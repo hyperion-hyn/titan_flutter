@@ -12,14 +12,16 @@ class AssetToken {
   final String logo;
   final String contractAddress;
 
-  const AssetToken({this.name, this.decimals, this.contractAddress, this.symbol, this.logo});
+  const AssetToken(
+      {this.name, this.decimals, this.contractAddress, this.symbol, this.logo});
 
   @override
   String toString() {
     return 'AssetToken{decimals: $decimals, name: $name, symbol: $symbol, logo: $logo, contractAddress: $contractAddress}';
   }
 
-  factory AssetToken.fromJson(Map<String, dynamic> json) => _$AssetTokenFromJson(json);
+  factory AssetToken.fromJson(Map<String, dynamic> json) =>
+      _$AssetTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$AssetTokenToJson(this);
 }
@@ -33,7 +35,6 @@ class SupportedTokens {
     logo: 'res/drawable/ic_btc_logo_large.png',
     symbol: 'BTC',
   );
-
   static const ETHEREUM = const AssetToken(
     name: 'Ethereum',
     decimals: 18,

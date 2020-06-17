@@ -38,7 +38,8 @@ import 'api/etherscan_api.dart';
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
 
-  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  ShowAccountPage(String coinVo)
+      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -64,11 +65,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
   @override
   Widget build(BuildContext context) {
     //activated quote sign
-    ActiveQuoteVoAndSign activeQuoteVoAndSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    ActiveQuoteVoAndSign activeQuoteVoAndSign = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign(widget.coinVo.symbol);
 
     var coinVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .getCoinVoBySymbol(widget.coinVo.symbol);
 
     return Scaffold(
         appBar: AppBar(
@@ -111,7 +113,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                               width: 80,
                               height: 80,
                               decoration: BoxDecoration(
-                                border: Border.all(color: Color(0xFF9B9B9B), width: 0),
+                                border: Border.all(
+                                    color: Color(0xFF9B9B9B), width: 0),
                                 shape: BoxShape.circle,
                               ),
                               child: ImageUtil.getCoinImage(coinVo.logo),
@@ -119,13 +122,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                           ),
                           Text(
                             "${FormatUtil.coinBalanceHumanReadFormat(coinVo)} ${coinVo.symbol}",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "≈ ${activeQuoteVoAndSign?.sign?.sign ?? ''}${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coinVo) * (activeQuoteVoAndSign?.quoteVo?.price ?? 0))}",
-                              style: TextStyle(fontSize: 14, color: Color(0xFF6D6D6D)),
+                              style: TextStyle(
+                                  fontSize: 14, color: Color(0xFF6D6D6D)),
                             ),
                           ),
                           SizedBox(
@@ -138,7 +143,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             child: IntrinsicHeight(
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   InkWell(
@@ -176,7 +182,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   InkWell(
                                     onTap: () {
                                       Navigator.push(
-                                          context, MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  WalletReceivePage(coinVo)));
                                     },
                                     child: Row(
                                       children: <Widget>[
@@ -207,22 +216,28 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                     builder: (BuildContext context) {
                                       return InkWell(
                                         onTap: () {
-                                          Clipboard.setData(ClipboardData(text: coinVo.address));
-                                          Scaffold.of(context)
-                                              .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
+                                          Clipboard.setData(ClipboardData(
+                                              text: coinVo.address));
+                                          Scaffold.of(context).showSnackBar(
+                                              SnackBar(
+                                                  content: Text(S
+                                                      .of(context)
+                                                      .address_copied)));
                                         },
                                         child: Row(
                                           children: <Widget>[
                                             Icon(
                                               ExtendsIconFont.copy_content,
-                                              color: Theme.of(context).primaryColor,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
                                               size: 24,
                                             ),
                                             SizedBox(
                                               width: 8,
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.all(8.0),
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Text(
                                                 S.of(context).copy,
                                                 style: TextStyle(
@@ -257,7 +272,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             if (index > 1) {
                               lastTransactionDetail = dataList[index - 1];
                             }
-                            return _buildTransactionItem(context, currentTransactionDetail, lastTransactionDetail);
+                            return _buildTransactionItem(
+                                context,
+                                currentTransactionDetail,
+                                lastTransactionDetail);
                           }
                         },
                         itemCount: max<int>(0, dataList.length),
@@ -277,11 +295,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var title = "";
     var describe = "";
     var amountColor;
-    var amountText = "${FormatUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
+    var amountText =
+        "${FormatUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
-      describe = "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
+      describe =
+          "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
         amountText = '+ $amountText';
@@ -302,13 +322,16 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         .toList()
         .contains(transactionDetail.toAddress.toLowerCase())) {
       title = S.of(context).contract_call;
-    } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
+    } else if (WalletConfig.map3ContractAddress.toLowerCase() ==
+        transactionDetail.toAddress.toLowerCase()) {
       title = S.of(context).map_contract_execution;
     }
 
-    var time = _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
+    var time = _dateFormat
+        .format(DateTime.fromMillisecondsSinceEpoch(transactionDetail.time));
     var lastTransactionTime = lastTransactionDetail != null
-        ? _dateFormat.format(DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
+        ? _dateFormat.format(
+            DateTime.fromMillisecondsSinceEpoch(lastTransactionDetail.time))
         : null;
     var isShowTime = lastTransactionTime != time;
 
@@ -321,7 +344,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                 padding: EdgeInsets.symmetric(vertical: 4),
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Text(
                     time,
                     style: TextStyle(color: Color(0xFF9B9B9B)),
@@ -331,8 +355,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
             color: Colors.white,
             child: InkWell(
               onTap: () {
-                var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-                var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                var isChinaMainland = SettingInheritedModel.of(context)
+                        .areaModel
+                        ?.isChinaMainland ==
+                    true;
+                var url = EtherscanApi.getTxDetailUrl(
+                    transactionDetail.hash, isChinaMainland);
                 if (url != null) {
                   // todo: jison_test_0421
                   /*
@@ -383,7 +411,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 Spacer(),
                                 Text(
                                   amountText,
-                                  style: TextStyle(color: amountColor, fontSize: 16, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: amountColor,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -391,7 +422,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Text(
                                 describe,
-                                style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xFF9B9B9B)),
                               ),
                             )
                           ],
@@ -416,12 +448,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       retList.add('header');
 
       //update balance
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent(symbol: widget.coinVo.symbol));
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent(symbol: widget.coinVo.symbol));
     }
 
     List<TransactionDetailVo> transferList = [];
     try {
-      transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
+      transferList =
+          await _accountTransferService.getTransferList(widget.coinVo, page);
     } catch (e) {
       logger.e(e);
     }
