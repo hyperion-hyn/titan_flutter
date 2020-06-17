@@ -29,7 +29,8 @@ class SupportedTokens {
   static const BTC = const AssetToken(
     name: 'BITCOIN',
     decimals: 8,
-    logo: 'https://www.altilly.com/assets/img/BTC_large.png',
+//    logo: 'https://www.altilly.com/assets/img/BTC_large.png',
+    logo: 'res/drawable/ic_btc_logo_large.png',
     symbol: 'BTC',
   );
 

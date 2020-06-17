@@ -15,6 +15,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -58,6 +59,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
+  var gasPriceRecommend;
 
   @override
   void onCreated() {
@@ -66,7 +68,15 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 //    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+      gasPriceRecommend = QuotesInheritedModel
+          .of(context, aspect: QuotesAspect.gasPrice)
+          .gasPriceRecommend;
+    }else{
+      gasPriceRecommend = QuotesInheritedModel
+          .of(context, aspect: QuotesAspect.gasPrice)
+          .btcGasPriceRecommend;
+    }
     _speedOnTap(1);
 //    _updateSpeed(defaultSpeed, quotePrice);
   }
@@ -79,36 +89,55 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Decimal get gasPrice {
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-    switch (selectedPriceLevel) {
-      case 0:
-        return gasPriceRecommend.safeLow;
-      case 1:
-        return gasPriceRecommend.average;
-      case 2:
-        return gasPriceRecommend.fast;
-      default:
-        return gasPriceRecommend.average;
-    }
+//    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+//      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).btcGasPriceRecommend;
+      switch (selectedPriceLevel) {
+        case 0:
+          return gasPriceRecommend.safeLow;
+        case 1:
+          return gasPriceRecommend.average;
+        case 2:
+          return gasPriceRecommend.fast;
+        default:
+          return gasPriceRecommend.average;
+      }
+//    } else {
+//      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+//      switch (selectedPriceLevel) {
+//        case 0:
+//          return gasPriceRecommend.safeLow;
+//        case 1:
+//          return gasPriceRecommend.average;
+//        case 2:
+//          return gasPriceRecommend.fast;
+//        default:
+//          return gasPriceRecommend.average;
+//      }
+//    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
-//    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-
-    var gasLimit =
-        widget.coinVo.symbol == "ETH" ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
-            : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
-    var gasEstimate =
-        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-
-    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
-
-    var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+    var gasPriceEstimateStr = "";
+    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+      gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).btcGasPriceRecommend;
+      var fees = ConvertTokenUnit.weiToDecimal(
+          BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE)).toString()), 8);
+      var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
+      gasPriceEstimateStr = "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+    } else {
+      gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+      var gasLimit = widget.coinVo.symbol == "ETH"
+          ? SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit
+          : SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(quotePrice.toString());
+      gasPriceEstimateStr =
+          "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -236,7 +265,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           alignment: Alignment.centerLeft,
                           height: 24,
                           child: Text(
-                            "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})",
+                            gasPriceEstimateStr,
                             style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
                           ),
                         ),
@@ -393,7 +422,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     setState(() {
       selectedPriceLevel = index;
     });
-//    _getGasFee();
   }
 
   Future _transfer() async {
@@ -418,6 +446,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
               widget.receiverAddress,
               activatedWallet.wallet);
+        } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
+          var activatedWalletVo = activatedWallet.wallet;
+          var hashTx = await activatedWalletVo.sendBitcoinTransaction(
+              walletPassword,
+              activatedWalletVo.getBitcoinZPub(),
+              widget.receiverAddress,
+              gasPrice.toInt(),
+              ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
         } else {
           await _transferErc20(
               walletPassword,
@@ -427,8 +463,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         }
 
         Application.router.navigateTo(context, Routes.confirm_success_papge);
-//        Fluttertoast.showToast(msg: S.of(context).transfer_submitted);
-//        Routes.popUntilCachedEntryRouteName(context, true);
       } catch (_) {
         logger.e(_);
         setState(() {
@@ -442,11 +476,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           }
         } else if (_ is RPCError) {
           Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
-          /*if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: S.of(context).eth_balance_not_enough_for_gas_fee);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }*/
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
@@ -455,7 +484,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferEth(String password, BigInt amount, String toAddress, Wallet wallet) async {
-//    var amount = ConvertTokenUnit.etherToWei(etherDecimal: transferAmount);
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -467,7 +495,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {
-//    var amount = ConvertTokenUnit.etherToWei(etherDecimal: transferAmount);
     var contractAddress = widget.coinVo.contractAddress;
 
     final txHash = await wallet.sendErc20Transaction(

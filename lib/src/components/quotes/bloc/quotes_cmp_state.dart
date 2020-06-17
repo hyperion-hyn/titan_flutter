@@ -29,9 +29,10 @@ class UpdatedQuotesSignState extends QuotesCmpState {
 class GasPriceState extends QuotesCmpState with EquatableMixin {
   final Status status;
   final GasPriceRecommend gasPriceRecommend;
+  final BTCGasPriceRecommend btcGasPriceRecommend;
 
-  GasPriceState({this.status, this.gasPriceRecommend});
+  GasPriceState({this.status, this.gasPriceRecommend, this.btcGasPriceRecommend});
 
   @override
-  List<Object> get props => [status, gasPriceRecommend];
+  List<Object> get props => [status, gasPriceRecommend, btcGasPriceRecommend];
 }

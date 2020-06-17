@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -41,6 +42,15 @@ class Wallet {
       }
     }
     return null;
+  }
+
+  String getBitcoinZPub() {
+    for (var account in accounts) {
+      if (account.coinType == CoinType.BITCOIN) {
+        return account.extendedPublicKey;
+      }
+    }
+    return "";
   }
 
   AssetToken getHynToken() {
@@ -81,6 +91,14 @@ class Wallet {
           return balance.first;
         }
         break;
+    }
+    return BigInt.from(0);
+  }
+
+  Future<BigInt> getBitcoinBalance(String pubString) async {
+    var response = await BitcoinApi.requestBitcoinBalance(pubString);
+    if (response['code'] == 0) {
+      return BigInt.from(response['data']);
     }
     return BigInt.from(0);
   }
@@ -187,6 +205,15 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+  }
+
+  Future<String> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
+    var transResult = await BitcoinApi.sendBitcoinTransaction(keystore.fileName,password,pubString,toAddr,fee,amount);
+    if(transResult["code"] == 0){
+      return transResult["data"];
+    }else{
+      return "";
+    }
   }
 
   Future<web3.Credentials> getCredentials(String password) async {

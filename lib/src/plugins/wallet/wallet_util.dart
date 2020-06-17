@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
@@ -17,6 +21,7 @@ import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
 
+import 'bitcoin_trans_entity.dart';
 import 'contract_const.dart';
 
 class WalletUtil {
@@ -47,7 +52,7 @@ class WalletUtil {
       name: name,
       mnemonic: mnemonic,
       password: password,
-      activeCoins: [CoinType.ETHEREUM],
+      activeCoins: [CoinType.ETHEREUM, CoinType.BITCOIN],
     );
     return loadWallet(fileName);
   }
@@ -166,9 +171,9 @@ class WalletUtil {
         map['accounts'].map((accountMap) => Account.fromJsonWithNet(accountMap, WalletConfig.netType)));
 
     //filter only ETHEREUM
-    accounts = accounts.where((account) {
-      return account.coinType == CoinType.ETHEREUM;
-    }).toList();
+//    accounts = accounts.where((account) {
+//      return account.coinType == CoinType.ETHEREUM;
+//    }).toList();
 
     var wallet = Wallet(keystore: keystore, accounts: accounts);
     return wallet;
@@ -245,4 +250,5 @@ class WalletUtil {
     }
     return null;
   }
+
 }

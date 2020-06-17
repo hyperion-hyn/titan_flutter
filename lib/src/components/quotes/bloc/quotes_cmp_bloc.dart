@@ -4,6 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../coin_market_api.dart';
 import '../model.dart';
@@ -12,7 +13,7 @@ import './bloc.dart';
 class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
-  static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT'];
+  static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT', 'BTC'];
 
   static const UPDATE_THRESHOLD = 5 * 60 * 1000; //5 minute
   QuotesModel currentQuotesModel;
@@ -51,6 +52,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 
       try {
         var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
+        print("!!!!!! $response");
         var gasPriceRecommend = GasPriceRecommend(
             fast: parseGasPriceToBigIntWei(response['fastest']),
             fastWait: response['fastestWait'],
@@ -62,7 +64,19 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 //            safeLowWait: response['safeLowWait']);
             safeLow: parseGasPriceToBigIntWei(response['average']),
             safeLowWait: response['avgWait']);
-        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
+
+        var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
+        if(btcResponse["code"] == 0){
+          var btcResponseData = btcResponse["data"];
+          var btcGasPriceRecommend = BTCGasPriceRecommend(
+              fast: btcResponseData['fastest'],
+              fastWait: btcResponseData['fastestWait'],
+              average: btcResponseData['fast'],
+              avgWait: btcResponseData['fastWait'],
+              safeLow: btcResponseData['average'],
+              safeLowWait: btcResponseData['avgWait']);
+          yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend, btcGasPriceRecommend: btcGasPriceRecommend);
+        }
       } catch (e) {
         logger.e(e);
         yield GasPriceState(status: Status.failed);

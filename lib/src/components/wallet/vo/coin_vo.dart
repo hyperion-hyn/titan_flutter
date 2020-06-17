@@ -9,6 +9,7 @@ class CoinVo {
   final String logo;
   final String address;
   final String contractAddress;
+  final String extendedPublicKey;
 
   final int decimals;
   final int coinType;
@@ -22,6 +23,7 @@ class CoinVo {
       this.logo,
       this.address,
       this.contractAddress,
+      this.extendedPublicKey,
       this.balance,
       this.coinType});
 

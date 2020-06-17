@@ -745,6 +745,18 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('API签名'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var hashTx = await activeWallet.sendBitcoinTransaction("111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                logger.i('Bitcoin交易已提交，交易hash $hashTx');
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('比特币转账'),
           )
         ],
       ),

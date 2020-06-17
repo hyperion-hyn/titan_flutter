@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:equatable/equatable.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 import 'vo/symbol_quote_vo.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -75,4 +76,33 @@ class GasPriceRecommend {
     this.fastWait,
     this.safeLowWait,
   });
+}
+
+class BTCGasPriceRecommend {
+  Decimal fast;
+  double fastWait;
+
+  Decimal average;
+  double avgWait;
+
+  Decimal safeLow;
+  double safeLowWait;
+
+  BTCGasPriceRecommend({
+    this.safeLow,
+    this.average,
+    this.fast,
+    this.safeLowWait,
+    this.avgWait,
+    this.fastWait,
+  });
+
+  BTCGasPriceRecommend.defaultValue(){
+    this.safeLow = Decimal.fromInt(BitcoinConst.BTC_LOW_SPEED);
+    this.average = Decimal.fromInt(BitcoinConst.BTC_FAST_SPEED);
+    this.fast = Decimal.fromInt(BitcoinConst.BTC_SUPER_FAST_SPEED);
+    this.safeLowWait = 70;
+    this.avgWait = 45;
+    this.fastWait = 15;
+  }
 }

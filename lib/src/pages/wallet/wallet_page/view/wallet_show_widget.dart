@@ -15,6 +15,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -241,7 +242,6 @@ class ShowWalletView extends StatelessWidget {
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
     var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
-    var isNetworkUrl = coin.logo.contains("http");
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -254,7 +254,7 @@ class ShowWalletView extends StatelessWidget {
               border: Border.all(color: Color(0xFF9B9B9B), width: 0),
               shape: BoxShape.circle,
             ),
-            child: getCoinImage(isNetworkUrl, coin.logo),
+            child: ImageUtil.getCoinImage(coin.logo),
           ),
           SizedBox(
             width: 12,
@@ -335,16 +335,5 @@ class ShowWalletView extends StatelessWidget {
         ),
       );
     }
-  }
-
-  Widget getCoinImage(bool isNetworkUrl, String imageUrl) {
-    if (!isNetworkUrl) {
-      return Image.asset(imageUrl);
-    }
-    return FadeInImage.assetNetwork(
-      placeholder: 'res/drawable/img_placeholder_circle.png',
-      image: imageUrl,
-      fit: BoxFit.cover,
-    );
   }
 }

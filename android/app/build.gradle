@@ -145,12 +145,14 @@ dependencies {
     implementation 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.0.0'
 
     //trust wallet core
-    implementation ('com.trustwallet:wallet-core:0.12.24') {
+    implementation ('com.trustwallet:wallet-core:2.0.15') {
 //    implementation ('com.trustwallet.walletcore:walletcore:0.10.0') {
         exclude group: 'com.google.guava'
     }
     //web3j
     implementation 'org.web3j:core:4.5.0'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
 
 
     testImplementation 'junit:junit:4.12'

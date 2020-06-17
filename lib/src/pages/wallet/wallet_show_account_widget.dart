@@ -29,6 +29,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
@@ -113,7 +114,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 border: Border.all(color: Color(0xFF9B9B9B), width: 0),
                                 shape: BoxShape.circle,
                               ),
-                              child: Image.asset(coinVo.logo),
+                              child: ImageUtil.getCoinImage(coinVo.logo),
                             ),
                           ),
                           Text(

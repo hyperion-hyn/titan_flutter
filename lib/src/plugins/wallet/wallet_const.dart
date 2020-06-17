@@ -37,6 +37,13 @@ class EthereumConst {
   static const int COLLECT_HALF_MAP3_NODE_GAS_LIMIT = 150000;
 }
 
+class BitcoinConst{
+  static const BTC_LOW_SPEED = 15;
+  static const BTC_FAST_SPEED = 30;
+  static const BTC_SUPER_FAST_SPEED = 60;
+  static const BTC_RAWTX_SIZE = 225;
+}
+
 class WalletError {
   static const UNKNOWN_ERROR = "0";
   static const PASSWORD_WRONG = "1";
@@ -47,6 +54,11 @@ enum EthereumNetType {
   main,
   ropsten,
   rinkeby,
+  local,
+}
+
+enum BitcoinNetType {
+  main,
   local,
 }
 
@@ -66,7 +78,13 @@ class WalletConfig {
 
   static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
+  static String get BITCOIN_MAIN_API => 'https://host/wallet/btc/';
+
+  static String get BITCOIN_LOCAL_API => 'http://10.10.1.113/wallet/btc/';
+
   static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
+
+  static BitcoinNetType bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
 
   static String get map3ContractAddress {
     switch (netType) {
@@ -94,6 +112,17 @@ class WalletConfig {
       case EthereumNetType.local:
         return ContractTestConfig.walletLocalDomain;
       //return LOCAL_API;
+    }
+    return '';
+  }
+
+  static String getBitcoinApi() {
+    switch (bitcoinNetType) {
+      case BitcoinNetType.main:
+        return BITCOIN_MAIN_API;
+      case BitcoinNetType.local:
+        return BITCOIN_LOCAL_API;
+    //return LOCAL_API;
     }
     return '';
   }

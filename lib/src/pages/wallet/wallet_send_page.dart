@@ -13,6 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -141,9 +142,16 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                               return S.of(context).receiver_address_not_empty_hint;
                             } else {
                               //TODO support more chain address regexp
-                              final RegExp _ethBasicAddress = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-                              if (!_ethBasicAddress.hasMatch(value)) {
-                                return S.of(context).input_valid_address;
+                              RegExp _ethBasicAddress = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+
+                              if(widget.coinVo.coinType == CoinType.BITCOIN) {
+                                if (_ethBasicAddress.hasMatch(value)){
+                                  return S.of(context).input_valid_address;
+                                }
+                              }else{
+                                if (!_ethBasicAddress.hasMatch(value)){
+                                  return S.of(context).input_valid_address;
+                                }
                               }
                             }
                             return null;
@@ -227,7 +235,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                       children: <Widget>[
                         Padding(
                             padding: EdgeInsets.only(left: 8, top: 8),
-                            child: Text("≈ $quoteSign${FormatUtil.formatPrice(_notionalValue)}")),
+                            child: Text("≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}")),
                       ],
                     ),
                     SizedBox(
