@@ -1,9 +1,7 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
@@ -18,8 +16,7 @@ class WalletTabsPage extends StatefulWidget {
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage>
-    with SingleTickerProviderStateMixin {
+class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -46,7 +43,9 @@ class _WalletTabsPageState extends State<WalletTabsPage>
           child: Container(
             color: Colors.white,
             child: SafeArea(
-              child: Stack(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Row(
                     children: <Widget>[
@@ -88,26 +87,13 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                             ),
                           ],
                         ),
-                      ),
-                      Spacer(
-                        flex: 3,
-                      )
-                    ],
-                  ),
-                  Positioned(
-                    top: 16.0,
-                    right: 16.0,
-                    child: InkWell(
-                      onTap: () async {
-                        String scanStr = await BarcodeScanner.scan();
-                      },
-                      child: Icon(
-                        ExtendsIconFont.qrcode_scan,
-                        color: Colors.black,
-                        size: 20,
-                      ),
+                        Tab(
+                          text: S.of(context).map3_node_introduction,
+                        ),
+                      ],
                     ),
-                  )
+                  ),
+                  Expanded(flex: 2, child: Text(""))
                 ],
               ),
             ),
@@ -117,7 +103,13 @@ class _WalletTabsPageState extends State<WalletTabsPage>
           controller: _tabController,
           children: [
             WalletPage(),
-            Container(),
+            Map3NodePage(),
+//            Center(
+//              child: Text('this is wallet page'),
+//            ),
+//            Center(
+//              child: Text('this is map3 node page'),
+//            )
           ],
 //          physics: NeverScrollableScrollPhysics(),
         ),

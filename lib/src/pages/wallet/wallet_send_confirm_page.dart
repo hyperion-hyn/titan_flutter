@@ -528,7 +528,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               activatedWallet.wallet);
         } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
           var activatedWalletVo = activatedWallet.wallet;
-          var hashTx = await activatedWalletVo.sendBitcoinTransaction(
+          var transResult = await activatedWalletVo.sendBitcoinTransaction(
               walletPassword,
               activatedWalletVo.getBitcoinZPub(),
               widget.receiverAddress,

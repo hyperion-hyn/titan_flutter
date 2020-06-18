@@ -78,9 +78,12 @@ class WalletConfig {
 
   static String get INFURA_RINKEBY_API => 'https://rinkeby.infura.io/v3/${Config.INFURA_PRVKEY}';
 
-  static String get BITCOIN_MAIN_API => 'https://host/wallet/btc/';
+  static String get BITCOIN_MAIN_API => 'http://btc-test-939969015.ap-southeast-1.elb.amazonaws.com/wallet/btc/';
 
-  static String get BITCOIN_LOCAL_API => 'http://10.10.1.113/wallet/btc/';
+  static String get BITCOIN_LOCAL_API => 'http://btc-test-939969015.ap-southeast-1.elb.amazonaws.com/wallet/btc/';
+//  static String get BITCOIN_LOCAL_API => 'http://10.10.1.134/wallet/btc/';
+
+  static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
 
   static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
 
