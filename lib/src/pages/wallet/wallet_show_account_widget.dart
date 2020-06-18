@@ -159,13 +159,15 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 children: <Widget>[
                                   InkWell(
                                     onTap: () {
-                                      TransactionDetailVo transaction = dataList[0];
-                                      if(transaction.state == 0){
-                                        UiUtil.showConfirmDialog(
-                                          context,
-                                          content: "你有未确认的比特币转账，请稍后再试！",
-                                        );
-                                        return;
+                                      if(dataList.length > 0){
+                                        TransactionDetailVo transaction = dataList[1];
+                                        if(transaction.state == 0 && transaction.type == CoinType.BITCOIN) {
+                                          UiUtil.showConfirmDialog(
+                                            context,
+                                            content: "你有未确认的比特币转账，请稍后再试！",
+                                          );
+                                          return;
+                                        }
                                       }
                                       Application.router.navigateTo(
                                           context,
