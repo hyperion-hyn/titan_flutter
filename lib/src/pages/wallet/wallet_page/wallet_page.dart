@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -30,8 +31,7 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage>
-    with RouteAware, AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   @override
@@ -46,20 +46,16 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   void didPopNext() async {
     callLater((_) {
-      BlocProvider.of<WalletCmpBloc>(context).add(
-        UpdateActivatedWalletBalanceEvent(),
-      );
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     });
   }
 
   @override
   void onCreated() {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context)
-        .add(UpdateQuotesEvent(isForceUpdate: true));
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -69,35 +65,25 @@ class _WalletPageState extends BaseState<WalletPage>
       children: <Widget>[
         Expanded(child: _buildWalletView(context)),
         //hyn quotes view
-        // hynQuotesView(),
-        _authorizedView(),
+        hynQuotesView(),
       ],
     );
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
           onRefresh: () async {
             //update quotes
-            var quoteSignStr =
-                await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-            QuotesSign quotesSign = quoteSignStr != null
-                ? QuotesSign.fromJson(json.decode(quoteSignStr))
-                : SupportedQuoteSigns.defaultQuotesSign;
-            Future.wait({
-              Future(() => BlocProvider.of<QuotesCmpBloc>(context)
-                  .add(UpdateQuotesSignEvent(sign: quotesSign))),
-              Future(() => BlocProvider.of<QuotesCmpBloc>(context)
-                  .add(UpdateQuotesEvent(isForceUpdate: true))),
-              Future(() => BlocProvider.of<WalletCmpBloc>(context)
-                  .add(UpdateActivatedWalletBalanceEvent()))
-            });
+            var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+            QuotesSign quotesSign =
+            quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+            Future.wait({Future(()=>BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign))),
+              Future(()=>BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true))),
+              Future(()=>BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent()))});
 //            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
 //            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
 //            //update all coin balance
@@ -110,11 +96,7 @@ class _WalletPageState extends BaseState<WalletPage>
             }
           },
           child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: ShowWalletView(
-                activatedWalletVo,
-                loadDataBloc,
-              )));
+              scrollDirection: Axis.vertical, child: ShowWalletView(activatedWalletVo, loadDataBloc)));
     }
 
     return BlocBuilder<WalletCmpBloc, WalletCmpState>(
@@ -131,8 +113,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -161,37 +142,13 @@ class _WalletPageState extends BaseState<WalletPage>
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),
           )
         ],
       ),
-    );
-  }
-
-  Widget _authorizedView() {
-    return Row(
-      children: <Widget>[
-        Spacer(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'res/drawable/logo_manwu.png',
-            width: 25,
-            height: 25,
-          ),
-        ),
-        Text(
-          '经过权威机构安全认证',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        Spacer()
-      ],
     );
   }
 
