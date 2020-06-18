@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:custom_radio_grouped_button/CustomButtons/CustomRadioButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -20,6 +19,7 @@ import 'package:titan/src/pages/contribution/new_poi/bloc/add_poi_state.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/widget/CustomRadioButton.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/picker_data/PickerData.dart';
@@ -550,7 +550,7 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
         customShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         buttonColor: Theme.of(context).canvasColor,
-        buttonLables: ['每天', '节假日', '工作日'],
+        buttonLabels: ['每天', '节假日', '工作日'],
         buttonValues: ['everyday', 'weekends', 'workdays'],
         radioButtonValue: (value) => {},
         selectedColor: Theme.of(context).primaryColor,

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:custom_radio_grouped_button/CustomButtons/CustomRadioButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
@@ -21,6 +20,7 @@ import 'package:titan/src/pages/contribution/new_poi/verify_poi_done_page.dart';
 import 'package:titan/src/pages/test_page/WebsocketPage.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/CustomRadioButton.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
 import 'package:titan/src/widget/picker_data/PickerData.dart';
@@ -621,7 +621,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
         customShape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         buttonColor: Theme.of(context).canvasColor,
-        buttonLables: ['每天', '节假日', '工作日'],
+        buttonLabels: ['每天', '节假日', '工作日'],
         buttonValues: ["everyday", 'weekends', 'workdays'],
         radioButtonValue: (value) => print(value),
         selectedColor: Theme.of(context).primaryColor,

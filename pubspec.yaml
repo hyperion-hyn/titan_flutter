@@ -98,9 +98,7 @@ dependencies:
   loading: ^1.0.1
   flutter_inappwebview: ^3.1.0
   characters: ^0.5.0
-  custom_radio_grouped_button: ^1.0.1
 
-  grouped_buttons: ^1.0.4
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0
 
