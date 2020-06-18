@@ -27,9 +27,12 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
 
   TextEditingController _walletNameController = TextEditingController();
   TextEditingController _walletPasswordController = TextEditingController();
-  TextEditingController _walletConfimPasswordController = TextEditingController();
+  TextEditingController _walletConfimPasswordController =
+      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  bool _isShowPassword = false;
 
   @override
   void onCreated() async {
@@ -43,11 +46,12 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
           centerTitle: true,
           title: Text(
             S.of(context).import_account,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
           actions: <Widget>[
             InkWell(
@@ -62,10 +66,11 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 }*/
               },
               child: Padding(
-                padding: const EdgeInsets.only(top:8.0,bottom: 8,left: 15,right: 15),
+                padding: const EdgeInsets.only(
+                    top: 8.0, bottom: 8, left: 15, right: 15),
                 child: Icon(
                   ExtendsIconFont.qrcode_scan,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -117,7 +122,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 ),
                 Text(
                   S.of(context).input_resume_mnemonic,
-                  style: TextStyle(color: HexColor('#AAAAAA'), fontSize: 14),
+                  style: TextStyle(color: Colors.black, fontSize: 14),
                 ),
                 SizedBox(
                   height: 12,
@@ -131,7 +136,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   child: Stack(
                     children: <Widget>[
                       Padding(
-                          padding: const EdgeInsets.only(left:8.0, right:8),
+                          padding: const EdgeInsets.only(left: 8.0, right: 8),
                           child: TextFormField(
                             validator: (value) {
                               if (value.isEmpty) {
@@ -143,19 +148,23 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                             controller: _mnemonicController,
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
-                            decoration: InputDecoration(border: InputBorder.none),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
                           )),
                       Align(
                         alignment: Alignment(1, 1),
                         child: InkWell(
                           onTap: () async {
-                            var mnemonicWords = (await Clipboard.getData(Clipboard.kTextPlain))?.text;
-                            if(mnemonicWords == null || mnemonicWords == '') {
+                            var mnemonicWords =
+                                (await Clipboard.getData(Clipboard.kTextPlain))
+                                    ?.text;
+                            if (mnemonicWords == null || mnemonicWords == '') {
                               print('no clipboard word');
-                              return ;
+                              return;
                             }
                             if (!bip39.validateMnemonic(mnemonicWords)) {
-                              Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                              Fluttertoast.showToast(
+                                  msg: S.of(context).illegal_mnemonic);
                               return;
                             } else {
                               _mnemonicController.text = mnemonicWords;
@@ -165,7 +174,8 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
                               S.of(context).paste,
-                              style: TextStyle(color: Theme.of(context).primaryColor),
+                              style: TextStyle(
+                                  color: Theme.of(context).primaryColor),
                             ),
                           ),
                         ),
@@ -183,12 +193,14 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 14,
+                        fontWeight: FontWeight.w500
                       ),
                     )
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                   child: TextFormField(
                       validator: (value) {
                         if (value.isEmpty) {
@@ -202,11 +214,14 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       controller: _walletNameController,
                       decoration: InputDecoration(
                         hintText: S.of(context).input_wallet_name_length_hint,
-                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        hintStyle:
+                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      maxLength: 6,
+                      inputFormatters: [LengthLimitingTextInputFormatter(6)],
                       keyboardType: TextInputType.text),
                 ),
                 SizedBox(
@@ -219,12 +234,14 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 14,
+                        fontWeight: FontWeight.w500
                       ),
                     )
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                   child: TextFormField(
                     validator: (value) {
                       if (!ValidatorUtil.validatePassword(value)) {
@@ -236,9 +253,12 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     controller: _walletPasswordController,
                     decoration: InputDecoration(
                       hintText: S.of(context).input_wallet_password_length_hint,
-                      hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      hintStyle:
+                          TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
@@ -254,12 +274,14 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       style: TextStyle(
                         color: HexColor('#333333'),
                         fontSize: 14,
+                        fontWeight: FontWeight.w500
                       ),
                     )
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                   child: TextFormField(
                     validator: (value) {
                       if (value.isEmpty) {
@@ -272,20 +294,47 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     },
                     controller: _walletConfimPasswordController,
                     decoration: InputDecoration(
-                      hintText: S.of(context).input_confirm_wallet_password_hint,
-                      hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      hintText:
+                          S.of(context).input_confirm_wallet_password_hint,
+                      hintStyle:
+                          TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      suffixIcon: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _isShowPassword = !_isShowPassword;
+                            });
+                          },
+                          child: _isShowPassword
+                              ? Image.asset(
+                            'res/drawable/ic_password_show.png',
+                            height: 20,
+                            width: 20,
+                          )
+                              : Image.asset(
+                            'res/drawable/ic_password_hide.png',
+                            height: 20,
+                            width: 20,
+                          ),
+                        ),
+                      )
                     ),
                     keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
+                    obscureText: !_isShowPassword,
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.fromLTRB(16, 24, 16, 48),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
@@ -297,16 +346,24 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         var mnemonic = _mnemonicController.text.trim();
 
                         if (!bip39.validateMnemonic(mnemonic)) {
-                          Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                          Fluttertoast.showToast(
+                              msg: S.of(context).illegal_mnemonic);
                           return;
                         }
 
                         try {
                           var wallet = await WalletUtil.storeByMnemonic(
-                              name: walletName, password: password, mnemonic: mnemonic);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => FinishImportPage(wallet)));
+                              name: walletName,
+                              password: password,
+                              mnemonic: mnemonic);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FinishImportPage(wallet)));
                         } catch (_) {
-                          Fluttertoast.showToast(msg: S.of(context).import_account_fail);
+                          Fluttertoast.showToast(
+                              msg: S.of(context).import_account_fail);
                         }
                       }
                     },
@@ -317,7 +374,8 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).import,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),
@@ -337,9 +395,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           return Wrap(
             children: <Widget>[
               ListTile(
-                title: Text(S.of(context).camera_scan,textAlign: TextAlign.center),
+                title: Text(S.of(context).camera_scan,
+                    textAlign: TextAlign.center),
                 onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500),(){
+                  Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext);
                   });
                   String mnemonicWords = await BarcodeScanner.scan();
@@ -351,9 +410,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).import_from_album,textAlign: TextAlign.center),
+                title: Text(S.of(context).import_from_album,
+                    textAlign: TextAlign.center),
                 onTap: () async {
-                  Future.delayed(Duration(milliseconds: 500),(){
+                  Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext);
                   });
 
@@ -365,10 +425,14 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if(tempListImagePaths != null && tempListImagePaths.length == 1){
-                    RScanResult mnemonicWords = await RScan.scanImagePath(tempListImagePaths[0].path);
-                    if (mnemonicWords == null || !bip39.validateMnemonic(mnemonicWords.message)) {
-                      Fluttertoast.showToast(msg: S.of(context).illegal_mnemonic);
+                  if (tempListImagePaths != null &&
+                      tempListImagePaths.length == 1) {
+                    RScanResult mnemonicWords =
+                        await RScan.scanImagePath(tempListImagePaths[0].path);
+                    if (mnemonicWords == null ||
+                        !bip39.validateMnemonic(mnemonicWords.message)) {
+                      Fluttertoast.showToast(
+                          msg: S.of(context).illegal_mnemonic);
                     } else {
                       _mnemonicController.text = mnemonicWords.message;
                     }
@@ -401,15 +465,13 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                 },
               ),
               ListTile(
-                title: Text(S.of(context).cancel,textAlign: TextAlign.center),
+                title: Text(S.of(context).cancel, textAlign: TextAlign.center),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
             ],
           );
-        }
-    );
+        });
   }
-
 }

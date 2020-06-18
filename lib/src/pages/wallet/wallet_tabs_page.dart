@@ -44,6 +44,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
+            color: Colors.white,
             child: SafeArea(
               child: Stack(
                 children: <Widget>[
@@ -53,7 +54,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                         width: 16.0,
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: TabBar(
                           controller: _tabController,
                           labelColor: Theme.of(context).primaryColor,

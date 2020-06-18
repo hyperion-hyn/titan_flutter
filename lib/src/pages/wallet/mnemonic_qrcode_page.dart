@@ -11,65 +11,84 @@ class MnemonicQrcodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(S.of(context).qrcode)),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
+        title: Text(
+          S.of(context).qrcode,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+      ),
       backgroundColor: Theme.of(context).backgroundColor,
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 48),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.all(Radius.circular(24.0)),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Image.asset(
-                        "res/drawable/ic_logo.png",
-                        width: 24,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      SizedBox(width: 8),
-                      Image.asset(
-                        'res/drawable/logo_title.png',
-                        height: 8,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  RepaintBoundary(
-                    child: QrImage(
-                      data: mnemonic,
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.grey[800],
-                      version: 4,
-                      size: 200,
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 48),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(24.0)),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Image.asset(
+                          "res/drawable/ic_logo.png",
+                          width: 24,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        SizedBox(width: 8),
+                        Image.asset(
+                          'res/drawable/logo_title.png',
+                          height: 8,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    S.of(context).mnemonic_qrcode_tip,
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
+                    SizedBox(height: 4),
+                    RepaintBoundary(
+                      child: QrImage(
+                        data: mnemonic,
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.grey[800],
+                        version: 4,
+                        size: 200,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      S.of(context).mnemonic_qrcode_tip,
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 32),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Icon(Icons.warning, color: Colors.grey),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      S.of(context).save_mnemonic_safe_notice,
+                      style: TextStyle(color: Colors.grey, fontSize: 14.0),
+                    ),
+                  )
                 ],
               ),
-            ),
-            SizedBox(height: 32),
-            Icon(Icons.warning, color: Colors.grey),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
-              child: Text(
-                S.of(context).save_mnemonic_safe_notice,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

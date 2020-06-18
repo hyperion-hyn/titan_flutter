@@ -15,7 +15,9 @@ class FinishCreatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -23,12 +25,13 @@ class FinishCreatePage extends StatelessWidget {
                 onPressed: () async {
                   List<Wallet> walletList = await WalletUtil.scanWallets();
                   if (walletList.length == 1) {
-                    BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+                    BlocProvider.of<WalletCmpBloc>(context)
+                        .add(ActiveWalletEvent(wallet: wallet));
 
                     await Future.delayed(Duration(milliseconds: 300));
-                    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+                    BlocProvider.of<WalletCmpBloc>(context)
+                        .add(UpdateActivatedWalletBalanceEvent());
                   }
-
                   Routes.popUntilCachedEntryRouteName(context, wallet);
                 },
               );
@@ -37,6 +40,7 @@ class FinishCreatePage extends StatelessWidget {
         ),
         body: Center(
           child: Container(
+            color: Colors.white,
             padding: EdgeInsets.all(10),
             alignment: Alignment.center,
             child: Column(
@@ -72,16 +76,19 @@ class FinishCreatePage extends StatelessWidget {
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () async {
-                      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+                      BlocProvider.of<WalletCmpBloc>(context)
+                          .add(ActiveWalletEvent(wallet: wallet));
 
                       await Future.delayed(Duration(milliseconds: 300));
-                      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+                      BlocProvider.of<WalletCmpBloc>(context)
+                          .add(UpdateActivatedWalletBalanceEvent());
 
                       Routes.popUntilCachedEntryRouteName(context, wallet);
                     },
@@ -92,7 +99,8 @@ class FinishCreatePage extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             S.of(context).user_this_account,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),

@@ -65,13 +65,16 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      children: <Widget>[
-        Expanded(child: _buildWalletView(context)),
-        //hyn quotes view
-        // hynQuotesView(),
-        _authorizedView(),
-      ],
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Expanded(child: _buildWalletView(context)),
+          //hyn quotes view
+          // hynQuotesView(),
+          _authorizedView(),
+        ],
+      ),
     );
   }
 
@@ -175,23 +178,30 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   Widget _authorizedView() {
-    return Row(
-      children: <Widget>[
-        Spacer(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: <Widget>[
+          Spacer(),
+          Image.asset(
             'res/drawable/logo_manwu.png',
-            width: 25,
-            height: 25,
+            width: 23,
+            height: 23,
+            color: Colors.grey[500],
           ),
-        ),
-        Text(
-          '经过权威机构安全认证',
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        Spacer()
-      ],
+          SizedBox(
+            width: 4.0,
+          ),
+          Text(
+            '经过权威机构安全认证',
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14.0,
+            ),
+          ),
+          Spacer()
+        ],
+      ),
     );
   }
 

@@ -69,17 +69,22 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
-          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
           centerTitle: true,
           title: Text(
             S.of(context).wallet_manage,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
           actions: <Widget>[
             InkWell(
               onTap: () {
-                var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                Application.router.navigateTo(context, Routes.wallet_import + '?entryRouteName=$currentRouteName');
+                var currentRouteName =
+                    RouteUtil.encodeRouteNameWithoutParams(context);
+                Application.router.navigateTo(context,
+                    Routes.wallet_import + '?entryRouteName=$currentRouteName');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -91,8 +96,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
             ),
             InkWell(
               onTap: () {
-                var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
+                var currentRouteName =
+                    RouteUtil.encodeRouteNameWithoutParams(context);
+                Application.router.navigateTo(context,
+                    Routes.wallet_create + '?entryRouteName=$currentRouteName');
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -104,40 +111,51 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
             )
           ],
         ),
-        body: BlocBuilder<WalletManagerBloc, WalletManagerState>(
-          bloc: _walletManagerBloc,
-          builder: (context, state) {
-            if (state is ShowWalletState) {
-              var walletList = state.wallets;
-              return ListView.builder(
-                primary: false,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return _buildWallet(walletList[index]);
-                },
-                itemCount: walletList.length,
-              );
-            } else if (state is WalletEmptyState) {
-              return Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 32.0),
-                    child: EmptyWalletView(tips: widget.tips),
-                  ));
-            } else {
-              return Container();
-            }
-          },
+        body: Container(
+          height: double.infinity,
+          color: Colors.white,
+          child: BlocBuilder<WalletManagerBloc, WalletManagerState>(
+            bloc: _walletManagerBloc,
+            builder: (context, state) {
+              if (state is ShowWalletState) {
+                var walletList = state.wallets;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: ListView.builder(
+                    primary: false,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _buildWallet(walletList[index]);
+                    },
+                    itemCount: walletList.length,
+                  ),
+                );
+              } else if (state is WalletEmptyState) {
+                return Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 32.0),
+                      child: EmptyWalletView(tips: widget.tips),
+                    ));
+              } else {
+                return Container();
+              }
+            },
+          ),
         ));
   }
 
   Widget _buildWallet(Wallet wallet) {
-    bool isSelected =
-        wallet.keystore.fileName == WalletInheritedModel.of(context).activatedWallet?.wallet?.keystore?.fileName;
+    bool isSelected = wallet.keystore.fileName ==
+        WalletInheritedModel.of(context)
+            .activatedWallet
+            ?.wallet
+            ?.keystore
+            ?.fileName;
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         children: <Widget>[
           Row(
@@ -146,7 +164,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 child: InkWell(
                   onTap: () {
                     if (!isSelected) {
-                      BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+                      BlocProvider.of<WalletCmpBloc>(context)
+                          .add(ActiveWalletEvent(wallet: wallet));
                     }
                   },
                   child: Row(
@@ -154,7 +173,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                     children: <Widget>[
                       Container(
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Theme.of(context).primaryColor),
                         width: 52,
                         height: 52,
                         child: Stack(
@@ -173,7 +194,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                                 alignment: Alignment.bottomRight,
                                 child: Container(
                                   padding: EdgeInsets.all(0),
-                                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white),
                                   child: Icon(
                                     Icons.check_circle,
                                     size: 18,
@@ -194,7 +217,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                           children: <Widget>[
                             Text(
                               walletKeyStore.name,
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF252525)),
                             ),
                             SizedBox(
                               height: 4,
@@ -203,7 +229,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Text(
                                 shortBlockChainAddress(ethAccount.address),
-                                style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                                style: TextStyle(
+                                    fontSize: 14, color: Color(0xFF9B9B9B)),
                               ),
                             ),
                           ],
@@ -215,10 +242,14 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               ),
               InkWell(
                 onTap: () {
-                  var walletStr = FluroConvertUtils.object2string(wallet.toJson());
-                  var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
+                  var walletStr =
+                      FluroConvertUtils.object2string(wallet.toJson());
+                  var currentRouteName =
+                      RouteUtil.encodeRouteNameWithoutParams(context);
                   Application.router.navigateTo(
-                      context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+                      context,
+                      Routes.wallet_setting +
+                          '?entryRouteName=$currentRouteName&walletStr=$walletStr');
                 },
                 child: Icon(
                   Icons.info_outline,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
@@ -18,9 +19,12 @@ class CreateAccountPage extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccountPage> {
   TextEditingController _walletNameController = TextEditingController();
   TextEditingController _walletPasswordController = TextEditingController();
-  TextEditingController _walletConfimPasswordController = TextEditingController();
+  TextEditingController _walletConfimPasswordController =
+      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  bool _isShowPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +32,12 @@ class _CreateAccountState extends State<CreateAccountPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
+          backgroundColor: Colors.white,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Colors.black),
           title: Text(
             S.of(context).create_wallet,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
         ),
         body: SingleChildScrollView(
@@ -45,15 +50,16 @@ class _CreateAccountState extends State<CreateAccountPage> {
                 children: <Widget>[
                   Container(
                     alignment: Alignment.center,
-                    width: 72,
-                    height: 72,
-                    child: Image.asset("res/drawable/hyn_logo.png"),
+                    width: 64,
+                    height: 64,
+                    child: Image.asset("res/drawable/ic_hyn_logo_new.png"),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 64),
+                    padding: const EdgeInsets.only(top: 16, bottom: 50),
                     child: Text(
                       S.of(context).create_wallet_tips,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                     ),
                   ),
                   Row(
@@ -61,14 +67,15 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       Text(
                         S.of(context).create_wallet_name_label,
                         style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                        ),
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
                       )
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
                         validator: (value) {
                           if (value.isEmpty) {
@@ -82,58 +89,75 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         controller: _walletNameController,
                         decoration: InputDecoration(
                           hintText: S.of(context).input_wallet_name_length_hint,
-                          hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          hintStyle: TextStyle(
+                              color: HexColor('#AAAAAA'), fontSize: 13),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
                         ),
-                        maxLength: 6,
+                        inputFormatters: [LengthLimitingTextInputFormatter(6)],
                         keyboardType: TextInputType.text),
+                  ),
+                  SizedBox(
+                    height: 8.0,
                   ),
                   Row(
                     children: <Widget>[
                       Text(
                         S.of(context).create_wallet_password_label,
                         style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                        ),
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
                       )
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
                       validator: (value) {
                         if (!ValidatorUtil.validatePassword(value)) {
-                          return S.of(context).input_wallet_password_length_hint;
+                          return S
+                              .of(context)
+                              .input_wallet_password_length_hint;
                         } else {
                           return null;
                         }
                       },
                       controller: _walletPasswordController,
                       decoration: InputDecoration(
-                        hintText: S.of(context).input_wallet_password_length_hint,
-                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        hintText:
+                            S.of(context).input_wallet_password_length_hint,
+                        hintStyle:
+                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: true,
                     ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
                   ),
                   Row(
                     children: <Widget>[
                       Text(
                         S.of(context).reinput_wallet_password_label,
                         style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                        ),
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600),
                       )
                     ],
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
                       validator: (value) {
                         if (value.isEmpty) {
@@ -146,33 +170,64 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       },
                       controller: _walletConfimPasswordController,
                       decoration: InputDecoration(
-                        hintText: S.of(context).input_confirm_wallet_password_hint,
-                        hintStyle: TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        suffixIcon: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isShowPassword = !_isShowPassword;
+                              });
+                            },
+                            child: _isShowPassword
+                                ? Image.asset(
+                                    'res/drawable/ic_password_show.png',
+                                    height: 20,
+                                    width: 20,
+                                  )
+                                : Image.asset(
+                                    'res/drawable/ic_password_hide.png',
+                                    height: 20,
+                                    width: 20,
+                                  ),
+                          ),
+                        ),
+                        hintText:
+                            S.of(context).input_confirm_wallet_password_hint,
+                        hintStyle:
+                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
                       keyboardType: TextInputType.visiblePassword,
-                      obscureText: true,
+                      obscureText: !_isShowPassword,
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
                     constraints: BoxConstraints.expand(height: 48),
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
                       disabledColor: Colors.grey[600],
                       color: Theme.of(context).primaryColor,
                       textColor: Colors.white,
                       disabledTextColor: Colors.white,
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          var walletName = FluroConvertUtils.fluroCnParamsEncode(_walletNameController.text);
+                          var walletName =
+                              FluroConvertUtils.fluroCnParamsEncode(
+                                  _walletNameController.text);
                           var password = _walletPasswordController.text;
 
 //                          createWalletNameTemp = walletName;
 //                          createWalletPasswordTemp = password;
-                          Application.router.navigateTo(context, Routes.wallet_backup_notice_for_creation
-                              + '?walletName=$walletName&password=$password');
+                          Application.router.navigateTo(
+                              context,
+                              Routes.wallet_backup_notice_for_creation +
+                                  '?walletName=$walletName&password=$password');
 
 //                          Navigator.push(
 //                              context, MaterialPageRoute(builder: (context) => CreateWalletBackupNoticePage()));
@@ -185,7 +240,10 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           children: <Widget>[
                             Text(
                               S.of(context).next,
-                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 16,
+                              ),
                             ),
                           ],
                         ),
