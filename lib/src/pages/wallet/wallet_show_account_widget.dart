@@ -32,6 +32,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
@@ -150,6 +151,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 children: <Widget>[
                                   InkWell(
                                     onTap: () {
+                                      TransactionDetailVo transaction = dataList[0];
+                                      if(transaction.state == 0){
+                                        UiUtil.showConfirmDialog(
+                                          context,
+                                          content: "你有未确认的比特币转账，请稍后再试！",
+                                        );
+                                        return;
+                                      }
                                       Application.router.navigateTo(
                                           context,
                                           Routes.wallet_account_send_transaction +
@@ -318,7 +327,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if (SupportedTokens.allContractTokens(WalletConfig.netType)
+    if(transactionDetail.state == 1 && transactionDetail.type == CoinType.BITCOIN){
+      title = "待确认";
+    } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
         .contains(transactionDetail.toAddress.toLowerCase())) {
@@ -424,9 +435,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   ),
                                 ),
                                 Spacer(),
-                                if (transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN)
+                                if (transactionDetail.state > 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN)
                                   Text(
-                                    "待确认",
+                                    "已确认${transactionDetail.state}次",
                                     style: TextStyle(
                                         color: DefaultColors.colorff4c3b, fontSize: 14, fontWeight: FontWeight.bold),
                                   ),
