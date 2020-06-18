@@ -32,10 +32,12 @@ import CoreBluetooth
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        
+        print("[AppDelegate] --> didFinishLaunchingWithOptions")
         GeneratedPluginRegistrant.register(with: self)
-        
+
         flutterMethodCallHandler()
-        
+
         setupUM(launchOptions: launchOptions)
         
         if let userInfo = launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] {

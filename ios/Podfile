@@ -1,5 +1,8 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '10.0'
+platform :ios, '11.0'
+
+#source 'https://github.com/CocoaPods/Specs.git'
+#source 'https://cdn.cocoapods.org/'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -79,7 +82,7 @@ target 'Runner' do
     pod 'SwiftKeychainWrapper'
     pod 'RxSwift', '~> 5.0'
 #    pod 'RxCocoa', '~> 5.0'
-    pod 'TrustWalletCore'
+    pod 'TrustWalletCore', '~> 2.0.22'
   end
 end
 

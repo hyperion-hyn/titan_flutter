@@ -23,6 +23,11 @@
 		9A86DB6D23ACA3290032B410 /* CellularSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6C23ACA3290032B410 /* CellularSensor.swift */; };
 		9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6E23ACA4290032B410 /* GpsSensor.swift */; };
 		9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */; };
+		9AD81F52249B54CE00124771 /* WalletPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */; };
+		9AD81F57249B93E800124771 /* App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F53249B920800124771 /* App.framework */; };
+		9AD81F58249B93E800124771 /* App.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F53249B920800124771 /* App.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; };
+		9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445D23FC22F900E5733F /* UserNotifications.framework */; };
 		9AEF446123FC237900E5733F /* UTDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445923FC213E00E5733F /* UTDID.framework */; };
 		9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445523FC20A900E5733F /* UMCommon.framework */; };
@@ -34,7 +39,6 @@
 		F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F537410622E84F0000ADF4FF /* Mobile.framework */; };
 		F537410C22E867A000ADF4FF /* DateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410B22E867A000ADF4FF /* DateExt.swift */; };
 		F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410D22E8683400ADF4FF /* EthEncryptionService.swift */; };
-		F54F1E27235EFAEB00633293 /* WalletPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = F54F1E26235EFAEB00633293 /* WalletPluginInterface.swift */; };
 		F5B23E8F22EEE98C00745E35 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5B23E9122EEE98C00745E35 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +49,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				9AD81F58249B93E800124771 /* App.framework in Embed Frameworks */,
+				9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -77,6 +83,9 @@
 		9A86DB6C23ACA3290032B410 /* CellularSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellularSensor.swift; sourceTree = "<group>"; };
 		9A86DB6E23ACA4290032B410 /* GpsSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpsSensor.swift; sourceTree = "<group>"; };
 		9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnSensorValueChangeListener.swift; sourceTree = "<group>"; };
+		9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletPluginInterface.swift; sourceTree = "<group>"; };
+		9AD81F53249B920800124771 /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = App.framework; path = Flutter/App.framework; sourceTree = "<group>"; };
+		9AD81F54249B920800124771 /* Flutter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flutter.framework; path = Flutter/Flutter.framework; sourceTree = "<group>"; };
 		9AEF445523FC20A900E5733F /* UMCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMCommon.framework; sourceTree = "<group>"; };
 		9AEF445723FC210F00E5733F /* UMPush.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMPush.framework; sourceTree = "<group>"; };
 		9AEF445923FC213E00E5733F /* UTDID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTDID.framework; sourceTree = "<group>"; };
@@ -88,7 +97,6 @@
 		F537410622E84F0000ADF4FF /* Mobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mobile.framework; sourceTree = "<group>"; };
 		F537410B22E867A000ADF4FF /* DateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExt.swift; sourceTree = "<group>"; };
 		F537410D22E8683400ADF4FF /* EthEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EthEncryptionService.swift; sourceTree = "<group>"; };
-		F54F1E26235EFAEB00633293 /* WalletPluginInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletPluginInterface.swift; sourceTree = "<group>"; };
 		F5B23E8922EEE8C000745E35 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		F5B23E8A22EEE8C000745E35 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		F5B23E8D22EEE95E00745E35 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
@@ -104,8 +112,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */,
+				9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */,
 				9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */,
 				9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */,
+				9AD81F57249B93E800124771 /* App.framework in Frameworks */,
 				9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */,
 				9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */,
 				B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */,
@@ -140,6 +150,8 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
+				9AD81F53249B920800124771 /* App.framework */,
+				9AD81F54249B920800124771 /* Flutter.framework */,
 				9A0663F12416250D005A7C38 /* UMAnalytics.framework */,
 				9AEF445B23FC215900E5733F /* UMCommonLog.framework */,
 				9AEF445923FC213E00E5733F /* UTDID.framework */,
@@ -237,7 +249,7 @@
 		F54F1E25235EEF9900633293 /* Wallet */ = {
 			isa = PBXGroup;
 			children = (
-				F54F1E26235EFAEB00633293 /* WalletPluginInterface.swift */,
+				9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */,
 			);
 			path = Wallet;
 			sourceTree = "<group>";
@@ -400,8 +412,8 @@
 				9A86DB6723AC72610032B410 /* Sensor.swift in Sources */,
 				9A86DB6923AC78900032B410 /* EncrytionPluginInterface.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
+				9AD81F52249B54CE00124771 /* WalletPluginInterface.swift in Sources */,
 				9A86DB6B23ACA1990032B410 /* BluetoothSensor.swift in Sources */,
-				F54F1E27235EFAEB00633293 /* WalletPluginInterface.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */,
 				F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */,
@@ -490,7 +502,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -513,7 +525,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -575,7 +587,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -624,7 +636,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -649,7 +661,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -683,7 +695,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
