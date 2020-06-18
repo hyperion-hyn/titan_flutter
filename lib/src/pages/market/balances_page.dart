@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/market/exchange/DepositPage.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+
+import 'exchange/WithdrawPage.dart';
 
 class BalancesPage extends StatefulWidget {
   @override
@@ -32,80 +35,90 @@ class _BalancesPageState extends State<BalancesPage> {
       ),
     );
   }
-}
 
-_totalBalances() {
-  return Padding(
-    padding: const EdgeInsets.all(16.0),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          '交易账户总资产折合(CNY)',
-          style: TextStyle(
-            fontSize: 16.0,
-          ),
-        ),
-        Text(
-          '≈￥9876.00',
-          style: TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 30,
-                child: OutlineButton(
-                  child: Text(
-                    '充币',
-                    style: TextStyle(color: HexColor('#FF1095B0')),
-                  ),
-                  onPressed: () {},
-                  borderSide: BorderSide(
-                    color: HexColor('#FF1095B0'),
-                    width: 1,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0)),
-                ),
-              ),
+  _totalBalances() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '交易账户总资产折合(CNY)',
+            style: TextStyle(
+              fontSize: 16.0,
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 30,
-                child: OutlineButton(
-                  child: Text(
-                    '提币',
-                    style: TextStyle(color: HexColor('#FF1095B0')),
+          ),
+          Text(
+            '≈￥9876.00',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 30,
+                  child: OutlineButton(
+                    child: Text(
+                      '充币',
+                      style: TextStyle(color: HexColor('#FF1095B0')),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DepositPage()));
+                    },
+                    borderSide: BorderSide(
+                      color: HexColor('#FF1095B0'),
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)),
                   ),
-                  onPressed: () {},
-                  borderSide: BorderSide(
-                    color: HexColor('#FF1095B0'),
-                    width: 1,
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.0)),
                 ),
               ),
-            )
-          ],
-        )
-      ],
-    ),
-  );
-}
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 30,
+                  child: OutlineButton(
+                    child: Text(
+                      '提币',
+                      style: TextStyle(color: HexColor('#FF1095B0')),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WithdrawPage()));
+                    },
+                    borderSide: BorderSide(
+                      color: HexColor('#FF1095B0'),
+                      width: 1,
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
 
-_coinList() {
-  return ListView.builder(
-      itemCount: 4,
-      itemBuilder: (ctx, index) {
-        return CoinItem('USDT');
-      });
+  _coinList() {
+    return ListView.builder(
+        itemCount: 4,
+        itemBuilder: (ctx, index) {
+          return CoinItem('USDT');
+        });
+  }
 }
 
 class CoinItem extends StatefulWidget {

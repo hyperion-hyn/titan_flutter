@@ -23,12 +23,12 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
           Column(
             children: <Widget>[
               _appBar(),
-              Row(
-                children: <Widget>[
-                  _exchangeOptions(),
-                  _depthChart(),
-                ],
-              )
+//              Row(
+//                children: <Widget>[
+//                  _exchangeOptions(),
+//                  _depthChart(),
+//                ],
+//              )
             ],
           )
         ],
