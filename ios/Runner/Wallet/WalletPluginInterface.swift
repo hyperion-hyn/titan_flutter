@@ -12,40 +12,40 @@ import TrustWalletCore
 
 class WalletPluginInterface {
     
-//    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
+    //    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
     
     private lazy var keyStoreDir: URL = {
-       let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-       let cachesDir = paths[0]
-       let keyStore = NSString(string: cachesDir).appendingPathComponent("keystore")
-       print("KeyStore: \(keyStore)")
-               
-       //ensure the path is exist
-       var isExist = FileManager.default.fileExists(atPath: keyStore)
-       print("before_isExist: \(isExist)")
-       
-       if !isExist {
-           do {
-               try FileManager.default.createDirectory(atPath: keyStore, withIntermediateDirectories: false, attributes: nil)
-               isExist = FileManager.default.fileExists(atPath: keyStore)
-               print("after_isExist: \(isExist)")
-           } catch let error as NSError {
-               print(error.localizedDescription);
-           }
-       }
-       
-       return URL(fileURLWithPath: keyStore)
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let cachesDir = paths[0]
+        let keyStore = NSString(string: cachesDir).appendingPathComponent("keystore")
+        print("KeyStore: \(keyStore)")
+        
+        //ensure the path is exist
+        var isExist = FileManager.default.fileExists(atPath: keyStore)
+        print("before_isExist: \(isExist)")
+        
+        if !isExist {
+            do {
+                try FileManager.default.createDirectory(atPath: keyStore, withIntermediateDirectories: false, attributes: nil)
+                isExist = FileManager.default.fileExists(atPath: keyStore)
+                print("after_isExist: \(isExist)")
+            } catch let error as NSError {
+                print(error.localizedDescription);
+            }
+        }
+        
+        return URL(fileURLWithPath: keyStore)
     }()
     
     private lazy var keyStore: KeyStore = try! KeyStore(keyDirectory: keyStoreDir)
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {
         switch(methodCall.method) {
-//        case "wallet_make_mnemonic":
-//            //产生助记词
-//            let mnemonics = Mnemonics(entropySize: .b128, language: .english)
-//            result(mnemonics.string)
-//            return true
+            //        case "wallet_make_mnemonic":
+            //            //产生助记词
+            //            let mnemonics = Mnemonics(entropySize: .b128, language: .english)
+            //            result(mnemonics.string)
+        //            return true
         case "wallet_import_mnemonic":
             /*通过助记词保存、导入*/
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -193,7 +193,7 @@ class WalletPluginInterface {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
                         try updateKeyStor(name: name ?? w.key.name, wallet: w, password: oldPassword, newPassword: newPassword)
-//                        try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
+                        //                        try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
                         let success = w.key.store(path: w.keyURL.path)
                         print("is store success \(success)")
                         result(w.keyURL.lastPathComponent)
@@ -223,7 +223,7 @@ class WalletPluginInterface {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
                         let privateKey = try w.privateKey(password: password, coin: coin)
-//                        let prvData = try keyStore.exportPrivateKey(wallet: w, password: password)
+                        //                        let prvData = try keyStore.exportPrivateKey(wallet: w, password: password)
                         result(privateKey.data.hexString)
                     } catch {
                         print("export private key error: \(error)")
@@ -251,6 +251,100 @@ class WalletPluginInterface {
                     do {
                         let mnemonic = try keyStore.exportMnemonic(wallet: w, password: password)
                         result(mnemonic)
+                    } catch {
+                        print("export mnemonic error: \(error)")
+                        result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
+                    }
+                    return true
+                }
+            }
+            
+            result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
+            return true
+            
+        case "bitcoinSign":
+            //比特币签名
+            guard let params = methodCall.arguments as? [String: String] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: String]", details: nil))
+                return true
+            }
+            guard let transJson = params["transJson"] as? [String: Any] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
+                return true
+            }
+            
+            let bitcoinTransEntity = BitcoinTransEntity()
+            
+            for w in keyStore.wallets {
+                if(w.keyURL.lastPathComponent == bitcoinTransEntity.fileName) {
+                    do {
+                        let mnemonic = try keyStore.exportMnemonic(wallet: w, password: bitcoinTransEntity.password)
+                        if mnemonic.isEmpty {
+                            result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
+                        } else {
+                            // 1.Getting key
+                            //get private key
+                            let wallet = try! HDWallet(mnemonic: mnemonic, passphrase: "")
+                            let coinBtc: CoinType = CoinType.bitcoin
+                            //let path = DerivationPath("m/84'/0'/0'/${it.sub}/${it.index}")
+                            //let path = DerivationPath(purpose: .bip84, coinType: coinBtc, account: 0, change: 0, address: 0)
+                            //let privateKey = wallet.getKey(derivationPath: path!.description)
+                            let toAddress = bitcoinTransEntity.toAddress
+                            let changeAddress = bitcoinTransEntity.change.address
+                            
+                            // 2.Signing Input
+                            var input = BitcoinSigningInput.with {
+                                $0.amount = bitcoinTransEntity.amount
+                                $0.hashType = BitcoinSigHashType.all.rawValue
+                                $0.toAddress = toAddress
+                                $0.changeAddress = changeAddress
+                                $0.byteFee = bitcoinTransEntity.fee
+                                $0.coinType = coinBtc.rawValue
+                                //$0.utxo = utxos
+                                //$0.privateKey = [privateKey.data]
+                            }
+                            
+                            // 3.
+                            bitcoinTransEntity.utxo.forEach { (it: Utxo) in
+                                //common
+                                let path = DerivationPath("m/84'/0'/0'/\(it.sub)/\(it.index)")
+                                let secretPrivateKeyBtc = wallet.getKey(at:path!)
+                                // Build lock script from address or public key hash
+                                let ypubHash = BitcoinScript.buildForAddress(address: it.address, coin: coinBtc)
+                                //let scriptHash = script.matchPayToWitnessPublicKeyHash()
+                                let script = BitcoinScript.buildPayToWitnessPubkeyHash(hash: ypubHash.data)
+                                let scriptHash = Hash.sha256RIPEMD(data: script.data).hexString
+                                
+                                //utxo
+                                let utxoTxId = it.txHash.reversed()
+                                let outPoint = BitcoinOutPoint.with {
+                                    // ...
+                                    $0.hash = Data.init(hexString:String(utxoTxId))!
+                                    $0.index = UInt32(it.txOutputN)
+                                    //$0.sequence = 4294967293
+                                    $0.sequence = UINT32_MAX
+                                }
+                                
+                                let utxo = BitcoinUnspentTransaction.with {
+                                    $0.amount = it.value // value of this UTXO
+                                    $0.outPoint = outPoint // reverse of UTXO tx id, Bitcoin internal expects network byte order
+                                    $0.script = script.data
+                                }
+                                input.utxo.append(utxo)
+                                
+                                
+                                //input
+                                input.privateKey.append(secretPrivateKeyBtc.data)
+                                input.scripts[scriptHash] = script.data
+                                
+                            }
+                            
+                            
+                            let output: BitcoinSigningOutput = AnySigner.sign(input: input, coin: coinBtc)
+                            let signedTransaction = output.encoded.hexString
+                            result(signedTransaction)
+                            
+                        }
                     } catch {
                         print("export mnemonic error: \(error)")
                         result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
@@ -312,22 +406,22 @@ class WalletPluginInterface {
         guard let index = keyStore.wallets.firstIndex(of: wallet) else {
             fatalError("Missing wallet")
         }
-
-        guard var privateKeyData = wallet.key.decryptPrivateKey(password: password) else {
+        
+        guard var privateKeyData = wallet.key.decryptPrivateKey(password: password.data(using: .utf8)!) else {
             throw KeyStore.Error.invalidPassword
         }
         defer {
             privateKeyData.resetBytes(in: 0 ..< privateKeyData.count)
         }
-
+        
         guard let coin = wallet.key.account(index: 0)?.coin else {
             throw KeyStore.Error.accountNotFound
         }
-
+        
         if let mnemonic = checkMnemonic(privateKeyData) {
-            keyStore.wallets[index].key = StoredKey.importHDWallet(mnemonic: mnemonic, name: name, password: newPassword, coin: coin)
+            keyStore.wallets[index].key = StoredKey.importHDWallet(mnemonic: mnemonic, name: name, password: newPassword.data(using: .utf8)!, coin: coin)!
         } else {
-            keyStore.wallets[index].key = StoredKey.importPrivateKey(privateKey: privateKeyData, name: name, password: newPassword, coin: coin)
+            keyStore.wallets[index].key = StoredKey.importPrivateKey(privateKey: privateKeyData, name: name, password: newPassword.data(using: .utf8)!, coin: coin)!
         }
     }
     
@@ -337,4 +431,30 @@ class WalletPluginInterface {
         }
         return mnemonic
     }
+}
+
+
+class BitcoinTransEntity{
+    var fileName: String = ""
+    var password: String = ""
+    var fromAddress: String = ""
+    var toAddress: String = ""
+    var fee: Int64 = 0
+    var amount: Int64 = 0
+    var utxo: Array<Utxo> = []
+    var change: Change = Change()
+}
+
+class Utxo {
+    var sub: Int = 0
+    var index: Int = 0
+    var txHash: String = ""
+    var address: String = ""
+    var txOutputN: Int = 0
+    var value: Int64 = 0
+}
+
+class Change {
+    var address: String = ""
+    var value: Int = 0
 }
