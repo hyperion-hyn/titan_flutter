@@ -52,7 +52,6 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 
       try {
         var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
-        print("!!!!!! $response");
         var gasPriceRecommend = GasPriceRecommend(
             fast: parseGasPriceToBigIntWei(response['fastest']),
             fastWait: response['fastestWait'],
@@ -69,12 +68,12 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
         if(btcResponse["code"] == 0){
           var btcResponseData = btcResponse["data"];
           var btcGasPriceRecommend = BTCGasPriceRecommend(
-              fast: btcResponseData['fastest'],
-              fastWait: btcResponseData['fastestWait'],
-              average: btcResponseData['fast'],
-              avgWait: btcResponseData['fastWait'],
-              safeLow: btcResponseData['average'],
-              safeLowWait: btcResponseData['avgWait']);
+              fast: Decimal.fromInt(btcResponseData['fastest']),
+              fastWait: double.parse(btcResponseData['fastestWait'].toString()),
+              average: Decimal.fromInt(btcResponseData['fast']),
+              avgWait: double.parse(btcResponseData['fastWait'].toString()),
+              safeLow: Decimal.fromInt(btcResponseData['average']),
+              safeLowWait: double.parse(btcResponseData['avgWait'].toString()));
           yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend, btcGasPriceRecommend: btcGasPriceRecommend);
         }
       } catch (e) {

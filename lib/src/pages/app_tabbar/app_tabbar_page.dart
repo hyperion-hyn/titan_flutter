@@ -117,7 +117,6 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     if(clipboardData != null && clipboardData.text.contains("titan://contract/detail")){
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
-      print("!!!!! " + clipboardData.text + " key= " + shareUser);
     }
   }
 

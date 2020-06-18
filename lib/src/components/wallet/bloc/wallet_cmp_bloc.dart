@@ -54,7 +54,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         //sync wallet account to server
         if((event.wallet?.getBitcoinZPub() ?? false) != ""){
-          BitcoinApi.syncBitcoinPubToServer(event.wallet?.getBitcoinZPub() ?? "", "P2WPKH");
+          BitcoinApi.syncBitcoinPubToServer(event.wallet?.getBitcoinZPub() ?? "");
         }
 //        _nodeApi.postWallets(_activatedWalletVo);
       }
