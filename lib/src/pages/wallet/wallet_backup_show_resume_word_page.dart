@@ -143,7 +143,8 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                     width: double.infinity,
                     padding: EdgeInsets.all(8.0),
                     decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         SizedBox(
                           width: 16.0,
