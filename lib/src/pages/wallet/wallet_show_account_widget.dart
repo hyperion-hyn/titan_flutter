@@ -340,7 +340,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if(transactionDetail.state == 1 && transactionDetail.type == CoinType.BITCOIN){
+    if(transactionDetail.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN){
       title = "待确认";
     } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
