@@ -76,10 +76,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
         appBar: AppBar(
           elevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
           title: Text(
             "${widget.coinVo.name} (${widget.coinVo.symbol})",
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(color: Colors.black),
           ),
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(

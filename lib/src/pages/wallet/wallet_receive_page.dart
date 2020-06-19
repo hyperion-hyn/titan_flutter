@@ -20,10 +20,11 @@ class WalletReceivePage extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           S.of(context).receiver_symbol(coinVo.symbol),
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Column(
