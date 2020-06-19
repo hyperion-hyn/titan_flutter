@@ -264,16 +264,24 @@ class WalletPluginInterface {
             
         case "bitcoinSign":
             //比特币签名
-            guard let params = methodCall.arguments as? [String: String] else {
-                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: String]", details: nil))
+            guard let params = methodCall.arguments as? [String: Any] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: Any]", details: nil))
                 return true
             }
-            guard let transJson = params["transJson"] as? [String: Any] else {
+            
+            guard let transJsonStr = params["transJson"] as? String else {
                 result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
                 return true
             }
             
-            let bitcoinTransEntity = BitcoinTransEntity()
+            guard let transJson = transJsonStr.convertToDictionary() else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
+                return true
+            }
+            
+            print("[Wallet] transJson:\(transJson)")
+            
+            let bitcoinTransEntity = BitcoinTransEntity.fromJson(map: transJson)
             
             for w in keyStore.wallets {
                 if(w.keyURL.lastPathComponent == bitcoinTransEntity.fileName) {
@@ -283,12 +291,8 @@ class WalletPluginInterface {
                             result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
                         } else {
                             // 1.Getting key
-                            //get private key
-                            let wallet = try! HDWallet(mnemonic: mnemonic, passphrase: "")
+                            let wallet = HDWallet(mnemonic: mnemonic, passphrase: "")
                             let coinBtc: CoinType = CoinType.bitcoin
-                            //let path = DerivationPath("m/84'/0'/0'/${it.sub}/${it.index}")
-                            //let path = DerivationPath(purpose: .bip84, coinType: coinBtc, account: 0, change: 0, address: 0)
-                            //let privateKey = wallet.getKey(derivationPath: path!.description)
                             let toAddress = bitcoinTransEntity.toAddress
                             let changeAddress = bitcoinTransEntity.change.address
                             
@@ -309,17 +313,18 @@ class WalletPluginInterface {
                                 //common
                                 let path = DerivationPath("m/84'/0'/0'/\(it.sub)/\(it.index)")
                                 let secretPrivateKeyBtc = wallet.getKey(at:path!)
-                                // Build lock script from address or public key hash
-                                let ypubHash = BitcoinScript.buildForAddress(address: it.address, coin: coinBtc)
-                                //let scriptHash = script.matchPayToWitnessPublicKeyHash()
-                                let script = BitcoinScript.buildPayToWitnessPubkeyHash(hash: ypubHash.data)
-                                let scriptHash = Hash.sha256RIPEMD(data: script.data).hexString
+                                let script = BitcoinScript.buildForAddress(address: it.address, coin: coinBtc) // utxo address
+                                let scriptHash = script.matchPayToWitnessPublicKeyHash()
                                 
                                 //utxo
-                                let utxoTxId = it.txHash.reversed()
+                                let utxoTxId = Data(hexString: it.txHash)
+                                let reverUtxoTxId = utxoTxId?.reversed()
+                                
                                 let outPoint = BitcoinOutPoint.with {
-                                    // ...
-                                    $0.hash = Data.init(hexString:String(utxoTxId))!
+                                    // TODO: 有问题！！！！
+                                    $0.hash = Data(reverUtxoTxId!)
+                                    print("[Wallet]  it.txHash:\(it.txHash), utxoTxId:\(utxoTxId), reverUtxoTxId:\(reverUtxoTxId)")
+                                
                                     $0.index = UInt32(it.txOutputN)
                                     //$0.sequence = 4294967293
                                     $0.sequence = UINT32_MAX
@@ -335,10 +340,12 @@ class WalletPluginInterface {
                                 
                                 //input
                                 input.privateKey.append(secretPrivateKeyBtc.data)
-                                input.scripts[scriptHash] = script.data
-                                
+
+                                if let hash = scriptHash {
+                                    input.scripts[hash.hexString] = BitcoinScript.buildPayToPublicKeyHash(hash: hash).data
+                                }
                             }
-                            
+
                             
                             let output: BitcoinSigningOutput = AnySigner.sign(input: input, coin: coinBtc)
                             let signedTransaction = output.encoded.hexString
@@ -360,6 +367,7 @@ class WalletPluginInterface {
         }
     }
     
+    
     func walletToReturnMap(wallet: Wallet) -> [String: Any] {
         var map: [String: Any] = [:]
         map["type"] = 0
@@ -369,6 +377,9 @@ class WalletPluginInterface {
             accountMap["address"] = account.address
             accountMap["derivationPath"] = account.derivationPath
             accountMap["coinType"] = account.coin.rawValue
+            if account.coin.rawValue == CoinType.bitcoin.rawValue {
+                accountMap["extendedPublicKey"] = account.extendedPublicKey
+            }
             accounts.append(accountMap)
         }
         map["accounts"] = accounts
@@ -377,6 +388,7 @@ class WalletPluginInterface {
         map["isMnemonic"] = wallet.key.isMnemonic
         map["identifier"] = wallet.key.identifier
         map["accountCount"] = wallet.key.accountCount
+        print("[Wallet] walletToReturnMap, map:\(map)")
         
         return map
     }
@@ -418,10 +430,14 @@ class WalletPluginInterface {
             throw KeyStore.Error.accountNotFound
         }
         
-        if let mnemonic = checkMnemonic(privateKeyData) {
-            keyStore.wallets[index].key = StoredKey.importHDWallet(mnemonic: mnemonic, name: name, password: newPassword.data(using: .utf8)!, coin: coin)!
+        if let mnemonic = checkMnemonic(privateKeyData), let psw = newPassword.data(using: .utf8) {
+            if let value = StoredKey.importHDWallet(mnemonic: mnemonic, name: name, password: psw, coin: coin) {
+                keyStore.wallets[index].key = value
+            }
         } else {
-            keyStore.wallets[index].key = StoredKey.importPrivateKey(privateKey: privateKeyData, name: name, password: newPassword.data(using: .utf8)!, coin: coin)!
+            if let psw = newPassword.data(using: .utf8), let value = StoredKey.importPrivateKey(privateKey: privateKeyData, name: name, password: psw, coin: coin) {
+                keyStore.wallets[index].key = value
+            }
         }
     }
     
@@ -443,6 +459,33 @@ class BitcoinTransEntity{
     var amount: Int64 = 0
     var utxo: Array<Utxo> = []
     var change: Change = Change()
+    
+    static func fromJson(map: [String:Any]) -> BitcoinTransEntity {
+        let model = BitcoinTransEntity()
+        model.fileName = map["fileName"] as? String ?? ""
+        model.password = map["password"] as? String ?? ""
+        model.fromAddress = map["fromAddress"] as? String ?? ""
+        model.toAddress = map["toAddress"] as? String ?? ""
+        model.fee = map["fee"] as? Int64 ?? 0
+        model.amount = map["amount"] as? Int64 ?? 0
+ 
+        if let utxoArr = map["utxo"] as? [Any] {
+            var utxo:[Utxo] = []
+            for item in utxoArr {
+                if let utxoDict = item as? [String:Any] {
+                    let model = Utxo.fromJson(map: utxoDict)
+                    utxo.append(model)
+                }
+            }
+            model.utxo = utxo
+        }
+        
+        if let changeDict = map["change"] as? [String:Any] {
+            model.change = Change.fromJson(map: changeDict)
+        }
+
+        return model
+    }
 }
 
 class Utxo {
@@ -452,9 +495,36 @@ class Utxo {
     var address: String = ""
     var txOutputN: Int = 0
     var value: Int64 = 0
+    
+    static func fromJson(map: [String:Any]) -> Utxo {
+        let model = Utxo()
+        model.sub = map["sub"] as? Int ?? 0
+        model.index = map["index"] as? Int ?? 0
+        model.txHash = map["txHash"] as? String ?? ""
+        model.address = map["address"] as? String ?? ""
+        model.txOutputN = map["txOutputN"] as? Int ?? 0
+        model.value = map["value"] as? Int64 ?? 0
+        return model
+    }
 }
 
 class Change {
     var address: String = ""
     var value: Int = 0
+    
+    static func fromJson(map: [String:Any]) -> Change {
+        let model = Change()
+        model.address = map["address"] as? String ?? ""
+        model.value = map["value"] as? Int ?? 0
+        return model
+    }
+}
+
+extension String {
+    func convertToDictionary() -> [String: Any]? {
+        if let data = data(using: .utf8) {
+            return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+        }
+        return nil
+    }
 }
