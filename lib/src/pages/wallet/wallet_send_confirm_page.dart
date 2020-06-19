@@ -24,6 +24,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -533,9 +534,13 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               activatedWalletVo.getBitcoinZPub(),
               widget.receiverAddress,
               gasPrice.toInt(),
-              ConvertTokenUnit.decimalToWei(
-                      Decimal.parse(widget.transferAmount), 8)
-                  .toInt());
+              ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
+          if(transResult["code"] != 0){
+            ExceptionProcess.uploadPoiException(transResult,"bitcoin upload");
+            Fluttertoast.showToast(msg: "${transResult.toString()}",
+                toastLength: Toast.LENGTH_LONG);
+            return;
+          }
         } else {
           await _transferErc20(
               walletPassword,
@@ -547,7 +552,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
         Application.router.navigateTo(context, Routes.confirm_success_papge);
       } catch (_) {
-        logger.e(_);
+        ExceptionProcess.uploadPoiException(_,"ETH or Bitcoin upload");
         setState(() {
           isTransferring = false;
         });
