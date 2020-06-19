@@ -132,12 +132,12 @@ class WalletPluginInterface {
                 }
             }
             
-            guard (wallet != nil) else {
+            guard let strongWallet = wallet else {
                 result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "load keystore error", details: nil))
                 return true
             }
             
-            let map: [String: Any] = walletToReturnMap(wallet: wallet!)
+            let map: [String: Any] = walletToReturnMap(wallet: strongWallet)
             result(map)
             
             return true
@@ -279,7 +279,7 @@ class WalletPluginInterface {
                 return true
             }
             
-            print("[Wallet] transJson:\(transJson)")
+            //print("[Wallet] transJson:\(transJson)")
             
             let bitcoinTransEntity = BitcoinTransEntity.fromJson(map: transJson)
             
@@ -311,19 +311,25 @@ class WalletPluginInterface {
                             // 3.
                             bitcoinTransEntity.utxo.forEach { (it: Utxo) in
                                 //common
-                                let path = DerivationPath("m/84'/0'/0'/\(it.sub)/\(it.index)")
-                                let secretPrivateKeyBtc = wallet.getKey(at:path!)
+                                let pathStr = "m/84'/0'/0'/\(it.sub)/\(it.index)"
+                                guard let path = DerivationPath(pathStr) else {
+                                     result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "path error", details: "path parse error, path:\(pathStr)"))
+                                    return
+                                }
+                                let secretPrivateKeyBtc = wallet.getKey(at:path)
                                 let script = BitcoinScript.buildForAddress(address: it.address, coin: coinBtc) // utxo address
                                 let scriptHash = script.matchPayToWitnessPublicKeyHash()
                                 
                                 //utxo
                                 let utxoTxId = Data(hexString: it.txHash)
-                                let reverUtxoTxId = utxoTxId?.reversed()
+                                guard let reverUtxoTxId = utxoTxId?.reversed() else {
+                                    result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "reversed error", details: "txHash reversed error, txHash:\(it.txHash)"))
+                                    return
+                                }
                                 
                                 let outPoint = BitcoinOutPoint.with {
-                                    // TODO: 有问题！！！！
-                                    $0.hash = Data(reverUtxoTxId!)
-                                    print("[Wallet]  it.txHash:\(it.txHash), utxoTxId:\(utxoTxId), reverUtxoTxId:\(reverUtxoTxId)")
+                                    $0.hash = Data(reverUtxoTxId)
+                                    //print("[Wallet]  it.txHash:\(it.txHash), utxoTxId:\(utxoTxId), reverUtxoTxId:\(reverUtxoTxId)")
                                 
                                     $0.index = UInt32(it.txOutputN)
                                     //$0.sequence = 4294967293
@@ -350,10 +356,9 @@ class WalletPluginInterface {
                             let output: BitcoinSigningOutput = AnySigner.sign(input: input, coin: coinBtc)
                             let signedTransaction = output.encoded.hexString
                             result(signedTransaction)
-                            
                         }
                     } catch {
-                        print("export mnemonic error: \(error)")
+                        //print("export mnemonic error: \(error)")
                         result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
                     }
                     return true
@@ -419,7 +424,7 @@ class WalletPluginInterface {
             fatalError("Missing wallet")
         }
         
-        guard var privateKeyData = wallet.key.decryptPrivateKey(password: password.data(using: .utf8)!) else {
+        guard let psw = password.data(using: .utf8), var privateKeyData = wallet.key.decryptPrivateKey(password: psw) else {
             throw KeyStore.Error.invalidPassword
         }
         defer {
