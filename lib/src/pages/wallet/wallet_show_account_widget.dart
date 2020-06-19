@@ -161,7 +161,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                     onTap: () {
                                       if(dataList.length > 0){
                                         TransactionDetailVo transaction = dataList[1];
-                                        if(transaction.state == 0 && transaction.type == CoinType.BITCOIN) {
+                                        if(transaction.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN) {
                                           UiUtil.showConfirmDialog(
                                             context,
                                             content: "你有未确认的比特币转账，请稍后再试！",
@@ -319,7 +319,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var describe = "";
     var amountColor;
     var amountText =
-        "${FormatUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
+        "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
@@ -340,7 +340,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if(transactionDetail.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN){
+    if(transactionDetail.state >= 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN){
       title = "待确认";
     } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
@@ -450,7 +450,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 Spacer(),
                                 if (transactionDetail.state > 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN)
                                   Text(
-                                    "已确认${transactionDetail.state}次",
+                                    "确认${transactionDetail.state}次",
                                     style: TextStyle(
                                         color: DefaultColors.colorff4c3b, fontSize: 14, fontWeight: FontWeight.bold),
                                   ),
