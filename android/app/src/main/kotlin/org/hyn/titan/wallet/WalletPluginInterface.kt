@@ -323,7 +323,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     var outPoint = Bitcoin.OutPoint.newBuilder().apply {
                         this.hash = ByteString.copyFrom(utxoTxId)
                         this.index = it.txOutputN
-                        this.sequence = (4294967293).toInt()
+                        this.sequence = Long.MAX_VALUE.toInt()
                     }.build()
                     var utxo = Bitcoin.UnspentTransaction.newBuilder().apply {
                         this.amount = it.value
