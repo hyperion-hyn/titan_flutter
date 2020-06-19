@@ -43,9 +43,6 @@ class BitcoinApi{
   }
 
   static Future<dynamic> sendBitcoinTransaction(String fileName, String password, String pubString, String toAddr, int fee, int amount) async {
-    // todo: test_jison_0618
-    //fee = 13;
-
     BitcoinTransEntity bitcoinTransEntity = await HttpCore.instance.postEntity(
         WalletConfig.getBitcoinApi() + "utxo",
         EntityFactory<BitcoinTransEntity>(
@@ -60,7 +57,6 @@ class BitcoinApi{
     bitcoinTransEntity.amount = amount;
     String rawTx = await TitanPlugin.signBitcoinRawTx(json.encode(bitcoinTransEntity.toJson()));
 
-    // todo: test_jison_0618_close
     var randomNum = Random().nextInt(bitcoinTransEntity.utxo.length);
     print("!!!!!!!! randomNum= $randomNum rawTx= $rawTx");
     var response = await HttpCore.instance.post(
@@ -68,9 +64,6 @@ class BitcoinApi{
         data: {"address": bitcoinTransEntity.utxo[randomNum].address, "raw": rawTx},
         options: RequestOptions(contentType: Headers.jsonContentType));
     return response;
-
-    return 0;
-
   }
 
   static Future<List<BitcoinTransferHistory>> getBitcoinTransferList(String pubString, int page,int pageSize) async {

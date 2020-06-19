@@ -323,6 +323,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
             });
           }
         }
+      } else if(barcode.contains("bitcoin")) {
+        var barcodeArray = barcode.split("?");
+        var withAddress = barcodeArray[0];
+        var address = withAddress.replaceAll("bitcoin:", "");
+        _receiverAddressController.text = address;
       } else {
         _receiverAddressController.text = barcode;
       }

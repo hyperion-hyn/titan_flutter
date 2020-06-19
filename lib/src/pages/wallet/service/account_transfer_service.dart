@@ -55,31 +55,28 @@ class AccountTransferService {
   }
 
   Future<List<TransactionDetailVo>> _getEthTransferList(CoinVo coinVo, int page) async {
-    List<Erc20TransferHistory> erc20TransferHistoryList =
-    await _etherScanApi.queryErc20History(coinVo.contractAddress, coinVo.address, page);
+    List<EthTransferHistory> ethTransferHistoryList = await _etherScanApi.queryEthHistory(coinVo.address, page);
 
-    List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
+    List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
       var type = 0;
-      if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
+      if (ethTransferHistory.from == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (erc20TransferHistory.to == coinVo.address.toLowerCase()) {
+      } else if (ethTransferHistory.to == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
       return TransactionDetailVo(
         type: type,
         state: 0,
-        amount: ConvertTokenUnit.weiToDecimal(
-            BigInt.parse(erc20TransferHistory.value), int.parse(erc20TransferHistory.tokenDecimal))
-            .toDouble(),
-        symbol: erc20TransferHistory.tokenSymbol,
-        fromAddress: erc20TransferHistory.from,
-        toAddress: erc20TransferHistory.to,
-        time: int.parse(erc20TransferHistory.timeStamp + "000"),
-        hash: erc20TransferHistory.hash,
-        gasPrice: erc20TransferHistory.gasPrice,
-        gasUsed: erc20TransferHistory.gasUsed,
-        gas: erc20TransferHistory.gas,
-        nonce: erc20TransferHistory.nonce,
+        amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(ethTransferHistory.value)).toDouble(),
+        symbol: "ETH",
+        fromAddress: ethTransferHistory.from,
+        toAddress: ethTransferHistory.to,
+        time: int.parse(ethTransferHistory.timeStamp + "000"),
+        hash: ethTransferHistory.hash,
+        gasPrice: ethTransferHistory.gasPrice,
+        gasUsed: ethTransferHistory.gasUsed,
+        gas: ethTransferHistory.gas,
+        nonce: ethTransferHistory.nonce,
       );
     }).toList();
     return detailList;
