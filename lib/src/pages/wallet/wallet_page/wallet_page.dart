@@ -81,13 +81,10 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
             var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
             QuotesSign quotesSign =
             quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-            Future.wait({Future(()=>BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign))),
-              Future(()=>BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true))),
-              Future(()=>BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent()))});
-//            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-//            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
-//            //update all coin balance
-//            BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
+            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+            //update all coin balance
+            BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
 
             await Future.delayed(Duration(milliseconds: 700));
 
