@@ -37,8 +37,10 @@ class _AppState extends State<App> {
         child: WalletComponent(
           child: MultiBlocProvider(
             providers: [
-              BlocProvider<UpdateBloc>(create: (context) => UpdateBloc(context: context)),
-              BlocProvider<RootPageControlBloc>(create: (context) => RootPageControlBloc()),
+              BlocProvider<UpdateBloc>(
+                  create: (context) => UpdateBloc(context: context)),
+              BlocProvider<RootPageControlBloc>(
+                  create: (context) => RootPageControlBloc()),
             ],
             child: Builder(
               builder: (context) {
@@ -58,7 +60,10 @@ class _AppState extends State<App> {
                   child: MaterialApp(
                     key: Keys.materialAppKey,
                     debugShowCheckedModeBanner: false,
-                    locale: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel?.locale,
+                    locale: SettingInheritedModel.of(context,
+                            aspect: SettingAspect.language)
+                        .languageModel
+                        ?.locale,
                     title: 'titan',
                     theme: appTheme,
                     localizationsDelegates: [

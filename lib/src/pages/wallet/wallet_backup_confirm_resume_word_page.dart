@@ -35,7 +35,8 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
     _candidateWords = widget.mnemonic
         .split(" ")
         .asMap()
-        .map((index, word) => MapEntry(index, CandidateWordVo("$index-$word", word, false)))
+        .map((index, word) =>
+            MapEntry(index, CandidateWordVo("$index-$word", word, false)))
         .values
         .toList();
 
@@ -47,7 +48,8 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: Colors.black),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -74,12 +76,16 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                      border: Border.all(color: Color(0xFFB7B7B7)), borderRadius: BorderRadius.circular(16)),
+                      border: Border.all(color: Color(0xFFB7B7B7)),
+                      borderRadius: BorderRadius.circular(16)),
                   child: GridView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 10.0,
+                          crossAxisSpacing: 10.0,
+                          childAspectRatio: 3),
                       itemCount: _selectedResumeWords.length,
                       itemBuilder: (BuildContext context, int index) {
                         var word = _selectedResumeWords[index];
@@ -90,7 +96,8 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                           child: Container(
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  border: Border.all(color: HexColor("#FFB7B7B7")),
+                                  border:
+                                      Border.all(color: HexColor("#FFB7B7B7")),
                                   borderRadius: BorderRadius.circular(12)),
                               child: Text("${index + 1} ${word.text}")),
                         );
@@ -103,7 +110,10 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, mainAxisSpacing: 10.0, crossAxisSpacing: 10.0, childAspectRatio: 3),
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10.0,
+                        crossAxisSpacing: 10.0,
+                        childAspectRatio: 3),
                     itemCount: _candidateWords.length,
                     itemBuilder: (BuildContext context, int index) {
                       var candidateWordVo = _candidateWords[index];
@@ -113,10 +123,15 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                         },
                         child: Container(
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(color: Color(0xFFE7E7E7), borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(
+                              color: Color(0xFFE7E7E7),
+                              borderRadius: BorderRadius.circular(12)),
                           child: Text(
                             candidateWordVo.text,
-                            style: TextStyle(color: candidateWordVo.selected ? Colors.transparent : Color(0xFF252525)),
+                            style: TextStyle(
+                                color: candidateWordVo.selected
+                                    ? Colors.transparent
+                                    : Color(0xFF252525)),
                           ),
                         ),
                       );
@@ -128,21 +143,25 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                   margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                   constraints: BoxConstraints.expand(height: 48),
                   child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
                     disabledColor: Colors.grey[600],
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () {
                       var selectedMnemonitc = "";
-                      _selectedResumeWords.forEach((word) => selectedMnemonitc = selectedMnemonitc + word.text + " ");
+                      _selectedResumeWords.forEach((word) => selectedMnemonitc =
+                          selectedMnemonitc + word.text + " ");
 
                       logger.i("selectedMnemonitc.trim() $selectedMnemonitc");
                       if (selectedMnemonitc.trim() == widget.mnemonic.trim()) {
-                        Fluttertoast.showToast(msg: S.of(context).backup_finish);
+                        Fluttertoast.showToast(
+                            msg: S.of(context).backup_finish);
                         Routes.popUntilCachedEntryRouteName(context);
                       } else {
-                        Fluttertoast.showToast(msg: S.of(context).confirm_mnemonic_incorrect);
+                        Fluttertoast.showToast(
+                            msg: S.of(context).confirm_mnemonic_incorrect);
                       }
                     },
                     child: Padding(
@@ -152,7 +171,8 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
                         children: <Widget>[
                           Text(
                             S.of(context).finish,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
                           ),
                         ],
                       ),

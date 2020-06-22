@@ -213,7 +213,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
             child: Container(
-              height: 320,
+              height: 300,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -223,8 +223,8 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                       padding: const EdgeInsets.only(top: 32.0, bottom: 25),
                       child: Image.asset(
                         'res/drawable/ic_snap.png',
-                        width: 80,
-                        height: 80,
+                        width: 60,
+                        height: 60,
                         color: Theme.of(context).primaryColor,
                       ),
                     ),
@@ -240,8 +240,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                       ),
                       child: Text(
                         S.of(context).warning_no_sceenshot,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 15,
                           color: HexColor('#FF6D6D6D'),
                           height: 1.7,
                         ),
