@@ -52,7 +52,9 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
         body: ListView(children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 48),
-            child: Center(child: Text(S.of(context).main_my_public_key, style: TextStyle(fontSize: 20))),
+            child: Center(
+                child: Text(S.of(context).main_my_public_key,
+                    style: TextStyle(fontSize: 20))),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -62,14 +64,18 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                   onTap: () {
                     if (_pubKey.isNotEmpty) {
                       Clipboard.setData(ClipboardData(text: _pubKey));
-                      Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).public_key_copied)));
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text(S.of(context).public_key_copied)));
                     }
                   },
                   child: Row(children: <Widget>[
-                    Flexible(child: Text(_pubKey, style: TextStyle(color: Colors.black54))),
+                    Flexible(
+                        child: Text(_pubKey,
+                            style: TextStyle(color: Colors.black54))),
                     Padding(
                         padding: const EdgeInsets.only(left: 4),
-                        child: Icon(Icons.content_copy, size: 16, color: Colors.black45))
+                        child: Icon(Icons.content_copy,
+                            size: 16, color: Colors.black45))
                   ]),
                 );
               },
@@ -120,7 +126,8 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
                 highlightColor: Colors.black,
                 splashColor: Colors.white10,
                 textColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(32.0)),
                 onPressed: share,
                 child: Text(S.of(context).share),
               ),
@@ -169,7 +176,8 @@ class _MyEncryptedAddrPageState extends State<MyEncryptedAddrPage> {
 
   void share() async {
     try {
-      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary =
+          _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();

@@ -112,9 +112,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         Text(
                           S.of(context).receiver_address,
                           style: TextStyle(
-                            color: Color(0xFF6D6D6D),
-                            fontSize: 16,
-                          ),
+                              color: Color(0xFF333333),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
                         ),
                         Spacer(),
                         InkWell(
@@ -188,9 +188,9 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         Text(
                           S.of(context).send_count_label(widget.coinVo.symbol),
                           style: TextStyle(
-                            color: Color(0xFF6D6D6D),
-                            fontSize: 16,
-                          ),
+                              color: Color(0xFF333333),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
                         ),
                         Text(
                           '(' +
@@ -212,7 +212,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                               style: TextStyle(
                                   color: Theme.of(context).primaryColor,
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                   textBaseline: TextBaseline.ideographic),
                             ),
                           ),
@@ -261,7 +261,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                         Padding(
                             padding: EdgeInsets.only(left: 8, top: 8),
                             child: Text(
-                                "≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}")),
+                              "≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}",
+                              style: TextStyle(
+                                color: Color(0xFF9B9B9B),
+                              ),
+                            )),
                       ],
                     ),
                     SizedBox(

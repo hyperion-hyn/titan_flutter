@@ -74,17 +74,25 @@ class MnemonicQrcodePage extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 32),
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
+              Row(
                 children: <Widget>[
-                  Icon(Icons.warning, color: Colors.grey),
+                  SizedBox(
+                    width: 16.0,
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.warning, color: Colors.grey),
+                  ),
+                  Expanded(
                     child: Text(
                       S.of(context).save_mnemonic_safe_notice,
+                      maxLines: 2,
                       style: TextStyle(color: Colors.grey, fontSize: 14.0),
                     ),
-                  )
+                  ),
+                  SizedBox(
+                    width: 16.0,
+                  ),
                 ],
               ),
             ],

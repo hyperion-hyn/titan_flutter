@@ -11,22 +11,25 @@ import 'package:titan/generated/l10n.dart';
 
 import '../global.dart';
 
-Future<String> reEncryptPoi(Repository repository, IPoi poi, String remark) async {
+Future<String> reEncryptPoi(
+    Repository repository, IPoi poi, String remark) async {
   var message = _genMessage(poi, remark);
   var api = repository.api;
   Map<String, dynamic> rePubKeyMap = await api.getReEncryptPubKey();
   var pubKey = rePubKeyMap['public_key'];
   var kid = rePubKeyMap['kid'];
-  var rand = '${DateTime.now().millisecondsSinceEpoch}:${Random().nextDouble()}';
+  var rand =
+      '${DateTime.now().millisecondsSinceEpoch}:${Random().nextDouble()}';
   var cm_a = await TitanPlugin.encrypt(pubKey, rand);
   var ct_a = await TitanPlugin.encrypt(pubKey, message);
   if (cm_a == null || cm_a.isEmpty || ct_a == null || ct_a.isEmpty) {
     throw Exception(S.of(Keys.rootKey.currentContext).encrypt_error);
   }
   var expiracy = 24 * 3600; //1 day
-  await api.storeCls(commitment: cm_a, ciphertext: ct_a, expiracy: expiracy, kid: kid);
+  await api.storeCls(
+      commitment: cm_a, ciphertext: ct_a, expiracy: expiracy, kid: kid);
   var kid_cmA = "${kid}_$cm_a";
-//  var shareCipherText = "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
+  //var shareCipherText ="${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
   var shareCipherText = "${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
 
   return shareCipherText;
@@ -38,7 +41,7 @@ Future<String> p2pEncryptPoi(String pubKey, IPoi poi, String remark) async {
   if (ciphertext == null || ciphertext.isEmpty) {
     throw Exception(S.of(Keys.rootKey.currentContext).not_legal_public_key);
   }
-//  return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
+  //return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
   return "${Const.CIPHER_TEXT_PREFIX}$ciphertext";
 }
 
@@ -49,7 +52,13 @@ String _genMessage(IPoi poi, String remark) {
 }
 
 Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
-  var trimList = [Const.TITAN_SHARE_URL_PREFIX, Const.TITAN_SCHEMA, "://", "//", "/"];
+  var trimList = [
+    Const.TITAN_SHARE_URL_PREFIX,
+    Const.TITAN_SCHEMA,
+    "://",
+    "//",
+    "/"
+  ];
   for (var trimText in trimList) {
     if (ciphertext.startsWith(trimText)) {
       ciphertext = ciphertext.replaceFirst(trimText, "");
@@ -71,7 +80,8 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
       ciphertext = kidCiphertextAry[1];
       var pubKey = await TitanPlugin.getPublicKey();
       try {
-        var clsMap = await repository.api.getCls(commitment: ciphertext, pubkey: pubKey, kid: kid);
+        var clsMap = await repository.api
+            .getCls(commitment: ciphertext, pubkey: pubKey, kid: kid);
         var ct_b = clsMap['ct_b'];
         cmsg = await TitanPlugin.decrypt(ct_b);
       } catch (err) {
@@ -89,7 +99,8 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
 //    var latLng = LatLng(codeArea.center.latitude, codeArea.center.longitude);
 
     List<String> coordinates = coordinate.split(',');
-    var latLng = LatLng(double.parse(coordinates[0]), double.parse(coordinates[1]));
+    var latLng =
+        LatLng(double.parse(coordinates[0]), double.parse(coordinates[1]));
 
     var word = "";
     if (msgAry.length > 2) {

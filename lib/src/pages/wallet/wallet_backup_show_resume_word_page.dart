@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_confirm_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -115,46 +116,65 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                         Clipboard.setData(ClipboardData(text: widget.mnemonic));
                         UiUtil.toast(S.of(context).copyed);
                       },
-                      child: Text(
-                        S.of(context).copy,
-                        style: TextStyle(color: Colors.blue, fontSize: 14),
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            ExtendsIconFont.copy_content,
+                            color: Colors.blue,
+                            size: 20,
+                          ),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          Text(
+                            S.of(context).copy,
+                            style: TextStyle(color: Colors.black, fontSize: 15),
+                          )
+                        ],
                       ),
                     ),
                     padding: EdgeInsets.only(top: 24),
                   ),
-                  SizedBox(height: 32.0,),
+                  SizedBox(
+                    height: 32.0,
+                  ),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(8),
+                    padding: EdgeInsets.all(8.0),
                     decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Row(
                       children: <Widget>[
-                        Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: <Widget>[
-                            Icon(
-                              Icons.warning,
+                        SizedBox(
+                          width: 16.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Icon(
+                            Icons.warning,
+                            color: Color(0xFFD0021B),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            S.of(context).save_mnemonic_safe_notice,
+                            style: TextStyle(
                               color: Color(0xFFD0021B),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                S.of(context).save_mnemonic_safe_notice,
-                                style: TextStyle(
-                                  color: Color(0xFFD0021B),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                softWrap: true,
-                              ),
-                            )
-                          ],
+                            softWrap: true,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 16.0,
                         )
                       ],
                     ),
                   ),
-                  SizedBox(height: 32.0,),
+                  SizedBox(
+                    height: 32.0,
+                  ),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 16, horizontal: 36),
                     constraints: BoxConstraints.expand(height: 48),

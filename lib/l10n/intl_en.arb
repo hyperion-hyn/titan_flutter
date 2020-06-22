@@ -578,7 +578,7 @@
   "reset_input_contract": "重新投入",
   "reset_output_contract": "重新提取",
   "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
-  "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
+  "mnemonic_qrcode_tip": "This QR code contains your mnemonic",
   "qrcode": "二维码",
   "delegation_amount_full": "抵押已满",
   "time_left": "剩余",
@@ -637,7 +637,7 @@
   "not_time_to_collect_hint": "not time to collect",
   "cannot_fint_wallet": "can't fine wallet",
   "warning_no_sceenshot": "Please do not share and store screenshots, as this may be collected by third-party malware and cause asset loss",
-  "no_screenshot_dialog_confirm": "ok",
+  "no_screenshot_dialog_confirm": "confirm",
   "no_screenshot_dialog_cancel": "cancel",
   "no_screenshot_dialog_title": "Don't screenshot"
 }

@@ -578,7 +578,7 @@
   "reset_input_contract": "重新投入",
   "reset_output_contract": "重新提取",
   "contract_launch_fail_please_get_back": "合约启动失败，请申请退款",
-  "mnemonic_qrcode_tip": "这个二维码包含你的助记词",
+  "mnemonic_qrcode_tip": "이 QR 코드에는 니모닉이 포함되어 있습니다",
   "qrcode": "二维码",
   "delegation_amount_full": "抵押已满",
   "time_left": "剩余",

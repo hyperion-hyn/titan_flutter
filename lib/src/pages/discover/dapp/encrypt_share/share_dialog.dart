@@ -271,7 +271,6 @@ class ShareDialogState extends State<ShareDialog> {
         cipherText = await p2pEncryptPoi(pubAddress, widget.poi, remark);
       } catch (err) {
         logger.e(err);
-
         setState(() {
           addressErrorStr = S.of(context).share_invalid_public_key;
           _formKey.currentState.validate();
