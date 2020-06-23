@@ -292,7 +292,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.safeLow ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 0 ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius:
                                       BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
@@ -301,7 +301,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_slow,
                                     style: TextStyle(
-                                        color: gasPrice == gasPriceRecommend.safeLow ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 0 ? Colors.white : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
@@ -326,7 +326,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.average ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 1 ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.all(Radius.circular(0))),
                               child: Column(
@@ -334,7 +334,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_normal,
                                     style: TextStyle(
-                                        color: gasPrice == gasPriceRecommend.average ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 1 ? Colors.white : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
@@ -359,7 +359,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: gasPrice == gasPriceRecommend.fast ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 2 ? Colors.grey : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
@@ -368,7 +368,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_fast,
                                     style: TextStyle(
-                                        color: gasPrice == gasPriceRecommend.fast ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 2 ? Colors.white : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
