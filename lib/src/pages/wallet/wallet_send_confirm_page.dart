@@ -534,7 +534,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               activatedWalletVo.getBitcoinZPub(),
               widget.receiverAddress,
               gasPrice.toInt(),
-<<<<<<< HEAD
               ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
           if(transResult["code"] != 0){
             ExceptionProcess.uploadPoiException(transResult,"bitcoin upload");
@@ -542,11 +541,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                 toastLength: Toast.LENGTH_LONG);
             return;
           }
-=======
-              ConvertTokenUnit.decimalToWei(
-                      Decimal.parse(widget.transferAmount), 8)
-                  .toInt());
->>>>>>> refactor[wallet]: update send and receive pages
+
         } else {
           await _transferErc20(
               walletPassword,

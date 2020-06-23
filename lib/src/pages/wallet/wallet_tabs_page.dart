@@ -1,7 +1,9 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
@@ -16,12 +18,13 @@ class WalletTabsPage extends StatefulWidget {
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin {
+class _WalletTabsPageState extends State<WalletTabsPage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
   void initState() {
-    _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
+    _tabController = new TabController(initialIndex: 0, vsync: this, length: 1);
     super.initState();
   }
 
@@ -43,57 +46,54 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
           child: Container(
             color: Colors.white,
             child: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
+              child: Stack(
                 children: <Widget>[
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      SizedBox(
-                        width: 16.0,
-                      ),
                       Expanded(
-                        flex: 3,
+                        flex: 1,
                         child: TabBar(
                           controller: _tabController,
                           labelColor: Theme.of(context).primaryColor,
                           labelStyle: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
                           indicatorSize: TabBarIndicatorSize.label,
                           indicatorColor: Theme.of(context).primaryColor,
-                          indicatorWeight: 2,
+                          indicatorWeight: 3,
                           indicatorPadding: EdgeInsets.only(bottom: 2),
-                          unselectedLabelColor: Colors.black,
+                          unselectedLabelColor: HexColor("#FF333333"),
                           tabs: [
                             Tab(
-                              child: Text(
-                                S.of(context).wallet,
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              text: S.of(context).wallet,
                             ),
-                            Tab(
-                              child: Text(
-                                '交易',
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                            //Tab(text: '交易'),
                           ],
                         ),
-                        Tab(
-                          text: S.of(context).map3_node_introduction,
-                        ),
-                      ],
-                    ),
+                      ),
+                      //Expanded(flex: 2, child: Text(""))
+                      Spacer(
+                        flex: 2,
+                      )
+                    ],
                   ),
-                  Expanded(flex: 2, child: Text(""))
+//                  Positioned(
+//                    top: 16.0,
+//                    right: 16.0,
+//                    child: InkWell(
+//                      onTap: () async {
+//                        String scanStr = await BarcodeScanner.scan();
+//                      },
+//                      child: Icon(
+//                        ExtendsIconFont.qrcode_scan,
+//                        color: Colors.black,
+//                        size: 20,
+//                      ),
+//                    ),
+//                  )
                 ],
               ),
             ),
@@ -103,15 +103,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
           controller: _tabController,
           children: [
             WalletPage(),
-            Map3NodePage(),
-//            Center(
-//              child: Text('this is wallet page'),
-//            ),
-//            Center(
-//              child: Text('this is map3 node page'),
-//            )
           ],
-//          physics: NeverScrollableScrollPhysics(),
         ),
       ),
     );

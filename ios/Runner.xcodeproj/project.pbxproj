@@ -24,9 +24,6 @@
 		9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6E23ACA4290032B410 /* GpsSensor.swift */; };
 		9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */; };
 		9AD81F52249B54CE00124771 /* WalletPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */; };
-		9AD81F57249B93E800124771 /* App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F53249B920800124771 /* App.framework */; };
-		9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; };
-		9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445D23FC22F900E5733F /* UserNotifications.framework */; };
 		9AEF446123FC237900E5733F /* UTDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445923FC213E00E5733F /* UTDID.framework */; };
 		9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445523FC20A900E5733F /* UMCommon.framework */; };
@@ -48,7 +45,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,8 +78,6 @@
 		9A86DB6E23ACA4290032B410 /* GpsSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpsSensor.swift; sourceTree = "<group>"; };
 		9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnSensorValueChangeListener.swift; sourceTree = "<group>"; };
 		9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletPluginInterface.swift; sourceTree = "<group>"; };
-		9AD81F53249B920800124771 /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = App.framework; path = Flutter/App.framework; sourceTree = "<group>"; };
-		9AD81F54249B920800124771 /* Flutter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flutter.framework; path = Flutter/Flutter.framework; sourceTree = "<group>"; };
 		9AEF445523FC20A900E5733F /* UMCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMCommon.framework; sourceTree = "<group>"; };
 		9AEF445723FC210F00E5733F /* UMPush.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMPush.framework; sourceTree = "<group>"; };
 		9AEF445923FC213E00E5733F /* UTDID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTDID.framework; sourceTree = "<group>"; };
@@ -110,10 +104,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */,
-				9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */,
 				9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */,
 				9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */,
-				9AD81F57249B93E800124771 /* App.framework in Frameworks */,
 				9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */,
 				9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */,
 				B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */,
@@ -148,8 +140,6 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
-				9AD81F53249B920800124771 /* App.framework */,
-				9AD81F54249B920800124771 /* Flutter.framework */,
 				9A0663F12416250D005A7C38 /* UMAnalytics.framework */,
 				9AEF445B23FC215900E5733F /* UMCommonLog.framework */,
 				9AEF445923FC213E00E5733F /* UTDID.framework */,
@@ -368,7 +358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" thin\n\n";
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;

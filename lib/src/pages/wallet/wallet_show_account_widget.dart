@@ -19,7 +19,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/pages/webview/webview.dart';
-import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -29,10 +28,7 @@ import 'package:titan/src/pages/wallet/wallet_receive_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
-import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/image_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
@@ -41,7 +37,8 @@ import 'api/etherscan_api.dart';
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
 
-  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  ShowAccountPage(String coinVo)
+      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -123,7 +120,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                       color: Color(0xFF9B9B9B), width: 0),
                                   shape: BoxShape.circle,
                                 ),
-                                child: ImageUtil.getCoinImage(coinVo.logo),
+                                child: Image.asset(coinVo.logo),
                               ),
                             ),
                             Text(
@@ -142,55 +139,44 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             SizedBox(
                               height: 24,
                             ),
-                          ),
-                          SizedBox(
-                            height: 24,
-                          ),
-                          Divider(
-                            height: 2,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () {
-                                      if(dataList.length > 0){
-                                        TransactionDetailVo transaction = dataList[1];
-                                        if(transaction.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN) {
-                                          UiUtil.showConfirmDialog(
+                            Divider(
+                              height: 2,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    InkWell(
+                                      onTap: () {
+                                        Application.router.navigateTo(
                                             context,
-                                            content: "你有未确认的比特币转账，请稍后再试！",
-                                          );
-                                          return;
-                                        }
-                                      }
-                                      Application.router.navigateTo(
-                                          context,
-                                          Routes.wallet_account_send_transaction +
-                                              '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
-                                    },
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(
-                                          ExtendsIconFont.send,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 32,
-                                        ),
-                                        SizedBox(
-                                          width: 8,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            S.of(context).send,
-                                            style: TextStyle(
-                                              color: HexColor(
-                                                "#FF6D6D6D",
+                                            Routes.wallet_account_send_transaction +
+                                                '?coinVo=${FluroConvertUtils.object2string(coinVo.toJson())}&entryRouteName=${Uri.encodeComponent(Routes.wallet_account_detail)}');
+                                      },
+                                      child: Row(
+                                        children: <Widget>[
+                                          Icon(
+                                            ExtendsIconFont.send,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            size: 24,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              S.of(context).send,
+                                              style: TextStyle(
+                                                color: HexColor(
+                                                  "#FF6D6D6D",
+                                                ),
                                               ),
                                             ),
                                           )
@@ -204,23 +190,21 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    WalletReceivePage(
-                                                        coinVo)));
+                                                    WalletReceivePage(coinVo)));
                                       },
                                       child: Row(
                                         children: <Widget>[
                                           Icon(
                                             ExtendsIconFont.receiver,
-                                            color: Theme.of(context)
-                                                .primaryColor,
+                                            color:
+                                                Theme.of(context).primaryColor,
                                             size: 20,
                                           ),
                                           SizedBox(
                                             width: 8,
                                           ),
                                           Padding(
-                                            padding:
-                                                const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(8.0),
                                             child: Text(
                                               S.of(context).receiver,
                                               style: TextStyle(
@@ -319,12 +303,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     var describe = "";
     var amountColor;
     var amountText =
-        "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+        "${FormatUtil.formatPrice(transactionDetail.amount)} ${transactionDetail.symbol}";
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconData = ExtendsIconFont.receiver;
       title = S.of(context).received;
       describe =
-          "From:" + shortBlockChainAddress(transactionDetail.fromAddress);
+          "From: " + shortBlockChainAddress(transactionDetail.fromAddress);
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
         amountText = '+ $amountText';
@@ -332,7 +316,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconData = ExtendsIconFont.send;
       title = S.of(context).sent;
-      describe = "To:" + shortBlockChainAddress(transactionDetail.toAddress);
+      describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress);
 
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FFE51C23");
@@ -340,9 +324,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if(transactionDetail.state >= 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN){
-      title = "待确认";
-    } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
+    if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
         .contains(transactionDetail.toAddress.toLowerCase())) {
@@ -362,36 +344,44 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
 
     return Ink(
       color: Color(0xFFF5F5F5),
-      child: Column(
-        children: <Widget>[
-          if (isShowTime)
-            Container(
-                padding: EdgeInsets.symmetric(vertical: 4),
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: Text(
-                    time,
-                    style: TextStyle(color: Color(0xFF9B9B9B)),
-                  ),
-                )),
-          Ink(
-            color: Colors.white,
-            child: InkWell(
-              onTap: () {
-                if (widget.coinVo.coinType == CoinType.BITCOIN) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => InAppWebViewContainer(
-                                initUrl: WalletConfig.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
-                                title: '',
-                              )));
-                } else {
-                  var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: <Widget>[
+            if (isShowTime)
+              Container(
+                  padding: EdgeInsets.symmetric(vertical: 4),
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: Text(
+                      time,
+                      style: TextStyle(color: Color(0xFF9B9B9B)),
+                    ),
+                  )),
+            Ink(
+              color: Colors.white,
+              child: InkWell(
+                onTap: () {
+                  var isChinaMainland = SettingInheritedModel.of(context)
+                          .areaModel
+                          ?.isChinaMainland ==
+                      true;
+                  var url = EtherscanApi.getTxDetailUrl(
+                      transactionDetail.hash, isChinaMainland);
                   if (url != null) {
+                    // todo: jison_test_0421
+                    /*
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WebViewContainer(
+                                  initUrl: url,
+                                  title: '',
+                                )));
+                  */
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -400,73 +390,66 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   title: '',
                                 )));
                   }
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8, right: 8),
-                      child: Icon(
-                        iconData,
-                        color: Color(0xFFCDCDCD),
-                        size: ExtendsIconFont.receiver == iconData ? 19 : 24,
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  title,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                Text(
-                                  amountText,
-                                  style: TextStyle(
-                                      color: amountColor,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 4),
-                                  child: Text(
-                                    describe,
-                                    style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
-                                  ),
-                                ),
-                                Spacer(),
-                                if (transactionDetail.state > 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN)
-                                  Text(
-                                    "确认${transactionDetail.state}次",
-                                    style: TextStyle(
-                                        color: DefaultColors.colorff4c3b, fontSize: 14, fontWeight: FontWeight.bold),
-                                  ),
-                              ],
-                            )
-                          ],
+                },
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8, right: 8),
+                        child: Icon(
+                          iconData,
+                          color: Color(0xFFCDCDCD),
+                          size: ExtendsIconFont.receiver == iconData ? 19 : 24,
                         ),
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    title,
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    amountText,
+                                    style: TextStyle(
+                                        color: amountColor,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4),
+                                child: Text(
+                                  describe,
+                                  style: TextStyle(
+                                      fontSize: 14, color: Color(0xFF9B9B9B)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 1),
-        ],
+            SizedBox(height: 1),
+          ],
+        ),
       ),
     );
   }
