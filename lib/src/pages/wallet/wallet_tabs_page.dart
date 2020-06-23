@@ -70,7 +70,7 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                             Tab(
                               text: S.of(context).wallet,
                             ),
-                            //Tab(text: '交易'),
+                            ///Tab(text: '交易'),
                           ],
                         ),
                       ),
