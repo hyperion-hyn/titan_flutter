@@ -44,6 +44,15 @@ class Wallet {
     return null;
   }
 
+  Account getBitcoinAccount() {
+    for (var account in accounts) {
+      if (account.coinType == CoinType.BITCOIN) {
+        return account;
+      }
+    }
+    return null;
+  }
+
   String getBitcoinZPub() {
     for (var account in accounts) {
       if (account.coinType == CoinType.BITCOIN) {

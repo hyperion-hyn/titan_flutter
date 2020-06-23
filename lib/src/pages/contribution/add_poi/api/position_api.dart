@@ -12,7 +12,7 @@ import 'package:titan/src/pages/contribution/add_poi/model/confirm_poi_network_i
 import 'package:titan/src/pages/contribution/add_poi/model/poi_collector.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/pages/discover/dapp/ncov/model/ncov_poi_entity.dart';
-import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 class PositionApi {
   Future<List<CategoryItem>> getCategoryList(String keyword, String address,
@@ -72,7 +72,7 @@ class PositionApi {
         return responseEntity.code;
       }
     } catch (_) {
-      ExceptionProcess.uploadPoiException(_, 'poi upload');
+      LogUtil.uploadException(_, 'poi upload');
       return -1;
     }
   }

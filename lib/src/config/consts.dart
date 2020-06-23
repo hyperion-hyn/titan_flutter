@@ -81,7 +81,6 @@ class PrefsKey {
   //wallet
   static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
   static final walletBalance = 'wallet_balance';
-  static final walletBitcoinCreate = 'wallet_bitcoin_create';
 
   static final appLanguageCode = "app_languageCode";
   static final appCountryCode = "app_countryCode";
