@@ -17,6 +17,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -302,6 +303,12 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               }
             },
           ),
+          RaisedButton(
+            child: Text('验证dialog'),
+            onPressed: () {
+              showDialog(context: context, child: AuthDialog());
+            },
+          )
         ],
       ),
     );
