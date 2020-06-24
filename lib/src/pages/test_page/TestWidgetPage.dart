@@ -7,6 +7,7 @@ import 'package:flutter_picker/Picker.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/api/exchange_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/add_poi_done_page.dart';
@@ -18,6 +19,7 @@ import 'package:titan/src/pages/contribution/new_poi/request_mortgage_page.dart'
 import 'package:titan/src/pages/contribution/new_poi/contributor_mortgage_broadcast_done_page.dart';
 import 'package:titan/src/pages/contribution/new_poi/verify_poi_done_page.dart';
 import 'package:titan/src/pages/test_page/WebsocketPage.dart';
+import 'package:titan/src/pages/test_page/recaptcha_test_page.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/CustomRadioButton.dart';
@@ -34,8 +36,7 @@ class TestWidgetPage extends StatefulWidget {
   }
 }
 
-class _TestWidgetPageState extends State<TestWidgetPage>
-    with TickerProviderStateMixin {
+class _TestWidgetPageState extends State<TestWidgetPage> with TickerProviderStateMixin {
   TabController _tabController;
   String radioValue = "First";
   List<String> tabStrList = ["请选择"];
@@ -58,16 +59,9 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           Text.rich(
             TextSpan(
               children: <TextSpan>[
-                TextSpan(
-                    text: '地图上的 ',
-                    style: TextStyle(fontStyle: FontStyle.normal)),
-                TextSpan(
-                    text: '天河城广场',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                TextSpan(
-                    text: ' 地点存在吗',
-                    style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '地图上的 ', style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '天河城广场', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                TextSpan(text: ' 地点存在吗', style: TextStyle(fontStyle: FontStyle.normal)),
               ],
             ),
           ),
@@ -82,16 +76,9 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           Text.rich(
             TextSpan(
               children: <TextSpan>[
-                TextSpan(
-                    text: '地图上的 ',
-                    style: TextStyle(fontStyle: FontStyle.normal)),
-                TextSpan(
-                    text: '天河城广场',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                TextSpan(
-                    text: ' 地点准确吗',
-                    style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '地图上的 ', style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '天河城广场', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                TextSpan(text: ' 地点准确吗', style: TextStyle(fontStyle: FontStyle.normal)),
               ],
             ),
           ),
@@ -125,15 +112,9 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           Text.rich(
             TextSpan(
               children: <TextSpan>[
-                TextSpan(
-                    text: '该地点的类别是 ',
-                    style: TextStyle(fontStyle: FontStyle.normal)),
-                TextSpan(
-                    text: '美食-中国餐',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                TextSpan(
-                    text: ' 吗', style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '该地点的类别是 ', style: TextStyle(fontStyle: FontStyle.normal)),
+                TextSpan(text: '美食-中国餐', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                TextSpan(text: ' 吗', style: TextStyle(fontStyle: FontStyle.normal)),
               ],
             ),
           ),
@@ -243,16 +224,13 @@ class _TestWidgetPageState extends State<TestWidgetPage>
         appBar: AppBar(
           title: Text("Wallet Demo1"),
         ),
-        body:
-            ListView(shrinkWrap: true, padding: EdgeInsets.all(16), children: <
-                Widget>[
+        body: ListView(shrinkWrap: true, padding: EdgeInsets.all(16), children: <Widget>[
           Divider(
             height: 16,
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ContributorPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ContributorPage()));
             },
             child: Text('我的贡献'),
           ),
@@ -261,10 +239,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ContributorMortgageInfoPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ContributorMortgageInfoPage()));
             },
             child: Text('我的抵押'),
           ),
@@ -273,10 +248,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ContributorAddMortgagePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ContributorAddMortgagePage()));
             },
             child: Text('增加抵押'),
           ),
@@ -285,10 +257,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RequestMortgagePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => RequestMortgagePage()));
             },
             child: Text('申请抵押'),
           ),
@@ -297,11 +266,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ContributorMortgageBroadcastDonePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ContributorMortgageBroadcastDonePage()));
             },
             child: Text('抵押广播成功页'),
           ),
@@ -310,8 +275,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddPoiPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddPoiPage()));
             },
             child: Text('添加poi页'),
           ),
@@ -320,8 +284,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddPOIDonePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddPOIDonePage()));
             },
             child: Text('添加poi成功页'),
           ),
@@ -339,8 +302,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           RaisedButton(
             onPressed: () async {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => VerifyPOIDonePage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => VerifyPOIDonePage()));
             },
             child: Text('校验poi成功页'),
           ),
@@ -371,7 +333,25 @@ class _TestWidgetPageState extends State<TestWidgetPage>
           ),
           Divider(
             height: 16,
-          )
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var response = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecaptchaTestPage(
+                            language: 'zh-CN',
+                            apiKey: '6LeIXagZAAAAAKXVvQRHPTvmO4XLoxoeBtOjE5xH',
+                          )));
+              if (response != null) {
+                var ret =
+                    await ExchangeHttp.instance.post('api/index/testRecaptcha', params: {'g-recaptcha-response': response});
+                print('$ret, $response');
+                UiUtil.toast(ret.toString());
+              }
+            },
+            child: Text('Recaptcha'),
+          ),
         ]));
   }
 
@@ -415,50 +395,44 @@ class _TestWidgetPageState extends State<TestWidgetPage>
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context1, sheetState) {
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      '请选择类型',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
+            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  '请选择类型',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 17,
                   ),
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: TabBar(
-                      controller: _tabController,
-                      labelColor: Colors.black,
-                      isScrollable: true,
-                      labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: Colors.black,
-                      indicatorWeight: 3,
-                      indicatorPadding: EdgeInsets.only(bottom: 2),
-                      unselectedLabelColor: HexColor("#aa000000"),
-                      tabs: getTabList(),
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: getTabContentList(() {
-                        sheetState(() {
-                          _tabController = new TabController(
-                              vsync: this, length: tabStrList.length);
-                          _tabController.animateTo(1);
-                        });
-                      }),
-                    ),
-                  ),
-                ]);
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.black,
+                  isScrollable: true,
+                  labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: Colors.black,
+                  indicatorWeight: 3,
+                  indicatorPadding: EdgeInsets.only(bottom: 2),
+                  unselectedLabelColor: HexColor("#aa000000"),
+                  tabs: getTabList(),
+                ),
+              ),
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: getTabContentList(() {
+                    sheetState(() {
+                      _tabController = new TabController(vsync: this, length: tabStrList.length);
+                      _tabController.animateTo(1);
+                    });
+                  }),
+                ),
+              ),
+            ]);
           });
         });
   }
@@ -498,9 +472,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
                   },
                 ),
                 Center(
-                  child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: ClickOvalButton('提交', () {})),
+                  child: Padding(padding: const EdgeInsets.all(16.0), child: ClickOvalButton('提交', () {})),
                 )
               ],
             ),
@@ -618,8 +590,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
       padding: const EdgeInsets.all(8.0),
       child: CustomRadioButton(
         enableShape: true,
-        customShape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        customShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         buttonColor: Theme.of(context).canvasColor,
         buttonLabels: ['每天', '节假日', '工作日'],
         buttonValues: ["everyday", 'weekends', 'workdays'],
@@ -643,8 +614,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
                 child: Container(
                   width: 50.0,
                   alignment: Alignment.center,
-                  child:
-                      Text('至', style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text('至', style: TextStyle(fontWeight: FontWeight.bold)),
                   color: Colors.white,
                 ))
           ],
@@ -667,11 +637,7 @@ class _TestWidgetPageState extends State<TestWidgetPage>
   showPickerNumber(BuildContext context) {
     Picker(
         adapter: NumberPickerAdapter(data: [
-          NumberPickerColumn(
-              begin: 0,
-              end: 999,
-              postfix: Text("\$"),
-              suffix: Icon(Icons.insert_emoticon)),
+          NumberPickerColumn(begin: 0, end: 999, postfix: Text("\$"), suffix: Icon(Icons.insert_emoticon)),
           NumberPickerColumn(begin: 200, end: 100, jump: -10),
           NumberPickerColumn(begin: 200, end: 100, jump: -10),
         ]),

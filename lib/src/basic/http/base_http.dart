@@ -26,28 +26,28 @@ class BaseHttpCore {
   static const String PATCH = "patch";
 
   Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic params, Options options, CancelToken cancelToken}) async {
     var res = await get(url, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
   Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
-      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic data, dynamic params, Options options, CancelToken cancelToken}) async {
     var res = await post(url, data: data, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
   Future<ResponseEntity<T>> patchResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic params, Options options, CancelToken cancelToken}) async {
     var res = await patch(url, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
   Future<T> getEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
         await getResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
@@ -58,7 +58,7 @@ class BaseHttpCore {
   }
 
   Future<T> postEntity<T>(String url, EntityFactory<T> factory,
-      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic data, dynamic params, Options options, CancelToken cancelToken}) async {
     var responseEntity = await postResponseEntity<T>(url, factory,
         data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
@@ -68,7 +68,7 @@ class BaseHttpCore {
   }
 
   Future<T> patchEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+      {dynamic params, Options options, CancelToken cancelToken}) async {
     var responseEntity =
         await patchResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
@@ -78,17 +78,13 @@ class BaseHttpCore {
   }
 
   //get method
-  Future<dynamic> get(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+  Future<dynamic> get(String url, {dynamic params, Options options, CancelToken cancelToken}) async {
     return _request(url, method: GET, params: params, options: options, cancelToken: cancelToken);
   }
 
   //post method
   Future<dynamic> post(String url,
-      {dynamic data,
-      Map<String, dynamic> params,
-      Options options,
-      CancelToken cancelToken,
-      ProgressCallback onSendProgress}) async {
+      {dynamic data, dynamic params, Options options, CancelToken cancelToken, ProgressCallback onSendProgress}) async {
     return _request(url,
         method: POST,
         data: data,
@@ -99,14 +95,14 @@ class BaseHttpCore {
   }
 
   //patch method
-  Future<dynamic> patch(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+  Future<dynamic> patch(String url, {dynamic params, Options options, CancelToken cancelToken}) async {
     return _request(url, method: PATCH, params: params, options: options, cancelToken: cancelToken);
   }
 
   Future<dynamic> _request(String url,
       {String method,
       dynamic data,
-      Map<String, dynamic> params,
+      dynamic params,
       Options options,
       CancelToken cancelToken,
       ProgressCallback onSendProgress}) async {
@@ -136,8 +132,9 @@ class BaseHttpCore {
     }
     options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
-    options.headers["walletAddress"] =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+    options.headers["walletAddress"] = Keys.rootKey.currentContext != null
+        ? WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? ''
+        : '';
 
     // todo rich add userid
 
@@ -176,7 +173,9 @@ class BaseHttpCore {
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = Keys.rootKey.currentContext != null
+          ? S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString())
+          : 'net work error';
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
