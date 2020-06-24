@@ -48,7 +48,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
             child: new Wrap(
               children: <Widget>[
                 new ListTile(
-                    leading: new Icon(IconData(0xe66e, fontFamily: 'iconfont'), color: Color(0xffac2229)),
+                    leading: new Icon(Icons.vertical_align_bottom),
                     title: new Text(S.of(context).Clean,
                         style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
                     onTap: () {

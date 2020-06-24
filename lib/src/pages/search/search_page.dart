@@ -259,7 +259,7 @@ class _SearchPageState extends State<SearchPage> {
                   top: 0,
                   bottom: 0,
                   right: 16,
-                  child: Center(child: Icon(IconData(0xe612, fontFamily: 'iconfont'), color: Colors.grey, size: 18)))
+                  child: Center(child: Icon(Icons.search, color: Colors.grey, size: 18)))
             ])));
   }
 

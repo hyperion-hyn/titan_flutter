@@ -173,8 +173,7 @@ class ShareDialogState extends State<ShareDialog> {
                               onTap: onScan,
                               child: Padding(
                                 padding: const EdgeInsets.only(top: 16),
-                                child: Icon(
-                                    IconData(0xe75a, fontFamily: 'iconfont')),
+                                child: Icon(Icons.share),
                               ),
                             ))
                       ],
