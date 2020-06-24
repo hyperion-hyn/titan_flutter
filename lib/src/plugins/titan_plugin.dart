@@ -167,4 +167,12 @@ class TitanPlugin {
     return await callChannel.invokeMethod('bluetoothEnable');
   }
 
+  static Future<String> signBitcoinRawTx(String transJson) async {
+    return await callChannel.invokeMethod("bitcoinSign", {'transJson': transJson});
+  }
+
+  static Future<String> bitcoinActive(String fileName,String password) async {
+    return await callChannel.invokeMethod("bitcoinActive", {"fileName": fileName,"password": password});
+  }
+
 }

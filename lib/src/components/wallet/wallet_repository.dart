@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -18,7 +19,12 @@ class WalletRepository {
   }
 
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
-    var balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
+    var balance = BigInt.from(0);
+    if(coin.coinType == CoinType.ETHEREUM) {
+      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
+    }else if(coin.coinType == CoinType.BITCOIN){
+      balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
+    }
     coin.balance = balance;
 //    coin.balance = (Decimal.parse(balance.toString()) / Decimal.parse(pow(10, coin.decimals).toString())).toDouble();
   }

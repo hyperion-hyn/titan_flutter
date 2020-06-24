@@ -172,9 +172,22 @@ class ContractNodeItem extends Object {
 //  }
 
   ///从启动到中期剩余时间
-  double get halfCompleteSecondsLeft {
+  ///❌
+/*  double get halfCompleteSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     double timeLeft = (expectDueTime - now.toDouble()) / 2;
+    return timeLeft > 0 ? timeLeft : 0;
+  }*/
+
+/// 对
+  double get halfCompleteSecondsLeft {
+    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
+    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
+    double halfTotalDue = totalDue / 2;
+    double overDue = (now - instanceActiveTime);
+    double timeLeft = halfTotalDue - overDue;
+    //double timeLeft = (expectDueTime.toDouble() - instanceActiveTime) / 2 - now + instanceActiveTime;
+    //timeLeft = (expectDueTime.toDouble() + instanceActiveTime) / 2 - now;
     return timeLeft > 0 ? timeLeft : 0;
   }
 

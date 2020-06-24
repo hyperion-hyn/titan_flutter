@@ -14,6 +14,7 @@ CoinVo _$CoinVoFromJson(Map<String, dynamic> json) {
     logo: json['logo'] as String,
     address: json['address'] as String,
     contractAddress: json['contractAddress'] as String,
+    extendedPublicKey: json['extendedPublicKey'] as String,
     balance: json['balance'] == null
         ? null
         : BigInt.parse(json['balance'] as String),
@@ -27,6 +28,7 @@ Map<String, dynamic> _$CoinVoToJson(CoinVo instance) => <String, dynamic>{
       'logo': instance.logo,
       'address': instance.address,
       'contractAddress': instance.contractAddress,
+      'extendedPublicKey': instance.extendedPublicKey,
       'decimals': instance.decimals,
       'coinType': instance.coinType,
       'balance': instance.balance?.toString(),

@@ -82,6 +82,8 @@ class PrefsKey {
 
   //wallet
   static const String ACTIVATED_WALLET_FILE_NAME = 'default_wallet_file_name';
+  static final walletBalance = 'wallet_balance';
+
   static final appLanguageCode = "app_languageCode";
   static final appCountryCode = "app_countryCode";
   static final appArea = "app_area";
@@ -91,7 +93,6 @@ class PrefsKey {
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
 
-  static final walletBalance = 'wallet_balance';
 }
 
 enum Status { idle, loading, success, failed, cancelled }

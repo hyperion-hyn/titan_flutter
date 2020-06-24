@@ -11,6 +11,7 @@ class Account {
   final String address;
   final String derivationPath;
   final int coinType;
+  final String extendedPublicKey;
 
   final AssetToken token;
   final List<AssetToken> contractAssetTokens;
@@ -21,6 +22,7 @@ class Account {
     this.coinType,
     this.token,
     this.contractAssetTokens,
+    this.extendedPublicKey,
   });
 
   factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [EthereumNetType netType = EthereumNetType.main]) {
@@ -49,6 +51,7 @@ class Account {
       address: json['address'],
       derivationPath: json['derivationPath'],
       coinType: json['coinType'],
+      extendedPublicKey: json['extendedPublicKey'],
       token: token,
       contractAssetTokens: erc20Tokens,
     );

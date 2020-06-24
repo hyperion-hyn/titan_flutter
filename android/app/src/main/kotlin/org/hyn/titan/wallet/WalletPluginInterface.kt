@@ -1,6 +1,9 @@
 package org.hyn.titan.wallet
 
 import android.content.Context
+import android.util.Log
+import com.google.gson.Gson
+import com.google.protobuf.ByteString
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -11,8 +14,12 @@ import org.hyn.titan.ErrorCode
 import org.hyn.titan.utils.md5
 import org.hyn.titan.utils.toHex
 import org.hyn.titan.utils.toHexByteArray
+import org.hyn.titan.wallet.bitcoin.BitNumeric
+import org.hyn.titan.wallet.bitcoin.BitcoinTransEntity
+import org.hyn.titan.wallet.bitcoin.Utxo
 import org.hyn.titan.wallet.crypto.SecureRandomUtils
 import org.hyn.titan.wallet.erc20.HyperionToken
+import org.jetbrains.anko.collections.forEachByIndex
 import org.web3j.crypto.*
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
@@ -21,9 +28,9 @@ import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
 import org.web3j.utils.Numeric
 import timber.log.Timber
-import wallet.core.jni.CoinType
-import wallet.core.jni.HDWallet
-import wallet.core.jni.StoredKey
+import wallet.core.java.AnySigner
+import wallet.core.jni.*
+import wallet.core.jni.proto.Bitcoin
 import java.io.File
 import java.lang.Exception
 import java.math.BigInteger
@@ -206,7 +213,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                     } else {
                         if (storedKey.isMnemonic) {
-                            val mnemonic = storedKey.decryptMnemonic(oldPassword);
+                            var mnemonic = storedKey.decryptMnemonic(oldPassword.toByteArray());
+                            if(mnemonic == null){
+                                mnemonic = storedKey.decryptMnemonic(oldPassword.toHexByteArray())
+                            }
                             if (mnemonic.isNullOrEmpty()) {
                                 result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                                 return true
@@ -257,7 +267,10 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                         Timber.i("-加载keystore文件 ${getKeyStorePath(fileName)}")
                         val storedKey = StoredKey.load(getKeyStorePath(fileName))
                         if (storedKey.isMnemonic) {
-                            val mnemonic = storedKey.decryptMnemonic(password)
+                            var mnemonic = storedKey.decryptMnemonic(password.toByteArray())
+                            if(mnemonic == null){
+                                mnemonic = storedKey.decryptMnemonic(password.toHexByteArray())
+                            }
                             if (mnemonic.isNullOrEmpty()) {
                                 result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
                             } else {
@@ -272,8 +285,167 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 }
                 true
             }
+            /*比特币签名*/
+            "bitcoinSign" -> {
+                val transJson = call.argument<String>("transJson")
+                var bitcoinTransEntity: BitcoinTransEntity = Gson().fromJson(transJson,BitcoinTransEntity::class.java)
+                signBitcoin(bitcoinTransEntity,result)
+                true
+            }
+            /*比特币激活*/
+            "bitcoinActive" -> {
+                val password = call.argument<String>("password")
+                val fileName = call.argument<String>("fileName")
+                if (fileName != null && password != null) {
+                    if (isTrustWallet(fileName)) {
+                        Timber.i("-加载keystore文件 ${getKeyStorePath(fileName)}")
+                        val storedKey = StoredKey.load(getKeyStorePath(fileName))
+                        if (storedKey.isMnemonic) {
+                            var mnemonic = storedKey.decryptMnemonic(password.toByteArray())
+                            if(mnemonic == null){
+                                mnemonic = storedKey.decryptMnemonic(password.toHexByteArray())
+                            }
+                            if (mnemonic.isNullOrEmpty()) {
+                                result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
+                            } else {
+                                var hdWallet = HDWallet(mnemonic,"")
+                                if (hdWallet != null) {
+                                    storedKey.accountForCoin(CoinType.BITCOIN, hdWallet)
+                                    val savePath = getKeyStoreDir().absolutePath + File.separator + fileName
+                                    Timber.i("-保存keystore文件 $fileName")
+                                    storedKey.store(savePath)
+
+                                    result.success(fileName)
+                                }else{
+                                    result.error(ErrorCode.UNKNOWN_ERROR, "load keystore error", null)
+                                }
+                            }
+                            return true
+                        }
+                    }
+                    result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
+                } else {
+                    result.error(ErrorCode.PARAMETERS_WRONG, "file not exist.", null)
+                }
+                true
+            }
             else -> false
         }
+    }
+
+    private fun signBitcoin(bitcoinTransEntity: BitcoinTransEntity, result: MethodChannel.Result) {
+        val storedKey = StoredKey.load(getKeyStorePath(bitcoinTransEntity.fileName))
+        if (storedKey.isMnemonic) {
+            var mnemonic = storedKey.decryptMnemonic(bitcoinTransEntity.password.toByteArray())
+            if(mnemonic == null){
+                mnemonic = storedKey.decryptMnemonic(bitcoinTransEntity.password.toHexByteArray())
+            }
+            if (mnemonic.isNullOrEmpty()) {
+                result.error(ErrorCode.PASSWORD_WRONG, "wrong password.", null)
+            } else {
+                var wallet = HDWallet(mnemonic,"")
+                var coinBtc: CoinType = CoinType.BITCOIN
+                val toAddress = bitcoinTransEntity.toAddress
+                val changeAddress = bitcoinTransEntity.change.address
+
+                var input = Bitcoin.SigningInput.newBuilder().apply {
+                    this.amount = bitcoinTransEntity.amount
+                    this.hashType = BitcoinSigHashType.ALL.value()
+                    this.toAddress = toAddress
+                    this.changeAddress = changeAddress
+                    this.byteFee = bitcoinTransEntity.fee
+                    this.coinType = coinBtc.value()
+                }
+
+                bitcoinTransEntity.utxo.forEach{
+                    //common
+                    val secretPrivateKeyBtc = wallet.getKey("m/84'/0'/0'/${it.sub}/${it.index}")
+                    var script = BitcoinScript.buildForAddress(it.address, coinBtc)
+                    var scriptHash = script.matchPayToWitnessPublicKeyHash()
+
+                    //utxo
+                    var utxoTxId = BitNumeric.hexStringToByteArray(it.txHash)
+                    utxoTxId.reverse()
+                    var outPoint = Bitcoin.OutPoint.newBuilder().apply {
+                        this.hash = ByteString.copyFrom(utxoTxId)
+                        this.index = it.txOutputN
+                        this.sequence = Long.MAX_VALUE.toInt()
+                    }.build()
+                    var utxo = Bitcoin.UnspentTransaction.newBuilder().apply {
+                        this.amount = it.value
+                        this.outPoint = outPoint
+                        this.script = ByteString.copyFrom(script.data())
+                    }.build()
+                    input.addUtxo(utxo)
+
+                    //input
+                    input.addPrivateKey(ByteString.copyFrom(secretPrivateKeyBtc.data()))
+                    input.putScripts(BitNumeric.toHexString(scriptHash), ByteString.copyFrom(BitcoinScript.buildPayToPublicKeyHash(scriptHash).data()))
+                }
+
+                var plan = AnySigner.plan(input.build(), CoinType.BITCOIN, Bitcoin.TransactionPlan.parser())
+                input.plan = plan
+                var output = AnySigner.sign(input.build(), CoinType.BITCOIN, Bitcoin.SigningOutput.parser())
+
+                var signedTransaction = output.encoded?.toByteArray()
+                result.success(BitNumeric.cleanHexPrefix(BitNumeric.toHexString(signedTransaction)))
+                return
+            }
+            result.error(ErrorCode.UNKNOWN_ERROR, "sign raw error", null)
+        }else{
+            result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
+        }
+
+
+
+        /*var wallet = HDWallet("math predict session country grant spray energy news runway biology tube tide","")
+        val coinBtc: CoinType = CoinType.BITCOIN
+        val addressBtc = wallet.getAddressForCoin(coinBtc)
+
+        val secretPrivateKeyBtc = wallet.getKeyForCoin(coinBtc)
+
+        val toAddress = "1MoXrqTD6MfecxYBA3NMTaLcB9y1Ucu2LK"
+        val changeAddress = "bc1q7fhqwluhcrs2ekkme0cu5nlvav2mdx7j7jel9t"
+
+        val script = BitcoinScript.buildForAddress(addressBtc, coinBtc)
+        val scriptHash = script.matchPayToWitnessPublicKeyHash()
+
+        val utxoTxId = BitNumeric.hexStringToByteArray("b3cbc89fdf9640bddf9eff15d53047e405b3339f7e31f6e272a8b1f8f055fed0")
+        utxoTxId.reverse()
+
+        val outPoint = Bitcoin.OutPoint.newBuilder().apply {
+            this.hash = ByteString.copyFrom(utxoTxId)
+            this.index = 0
+            this.sequence = (4294967293).toInt()
+        }.build()
+
+        val utxo = Bitcoin.UnspentTransaction.newBuilder().apply {
+            this.amount = 360476
+            this.outPoint = outPoint
+            this.script = ByteString.copyFrom(script.data())
+        }.build()
+
+        val input = Bitcoin.SigningInput.newBuilder().apply {
+            this.amount = 50000
+            this.hashType = BitcoinSigHashType.ALL.value()
+            this.toAddress = toAddress
+            this.changeAddress = changeAddress
+            this.byteFee = 62
+            this.coinType = coinBtc.value()
+            this.addPrivateKey(ByteString.copyFrom(secretPrivateKeyBtc.data()))
+            this.putScripts(BitNumeric.toHexString(scriptHash), ByteString.copyFrom(BitcoinScript.buildPayToPublicKeyHash(scriptHash).data()))
+        }
+
+        input.addUtxo(utxo)
+
+        val plan = AnySigner.plan(input.build(), CoinType.BITCOIN, Bitcoin.TransactionPlan.parser())
+
+        input.plan = plan
+        val output = AnySigner.sign(input.build(), CoinType.BITCOIN, Bitcoin.SigningOutput.parser())
+
+        assert(output.error.isEmpty())
+        val signedTransaction = output.encoded?.toByteArray()
+        Log.i("!!!!!", "Signed BTC transaction1: ${BitNumeric.toHexString(signedTransaction)}")*/
     }
 
     /**
@@ -281,10 +453,15 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
      */
     private fun importByMnemonic(mnemonic: String, name: String, password: String, coins: List<CoinType>): String {
         val firstCoin = if (coins.isNotEmpty()) coins[0] else CoinType.ETHEREUM
-        val storedKey = StoredKey.importHDWallet(mnemonic, name, password, firstCoin)
-
+        var storedKey = StoredKey.importHDWallet(mnemonic, name, password.toByteArray(), firstCoin)
+        if(storedKey == null){
+            storedKey = StoredKey.importHDWallet(mnemonic, name, password.toHexByteArray(), firstCoin)
+        }
         //active coins
-        val hdWallet = storedKey.wallet(password)
+        var hdWallet = storedKey.wallet(password.toByteArray())
+        if(hdWallet == null){
+            hdWallet = storedKey.wallet(password.toHexByteArray())
+        }
         if (hdWallet != null) {
             for (coin in coins) {
                 storedKey.accountForCoin(coin, hdWallet)
@@ -300,11 +477,14 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
      * 保存私钥成为keystore， 私钥格式: 私钥二进制的Hex String
      */
     private fun importByPrvKey(prvKeyHex: String, name: String, password: String, coinType: CoinType): String {
-        return importByPrvKey(prvKeyHex.toHexByteArray(), name, password, coinType)
+        return importByPrvKey(prvKeyHex.toByteArray(), name, password, coinType)
     }
 
     private fun importByPrvKey(bytes: ByteArray, name: String, password: String, coinType: CoinType): String {
-        val storedKey = StoredKey.importPrivateKey(bytes, name, password, coinType)
+        var storedKey = StoredKey.importPrivateKey(bytes, name, password.toByteArray(), coinType)
+        if(storedKey == null){
+            storedKey = StoredKey.importPrivateKey(bytes, name, password.toHexByteArray(), coinType)
+        }
         Timber.i("storedKey activeAccount count ${storedKey.accountCount()}, 密码: $password, 私钥: ${bytes.toHex()}")
         return saveStoredKeyToLocal(storedKey)
     }
@@ -313,13 +493,22 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
      * 保存keystore json
      */
     private fun saveKeyStoreJson(keyStoreJson: String, name: String, password: String, newPassword: String, coins: List<CoinType>): String {
-        val storedKey = StoredKey.importJSON(keyStoreJson.toByteArray())
+        var storedKey = StoredKey.importJSON(keyStoreJson.toByteArray())
+        if(storedKey == null){
+            storedKey = StoredKey.importJSON(keyStoreJson.toHexByteArray())
+        }
         try {
             //hack here, storedKey.decryptPrivateKey crash when password is wrong???
             val firstCoin = if (coins.isNotEmpty()) coins[0] else CoinType.ETHEREUM
-            val tokenPrvKey = storedKey.privateKey(firstCoin, password)
+            var tokenPrvKey = storedKey.privateKey(firstCoin, password.toByteArray())
+            if(tokenPrvKey == null){
+                tokenPrvKey = storedKey.privateKey(firstCoin, password.toHexByteArray())
+            }
             if (tokenPrvKey != null) {   //the password is right
-                val prvKeyBytes = storedKey.decryptPrivateKey(password)
+                var prvKeyBytes = storedKey.decryptPrivateKey(password.toByteArray())
+                if(prvKeyBytes == null){
+                    prvKeyBytes = storedKey.decryptPrivateKey(password.toHexByteArray())
+                }
                 if (prvKeyBytes != null) {
                     val mnemonic = String(prvKeyBytes, Charsets.US_ASCII)
                     val isMnemonic = HDWallet.isValid(mnemonic)
@@ -352,9 +541,9 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
 
     private fun loadKeyStore(fileName: String): Map<String, Any>? {
         val storedKey = StoredKey.load(getKeyStorePath(fileName))
+
         if (storedKey != null) {
             val map = HashMap<String, Any>()
-//            map["type"] = 0
             val accounts = ArrayList<HashMap<String, Any>>()
             val count = storedKey.accountCount()
             for (i in 0 until count) {
@@ -363,6 +552,9 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 accountMap["address"] = account.address()
                 accountMap["derivationPath"] = account.derivationPath()
                 accountMap["coinType"] = account.coin().value()
+                if(accountMap["coinType"] == CoinType.BITCOIN.value()) {
+                    accountMap["extendedPublicKey"] = account.extendedPublicKey()
+                }
                 accounts.add(accountMap)
             }
             map["accounts"] = accounts

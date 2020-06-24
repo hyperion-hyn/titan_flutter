@@ -13,6 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -77,6 +78,19 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
 
+    var addressHint = "";
+    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+    String addressErrorHint = "";
+    if(widget.coinVo.coinType == CoinType.BITCOIN){
+      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+      addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
+      addressErrorHint = "请输入1、bc、或3开头的合法接收者地址";
+    }else{
+      _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
+      addressHint = S.of(context).example + ': 0x81e7A0529AC1726e...';
+      addressErrorHint = S.of(context).input_valid_address;
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -139,18 +153,14 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           validator: (value) {
                             if (value.isEmpty) {
                               return S.of(context).receiver_address_not_empty_hint;
-                            } else {
-                              //TODO support more chain address regexp
-                              final RegExp _ethBasicAddress = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-                              if (!_ethBasicAddress.hasMatch(value)) {
-                                return S.of(context).input_valid_address;
-                              }
+                            } else if (!_basicAddressReg.hasMatch(value)){
+                              return addressErrorHint;
                             }
                             return null;
                           },
                           controller: _receiverAddressController,
                           decoration: InputDecoration(
-                            hintText: S.of(context).example + ': 0x81e7A0529AC1726e...',
+                            hintText: addressHint,
                             hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -227,7 +237,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                       children: <Widget>[
                         Padding(
                             padding: EdgeInsets.only(left: 8, top: 8),
-                            child: Text("≈ $quoteSign${FormatUtil.formatPrice(_notionalValue)}")),
+                            child: Text("≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}")),
                       ],
                     ),
                     SizedBox(
@@ -313,6 +323,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
             });
           }
         }
+      } else if(barcode.contains("bitcoin")) {
+        var barcodeArray = barcode.split("?");
+        var withAddress = barcodeArray[0];
+        var address = withAddress.replaceAll("bitcoin:", "");
+        _receiverAddressController.text = address;
       } else {
         _receiverAddressController.text = barcode;
       }

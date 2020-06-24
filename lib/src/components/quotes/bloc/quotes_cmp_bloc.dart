@@ -4,6 +4,7 @@ import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../coin_market_api.dart';
 import '../model.dart';
@@ -12,7 +13,7 @@ import './bloc.dart';
 class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
-  static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT'];
+  static const DEFAULT_SYMBOLS = ['ETH', 'HYN', 'USDT', 'BTC'];
 
   static const UPDATE_THRESHOLD = 5 * 60 * 1000; //5 minute
   QuotesModel currentQuotesModel;
@@ -63,7 +64,19 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 //            safeLowWait: response['safeLowWait']);
             safeLow: parseGasPriceToBigIntWei(response['average']),
             safeLowWait: response['avgWait']);
-        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
+
+        var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
+        if(btcResponse["code"] == 0){
+          var btcResponseData = btcResponse["data"];
+          var btcGasPriceRecommend = BTCGasPriceRecommend(
+              fast: Decimal.fromInt(btcResponseData['fastest']),
+              fastWait: double.parse(btcResponseData['fastestWait'].toString()),
+              average: Decimal.fromInt(btcResponseData['fast']),
+              avgWait: double.parse(btcResponseData['fastWait'].toString()),
+              safeLow: Decimal.fromInt(btcResponseData['average']),
+              safeLowWait: double.parse(btcResponseData['avgWait'].toString()));
+          yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend, btcGasPriceRecommend: btcGasPriceRecommend);
+        }
       } catch (e) {
         logger.e(e);
         yield GasPriceState(status: Status.failed);

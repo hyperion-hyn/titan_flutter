@@ -635,6 +635,7 @@
   "not_allow_to_collect_in_pending_state_hint": "not allow to collect in pending state",
   "delegator_not_exist_hint": "delegator not exist",
   "not_time_to_collect_hint": "not time to collect",
+  "cannot_fint_wallet": "找不到本地钱包",
   "order_type_buy": "BUY",
   "order_type_sell": "SELL"
 }

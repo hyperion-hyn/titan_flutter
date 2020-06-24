@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.0.5+105
+version: 3.0.7+107
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -53,7 +53,8 @@ dependencies:
   #https://pub.dev/packages/shared_preferences#-installing-tab-
   shared_preferences: ^0.5.6
   #https://pub.dev/packages/flutter_bloc
-  flutter_bloc: ^3.2.0
+#  flutter_bloc: ^3.2.0
+  flutter_bloc: ^4.0.1
   #https://pub.dev/packages/equatable#-readme-tab-
   equatable: ^1.1.1
   #https://pub.dev/packages/logger#-installing-tab-
@@ -97,7 +98,8 @@ dependencies:
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
   flutter_inappwebview: ^3.1.0
-  characters: ^0.5.0
+#  characters: ^0.5.0
+  characters: ^1.0.0
 
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0

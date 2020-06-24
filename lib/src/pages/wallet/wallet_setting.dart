@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -395,6 +396,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         var result = await widget.wallet.delete(walletPassword);
         print("del result ${widget.wallet.keystore.fileName} $result");
         if (result) {
+          AppCache.remove(widget.wallet.getBitcoinAccount().address);
           List<Wallet> walletList = await WalletUtil.scanWallets();
           var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 

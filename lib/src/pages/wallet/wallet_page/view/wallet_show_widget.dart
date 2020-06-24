@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -16,7 +19,9 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -123,9 +128,82 @@ class ShowWalletView extends StatelessWidget {
               },
               itemCount: walletVo.coins.length,
             ),
+            if(walletVo.wallet.getBitcoinAccount() == null)
+              _bitcoinEmptyView(context),
             if (env.buildType == BuildType.DEV)
               _testWalletView(context),
           ]),
+    );
+  }
+
+  Widget _bitcoinEmptyView(BuildContext context){
+    /*FlatButton(
+      onPressed: () {
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+//                    Future.delayed(Duration(milliseconds: 1000),(){
+//                      loadDataBloc.add(LoadingEvent());
+//                    });
+        });
+      },
+      child: Text("激活比特币"),
+    ),*/
+    var coinVo = CoinVo(
+      name: "BITCOIN",
+      symbol: "BTC",
+      coinType: 0,
+      address: "",
+      decimals: 8,
+      logo: "res/drawable/ic_btc_logo_empty.png",
+      contractAddress: null,
+      extendedPublicKey: "",
+      balance: BigInt.from(0),
+    );
+    return InkWell(
+      onTap: (){
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+          Future.delayed(Duration(milliseconds: 500),(){
+            loadDataBloc.add(LoadingEvent());
+          });
+        });
+      },
+      child: Column(
+        children: <Widget>[
+          _buildAccountItem(context, coinVo),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+            Image.asset("res/drawable/ic_key_view.png",width: 16,height: 16,),
+            Padding(
+              padding: const EdgeInsets.only(left:10,right: 16),
+              child: Text("激活BTC",style: TextStyle(fontSize: 14,color: HexColor("#1F81FF")),),
+            )
+          ],)
+        ],
+      ),
     );
   }
 
@@ -243,8 +321,6 @@ class ShowWalletView extends StatelessWidget {
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
     var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
-    print("!!!!!11111 ${coin.symbol} ${symbolQuote?.quoteVo?.price}");
-    var isNetworkUrl = coin.logo.contains("http");
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -257,7 +333,7 @@ class ShowWalletView extends StatelessWidget {
               border: Border.all(color: Color(0xFF9B9B9B), width: 0),
               shape: BoxShape.circle,
             ),
-            child: getCoinImage(isNetworkUrl, coin.logo),
+            child: ImageUtil.getCoinImage(coin.logo),
           ),
           SizedBox(
             width: 12,
@@ -298,7 +374,7 @@ class ShowWalletView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                  "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
+                    "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
                     style: TextStyle(color: Color(0xFF252525), fontSize: 16),overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(
@@ -338,16 +414,5 @@ class ShowWalletView extends StatelessWidget {
         ),
       );
     }
-  }
-
-  Widget getCoinImage(bool isNetworkUrl, String imageUrl) {
-    if (!isNetworkUrl) {
-      return Image.asset(imageUrl);
-    }
-    return FadeInImage.assetNetwork(
-      placeholder: 'res/drawable/img_placeholder_circle.png',
-      image: imageUrl,
-      fit: BoxFit.cover,
-    );
   }
 }

@@ -8,7 +8,9 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'bloc.dart';
 import '../../../global.dart';
@@ -51,6 +53,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         _recoverBalanceFromDisk(_activatedWalletVo);
 
         //sync wallet account to server
+        if(event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false){
+          BitcoinApi.syncBitcoinPubToServer(event.wallet.getBitcoinAccount().address, event.wallet?.getBitcoinZPub() ?? "");
+        }
 //        _nodeApi.postWallets(_activatedWalletVo);
       }
 
@@ -103,6 +108,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         decimals: account.token.decimals,
         logo: account.token.logo,
         contractAddress: null,
+        extendedPublicKey: account.extendedPublicKey,
         balance: BigInt.from(0),
       );
       coins.add(coin);

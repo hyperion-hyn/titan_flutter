@@ -10,7 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import '../../env.dart';
 import '../global.dart';
 
-class ExceptionProcess {
+class LogUtil {
   static process(Exception error, {bool isThrow = true}) {
     if (error is HttpResponseCodeNotSuccess) {
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
@@ -29,7 +29,7 @@ class ExceptionProcess {
     }
   }
 
-  static uploadPoiException(dynamic exception, [String errorPrefix]) {
+  static uploadException(dynamic exception, [String errorPrefix]) {
     if (env.buildType == BuildType.PROD) {
       if (exception is Error) {
         FlutterBugly.uploadException(
@@ -41,4 +41,11 @@ class ExceptionProcess {
     }
     logger.e(exception);
   }
+
+  static printMessage(dynamic message){
+    if (env.buildType != BuildType.PROD) {
+      print(message);
+    }
+  }
+
 }

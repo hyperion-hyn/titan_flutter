@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -17,6 +18,7 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -167,11 +169,11 @@ class _WalletDemoState extends State<WalletDemo> {
                       "账户${account.address} ${account.token.symbol} 余额是 ${balance / BigInt.from(pow(10, account.token.decimals))}");
 
                   //获取erc20账户余额
-                  for (var token in account.contractAssetTokens) {
-                    balance = await activeWallet.getErc20Balance(token.contractAddress);
-                    print(
-                        "ERC20账户${account.address} ${token.symbol} 余额是 ${balance / BigInt.from(pow(10, token.decimals))}");
-                  }
+//                  for (var token in account.contractAssetTokens) {
+//                    balance = await activeWallet.getErc20Balance(token.contractAddress);
+//                    print(
+//                        "ERC20账户${account.address} ${token.symbol} 余额是 ${balance / BigInt.from(pow(10, token.decimals))}");
+//                  }
                 }
               }
             },
@@ -686,13 +688,11 @@ class _WalletDemoState extends State<WalletDemo> {
               try {
                 var password = '111111';
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01); //.toRadixString(16);
-                var wallets = await WalletUtil.scanWallets();
-                if (wallets.length > 0) {
-                  var wallet0 = wallets[0];
+                var wallet = WalletInheritedModel.of(context).activatedWallet;
+                if (wallet != null) {
+                  var toAddress = '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A';
 
-                  var toAddress = '0x81e7A0529AC1726e7F78E4843802765B80d8cBc0';
-
-                  final txHash = await wallet0.sendEthTransaction(
+                  final txHash = await wallet.wallet.sendEthTransaction(
                     password: password,
                     toAddress: toAddress,
                     gasPrice: BigInt.from(EthereumConst.FAST_SPEED),
@@ -874,6 +874,31 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('ETH nonce 多次慢速转账'),
           ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var password = '111111';
+                Map<String, dynamic> params = {"a": 1, "d": 'd_p', "c": 'c_p', 'b': 'b_p'};
+                await Signer.signMessage(context, password, params);
+                print(params);
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('API签名'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var hashTx = await activeWallet.sendBitcoinTransaction("111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                logger.i('Bitcoin交易已提交，交易hash $hashTx');
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('比特币转账'),
+          )
         ],
       ),
     );
