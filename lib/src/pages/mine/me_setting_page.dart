@@ -18,9 +18,16 @@ class MeSettingPage extends StatefulWidget {
 class _MeSettingState extends State<MeSettingPage> {
   @override
   Widget build(BuildContext context) {
-    var language = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.name;
-    var quoteStr = QuotesInheritedModel.of(context,aspect: QuotesAspect.quote).activeQuotesSign?.quote;
-    var area = SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.name(context);
+    var language =
+        SettingInheritedModel.of(context, aspect: SettingAspect.language)
+            .languageModel
+            .name;
+    var quoteStr = QuotesInheritedModel.of(context, aspect: QuotesAspect.quote)
+        .activeQuotesSign
+        ?.quote;
+    var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
+        .areaModel
+        .name(context);
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -32,20 +39,23 @@ class _MeSettingState extends State<MeSettingPage> {
         ),
         body: Column(
           children: <Widget>[
-            _buildMemuBar(S.of(context).price_show, quoteStr, () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MePricePage()));
+            _buildMenuBar(S.of(context).price_show, quoteStr, () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MePricePage()));
             }),
             Divider(
               height: 1,
             ),
-            _buildMemuBar(S.of(context).language, language, () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MeLanguagePage()));
+            _buildMenuBar(S.of(context).language, language, () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeLanguagePage()));
             }),
             Divider(
               height: 1,
             ),
-            _buildMemuBar(S.of(context).app_area_setting, area, () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MeAreaPage()));
+            _buildMenuBar(S.of(context).app_area_setting, area, () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeAreaPage()));
             }),
             Divider(
               height: 1,
@@ -55,7 +65,7 @@ class _MeSettingState extends State<MeSettingPage> {
   }
 }
 
-Widget _buildMemuBar(String title, String subTitle, Function onTap) {
+Widget _buildMenuBar(String title, String subTitle, Function onTap) {
   return Material(
     child: InkWell(
       onTap: onTap,
@@ -69,7 +79,10 @@ Widget _buildMemuBar(String title, String subTitle, Function onTap) {
               padding: const EdgeInsets.only(left: 15),
               child: Text(
                 title,
-                style: TextStyle(color: HexColor("#333333"), fontSize: 16, fontWeight: FontWeight.w400),
+                style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400),
               ),
             ),
             Spacer(),

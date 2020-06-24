@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gesture_unlock/lock_pattern.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:titan/src/widget/gesture_unlock_widget.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:titan/src/widget/lock_patten_auth.dart';
 
 class AuthDialog extends StatefulWidget {
   @override
@@ -14,21 +15,22 @@ class AuthDialog extends StatefulWidget {
 
 class _AuthDialogState extends State<AuthDialog> {
   final LocalAuthentication auth = LocalAuthentication();
-  int _bioAuthMaxCount = 3;
-  int _bioAuthRemainCount;
 
+  ///When used up remain quick-auth times, use password to authorize.
   bool _usePassword = false;
+  int _quickAuthMaxCount = 3;
+  int _quickAuthRemainCount;
 
-  bool _canCheckBiometrics;
+  ///Check available biometrics
   List<BiometricType> _availableBiometrics = List();
-  String _authorized = 'Not Authorized';
-  bool _isAuthenticating = false;
+
+  bool _authorized = false;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _bioAuthRemainCount = _bioAuthMaxCount;
+    _quickAuthRemainCount = _quickAuthMaxCount;
 
     _getAvailableBiometrics();
   }
@@ -69,19 +71,7 @@ class _AuthDialogState extends State<AuthDialog> {
                           ),
                         ),
                       ),
-                      _usePassword
-                          ? Container(
-                              child: Center(
-                                child: Text(
-                                  '使用密码登陆',
-                                  style: TextStyle(color: Colors.amber),
-                                ),
-                              ),
-                            )
-                          : _authWidget(),
-                      !_usePassword && _bioAuthRemainCount < _bioAuthMaxCount
-                          ? _bioAuthRemainCountHint()
-                          : SizedBox(),
+                      _authorized ? _onAuthorized() : _authLayout(),
                     ],
                   ),
                 ),
@@ -93,37 +83,53 @@ class _AuthDialogState extends State<AuthDialog> {
     );
   }
 
-  _authWidget() {
+  _onAuthorized() {
+    return Container(
+      width: 300,
+      height: 300,
+      child: Center(
+        child: Text('验证成功'),
+      ),
+    );
+  }
+
+  _authLayout() {
+    return Column(
+      children: <Widget>[
+        _usePassword
+            ? Container(
+                child: EnterWalletPasswordWidget(),
+                height: 250,
+              )
+            : _quickAuthWidget(),
+        !_usePassword && _quickAuthRemainCount < _quickAuthMaxCount
+            ? _quickAuthRemainCountHint()
+            : SizedBox(),
+      ],
+    );
+  }
+
+  _quickAuthWidget() {
     if (_availableBiometrics.contains(BiometricType.face)) {
       return _faceAuthWidget();
     } else if (_availableBiometrics.contains(BiometricType.fingerprint)) {
       return _fingerprintAuthWidget();
     } else {
-      return GestureUnlockWidget();
+      return LockPatternVerify(
+        password: '1236',
+        onVerifyFailed: () {
+          setState(() {
+            _quickAuthRemainCount--;
+            if (_quickAuthRemainCount == 0) {
+              _usePassword = true;
+            }
+          });
+        },
+        onVerifyPassed: () {
+          Fluttertoast.showToast(msg: 'Verify successful');
+        },
+      );
     }
-    return Container(
-      color: Colors.amber,
-      child: Column(
-        children: <Widget>[
-          Text('Can check biometrics: $_canCheckBiometrics\n'),
-          RaisedButton(
-            child: const Text('Check biometrics'),
-            onPressed: _checkBiometrics,
-          ),
-          Text('Available biometrics: $_availableBiometrics\n'),
-          RaisedButton(
-            child: const Text('Get available biometrics'),
-            onPressed: _getAvailableBiometrics,
-          ),
-          Text('Current State: $_authorized\n'),
-          RaisedButton(
-            child: Text(_isAuthenticating ? 'Cancel' : 'Authenticate'),
-            onPressed:
-                _isAuthenticating ? _cancelAuthentication : _authenticate,
-          )
-        ],
-      ),
-    );
   }
 
   _faceAuthWidget() {
@@ -181,12 +187,15 @@ class _AuthDialogState extends State<AuthDialog> {
     );
   }
 
-  _bioAuthRemainCountHint() {
+  _quickAuthRemainCountHint() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Wrap(
         children: <Widget>[
-          Text('识别失败，剩余$_bioAuthRemainCount次'),
+          Text('识别失败，剩余$_quickAuthRemainCount次'),
+          SizedBox(
+            width: 8,
+          ),
           InkWell(
             child: Text(
               '取消',
@@ -206,18 +215,10 @@ class _AuthDialogState extends State<AuthDialog> {
   _authenticate() async {
     bool authenticated = false;
     try {
-      setState(() {
-        _isAuthenticating = true;
-        _authorized = 'Authenticating';
-      });
       authenticated = await auth.authenticateWithBiometrics(
-          localizedReason: 'Scan your fingerprint to authenticate',
           useErrorDialogs: true,
-          stickyAuth: true);
-      setState(() {
-        _isAuthenticating = false;
-        _authorized = 'Authenticating';
-      });
+          stickyAuth: true,
+          localizedReason: 'Use your face or fingerprint to authorize.');
     } on PlatformException catch (e) {
       Fluttertoast.showToast(msg: e.toString());
       print(e);
@@ -225,8 +226,8 @@ class _AuthDialogState extends State<AuthDialog> {
     if (!mounted) return;
 
     if (!authenticated) {
-      _bioAuthRemainCount--;
-      if (_bioAuthRemainCount == 0) {
+      _quickAuthRemainCount--;
+      if (_quickAuthRemainCount == 0) {
         setState(() {
           _usePassword = true;
         });
@@ -235,7 +236,7 @@ class _AuthDialogState extends State<AuthDialog> {
 
     final String message = authenticated ? 'Authorized' : 'Not Authorized';
     setState(() {
-      _authorized = message;
+      _authorized = authenticated;
     });
   }
 
@@ -250,24 +251,9 @@ class _AuthDialogState extends State<AuthDialog> {
 
     setState(() {
       _availableBiometrics = availableBiometrics;
+      if (!_usePassword) {
+        _authenticate();
+      }
     });
-  }
-
-  Future<void> _checkBiometrics() async {
-    bool canCheckBiometrics;
-    try {
-      canCheckBiometrics = await auth.canCheckBiometrics;
-    } on PlatformException catch (e) {
-      print(e);
-    }
-    if (!mounted) return;
-
-    setState(() {
-      _canCheckBiometrics = canCheckBiometrics;
-    });
-  }
-
-  void _cancelAuthentication() {
-    auth.stopAuthentication();
   }
 }
