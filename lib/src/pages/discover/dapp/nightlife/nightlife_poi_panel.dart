@@ -75,7 +75,7 @@ class NightLifePanelState extends State<NightLifePanel> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Icon(
-                  IconData(0xe601, fontFamily: 'iconfont'),
+                  Icons.wb_sunny,
                   color: Colors.purple[300],
                   size: 20,
                 ),

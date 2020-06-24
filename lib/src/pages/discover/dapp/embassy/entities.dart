@@ -31,8 +31,10 @@ class EmbassyPoi implements IDMapPoi {
     EmbassyPoi poi = EmbassyPoi();
 
     poi.id = feature["id"] is int ? feature["id"].toString() : feature["id"];
-    var lat = double.parse(feature["properties"]["lat"]);
-    var lon = double.parse(feature["properties"]["lon"]);
+//    var lat = double.parse(feature["properties"]["lat"]);
+//    var lon = double.parse(feature["properties"]["lon"]);
+    var lat = feature["geometry"]["coordinates"][1];
+    var lon = feature["geometry"]["coordinates"][0];
     poi.latLng = LatLng(lat, lon);
     poi.name = feature["properties"]["name"];
     poi.telephone = feature["properties"]["telephone"];
