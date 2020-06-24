@@ -24,9 +24,6 @@
 		9A86DB6F23ACA4290032B410 /* GpsSensor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB6E23ACA4290032B410 /* GpsSensor.swift */; };
 		9A86DB7123AF4D3D0032B410 /* OnSensorValueChangeListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */; };
 		9AD81F52249B54CE00124771 /* WalletPluginInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */; };
-		9AD81F57249B93E800124771 /* App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F53249B920800124771 /* App.framework */; };
-		9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; };
-		9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9AD81F54249B920800124771 /* Flutter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445D23FC22F900E5733F /* UserNotifications.framework */; };
 		9AEF446123FC237900E5733F /* UTDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445923FC213E00E5733F /* UTDID.framework */; };
 		9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AEF445523FC20A900E5733F /* UMCommon.framework */; };
@@ -40,20 +37,6 @@
 		F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410D22E8683400ADF4FF /* EthEncryptionService.swift */; };
 		F5B23E8F22EEE98C00745E35 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5B23E9122EEE98C00745E35 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9AD81F5A249B93E900124771 /* Flutter.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
@@ -82,8 +65,6 @@
 		9A86DB6E23ACA4290032B410 /* GpsSensor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GpsSensor.swift; sourceTree = "<group>"; };
 		9A86DB7023AF4D3D0032B410 /* OnSensorValueChangeListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnSensorValueChangeListener.swift; sourceTree = "<group>"; };
 		9AD81F51249B54CE00124771 /* WalletPluginInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletPluginInterface.swift; sourceTree = "<group>"; };
-		9AD81F53249B920800124771 /* App.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = App.framework; path = Flutter/App.framework; sourceTree = "<group>"; };
-		9AD81F54249B920800124771 /* Flutter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Flutter.framework; path = Flutter/Flutter.framework; sourceTree = "<group>"; };
 		9AEF445523FC20A900E5733F /* UMCommon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMCommon.framework; sourceTree = "<group>"; };
 		9AEF445723FC210F00E5733F /* UMPush.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UMPush.framework; sourceTree = "<group>"; };
 		9AEF445923FC213E00E5733F /* UTDID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UTDID.framework; sourceTree = "<group>"; };
@@ -110,10 +91,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */,
-				9AD81F59249B93E900124771 /* Flutter.framework in Frameworks */,
 				9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */,
 				9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */,
-				9AD81F57249B93E800124771 /* App.framework in Frameworks */,
 				9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */,
 				9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */,
 				B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */,
@@ -148,8 +127,6 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
-				9AD81F53249B920800124771 /* App.framework */,
-				9AD81F54249B920800124771 /* Flutter.framework */,
 				9A0663F12416250D005A7C38 /* UMAnalytics.framework */,
 				9AEF445B23FC215900E5733F /* UMCommonLog.framework */,
 				9AEF445923FC213E00E5733F /* UTDID.framework */,
@@ -264,7 +241,6 @@
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
-				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				DFDB65AAA7B8CECEF5FFEF7E /* [CP] Embed Pods Frameworks */,
 			);
@@ -368,7 +344,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" thin\n\n";
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -390,9 +366,94 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/FMDB/FMDB.framework",
+				"${PODS_ROOT}/../Flutter/Flutter.framework",
+				"${BUILT_PRODUCTS_DIR}/MTBBarcodeScanner/MTBBarcodeScanner.framework",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework.dSYM",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/1C04753A-6715-3177-9FDA-8F75B4324E0C.bcsymbolmap",
+				"${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/EE5140C5-686C-3DED-8916-3717EC675952.bcsymbolmap",
+				"${BUILT_PRODUCTS_DIR}/MapboxAnnotationExtension/MapboxAnnotationExtension.framework",
+				"${BUILT_PRODUCTS_DIR}/MapboxCoreNavigation/MapboxCoreNavigation.framework",
+				"${BUILT_PRODUCTS_DIR}/MapboxDirections.swift/MapboxDirections.framework",
+				"${BUILT_PRODUCTS_DIR}/MapboxMobileEvents/MapboxMobileEvents.framework",
+				"${BUILT_PRODUCTS_DIR}/MapboxNavigation/MapboxNavigation.framework",
+				"${PODS_ROOT}/MapboxNavigationNative/MapboxNavigationNative.framework",
+				"${PODS_ROOT}/MapboxNavigationNative/MapboxNavigationNative.framework.dSYM",
+				"${BUILT_PRODUCTS_DIR}/MapboxSpeech/MapboxSpeech.framework",
+				"${BUILT_PRODUCTS_DIR}/PodAsset/PodAsset.framework",
+				"${BUILT_PRODUCTS_DIR}/Polyline/Polyline.framework",
+				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/Solar/Solar.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftProtobuf/SwiftProtobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/TrustWalletCore/TrustWalletCore.framework",
+				"${BUILT_PRODUCTS_DIR}/Turf/Turf.framework",
+				"${BUILT_PRODUCTS_DIR}/ZLPhotoBrowser/ZLPhotoBrowser.framework",
+				"${BUILT_PRODUCTS_DIR}/app_settings/app_settings.framework",
+				"${BUILT_PRODUCTS_DIR}/barcode_scan/barcode_scan.framework",
+				"${BUILT_PRODUCTS_DIR}/esys_flutter_share/esys_flutter_share.framework",
+				"${BUILT_PRODUCTS_DIR}/fake_cookie_manager/fake_cookie_manager.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_inappwebview/flutter_inappwebview.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_statusbarcolor/flutter_statusbarcolor.framework",
+				"${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework",
+				"${BUILT_PRODUCTS_DIR}/image_pickers/image_pickers.framework",
+				"${BUILT_PRODUCTS_DIR}/mapbox_gl/mapbox_gl.framework",
+				"${BUILT_PRODUCTS_DIR}/package_info/package_info.framework",
+				"${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework",
+				"${BUILT_PRODUCTS_DIR}/r_scan/r_scan.framework",
+				"${BUILT_PRODUCTS_DIR}/shared_preferences/shared_preferences.framework",
+				"${BUILT_PRODUCTS_DIR}/sqflite/sqflite.framework",
+				"${BUILT_PRODUCTS_DIR}/uni_links/uni_links.framework",
+				"${BUILT_PRODUCTS_DIR}/url_launcher/url_launcher.framework",
+				"${BUILT_PRODUCTS_DIR}/webview_flutter/webview_flutter.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FMDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MTBBarcodeScanner.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework",
+				"${DWARF_DSYM_FOLDER_PATH}/Mapbox.framework.dSYM",
+				"${BUILT_PRODUCTS_DIR}/1C04753A-6715-3177-9FDA-8F75B4324E0C.bcsymbolmap",
+				"${BUILT_PRODUCTS_DIR}/EE5140C5-686C-3DED-8916-3717EC675952.bcsymbolmap",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxAnnotationExtension.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxCoreNavigation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxDirections.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxMobileEvents.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxNavigation.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxNavigationNative.framework",
+				"${DWARF_DSYM_FOLDER_PATH}/MapboxNavigationNative.framework.dSYM",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MapboxSpeech.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PodAsset.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Polyline.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Solar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftProtobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TrustWalletCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Turf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZLPhotoBrowser.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/app_settings.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/barcode_scan.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/esys_flutter_share.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fake_cookie_manager.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_inappwebview.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_statusbarcolor.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fluttertoast.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/image_pickers.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/mapbox_gl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/package_info.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/r_scan.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/shared_preferences.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/sqflite.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/uni_links.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/url_launcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/webview_flutter.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -461,7 +522,6 @@
 /* Begin XCBuildConfiguration section */
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -540,7 +600,6 @@
 		};
 		97C147031CF9000F007C117D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -595,7 +654,6 @@
 		};
 		97C147041CF9000F007C117D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
