@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/widget/custom_click_oval_button.dart';
 
 import '../../../../global.dart';
-
 
 class ShareDialog extends StatefulWidget {
   final IPoi poi;
@@ -49,27 +50,28 @@ class ShareDialogState extends State<ShareDialog> {
   Widget build(BuildContext context) {
     Duration insetAnimationDuration = const Duration(milliseconds: 100);
     Curve insetAnimationCurve = Curves.decelerate;
-
-    RoundedRectangleBorder _defaultDialogShape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(2.0)));
-
     return AnimatedPadding(
-      padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
+      padding: MediaQuery.of(context).viewInsets +
+          const EdgeInsets.symmetric(horizontal: 32.0),
       duration: insetAnimationDuration,
       curve: insetAnimationCurve,
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                color: Colors.white,
-              ),
-              child: buildContent(context),
+      child: Center(
+        child: Material(
+          color: Colors.transparent,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: Colors.white,
+                  ),
+                  child: buildContent(context),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -85,12 +87,14 @@ class ShareDialogState extends State<ShareDialog> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  S.of(context).share_encrypted_location,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                Center(
+                  child: Text(
+                    S.of(context).share_encrypted_location,
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 Container(
-                  color: Colors.grey[100],
+                  color: Colors.white,
                   margin: EdgeInsets.only(top: 16),
                   padding: EdgeInsets.all(8),
                   child: Column(
@@ -98,14 +102,17 @@ class ShareDialogState extends State<ShareDialog> {
                     children: <Widget>[
                       Text(
                         widget.poi.name,
-                        style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                        style: TextStyle(
+                            color: HexColor('#FF333333'),
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Row(
                         children: <Widget>[
                           Icon(
                             Icons.location_on,
-                            color: Colors.grey[500],
+                            color: HexColor('#FF999999'),
                             size: 16,
                           ),
                           SizedBox(width: 8),
@@ -123,106 +130,172 @@ class ShareDialogState extends State<ShareDialog> {
                     ],
                   ),
                 ),
-                if (!expandOptions)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          expandOptions = true;
-                        });
+                if (expandOptions) _p2pShareOptions(),
+                Row(
+                  children: <Widget>[
+                    Spacer(),
+                    Text(
+                      '高级模式',
+                      style: TextStyle(color: HexColor('#FF999999')),
+                    ),
+                    Switch(
+                      activeColor: Colors.grey[100],
+                      activeTrackColor: Theme.of(context).primaryColor,
+                      onChanged: (value) {
+                        expandOptions = value;
+                        setState(() {});
                       },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            S.of(context).add_share_options,
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.blue,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                if (expandOptions)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        TextFormField(
-                          controller: pubKeyTextEditController,
-                          autofocus: true,
-                          decoration: InputDecoration(
-                              labelText: S.of(context).accept_share_pub_key,
-                              hintText: S.of(context).receiver_encrypted_address,
-                              contentPadding: EdgeInsets.only(top: 16, right: 32, bottom: 8)),
-                          validator: validatePubAddress,
-                          onSaved: (value) {
-                            pubAddress = value;
-                          },
-                        ),
-                        Align(
-                            alignment: Alignment.centerRight,
-                            child: InkWell(
-                              onTap: onScan,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: Icon(IconData(0xe75a, fontFamily: 'iconfont')),
-                              ),
-                            ))
-                      ],
-                    ),
-                  ),
-                if (expandOptions)
-                  TextFormField(
-                    autofocus: true,
-                    maxLength: 50,
-                    decoration: InputDecoration(
-                        labelText: S.of(context).postscript, hintText: S.of(context).postscript_hint, contentPadding: EdgeInsets.only(top: 16, bottom: 8)),
-                    onSaved: (value) {
-                      remark = value;
-                    },
-                  ),
+                      value: expandOptions,
+                    )
+                  ],
+                ),
                 SizedBox(
                   height: 16,
                 ),
                 Align(
                   alignment: Alignment.center,
-                  child: RaisedButton.icon(
-                    onPressed: onShare,
-                    icon: Icon(
-                      Icons.lock,
-                      size: 20,
+                  child: CustomClickOvalButton(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.lock_outline,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          '分享',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                    label: Text(
-                      S.of(context).share,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    color: Colors.black87,
-                    splashColor: Colors.white10,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.0)),
+                    onShare,
+                    width: 120,
+                    height: 40,
                   ),
                 )
               ],
             ),
           ),
         ),
-        Align(
-          child: InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.close),
-            ),
-            onTap: () => Navigator.pop(context),
-          ),
-          alignment: Alignment.topRight,
-        ),
       ],
+    );
+  }
+
+  Widget _p2pShareOptions() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                '点对点分享',
+                style: TextStyle(
+                    fontSize: 17,
+                    color: HexColor('#FF333333'),
+                    fontWeight: FontWeight.bold),
+              ),
+              Spacer(),
+              InkWell(
+                onTap: onScan,
+                child: Icon(IconData(0xe75a, fontFamily: 'iconfont')),
+              ),
+              SizedBox(
+                width: 16.0,
+              )
+            ],
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  TextFormField(
+                    style: TextStyle(fontSize: 14),
+                    controller: pubKeyTextEditController,
+                    autofocus: true,
+                    decoration: InputDecoration.collapsed(
+                      hintText: S.of(context).receiver_encrypted_address,
+                      hintStyle: TextStyle(
+                        color: HexColor('#FF999999'),
+                        fontSize: 14,
+                      ),
+                    ),
+                    onSaved: (value) {
+                      pubAddress = value;
+                    },
+                  ),
+                  if (addressErrorStr != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        addressErrorStr,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: HexColor('#FFF2F2F2')),
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Text(
+            '附言',
+            style: TextStyle(
+                fontSize: 17,
+                color: HexColor('#FF333333'),
+                fontWeight: FontWeight.bold),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextFormField(
+                  autofocus: true,
+                  style: TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    focusedBorder: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    errorBorder: InputBorder.none,
+                    hintText: S.of(context).postscript_hint,
+                    hintStyle: TextStyle(
+                      color: HexColor('#FF999999'),
+                      fontSize: 14,
+                    ),
+                  ),
+                  onSaved: (value) {
+                    remark = value;
+                  },
+                ),
+              ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: HexColor('#FFF2F2F2')),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -237,16 +310,19 @@ class ShareDialogState extends State<ShareDialog> {
     try {
       String barcode = await BarcodeScanner.scan();
       if (barcode.length != 130) {
-        Fluttertoast.showToast(msg: S.of(context).public_key_scan_fail_rescan, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(
+            msg: S.of(context).public_key_scan_fail_rescan,
+            toastLength: Toast.LENGTH_SHORT);
       } else {
         pubKeyTextEditController.text = barcode;
         setState(() => {});
       }
     } catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        Fluttertoast.showToast(msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
+        Fluttertoast.showToast(
+            msg: S.of(context).open_camera, toastLength: Toast.LENGTH_SHORT);
       } else {
-        logger.e("",e);
+        logger.e("", e);
         setState(() => this.pubAddress = S.of(context).unknown_error);
       }
     }
@@ -260,7 +336,8 @@ class ShareDialogState extends State<ShareDialog> {
     bool isReEncrypt = pubAddress == null || pubAddress.isEmpty;
     if (isReEncrypt) {
       try {
-        cipherText = await reEncryptPoi(Injector.of(context).repository, widget.poi, remark);
+        cipherText = await reEncryptPoi(
+            Injector.of(context).repository, widget.poi, remark);
       } catch (err) {
         logger.e(err);
         Fluttertoast.showToast(msg: S.of(context).encrypt_error);
@@ -279,7 +356,8 @@ class ShareDialogState extends State<ShareDialog> {
     }
 
     if (cipherText != null && cipherText.isNotEmpty) {
-      Share.text(S.of(context).share_encrypted_location, cipherText, 'text/plain');
+      Share.text(
+          S.of(context).share_encrypted_location, cipherText, 'text/plain');
       Navigator.pop(context, true);
     }
   }

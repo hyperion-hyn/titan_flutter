@@ -134,6 +134,11 @@ dependencies:
   # https://pub.dev/packages/gesture_unlock
   gesture_unlock: ^0.0.1
 
+  flutter_recaptcha_v2:
+    git:
+      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
+
+
 dev_dependencies:
   flutter_driver:
     sdk: flutter
