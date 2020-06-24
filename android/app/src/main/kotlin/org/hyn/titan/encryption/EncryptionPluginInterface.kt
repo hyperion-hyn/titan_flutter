@@ -90,8 +90,12 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
-        val ciphertext = call.arguments as String;
-        val message = encryptionService.decrypt(ciphertext)
+        val cipherText = call.argument<String>("cipherText") ?: ""
+        val password = call.argument<String>("password") ?: ""
+        val fileName = call.argument<String>("fileName") ?: ""
+
+//        val ciphertext = call.arguments as String;
+        val message = encryptionService.decrypt(cipherText,fileName,password)
         message.subscribe({
             Timber.i("message:$message")
             result.success(it);

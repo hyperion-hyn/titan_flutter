@@ -13,5 +13,5 @@ interface EncryptionService {
 
     fun encryptSync(publicKeyStr: String, message: String): String
 
-    fun decrypt(ciphertext: String): Flowable<String>
+    fun decrypt(cipherText: String,fileName: String,password: String): Flowable<String>
 }

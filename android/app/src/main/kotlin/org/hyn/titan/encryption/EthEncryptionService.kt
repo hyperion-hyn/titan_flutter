@@ -4,7 +4,11 @@ import android.content.Context
 import io.reactivex.Flowable
 import mobile.Cipher
 import org.hyn.titan.encryption.rsa.RsaEncryption
+import org.hyn.titan.utils.md5
+import org.hyn.titan.wallet.KeyStoreUtil
 import timber.log.Timber
+import wallet.core.jni.CoinType
+import java.io.File
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 
@@ -70,18 +74,28 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
         }
     }
 
-    override fun decrypt(ciphertext: String): Flowable<String> {
+    override fun decrypt(cipherText: String,fileName: String,password: String): Flowable<String> {
         return Flowable.fromCallable {
-            val privateKeyStr = sharedPreferences.getString("private", null)
+            val privateKeyStr = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, CoinType.ETHEREUM)
+//            val privateKeyStr = sharedPreferences.getString("private", null)
             if (privateKeyStr != null) {
-                val privateKeyECStr = rsaEncryption.decrypt(privateKeyStr)
-                val message = cipher.decrypt(privateKeyECStr, ciphertext)
+//                val privateKeyECStr = rsaEncryption.decrypt(privateKeyStr)
+                val message = cipher.decrypt(privateKeyStr, cipherText)
                 if (message.isNotEmpty()) {
                     return@fromCallable message
                 }
             }
             throw Exception("decrypt error")
         }
+    }
+
+    private fun getKeyStorePath(fileName: String? = null): String {
+        val saveName = fileName ?: ("${System.currentTimeMillis()}".md5() + ".keystore")
+        return getKeyStoreDir().absolutePath + File.separator + saveName
+    }
+
+    private fun getKeyStoreDir(): File {
+        return context.getDir("keystore", Context.MODE_PRIVATE)
     }
 
 }
