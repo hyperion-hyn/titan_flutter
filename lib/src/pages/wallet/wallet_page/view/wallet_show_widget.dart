@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -17,6 +20,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -122,9 +126,82 @@ class ShowWalletView extends StatelessWidget {
               },
               itemCount: walletVo.coins.length,
             ),
+            if(walletVo.wallet.getBitcoinAccount() == null)
+              _bitcoinEmptyView(context),
             if (env.buildType == BuildType.DEV)
               _testWalletView(context),
           ]),
+    );
+  }
+
+  Widget _bitcoinEmptyView(BuildContext context){
+    /*FlatButton(
+      onPressed: () {
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+//                    Future.delayed(Duration(milliseconds: 1000),(){
+//                      loadDataBloc.add(LoadingEvent());
+//                    });
+        });
+      },
+      child: Text("激活比特币"),
+    ),*/
+    var coinVo = CoinVo(
+      name: "BITCOIN",
+      symbol: "BTC",
+      coinType: 0,
+      address: "",
+      decimals: 8,
+      logo: "res/drawable/ic_btc_logo_empty.png",
+      contractAddress: null,
+      extendedPublicKey: "",
+      balance: BigInt.from(0),
+    );
+    return InkWell(
+      onTap: (){
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+          Future.delayed(Duration(milliseconds: 500),(){
+            loadDataBloc.add(LoadingEvent());
+          });
+        });
+      },
+      child: Column(
+        children: <Widget>[
+          _buildAccountItem(context, coinVo),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+            Image.asset("res/drawable/ic_key_view.png",width: 16,height: 16,),
+            Padding(
+              padding: const EdgeInsets.only(left:10,right: 16),
+              child: Text("激活BTC",style: TextStyle(fontSize: 14,color: HexColor("#1F81FF")),),
+            )
+          ],)
+        ],
+      ),
     );
   }
 

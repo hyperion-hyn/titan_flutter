@@ -76,21 +76,11 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
+          onLoadData: (){
+            listLoadingData();
+          },
           onRefresh: () async {
-            //update quotes
-            var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-            QuotesSign quotesSign =
-            quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
-            //update all coin balance
-            BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-
-            await Future.delayed(Duration(milliseconds: 700));
-
-            if (mounted) {
-              loadDataBloc.add(RefreshSuccessEvent());
-            }
+            listLoadingData();
           },
           child: SingleChildScrollView(
               scrollDirection: Axis.vertical, child: ShowWalletView(activatedWalletVo, loadDataBloc)));
@@ -106,6 +96,23 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
         }
       },
     );
+  }
+
+  Future listLoadingData() async {
+    //update quotes
+    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign =
+    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    //update all coin balance
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+
+    await Future.delayed(Duration(milliseconds: 700));
+
+    if (mounted) {
+      loadDataBloc.add(RefreshSuccessEvent());
+    }
   }
 
   Widget hynQuotesView() {

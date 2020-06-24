@@ -5,6 +5,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -219,6 +220,11 @@ class Wallet {
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
     var transResult = await BitcoinApi.sendBitcoinTransaction(keystore.fileName,password,pubString,toAddr,fee,amount);
     return transResult;
+  }
+
+  Future<String> bitcoinActive(String password) async {
+    var result = await TitanPlugin.bitcoinActive(keystore.fileName,password);
+    return result;
   }
 
   Future<web3.Credentials> getCredentials(String password) async {
