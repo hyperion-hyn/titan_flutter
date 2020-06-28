@@ -32,15 +32,21 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
                 return
             }
             var host = data.host
-            if("contract" == host){
+//            if("contract" == host){
                 var params = data.pathSegments
                 if(params.size == 1){
-                    var contractId = data.getQueryParameter("contractId")
+                    var contentMap:Map<String,String> = mapOf()
+                    data.queryParameterNames.mapIndexed { index, keyStr ->
+                        contentMap.plus(mapOf(keyStr to data.getQueryParameter(keyStr)))
+                    }
+                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to contentMap)
+                    methodChannel.invokeMethod("urlLauncher",mapValue)
+                    /*var contractId = data.getQueryParameter("contractId")
                     var key = data.getQueryParameter("key")
                     var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId,"key" to key))
-                    methodChannel.invokeMethod("urlLauncher",mapValue)
+                    methodChannel.invokeMethod("urlLauncher",mapValue)*/
                 }
-            }
+//            }
         }
     }
 
