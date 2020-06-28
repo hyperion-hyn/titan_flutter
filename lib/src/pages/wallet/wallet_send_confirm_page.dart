@@ -286,10 +286,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               color: Color(0xFFF2F2F2),
               height: 8.0,
             ),
-//            Padding(
-//              padding: const EdgeInsets.all(16.0),
-//              child: GasInputWidget(),
-//            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GasInputWidget(),
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(

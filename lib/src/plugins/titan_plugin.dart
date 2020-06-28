@@ -8,8 +8,10 @@ typedef MessagePushCallBack = void Function(Map values);
 typedef UrlLauncherCallBack = void Function(Map values);
 
 class TitanPlugin {
-  static final MethodChannel callChannel = MethodChannel('org.hyn.titan/call_channel');
-  static final EventChannel keyPairChangeChannel = EventChannel('org.hyn.titan/event_stream');
+  static final MethodChannel callChannel =
+      MethodChannel('org.hyn.titan/call_channel');
+  static final EventChannel keyPairChangeChannel =
+      EventChannel('org.hyn.titan/event_stream');
   static MessagePushCallBack msgPushChangeCallBack;
   static UrlLauncherCallBack urlLauncherCallBack;
 
@@ -49,9 +51,8 @@ class TitanPlugin {
         msgPushChangeCallBack(result);
         break;
 
-
       case "urlLauncher":
-       /*
+        /*
         Map values = {
           "type": "contract",
           "subType": "detail",
@@ -101,17 +102,20 @@ class TitanPlugin {
   }
 
   static Future<String> encrypt(String pubKey, String message) async {
-    return await callChannel.invokeMethod("encrypt", {'pub': pubKey, 'message': message});
+    return await callChannel
+        .invokeMethod("encrypt", {'pub': pubKey, 'message': message});
   }
 
   static Future<String> decrypt(String cipherText) async {
     return await callChannel.invokeMethod("decrypt", cipherText);
   }
 
-  static StreamSubscription listenCipherEvent(onData, {Function onError, void onDone(), bool cancelOnError}) {
+  static StreamSubscription listenCipherEvent(onData,
+      {Function onError, void onDone(), bool cancelOnError}) {
     return keyPairChangeChannel
         .receiveBroadcastStream('keypair_change_event')
-        .listen(onData, onDone: onDone, onError: onError, cancelOnError: cancelOnError);
+        .listen(onData,
+            onDone: onDone, onError: onError, cancelOnError: cancelOnError);
   }
 
   //---------------------
@@ -125,11 +129,13 @@ class TitanPlugin {
   // share
   //---------------------
   static Future<dynamic> shareImage(String path, String title) {
-    return callChannel.invokeMethod("shareImage", {'path': path, 'title': title});
+    return callChannel
+        .invokeMethod("shareImage", {'path': path, 'title': title});
   }
 
   static Future<dynamic> shareText(String text, String title) {
-    return callChannel.invokeMethod("shareText", {'text': text, 'title': title});
+    return callChannel
+        .invokeMethod("shareText", {'text': text, 'title': title});
   }
 
   //---------------------
@@ -152,7 +158,8 @@ class TitanPlugin {
   }
 
   static Future<dynamic> openMarket({String packageName}) async {
-    return await callChannel.invokeMethod('openMarket', {'packageName': packageName});
+    return await callChannel
+        .invokeMethod('openMarket', {'packageName': packageName});
   }
 
   static Future<String> fileMd5(String path) async {
@@ -168,7 +175,7 @@ class TitanPlugin {
   }
 
   static Future<String> signBitcoinRawTx(String transJson) async {
-    return await callChannel.invokeMethod("bitcoinSign", {'transJson': transJson});
+    return await callChannel
+        .invokeMethod("bitcoinSign", {'transJson': transJson});
   }
-
 }

@@ -48,11 +48,13 @@ class _BackupConfirmResumeWordState extends State<BackupConfirmResumeWordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
         ),
         body: SingleChildScrollView(
           child: Container(
+            color: Colors.white,
             padding: EdgeInsets.all(10),
             alignment: Alignment.center,
             child: Column(

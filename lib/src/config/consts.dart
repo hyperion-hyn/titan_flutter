@@ -7,22 +7,21 @@ import 'package:titan/src/plugins/wallet/contract_const.dart';
 import '../../env.dart';
 
 class Const {
-
   static String get DOMAIN {
-      return 'https://api.hyn.space/';
+    return 'https://api.hyn.space/';
   }
 
-
   static String get NODE_DOMAIN {
-    if(env.buildType == BuildType.DEV){
+    if (env.buildType == BuildType.DEV) {
       return Config.NODE_API_URL_TEST;
-    }else{
+    } else {
       return Config.NODE_API_URL;
     }
   }
 
   static const String TITAN_SCHEMA = "titan://";
-  static const String TITAN_SHARE_URL_PREFIX = "https://www.hyn.space/titan/share?key=";
+  static const String TITAN_SHARE_URL_PREFIX =
+      "https://www.hyn.space/titan/share?key=";
   static const String CIPHER_TEXT_PREFIX = "titan_cipher";
   static const String CIPHER_TOKEN_PREFIX = "titan_cls";
 
@@ -38,19 +37,26 @@ class Const {
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';
 
   //white
-  static const kWhiteMapStyleCn = 'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
+  static const kWhiteMapStyleCn =
+      'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
 
 //  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';
-  static const kWhiteMapStyle = 'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+  static const kWhiteMapStyle =
+      'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
 
   //black
-  static const kBlackMapStyleCn = "https://cn.tile.map3.network/fiord-color.json";
-  static const kBlackMapStyle = "https://static.hyn.space/maptiles/fiord-color.json";
+  static const kBlackMapStyleCn =
+      "https://cn.tile.map3.network/fiord-color.json";
+  static const kBlackMapStyle =
+      "https://static.hyn.space/maptiles/fiord-color.json";
   static const kNCovMapStyle = 'https://cn.tile.map3.network/ncov_v1.json';
 
-  static const String POI_POLICY = "https://api.hyn.space/map-collector/pol-policy";
-  static const String PRIVACY_POLICY = "https://api.hyn.space/map-collector/upload/privacy-policy";
-  static const String APP_POLICY = 'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
+  static const String POI_POLICY =
+      "https://api.hyn.space/map-collector/pol-policy";
+  static const String PRIVACY_POLICY =
+      "https://api.hyn.space/map-collector/upload/privacy-policy";
+  static const String APP_POLICY =
+      'https://github.com/hyperion-hyn/titan_flutter/blob/master/LICENSE';
 }
 
 class Keys {
@@ -62,7 +68,8 @@ class Keys {
   static final mapParentKey = GlobalKey(debugLabel: '__map_parent__');
   static final mapHeatKey = GlobalKey(debugLabel: '__map_heat__');
   static final homePanelKey = GlobalKey(debugLabel: '__home_panel_parent__');
-  static final mapDraggablePanelKey = GlobalKey(debugLabel: 'mapDraggablePanelKey');
+  static final mapDraggablePanelKey =
+      GlobalKey(debugLabel: 'mapDraggablePanelKey');
 }
 
 class PrefsKey {
@@ -91,7 +98,11 @@ class PrefsKey {
 
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
+}
 
+class SecurePrefsKey {
+  static const String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
+  static const String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
 }
 
 enum Status { idle, loading, success, failed, cancelled }

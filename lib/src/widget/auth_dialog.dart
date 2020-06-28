@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gesture_unlock/lock_pattern.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/lock_patten_auth.dart';
 
@@ -25,6 +30,8 @@ class _AuthDialogState extends State<AuthDialog> {
   List<BiometricType> _availableBiometrics = List();
 
   bool _authorized = false;
+
+  String _currentWalletPwd;
 
   @override
   void initState() {
@@ -71,7 +78,7 @@ class _AuthDialogState extends State<AuthDialog> {
                           ),
                         ),
                       ),
-                      _authorized ? _onAuthorized() : _authLayout(),
+                      _authorized ? _authorizedView() : _authLayout(),
                     ],
                   ),
                 ),
@@ -83,12 +90,17 @@ class _AuthDialogState extends State<AuthDialog> {
     );
   }
 
-  _onAuthorized() {
+  _authorizedView() {
     return Container(
       width: 300,
       height: 300,
       child: Center(
-        child: Text('验证成功'),
+        child: Column(
+          children: <Widget>[
+            Text('验证成功'),
+            Text('当前钱包密码: $_currentWalletPwd'),
+          ],
+        ),
       ),
     );
   }
@@ -237,6 +249,17 @@ class _AuthDialogState extends State<AuthDialog> {
     final String message = authenticated ? 'Authorized' : 'Not Authorized';
     setState(() {
       _authorized = authenticated;
+      _onAuthorized();
+    });
+  }
+
+  _onAuthorized() async {
+    Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    String address = wallet.getEthAccount().address;
+    FlutterSecureStorage flutterSecureStorage = FlutterSecureStorage();
+    String pwd = await flutterSecureStorage.read(key: 'pwd_$address');
+    setState(() {
+      _currentWalletPwd = pwd;
     });
   }
 

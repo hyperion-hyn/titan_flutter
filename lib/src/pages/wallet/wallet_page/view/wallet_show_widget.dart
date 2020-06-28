@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -18,6 +19,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -307,6 +309,24 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('验证dialog'),
             onPressed: () {
               showDialog(context: context, child: AuthDialog());
+            },
+          ),
+          RaisedButton(
+            child: Text('保存当前钱包密码到securedStorage'),
+            onPressed: () async {
+              String address = WalletInheritedModel.of(context)
+                  .activatedWallet
+                  .wallet
+                  .getEthAccount()
+                  .address;
+              var password = await showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EnterWalletPasswordWidget();
+                  });
+              FlutterSecureStorage secureStorage = FlutterSecureStorage();
+              secureStorage.write(key: 'wallet_pwd_$address', value: password);
             },
           )
         ],
