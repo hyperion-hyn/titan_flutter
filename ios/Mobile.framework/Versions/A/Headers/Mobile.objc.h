@@ -15,15 +15,16 @@
 
 @interface MobileCipher : NSObject <goSeqRefInterface> {
 }
-@property(strong, readonly) id _ref;
+@property(strong, readonly) _Nonnull id _ref;
 
-- (instancetype)initWithRef:(id)ref;
-- (instancetype)init;
-- (NSString*)decrypt:(NSString*)prvStr cipherText:(NSString*)cipherText;
-- (NSString*)encrypt:(NSString*)pubStr message:(NSString*)message;
-- (NSString*)genKeyPair;
+- (nonnull instancetype)initWithRef:(_Nonnull id)ref;
+- (nullable instancetype)init;
+- (NSString* _Nonnull)deCompressPubkey:(NSString* _Nullable)pubStrC;
+- (NSString* _Nonnull)decrypt:(NSString* _Nullable)prvStr cipherText:(NSString* _Nullable)cipherText;
+- (NSString* _Nonnull)encrypt:(NSString* _Nullable)pubStr message:(NSString* _Nullable)message;
+- (NSString* _Nonnull)genKeyPair;
 @end
 
-FOUNDATION_EXPORT MobileCipher* MobileNewCipher(void);
+FOUNDATION_EXPORT MobileCipher* _Nullable MobileNewCipher(void);
 
 #endif

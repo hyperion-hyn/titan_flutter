@@ -31,11 +31,11 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
   ScaffoldMapBloc(this.context /*, this.store*/);
 
-  @override
+/*  @override
   Stream<Transition<ScaffoldMapEvent, ScaffoldMapState>> transformEvents(Stream<ScaffoldMapEvent> events, transitionFn) {
 //    return super.transformEvents(events, transitionFn);
     return events.switchMap(transitionFn);
-  }
+  }*/
 
   @override
   ScaffoldMapState get initialState => DefaultScaffoldMapState();
