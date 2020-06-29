@@ -10,6 +10,8 @@ The first ever truly privacy-aware map application built on strong cryptographic
 - Cryptographic Location Sharing (CLS)
 
 
+# BUILD
+
 
 make json model
 
