@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +12,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -757,6 +759,41 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('比特币转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var encryptMsg = await TitanPlugin.activeEncrypt("abcabcabc", "111111", activeWallet.keystore.fileName);
+                logger.i('位置加密激活msg ${json.encode(encryptMsg).toString()}');
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('激活位置加密'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var encryptMsg = await TitanPlugin.encrypt("044f5df535b366ff60105cd2423a66e8eda8d00184676449e7b6856188628575f242e28a5cb97d0daaaeceaea2a138773c1bb95c57621e87bbdb867b825ed4926e", "abcabc111");
+                logger.i('位置加密msg ${json.encode(encryptMsg).toString()}');
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('位置加密'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var encryptMsg = await TitanPlugin.decrypt("C85bouB1T6Pzoe4RqpQZqaaGnzhBDgVqvkkp3ayCR9v281tD2skF9azhrY63kdP1BE7W5vKDN7vtqp5wrcU4CrPxFgD7Jhdm7CmLBqTCDsmLZfurik9WbJAMi7tk82vr22uMkjaA5W5gpXEzhpvpZ1Pg2GwPbp6nxcQbov", "111111", activeWallet.keystore.fileName);
+                logger.i('位置解密msg $encryptMsg');
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('位置解密'),
           )
         ],
       ),

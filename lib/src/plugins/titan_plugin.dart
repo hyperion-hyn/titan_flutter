@@ -103,11 +103,16 @@ class TitanPlugin {
 
   static Future<String> encrypt(String pubKey, String message) async {
     return await callChannel
-        .invokeMethod("encrypt", {'pub': pubKey, 'message': message});
+        .invokeMethod("encrypt", {'publicKey': pubKey, 'message': message});
   }
 
-  static Future<String> decrypt(String cipherText) async {
-    return await callChannel.invokeMethod("decrypt", cipherText);
+  static Future<Map> activeEncrypt(String message, String password, String fileName) async {
+    return await callChannel
+        .invokeMethod("activeEncrypt", {'message': message, 'password': password, 'fileName': fileName});
+  }
+
+  static Future<String> decrypt(String cipherText, String password, String fileName) async {
+    return await callChannel.invokeMethod("decrypt", {'cipherText': cipherText, 'password': password, 'fileName': fileName});
   }
 
   static StreamSubscription listenCipherEvent(onData,

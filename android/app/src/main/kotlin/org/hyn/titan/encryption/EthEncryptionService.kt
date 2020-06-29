@@ -4,10 +4,13 @@ import android.content.Context
 import io.reactivex.Flowable
 import mobile.Cipher
 import org.hyn.titan.encryption.rsa.RsaEncryption
+import org.hyn.titan.utils.Numeric
 import org.hyn.titan.utils.md5
+import org.hyn.titan.utils.toHexByteArray
 import org.hyn.titan.wallet.KeyStoreUtil
 import timber.log.Timber
 import wallet.core.jni.CoinType
+import wallet.core.jni.StoredKey
 import java.io.File
 import java.security.KeyStore
 import java.security.cert.X509Certificate
@@ -60,23 +63,33 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
             return 0L
         }
 
-    override fun encryptSync(publicKeyStr: String, message: String): String {
-        val cipherText = cipher.encrypt(publicKeyStr, message)
-        if (cipherText.isEmpty()) {
+    override fun encryptSync(publicKeyStr: String?, message: String, password: String, fileName: String): Map<String,String> {
+        var tempPublicKey = ""
+        if(publicKeyStr == null || publicKeyStr == "") {
+            var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
+            var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
+            tempPublicKey = publicKeyEntity?.description() ?: ""
+        }else{
+            tempPublicKey = publicKeyStr
+        }
+        var cipherText = cipher.encrypt(tempPublicKey, message)
+            if (cipherText.isEmpty()) {
             throw Exception("encrypt error")
         }
-        return cipherText
+
+        return mapOf("publicKey" to tempPublicKey,"cipherText" to cipherText)
     }
 
-    override fun encrypt(publicKeyStr: String, message: String): Flowable<String> {
+    override fun encrypt(publicKeyStr: String?, message: String, password: String, fileName: String): Flowable<Map<String,String>> {
         return Flowable.fromCallable {
-            return@fromCallable encryptSync(publicKeyStr, message)
+            return@fromCallable encryptSync(publicKeyStr, message, password, fileName)
         }
     }
 
     override fun decrypt(cipherText: String,fileName: String,password: String): Flowable<String> {
         return Flowable.fromCallable {
-            val privateKeyStr = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, CoinType.ETHEREUM)
+            var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
+            var privateKeyStr = Numeric.toHexString(privateKey?.data(),false)
 //            val privateKeyStr = sharedPreferences.getString("private", null)
             if (privateKeyStr != null) {
 //                val privateKeyECStr = rsaEncryption.decrypt(privateKeyStr)

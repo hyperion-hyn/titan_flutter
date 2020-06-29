@@ -5,6 +5,7 @@ import timber.log.Timber
 import wallet.core.jni.CoinType
 import wallet.core.jni.StoredKey
 import org.hyn.titan.utils.toHexByteArray
+import wallet.core.jni.PrivateKey
 
 object KeyStoreUtil {
     fun parseCoinType(coinTypeValue: Int?, default: CoinType = CoinType.ETHEREUM): CoinType {
@@ -42,6 +43,11 @@ object KeyStoreUtil {
         return bytes?.toHex()
     }
 
+    fun getPrvKeyEntity(filePath: String, password: String, coinType: CoinType): PrivateKey? {
+        val storedKey = StoredKey.load(filePath) ?: return null
+        return getPrvKeyEntity(storedKey, password, coinType)
+    }
+
     fun isValidPassword(filePath: String, password: String, coinType: CoinType): Boolean {
         return getPrvKey(filePath, password, coinType) != null
     }
@@ -58,6 +64,17 @@ object KeyStoreUtil {
         } else {
             val prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
             prvKey?.data()
+        }
+    }
+
+    private fun getPrvKeyEntity(storedKey: StoredKey, password: String, coinType: CoinType): PrivateKey? {
+        return if (storedKey.isMnemonic) {
+            val hdWallet = storedKey.wallet(password.toHexByteArray())
+            val privateKey = hdWallet?.getKeyForCoin(coinType)
+            privateKey
+        } else {
+            val prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
+            prvKey
         }
     }
 

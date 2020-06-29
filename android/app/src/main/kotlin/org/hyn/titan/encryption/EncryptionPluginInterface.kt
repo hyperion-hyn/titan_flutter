@@ -6,7 +6,13 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.hyn.titan.utils.md5
+import org.hyn.titan.utils.toHexByteArray
+import org.hyn.titan.wallet.KeyStoreUtil
 import timber.log.Timber
+import wallet.core.jni.CoinType
+import wallet.core.jni.StoredKey
+import java.io.File
 
 class EncryptionPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
     private val keyPairChangeChannel by lazy { EventChannel(binaryMessenger, "org.hyn.titan/event_stream") }
@@ -45,6 +51,10 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 result.success(encryptionService.expireTime)
                 return true
             }
+            "activeEncrypt" -> {
+                activeEncrypt(call, result)
+                return true
+            }
             "encrypt" -> {
                 encrypt(call, result)
                 return true
@@ -79,14 +89,30 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         }
     }
 
+    private fun activeEncrypt(call: MethodCall, result: MethodChannel.Result) {
+
+        var publicKey = call.argument<String>("publicKey")
+        var message = call.argument<String>("message") ?: ""
+        var password = call.argument<String>("password") ?: ""
+        var fileName = call.argument<String>("fileName") ?: ""
+        var resultMapFlowable = encryptionService.encrypt(publicKey, message, password, fileName)
+        resultMapFlowable.subscribe{
+            result.success(it)
+        }
+
+    }
+
     private fun encrypt(call: MethodCall, result: MethodChannel.Result) {
 
-        val pub = call.argument<String>("pub");
-        val message = call.argument<String>("message");
-        val ciphertext = encryptionService.encrypt(pub!!, message!!)
-        ciphertext.subscribe({
-            result.success(it);
-        })
+        var publicKey = call.argument<String>("publicKey")
+        var message = call.argument<String>("message") ?: ""
+        var password = call.argument<String>("password") ?: ""
+        var fileName = call.argument<String>("fileName") ?: ""
+        var resultMapFlowable = encryptionService.encrypt(publicKey, message, password, fileName)
+        resultMapFlowable.subscribe{
+            result.success(it["cipherText"])
+        }
+        
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
@@ -95,11 +121,11 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         val fileName = call.argument<String>("fileName") ?: ""
 
 //        val ciphertext = call.arguments as String;
-        val message = encryptionService.decrypt(cipherText,fileName,password)
-        message.subscribe({
-            Timber.i("message:$message")
+        val messageFlowable = encryptionService.decrypt(cipherText,fileName,password)
+        messageFlowable.subscribe {
+            Timber.i("message:$it")
             result.success(it);
-        })
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -116,4 +142,14 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                     result.error(it.message, null, null)
                 })
     }
+
+    private fun getKeyStorePath(fileName: String? = null): String {
+        val saveName = fileName ?: ("${System.currentTimeMillis()}".md5() + ".keystore")
+        return getKeyStoreDir().absolutePath + File.separator + saveName
+    }
+
+    private fun getKeyStoreDir(): File {
+        return context.getDir("keystore", Context.MODE_PRIVATE)
+    }
+    
 }

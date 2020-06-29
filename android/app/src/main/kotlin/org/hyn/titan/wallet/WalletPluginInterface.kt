@@ -349,57 +349,6 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         }else{
             result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
         }
-
-
-
-        /*var wallet = HDWallet("math predict session country grant spray energy news runway biology tube tide","")
-        val coinBtc: CoinType = CoinType.BITCOIN
-        val addressBtc = wallet.getAddressForCoin(coinBtc)
-
-        val secretPrivateKeyBtc = wallet.getKeyForCoin(coinBtc)
-
-        val toAddress = "1MoXrqTD6MfecxYBA3NMTaLcB9y1Ucu2LK"
-        val changeAddress = "bc1q7fhqwluhcrs2ekkme0cu5nlvav2mdx7j7jel9t"
-
-        val script = BitcoinScript.buildForAddress(addressBtc, coinBtc)
-        val scriptHash = script.matchPayToWitnessPublicKeyHash()
-
-        val utxoTxId = BitNumeric.hexStringToByteArray("b3cbc89fdf9640bddf9eff15d53047e405b3339f7e31f6e272a8b1f8f055fed0")
-        utxoTxId.reverse()
-
-        val outPoint = Bitcoin.OutPoint.newBuilder().apply {
-            this.hash = ByteString.copyFrom(utxoTxId)
-            this.index = 0
-            this.sequence = (4294967293).toInt()
-        }.build()
-
-        val utxo = Bitcoin.UnspentTransaction.newBuilder().apply {
-            this.amount = 360476
-            this.outPoint = outPoint
-            this.script = ByteString.copyFrom(script.data())
-        }.build()
-
-        val input = Bitcoin.SigningInput.newBuilder().apply {
-            this.amount = 50000
-            this.hashType = BitcoinSigHashType.ALL.value()
-            this.toAddress = toAddress
-            this.changeAddress = changeAddress
-            this.byteFee = 62
-            this.coinType = coinBtc.value()
-            this.addPrivateKey(ByteString.copyFrom(secretPrivateKeyBtc.data()))
-            this.putScripts(BitNumeric.toHexString(scriptHash), ByteString.copyFrom(BitcoinScript.buildPayToPublicKeyHash(scriptHash).data()))
-        }
-
-        input.addUtxo(utxo)
-
-        val plan = AnySigner.plan(input.build(), CoinType.BITCOIN, Bitcoin.TransactionPlan.parser())
-
-        input.plan = plan
-        val output = AnySigner.sign(input.build(), CoinType.BITCOIN, Bitcoin.SigningOutput.parser())
-
-        assert(output.error.isEmpty())
-        val signedTransaction = output.encoded?.toByteArray()
-        Log.i("!!!!!", "Signed BTC transaction1: ${BitNumeric.toHexString(signedTransaction)}")*/
     }
 
     /**
@@ -418,7 +367,6 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         }
 
         val path = saveStoredKeyToLocal(storedKey)
-//        Timber.i("importByMnemonic name: $name, password: $password, path: $path, 助记词: $mnemonic")
         return path
     }
 

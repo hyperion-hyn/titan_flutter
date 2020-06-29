@@ -70,7 +70,7 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
   if (ciphertext.startsWith(Const.CIPHER_TEXT_PREFIX)) {
     // p2p share
     ciphertext = ciphertext.substring(Const.CIPHER_TEXT_PREFIX.length);
-    cmsg = await TitanPlugin.decrypt(ciphertext);
+    cmsg = await TitanPlugin.decrypt(ciphertext,"","");
   } else if (ciphertext.startsWith(Const.CIPHER_TOKEN_PREFIX)) {
     // common share
     ciphertext = ciphertext.substring(Const.CIPHER_TOKEN_PREFIX.length);
@@ -83,7 +83,7 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
         var clsMap = await repository.api
             .getCls(commitment: ciphertext, pubkey: pubKey, kid: kid);
         var ct_b = clsMap['ct_b'];
-        cmsg = await TitanPlugin.decrypt(ct_b);
+        cmsg = await TitanPlugin.decrypt(ct_b,"","");
       } catch (err) {
         logger.e(err);
       }
