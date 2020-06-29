@@ -23,6 +23,7 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -437,11 +438,13 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
         return WalletPage();
 
       case 2:
-        return BlocProvider(
+        return Map3NodePage();
+
+        /*return BlocProvider(
             create: (ctx) => DiscoverBloc(ctx),
             child: DiscoverPage(
               key: _discoverKey,
-            ));
+            ));*/
 
       case 3:
         return InformationPage();
