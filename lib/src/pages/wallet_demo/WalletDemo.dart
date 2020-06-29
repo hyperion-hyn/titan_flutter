@@ -735,11 +735,28 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+              if (activeWallet == null) {
+                print('请导入钱包');
+              }
+
               try {
                 var password = '111111';
-                Map<String, dynamic> params = {"a": 1, "d": 'd_p', "c": 'c_p', 'b': 'b_p'};
-                await Signer.signMessage(context, password, params);
-                print(params);
+                Map<String, dynamic> params = {
+                  "a": 1,
+                  "b": "b_p",
+                  "c": "c_p",
+                  "d": "d_p",
+                  "ts": "1593316816860",
+                  "address": "0xb0a2432e01b85F1c00032d3EB21DCF0298f52A15",
+                };
+
+                var method = 'POST';
+                var host = "10.10.1.120:8989";
+                var path = "/api/index/testWalletSign";
+
+                var signed = await Signer.signApi(activeWallet, password, method, host, path, params);
+                print(signed);
               } catch (e) {
                 logger.e(e);
               }
@@ -750,7 +767,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               try {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-                var hashTx = await activeWallet.sendBitcoinTransaction("111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                var hashTx = await activeWallet.sendBitcoinTransaction(
+                    "111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
                 logger.i('Bitcoin交易已提交，交易hash $hashTx');
               } catch (e) {
                 logger.e(e);
