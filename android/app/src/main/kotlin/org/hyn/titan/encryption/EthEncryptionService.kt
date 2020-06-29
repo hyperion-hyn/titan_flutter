@@ -63,21 +63,27 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
             return 0L
         }
 
-    override fun encryptSync(publicKeyStr: String?, message: String, password: String, fileName: String): Map<String,String> {
+    override fun encryptSync(comPublicKeyStr: String?, message: String, password: String, fileName: String): Map<String,String> {
         var tempPublicKey = ""
-        if(publicKeyStr == null || publicKeyStr == "") {
+        var comPublicKey = ""
+        if(comPublicKeyStr == null || comPublicKeyStr == "") {
             var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
             var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
             tempPublicKey = publicKeyEntity?.description() ?: ""
+            comPublicKey = publicKeyEntity?.compressed()?.description() ?: ""
+            if(comPublicKey.isNotEmpty()){
+                comPublicKey = "0x$comPublicKey"
+            }
         }else{
-            tempPublicKey = publicKeyStr
+            tempPublicKey = cipher.deCompressPubkey(comPublicKeyStr)
+            comPublicKey = comPublicKeyStr
         }
         var cipherText = cipher.encrypt(tempPublicKey, message)
             if (cipherText.isEmpty()) {
             throw Exception("encrypt error")
         }
 
-        return mapOf("publicKey" to tempPublicKey,"cipherText" to cipherText)
+        return mapOf("publicKey" to comPublicKey,"cipherText" to cipherText)
     }
 
     override fun encrypt(publicKeyStr: String?, message: String, password: String, fileName: String): Flowable<Map<String,String>> {
