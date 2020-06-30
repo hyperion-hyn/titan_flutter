@@ -101,22 +101,13 @@ class TitanPlugin {
     return await callChannel.invokeMethod("getExpired");
   }
 
-  static Future<String> encrypt(String pubKey, String message,{isCompress = false}) async {
+  static Future<String> encrypt(String pubKey, String message) async {
     return await callChannel
-        .invokeMethod("encrypt", {'publicKey': pubKey, 'message': message, 'isCompress': isCompress});
+        .invokeMethod("encrypt", {'pub': pubKey, 'message': message});
   }
 
-  static Future<Map> activeEncrypt(String message, String password, String fileName) async {
-    return await callChannel
-        .invokeMethod("activeEncrypt", {'message': message, 'password': password, 'fileName': fileName});
-  }
-
-  static Future<String> decrypt(String cipherText, String password, String fileName) async {
+  static Future<String> decrypt(String cipherText) async {
     return await callChannel.invokeMethod("decrypt", cipherText);
-  }
-
-  static Future<String> trustDecrypt(String cipherText, String password, String fileName) async {
-    return await callChannel.invokeMethod("trustDecrypt", {'cipherText': cipherText, 'password': password, 'fileName': fileName});
   }
 
   static StreamSubscription listenCipherEvent(onData,
