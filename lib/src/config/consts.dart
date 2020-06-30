@@ -12,6 +12,7 @@ class Const {
       return 'https://api.hyn.space/';
   }
 
+  static String EXCHANGE_DOMAIN = 'http://10.10.1.120:8989';
 
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){

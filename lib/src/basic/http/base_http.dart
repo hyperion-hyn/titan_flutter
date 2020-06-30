@@ -137,8 +137,9 @@ class BaseHttpCore {
     }
     options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
-    options.headers["walletAddress"] =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+    options.headers["walletAddress"] = Keys.rootKey.currentContext != null
+        ? WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? ''
+        : '';
 
     // todo rich add userid
 
@@ -179,7 +180,9 @@ class BaseHttpCore {
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = Keys.rootKey.currentContext != null
+          ? S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString())
+          : 'net work error';
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
