@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -143,8 +144,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                       }
                     },
                     child: GestureDetector(
-                      child: Icon(Icons.content_copy,
-                          size: 22, color: Colors.black45),
+                      child: Icon(Icons.content_copy, size: 22, color: Colors.black45),
                     ),
                   );
                 },
@@ -347,9 +347,10 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
   }
 
   void share() async {
+    //print("[my-encrypted] === share");
+
     try {
-      RenderRepaintBoundary boundary =
-          _qrImageBoundaryKey.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
@@ -358,8 +359,12 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
       final tempDir = await getTemporaryDirectory();
       final file = await File('${tempDir.path}/$path').create();
       await file.writeAsBytes(pngBytes);
-
-      TitanPlugin.shareImage(path, S.of(context).share_qrcode);
+      //print("[my-encrypted] === share, path:$path, file:$file");
+      if (Platform.isIOS) {
+        await Share.file(S.of(context).share_qrcode, path, pngBytes, 'image/jpeg');
+      } else {
+        TitanPlugin.shareImage(path, S.of(context).share_qrcode);
+      }
     } catch (e) {
       print(e.toString());
       Fluttertoast.showToast(msg: S.of(context).share_fail);
