@@ -8,6 +8,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -45,6 +48,12 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   void didPopNext() async {
     callLater((_) {
       BlocProvider.of<WalletCmpBloc>(context)
@@ -53,7 +62,7 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   @override
-  void onCreated() {
+  Future<void> onCreated() async {
     //update quotes
     BlocProvider.of<QuotesCmpBloc>(context)
         .add(UpdateQuotesEvent(isForceUpdate: true));
@@ -66,15 +75,29 @@ class _WalletPageState extends BaseState<WalletPage>
   Widget build(BuildContext context) {
     super.build(context);
 
-    return Container(
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Expanded(child: _buildWalletView(context)),
-          //hyn quotes view
-          // hynQuotesView(),
-          _authorizedView(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Center(
+          child: Text(
+            S.of(context).wallet,
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(child: _buildWalletView(context)),
+            //hyn quotes view
+            // hynQuotesView(),
+            _authorizedView(),
+          ],
+        ),
       ),
     );
   }

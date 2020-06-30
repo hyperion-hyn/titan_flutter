@@ -5,6 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/auth/bloc/auth_state.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -16,6 +20,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_bloc.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/setting_on_launcher/setting_on_launcher_page.dart';
 
 class RootPageControlComponent extends StatefulWidget {
@@ -27,7 +32,8 @@ class RootPageControlComponent extends StatefulWidget {
   }
 }
 
-class RootPageControlComponentState extends BaseState<RootPageControlComponent> {
+class RootPageControlComponentState
+    extends BaseState<RootPageControlComponent> {
   @override
   void initState() {
     super.initState();
@@ -42,42 +48,60 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
 //  }
 
   _initSetting() async {
-    var languageStr = await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
+    var languageStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_LANGUAGE);
     LanguageModel languageModel = languageStr != null
         ? LanguageModel.fromJson(json.decode(languageStr))
         : SupportedLanguage.defaultModel(context);
 
     var areaModelStr = await AppCache.getValue<String>(PrefsKey.SETTING_AREA);
-    AreaModel areaModel =
-        areaModelStr != null ? AreaModel.fromJson(json.decode(areaModelStr)) : SupportedArea.defaultModel();
+    AreaModel areaModel = areaModelStr != null
+        ? AreaModel.fromJson(json.decode(areaModelStr))
+        : SupportedArea.defaultModel();
 
-    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign =
-    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
 
     BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
-      areaModel: areaModel,
-      languageModel: languageModel,
-      quotesSign: quotesSign
-    ));
+        areaModel: areaModel,
+        languageModel: languageModel,
+        quotesSign: quotesSign));
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
 
-    Future.delayed(Duration(milliseconds: 1500),(){
+    ///Every time app restart, set to false first
+    BlocProvider.of<AuthBloc>(context).add(UpdateAuthStatusEvent(
+      authorized: false,
+    ));
+
+    var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
+    AuthConfigModel authConfigModel =
+        AuthConfigModel.fromJson(json.decode(authConfigStr));
+    BlocProvider.of(context).add(UpdateAuthConfigEvent(
+      authConfigModel: authConfigModel,
+    ));
+
+    Future.delayed(Duration(milliseconds: 1500), () {
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
     });
   }
 
   void launchRootPage() async {
     var prefs = await SharedPreferences.getInstance();
-    bool notFirstTimeLauncher = prefs.containsKey(PrefsKey.FIRST_TIME_LAUNCHER_KEY);
+    bool notFirstTimeLauncher =
+        prefs.containsKey(PrefsKey.FIRST_TIME_LAUNCHER_KEY);
     if (notFirstTimeLauncher) {
 //    if (false) {
       //launch dashboard
-      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: AppTabBarPage()));
+      BlocProvider.of<RootPageControlBloc>(context)
+          .add(SetRootPageEvent(page: AppTabBarPage()));
     } else {
       //launch setting
-      BlocProvider.of<RootPageControlBloc>(context).add(SetRootPageEvent(page: SettingOnLauncherPage()));
+      BlocProvider.of<RootPageControlBloc>(context)
+          .add(SetRootPageEvent(page: SettingOnLauncherPage()));
     }
   }
 
@@ -85,8 +109,10 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<ScaffoldMapBloc>(create: (context) => ScaffoldMapBloc(context)),
+        BlocProvider<ScaffoldMapBloc>(
+            create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
+        BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {
@@ -95,8 +121,8 @@ class RootPageControlComponentState extends BaseState<RootPageControlComponent> 
           }
           return Scaffold(
             body: Center(
-              //child: Text('please set the root page!'),
-            ),
+                //child: Text('please set the root page!'),
+                ),
           );
         },
       ),

@@ -122,6 +122,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   @override
   Widget build(BuildContext context) {
+    var ethQuotePrice = QuotesInheritedModel.of(context)
+            .activatedQuoteVoAndSign('ETH')
+            ?.quoteVo
+            ?.price ??
+        0;
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceEstimateStr = "";
@@ -288,7 +293,13 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: GasInputWidget(),
+              child: GasInputWidget(
+                currentEthPrice: ethQuotePrice,
+                callback: (double gasPrice, double gasPriceLimit) {
+                  print(
+                      "[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -534,14 +545,16 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               activatedWalletVo.getBitcoinZPub(),
               widget.receiverAddress,
               gasPrice.toInt(),
-              ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
-          if(transResult["code"] != 0){
-            ExceptionProcess.uploadPoiException(transResult,"bitcoin upload");
-            Fluttertoast.showToast(msg: "${transResult.toString()}",
+              ConvertTokenUnit.decimalToWei(
+                      Decimal.parse(widget.transferAmount), 8)
+                  .toInt());
+          if (transResult["code"] != 0) {
+            ExceptionProcess.uploadPoiException(transResult, "bitcoin upload");
+            Fluttertoast.showToast(
+                msg: "${transResult.toString()}",
                 toastLength: Toast.LENGTH_LONG);
             return;
           }
-
         } else {
           await _transferErc20(
               walletPassword,
@@ -553,7 +566,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
         Application.router.navigateTo(context, Routes.confirm_success_papge);
       } catch (_) {
-        ExceptionProcess.uploadPoiException(_,"ETH or Bitcoin upload");
+        ExceptionProcess.uploadPoiException(_, "ETH or Bitcoin upload");
         setState(() {
           isTransferring = false;
         });

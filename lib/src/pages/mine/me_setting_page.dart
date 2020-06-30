@@ -3,6 +3,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/pages/mine/auth_setting_page.dart';
 
 import 'me_area_page.dart';
 import 'me_language_page.dart';
@@ -59,7 +60,14 @@ class _MeSettingState extends State<MeSettingPage> {
             }),
             Divider(
               height: 1,
-            )
+            ),
+            _buildMenuBar('快速验证', '', () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AuthSettingPage()));
+            }),
+            Divider(
+              height: 1,
+            ),
           ],
         ));
   }

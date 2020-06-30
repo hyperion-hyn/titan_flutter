@@ -104,8 +104,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
 
-    var totalGasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit
-        + SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
+    var totalGasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit +
+        SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
     var gasEstimate = ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
@@ -230,6 +230,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     // todo: test_jison_0520_close
+                    /*
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
@@ -363,10 +364,13 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                         ],
                       ),
                     ),
-                    /*GasInputWidget(currentEthPrice: ethQuotePrice, callback: (double gasPrice, double gasPriceLimit){
-                      print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                    }),*/
-                    Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
+                    Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf"))),
+                    */
+                    GasInputWidget(
+                        currentEthPrice: ethQuotePrice,
+                        callback: (double gasPrice, double gasPriceLimit) {
+                          print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
+                        }),
                   ],
                 ),
               ),
