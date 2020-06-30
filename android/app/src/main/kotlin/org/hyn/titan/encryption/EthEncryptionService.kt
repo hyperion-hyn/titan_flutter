@@ -20,6 +20,8 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
     private val rsaEncryption: RsaEncryption = RsaEncryption(1024)
     private var rsaEntry: KeyStore.PrivateKeyEntry? = null
     private val sharedPreferences = context.getSharedPreferences("eth_encryption", Context.MODE_PRIVATE)
+    private var pubStr:String? = null
+    private var encryptedPrivateStr:String? = null
 
     init {
         try {
@@ -36,13 +38,9 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
             if (rsaEntry != null) {
                 val pairs = cipher.genKeyPair().split(',')
                 val prvStr = pairs[0]
-                val pubStr = pairs[1]
-                val encryptedPrivateStr = rsaEncryption.encrypt(prvStr)
+                pubStr = pairs[1]
+                encryptedPrivateStr = rsaEncryption.encrypt(prvStr)
                 Timber.i("Eth public key is: $pubStr")
-                sharedPreferences.edit()
-                        .putString("public", pubStr)
-                        .putString("private", encryptedPrivateStr)
-                        .apply()
 
                 return@fromCallable true
             }
@@ -51,7 +49,7 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
     }
 
     override val publicKey: String?
-        get() = sharedPreferences.getString("public", null)
+        get() = pubStr
 
     override val expireTime: Long
         get() {
@@ -86,19 +84,74 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
         return mapOf("publicKey" to comPublicKey,"cipherText" to cipherText)
     }
 
-    override fun encrypt(publicKeyStr: String?, message: String, password: String, fileName: String): Flowable<Map<String,String>> {
+    override fun trustActiveEncrypt(message: String, password: String, fileName: String): Flowable<String> {
         return Flowable.fromCallable {
-            return@fromCallable encryptSync(publicKeyStr, message, password, fileName)
+            var comPublicKey = ""
+            var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
+            var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
+            comPublicKey = publicKeyEntity?.compressed()?.description() ?: ""
+            if(comPublicKey.isNotEmpty()){
+                comPublicKey = "0x$comPublicKey"
+            }
+            return@fromCallable comPublicKey
         }
     }
 
-    override fun decrypt(cipherText: String,fileName: String,password: String): Flowable<String> {
+    override fun encrypt(publicKeyStr: String?, message: String, isCompress:Boolean): Flowable<String> {
+        return Flowable.fromCallable {
+            var tempPublicKey = ""
+            if(isCompress) {
+                tempPublicKey = cipher.deCompressPubkey(publicKeyStr)
+            }else{
+                tempPublicKey = publicKeyStr ?: ""
+            }
+            var cipherText = cipher.encrypt(tempPublicKey, message)
+            if (cipherText.isEmpty()) {
+                throw Exception("encrypt error")
+            }
+            return@fromCallable cipherText
+        }
+    }
+
+    /*override fun activeEncrypt(message: String, password: String, fileName: String): Flowable<Map<String,String>> {
+        return Flowable.fromCallable {
+            var tempPublicKey = ""
+            var comPublicKey = ""
+            var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
+            var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
+            tempPublicKey = publicKeyEntity?.description() ?: ""
+            comPublicKey = publicKeyEntity?.compressed()?.description() ?: ""
+            if(comPublicKey.isNotEmpty()){
+                comPublicKey = "0x$comPublicKey"
+            }
+
+            var cipherText = cipher.encrypt(tempPublicKey, message)
+            if (cipherText.isEmpty()) {
+                throw Exception("encrypt error")
+            }
+            return@fromCallable mapOf("publicKey" to comPublicKey,"cipherText" to cipherText)
+        }
+    }*/
+
+    override fun decrypt(ciphertext: String): Flowable<String> {
+        return Flowable.fromCallable {
+//            val privateKeyStr = sharedPreferences.getString("private", null)
+            if (encryptedPrivateStr != null) {
+                val privateKeyECStr = rsaEncryption.decrypt(encryptedPrivateStr)
+                val message = cipher.decrypt(privateKeyECStr, ciphertext)
+                if (message.isNotEmpty()) {
+                    return@fromCallable message
+                }
+            }
+            throw Exception("decrypt error")
+        }
+    }
+
+    override fun trustDecrypt(cipherText: String,fileName: String,password: String): Flowable<String> {
         return Flowable.fromCallable {
             var privateKey = KeyStoreUtil.getPrvKeyEntity(getKeyStorePath(fileName),password,CoinType.ETHEREUM)
             var privateKeyStr = Numeric.toHexString(privateKey?.data(),false)
-//            val privateKeyStr = sharedPreferences.getString("private", null)
             if (privateKeyStr != null) {
-//                val privateKeyECStr = rsaEncryption.decrypt(privateKeyStr)
                 val message = cipher.decrypt(privateKeyStr, cipherText)
                 if (message.isNotEmpty()) {
                     return@fromCallable message

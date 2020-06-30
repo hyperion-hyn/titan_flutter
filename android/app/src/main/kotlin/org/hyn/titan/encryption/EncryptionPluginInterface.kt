@@ -9,6 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 import org.hyn.titan.utils.md5
 import org.hyn.titan.utils.toHexByteArray
 import org.hyn.titan.wallet.KeyStoreUtil
+import org.web3j.abi.datatypes.Bool
 import timber.log.Timber
 import wallet.core.jni.CoinType
 import wallet.core.jni.StoredKey
@@ -63,6 +64,10 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 decrypt(call, result)
                 return true
             }
+            "trustDecrypt" -> {
+                trustDecrypt(call, result)
+                return true
+            }
         }
         return false
     }
@@ -80,7 +85,20 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     }
 
     private fun getPublicKey(call: MethodCall, result: MethodChannel.Result) {
-        result.success(encryptionService.publicKey)
+        if(encryptionService.publicKey == null || System.currentTimeMillis() > encryptionService.expireTime){
+            encryptionService.generateKeyPairAndStore(3600)
+                    .subscribe({
+                        encryptionService.publicKey?.let { pubKey ->
+                            result.success(pubKey)
+//                            cipherEventSink?.success(pubKey)
+                        }
+                    }, {
+                        it.printStackTrace()
+                        result.error(it.message, null, null)
+                    })
+        }else {
+            result.success(encryptionService.publicKey)
+        }
     }
 
     private fun initOrCreateKeyPair(expired: Long, result: MethodChannel.Result) {
@@ -91,11 +109,10 @@ class EncryptionPluginInterface(private val context: Context, private val binary
 
     private fun activeEncrypt(call: MethodCall, result: MethodChannel.Result) {
 
-        var publicKey = call.argument<String>("publicKey")
         var message = call.argument<String>("message") ?: ""
         var password = call.argument<String>("password") ?: ""
         var fileName = call.argument<String>("fileName") ?: ""
-        var resultMapFlowable = encryptionService.encrypt(publicKey, message, password, fileName)
+        var resultMapFlowable = encryptionService.trustActiveEncrypt(message, password, fileName)
         resultMapFlowable.subscribe{
             result.success(it)
         }
@@ -103,25 +120,29 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     }
 
     private fun encrypt(call: MethodCall, result: MethodChannel.Result) {
-
         var publicKey = call.argument<String>("publicKey")
         var message = call.argument<String>("message") ?: ""
-        var password = call.argument<String>("password") ?: ""
-        var fileName = call.argument<String>("fileName") ?: ""
-        var resultMapFlowable = encryptionService.encrypt(publicKey, message, password, fileName)
+        var isCompress = call.argument<Boolean>("isCompress") ?: false
+        var resultMapFlowable = encryptionService.encrypt(publicKey, message,isCompress)
         resultMapFlowable.subscribe{
-            result.success(it["cipherText"])
+            result.success(it)
         }
-        
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
+        val ciphertext = call.arguments as String;
+        val message = encryptionService.decrypt(ciphertext)
+        message.subscribe{
+            Timber.i("message:$message")
+            result.success(it);
+        }
+    }
+
+    private fun trustDecrypt(call: MethodCall, result: MethodChannel.Result) {
         val cipherText = call.argument<String>("cipherText") ?: ""
         val password = call.argument<String>("password") ?: ""
         val fileName = call.argument<String>("fileName") ?: ""
-
-//        val ciphertext = call.arguments as String;
-        val messageFlowable = encryptionService.decrypt(cipherText,fileName,password)
+        val messageFlowable = encryptionService.trustDecrypt(cipherText,fileName,password)
         messageFlowable.subscribe {
             Timber.i("message:$it")
             result.success(it);

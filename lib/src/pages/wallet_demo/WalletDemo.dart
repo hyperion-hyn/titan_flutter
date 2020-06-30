@@ -775,7 +775,7 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var encryptMsg = await TitanPlugin.encrypt("0x024f5df535b366ff60105cd2423a66e8eda8d00184676449e7b6856188628575f2", "abcabc111");
+                var encryptMsg = await TitanPlugin.encrypt("0x024f5df535b366ff60105cd2423a66e8eda8d00184676449e7b6856188628575f2", "abcabc111", isCompress: true);
                 logger.i('位置加密msg ${json.encode(encryptMsg).toString()}');
               } catch (e) {
                 logger.e(e);

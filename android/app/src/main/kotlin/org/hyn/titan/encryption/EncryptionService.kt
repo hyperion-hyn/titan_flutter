@@ -9,9 +9,13 @@ interface EncryptionService {
 
     val expireTime: Long
 
-    fun encrypt(publicKeyStr: String?, message: String, password: String, fileName: String): Flowable<Map<String,String>>
+    fun trustActiveEncrypt(message: String, password: String, fileName: String): Flowable<String>
+
+    fun encrypt(publicKeyStr: String?, message: String, isCompress:Boolean): Flowable<String>
 
     fun encryptSync(publicKeyStr: String?, message: String, password: String, fileName: String): Map<String,String>
 
-    fun decrypt(cipherText: String,fileName: String,password: String): Flowable<String>
+    fun decrypt(cipherText: String): Flowable<String>
+
+    fun trustDecrypt(cipherText: String,fileName: String,password: String): Flowable<String>
 }
