@@ -1,5 +1,6 @@
 package org.hyn.titan.utils
 
+import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
@@ -35,12 +36,12 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
 //            if("contract" == host){
                 var params = data.pathSegments
                 if(params.size == 1){
-                    var contentMap:Map<String,String> = mapOf()
+                    var contentMap:MutableMap<String,String> = mutableMapOf()
                     data.queryParameterNames.mapIndexed { index, keyStr ->
-                        contentMap.plus(mapOf(keyStr to data.getQueryParameter(keyStr)))
+                        contentMap.put(keyStr, data.getQueryParameter(keyStr) ?: "")
                     }
                     var mapValue = mapOf("type" to host,"subType" to params[0],"content" to contentMap)
-                    methodChannel.invokeMethod("urlLauncher",mapValue)
+                    methodChannel.invokeMethod("p2fDeeplink",mapValue)
                     /*var contractId = data.getQueryParameter("contractId")
                     var key = data.getQueryParameter("key")
                     var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId,"key" to key))
@@ -50,10 +51,16 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
         }
     }
 
-    fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
+    fun setMethodCallHandler(context: Context, call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
             "clipboardData" -> {
                 getClipboardData()
+                result.success(true)
+                true
+            }
+            "f2pDeeplink" -> {
+                var intent = (context as Activity).intent
+                deeplinkStart(intent.data)
                 result.success(true)
                 true
             }

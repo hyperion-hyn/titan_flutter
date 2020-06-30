@@ -9,6 +9,8 @@ import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
@@ -27,6 +29,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/encryption.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
@@ -47,7 +50,7 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMixin {
+class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
@@ -114,8 +117,12 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       _urlLauncherAction(values);
     };
 
-//    DMapCreationModel model = DMapDefine.kMapList["embassy"];
-//    createDAppWidgetFunction = model.createDAppWidgetFunction;
+  }
+
+  @override
+  void onCreated() {
+    TitanPlugin.f2pDeeplink();
+    super.onCreated();
   }
 
   void getClipboardData() async {
@@ -144,7 +151,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                 )));
   }
 
-  void _urlLauncherAction(Map values) {
+  void _urlLauncherAction(Map values) async {
     var type = values["type"];
     var subType = values["subType"];
     var content = values["content"];
@@ -155,12 +162,14 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+    } else if (type == "location" && subType == 'p2pshare') {
+      var encryptedMsg = content['msg'];
+      var poi = await ciphertextToPoi(
+        Injector.of(context).repository,
+        encryptedMsg,
+      );
+      BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));
     }
-    /*else if(type == "save" && subType == "shareUser"){
-      var shareUser = content["shareUserValue"];
-      MemoryCache.shareKey = shareUser;
-      print("shareuser clipboard $shareUser");
-    }*/
   }
 
   @override

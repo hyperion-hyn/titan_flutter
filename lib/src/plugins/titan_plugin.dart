@@ -1,8 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/src/components/inject/injector.dart';
+import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/encryption.dart';
 
 typedef MessagePushCallBack = void Function(Map values);
 typedef UrlLauncherCallBack = void Function(Map values);
@@ -51,20 +60,15 @@ class TitanPlugin {
         msgPushChangeCallBack(result);
         break;
 
-      case "urlLauncher":
-        /*
-        Map values = {
-          "type": "contract",
-          "subType": "detail",
-          "content": {
-              "contractId": 8,
-          },
-        };
-        */
+      case "p2fDeeplink":
         Map result = call.arguments;
         urlLauncherCallBack(result);
         break;
     }
+  }
+
+  static Future<void> f2pDeeplink() async {
+    await callChannel.invokeMethod('f2pDeeplink');
   }
 
   static Future<String> greetNative() async {

@@ -45,13 +45,13 @@ class MainActivity : FlutterActivity() {
         AppToolsPlugin.registerWith(this)
         UmengPlugin.registerWith(this)
         GlobalScope.launch {
-            Thread.sleep(2000)
+            /*Thread.sleep(2000)
             withContext(Dispatchers.Main) {
                 var data = intent.data
                 if(data != null){
                     AppToolsPlugin.deeplinkStart(data)
                 }
-            }
+            }*/
 
             Thread.sleep(10000)
             withContext(Dispatchers.Main){
@@ -67,7 +67,7 @@ class MainActivity : FlutterActivity() {
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
-            appToolsPlugin.setMethodCallHandler(call, result)
+            appToolsPlugin.setMethodCallHandler(this@MainActivity, call, result)
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
