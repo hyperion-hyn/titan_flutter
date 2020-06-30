@@ -16,9 +16,11 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
+import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/widget/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
 class HomePanel extends StatefulWidget {
@@ -99,6 +101,7 @@ class HomePanelState extends State<HomePanel> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
+            flex: 18,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -143,7 +146,7 @@ class HomePanelState extends State<HomePanel> {
                       child: Stack(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(top: 4.0, left: 8),
+                            padding: const EdgeInsets.only(top: 4.0, left: 16),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,6 +177,7 @@ class HomePanelState extends State<HomePanel> {
                                 'res/drawable/global.png',
                                 width: 32,
                                 height: 32,
+                                color: Colors.white,
                               )),
                         ],
                       ),
@@ -209,37 +213,44 @@ class HomePanelState extends State<HomePanel> {
                       child: Stack(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(top: 4.0, left: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            padding: const EdgeInsets.only(left: 16),
+                            child: Row(
                               children: <Widget>[
-                                Text(
-                                  S.of(context).Hyperion,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      S.of(context).Hyperion,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        S.of(context).project_introduction,
+                                        style: TextStyle(
+                                            color:
+                                                Colors.white.withOpacity(0.8),
+                                            fontSize: 12),
+                                      ),
+                                    )
+                                  ],
                                 ),
+                                Spacer(),
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 8.0),
-                                  child: Text(
-                                    S.of(context).project_introduction,
-                                    style: TextStyle(
-                                        color: Colors.white.withOpacity(0.8),
-                                        fontSize: 12),
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    'res/drawable/ic_hyperion.png',
+                                    width: 40,
+                                    height: 40,
+                                    color: Colors.white,
                                   ),
                                 )
                               ],
                             ),
                           ),
-                          Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Image.asset(
-                                'res/drawable/ic_hyperion_white.png',
-                                width: 32,
-                                height: 32,
-                              )),
                         ],
                       ),
                     ),
@@ -252,6 +263,7 @@ class HomePanelState extends State<HomePanel> {
             width: 12,
           ),
           Expanded(
+            flex: 15,
             child: InkWell(
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
               onTap: () {
@@ -277,7 +289,7 @@ class HomePanelState extends State<HomePanel> {
                 child: Stack(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0, left: 8),
+                      padding: const EdgeInsets.only(top: 16.0, left: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -307,6 +319,7 @@ class HomePanelState extends State<HomePanel> {
                           'res/drawable/data.png',
                           width: 32,
                           height: 32,
+                          color: Colors.white,
                         )),
                   ],
                 ),
@@ -357,30 +370,18 @@ class HomePanelState extends State<HomePanel> {
             ),
           ),
           Text(S.of(context).dmap_tools, style: TextStyle(color: Colors.grey)),
-          Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: InkWell(
-              onTap: () async {
-                await activeDMap('encryptShare');
-                var mapboxController =
-                    (Keys.mapContainerKey.currentState as MapContainerState)
-                        ?.mapboxMapController;
-
-                var lastLocation = await mapboxController?.lastKnownLocation();
-                if (lastLocation != null) {
-                  Future.delayed(Duration(milliseconds: 500)).then((value) {
-                    mapboxController?.animateCamera(
-                        CameraUpdate.newLatLngZoom(lastLocation, 17));
-                  });
-                }
-              },
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              child: Container(
-                padding: EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                    color: HexColor("#EFFBFD"),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
-                child: Row(
+          SizedBox(
+            height: 16,
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: HexColor('#FFEDFCFF'),
+            ),
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
                   children: <Widget>[
                     Image.asset('res/drawable/ic_dmap_location_share.png',
                         width: 32, height: 32),
@@ -407,11 +408,87 @@ class HomePanelState extends State<HomePanel> {
                         ),
                       ),
                     ),
-                    Image.asset('res/drawable/ic_dmap_location_share_arrow.png',
-                        width: 22, height: 22),
                   ],
                 ),
-              ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Row(
+                  children: <Widget>[
+                    Spacer(),
+                    CustomClickOvalButton(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.lock_open,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 4.0,
+                          ),
+                          Text(
+                            '发送',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13.0),
+                          )
+                        ],
+                      ),
+                      () async {
+                        await activeDMap('encryptShare');
+                        var mapboxController = (Keys.mapContainerKey
+                                .currentState as MapContainerState)
+                            ?.mapboxMapController;
+
+                        var lastLocation =
+                            await mapboxController?.lastKnownLocation();
+                        if (lastLocation != null) {
+                          Future.delayed(Duration(milliseconds: 500))
+                              .then((value) {
+                            mapboxController?.animateCamera(
+                                CameraUpdate.newLatLngZoom(lastLocation, 17));
+                          });
+                        }
+                      },
+                      width: 110,
+                      height: 37,
+                    ),
+                    Spacer(),
+                    CustomClickOvalButton(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.lock_outline,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            '接收',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13.0),
+                          )
+                        ],
+                      ),
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyEncryptedAddrPage()));
+                      },
+                      width: 110,
+                      height: 37,
+                    ),
+                    Spacer()
+                  ],
+                )
+              ],
             ),
           ),
           Padding(
@@ -419,125 +496,124 @@ class HomePanelState extends State<HomePanel> {
             child: Text(S.of(context).dmap_life,
                 style: TextStyle(color: Colors.grey)),
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: SizedBox(
-              height: 80,
-              child: Row(
-                children: <Widget>[
-                  //全球大使馆
-                  Expanded(
-                    child: InkWell(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      onTap: () {
-                        activeDMap('embassy');
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                            color: HexColor("#EFFBFD"),
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Row(
-                          children: <Widget>[
-                            Image.asset(
-                              'res/drawable/ic_dmap_mbassy.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      S.of(context).embassy_guide,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 8.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              S.of(context).global_embassies,
-                                              style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 12),
-                                            ),
+          SizedBox(
+            height: 16,
+          ),
+          SizedBox(
+            height: 80,
+            child: Row(
+              children: <Widget>[
+                //全球大使馆
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    onTap: () {
+                      activeDMap('embassy');
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                          color: HexColor("#EFFBFD"),
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: Row(
+                        children: <Widget>[
+                          Image.asset(
+                            'res/drawable/ic_dmap_mbassy.png',
+                            width: 28,
+                            height: 28,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).embassy_guide,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                            S.of(context).global_embassies,
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12),
                                           ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  //警察服务站
-                  Expanded(
-                    child: InkWell(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      onTap: () {
-                        activeDMap('policeStation');
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
-                        decoration: BoxDecoration(
-                            color: HexColor("#EFFBFD"),
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Row(
-                          children: <Widget>[
-                            Image.asset(
-                              'res/drawable/ic_dmap_police.png',
-                              width: 28,
-                              height: 28,
-                            ),
-                            Flexible(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      S.of(context).police_security_station,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12),
-                                    ),
-                                    Flexible(
-                                      flex: 2,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 8.0),
-                                        child: Text(
-                                          S.of(context).police_station_text,
-                                          style: TextStyle(
-                                              color: Colors.grey, fontSize: 12),
                                         ),
-                                      ),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          )
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                //警察服务站
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.all(Radius.circular(8)),
+                    onTap: () {
+                      activeDMap('policeStation');
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
+                      decoration: BoxDecoration(
+                          color: HexColor("#EFFBFD"),
+                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: Row(
+                        children: <Widget>[
+                          Image.asset(
+                            'res/drawable/ic_dmap_police.png',
+                            width: 28,
+                            height: 28,
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).police_security_station,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 12),
+                                  ),
+                                  Flexible(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(
+                                        S.of(context).police_station_text,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(

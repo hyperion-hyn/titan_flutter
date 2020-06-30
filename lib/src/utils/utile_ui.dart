@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/widget/auth_dialog/auth_dialog.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -29,7 +30,8 @@ class UiUtil {
   }
 
   static toast(String message) {
-    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white);
+    Fluttertoast.showToast(
+        msg: message, backgroundColor: Colors.black, textColor: Colors.white);
   }
 
   static String shortEthAddress(String address) {
@@ -39,7 +41,9 @@ class UiUtil {
     if (address.length < 9) {
       return address;
     }
-    return address.substring(0, 9) + "..." + address.substring(address.length - 9, address.length);
+    return address.substring(0, 9) +
+        "..." +
+        address.substring(address.length - 9, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -65,7 +69,8 @@ class UiUtil {
   }
 
   // alertView
-  static Future<T> showDialogWidget<T>(BuildContext context, {Widget title, Widget content, List<Widget> actions}) {
+  static Future<T> showDialogWidget<T>(BuildContext context,
+      {Widget title, Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -84,7 +89,8 @@ class UiUtil {
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
+      {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -112,11 +118,16 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
+  static Future<T> showRequestLocationAuthDialog<T>(
+      BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context,
-      isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
-      isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
+      isServiceTurnOff == true
+          ? S.of(context).open_location_service
+          : S.of(context).require_location,
+      isServiceTurnOff == true
+          ? S.of(context).open_location_service_message
+          : S.of(context).require_location_message,
       () => openSettingLocation(isServiceTurnOff),
     );
   }
@@ -136,7 +147,8 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
+  static Future<T> showDialogs<T>(
+      BuildContext context, String title, String content, Function func) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -157,12 +169,15 @@ class UiUtil {
     );
   }
 
-
   static bool isIPhoneX(BuildContext context) {
     if (Platform.isIOS) {
       return MediaQuery.of(context).padding.bottom > 0;
     }
     return false;
+  }
+
+  static showAuthDialog(BuildContext context) {
+    showDialog(context: context, child: AuthDialog());
   }
 }
 

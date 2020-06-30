@@ -5,6 +5,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/auth/bloc/auth_state.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -67,6 +71,18 @@ class RootPageControlComponentState
         quotesSign: quotesSign));
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+
+    ///Every time app restart, set to false first
+    BlocProvider.of<AuthBloc>(context).add(UpdateAuthStatusEvent(
+      authorized: false,
+    ));
+
+    var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
+    AuthConfigModel authConfigModel =
+        AuthConfigModel.fromJson(json.decode(authConfigStr));
+    BlocProvider.of(context).add(UpdateAuthConfigEvent(
+      authConfigModel: authConfigModel,
+    ));
 
     Future.delayed(Duration(milliseconds: 1500), () {
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());

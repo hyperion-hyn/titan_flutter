@@ -98,11 +98,16 @@ class PrefsKey {
 
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
+
+  static final WALLET_PUB_KEY_PREFIX_KEY = 'wallet_pub_';
+
+  ///auth
+  static const String AUTH_CONFIG = 'auth_config';
 }
 
 class SecurePrefsKey {
-  static const String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
-  static const String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
+  static final String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
+  static final String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
 }
 
 enum Status { idle, loading, success, failed, cancelled }
