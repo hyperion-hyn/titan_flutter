@@ -32,7 +32,10 @@ class AuthDialogBloc extends Bloc<AuthDialogEvent, AuthDialogState> {
       var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
       // _authConfigModel = AuthConfigModel.fromJson(json.decode(authConfigStr));
       _authConfigModel = AuthConfigModel(
-          useFace: true, useFingerprint: true, bioAuthEnabled: true);
+        useFace: true,
+        useFingerprint: true,
+        bioAuthEnabled: true,
+      );
       _checkAvailableBioMetrics();
     } else if (event is CheckBioAuthEvent) {
     } else if (event is ShowBioAuthRemainCountEvent) {
