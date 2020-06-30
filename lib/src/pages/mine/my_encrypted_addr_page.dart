@@ -36,24 +36,23 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
 
   GlobalKey _qrImageBoundaryKey = GlobalKey();
 
-  bool _hasActiveWallet = true;
-  bool _walletActivated = false;
-  String _walletPubKey = '';
-  WalletVo _activeWallet;
+//  bool _walletActivated = false;
+//  String _walletPubKey = '';
+//  WalletVo _activeWallet;
 
   @override
   void initState() {
     super.initState();
-    //queryData();
+    queryData();
   }
 
-  @override
-  void onCreated() {
-    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    if (_activeWallet != null) {
-      _getCurrentWalletPubKey();
-    }
-  }
+//  @override
+//  void onCreated() {
+//    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+//    if (_activeWallet != null) {
+//      _getCurrentWalletPubKey();
+//    }
+//  }
 
   void queryData() async {
     _pubKey = await TitanPlugin.getPublicKey();
@@ -62,33 +61,33 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
     setState(() {});
   }
 
-  _getCurrentWalletPubKey() async {
-    //      var walletPubKey = await AppCache.getValue(
+  // _getCurrentWalletPubKey() async {
+  //      var walletPubKey = await AppCache.getValue(
 //          '${PrefsKey.WALLET_PUB_KEY_PREFIX_KEY}${_activatedWalletVo.getEthAccount().address}');
-    var walletPubKey =
-        await AppCache.getValue(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
-    _walletActivated = walletPubKey != null;
-    if (walletPubKey != null) {
-      _walletPubKey = walletPubKey;
-      _walletActivated = true;
-    }
+//    var walletPubKey =
+//        await AppCache.getValue(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
+//    _walletActivated = walletPubKey != null;
+//    if (walletPubKey != null) {
+//      _walletPubKey = walletPubKey;
+//      _walletActivated = true;
+//    }
+//
+//    setState(() {});
+//  }
 
-    setState(() {});
-  }
-
-  _activateWallet() async {
-    ///Get pub key from TitanPlugin here
-    ///
-    var result = await AppCache.saveValue<String>(
-        '${PrefsKey.WALLET_PUB_KEY_PREFIX_KEY}${_activeWallet.wallet.getEthAccount().address}',
-        'PubKey');
-    setState(() {
-      _walletActivated = result;
-    });
-    if (!result) {
-      Fluttertoast.showToast(msg: '授权失败');
-    }
-  }
+//  _activateWallet() async {
+//    ///Get pub key from TitanPlugin here
+//    ///
+//    var result = await AppCache.saveValue<String>(
+//        '${PrefsKey.WALLET_PUB_KEY_PREFIX_KEY}${_activeWallet.wallet.getEthAccount().address}',
+//        'PubKey');
+//    setState(() {
+//      _walletActivated = result;
+//    });
+//    if (!result) {
+//      Fluttertoast.showToast(msg: '授权失败');
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +101,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: _activeWallet != null
-            ? _walletActivated ? _pubKeyView() : _walletNotActivatedView()
-            : _noActiveWalletView());
+        body: _pubKeyView());
   }
 
   _pubKeyView() {
@@ -171,7 +168,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                 },
                 child: Row(children: <Widget>[
                   Flexible(
-                      child: Text(_walletPubKey,
+                      child: Text(_pubKey,
                           style: TextStyle(
                             color: HexColor('#FF999999'),
                             height: 2.0,
@@ -304,7 +301,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
             height: 32,
           ),
           ClickOvalButton('授权', () {
-            _activateWallet();
+            // _activateWallet();
           })
         ],
       ),
