@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -24,7 +25,8 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/auth_dialog/auth_dialog.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -45,6 +47,7 @@ class ShowWalletView extends StatefulWidget {
 
 class _ShowWalletViewState extends State<ShowWalletView> {
   int _lastRequestCoinTime = 0;
+  bool _isShowBalances = true;
 
   @override
   void initState() {
@@ -105,18 +108,11 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                             Spacer(),
                             InkWell(
                               onTap: () async {
-                                if (!AuthInheritedModel.of(context)
-                                    .authorized) {
-                                  var authorized = await showDialog(
-                                      context: context, child: AuthDialog());
-                                  if (authorized != null) {
-                                    BlocProvider.of<AuthBloc>(context).add(
-                                        UpdateAuthStatusEvent(
-                                            authorized: authorized));
-                                  }
-                                }
+                                setState(() {
+                                  _isShowBalances = !_isShowBalances;
+                                });
                               },
-                              child: AuthInheritedModel.of(context).authorized
+                              child: _isShowBalances
                                   ? Image.asset(
                                       'res/drawable/ic_wallet_show_balances.png',
                                       height: 20,
@@ -152,7 +148,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                             width: 8,
                           ),
                           Text(
-                            AuthInheritedModel.of(context).authorized
+                            _isShowBalances
                                 ? '${FormatUtil.formatPrice(widget.walletVo.balance)}'
                                 : '*************',
                             style: TextStyle(
@@ -326,8 +322,17 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           ),
           RaisedButton(
             child: Text('验证dialog'),
-            onPressed: () {
-              showDialog(context: context, child: AuthDialog());
+            onPressed: () async {
+              if (AuthInheritedModel.of(context).bioAuthEnabled) {
+                var result =
+                    await showDialog(context: context, child: BioAuthDialog());
+                if (result != null && result) {
+                } else {
+                  _showPasswordBottomSheet();
+                }
+              } else {
+                _showPasswordBottomSheet();
+              }
             },
           ),
           RaisedButton(
@@ -341,6 +346,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               var password = await showModalBottomSheet(
                   isScrollControlled: true,
                   context: context,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
                   builder: (BuildContext context) {
                     return EnterWalletPasswordWidget();
                   });
@@ -424,7 +432,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    AuthInheritedModel.of(context).authorized
+                    _isShowBalances
                         ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
                         : '******',
                     textAlign: TextAlign.right,
@@ -437,7 +445,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      AuthInheritedModel.of(context).authorized
+                      _isShowBalances
                           ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
                           : '****',
                       style: TextStyles.textC9b9b9bS12,
@@ -470,5 +478,22 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         ),
       );
     }
+  }
+
+  _showPasswordBottomSheet() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        }).then((walletPassword) async {
+      if (walletPassword == null) {
+        return;
+      }
+      Fluttertoast.showToast(msg: walletPassword);
+    });
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
@@ -42,7 +44,9 @@ class _AuthManagerState extends BaseState<_AuthManager> {
         if (state is UpdateAuthStatusState) {
           authorized = state.authorized;
         } else if (state is UpdateAuthConfigState) {
-          authConfigModel = state.authConfigModel;
+          if (state.authConfigModel != null) {
+            authConfigModel = state.authConfigModel;
+          }
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(
@@ -73,6 +77,34 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
     @required this.authConfigModel,
     @required Widget child,
   }) : super(key: key, child: child);
+
+  bool get expired {
+    if (authConfigModel.lastAuthDate != null) {
+      return (authConfigModel.lastAuthDate + 7 * 24 * 3600) <
+          DateTime.now().millisecondsSinceEpoch;
+    } else {
+      return true;
+    }
+  }
+
+  bool get bioAuthEnabled {
+    return authConfigModel.useFace || authConfigModel.useFingerprint;
+  }
+
+  bool get showSetBioAuthDialog {
+    return bioAuthEnabled && !authConfigModel.setBioAuthAsked;
+  }
+
+  BiometricType get currentBioMetricType {
+    if (authConfigModel.availableBiometricTypes.contains(BiometricType.face)) {
+      return BiometricType.face;
+    } else if (authConfigModel.availableBiometricTypes
+        .contains(BiometricType.fingerprint)) {
+      return BiometricType.fingerprint;
+    } else {
+      return null;
+    }
+  }
 
   @override
   bool updateShouldNotify(AuthInheritedModel oldWidget) {

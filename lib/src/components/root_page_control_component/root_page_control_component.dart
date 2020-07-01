@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -77,10 +79,23 @@ class RootPageControlComponentState
       authorized: false,
     ));
 
+    List availableBiometricTypes = List();
+    try {
+      LocalAuthentication auth = LocalAuthentication();
+      availableBiometricTypes = await auth.getAvailableBiometrics();
+    } on PlatformException catch (e) {
+      print(e);
+    }
     var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
-    AuthConfigModel authConfigModel =
-        AuthConfigModel.fromJson(json.decode(authConfigStr));
-    BlocProvider.of(context).add(UpdateAuthConfigEvent(
+    AuthConfigModel authConfigModel = authConfigStr != null
+        ? AuthConfigModel.fromJson(json.decode(authConfigStr))
+        : AuthConfigModel(
+            useFace: false,
+            useFingerprint: false,
+            setBioAuthAsked: false,
+            availableBiometricTypes: availableBiometricTypes);
+
+    BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
       authConfigModel: authConfigModel,
     ));
 

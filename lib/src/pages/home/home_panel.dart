@@ -394,14 +394,14 @@ class HomePanelState extends State<HomePanel> {
                             Text(
                               S.of(context).private_sharing,
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 12),
+                                  fontWeight: FontWeight.w700, fontSize: 13),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Text(
                                 S.of(context).private_sharing_text,
                                 style:
-                                    TextStyle(color: Colors.grey, fontSize: 12),
+                                    TextStyle(color: Colors.grey, fontSize: 13),
                               ),
                             ),
                           ],
@@ -423,6 +423,7 @@ class HomePanelState extends State<HomePanel> {
                           Icon(
                             Icons.lock_open,
                             color: Colors.white,
+                            size: 20,
                           ),
                           SizedBox(
                             width: 4.0,
@@ -452,17 +453,18 @@ class HomePanelState extends State<HomePanel> {
                           });
                         }
                       },
-                      width: 110,
-                      height: 37,
+                      width: 100,
+                      height: 35,
                     ),
                     Spacer(),
                     CustomClickOvalButton(
                       Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: <Widget>[
-                          Icon(
-                            Icons.lock_outline,
-                            color: Colors.white,
+                          Image.asset(
+                            'res/drawable/ic_qrcode.png',
+                            width: 15,
+                            height: 15,
                           ),
                           SizedBox(
                             width: 4,
@@ -482,8 +484,8 @@ class HomePanelState extends State<HomePanel> {
                             MaterialPageRoute(
                                 builder: (context) => MyEncryptedAddrPage()));
                       },
-                      width: 110,
-                      height: 37,
+                      width: 100,
+                      height: 35,
                     ),
                     Spacer()
                   ],

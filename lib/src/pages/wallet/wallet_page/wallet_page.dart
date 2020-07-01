@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -23,6 +26,8 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -37,6 +42,9 @@ class WalletPage extends StatefulWidget {
 class _WalletPageState extends BaseState<WalletPage>
     with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
+
+  final LocalAuthentication auth = LocalAuthentication();
+  List<BiometricType> _availableBiometricTypes = List();
 
   @override
   bool get wantKeepAlive => true;
@@ -61,6 +69,19 @@ class _WalletPageState extends BaseState<WalletPage>
     });
   }
 
+  _showDialog() async {
+    await Future.delayed(Duration(milliseconds: 50));
+    if (!AuthInheritedModel.of(context).bioAuthEnabled) {
+      if (AuthInheritedModel.of(context).currentBioMetricType != null) {
+        showDialog(
+            context: context,
+            child: SetBioAuthDialog(
+              AuthInheritedModel.of(context).currentBioMetricType,
+            ));
+      }
+    }
+  }
+
   @override
   Future<void> onCreated() async {
     //update quotes
@@ -74,7 +95,6 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -141,15 +161,18 @@ class _WalletPageState extends BaseState<WalletPage>
               child: ShowWalletView(activatedWalletVo, loadDataBloc)));
     }
 
-    return BlocBuilder<WalletCmpBloc, WalletCmpState>(
-      builder: (BuildContext context, WalletCmpState state) {
-        switch (state.runtimeType) {
-          case LoadingWalletState:
-            return loadingView(context);
-          default:
-            return EmptyWalletView();
-        }
-      },
+    return BlocListener<WalletCmpBloc, WalletCmpState>(
+      listener: (ctx, state) {},
+      child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
+        builder: (BuildContext context, WalletCmpState state) {
+          switch (state.runtimeType) {
+            case LoadingWalletState:
+              return loadingView(context);
+            default:
+              return EmptyWalletView();
+          }
+        },
+      ),
     );
   }
 

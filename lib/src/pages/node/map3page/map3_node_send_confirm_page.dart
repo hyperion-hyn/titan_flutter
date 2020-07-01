@@ -418,6 +418,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         }).then((walletPassword) async {

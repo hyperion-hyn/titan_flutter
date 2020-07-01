@@ -61,7 +61,7 @@ class _MeSettingState extends State<MeSettingPage> {
             Divider(
               height: 1,
             ),
-            _buildMenuBar('快速验证', '', () {
+            _buildMenuBar('生物识别', '', () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => AuthSettingPage()));
             }),

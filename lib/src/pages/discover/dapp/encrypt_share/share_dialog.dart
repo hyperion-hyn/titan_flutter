@@ -216,6 +216,9 @@ class ShareDialogState extends State<ShareDialog> {
             height: 16.0,
           ),
           Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: HexColor('#FFF2F2F2')),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
@@ -252,9 +255,7 @@ class ShareDialogState extends State<ShareDialog> {
                 ],
               ),
             ),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: HexColor('#FFF2F2F2')),
+
           ),
           SizedBox(
             height: 16.0,
