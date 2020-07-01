@@ -3,7 +3,7 @@ package org.hyn.titan.encryption
 import io.reactivex.Flowable
 
 interface EncryptionService {
-    fun generateKeyPairAndStore(): Flowable<Boolean>
+    fun generateKeyPairAndStore(): Flowable<Map<String,String>>
 
     val publicKey: String?
 
@@ -13,5 +13,5 @@ interface EncryptionService {
 
     fun encryptSync(publicKeyStr: String, message: String): String
 
-    fun decrypt(ciphertext: String): Flowable<String>
+    fun decrypt(privateKey: String, ciphertext: String): Flowable<String>
 }

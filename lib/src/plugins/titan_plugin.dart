@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
@@ -23,6 +25,8 @@ class TitanPlugin {
       EventChannel('org.hyn.titan/event_stream');
   static MessagePushCallBack msgPushChangeCallBack;
   static UrlLauncherCallBack urlLauncherCallBack;
+  static String publicKey;
+  static String privateKey;
 
   static void initFlutterMethodCall() {
     callChannel.setMethodCallHandler(_platformCallHandler);
@@ -98,7 +102,17 @@ class TitanPlugin {
   }
 
   static Future<String> getPublicKey() async {
-    return await callChannel.invokeMethod('getPublicKey');
+    if(publicKey == null) {
+      publicKey = await AppCache.secureGetValue(SecurePrefsKey.MY_PUBLIC_KEY);
+      if (publicKey == null) {
+        var pairMap = await callChannel.invokeMethod('genKeyPair');
+        var privateKey = pairMap["privateKey"];
+        publicKey = pairMap["publicKey"];
+        await AppCache.secureSaveValue(SecurePrefsKey.MY_PRIVATE_KEY, privateKey);
+        await AppCache.secureSaveValue(SecurePrefsKey.MY_PUBLIC_KEY, publicKey);
+      }
+    }
+    return publicKey;
   }
 
   static Future<int> getExpiredTime() async {
@@ -111,7 +125,14 @@ class TitanPlugin {
   }
 
   static Future<String> decrypt(String cipherText) async {
-    return await callChannel.invokeMethod("decrypt", cipherText);
+    if(privateKey == null) {
+      privateKey = await AppCache.secureGetValue(SecurePrefsKey.MY_PRIVATE_KEY);
+    }
+    if(privateKey == null){
+      Fluttertoast.showToast(msg: "密钥对异常，请重新进行位置分享操作");
+      return "";
+    }
+    return await callChannel.invokeMethod("decrypt", {'privateKey': privateKey, 'cipherText': cipherText} );
   }
 
   static StreamSubscription listenCipherEvent(onData,

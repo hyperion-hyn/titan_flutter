@@ -22,7 +22,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   TitanPlugin.initFlutterMethodCall();
   //init key for security share
-  TitanPlugin.initKeyPair();
+//  TitanPlugin.initKeyPair();
 
   //init injector
   Api api = Api();

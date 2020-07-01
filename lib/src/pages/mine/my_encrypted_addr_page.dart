@@ -192,7 +192,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
             ),
           )),
         ),
-        Padding(
+        /*Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +213,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                   ),
                 )
               ]),
-        ),
+        ),*/
         SizedBox(
           height: 36,
         ),

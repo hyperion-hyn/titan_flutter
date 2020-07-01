@@ -22,7 +22,7 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
         }
     }
 
-    override fun generateKeyPairAndStore(): Flowable<Boolean> {
+    override fun generateKeyPairAndStore(): Flowable<Map<String,String>> {
         return Flowable.fromCallable {
 //            rsaEncryption.createKeys(context, expireAt)
 //            rsaEntry = rsaEncryption.keyEntry
@@ -32,12 +32,12 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
                 val pubStr = pairs[1]
 //                val encryptedPrivateStr = rsaEncryption.encrypt(prvStr)
                 Timber.i("Eth public key is: $pubStr")
-                sharedPreferences.edit()
-                        .putString("public", pubStr)
-                        .putString("private", prvStr)
-                        .apply()
+//                sharedPreferences.edit()
+//                        .putString("public", pubStr)
+//                        .putString("private", prvStr)
+//                        .apply()
 
-                return@fromCallable true
+                return@fromCallable mapOf("publicKey" to pubStr,"privateKey" to prvStr)
 //            }
 //            return@fromCallable false
         }
@@ -70,12 +70,12 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
         }
     }
 
-    override fun decrypt(ciphertext: String): Flowable<String> {
+    override fun decrypt(privateKey: String, ciphertext: String): Flowable<String> {
         return Flowable.fromCallable {
-            val privateKeyStr = sharedPreferences.getString("private", null)
+//            val privateKeyStr = sharedPreferences.getString("private", null)
 //            if (privateKeyStr != null) {
 //                val privateKeyECStr = rsaEncryption.decrypt(privateKeyStr)
-                val message = cipher.decrypt(privateKeyStr, ciphertext)
+                val message = cipher.decrypt(privateKey, ciphertext)
                 if (message.isNotEmpty()) {
                     return@fromCallable message
                 }

@@ -108,6 +108,8 @@ class PrefsKey {
 class SecurePrefsKey {
   static final String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
   static final String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
+  static final String MY_PUBLIC_KEY = 'my_public_key';
+  static final String MY_PRIVATE_KEY = 'my_private_key';
 }
 
 enum Status { idle, loading, success, failed, cancelled }

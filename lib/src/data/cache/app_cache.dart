@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppCache {
@@ -34,4 +35,20 @@ class AppCache {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.remove(key);
   }
+
+  static Future<void> secureSaveValue(String key, String value,{IOSOptions iosOptions,AndroidOptions androidOptions}) async {
+    FlutterSecureStorage secureStorage = FlutterSecureStorage();
+    return secureStorage.write(key: key, value: value,iOptions: iosOptions,aOptions: androidOptions);
+  }
+
+  static Future<String> secureGetValue(String key,{IOSOptions iosOptions,AndroidOptions androidOptions}) async {
+    FlutterSecureStorage secureStorage = FlutterSecureStorage();
+    return secureStorage.read(key: key,iOptions: iosOptions,aOptions: androidOptions);
+  }
+
+  static Future<void> secureRemove(String key,{IOSOptions iosOptions,AndroidOptions androidOptions}) async {
+    FlutterSecureStorage secureStorage = FlutterSecureStorage();
+    return secureStorage.delete(key: key,iOptions: iosOptions,aOptions: androidOptions);
+  }
+
 }

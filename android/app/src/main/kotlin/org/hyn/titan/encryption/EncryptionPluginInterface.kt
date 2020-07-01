@@ -78,22 +78,22 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     }
 
     private fun encrypt(call: MethodCall, result: MethodChannel.Result) {
-
-        val pub = call.argument<String>("pub");
-        val message = call.argument<String>("message");
+        val pub = call.argument<String>("pub")
+        val message = call.argument<String>("message")
         val ciphertext = encryptionService.encrypt(pub!!, message!!)
-        ciphertext.subscribe({
-            result.success(it);
-        })
+        ciphertext.subscribe{
+            result.success(it)
+        }
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
-        val ciphertext = call.arguments as String;
-        val message = encryptionService.decrypt(ciphertext)
-        message.subscribe({
+        val privateKey = call.argument<String>("privateKey") ?: ""
+        val cipherText = call.argument<String>("cipherText") ?: ""
+        val message = encryptionService.decrypt(cipherText, privateKey)
+        message.subscribe{
             Timber.i("message:$message")
-            result.success(it);
-        })
+            result.success(it)
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -101,10 +101,12 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         Timber.i("-生成密钥")
         encryptionService.generateKeyPairAndStore()
                 .subscribe({
-                    encryptionService.publicKey?.let { pubKey ->
-                        result.success(pubKey)
-                        cipherEventSink?.success(pubKey)
-                    }
+                    result.success(it)
+                    cipherEventSink?.success(it)
+//                    encryptionService.publicKey?.let { pubKey ->
+//                        result.success(pubKey)
+//                        cipherEventSink?.success(pubKey)
+//                    }
                 }, {
                     it.printStackTrace()
                     result.error(it.message, null, null)
