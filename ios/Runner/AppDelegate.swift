@@ -27,7 +27,9 @@ import CoreBluetooth
     }()
 
     private lazy var encrytionPlugin: EncrytionPluginInterface = EncrytionPluginInterface()
-
+    
+    var deepLink: URL?
+    
     override func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -54,7 +56,8 @@ import CoreBluetooth
         */
         
         if let url = launchOptions?[UIApplication.LaunchOptionsKey.url] as? URL{
-             urlLauncherAction(url: url)
+            self.deepLink = url
+             //urlLauncherAction(url: url)
         }
         
         let isLaunch = super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -96,6 +99,15 @@ import CoreBluetooth
 
                     result(true)
 
+                    break
+                    
+                case "f2pDeeplink":
+                    if let url = self.deepLink {
+                        self.urlLauncherAction(url: url)
+                        self.deepLink = nil
+                    }
+                    result(true)
+                    
                     break
                     
                 default:
@@ -214,8 +226,8 @@ import CoreBluetooth
     }
 
     override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        urlLauncherAction(url: url)
-        
+//        self.deepLink = url
+        self.urlLauncherAction(url: url)
         return true
     }
     
@@ -279,7 +291,7 @@ import CoreBluetooth
                 ]
                 print("[Appdelegate] -->open url, content:\(content), arguments:\(arguments)")
 
-                self.callChannel.invokeMethod("urlLauncher", arguments: arguments)
+                self.callChannel.invokeMethod("p2fDeeplink", arguments: arguments)
             }
         }
     
