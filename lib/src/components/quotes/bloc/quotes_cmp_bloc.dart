@@ -63,6 +63,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 //            safeLowWait: response['safeLowWait']);
             safeLow: parseGasPriceToBigIntWei(response['average']),
             safeLowWait: response['avgWait']);
+        yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
 
         var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
         if(btcResponse["code"] == 0){
@@ -74,7 +75,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
               avgWait: double.parse(btcResponseData['fastWait'].toString()),
               safeLow: Decimal.fromInt(btcResponseData['average']),
               safeLowWait: double.parse(btcResponseData['avgWait'].toString()));
-          yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend, btcGasPriceRecommend: btcGasPriceRecommend);
+          yield GasPriceState(status: Status.success, btcGasPriceRecommend: btcGasPriceRecommend);
         }
       } catch (e) {
         logger.e(e);

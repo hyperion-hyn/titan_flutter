@@ -291,7 +291,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               color: Color(0xFFF2F2F2),
               height: 8.0,
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.all(16.0),
               child: GasInputWidget(
                 currentEthPrice: ethQuotePrice,
@@ -300,7 +300,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                       "[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
                 },
               ),
-            ),
+            ),*/
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
