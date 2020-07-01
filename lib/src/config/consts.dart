@@ -106,6 +106,7 @@ class PrefsKey {
 }
 
 class SecurePrefsKey {
+  ///complete key:  WALLET_PWD_KEY_PREFIX + wallet.getEthAccount().address
   static final String WALLET_PWD_KEY_PREFIX = 'wallet_pwd_';
   static final String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
   static final String MY_PUBLIC_KEY = 'my_public_key';

@@ -50,7 +50,8 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderStateMixin {
+class AppTabBarPageState extends BaseState<AppTabBarPage>
+    with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
@@ -116,7 +117,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
-
   }
 
   @override

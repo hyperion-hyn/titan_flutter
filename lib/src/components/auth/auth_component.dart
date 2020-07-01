@@ -87,12 +87,16 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
     }
   }
 
+  bool get bioAuthAvailable {
+    return authConfigModel.availableBiometricTypes.length != 0;
+  }
+
   bool get bioAuthEnabled {
     return authConfigModel.useFace || authConfigModel.useFingerprint;
   }
 
   bool get showSetBioAuthDialog {
-    return bioAuthEnabled && !authConfigModel.setBioAuthAsked;
+    return bioAuthAvailable && !bioAuthEnabled;
   }
 
   BiometricType get currentBioMetricType {

@@ -3,10 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/mine/auth_setting_page.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -14,6 +20,8 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:characters/characters.dart';
@@ -116,13 +124,13 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           size: 64,
                           fontSize: 20,
                           address: widget.wallet.getEthAccount()?.address),
-                      Positioned(
-                          right: 6,
-                          bottom: 6,
-                          child: Image.asset(
-                            'res/drawable/ic_edit.png',
-                            height: 12,
-                          )),
+//                      Positioned(
+//                          right: 6,
+//                          bottom: 6,
+//                          child: Image.asset(
+//                            'res/drawable/ic_edit.png',
+//                            height: 12,
+//                          )),
                     ],
                   ),
                 ),
@@ -227,7 +235,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
-                    onPressed: _hasChangeProperties ? updateWallet : null,
+                    onPressed: _hasChangeProperties ? updateWalletV2 : null,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -273,6 +281,32 @@ class _WalletSettingState extends State<WalletSettingPage> {
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast('更新成功');
+          if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+            var result = await showDialog(
+                context: context,
+                child: SetBioAuthDialog(
+                    AuthInheritedModel.of(context).currentBioMetricType,
+                    '更新成功'));
+            if (result != null && result) {
+              AppCache.secureSaveValue(
+                  '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${widget.wallet.getEthAccount().address}',
+                  password);
+              BlocProvider.of<AuthBloc>(context)
+                  .add(SetBioAuthEvent(value: true));
+              Future.delayed(Duration(milliseconds: 3));
+              Fluttertoast.showToast(
+                msg: '成功开启生物识别',
+                gravity: ToastGravity.CENTER,
+                toastLength: Toast.LENGTH_LONG,
+              );
+            } else {
+              Fluttertoast.showToast(
+                msg: '生物识别未开启',
+                gravity: ToastGravity.CENTER,
+                toastLength: Toast.LENGTH_LONG,
+              );
+            }
+          }
         }
         setState(() {
           _originWalletName = newName;
@@ -286,6 +320,46 @@ class _WalletSettingState extends State<WalletSettingPage> {
           UiUtil.toast('更新出错');
         }
       }
+    }
+  }
+
+  void updateWalletV2() async {
+    if (AuthInheritedModel.of(context).bioAuthEnabled) {
+      var result = await showDialog(context: context, child: BioAuthDialog());
+      if (result != null && result) {
+        var password = await AppCache.secureGetValue(
+            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${widget.wallet.getEthAccount().address}');
+        if (password != null) {
+          try {
+            var newName = _walletNameController.text;
+            if (_focusNode.hasFocus) {
+              _focusNode.unfocus();
+            }
+            var success = await WalletUtil.updateWallet(
+                wallet: widget.wallet, password: password, name: newName);
+            if (success == true) {
+              BlocProvider.of<WalletCmpBloc>(context)
+                  .add(ActiveWalletEvent(wallet: widget.wallet));
+              UiUtil.toast('更新成功');
+            }
+            setState(() {
+              _originWalletName = newName;
+              _hasChangeProperties = false;
+            });
+          } catch (_) {
+            logger.e(_);
+            if (_.code == WalletError.PASSWORD_WRONG) {
+              UiUtil.toast(S.of(context).wallet_password_error);
+            } else {
+              UiUtil.toast('更新出错');
+            }
+          }
+        }
+      } else {
+        updateWallet();
+      }
+    } else {
+      updateWallet();
     }
   }
 
