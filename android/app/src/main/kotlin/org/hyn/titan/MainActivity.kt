@@ -12,6 +12,7 @@ import android.provider.Settings
 import androidx.core.content.FileProvider
 import com.hyn.titan.tools.AppPrintTools
 import io.flutter.app.FlutterActivity
+import io.flutter.app.FlutterFragmentActivity
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,7 @@ import java.io.File
 
 
 
-class MainActivity : FlutterActivity() {
+class MainActivity : FlutterFragmentActivity() {
     private val callChannel by lazy { MethodChannel(flutterView, "org.hyn.titan/call_channel") }
 
     private val QRCODE_SCAN_REQUEST_CODE = 1

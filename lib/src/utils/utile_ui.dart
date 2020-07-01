@@ -8,7 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/widget/auth_dialog/auth_dialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -176,8 +177,18 @@ class UiUtil {
     return false;
   }
 
-  static showAuthDialog(BuildContext context) {
-    showDialog(context: context, child: AuthDialog());
+
+  static Future<String> showEnterPassWordBottomSheet(
+      BuildContext context) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        });
   }
 }
 

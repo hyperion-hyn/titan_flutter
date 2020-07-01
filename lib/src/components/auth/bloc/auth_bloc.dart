@@ -20,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is UpdateAuthConfigEvent) {
       if (event.authConfigModel != null) {
         //AppCache.saveValue(PrefsKey.AUTH_CONFIG, )
+
         yield UpdateAuthConfigState(authConfigModel: event.authConfigModel);
       }
     }

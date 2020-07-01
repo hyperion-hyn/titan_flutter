@@ -144,7 +144,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                       }
                     },
                     child: GestureDetector(
-                      child: Icon(Icons.content_copy, size: 22, color: Colors.black45),
+                      child: Icon(Icons.content_copy,
+                          size: 22, color: Colors.black45),
                     ),
                   );
                 },
@@ -350,7 +351,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
     //print("[my-encrypted] === share");
 
     try {
-      RenderRepaintBoundary boundary = _qrImageBoundaryKey.currentContext.findRenderObject();
+      RenderRepaintBoundary boundary =
+          _qrImageBoundaryKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
@@ -361,7 +363,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
       await file.writeAsBytes(pngBytes);
       //print("[my-encrypted] === share, path:$path, file:$file");
       if (Platform.isIOS) {
-        await Share.file(S.of(context).share_qrcode, path, pngBytes, 'image/jpeg');
+        await Share.file(
+            S.of(context).share_qrcode, path, pngBytes, 'image/jpeg');
       } else {
         TitanPlugin.shareImage(path, S.of(context).share_qrcode);
       }

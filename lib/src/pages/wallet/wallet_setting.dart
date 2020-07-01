@@ -255,6 +255,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
     var password = await showModalBottomSheet(
         isScrollControlled: true,
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         });
@@ -290,6 +293,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         }).then((walletPassword) async {

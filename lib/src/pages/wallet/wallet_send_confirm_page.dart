@@ -519,6 +519,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         }).then((walletPassword) async {
