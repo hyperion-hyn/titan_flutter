@@ -89,7 +89,7 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
         val privateKey = call.argument<String>("privateKey") ?: ""
         val cipherText = call.argument<String>("cipherText") ?: ""
-        val message = encryptionService.decrypt(cipherText, privateKey)
+        val message = encryptionService.decrypt(privateKey, cipherText)
         message.subscribe{
             Timber.i("message:$message")
             result.success(it)
