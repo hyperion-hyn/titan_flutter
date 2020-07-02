@@ -78,21 +78,17 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
     @required Widget child,
   }) : super(key: key, child: child);
 
-  bool get expired {
-    if (authConfigModel.lastAuthDate != null) {
-      return (authConfigModel.lastAuthDate + 7 * 24 * 3600) <
-          DateTime.now().millisecondsSinceEpoch;
-    } else {
-      return true;
-    }
-  }
-
   bool get bioAuthAvailable {
     return authConfigModel.availableBiometricTypes.length != 0;
   }
 
   bool get bioAuthEnabled {
     return authConfigModel.useFace || authConfigModel.useFingerprint;
+  }
+
+  bool get bioAuthExpired {
+    return authConfigModel.lastBioAuthTime + 7 * 24 * 3600 <
+        DateTime.now().millisecondsSinceEpoch;
   }
 
   bool get showSetBioAuthDialog {

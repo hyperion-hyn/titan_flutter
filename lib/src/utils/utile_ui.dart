@@ -204,11 +204,15 @@ class UiUtil {
     String walletAddress,
   ) async {
     var password;
-    if (AuthInheritedModel.of(context).bioAuthEnabled) {
+    bool bioAuthExpired = AuthInheritedModel.of(context).bioAuthExpired;
+    if (bioAuthExpired) {
+      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: false));
+    }
+    if (AuthInheritedModel.of(context).bioAuthEnabled && !bioAuthExpired) {
       var result = await showDialog(context: context, child: BioAuthDialog());
       if (result != null && result) {
         password = await AppCache.secureGetValue(
-            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${walletAddress}');
+            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress');
         if (password == null) {
           var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
             walletAddress,

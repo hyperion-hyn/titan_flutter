@@ -98,7 +98,7 @@ class RootPageControlComponentState
         ? AuthConfigModel.fromJson(json.decode(authConfigStr))
         : AuthConfigModel(
             setBioAuthAsked: false,
-            lastAuthDate: 0,
+            lastBioAuthTime: 0,
             useFace: false,
             useFingerprint: false,
             availableBiometricTypes: availableBiometricTypes,

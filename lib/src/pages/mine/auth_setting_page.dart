@@ -160,11 +160,12 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   }
 
   Future<bool> _verifyWalletPwd() async {
-    var password = await UiUtil.showWalletPasswordDialogV2(
-      context,
+    ///Don't use bio-auth dialog here
+    ///
+    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
       _wallet.getEthAccount().address,
     );
-
+    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       ///Check pwd is valid here
       ///
@@ -191,15 +192,6 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   }
 
   _turnOnOrOffBioAuth(BiometricType biometricType, bool value) {
-    AuthConfigModel authConfigModel =
-        AuthInheritedModel.of(context).authConfigModel;
-    if (biometricType == BiometricType.face) {
-      authConfigModel.useFace = value;
-    } else if (biometricType == BiometricType.fingerprint) {
-      authConfigModel.useFingerprint = value;
-    }
-    BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
-      authConfigModel: authConfigModel,
-    ));
+    BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: value));
   }
 }

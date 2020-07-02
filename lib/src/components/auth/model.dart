@@ -3,14 +3,14 @@ import 'package:local_auth/local_auth.dart';
 
 class AuthConfigModel extends Equatable {
   bool setBioAuthAsked = false;
-  int lastAuthDate = 0;
+  int lastBioAuthTime = 0;
   bool useFace = false;
   bool useFingerprint = false;
   List<BiometricType> availableBiometricTypes = List();
 
   AuthConfigModel({
     this.setBioAuthAsked,
-    this.lastAuthDate,
+    this.lastBioAuthTime,
     this.useFace,
     this.useFingerprint,
     this.availableBiometricTypes,
@@ -18,7 +18,7 @@ class AuthConfigModel extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object> get props => [lastAuthDate];
+  List<Object> get props => [lastBioAuthTime];
 
   factory AuthConfigModel.fromJson(Map<String, dynamic> json) {
     try {
@@ -34,7 +34,7 @@ class AuthConfigModel extends Equatable {
       });
       return AuthConfigModel(
         setBioAuthAsked: json['setBioAuthAsked'],
-        lastAuthDate: json['lastAuthDate'],
+        lastBioAuthTime: json['lastBioAuthTime'],
         useFace: json['useFace'],
         useFingerprint: json['useFingerprint'],
         availableBiometricTypes: biometricTypes,
@@ -42,7 +42,7 @@ class AuthConfigModel extends Equatable {
     } catch (e) {
       return AuthConfigModel(
         setBioAuthAsked: false,
-        lastAuthDate: 0,
+        lastBioAuthTime: 0,
         useFace: false,
         useFingerprint: false,
         availableBiometricTypes: List(),
@@ -53,7 +53,7 @@ class AuthConfigModel extends Equatable {
   Map<String, dynamic> toJSON() {
     Map<String, dynamic> json = Map();
     json['setBioAuthAsked'] = this.setBioAuthAsked;
-    json['lastAuthDate'] = this.lastAuthDate;
+    json['lastBioAuthTime'] = this.lastBioAuthTime;
     json['useFace'] = this.useFace;
     json['useFingerprint'] = this.useFingerprint;
     List<int> bioAuthTypes = List();

@@ -364,15 +364,6 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
-
-        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
-          UiUtil.showSetBioAuthDialog(
-            context,
-            '提交成功',
-            wallet.getEthAccount().address,
-            password,
-          );
-        }
       } catch (e) {
         logger.e(e);
         UiUtil.toast(e.message);

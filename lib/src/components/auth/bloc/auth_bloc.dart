@@ -43,19 +43,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (authConfigModel.availableBiometricTypes
             .contains(BiometricType.face)) {
           authConfigModel.useFace = event.value;
-        } else if (authConfigModel.availableBiometricTypes
+        }
+        if (authConfigModel.availableBiometricTypes
             .contains(BiometricType.fingerprint)) {
           authConfigModel.useFingerprint = event.value;
         }
-        var activeWalletFileName = await AppCache.getValue<String>(
-          PrefsKey.ACTIVATED_WALLET_FILE_NAME,
-        );
 
-        if (activeWalletFileName != null) {
-          await AppCache.saveValue<String>(
-              '${activeWalletFileName}_${PrefsKey.AUTH_CONFIG}',
-              json.encode(authConfigModel.toJSON()));
+        if (authConfigModel.availableBiometricTypes
+            .contains(BiometricType.iris)) {
+          authConfigModel.useFingerprint = event.value;
         }
+
+        authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+
+        await AppCache.saveValue<String>(
+            '${PrefsKey.AUTH_CONFIG}',
+            json.encode(
+              authConfigModel.toJSON(),
+            ));
 
         yield UpdateAuthConfigState(authConfigModel: authConfigModel);
       }
