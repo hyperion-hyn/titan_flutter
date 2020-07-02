@@ -39,8 +39,7 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage>
-    with RouteAware, AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -71,11 +70,9 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   Future<void> onCreated() async {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context)
-        .add(UpdateQuotesEvent(isForceUpdate: true));
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -109,38 +106,16 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo =
-        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
+          onLoadData: (){
+            listLoadingData();
+          },
           onRefresh: () async {
-            //update quotes
-            var quoteSignStr =
-                await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-            QuotesSign quotesSign = quoteSignStr != null
-                ? QuotesSign.fromJson(json.decode(quoteSignStr))
-                : SupportedQuoteSigns.defaultQuotesSign;
-            Future.wait({
-              Future(() => BlocProvider.of<QuotesCmpBloc>(context)
-                  .add(UpdateQuotesSignEvent(sign: quotesSign))),
-              Future(() => BlocProvider.of<QuotesCmpBloc>(context)
-                  .add(UpdateQuotesEvent(isForceUpdate: true))),
-              Future(() => BlocProvider.of<WalletCmpBloc>(context)
-                  .add(UpdateActivatedWalletBalanceEvent()))
-            });
-//            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-//            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
-//            //update all coin balance
-//            BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
-
-            await Future.delayed(Duration(milliseconds: 700));
-
-            if (mounted) {
-              loadDataBloc.add(RefreshSuccessEvent());
-            }
+            listLoadingData();
           },
           child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -162,10 +137,26 @@ class _WalletPageState extends BaseState<WalletPage>
     );
   }
 
+  Future listLoadingData() async {
+    //update quotes
+    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign =
+    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    //update all coin balance
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+
+    await Future.delayed(Duration(milliseconds: 700));
+
+    if (mounted) {
+      loadDataBloc.add(RefreshSuccessEvent());
+    }
+  }
+
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -194,10 +185,7 @@ class _WalletPageState extends BaseState<WalletPage>
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(
-                      color: HexColor('#333333'),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
+                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               ],
             ),

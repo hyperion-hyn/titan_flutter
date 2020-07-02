@@ -6,6 +6,7 @@ import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import '../../../config.dart';
 import '../../../env.dart';
@@ -105,7 +106,7 @@ class BaseHttpCore {
 
   Future<dynamic> _request(String url,
       {String method,
-      Map<String, dynamic> data,
+      dynamic data,
       Map<String, dynamic> params,
       Options options,
       CancelToken cancelToken,
@@ -156,11 +157,13 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
+        LogUtil.printMessage("[base_http] post params = ${params.toString()} ***URL = $url");
         /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
         });*/
         response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
+        LogUtil.printMessage("[base_http] post data = ${data.toString()} ***URL = $url");
         response =
             await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
       } else {

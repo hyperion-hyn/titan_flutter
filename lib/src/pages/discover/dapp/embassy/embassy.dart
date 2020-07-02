@@ -26,10 +26,12 @@ final embassyDMapConfigModel = DMapConfigModel(
     defaultLocation: LatLng(22.296797, 114.170900),
     defaultZoom: 12,
     onMapClickHandle: (BuildContext context, Point<double> point, LatLng coordinates) async {
+      print('【D-map] --> point:$point, coordinates:$coordinates');
+
       var poi;
       var feature = await MapUtil.getFeature(point, coordinates, 'layer-heaven-c1b7c5102eca43029f0416892447e0ed');
+
       if (feature != null) {
-        //print('【D-map] --> $feature');
         poi = EmbassyPoi.fromMapFeature(feature);
         if (poi != null) {
           BlocProvider.of<ScaffoldMapBloc>(context).add(ShowPoiEvent(poi: poi));

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -175,25 +177,94 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 return InkWell(
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];
-                      var coinVoJsonStr =
-                          FluroConvertUtils.object2string(coinVo.toJson());
-                      Application.router.navigateTo(
-                          context,
-                          Routes.wallet_account_detail +
-                              '?coinVo=$coinVoJsonStr');
+                      var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+                      Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
                     },
-                    child: _buildAccountItem(
-                        context, widget.walletVo.coins[index]));
+                    child: _buildAccountItem(context, widget.walletVo.coins[index]));
               },
               itemCount: widget.walletVo.coins.length,
             ),
-            if (env.buildType == BuildType.DEV) _testWalletView(context),
+            if(widget.walletVo.wallet.getBitcoinAccount() == null)
+              _bitcoinEmptyView(context),
+            if (env.buildType == BuildType.DEV)
+              _testWalletView(context),
           ]),
     );
   }
 
+  Widget _bitcoinEmptyView(BuildContext context){
+    /*FlatButton(
+      onPressed: () {
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+//                    Future.delayed(Duration(milliseconds: 1000),(){
+//                      loadDataBloc.add(LoadingEvent());
+//                    });
+        });
+      },
+      child: Text("激活比特币"),
+    ),*/
+    var coinVo = CoinVo(
+      name: "BITCOIN",
+      symbol: "BTC",
+      coinType: 0,
+      address: "",
+      decimals: 8,
+      logo: "res/drawable/ic_btc_logo_empty.png",
+      contractAddress: null,
+      extendedPublicKey: "",
+      balance: BigInt.from(0),
+    );
+    return InkWell(
+      onTap: (){
+        showModalBottomSheet(
+            isScrollControlled: true,
+            context: context,
+            builder: (BuildContext context) {
+              return EnterWalletPasswordWidget();
+            }).then((walletPassword) async {
+          if (walletPassword == null) {
+            return;
+          }
+
+          await widget.walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+          Future.delayed(Duration(milliseconds: 500),(){
+            widget.loadDataBloc.add(LoadingEvent());
+          });
+        });
+      },
+      child: Column(
+        children: <Widget>[
+          _buildAccountItem(context, coinVo),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+            Image.asset("res/drawable/ic_key_view.png",width: 16,height: 16,),
+            Padding(
+              padding: const EdgeInsets.only(left:10,right: 16),
+              child: Text("激活BTC",style: TextStyle(fontSize: 14,color: HexColor("#1F81FF")),),
+            )
+          ],)
+        ],
+      ),
+    );
+  }
+
   Widget _testWalletView(BuildContext context) {
-    return Padding(
+    return  Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
@@ -201,17 +272,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('-测试申请0.05ETH'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if (time - _lastRequestCoinTime < 60 * 1000) {
-                //1分钟
+              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return;
+                return ;
               }
-              var activeWallet =
-                  WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              final credentials = await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
@@ -220,12 +288,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   Transaction(
                     to: EthereumAddress.fromHex(toAddress),
                     value: EtherAmount.inWei(amount),
-                    gasPrice: EtherAmount.inWei(
-                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
 //                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                    maxGas: SettingInheritedModel.ofConfig(context)
-                        .systemConfigEntity
-                        .ethTransferGasLimit,
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -239,35 +304,27 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('-测试申请20万HYN'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if (time - _lastRequestCoinTime < 60 * 1000) {
-                //1分钟
+              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return;
+                return ;
               }
-              var activeWallet =
-                  WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              final credentials = await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var hynErc20Contract = WalletUtil.getHynErc20Contract(
-                    ContractTestConfig.hynContractAddress);
-                var hynAmount =
-                    ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
+                var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
+                var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: hynErc20Contract,
                     function: hynErc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                    gasPrice: EtherAmount.inWei(
-                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context)
-                        .systemConfigEntity
-                        .erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -282,35 +339,27 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('-测试申请100USDT'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if (time - _lastRequestCoinTime < 60 * 1000) {
-                //1分钟
+              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return;
+                return ;
               }
-              var activeWallet =
-                  WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials =
-                  await client.credentialsFromPrivateKey(privateKey);
+              final credentials = await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var erc20Contract = WalletUtil.getHynErc20Contract(
-                    ContractTestConfig.usdtContractAddress);
-                var amount = ConvertTokenUnit.numToWei(
-                    100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
+                var erc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.usdtContractAddress);
+                var amount = ConvertTokenUnit.numToWei(100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: erc20Contract,
                     function: erc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), amount],
-                    gasPrice: EtherAmount.inWei(
-                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context)
-                        .systemConfigEntity
-                        .erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -383,8 +432,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
-    var symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
+    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -409,10 +457,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               children: <Widget>[
                 Text(
                   coin.symbol,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF252525)),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
                 ),
                 SizedBox(
                   height: 4,
@@ -441,12 +486,8 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    _isShowBalances
-                        ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
-                        : '******',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+                    "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
+                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(
                     height: 4,
@@ -454,9 +495,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      _isShowBalances
-                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-                          : '****',
+                      "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),

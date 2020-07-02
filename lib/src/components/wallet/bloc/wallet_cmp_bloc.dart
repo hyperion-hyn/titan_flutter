@@ -60,9 +60,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         _recoverBalanceFromDisk(_activatedWalletVo);
 
         //sync wallet account to server
-        if ((event.wallet?.getBitcoinZPub() ?? false) != "") {
-          BitcoinApi.syncBitcoinPubToServer(
-              event.wallet?.getBitcoinZPub() ?? "");
+        if(event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false){
+          BitcoinApi.syncBitcoinPubToServer(event.wallet.getBitcoinAccount().address, event.wallet?.getBitcoinZPub() ?? "");
         }
 //        _nodeApi.postWallets(_activatedWalletVo);
 

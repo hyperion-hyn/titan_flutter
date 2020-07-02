@@ -1,6 +1,16 @@
-# flutter_app
+# Titan
 
-Titan Flutter application.
+
+The first ever truly privacy-aware map application built on strong cryptographic primitives. All map functions such as positioning and searching are computed locally at the phone. Your location trace will never leave your phone and you have the power to burn them all with just one click. Through our cryptographic library, you can even share a location to your friend with no other intermedia platforms learning where you are and where you want to go.
+
+- Secure public key identity
+
+- Ultra privacy with no location trace leaving your phone
+
+- Cryptographic Location Sharing (CLS)
+
+
+# BUILD
 
 
 make json model
@@ -9,19 +19,6 @@ make json model
 flutter packages pub run build_runner build --delete-conflicting-outputs
 
 ```
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
 
 # License
 

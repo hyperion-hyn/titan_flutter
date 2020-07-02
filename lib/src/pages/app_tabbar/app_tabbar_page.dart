@@ -136,7 +136,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         clipboardData.text.contains("titan://contract/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
-      print("!!!!! " + clipboardData.text + " key= " + shareUser);
     }
   }
 

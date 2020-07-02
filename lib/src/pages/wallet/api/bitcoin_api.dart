@@ -13,7 +13,7 @@ import 'package:titan/src/plugins/wallet/bitcoin_trans_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'dart:math';
 
-import 'package:titan/src/utils/exception_process.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 class BitcoinApi{
 
@@ -25,19 +25,19 @@ class BitcoinApi{
           data: {"pub": pubString},
           options: RequestOptions(contentType: Headers.jsonContentType));
     }catch(exception){
-      ExceptionProcess.uploadPoiException(exception, 'bitcoin balance upload');
+      LogUtil.uploadException(exception, 'bitcoin balance upload');
     }
     return response;
   }
 
-  static Future syncBitcoinPubToServer(String pubString) async {
-    var createValue = await AppCache.getValue(PrefsKey.walletBitcoinCreate);
+  static Future syncBitcoinPubToServer(String btcAddress, String pubString) async {
+    var createValue = await AppCache.getValue(btcAddress);
     if(createValue != "create") {
       var response = await HttpCore.instance.post(WalletConfig.getBitcoinApi() + "create",
           data: {"pub": pubString, "version": "P2WPKH"},
           options: RequestOptions(contentType: Headers.jsonContentType));
       if(response != null && response["code"] == 0) {
-        AppCache.saveValue(PrefsKey.walletBitcoinCreate, "create");
+        AppCache.saveValue(btcAddress, "create");
       }
     }
   }
@@ -58,7 +58,6 @@ class BitcoinApi{
     String rawTx = await TitanPlugin.signBitcoinRawTx(json.encode(bitcoinTransEntity.toJson()));
 
     var randomNum = Random().nextInt(bitcoinTransEntity.utxo.length);
-    print("!!!!!!!! randomNum= $randomNum rawTx= $rawTx");
     var response = await HttpCore.instance.post(
         WalletConfig.getBitcoinApi() + "txRaw",
         data: {"address": bitcoinTransEntity.utxo[randomNum].address, "raw": rawTx},

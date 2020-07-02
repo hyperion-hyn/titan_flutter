@@ -49,12 +49,13 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   void initState() {
     super.initState();
     _amountController.addListener(() {
-      if (_amountController.text != null && _amountController.text.length > 0) {
+      if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
+        var inputAmount = _amountController.text.trim();
         var activatedQuoteSign = QuotesInheritedModel.of(context)
             .activatedQuoteVoAndSign(widget.coinVo.symbol);
         var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
         setState(() {
-          _notionalValue = double.parse(_amountController.text) * quotePrice;
+          _notionalValue = double.parse(inputAmount) * quotePrice;
         });
       }
     });
@@ -221,6 +222,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           horizontal: 0, vertical: 12),
                       child: TextFormField(
                         validator: (value) {
+                          value = value.trim();
                           if (value == "0") {
                             return S.of(context).input_corrent_count_hint;
                           }

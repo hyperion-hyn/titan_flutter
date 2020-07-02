@@ -1,10 +1,10 @@
 package org.hyn.titan.wallet
 
 import org.hyn.titan.utils.toHex
+import org.hyn.titan.utils.toHexByteArray
 import timber.log.Timber
 import wallet.core.jni.CoinType
 import wallet.core.jni.StoredKey
-import org.hyn.titan.utils.toHexByteArray
 import wallet.core.jni.PrivateKey
 
 object KeyStoreUtil {
@@ -58,11 +58,17 @@ object KeyStoreUtil {
 
     private fun getPrvKeyBytes(storedKey: StoredKey, password: String, coinType: CoinType): ByteArray? {
         return if (storedKey.isMnemonic) {
-            val hdWallet = storedKey.wallet(password.toHexByteArray())
+            var hdWallet = storedKey.wallet(password.toByteArray())
+            if(hdWallet == null){
+                hdWallet = storedKey.wallet(password.toHexByteArray())
+            }
             val privateKey = hdWallet?.getKeyForCoin(coinType)
             privateKey?.data()
         } else {
-            val prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
+            var prvKey = storedKey.privateKey(coinType, password.toByteArray())
+            if(prvKey == null){
+                prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
+            }
             prvKey?.data()
         }
     }

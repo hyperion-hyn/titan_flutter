@@ -36,7 +36,7 @@ class UMengPushImpl : IUMengPush{
     override fun initUMeng(context: Context,onPushListener: OnPushListener) {
         Log.i(LOG_TAG, "initUMeng")
         this.onPushListener = onPushListener
-        UMConfigure.setLogEnabled(true)
+        UMConfigure.setLogEnabled(false)
         UMConfigure.init(context, UMengConstants.UMENG_APPKEY, "Umeng", UMConfigure.DEVICE_TYPE_PHONE, UMengConstants.UMENG_MESSAGE_SECRET)
 
         // 选用AUTO页面采集模式
