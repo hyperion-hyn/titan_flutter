@@ -29,8 +29,8 @@ Future<String> reEncryptPoi(
   await api.storeCls(
       commitment: cm_a, ciphertext: ct_a, expiracy: expiracy, kid: kid);
   var kid_cmA = "${kid}_$cm_a";
-  //var shareCipherText ="${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
-  var shareCipherText = "${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
+  var shareCipherText ="${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
+  //var shareCipherText = "${Const.CIPHER_TOKEN_PREFIX}$kid_cmA";
 
   return shareCipherText;
 }
@@ -41,8 +41,8 @@ Future<String> p2pEncryptPoi(String pubKey, IPoi poi, String remark) async {
   if (ciphertext == null || ciphertext.isEmpty) {
     throw Exception(S.of(Keys.rootKey.currentContext).not_legal_public_key);
   }
-  //return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
-  return "${Const.CIPHER_TEXT_PREFIX}$ciphertext";
+  return "${Const.TITAN_SHARE_URL_PREFIX}${Const.CIPHER_TEXT_PREFIX}$ciphertext";
+  //return "${Const.CIPHER_TEXT_PREFIX}$ciphertext";
 }
 
 String _genMessage(IPoi poi, String remark) {

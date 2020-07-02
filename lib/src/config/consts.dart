@@ -21,7 +21,7 @@ class Const {
 
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
-      "https://www.hyn.space/titan/share?key=";
+      "https://www.hyn.space/titan/shareV2?key=";
   static const String CIPHER_TEXT_PREFIX = "titan_cipher";
   static const String CIPHER_TOKEN_PREFIX = "titan_cls";
 
