@@ -5,9 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_password_dialog.dart';
@@ -191,6 +199,32 @@ class UiUtil {
 //        });
 //  }
 
+  static showWalletPasswordDialogV2(
+    BuildContext context,
+    String walletAddress,
+  ) async {
+    var password;
+    if (AuthInheritedModel.of(context).bioAuthEnabled) {
+      var result = await showDialog(context: context, child: BioAuthDialog());
+      if (result != null && result) {
+        password = await AppCache.secureGetValue(
+            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${walletAddress}');
+        if (password == null) {
+          var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+            walletAddress,
+          );
+          password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
+        }
+      }
+    } else {
+      var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+        walletAddress,
+      );
+      password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
+    }
+    return password;
+  }
+
   static Future<String> showPasswordDialog(
     BuildContext context,
     bool useDigits,
@@ -211,6 +245,37 @@ class UiUtil {
           builder: (BuildContext context) {
             return EnterWalletPasswordWidget();
           });
+    }
+  }
+
+  static showSetBioAuthDialog(
+    BuildContext context,
+    String title,
+    String walletAddress,
+    String pwd,
+  ) async {
+    var result = await showDialog(
+        context: context,
+        child: SetBioAuthDialog(
+            AuthInheritedModel.of(context).currentBioMetricType, title));
+    if (result != null && result) {
+      AppCache.secureSaveValue(
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress',
+        pwd,
+      );
+      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: true));
+      Future.delayed(Duration(milliseconds: 3));
+      Fluttertoast.showToast(
+        msg: '成功开启生物识别',
+        gravity: ToastGravity.CENTER,
+        toastLength: Toast.LENGTH_LONG,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: '生物识别未开启',
+        gravity: ToastGravity.CENTER,
+        toastLength: Toast.LENGTH_LONG,
+      );
     }
   }
 }

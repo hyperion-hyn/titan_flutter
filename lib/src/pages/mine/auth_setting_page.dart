@@ -160,10 +160,10 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   }
 
   Future<bool> _verifyWalletPwd() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       _wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
 
     if (password != null) {
       ///Check pwd is valid here

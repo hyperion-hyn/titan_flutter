@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -1468,10 +1469,10 @@ class _Map3NodeContractDetailState
       return;
     }
 
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
       _wallet.getEthAccount().address,
     );
-    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
 
     if (walletPassword == null) {
       return;

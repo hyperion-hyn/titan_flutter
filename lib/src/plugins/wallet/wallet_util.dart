@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
@@ -19,6 +21,8 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 import 'package:bip39/bip39.dart' as bip39;
@@ -117,6 +121,8 @@ class WalletUtil {
         '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$address');
     return result != null && result;
   }
+
+
 
   static getPwdFromSecureStorage(String address) async {
     var password = await AppCache.secureGetValue(

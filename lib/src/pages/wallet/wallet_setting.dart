@@ -259,11 +259,11 @@ class _WalletSettingState extends State<WalletSettingPage> {
     );
   }
 
-  void updateWallet() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+  void updateWalletV2() async {
+    String password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       widget.wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       try {
         var newName = _walletNameController.text;
@@ -277,30 +277,12 @@ class _WalletSettingState extends State<WalletSettingPage> {
               .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast('更新成功');
           if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
-            var result = await showDialog(
-                context: context,
-                child: SetBioAuthDialog(
-                    AuthInheritedModel.of(context).currentBioMetricType,
-                    '更新成功'));
-            if (result != null && result) {
-              AppCache.secureSaveValue(
-                  '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${widget.wallet.getEthAccount().address}',
-                  password);
-              BlocProvider.of<AuthBloc>(context)
-                  .add(SetBioAuthEvent(value: true));
-              Future.delayed(Duration(milliseconds: 3));
-              Fluttertoast.showToast(
-                msg: '成功开启生物识别',
-                gravity: ToastGravity.CENTER,
-                toastLength: Toast.LENGTH_LONG,
-              );
-            } else {
-              Fluttertoast.showToast(
-                msg: '生物识别未开启',
-                gravity: ToastGravity.CENTER,
-                toastLength: Toast.LENGTH_LONG,
-              );
-            }
+            UiUtil.showSetBioAuthDialog(
+              context,
+              '更新成功',
+              widget.wallet.getEthAccount().address,
+              password,
+            );
           }
         }
         setState(() {
@@ -318,51 +300,11 @@ class _WalletSettingState extends State<WalletSettingPage> {
     }
   }
 
-  void updateWalletV2() async {
-    if (AuthInheritedModel.of(context).bioAuthEnabled) {
-      var result = await showDialog(context: context, child: BioAuthDialog());
-      if (result != null && result) {
-        var password = await AppCache.secureGetValue(
-            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${widget.wallet.getEthAccount().address}');
-        if (password != null) {
-          try {
-            var newName = _walletNameController.text;
-            if (_focusNode.hasFocus) {
-              _focusNode.unfocus();
-            }
-            var success = await WalletUtil.updateWallet(
-                wallet: widget.wallet, password: password, name: newName);
-            if (success == true) {
-              BlocProvider.of<WalletCmpBloc>(context)
-                  .add(ActiveWalletEvent(wallet: widget.wallet));
-              UiUtil.toast('更新成功');
-            }
-            setState(() {
-              _originWalletName = newName;
-              _hasChangeProperties = false;
-            });
-          } catch (_) {
-            logger.e(_);
-            if (_.code == WalletError.PASSWORD_WRONG) {
-              UiUtil.toast(S.of(context).wallet_password_error);
-            } else {
-              UiUtil.toast('更新出错');
-            }
-          }
-        }
-      } else {
-        updateWallet();
-      }
-    } else {
-      updateWallet();
-    }
-  }
-
   Future<void> deleteWallet() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
       widget.wallet.getEthAccount().address,
     );
-    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     print("walletPassword:$walletPassword");
     if (walletPassword == null) {
       return;
@@ -394,6 +336,14 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            S.of(context).delete_wallet_success,
+            widget.wallet.getEthAccount().address,
+            walletPassword,
+          );
+        }
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }

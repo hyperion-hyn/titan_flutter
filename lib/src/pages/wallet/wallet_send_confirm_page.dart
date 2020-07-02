@@ -517,11 +517,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transfer() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
       activatedWallet.wallet.getEthAccount().address,
     );
-    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
-
     if (walletPassword == null) {
       return;
     }

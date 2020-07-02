@@ -452,10 +452,10 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Future _transferNew() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
       activatedWallet.wallet.getEthAccount().address,
     );
-    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
 
     if (walletPassword == null) {
       return;

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -329,10 +330,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   }
 
   void handleCommitAnnualized(context, type, int value) async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       setState(() {
         _isCommitting = true;
@@ -363,6 +364,15 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         print('-提交成功 hash $response');
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
+
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            '提交成功',
+            wallet.getEthAccount().address,
+            password,
+          );
+        }
       } catch (e) {
         logger.e(e);
         UiUtil.toast(e.message);
@@ -562,10 +572,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   }
 
   void handleCommitDeposit(context, Decimal value) async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       setState(() {
         _isCommitting = true;
@@ -574,11 +584,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
       try {
         var wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
 
-        var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+        var password = await UiUtil.showWalletPasswordDialogV2(
+          context,
           wallet.getEthAccount().address,
         );
-        var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
-
         var hynAssetToken = wallet.getHynToken();
         var hynErc20ContractAddress = hynAssetToken?.contractAddress;
         var approveToAddress = WalletConfig.map3ContractAddress;
@@ -625,6 +634,15 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         print('-提交成功 hash $response');
 
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            '提交成功',
+            wallet.getEthAccount().address,
+            password,
+          );
+        }
+
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
         logger.e(e);
@@ -638,10 +656,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   }
 
   void handleCommitWithdraw(context, Decimal value) async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       setState(() {
         _isCommitting = true;
@@ -671,6 +689,15 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         print('-提交成功 hash $response');
 
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            '提交成功',
+            wallet.getEthAccount().address,
+            password,
+          );
+        }
+
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
         logger.e(e);
@@ -684,10 +711,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   }
 
   void handleCommitChangeMaxDelegation(context, Decimal value) async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
       wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       setState(() {
         _isCommitting = true;
@@ -716,6 +743,15 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         );
 
         print('-提交成功 hash $response');
+
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            '提交成功',
+            wallet.getEthAccount().address,
+            password,
+          );
+        }
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {

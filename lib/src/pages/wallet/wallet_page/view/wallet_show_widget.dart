@@ -361,8 +361,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     .getEthAccount()
                     .address,
               );
-              var password =
-                  await UiUtil.showPasswordDialog(context, pwdUseDigits);
+              var password = await UiUtil.showWalletPasswordDialogV2(
+                context,
+                address,
+              );
               FlutterSecureStorage secureStorage = FlutterSecureStorage();
               secureStorage.write(key: 'wallet_pwd_$address', value: password);
             },
@@ -488,11 +490,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   _showPasswordBottomSheet() async {
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
       widget.walletVo.wallet.getEthAccount().address,
     );
-    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
-
     if (walletPassword == null) {
       return;
     }
