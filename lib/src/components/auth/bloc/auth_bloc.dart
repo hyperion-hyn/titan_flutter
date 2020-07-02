@@ -26,15 +26,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is UpdateAuthConfigEvent) {
       if (event.authConfigModel != null) {
         authConfigModel = event.authConfigModel;
-        var activeWalletFileName = await AppCache.getValue<String>(
-          PrefsKey.ACTIVATED_WALLET_FILE_NAME,
-        );
 
-        if (activeWalletFileName != null) {
-          await AppCache.saveValue<String>(
-              '${activeWalletFileName}_${PrefsKey.AUTH_CONFIG}',
-              json.encode(event.authConfigModel.toJSON()));
-        }
+        await AppCache.saveValue<String>('${PrefsKey.AUTH_CONFIG}',
+            json.encode(event.authConfigModel.toJSON()));
 
         yield UpdateAuthConfigState(authConfigModel: event.authConfigModel);
       }
@@ -56,6 +50,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
+        print('SetBioAuthEvent: ${authConfigModel.toJSON()}');
         await AppCache.saveValue<String>(
             '${PrefsKey.AUTH_CONFIG}',
             json.encode(
