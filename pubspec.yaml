@@ -135,6 +135,8 @@ dependencies:
   gesture_unlock: ^0.0.1
   # https://pub.dev/packages/pin_input_text_field
   pin_input_text_field: 3.0.3
+  # https://pub.dev/packages/image_save
+  image_save: 3.1.1
 
   flutter_recaptcha_v2:
     git:
