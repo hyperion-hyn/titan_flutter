@@ -13,7 +13,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/ContentDialog.dart';
+import 'package:titan/src/widget/screenshot_warning_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
@@ -211,94 +211,8 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          return Dialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            child: Container(
-              height: 320,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 32.0, bottom: 25),
-                      child: Image.asset(
-                        'res/drawable/ic_snap.png',
-                        width: 60,
-                        height: 60,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                    ),
-                    Text(S.of(context).no_screenshot_dialog_title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 16.0,
-                      ),
-                      child: Text(
-                        S.of(context).warning_no_sceenshot,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: HexColor('#FF6D6D6D'),
-                          height: 1.7,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    Container(
-                      width: double.infinity,
-                      color: Colors.grey[200],
-                      height: 1,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 1,
-                          child: FlatButton(
-                            child: Text(
-                              S.of(context).no_screenshot_dialog_cancel,
-                              style: TextStyle(
-                                color: HexColor('#FF9B9B9B'),
-                                fontSize: 16,
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                        Container(
-                          width: 1,
-                          color: Colors.grey[200],
-                          height: 24.0,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: FlatButton(
-                            child: Text(
-                              S.of(context).no_screenshot_dialog_confirm,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16),
-                            ),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              _showVerifyDialog();
-                            },
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
+          return ScreenshotWarningDialog(
+            onConfirm: _showVerifyDialog,
           );
         });
   }
