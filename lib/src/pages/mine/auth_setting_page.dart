@@ -76,13 +76,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                   value: AuthInheritedModel.of(context).authConfigModel.useFace,
                   onChanged: (bool value) async {
                     if (value) {
-                      var result = await _verifyWalletPwd();
-                      if (result) {
-                        _turnOnOrOffBioAuth(BiometricType.face, value);
-                      } else {
-                        Fluttertoast.showToast(msg: '密码错误');
-                      }
-                      ;
+                      _requestWalletPwd();
                     } else {
                       _turnOnOrOffBioAuth(BiometricType.face, value);
                     }
@@ -102,13 +96,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                     .useFingerprint,
                 onChanged: (bool value) async {
                   if (value) {
-                    var result = await _verifyWalletPwd();
-                    if (result) {
-                      _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
-                    } else {
-                      Fluttertoast.showToast(msg: '密码错误');
-                    }
-                    ;
+                    _requestWalletPwd();
                   } else {
                     _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
                   }
@@ -159,36 +147,33 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
         barrierDismissible: true);
   }
 
-  Future<bool> _verifyWalletPwd() async {
-    ///Don't use bio-auth dialog here
+  _requestWalletPwd() async {
+    ///Use password dialog
     ///
     var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
       _wallet.getEthAccount().address,
     );
     var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
-    if (password != null) {
-      ///Check pwd is valid here
-      ///
-      var result = await WalletUtil.exportPrivateKey(
-        fileName: _wallet.keystore.fileName,
-        password: password,
-      );
-      if (result != null) {
-        _saveWalletPwdToSecureStorage(password);
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
 
-  _saveWalletPwdToSecureStorage(String pwd) async {
-    AppCache.secureSaveValue(
-      '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
-      pwd,
+    ///Check password is valid
+    ///
+    var result = await WalletUtil.exportPrivateKey(
+      fileName: _wallet.keystore.fileName,
+      password: password,
     );
+    if (result != null) {
+      ///Save password
+      await AppCache.secureSaveValue(
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
+        password,
+      );
+      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+        value: true,
+      ));
+    } else {
+      Fluttertoast.showToast(msg: '密码错误');
+    }
+    setState(() {});
   }
 
   _turnOnOrOffBioAuth(BiometricType biometricType, bool value) {

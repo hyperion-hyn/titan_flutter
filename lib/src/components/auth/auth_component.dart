@@ -87,12 +87,18 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   }
 
   bool get bioAuthExpired {
-    return authConfigModel.lastBioAuthTime + 7 * 24 * 3600 <
-        DateTime.now().millisecondsSinceEpoch;
+    return authConfigModel.lastBioAuthTime + 7 * 24 * 3600 * 1000 <
+        DateTime
+            .now()
+            .millisecondsSinceEpoch;
   }
 
   bool get showSetBioAuthDialog {
     return bioAuthAvailable && !bioAuthEnabled;
+  }
+
+  String get info {
+    return 'Config: ${authConfigModel.toJSON().toString()}';
   }
 
   BiometricType get currentBioMetricType {
@@ -120,10 +126,10 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      AuthInheritedModel oldWidget, Set<AuthAspect> dependencies) {
+  bool updateShouldNotifyDependent(AuthInheritedModel oldWidget,
+      Set<AuthAspect> dependencies) {
     return authConfigModel != oldWidget.authConfigModel &&
-            dependencies.contains(AuthAspect.config) ||
+        dependencies.contains(AuthAspect.config) ||
         authorized != oldWidget.authorized &&
             dependencies.contains(AuthAspect.authorized);
   }

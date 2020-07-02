@@ -12,6 +12,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -205,15 +206,26 @@ class UiUtil {
   ) async {
     var password;
     bool bioAuthExpired = AuthInheritedModel.of(context).bioAuthExpired;
-    if (bioAuthExpired) {
-      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: false));
-    }
+//    if (bioAuthExpired) {
+//      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: false));
+//    }
     if (AuthInheritedModel.of(context).bioAuthEnabled && !bioAuthExpired) {
-      var result = await showDialog(context: context, child: BioAuthDialog());
-      if (result != null && result) {
+      var bioAuthResult =
+          await showDialog(context: context, child: BioAuthDialog());
+      if (bioAuthResult != null && bioAuthResult) {
         password = await AppCache.secureGetValue(
             '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress');
-        if (password == null) {
+
+        ///Check password from secureStorage is correct
+        var result = await WalletUtil.exportPrivateKey(
+          fileName: WalletInheritedModel.of(context)
+              .activatedWallet
+              .wallet
+              .keystore
+              .fileName,
+          password: password,
+        );
+        if (result == null) {
           var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
             walletAddress,
           );
