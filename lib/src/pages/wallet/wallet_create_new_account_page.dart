@@ -98,7 +98,6 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         ),
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(6),
-                          WhitelistingTextInputFormatter.digitsOnly,
                         ],
                         keyboardType: TextInputType.text),
                   ),
@@ -171,6 +170,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly,
                       ],
                       validator: (value) {
                         if (value.isEmpty) {

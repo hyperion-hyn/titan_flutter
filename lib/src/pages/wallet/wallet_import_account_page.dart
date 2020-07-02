@@ -222,7 +222,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       ),
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(6),
-                        WhitelistingTextInputFormatter.digitsOnly,
                       ],
                       keyboardType: TextInputType.text),
                 ),
@@ -289,6 +288,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   child: TextFormField(
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(6),
+                      WhitelistingTextInputFormatter.digitsOnly,
                     ],
                     validator: (value) {
                       if (value.isEmpty) {
