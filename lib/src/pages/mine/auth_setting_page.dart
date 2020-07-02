@@ -150,10 +150,10 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   _requestWalletPwd() async {
     ///Use password dialog
     ///
-    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+    var password = await UiUtil.showPasswordDialog(
+      context,
       _wallet.getEthAccount().address,
     );
-    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
 
     ///Check password is valid
     ///

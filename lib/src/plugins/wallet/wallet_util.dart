@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
@@ -130,6 +131,26 @@ class WalletUtil {
         '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress');
     print('checkUseDigitsPwd: $result walletAddress: $walletAddress');
     return result != null && result;
+  }
+
+  static getPwdFromStorage(BuildContext context, String walletAddress) async {
+    String pwd = await AppCache.secureGetValue(
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress');
+
+    ///Check password from secureStorage is correct
+    String result = await WalletUtil.exportPrivateKey(
+      fileName: WalletInheritedModel.of(context)
+          .activatedWallet
+          .wallet
+          .keystore
+          .fileName,
+      password: pwd,
+    );
+    if (result != null) {
+      return pwd;
+    } else {
+      return null;
+    }
   }
 
   static Future<bool> updateWallet({

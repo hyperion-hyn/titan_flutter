@@ -121,7 +121,7 @@
   "input_wallet_name_hint": "請輸入錢包名稱",
   "input_wallet_name_length_hint": "請輸入6位以內的名稱",
   "create_wallet_password_label": "錢包密碼",
-  "input_wallet_password_length_hint": "請輸入6位的密碼",
+  "input_wallet_password_length_hint": "請輸入6位的数字密码",
   "reinput_wallet_password_label": "確認密碼",
   "input_password_again_hint": "請再次輸入密碼",
   "password_not_equal_hint": "密碼不壹致",

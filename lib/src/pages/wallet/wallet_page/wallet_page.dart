@@ -87,6 +87,7 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
             S.of(context).wallet,
             style: TextStyle(
               color: Colors.black,
+              fontSize: 18,
             ),
           ),
         ),

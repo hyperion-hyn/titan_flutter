@@ -182,7 +182,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
                     onPressed: () {
-                      _showSecurityDialog();
+                      _showScreenshotWarningDailog();
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -207,7 +207,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
     );
   }
 
-  _showSecurityDialog() {
+  _showScreenshotWarningDailog() {
     showDialog(
         context: context,
         builder: (BuildContext context) {

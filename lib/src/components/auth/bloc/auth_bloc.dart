@@ -50,13 +50,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
-        print('SetBioAuthEvent: ${authConfigModel.toJSON()}');
         await AppCache.saveValue<String>(
             '${PrefsKey.AUTH_CONFIG}',
             json.encode(
               authConfigModel.toJSON(),
             ));
 
+        yield UpdateAuthConfigState(authConfigModel: authConfigModel);
+      }
+    } else if (event is UpdateLastBioAuthTimeEvent) {
+      if (authConfigModel != null) {
+        authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+        await AppCache.saveValue<String>(
+            '${PrefsKey.AUTH_CONFIG}',
+            json.encode(
+              authConfigModel.toJSON(),
+            ));
+        ///Update pwd in secureStorage
+        await AppCache.secureSaveValue(
+          '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${event.walletAddress}',
+          event.walletPwd,
+        );
         yield UpdateAuthConfigState(authConfigModel: authConfigModel);
       }
     }

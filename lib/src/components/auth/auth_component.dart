@@ -79,7 +79,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   }) : super(key: key, child: child);
 
   bool get bioAuthAvailable {
-    return authConfigModel.availableBiometricTypes.length != 0;
+    return authConfigModel.availableBiometricTypes.length > 0;
   }
 
   bool get bioAuthEnabled {

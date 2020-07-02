@@ -51,7 +51,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
           centerTitle: true,
           title: Text(
             S.of(context).import_account,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
           ),
           actions: <Widget>[
             InkWell(
@@ -111,284 +114,337 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
             )*/
           ],
         ),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: <Widget>[
-                SizedBox(
-                  height: 36,
-                ),
-                Text(
-                  S.of(context).input_resume_mnemonic,
-                  style: TextStyle(color: Colors.black, fontSize: 14),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Container(
-                  constraints: BoxConstraints.expand(height: 120),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color(0xFFB7B7B7), width: 1)),
-                  child: Stack(
-                    children: <Widget>[
-                      Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8),
-                          child: TextFormField(
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return S.of(context).please_input_mnemonic;
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            // hide keyboard when touch other widgets
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: <Widget>[
+                  SizedBox(
+                    height: 36,
+                  ),
+                  Text(
+                    S.of(context).input_resume_mnemonic,
+                    style: TextStyle(color: Colors.black, fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Container(
+                    constraints: BoxConstraints.expand(height: 120),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Color(0xFFB7B7B7), width: 1)),
+                    child: Stack(
+                      children: <Widget>[
+                        Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8),
+                            child: TextFormField(
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return S.of(context).please_input_mnemonic;
+                                } else {
+                                  return null;
+                                }
+                              },
+                              controller: _mnemonicController,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: null,
+                              decoration:
+                                  InputDecoration(border: InputBorder.none),
+                            )),
+                        Align(
+                          alignment: Alignment(1, 1),
+                          child: InkWell(
+                            onTap: () async {
+                              var mnemonicWords = (await Clipboard.getData(
+                                      Clipboard.kTextPlain))
+                                  ?.text;
+                              if (mnemonicWords == null ||
+                                  mnemonicWords == '') {
+                                print('no clipboard word');
+                                return;
+                              }
+                              if (!bip39.validateMnemonic(mnemonicWords)) {
+                                Fluttertoast.showToast(
+                                    msg: S.of(context).illegal_mnemonic);
+                                return;
                               } else {
-                                return null;
+                                _mnemonicController.text = mnemonicWords;
                               }
                             },
-                            controller: _mnemonicController,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: null,
-                            decoration:
-                                InputDecoration(border: InputBorder.none),
-                          )),
-                      Align(
-                        alignment: Alignment(1, 1),
-                        child: InkWell(
-                          onTap: () async {
-                            var mnemonicWords =
-                                (await Clipboard.getData(Clipboard.kTextPlain))
-                                    ?.text;
-                            if (mnemonicWords == null || mnemonicWords == '') {
-                              print('no clipboard word');
-                              return;
-                            }
-                            if (!bip39.validateMnemonic(mnemonicWords)) {
-                              Fluttertoast.showToast(
-                                  msg: S.of(context).illegal_mnemonic);
-                              return;
-                            } else {
-                              _mnemonicController.text = mnemonicWords;
-                            }
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Text(
-                              S.of(context).paste,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                S.of(context).paste,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor),
+                              ),
                             ),
                           ),
-                        ),
+                        )
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.of(context).wallet_name_label,
+                        style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
                       )
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).wallet_name_label,
-                      style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                  child: TextFormField(
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                    child: TextFormField(
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return S.of(context).input_wallet_name_hint;
+                          } else if (value.length > 6) {
+                            return S.of(context).input_wallet_name_length_hint;
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: _walletNameController,
+                        decoration: InputDecoration(
+                          hintText: S.of(context).input_wallet_name_length_hint,
+                          hintStyle: TextStyle(
+                            color: HexColor('#FF999999'),
+                            fontSize: 13,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                        ),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(6),
+                        ],
+                        keyboardType: TextInputType.text),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.of(context).create_wallet_password_label,
+                        style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                    child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly
+                      ],
                       validator: (value) {
-                        if (value.isEmpty) {
-                          return S.of(context).input_wallet_name_hint;
-                        } else if (value.length > 6) {
-                          return S.of(context).input_wallet_name_length_hint;
+                        if (!ValidatorUtil.validatePassword(value)) {
+                          return S
+                              .of(context)
+                              .input_wallet_password_length_hint;
                         } else {
                           return null;
                         }
                       },
-                      controller: _walletNameController,
+                      controller: _walletPasswordController,
                       decoration: InputDecoration(
-                        hintText: S.of(context).input_wallet_name_length_hint,
-                        hintStyle:
-                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)),
+                        hintText:
+                            S.of(context).input_wallet_password_length_hint,
+                        hintStyle: TextStyle(
+                          color: HexColor('#FF999999'),
+                          fontSize: 13,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: HexColor('#FFD0D0D0'),
+                            width: 0.5,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: HexColor('#FFD0D0D0'),
+                            width: 0.5,
+                          ),
+                        ),
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
+                      keyboardType: TextInputType.number,
+                      obscureText: true,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.of(context).reinput_wallet_password_label,
+                        style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                    child: TextFormField(
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly,
                       ],
-                      keyboardType: TextInputType.text),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).create_wallet_password_label,
-                      style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                  child: TextFormField(
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                      WhitelistingTextInputFormatter.digitsOnly
-                    ],
-                    validator: (value) {
-                      if (!ValidatorUtil.validatePassword(value)) {
-                        return S.of(context).input_wallet_password_length_hint;
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: _walletPasswordController,
-                    decoration: InputDecoration(
-                      hintText: S.of(context).input_wallet_password_length_hint,
-                      hintStyle:
-                          TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return S.of(context).input_password_again_hint;
+                        } else if (value != _walletPasswordController.text) {
+                          return S.of(context).password_not_equal_hint;
+                        } else {
+                          return null;
+                        }
+                      },
+                      controller: _walletConfimPasswordController,
+                      decoration: InputDecoration(
+                          hintText:
+                              S.of(context).input_confirm_wallet_password_hint,
+                          hintStyle: TextStyle(
+                            color: HexColor('#FF999999'),
+                            fontSize: 13,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          suffixIcon: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _isShowPassword = !_isShowPassword;
+                                });
+                              },
+                              child: _isShowPassword
+                                  ? Image.asset(
+                                      'res/drawable/ic_password_show.png',
+                                      height: 20,
+                                      width: 20,
+                                    )
+                                  : Image.asset(
+                                      'res/drawable/ic_password_hide.png',
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                            ),
+                          )),
+                      keyboardType: TextInputType.number,
+                      obscureText: !_isShowPassword,
                     ),
-                    keyboardType: TextInputType.number,
-                    obscureText: true,
                   ),
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).reinput_wallet_password_label,
-                      style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                  child: TextFormField(
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                      WhitelistingTextInputFormatter.digitsOnly,
-                    ],
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return S.of(context).input_password_again_hint;
-                      } else if (value != _walletPasswordController.text) {
-                        return S.of(context).password_not_equal_hint;
-                      } else {
-                        return null;
-                      }
-                    },
-                    controller: _walletConfimPasswordController,
-                    decoration: InputDecoration(
-                        hintText:
-                            S.of(context).input_confirm_wallet_password_hint,
-                        hintStyle:
-                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        suffixIcon: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 8.0, horizontal: 16.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _isShowPassword = !_isShowPassword;
-                              });
-                            },
-                            child: _isShowPassword
-                                ? Image.asset(
-                                    'res/drawable/ic_password_show.png',
-                                    height: 20,
-                                    width: 20,
-                                  )
-                                : Image.asset(
-                                    'res/drawable/ic_password_hide.png',
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                          ),
-                        )),
-                    keyboardType: TextInputType.number,
-                    obscureText: !_isShowPassword,
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(16, 24, 16, 48),
-                  constraints: BoxConstraints.expand(height: 48),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    disabledColor: Colors.grey[600],
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                    disabledTextColor: Colors.white,
-                    onPressed: () async {
-                      if (_formKey.currentState.validate()) {
-                        var walletName = _walletNameController.text;
-                        var password = _walletPasswordController.text;
-                        var mnemonic = _mnemonicController.text.trim();
+                  Container(
+                    margin: EdgeInsets.fromLTRB(16, 24, 16, 48),
+                    constraints: BoxConstraints.expand(height: 48),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      disabledColor: Colors.grey[600],
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      disabledTextColor: Colors.white,
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          var walletName = _walletNameController.text;
+                          var password = _walletPasswordController.text;
+                          var mnemonic = _mnemonicController.text.trim();
 
-                        if (!bip39.validateMnemonic(mnemonic)) {
-                          Fluttertoast.showToast(
-                              msg: S.of(context).illegal_mnemonic);
-                          return;
-                        }
+                          if (!bip39.validateMnemonic(mnemonic)) {
+                            Fluttertoast.showToast(
+                                msg: S.of(context).illegal_mnemonic);
+                            return;
+                          }
 
-                        try {
-                          var wallet = await WalletUtil.storeByMnemonic(
-                              name: walletName,
-                              password: password,
-                              mnemonic: mnemonic);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      FinishImportPage(wallet)));
-                        } catch (_) {
-                          Fluttertoast.showToast(
-                              msg: S.of(context).import_account_fail);
+                          try {
+                            var wallet = await WalletUtil.storeByMnemonic(
+                                name: walletName,
+                                password: password,
+                                mnemonic: mnemonic);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FinishImportPage(wallet)));
+                          } catch (_) {
+                            Fluttertoast.showToast(
+                                msg: S.of(context).import_account_fail);
+                          }
                         }
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            S.of(context).import,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 16),
-                          ),
-                        ],
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              S.of(context).import,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ));

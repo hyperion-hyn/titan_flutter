@@ -83,7 +83,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           centerTitle: true,
           title: Text(
             S.of(context).wallet_manage,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
           ),
           actions: <Widget>[
             InkWell(
@@ -97,9 +100,12 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
                   ExtendsIconFont.import,
-                  size: 20,
+                  size: 18,
                 ),
               ),
+            ),
+            SizedBox(
+              width: 4.0,
             ),
             InkWell(
               onTap: () {
@@ -110,7 +116,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(ExtendsIconFont.add),
+                child: Icon(
+                  ExtendsIconFont.add,
+                  size: 20,
+                ),
               ),
             ),
             SizedBox(
@@ -162,7 +171,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: <Widget>[
           Row(
@@ -183,8 +192,8 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                         decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Theme.of(context).primaryColor),
-                        width: 52,
-                        height: 52,
+                        width: 45,
+                        height: 45,
                         child: Stack(
                           children: <Widget>[
                             Align(
@@ -215,7 +224,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                         ),
                       ),
                       SizedBox(
-                        width: 12,
+                        width: 8,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -271,6 +280,4 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
       ),
     );
   }
-
-
 }

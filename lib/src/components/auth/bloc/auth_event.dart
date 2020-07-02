@@ -16,6 +16,13 @@ class SetBioAuthEvent extends AuthEvent {
   SetBioAuthEvent({this.value});
 }
 
+class UpdateLastBioAuthTimeEvent extends AuthEvent {
+  final String walletAddress;
+  final String walletPwd;
+
+  UpdateLastBioAuthTimeEvent(this.walletPwd, this.walletAddress);
+}
+
 class UpdateAuthStatusEvent extends AuthEvent {
   final bool authorized;
 

@@ -50,16 +50,26 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
           actions: <Widget>[
-            FlatButton(
-              child: Text(
-                '显示二维码',
-                style: TextStyle(color: Colors.black),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        MnemonicQrcodePage(mnemonic: widget.mnemonic)));
-              },
+            Row(
+              children: <Widget>[
+                Image.asset(
+                  'res/drawable/ic_qrcode.png',
+                  width: 15,
+                  height: 15,
+                  color: Colors.black,
+                ),
+                FlatButton(
+                  child: Text(
+                    '显示二维码',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            MnemonicQrcodePage(mnemonic: widget.mnemonic)));
+                  },
+                ),
+              ],
             ),
           ],
         ),

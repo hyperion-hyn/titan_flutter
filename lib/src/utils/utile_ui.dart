@@ -200,21 +200,14 @@ class UiUtil {
 //        });
 //  }
 
-  static showWalletPasswordDialogV2(
+  static Future<String> showWalletPasswordDialogV2(
     BuildContext context,
     String walletAddress,
   ) async {
-    var password;
-    bool bioAuthExpired = AuthInheritedModel.of(context).bioAuthExpired;
-//    if (bioAuthExpired) {
-//      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: false));
-//    }
-    if (AuthInheritedModel.of(context).bioAuthEnabled && !bioAuthExpired) {
-      var bioAuthResult =
-          await showDialog(context: context, child: BioAuthDialog());
-      if (bioAuthResult != null && bioAuthResult) {
-        password = await AppCache.secureGetValue(
-            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress');
+    if (AuthInheritedModel.of(context).bioAuthEnabled) {
+      ///Bio-auth is expired, ask for pwd with password dialog.
+      if (AuthInheritedModel.of(context).bioAuthExpired) {
+        var pwd = await showPasswordDialog(context, walletAddress);
 
         ///Check password from secureStorage is correct
         var result = await WalletUtil.exportPrivateKey(
@@ -223,28 +216,44 @@ class UiUtil {
               .wallet
               .keystore
               .fileName,
-          password: password,
+          password: pwd,
         );
-        if (result == null) {
-          var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+        if (result != null) {
+          BlocProvider.of<AuthBloc>(context)
+              .add(UpdateLastBioAuthTimeEvent(walletAddress, pwd));
+        }
+        return pwd;
+      } else {
+        ///BioAuth is not expired, check the password from disk is correct
+        bool bioAuthResult = await showDialog(
+          context: context,
+          child: BioAuthDialog(),
+        );
+        if (bioAuthResult != null && bioAuthResult) {
+          String pwd = await WalletUtil.getPwdFromStorage(
+            context,
             walletAddress,
           );
-          password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
+          print('getPwdFromStorage: $pwd');
+          if (pwd != null) {
+            return pwd;
+          }
         }
       }
-    } else {
-      var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
-        walletAddress,
-      );
-      password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     }
-    return password;
+
+    var pwd = await UiUtil.showPasswordDialog(context, walletAddress);
+    return pwd;
   }
 
   static Future<String> showPasswordDialog(
     BuildContext context,
-    bool useDigits,
-  ) {
+    String walletAddress,
+  ) async {
+    var useDigits = await WalletUtil.checkUseDigitsPwd(
+      walletAddress,
+    );
+
     if (useDigits != null && useDigits) {
       return showDialog(
           context: context,

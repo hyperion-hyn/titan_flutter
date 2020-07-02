@@ -49,7 +49,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
   void initState() {
     super.initState();
     _amountController.addListener(() {
-      if (_amountController.text.trim() != null && _amountController.text.trim().length > 0) {
+      if (_amountController.text.trim() != null &&
+          _amountController.text.trim().length > 0) {
         var inputAmount = _amountController.text.trim();
         var activatedQuoteSign = QuotesInheritedModel.of(context)
             .activatedQuoteVoAndSign(widget.coinVo.symbol);
@@ -84,13 +85,15 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     var quoteSign = activatedQuoteSign?.sign?.sign;
 
     var addressHint = "";
-    RegExp _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+    RegExp _basicAddressReg =
+        RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
     String addressErrorHint = "";
-    if(widget.coinVo.coinType == CoinType.BITCOIN){
-      _basicAddressReg = RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
+    if (widget.coinVo.coinType == CoinType.BITCOIN) {
+      _basicAddressReg =
+          RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
       addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
       addressErrorHint = "请输入1、bc、或3开头的合法接收者地址";
-    }else{
+    } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
       addressHint = S.of(context).example + ': 0x81e7A0529AC1726e...';
       addressErrorHint = S.of(context).input_valid_address;
@@ -105,201 +108,217 @@ class _WalletSendState extends BaseState<WalletSendPage> {
         iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           S.of(context).send_symbol(widget.coinVo.symbol),
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Form(
-                key: _fromKey,
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          S.of(context).receiver_address,
-                          style: TextStyle(
-                              color: Color(0xFF333333),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: onPaste,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Icon(
-                              ExtendsIconFont.copy_content,
-                              color: Theme.of(context).primaryColor,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // hide keyboard when touch other widgets
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Form(
+                  key: _fromKey,
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            S.of(context).receiver_address,
+                            style: TextStyle(
+                                color: Color(0xFF333333),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: onPaste,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Icon(
+                                ExtendsIconFont.copy_content,
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () => onScan(quotePrice),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Icon(
-                              ExtendsIconFont.qrcode_scan,
-                              color: Theme.of(context).primaryColor,
+                          InkWell(
+                            onTap: () => onScan(quotePrice),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Icon(
+                                ExtendsIconFont.qrcode_scan,
+                                color: Theme.of(context).primaryColor,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 12),
-                      child: TextFormField(
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 12),
+                        child: TextFormField(
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return S
+                                    .of(context)
+                                    .receiver_address_not_empty_hint;
+                              } else if (!_basicAddressReg.hasMatch(value)) {
+                                return addressErrorHint;
+                              }
+                              return null;
+                            },
+                            controller: _receiverAddressController,
+                            decoration: InputDecoration(
+                              hintText: addressHint,
+                              hintStyle: TextStyle(color: Colors.black12),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                            ),
+                            keyboardType: TextInputType.text),
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            S
+                                .of(context)
+                                .send_count_label(widget.coinVo.symbol),
+                            style: TextStyle(
+                                color: Color(0xFF333333),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            '(' +
+                                S.of(context).can_use +
+                                ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black38),
+                          ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () {
+                              _amountController.text =
+                                  FormatUtil.coinBalanceHumanRead(
+                                      widget.coinVo);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 0),
+                              child: Text(
+                                S.of(context).all,
+                                style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    textBaseline: TextBaseline.ideographic),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 12),
+                        child: TextFormField(
                           validator: (value) {
-                            if (value.isEmpty) {
-                              return S.of(context).receiver_address_not_empty_hint;
-                            } else if (!_basicAddressReg.hasMatch(value)){
-                              return addressErrorHint;
+                            value = value.trim();
+                            if (value == "0") {
+                              return S.of(context).input_corrent_count_hint;
+                            }
+                            if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
+                              return S.of(context).input_corrent_count_hint;
+                            }
+                            if (Decimal.parse(value) >
+                                Decimal.parse(FormatUtil.coinBalanceHumanRead(
+                                    widget.coinVo))) {
+                              return S.of(context).input_count_over_balance;
                             }
                             return null;
                           },
-                          controller: _receiverAddressController,
+                          controller: _amountController,
                           decoration: InputDecoration(
-                            hintText: addressHint,
+                            hintText: S.of(context).input_transfer_num,
                             hintStyle: TextStyle(color: Colors.black12),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30)),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                           ),
-                          keyboardType: TextInputType.text),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          S.of(context).send_count_label(widget.coinVo.symbol),
-                          style: TextStyle(
-                              color: Color(0xFF333333),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          '(' +
-                              S.of(context).can_use +
-                              ' ${FormatUtil.coinBalanceHumanReadFormat(widget.coinVo)})',
-                          style: TextStyle(fontSize: 12, color: Colors.black38),
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: () {
-                            _amountController.text =
-                                FormatUtil.coinBalanceHumanRead(widget.coinVo);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0, vertical: 0),
-                            child: Text(
-                              S.of(context).all,
-                              style: TextStyle(
-                                  color: Theme.of(context).primaryColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  textBaseline: TextBaseline.ideographic),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 12),
-                      child: TextFormField(
-                        validator: (value) {
-                          value = value.trim();
-                          if (value == "0") {
-                            return S.of(context).input_corrent_count_hint;
-                          }
-                          if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
-                            return S.of(context).input_corrent_count_hint;
-                          }
-                          if (Decimal.parse(value) >
-                              Decimal.parse(FormatUtil.coinBalanceHumanRead(
-                                  widget.coinVo))) {
-                            return S.of(context).input_count_over_balance;
-                          }
-                          return null;
-                        },
-                        controller: _amountController,
-                        decoration: InputDecoration(
-                          hintText: S.of(context).input_transfer_num,
-                          hintStyle: TextStyle(color: Colors.black12),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                        ),
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
 //                        onChanged: (value) {
 //                          setState(() {
 //                            _notionalValue = double.parse(value) * quotePrice;
 //                          });
 //                        },
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(left: 8, top: 8),
-                            child: Text(
-                              "≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}",
-                              style: TextStyle(
-                                color: Color(0xFF9B9B9B),
-                              ),
-                            )),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
-                constraints: BoxConstraints.expand(height: 48),
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  disabledColor: Colors.grey[600],
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
-                  disabledTextColor: Colors.white,
-                  onPressed: widget.coinVo == null ? null : submit,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          S.of(context).next,
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 16),
                         ),
-                      ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(left: 8, top: 8),
+                              child: Text(
+                                "≈ ${quoteSign ?? ""}${FormatUtil.formatPrice(_notionalValue)}",
+                                style: TextStyle(
+                                  color: Color(0xFF9B9B9B),
+                                ),
+                              )),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 12,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
+                  constraints: BoxConstraints.expand(height: 48),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    disabledColor: Colors.grey[600],
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    disabledTextColor: Colors.white,
+                    onPressed: widget.coinVo == null ? null : submit,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            S.of(context).next,
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -353,7 +372,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
             });
           }
         }
-      } else if(barcode.contains("bitcoin")) {
+      } else if (barcode.contains("bitcoin")) {
         var barcodeArray = barcode.split("?");
         var withAddress = barcodeArray[0];
         var address = withAddress.replaceAll("bitcoin:", "");

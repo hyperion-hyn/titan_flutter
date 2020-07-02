@@ -22,9 +22,9 @@ class BioAuthDialog extends StatefulWidget {
 class _BioAuthDialogState extends BaseState<BioAuthDialog> {
   final LocalAuthentication auth = LocalAuthentication();
 
-  String _currentWalletPwd;
-
   BioAuthDialogBloc authDialogBloc = BioAuthDialogBloc();
+
+  bool _showContent = true;
 
   void initState() {
     super.initState();
@@ -53,6 +53,10 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
       bloc: authDialogBloc,
       listener: (context, state) {
         if (state is AuthCompletedState) {
+          if (mounted)
+            setState(() {
+              _showContent = false;
+            });
           Navigator.of(context).pop(state.result);
         }
       },
@@ -70,8 +74,6 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
               state.remainCount,
               state.maxCount,
             );
-          } else if (state is AuthCompletedState) {
-            content = _resultView(state.result);
           }
           return AnimatedPadding(
             padding: MediaQuery.of(context).viewInsets +
@@ -81,36 +83,39 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
             child: Center(
               child: Material(
                 color: Colors.transparent,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(15)),
-                          color: Colors.white,
-                        ),
+                child: _showContent
+                    ? SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                '钱包授权登陆',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      '钱包授权登陆',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  if (content != null) content
+                                ],
                               ),
                             ),
-                            if (content != null) content
                           ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
+                      )
+                    : SizedBox(),
               ),
             ),
           );

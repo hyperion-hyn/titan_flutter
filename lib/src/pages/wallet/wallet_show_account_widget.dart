@@ -40,7 +40,8 @@ import 'api/etherscan_api.dart';
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
 
-  ShowAccountPage(String coinVo) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
+  ShowAccountPage(String coinVo)
+      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
   State<StatefulWidget> createState() {
@@ -81,7 +82,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
           iconTheme: IconThemeData(color: Colors.black),
           title: Text(
             "${widget.coinVo.name} (${widget.coinVo.symbol})",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 15,
+            ),
           ),
         ),
         body: BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -141,8 +145,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                             SizedBox(
                               height: 24,
                             ),
-                            Divider(
-                              height: 2,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Divider(
+                                height: 2,
+                              ),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -155,9 +163,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () {
-                                        if(dataList.length > 0){
-                                          TransactionDetailVo transaction = dataList[1];
-                                          if(transaction.state == 0 && widget.coinVo.coinType == CoinType.BITCOIN) {
+                                        if (dataList.length > 0) {
+                                          TransactionDetailVo transaction =
+                                              dataList[1];
+                                          if (transaction.state == 0 &&
+                                              widget.coinVo.coinType ==
+                                                  CoinType.BITCOIN) {
                                             UiUtil.showConfirmDialog(
                                               context,
                                               content: "你有未确认的比特币转账，请稍后再试！",
@@ -336,7 +347,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
       }
     }
 
-    if(transactionDetail.state >= 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN){
+    if (transactionDetail.state >= 0 &&
+        transactionDetail.state < 6 &&
+        widget.coinVo.coinType == CoinType.BITCOIN) {
       title = "待确认";
     } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
@@ -383,20 +396,26 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => InAppWebViewContainer(
-                              initUrl: WalletConfig.BITCOIN_TRANSATION_DETAIL + transactionDetail.hash,
-                              title: '',
-                            )));
+                                  initUrl:
+                                      WalletConfig.BITCOIN_TRANSATION_DETAIL +
+                                          transactionDetail.hash,
+                                  title: '',
+                                )));
                   } else {
-                    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-                    var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                    var isChinaMainland = SettingInheritedModel.of(context)
+                            .areaModel
+                            ?.isChinaMainland ==
+                        true;
+                    var url = EtherscanApi.getTxDetailUrl(
+                        transactionDetail.hash, isChinaMainland);
                     if (url != null) {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => InAppWebViewContainer(
-                                initUrl: url,
-                                title: '',
-                              )));
+                                    initUrl: url,
+                                    title: '',
+                                  )));
                     }
                   }
                 },
@@ -438,23 +457,40 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   ),
                                 ],
                               ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
                               Row(
                                 children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
                                     child: Text(
                                       describe,
-                                      style: TextStyle(fontSize: 14, color: Color(0xFF9B9B9B)),
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Color(0xFF9B9B9B)),
                                     ),
                                   ),
                                   Spacer(),
-                                  if (transactionDetail.state > 0 && transactionDetail.state < 6 && widget.coinVo.coinType == CoinType.BITCOIN)
+                                  if (transactionDetail.state > 0 &&
+                                      transactionDetail.state < 6 &&
+                                      widget.coinVo.coinType ==
+                                          CoinType.BITCOIN)
                                     Text(
                                       "确认${transactionDetail.state}次",
                                       style: TextStyle(
-                                          color: DefaultColors.colorff4c3b, fontSize: 14, fontWeight: FontWeight.bold),
+                                          color: DefaultColors.colorff4c3b,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                 ],
+                              ),
+                              SizedBox(
+                                height: 8.0,
+                              ),
+                              Divider(
+                                height: 1,
                               )
                             ],
                           ),
