@@ -57,18 +57,15 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    S.of(context).your_mnemonic,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+                Text(
+                  S.of(context).your_mnemonic,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     S.of(context).save_mnemonic_notice,
                     style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
@@ -76,7 +73,7 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 32.0, horizontal: 8.0),
+                      vertical: 16.0, horizontal: 8.0),
                   child: Container(
                     child: GridView.builder(
                         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -101,22 +98,27 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                         }),
                   ),
                 ),
+                SizedBox(height: 16.0,),
                 Container(
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
                   child: Row(
                     children: <Widget>[
+                     Spacer(),
                       Icon(
-                        Icons.notification_important,
+                        Icons.warning,
                         color: Color(0xFFD0021B),
                       ),
+                      SizedBox(width: 4,),
                       Text(
                         S.of(context).save_mnemonic_safe_notice,
                         style: TextStyle(
                           color: Color(0xFFD0021B),
-                          fontSize: 14,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold
                         ),
                       ),
+                      Spacer(),
                     ],
                   ),
                 ),

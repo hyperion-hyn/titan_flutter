@@ -98,7 +98,7 @@ dependencies:
   fake_cookie_manager: ^0.1.0
   loading: ^1.0.1
   flutter_inappwebview: ^3.1.0
-#  characters: ^0.5.0
+  #  characters: ^0.5.0
   characters: ^1.0.0
 
   #  flutter_inappwebview:
@@ -133,6 +133,8 @@ dependencies:
   flutter_secure_storage: 3.3.3
   # https://pub.dev/packages/gesture_unlock
   gesture_unlock: ^0.0.1
+  # https://pub.dev/packages/pin_input_text_field
+  pin_input_text_field: 3.0.3
 
   flutter_recaptcha_v2:
     git:

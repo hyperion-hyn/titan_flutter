@@ -26,6 +26,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/exception_process.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
@@ -516,78 +517,72 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   }
 
   Future _transfer() async {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
+    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+      activatedWallet.wallet.getEthAccount().address,
+    );
+    var walletPassword = await UiUtil.showPasswordDialog(context, pwdUseDigits);
+
+    if (walletPassword == null) {
+      return;
+    }
+
+    try {
+      setState(() {
+        isTransferring = true;
+      });
+      var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+      if (widget.coinVo.symbol == "ETH") {
+        await _transferEth(
+            walletPassword,
+            ConvertTokenUnit.strToBigInt(
+                widget.transferAmount, widget.coinVo.decimals),
+            widget.receiverAddress,
+            activatedWallet.wallet);
+      } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
+        var activatedWalletVo = activatedWallet.wallet;
+        var transResult = await activatedWalletVo.sendBitcoinTransaction(
+            walletPassword,
+            activatedWalletVo.getBitcoinZPub(),
+            widget.receiverAddress,
+            gasPrice.toInt(),
+            ConvertTokenUnit.decimalToWei(
+                    Decimal.parse(widget.transferAmount), 8)
+                .toInt());
+        if (transResult["code"] != 0) {
+          ExceptionProcess.uploadPoiException(transResult, "bitcoin upload");
+          Fluttertoast.showToast(
+              msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
+          return;
+        }
+      } else {
+        await _transferErc20(
+            walletPassword,
+            ConvertTokenUnit.strToBigInt(
+                widget.transferAmount, widget.coinVo.decimals),
+            widget.receiverAddress,
+            activatedWallet.wallet);
       }
 
-      try {
-        setState(() {
-          isTransferring = true;
-        });
-        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-        if (widget.coinVo.symbol == "ETH") {
-          await _transferEth(
-              walletPassword,
-              ConvertTokenUnit.strToBigInt(
-                  widget.transferAmount, widget.coinVo.decimals),
-              widget.receiverAddress,
-              activatedWallet.wallet);
-        } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
-          var activatedWalletVo = activatedWallet.wallet;
-          var transResult = await activatedWalletVo.sendBitcoinTransaction(
-              walletPassword,
-              activatedWalletVo.getBitcoinZPub(),
-              widget.receiverAddress,
-              gasPrice.toInt(),
-              ConvertTokenUnit.decimalToWei(
-                      Decimal.parse(widget.transferAmount), 8)
-                  .toInt());
-          if (transResult["code"] != 0) {
-            ExceptionProcess.uploadPoiException(transResult, "bitcoin upload");
-            Fluttertoast.showToast(
-                msg: "${transResult.toString()}",
-                toastLength: Toast.LENGTH_LONG);
-            return;
-          }
-        } else {
-          await _transferErc20(
-              walletPassword,
-              ConvertTokenUnit.strToBigInt(
-                  widget.transferAmount, widget.coinVo.decimals),
-              widget.receiverAddress,
-              activatedWallet.wallet);
-        }
-
-        Application.router.navigateTo(context, Routes.confirm_success_papge);
-      } catch (_) {
-        ExceptionProcess.uploadPoiException(_, "ETH or Bitcoin upload");
-        setState(() {
-          isTransferring = false;
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          Fluttertoast.showToast(
-              msg: MemoryCache.contractErrorStr(_.message),
-              toastLength: Toast.LENGTH_LONG);
+      Application.router.navigateTo(context, Routes.confirm_success_papge);
+    } catch (_) {
+      ExceptionProcess.uploadPoiException(_, "ETH or Bitcoin upload");
+      setState(() {
+        isTransferring = false;
+      });
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
+      } else if (_ is RPCError) {
+        Fluttertoast.showToast(
+            msg: MemoryCache.contractErrorStr(_.message),
+            toastLength: Toast.LENGTH_LONG);
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
-    });
+    }
   }
 
   Future _transferEth(

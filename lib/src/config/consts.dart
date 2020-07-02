@@ -99,6 +99,8 @@ class PrefsKey {
   static final lastAnnouncement = 'last_announcement';
   static final newsUpdateTime = 'news_update_time';
 
+  static final WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
+
   static final WALLET_PUB_KEY_PREFIX_KEY = 'wallet_pub_';
 
   ///auth

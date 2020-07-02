@@ -18,8 +18,6 @@ class ShowFingerprintAuthEvent extends BioAuthDialogEvent {
   ShowFingerprintAuthEvent({this.remainCount, this.maxCount});
 }
 
-class ShowPasswordAuthEvent extends BioAuthDialogEvent {}
-
 class CheckAuthConfigEvent extends BioAuthDialogEvent {}
 
 class CheckBioAuthEvent extends BioAuthDialogEvent {}

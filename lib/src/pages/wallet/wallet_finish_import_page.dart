@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -31,6 +33,12 @@ class FinishImportPage extends StatelessWidget {
                     await Future.delayed(Duration(milliseconds: 300));
                     BlocProvider.of<WalletCmpBloc>(context)
                         .add(UpdateActivatedWalletBalanceEvent());
+
+                    ///Use digits password now
+                    AppCache.saveValue<bool>(
+                      '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.getEthAccount().address}',
+                      true,
+                    );
                   }
                   Routes.popUntilCachedEntryRouteName(context);
                 },
@@ -58,8 +66,7 @@ class FinishImportPage extends StatelessWidget {
                   child: Text(
                     S.of(context).import_account_success,
                     textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
                 Padding(

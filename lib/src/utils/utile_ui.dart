@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:titan/src/widget/wallet_password_dialog.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -177,18 +178,40 @@ class UiUtil {
     return false;
   }
 
+//  static Future<String> showEnterPassWordBottomSheet(
+//      BuildContext context) {
+//    return showModalBottomSheet(
+//        isScrollControlled: true,
+//        context: context,
+//        shape: RoundedRectangleBorder(
+//          borderRadius: BorderRadius.circular(15.0),
+//        ),
+//        builder: (BuildContext context) {
+//          return EnterWalletPasswordWidget();
+//        });
+//  }
 
-  static Future<String> showEnterPassWordBottomSheet(
-      BuildContext context) {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        });
+  static Future<String> showPasswordDialog(
+    BuildContext context,
+    bool useDigits,
+  ) {
+    if (useDigits != null && useDigits) {
+      return showDialog(
+          context: context,
+          child: WalletPasswordDialog(
+            title: '请输入钱包密码',
+          ));
+    } else {
+      return showModalBottomSheet(
+          isScrollControlled: true,
+          context: context,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          builder: (BuildContext context) {
+            return EnterWalletPasswordWidget();
+          });
+    }
   }
 }
 

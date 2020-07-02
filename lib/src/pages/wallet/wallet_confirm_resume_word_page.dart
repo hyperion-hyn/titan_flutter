@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/wallet_finish_create_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -70,11 +72,14 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       S.of(context).confirm_mnemonic_tips,
                       style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                     ),
+                  ),
+                  SizedBox(
+                    height: 16,
                   ),
                   Container(
                     constraints: BoxConstraints(minHeight: 200),
@@ -218,6 +223,8 @@ class _ConfirmResumeWordState extends State<ConfirmResumeWordPage> {
           name: widget.walletName,
           password: widget.password,
           mnemonic: widget.createWalletMnemonicTemp.trim());
+
+
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => FinishCreatePage(wallet)));
     } else {
