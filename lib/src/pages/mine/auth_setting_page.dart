@@ -4,10 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/auth/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:titan/src/widget/enter_wallet_password.dart';
@@ -22,6 +28,7 @@ class AuthSettingPage extends StatefulWidget {
 class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   final LocalAuthentication auth = LocalAuthentication();
   List<BiometricType> _availableBiometrics = List();
+  Wallet _wallet;
 
   @override
   void initState() {
@@ -34,7 +41,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
-    //_authConfigModel = AuthInheritedModel.of(context).authConfigModel;
+    _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
   }
 
   @override
@@ -42,35 +49,46 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '生物识别',
+          '面容/指纹与密码',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.black),
       ),
       body: Container(
-        color: Colors.white,
+        color: HexColor('#FFF2F2F2'),
         child: ListView(
           children: <Widget>[
-            Text('Available biometrics: $_availableBiometrics\n'),
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text('开启快捷验证功能'),
+            ),
             if (_availableBiometrics != null &&
                 _availableBiometrics.contains(BiometricType.face))
-              SwitchListTile(
-                activeColor: Theme.of(context).primaryColor,
-                title: Text('开启人脸验证'),
-                value: AuthInheritedModel.of(context).authConfigModel.useFace,
-                onChanged: (bool value) async {
-                  if (value) {
-                    var result = await _verifyWalletPwd();
-                    if (result) _turnOnOrOffBioAuth(BiometricType.face, value);
-                  } else {
-                    _turnOnOrOffBioAuth(BiometricType.face, value);
-                  }
-                  setState(() {});
-                },
+              Material(
+                elevation: 0,
+                child: SwitchListTile(
+                  activeColor: Theme.of(context).primaryColor,
+                  title: Text('人脸验证'),
+                  value: AuthInheritedModel.of(context).authConfigModel.useFace,
+                  onChanged: (bool value) async {
+                    if (value) {
+                      var result = await _verifyWalletPwd();
+                      if (result) {
+                        _turnOnOrOffBioAuth(BiometricType.face, value);
+                      } else {
+                        Fluttertoast.showToast(msg: '密码错误');
+                      }
+                      ;
+                    } else {
+                      _turnOnOrOffBioAuth(BiometricType.face, value);
+                    }
+                    setState(() {});
+                  },
+                ),
               ),
             Divider(
               height: 1,
@@ -78,15 +96,19 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
             if (_availableBiometrics != null &&
                 _availableBiometrics.contains(BiometricType.fingerprint))
               SwitchListTile(
-                title: Text('开启指纹识别'),
+                title: Text('指纹识别'),
                 value: AuthInheritedModel.of(context)
                     .authConfigModel
                     .useFingerprint,
                 onChanged: (bool value) async {
                   if (value) {
                     var result = await _verifyWalletPwd();
-                    if (result)
+                    if (result) {
                       _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
+                    } else {
+                      Fluttertoast.showToast(msg: '密码错误');
+                    }
+                    ;
                   } else {
                     _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
                   }
@@ -138,39 +160,38 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
   }
 
   Future<bool> _verifyWalletPwd() async {
-    var password = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        });
+    ///Don't use bio-auth dialog here
+    ///
+    var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+      _wallet.getEthAccount().address,
+    );
+    var password = await UiUtil.showPasswordDialog(context, pwdUseDigits);
     if (password != null) {
       ///Check pwd is valid here
       ///
-
-      return _saveWalletPwdToSecureStorage(password);
+      var result = await WalletUtil.exportPrivateKey(
+        fileName: _wallet.keystore.fileName,
+        password: password,
+      );
+      if (result != null) {
+        _saveWalletPwdToSecureStorage(password);
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   }
 
-  Future<bool> _saveWalletPwdToSecureStorage(String pwd) async {
-    return true;
+  _saveWalletPwdToSecureStorage(String pwd) async {
+    AppCache.secureSaveValue(
+      '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
+      pwd,
+    );
   }
 
   _turnOnOrOffBioAuth(BiometricType biometricType, bool value) {
-    AuthConfigModel authConfigModel =
-        AuthInheritedModel.of(context).authConfigModel;
-    if (biometricType == BiometricType.face) {
-      authConfigModel.useFace = value;
-    } else if (biometricType == BiometricType.fingerprint) {
-      authConfigModel.useFingerprint = value;
-    }
-    BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
-      authConfigModel: authConfigModel,
-    ));
+    BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: value));
   }
 }

@@ -86,14 +86,23 @@ class RootPageControlComponentState
     } on PlatformException catch (e) {
       print(e);
     }
-    var authConfigStr = await AppCache.getValue<String>(PrefsKey.AUTH_CONFIG);
+//    var activeWalletFileName =
+//        await AppCache.getValue<String>(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
+//    var authConfigStr = activeWalletFileName != null
+//        ? await AppCache.getValue<String>(
+//            '${activeWalletFileName}_${PrefsKey.AUTH_CONFIG}')
+//        : null;
+    var authConfigStr =
+        await AppCache.getValue<String>('${PrefsKey.AUTH_CONFIG}');
     AuthConfigModel authConfigModel = authConfigStr != null
         ? AuthConfigModel.fromJson(json.decode(authConfigStr))
         : AuthConfigModel(
+            setBioAuthAsked: false,
+            lastBioAuthTime: 0,
             useFace: false,
             useFingerprint: false,
-            setBioAuthAsked: false,
-            availableBiometricTypes: availableBiometricTypes);
+            availableBiometricTypes: availableBiometricTypes,
+          );
 
     BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
       authConfigModel: authConfigModel,

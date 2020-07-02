@@ -2,8 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/auth/bloc/bloc.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -40,7 +45,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       if (event.wallet == null) {
         _activatedWalletVo = null;
       } else {
-        if (_activatedWalletVo?.wallet?.getEthAccount()?.address == event.wallet.getEthAccount().address) {
+        if (_activatedWalletVo?.wallet?.getEthAccount()?.address ==
+            event.wallet.getEthAccount().address) {
           isSameWallet = true;
         }
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
@@ -48,16 +54,25 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       if (!isSameWallet) {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
-        walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
+        walletRepository.saveActivatedWalletFileName(
+            _activatedWalletVo?.wallet?.keystore?.fileName);
 
         _recoverBalanceFromDisk(_activatedWalletVo);
 
         //sync wallet account to server
-        if((event.wallet?.getBitcoinZPub() ?? false) != ""){
-          BitcoinApi.syncBitcoinPubToServer(event.wallet?.getBitcoinZPub() ?? "");
+        if ((event.wallet?.getBitcoinZPub() ?? false) != "") {
+          BitcoinApi.syncBitcoinPubToServer(
+              event.wallet?.getBitcoinZPub() ?? "");
         }
 //        _nodeApi.postWallets(_activatedWalletVo);
+
       }
+
+      ///Use digits password now
+      AppCache.saveValue<bool>(
+        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${_activatedWalletVo.wallet.getEthAccount().address}',
+        true,
+      );
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
@@ -69,9 +84,12 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         yield UpdatingWalletBalanceState();
 
         try {
-          await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol);
-          _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
-          yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo.copyWith());
+          await walletRepository.updateWalletVoBalance(
+              _activatedWalletVo, event.symbol);
+          _saveWalletVoBalanceToDisk(
+              _activatedWalletVo); //save balance data to disk;
+          yield UpdatedWalletBalanceState(
+              walletVo: _activatedWalletVo.copyWith());
         } catch (e) {
           logger.e(e);
 

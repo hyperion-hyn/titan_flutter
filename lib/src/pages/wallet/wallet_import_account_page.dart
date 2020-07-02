@@ -191,10 +191,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     Text(
                       S.of(context).wallet_name_label,
                       style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500
-                      ),
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
                     )
                   ],
                 ),
@@ -232,10 +231,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     Text(
                       S.of(context).create_wallet_password_label,
                       style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500
-                      ),
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
                     )
                   ],
                 ),
@@ -243,6 +241,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                   child: TextFormField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(6),
+                    ],
                     validator: (value) {
                       if (!ValidatorUtil.validatePassword(value)) {
                         return S.of(context).input_wallet_password_length_hint;
@@ -260,7 +261,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
-                    keyboardType: TextInputType.visiblePassword,
+                    keyboardType: TextInputType.number,
                     obscureText: true,
                   ),
                 ),
@@ -272,10 +273,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     Text(
                       S.of(context).reinput_wallet_password_label,
                       style: TextStyle(
-                        color: HexColor('#333333'),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500
-                      ),
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500),
                     )
                   ],
                 ),
@@ -283,6 +283,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                   child: TextFormField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(6),
+                    ],
                     validator: (value) {
                       if (value.isEmpty) {
                         return S.of(context).input_password_again_hint;
@@ -294,38 +297,37 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     },
                     controller: _walletConfimPasswordController,
                     decoration: InputDecoration(
-                      hintText:
-                          S.of(context).input_confirm_wallet_password_hint,
-                      hintStyle:
-                          TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      suffixIcon: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 16.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _isShowPassword = !_isShowPassword;
-                            });
-                          },
-                          child: _isShowPassword
-                              ? Image.asset(
-                            'res/drawable/ic_password_show.png',
-                            height: 20,
-                            width: 20,
-                          )
-                              : Image.asset(
-                            'res/drawable/ic_password_hide.png',
-                            height: 20,
-                            width: 20,
+                        hintText:
+                            S.of(context).input_confirm_wallet_password_hint,
+                        hintStyle:
+                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        suffixIcon: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 8.0, horizontal: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isShowPassword = !_isShowPassword;
+                              });
+                            },
+                            child: _isShowPassword
+                                ? Image.asset(
+                                    'res/drawable/ic_password_show.png',
+                                    height: 20,
+                                    width: 20,
+                                  )
+                                : Image.asset(
+                                    'res/drawable/ic_password_hide.png',
+                                    height: 20,
+                                    width: 20,
+                                  ),
                           ),
-                        ),
-                      )
-                    ),
-                    keyboardType: TextInputType.visiblePassword,
+                        )),
+                    keyboardType: TextInputType.number,
                     obscureText: !_isShowPassword,
                   ),
                 ),

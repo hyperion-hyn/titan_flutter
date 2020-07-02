@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_save/image_save.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -219,14 +220,33 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
           height: 36,
         ),
         Center(
-          child: ClickOvalButton(
-            S.of(context).share,
-            () {
-              share();
-            },
-            height: 40,
-            width: 110,
-            fontSize: 16,
+          child: Row(
+            children: <Widget>[
+              Spacer(),
+              ClickOvalButton(
+                S.of(context).share,
+                () {
+                  share();
+                },
+                height: 40,
+                width: 110,
+                fontSize: 16,
+              ),
+              SizedBox(
+                width: 32,
+              ),
+              InkWell(
+                onTap: _saveQrImage,
+                child: Text(
+                  '保存二维码',
+                  style: TextStyle(
+                    color: HexColor('#FF1F81FF'),
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              Spacer(),
+            ],
           ),
         ),
       ]),
@@ -385,5 +405,23 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
 //    PermissionHandler().openAppSettings();
 //    var canInstall = await TitanPlugin.requestInstallUnknownSourceSetting();
 //    print(canInstall);
+  }
+
+  _saveQrImage() async {
+    bool result = false;
+    try {
+      RenderRepaintBoundary boundary =
+          _qrImageBoundaryKey.currentContext.findRenderObject();
+      var image = await boundary.toImage();
+      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List pngBytes = byteData.buffer.asUint8List();
+      result = await ImageSave.saveImage(pngBytes, "png",
+          albumName: 'titan_wallet_$_pubKey');
+    } catch (e) {
+      result = false;
+    }
+    Fluttertoast.showToast(
+      msg: result ? '保存成功' : '保存失败',
+    );
   }
 }

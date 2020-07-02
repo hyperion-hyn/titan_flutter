@@ -1,12 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/utils/validator_util.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 
 class EnterWalletPasswordWidget extends StatefulWidget {
+  final bool useDigits;
+
+  EnterWalletPasswordWidget({
+    this.useDigits = false,
+  });
+
   @override
   State<StatefulWidget> createState() {
     return EnterWalletPasswordState();
@@ -71,6 +78,10 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             TextFormField(
+                              inputFormatters: [
+                                if (widget.useDigits)
+                                  LengthLimitingTextInputFormatter(6),
+                              ],
                               validator: (value) {
                                 if (!ValidatorUtil.validatePassword(value)) {
                                   return S
@@ -81,7 +92,9 @@ class EnterWalletPasswordState extends State<EnterWalletPasswordWidget> {
                                 }
                               },
                               controller: passwordEditingController,
-                              keyboardType: TextInputType.emailAddress,
+                              keyboardType: widget.useDigits
+                                  ? TextInputType.number
+                                  : TextInputType.emailAddress,
                               obscureText: true,
                               decoration: InputDecoration.collapsed(
                                 hintText: S

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
@@ -246,6 +253,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                       FluroConvertUtils.object2string(wallet.toJson());
                   var currentRouteName =
                       RouteUtil.encodeRouteNameWithoutParams(context);
+
                   Application.router.navigateTo(
                       context,
                       Routes.wallet_setting +
@@ -263,4 +271,6 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
       ),
     );
   }
+
+
 }

@@ -28,6 +28,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:titan/src/widget/wallet_password_dialog.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -336,6 +337,16 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             },
           ),
           RaisedButton(
+            child: Text('密码dialog'),
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  child: WalletPasswordDialog(
+                    title: '请输入钱包密码',
+                  ));
+            },
+          ),
+          RaisedButton(
             child: Text('保存当前钱包密码到securedStorage'),
             onPressed: () async {
               String address = WalletInheritedModel.of(context)
@@ -343,23 +354,21 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   .wallet
                   .getEthAccount()
                   .address;
-              var password = await showModalBottomSheet(
-                  isScrollControlled: true,
-                  context: context,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  builder: (BuildContext context) {
-                    return EnterWalletPasswordWidget();
-                  });
+              var pwdUseDigits = await WalletUtil.checkUseDigitsPwd(
+                WalletInheritedModel.of(context)
+                    .activatedWallet
+                    .wallet
+                    .getEthAccount()
+                    .address,
+              );
+              var password = await UiUtil.showWalletPasswordDialogV2(
+                context,
+                address,
+              );
               FlutterSecureStorage secureStorage = FlutterSecureStorage();
               secureStorage.write(key: 'wallet_pwd_$address', value: password);
             },
           ),
-          Text('authorized: ${AuthInheritedModel.of(
-            context,
-            aspect: AuthAspect.authorized,
-          ).authorized}'),
           RaisedButton(
             child: Text('Change Authorized'),
             onPressed: () {
@@ -480,20 +489,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     }
   }
 
-  _showPasswordBottomSheet() {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
-      }
-      Fluttertoast.showToast(msg: walletPassword);
-    });
+  _showPasswordBottomSheet() async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.walletVo.wallet.getEthAccount().address,
+    );
+    if (walletPassword == null) {
+      return;
+    }
+    Fluttertoast.showToast(msg: walletPassword);
   }
 }

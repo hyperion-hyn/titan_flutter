@@ -44,7 +44,6 @@ class _WalletPageState extends BaseState<WalletPage>
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
-  List<BiometricType> _availableBiometricTypes = List();
 
   @override
   bool get wantKeepAlive => true;
@@ -67,19 +66,6 @@ class _WalletPageState extends BaseState<WalletPage>
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateActivatedWalletBalanceEvent());
     });
-  }
-
-  _showDialog() async {
-    await Future.delayed(Duration(milliseconds: 50));
-    if (!AuthInheritedModel.of(context).bioAuthEnabled) {
-      if (AuthInheritedModel.of(context).currentBioMetricType != null) {
-        showDialog(
-            context: context,
-            child: SetBioAuthDialog(
-              AuthInheritedModel.of(context).currentBioMetricType,
-            ));
-      }
-    }
   }
 
   @override

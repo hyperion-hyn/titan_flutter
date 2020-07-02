@@ -12,6 +12,8 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/ContentDialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
@@ -213,7 +215,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(10.0))),
             child: Container(
-              height: 300,
+              height: 320,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -301,43 +303,38 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
         });
   }
 
-  _showVerifyDialog() {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      print("walletPassword:$walletPassword");
-      if (walletPassword == null) {
-        return;
+  _showVerifyDialog() async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.wallet.getEthAccount().address,
+    );
+
+    print("walletPassword:$walletPassword");
+    if (walletPassword == null) {
+      return;
+    }
+    var wallet = widget.wallet;
+    try {
+      if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
+        var mnemonic = await WalletUtil.exportMnemonic(
+            fileName: wallet.keystore.fileName, password: walletPassword);
+        logger.i('your mnemonic is: $mnemonic');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    BackupShowResumeWordPage(wallet, mnemonic)));
+      } else {
+        print(S.of(context).isnt_trustwallet_cant_export);
       }
-      var wallet = widget.wallet;
-      try {
-        if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
-          var mnemonic = await WalletUtil.exportMnemonic(
-              fileName: wallet.keystore.fileName, password: walletPassword);
-          logger.i('your mnemonic is: $mnemonic');
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      BackupShowResumeWordPage(wallet, mnemonic)));
-        } else {
-          print(S.of(context).isnt_trustwallet_cant_export);
-        }
-      } catch (_) {
-        _ as PlatformException;
-        logger.e(_);
-        if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).extract_mnemonic_fail);
-        }
+    } catch (_) {
+      _ as PlatformException;
+      logger.e(_);
+      if (_.code == WalletError.PASSWORD_WRONG) {
+        Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).extract_mnemonic_fail);
       }
-    });
+    }
   }
 }

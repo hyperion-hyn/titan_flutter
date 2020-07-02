@@ -10,6 +10,12 @@ class UpdateAuthConfigEvent extends AuthEvent {
   UpdateAuthConfigEvent({this.authConfigModel});
 }
 
+class SetBioAuthEvent extends AuthEvent {
+  final bool value;
+
+  SetBioAuthEvent({this.value});
+}
+
 class UpdateAuthStatusEvent extends AuthEvent {
   final bool authorized;
 

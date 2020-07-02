@@ -117,6 +117,9 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
                       validator: (value) {
                         if (!ValidatorUtil.validatePassword(value)) {
                           return S
@@ -130,14 +133,17 @@ class _CreateAccountState extends State<CreateAccountPage> {
                       decoration: InputDecoration(
                         hintText:
                             S.of(context).input_wallet_password_length_hint,
-                        hintStyle:
-                            TextStyle(color: HexColor('#AAAAAA'), fontSize: 13),
+                        hintStyle: TextStyle(
+                          color: HexColor('#AAAAAA'),
+                          fontSize: 13,
+                        ),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30)),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
-                      keyboardType: TextInputType.visiblePassword,
+                      keyboardType: TextInputType.number,
                       obscureText: true,
                     ),
                   ),
@@ -159,6 +165,9 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     child: TextFormField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
                       validator: (value) {
                         if (value.isEmpty) {
                           return S.of(context).input_password_again_hint;
@@ -201,7 +210,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                       ),
-                      keyboardType: TextInputType.visiblePassword,
+                      keyboardType: TextInputType.number,
                       obscureText: !_isShowPassword,
                     ),
                   ),

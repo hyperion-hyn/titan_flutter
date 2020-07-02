@@ -41,9 +41,7 @@ class BioAuthDialogBloc extends Bloc<BioAuthDialogEvent, BioAuthDialogState> {
     } else if (event is CheckBioAuthEvent) {
     } else if (event is ShowBioAuthRemainCountEvent) {
       yield ShowBioAuthRemainCountState(event.remainCount);
-    } else if (event is ShowPasswordAuthEvent) {
-      yield ShowPasswordAuthState();
-    } else if (event is ShowFaceAuthEvent) {
+    }  else if (event is ShowFaceAuthEvent) {
       yield ShowFaceAuthState(
         remainCount: event.remainCount,
         maxCount: event.maxCount,

@@ -60,9 +60,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
         bloc: authDialogBloc,
         builder: (ctx, state) {
           var content;
-          if (state is ShowPasswordAuthState) {
-            content = _enterPasswordWidget();
-          } else if (state is ShowFaceAuthState) {
+          if (state is ShowFaceAuthState) {
             content = _faceAuthWidget(
               state.remainCount,
               state.maxCount,
@@ -133,13 +131,6 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
       //          ],
       //        ),
       //      ),
-    );
-  }
-
-  _enterPasswordWidget() {
-    return Container(
-      height: 270,
-      child: Center(child: EnterWalletPasswordWidget()),
     );
   }
 

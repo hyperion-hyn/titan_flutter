@@ -3,10 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/mine/auth_setting_page.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -14,6 +20,8 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:characters/characters.dart';
@@ -116,13 +124,13 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           size: 64,
                           fontSize: 20,
                           address: widget.wallet.getEthAccount()?.address),
-                      Positioned(
-                          right: 6,
-                          bottom: 6,
-                          child: Image.asset(
-                            'res/drawable/ic_edit.png',
-                            height: 12,
-                          )),
+//                      Positioned(
+//                          right: 6,
+//                          bottom: 6,
+//                          child: Image.asset(
+//                            'res/drawable/ic_edit.png',
+//                            height: 12,
+//                          )),
                     ],
                   ),
                 ),
@@ -227,7 +235,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     disabledTextColor: Colors.white,
-                    onPressed: _hasChangeProperties ? updateWallet : null,
+                    onPressed: _hasChangeProperties ? updateWalletV2 : null,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -251,16 +259,11 @@ class _WalletSettingState extends State<WalletSettingPage> {
     );
   }
 
-  void updateWallet() async {
-    var password = await showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        });
+  void updateWalletV2() async {
+    String password = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.wallet.getEthAccount().address,
+    );
     if (password != null) {
       try {
         var newName = _walletNameController.text;
@@ -273,6 +276,14 @@ class _WalletSettingState extends State<WalletSettingPage> {
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast('更新成功');
+          if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+            UiUtil.showSetBioAuthDialog(
+              context,
+              '更新成功',
+              widget.wallet.getEthAccount().address,
+              password,
+            );
+          }
         }
         setState(() {
           _originWalletName = newName;
@@ -289,58 +300,60 @@ class _WalletSettingState extends State<WalletSettingPage> {
     }
   }
 
-  void deleteWallet() {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      print("walletPassword:$walletPassword");
-      if (walletPassword == null) {
-        return;
-      }
+  Future<void> deleteWallet() async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.wallet.getEthAccount().address,
+    );
+    print("walletPassword:$walletPassword");
+    if (walletPassword == null) {
+      return;
+    }
 
-      try {
-        var result = await widget.wallet.delete(walletPassword);
-        print("del result ${widget.wallet.keystore.fileName} $result");
-        if (result) {
-          List<Wallet> walletList = await WalletUtil.scanWallets();
-          var activatedWalletVo = WalletInheritedModel.of(context,
-              aspect: WalletAspect.activatedWallet);
+    try {
+      var result = await widget.wallet.delete(walletPassword);
+      print("del result ${widget.wallet.keystore.fileName} $result");
+      if (result) {
+        List<Wallet> walletList = await WalletUtil.scanWallets();
+        var activatedWalletVo = WalletInheritedModel.of(context,
+            aspect: WalletAspect.activatedWallet);
 
-          if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
-                  widget.wallet.keystore.fileName &&
-              walletList.length > 0) {
-            //delete current wallet
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(ActiveWalletEvent(wallet: walletList[0]));
-            Routes.popUntilCachedEntryRouteName(context);
-          } else if (walletList.length > 0) {
-            //delete other wallet
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
+                widget.wallet.keystore.fileName &&
+            walletList.length > 0) {
+          //delete current wallet
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(ActiveWalletEvent(wallet: walletList[0]));
+          Routes.popUntilCachedEntryRouteName(context);
+        } else if (walletList.length > 0) {
+          //delete other wallet
 //                          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: activatedWalletVo.activatedWallet.wallet));
-            Routes.popUntilCachedEntryRouteName(context);
-          } else {
-            //no wallet
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(ActiveWalletEvent(wallet: null));
-            Routes.popUntilCachedEntryRouteName(context);
-          }
-          Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
+          Routes.popUntilCachedEntryRouteName(context);
         } else {
-          Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
+          //no wallet
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(ActiveWalletEvent(wallet: null));
+          Routes.popUntilCachedEntryRouteName(context);
         }
-      } catch (_) {
-        logger.e(_);
-        if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
+        Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
+        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+          UiUtil.showSetBioAuthDialog(
+            context,
+            S.of(context).delete_wallet_success,
+            widget.wallet.getEthAccount().address,
+            walletPassword,
+          );
         }
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }
-    });
+    } catch (_) {
+      logger.e(_);
+      if (_.code == WalletError.PASSWORD_WRONG) {
+        Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
+      }
+    }
   }
 }

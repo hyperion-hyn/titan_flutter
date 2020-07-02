@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:local_auth/error_codes.dart' as auth_error;
 
 class SetBioAuthDialog extends StatefulWidget {
   final BiometricType biometricType;
+  final String title;
 
-  SetBioAuthDialog(this.biometricType);
+  SetBioAuthDialog(this.biometricType, this.title);
 
   @override
   BaseState<StatefulWidget> createState() {
@@ -16,6 +19,8 @@ class SetBioAuthDialog extends StatefulWidget {
 }
 
 class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
+  final LocalAuthentication auth = LocalAuthentication();
+
   void initState() {
     super.initState();
     // TODO: implement initState
@@ -61,7 +66,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          '生物识别',
+                          widget.title,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -96,8 +101,8 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(
             'res/drawable/ic_face_id.png',
-            width: 80,
-            height: 80,
+            width: 60,
+            height: 60,
             color: Theme.of(context).primaryColor,
           ),
         ),
@@ -122,7 +127,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
               ClickOvalButton(
                 '开启',
                 () {
-                  Navigator.of(context).pop(true);
+                  _authenticate();
                 },
                 width: 120,
               ),
@@ -165,7 +170,9 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
               ),
               ClickOvalButton(
                 '开启',
-                () {},
+                () {
+                  _authenticate();
+                },
                 width: 120,
               ),
               Spacer()
@@ -174,5 +181,30 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
         )
       ],
     );
+  }
+
+  _authenticate() async {
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticateWithBiometrics(
+          useErrorDialogs: true,
+          stickyAuth: true,
+          localizedReason: 'Use your face or fingerprint to authorize.');
+    } on PlatformException catch (e) {
+      if (e.code == auth_error.notEnrolled) {
+        Fluttertoast.showToast(msg: '暂不支持生物识别');
+      } else if (e.code == auth_error.notAvailable) {
+        Fluttertoast.showToast(msg: '您当前未开启Face ID授权，请前往设置中心开启');
+      } else if (e.code == auth_error.passcodeNotSet) {
+        Fluttertoast.showToast(msg: 'passcodeNotSet');
+      } else if (e.code == auth_error.lockedOut) {
+        Fluttertoast.showToast(msg: 'lockedOut');
+      } else if (e.code == auth_error.permanentlyLockedOut) {
+        Fluttertoast.showToast(msg: 'permanentlyLockedOut');
+      } else if (e.code == auth_error.otherOperatingSystem) {
+        Fluttertoast.showToast(msg: 'otherOperatingSystem');
+      }
+    }
+    Navigator.of(context).pop(authenticated);
   }
 }
