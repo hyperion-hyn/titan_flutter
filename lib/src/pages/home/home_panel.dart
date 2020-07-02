@@ -48,17 +48,16 @@ class HomePanelState extends State<HomePanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 4, left: 0, right: 0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(16), topRight: Radius.circular(16)),
         color: Colors.white,
-        boxShadow: [
+        /*boxShadow: [
           BoxShadow(
             color: Colors.black26,
             blurRadius: 20.0,
           ),
-        ],
+        ],*/
       ),
       child: CustomScrollView(
         controller: widget.scrollController,
@@ -68,7 +67,7 @@ class HomePanelState extends State<HomePanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 12),
+                  padding: const EdgeInsets.only(top: 14, bottom: 10),
                   child: DragTick(),
                 ),
               ],
@@ -643,22 +642,22 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _search() {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.only(left: 14, right: 14),
       child: InkWell(
         onTap: onSearch,
-        borderRadius: BorderRadius.all(Radius.circular(32)),
+        borderRadius: BorderRadius.all(Radius.circular(44)),
         child: Container(
-          height: 46,
+          height: 44,
           decoration: BoxDecoration(
-            color: Color(0xffffffff),
-            borderRadius: BorderRadius.all(Radius.circular(32)),
-            boxShadow: [
+            color: Color(0xfff2f2f2),
+            borderRadius: BorderRadius.all(Radius.circular(44)),
+            /*boxShadow: [
               BoxShadow(
                 color: HexColor("#000000").withOpacity(0.08),
                 offset: Offset(0, 2),
                 blurRadius: 12.0,
               ),
-            ],
+            ],*/
           ),
           child: Row(
             children: <Widget>[
@@ -669,9 +668,11 @@ class HomePanelState extends State<HomePanel> {
                   color: Color(0xff777777),
                 ),
               ),
+              SizedBox(width: 34,),
               Text(
                 S.of(context).search_or_decode,
                 style: TextStyle(
+                  fontSize: 17,
                   color: Color(0xff777777),
                 ),
               ),
@@ -800,12 +801,12 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _category() {
     return Container(
-      height: 60,
+      padding: const EdgeInsets.only(top:3),
+      height: 55,
       //color: Colors.red,
       child: ListView.builder(
         itemBuilder: (context, index) {
           var model = list[index];
-          //print("[cagegory] --> list.length:${list.length}, title:${model.title}, gaodeType:${model.gaodeType}");
 
           return InkWell(
             onTap: () {
@@ -819,29 +820,16 @@ class HomePanelState extends State<HomePanel> {
               }
             },
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(14.0),
               child: Container(
-                /*decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [HexColor("#46CBE6"), HexColor("#00A4C5")],
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                  ),
-                ),*/
-                child: Chip(
-                  avatar: Image.asset(
-                    model.avatar,
-                    width: 16,
-                    height: 16,
-                    color: Colors.white,
-                  ),
-                  label: Text(model.title),
-                  labelStyle: TextStyle(color: Colors.white),
-                  //backgroundColor: Theme.of(context).primaryColor,
-                  backgroundColor: HexColor("00A4C5"),
-                  padding: const EdgeInsets.fromLTRB(4, 0, 0, 0),
-                  labelPadding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                height: 20,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.fromLTRB(14, 0, 14, 2),
+                decoration: BoxDecoration(
+                    border: Border.all(color: HexColor("#dedede")),
+                    borderRadius: BorderRadius.circular(20),
                 ),
+                child: Text(model.title,style: TextStyle(fontSize: 15,color: HexColor("#999999"))),
               ),
             ),
           );

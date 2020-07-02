@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -94,7 +93,13 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
 
     //set the status bar color
-    FlutterStatusbarcolor.setStatusBarColor(Colors.black12);
+//    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    );
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
