@@ -220,7 +220,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      inputFormatters: [LengthLimitingTextInputFormatter(6)],
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly,
+                      ],
                       keyboardType: TextInputType.text),
                 ),
                 SizedBox(
@@ -243,6 +246,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                   child: TextFormField(
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(6),
+                      WhitelistingTextInputFormatter.digitsOnly
                     ],
                     validator: (value) {
                       if (!ValidatorUtil.validatePassword(value)) {

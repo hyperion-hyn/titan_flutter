@@ -96,7 +96,10 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 16, vertical: 10),
                         ),
-                        inputFormatters: [LengthLimitingTextInputFormatter(6)],
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(6),
+                          WhitelistingTextInputFormatter.digitsOnly,
+                        ],
                         keyboardType: TextInputType.text),
                   ),
                   SizedBox(
@@ -119,6 +122,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                     child: TextFormField(
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(6),
+                        WhitelistingTextInputFormatter.digitsOnly
                       ],
                       validator: (value) {
                         if (!ValidatorUtil.validatePassword(value)) {
