@@ -61,8 +61,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     color: Colors.white,
                   ),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  child: Column(
                     children: <Widget>[
                       Container(
                         width: double.infinity,
@@ -85,7 +84,7 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0,
+                          horizontal: 16.0,
                           vertical: 16.0,
                         ),
                         child: Text(
@@ -98,7 +97,9 @@ class _ScreenshotWarningDialogState extends BaseState<ScreenshotWarningDialog> {
                           ),
                         ),
                       ),
-                      Spacer(),
+                      SizedBox(
+                        height: 32.0,
+                      ),
                       Container(
                         width: double.infinity,
                         color: Colors.grey[200],
