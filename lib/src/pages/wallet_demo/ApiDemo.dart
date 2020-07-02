@@ -4,6 +4,8 @@ import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/exchange_api.dart';
+import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class ApiDemo extends StatefulWidget {
   @override
@@ -25,6 +27,21 @@ class _ApiDemoState extends State {
         shrinkWrap: true,
         padding: EdgeInsets.all(16),
         children: <Widget>[
+          RaisedButton(
+            onPressed: () async {
+              var verifyCode = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RecaptchaTestPage(
+                            language: 'zh-CN',
+                            apiKey: '6LeIXagZAAAAAKXVvQRHPTvmO4XLoxoeBtOjE5xH',
+                          )));
+              if (verifyCode != null) {
+                UiUtil.toast('获得google人机验证码 $verifyCode');
+              }
+            },
+            child: Text('人机验证'),
+          ),
           RaisedButton(
             onPressed: () async {
               var wallet = WalletInheritedModel.of(context).activatedWallet;
