@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
@@ -116,17 +117,19 @@ class WalletUtil {
     return WalletChannel.exportMnemonic(fileName: fileName, password: password);
   }
 
-  static checkUseDigitsPwd(String address) async {
-    bool result = await AppCache.getValue(
-        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$address');
-    return result != null && result;
+  static useDigitsPwd(String walletAddress) {
+    print('useDigitsPwd:$walletAddress');
+    AppCache.saveValue<bool>(
+      '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress',
+      true,
+    );
   }
 
-
-
-  static getPwdFromSecureStorage(String address) async {
-    var password = await AppCache.secureGetValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${address}');
+  static checkUseDigitsPwd(String walletAddress) async {
+    var result = await AppCache.getValue<bool>(
+        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress');
+    print('checkUseDigitsPwd: $result walletAddress: $walletAddress');
+    return result != null && result;
   }
 
   static Future<bool> updateWallet({

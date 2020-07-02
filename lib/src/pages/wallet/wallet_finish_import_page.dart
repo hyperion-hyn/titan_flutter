@@ -35,10 +35,7 @@ class FinishImportPage extends StatelessWidget {
                         .add(UpdateActivatedWalletBalanceEvent());
 
                     ///Use digits password now
-                    AppCache.saveValue<bool>(
-                      '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.getEthAccount().address}',
-                      true,
-                    );
+                    WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
                   }
                   Routes.popUntilCachedEntryRouteName(context);
                 },
@@ -97,7 +94,8 @@ class FinishImportPage extends StatelessWidget {
                       await Future.delayed(Duration(milliseconds: 300));
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(UpdateActivatedWalletBalanceEvent());
-
+                      ///Use digits password now
+                      WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
                       Routes.popUntilCachedEntryRouteName(context);
                     },
                     child: Padding(

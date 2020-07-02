@@ -102,7 +102,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             onPressed: deleteWallet,
             child: Text(
               S.of(context).delete,
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: Colors.black),
             ),
           ),
         ],

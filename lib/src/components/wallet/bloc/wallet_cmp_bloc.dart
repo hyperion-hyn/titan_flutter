@@ -68,11 +68,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       }
 
-      ///Use digits password now
-      AppCache.saveValue<bool>(
-        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${_activatedWalletVo.wallet.getEthAccount().address}',
-        true,
-      );
+
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
