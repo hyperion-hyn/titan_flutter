@@ -13,6 +13,11 @@ class UpdateAuthConfigState extends AuthState {
   UpdateAuthConfigState({this.authConfigModel});
 }
 
+class RefreshBioAuthConfigState extends AuthState {
+
+  RefreshBioAuthConfigState();
+}
+
 class UpdateAuthStatusState extends AuthState {
   final bool authorized;
 

@@ -1,7 +1,9 @@
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
@@ -16,7 +18,8 @@ class WalletTabsPage extends StatefulWidget {
   }
 }
 
-class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProviderStateMixin {
+class _WalletTabsPageState extends State<WalletTabsPage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -69,6 +72,7 @@ class _WalletTabsPageState extends State<WalletTabsPage> with SingleTickerProvid
                             Tab(
                               text: S.of(context).wallet,
                             ),
+
                             ///Tab(text: '交易'),
                           ],
                         ),

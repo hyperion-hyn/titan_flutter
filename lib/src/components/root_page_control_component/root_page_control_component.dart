@@ -74,11 +74,6 @@ class RootPageControlComponentState
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
 
-    ///Every time app restart, set to false first
-    BlocProvider.of<AuthBloc>(context).add(UpdateAuthStatusEvent(
-      authorized: false,
-    ));
-
     List availableBiometricTypes = List();
     try {
       LocalAuthentication auth = LocalAuthentication();
@@ -86,14 +81,16 @@ class RootPageControlComponentState
     } on PlatformException catch (e) {
       print(e);
     }
-//    var activeWalletFileName =
-//        await AppCache.getValue<String>(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
-//    var authConfigStr = activeWalletFileName != null
-//        ? await AppCache.getValue<String>(
-//            '${activeWalletFileName}_${PrefsKey.AUTH_CONFIG}')
-//        : null;
-    var authConfigStr =
-        await AppCache.getValue<String>('${PrefsKey.AUTH_CONFIG}');
+    var activeWalletFileName =
+        await AppCache.getValue<String>(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
+    var authConfigStr = activeWalletFileName != null
+        ? await AppCache.getValue<String>(
+            '${PrefsKey.AUTH_CONFIG}_$activeWalletFileName')
+        : null;
+    print(
+        'activeWalletFileName: $activeWalletFileName authConfig: ${authConfigStr}');
+//    var authConfigStr =
+//        await AppCache.getValue<String>('${PrefsKey.AUTH_CONFIG}');
     AuthConfigModel authConfigModel = authConfigStr != null
         ? AuthConfigModel.fromJson(json.decode(authConfigStr))
         : AuthConfigModel(
@@ -104,11 +101,10 @@ class RootPageControlComponentState
             availableBiometricTypes: availableBiometricTypes,
           );
 
-    BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
-      authConfigModel: authConfigModel,
-    ));
-
     Future.delayed(Duration(milliseconds: 1500), () {
+      BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
+        authConfigModel: authConfigModel,
+      ));
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
     });
   }

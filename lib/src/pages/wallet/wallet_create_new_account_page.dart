@@ -113,10 +113,24 @@ class _CreateAccountState extends State<CreateAccountPage> {
                                 width: 0.5,
                               ),
                             ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: HexColor('#FFD0D0D0'),
+                                width: 0.5,
+                              ),
+                            ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide(
                                 color: HexColor('#FFD0D0D0'),
+                                width: 0.5,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Colors.red,
                                 width: 0.5,
                               ),
                             ),
@@ -176,10 +190,24 @@ class _CreateAccountState extends State<CreateAccountPage> {
                               width: 0.5,
                             ),
                           ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide(
                               color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.red,
                               width: 0.5,
                             ),
                           ),
@@ -256,10 +284,24 @@ class _CreateAccountState extends State<CreateAccountPage> {
                               width: 0.5,
                             ),
                           ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide(
                               color: HexColor('#FFD0D0D0'),
+                              width: 0.5,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide(
+                              color: Colors.red,
                               width: 0.5,
                             ),
                           ),

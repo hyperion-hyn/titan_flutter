@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
@@ -60,20 +61,38 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                     color: Colors.white,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Stack(
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.title,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              widget.title,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _content()
+                        ],
+                      ),
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Image.asset(
+                            'res/drawable/ic_dialog_close.png',
+                            width: 18,
+                            height: 18,
                           ),
                         ),
-                      ),
-                      _content()
+                      )
                     ],
                   ),
                 ),
@@ -98,17 +117,21 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Text(
+            '您的设备支持面容识别功能，是否开启面容识别？',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: HexColor('#FF999999')),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(24.0),
           child: Image.asset(
             'res/drawable/ic_face_id.png',
             width: 60,
             height: 60,
             color: Theme.of(context).primaryColor,
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('您的设备支持面容识别功能，是否开启面容识别？'),
         ),
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -121,9 +144,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
                   Navigator.of(context).pop(false);
                 },
               ),
-              SizedBox(
-                width: 32.0,
-              ),
+              Spacer(),
               ClickOvalButton(
                 '开启',
                 () {
@@ -144,19 +165,20 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Image.asset(
-            'res/drawable/ic_fingerprint.png',
-            width: 80,
-            height: 80,
-            color: Theme.of(context).primaryColor,
+          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          child: Text(
+            '您的设备支持指纹识别功能，是否开启指纹识别？',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: HexColor('#FF999999')),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            '您的设备支持指纹识别功能，是否开启指纹识别？',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          padding: const EdgeInsets.all(24.0),
+          child: Image.asset(
+            'res/drawable/ic_fingerprint.png',
+            width: 60,
+            height: 60,
+            color: Theme.of(context).primaryColor,
           ),
         ),
         Padding(
@@ -164,10 +186,13 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
           child: Row(
             children: <Widget>[
               Spacer(),
-              Text('暂不开启'),
-              SizedBox(
-                width: 32.0,
+              InkWell(
+                child: Text('暂不开启'),
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
               ),
+              Spacer(),
               ClickOvalButton(
                 '开启',
                 () {

@@ -72,7 +72,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext cofntext) {
     return Scaffold(
         appBar: AppBar(
           elevation: 0,

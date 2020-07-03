@@ -476,10 +476,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             alignment: Alignment.center,
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFF9B9B9B), width: 0),
-              shape: BoxShape.circle,
-            ),
             child: ImageUtil.getCoinImage(coin.logo),
           ),
           SizedBox(
@@ -539,7 +535,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     child: Text(
                       _isShowBalances
                           ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-                          : '**********',
+                          : '${symbolQuote?.sign?.sign ?? ''} **********',
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),

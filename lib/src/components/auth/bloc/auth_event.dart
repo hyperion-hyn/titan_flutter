@@ -23,6 +23,8 @@ class UpdateLastBioAuthTimeEvent extends AuthEvent {
   UpdateLastBioAuthTimeEvent(this.walletPwd, this.walletAddress);
 }
 
+class RefreshBioAuthConfigEvent extends AuthEvent {}
+
 class UpdateAuthStatusEvent extends AuthEvent {
   final bool authorized;
 
