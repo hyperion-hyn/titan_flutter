@@ -169,12 +169,14 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       Application.router.navigateTo(context,
           Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (type == "location" && subType == 'share') {
+      (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)
+          ?.back();
+
       var encryptedMsg = content['msg'];
       var poi = await ciphertextToPoi(
         Injector.of(context).repository,
         encryptedMsg,
       );
-
       ///switch to map page first, then poi can show correctly.
       BlocProvider.of<AppTabBarBloc>(context)
           .add(ChangeTabBarItemEvent(index: 0));

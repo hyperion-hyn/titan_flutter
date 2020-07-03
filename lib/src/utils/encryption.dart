@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/entity/poi/mapbox_poi.dart';
@@ -67,27 +68,28 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
   logger.d('after cut ciphertext is: $ciphertext');
 
   var cmsg;
-  if (ciphertext.startsWith(Const.CIPHER_TEXT_PREFIX)) {
-    // p2p share
-    ciphertext = ciphertext.substring(Const.CIPHER_TEXT_PREFIX.length);
-    cmsg = await TitanPlugin.decrypt(ciphertext);
-  } else if (ciphertext.startsWith(Const.CIPHER_TOKEN_PREFIX)) {
-    // common share
-    ciphertext = ciphertext.substring(Const.CIPHER_TOKEN_PREFIX.length);
-    if (ciphertext.indexOf("_") > 0) {
-      var kidCiphertextAry = ciphertext.split("_");
-      var kid = kidCiphertextAry[0];
-      ciphertext = kidCiphertextAry[1];
-      var pubKey = await TitanPlugin.getPublicKey();
-      try {
-        var clsMap = await repository.api
-            .getCls(commitment: ciphertext, pubkey: pubKey, kid: kid);
-        var ct_b = clsMap['ct_b'];
-        cmsg = await TitanPlugin.decrypt(ct_b);
-      } catch (err) {
-        logger.e(err);
+  try {
+    if (ciphertext.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+      // p2p share
+      ciphertext = ciphertext.substring(Const.CIPHER_TEXT_PREFIX.length);
+      cmsg = await TitanPlugin.decrypt(ciphertext);
+    } else if (ciphertext.startsWith(Const.CIPHER_TOKEN_PREFIX)) {
+      // common share
+      ciphertext = ciphertext.substring(Const.CIPHER_TOKEN_PREFIX.length);
+      if (ciphertext.indexOf("_") > 0) {
+        var kidCiphertextAry = ciphertext.split("_");
+        var kid = kidCiphertextAry[0];
+        ciphertext = kidCiphertextAry[1];
+        var pubKey = await TitanPlugin.getPublicKey();
+          var clsMap = await repository.api
+              .getCls(commitment: ciphertext, pubkey: pubKey, kid: kid);
+          var ct_b = clsMap['ct_b'];
+          cmsg = await TitanPlugin.decrypt(ct_b);
       }
     }
+  } catch (err) {
+    Fluttertoast.showToast(msg: "你无法解密该密文",toastLength: Toast.LENGTH_LONG);
+    logger.e(err);
   }
 
   if (cmsg != null) {
