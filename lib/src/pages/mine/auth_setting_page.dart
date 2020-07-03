@@ -50,9 +50,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
       appBar: AppBar(
         title: Text(
           '面容/指纹与密码',
-          style: TextStyle(
-            color: Colors.black,
-          ),
+          style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -70,6 +68,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                 _availableBiometrics.contains(BiometricType.face))
               Material(
                 elevation: 0,
+                color: Colors.white,
                 child: SwitchListTile(
                   activeColor: Theme.of(context).primaryColor,
                   title: Text('人脸验证'),
@@ -89,19 +88,23 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
             ),
             if (_availableBiometrics != null &&
                 _availableBiometrics.contains(BiometricType.fingerprint))
-              SwitchListTile(
-                title: Text('指纹识别'),
-                value: AuthInheritedModel.of(context)
-                    .authConfigModel
-                    .useFingerprint,
-                onChanged: (bool value) async {
-                  if (value) {
-                    _requestWalletPwd();
-                  } else {
-                    _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
-                  }
-                  setState(() {});
-                },
+              Material(
+                elevation: 0,
+                color: Colors.white,
+                child: SwitchListTile(
+                  title: Text('指纹识别'),
+                  value: AuthInheritedModel.of(context)
+                      .authConfigModel
+                      .useFingerprint,
+                  onChanged: (bool value) async {
+                    if (value) {
+                      _requestWalletPwd();
+                    } else {
+                      _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
+                    }
+                    setState(() {});
+                  },
+                ),
               ),
           ],
         ),
