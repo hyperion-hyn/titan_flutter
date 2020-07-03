@@ -124,6 +124,7 @@ class EncryptShareState extends State<EncryptShare> {
                                 if (selectedPoi != null) {
                                   var suc = await showDialog(
                                       context: context,
+                                      barrierDismissible: false,
                                       builder: (context) {
                                         return ShareDialog(poi: selectedPoi);
                                       });

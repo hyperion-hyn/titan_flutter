@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -39,7 +41,8 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage>
+    with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -70,9 +73,11 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   @override
   Future<void> onCreated() async {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
@@ -107,12 +112,14 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
-          onLoadData: (){
+          onLoadData: () {
             listLoadingData();
           },
           onRefresh: () async {
@@ -140,13 +147,18 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   Future listLoadingData() async {
     //update quotes
-    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign =
-    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
 
     await Future.delayed(Duration(milliseconds: 700));
 
@@ -157,7 +169,8 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -186,7 +199,10 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: HexColor('#333333'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ],
             ),
@@ -215,7 +231,7 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
             '经过权威机构安全认证',
             style: TextStyle(
               color: Colors.grey[500],
-              fontSize: 14.0,
+              fontSize: 12.0,
             ),
           ),
           Spacer()

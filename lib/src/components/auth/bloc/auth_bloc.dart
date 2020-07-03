@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -27,9 +28,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (event.authConfigModel != null) {
         authConfigModel = event.authConfigModel;
 
-        await AppCache.saveValue<String>('${PrefsKey.AUTH_CONFIG}',
-            json.encode(event.authConfigModel.toJSON()));
-
         yield UpdateAuthConfigState(authConfigModel: event.authConfigModel);
       }
     } else if (event is SetBioAuthEvent) {
@@ -50,22 +48,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
-        await AppCache.saveValue<String>(
-            '${PrefsKey.AUTH_CONFIG}',
-            json.encode(
-              authConfigModel.toJSON(),
-            ));
-
         yield UpdateAuthConfigState(authConfigModel: authConfigModel);
       }
     } else if (event is UpdateLastBioAuthTimeEvent) {
       if (authConfigModel != null) {
         authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-        await AppCache.saveValue<String>(
-            '${PrefsKey.AUTH_CONFIG}',
-            json.encode(
-              authConfigModel.toJSON(),
-            ));
+
         ///Update pwd in secureStorage
         await AppCache.secureSaveValue(
           '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${event.walletAddress}',
@@ -73,6 +61,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         yield UpdateAuthConfigState(authConfigModel: authConfigModel);
       }
+    } else if (event is RefreshBioAuthConfigEvent) {
+      yield RefreshBioAuthConfigState();
     }
   }
 }

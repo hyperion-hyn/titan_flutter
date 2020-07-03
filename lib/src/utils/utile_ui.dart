@@ -241,7 +241,6 @@ class UiUtil {
         }
       }
     }
-
     var pwd = await UiUtil.showPasswordDialog(context, walletAddress);
     return pwd;
   }
@@ -281,6 +280,7 @@ class UiUtil {
   ) async {
     var result = await showDialog(
         context: context,
+        barrierDismissible: false,
         child: SetBioAuthDialog(
             AuthInheritedModel.of(context).currentBioMetricType, title));
     if (result != null && result) {

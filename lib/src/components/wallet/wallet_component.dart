@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
@@ -84,6 +86,8 @@ class _WalletManagerState extends State<_WalletManager> {
             if (_activatedWallet != null) {
               _activatedWallet.balance =
                   _calculateTotalBalance(_activatedWallet);
+
+
             }
           } else if (state is LoadingWalletState) {
             _activatedWallet = null;

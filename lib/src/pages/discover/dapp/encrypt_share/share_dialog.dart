@@ -62,12 +62,30 @@ class ShareDialogState extends State<ShareDialog> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: Colors.white,
-                  ),
-                  child: buildContent(context),
+                Stack(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        color: Colors.white,
+                      ),
+                      child: buildContent(context),
+                    ),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Image.asset(
+                          'res/drawable/ic_dialog_close.png',
+                          width: 18,
+                          height: 18,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -82,103 +100,111 @@ class ShareDialogState extends State<ShareDialog> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: Text(
-                    S.of(context).share_encrypted_location,
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // hide keyboard when touch other widgets
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Center(
+                    child: Text(
+                      S.of(context).share_encrypted_location,
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                Container(
-                  color: Colors.white,
-                  margin: EdgeInsets.only(top: 16),
-                  padding: EdgeInsets.all(8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Container(
+                    color: Colors.white,
+                    margin: EdgeInsets.only(top: 16),
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.poi.name,
+                          style: TextStyle(
+                              color: HexColor('#FF333333'),
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.location_on,
+                              color: HexColor('#FF999999'),
+                              size: 16,
+                            ),
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                widget.poi.address,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (expandOptions) _p2pShareOptions(),
+                  Row(
                     children: <Widget>[
+                      Spacer(),
                       Text(
-                        widget.poi.name,
-                        style: TextStyle(
-                            color: HexColor('#FF333333'),
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
+                        '高级模式',
+                        style: TextStyle(color: HexColor('#FF999999')),
                       ),
-                      SizedBox(height: 4),
-                      Row(
+                      Switch(
+                        activeColor: Colors.grey[100],
+                        activeTrackColor: Theme.of(context).primaryColor,
+                        onChanged: (value) {
+                          expandOptions = value;
+                          setState(() {});
+                        },
+                        value: expandOptions,
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: CustomClickOvalButton(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: <Widget>[
                           Icon(
-                            Icons.location_on,
-                            color: HexColor('#FF999999'),
-                            size: 16,
+                            Icons.lock_outline,
+                            color: Colors.white,
                           ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              widget.poi.address,
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 14,
-                              ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            '分享',
+                            style: TextStyle(
+                              color: Colors.white,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                if (expandOptions) _p2pShareOptions(),
-                Row(
-                  children: <Widget>[
-                    Spacer(),
-                    Text(
-                      '高级模式',
-                      style: TextStyle(color: HexColor('#FF999999')),
+                      onShare,
+                      width: 120,
+                      height: 40,
                     ),
-                    Switch(
-                      activeColor: Colors.grey[100],
-                      activeTrackColor: Theme.of(context).primaryColor,
-                      onChanged: (value) {
-                        expandOptions = value;
-                        setState(() {});
-                      },
-                      value: expandOptions,
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: CustomClickOvalButton(
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.lock_outline,
-                          color: Colors.white,
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          '分享',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onShare,
-                    width: 120,
-                    height: 40,
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -255,7 +281,6 @@ class ShareDialogState extends State<ShareDialog> {
                 ],
               ),
             ),
-
           ),
           SizedBox(
             height: 16.0,
