@@ -6,6 +6,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.hyn.titan.ErrorCode
 import timber.log.Timber
 
 class EncryptionPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
@@ -81,9 +82,11 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         val pub = call.argument<String>("pub")
         val message = call.argument<String>("message")
         val ciphertext = encryptionService.encrypt(pub!!, message!!)
-        ciphertext.subscribe{
+        ciphertext.subscribe({
             result.success(it)
-        }
+        },{
+            result.error(ErrorCode.PARAMETERS_WRONG, "encrypt error", null)
+        })
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {

@@ -70,11 +70,11 @@ class _MyPageState extends State<MyPage> {
                   alignment: Alignment.centerLeft,
                   child: Stack(
                     children: <Widget>[
-                      Positioned(
+                      /*Positioned(
                         top: 37 + padding,
                         right: 12,
                         child: _buildScanQrCodeRow(),
-                      ),
+                      ),*/
                       Container(
                         margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                         width: 216,
@@ -190,7 +190,7 @@ class _MyPageState extends State<MyPage> {
                 ],
               ),
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 16, left: 16),
               child: Row(
                 children: <Widget>[
@@ -212,7 +212,7 @@ class _MyPageState extends State<MyPage> {
                 }),
                 Divider(height: 0),
               ],
-            )
+            )*/
           ],
         ),
       ),
