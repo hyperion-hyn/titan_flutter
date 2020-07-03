@@ -50,7 +50,7 @@ class HomePageState extends State<HomePage> {
     double maxHeight = boxConstraints.biggest.height;
     double anchorSize = 0.5;
     double minChildSize = 88.0 / maxHeight;
-    double initSize = 280.0 / maxHeight;
+    double initSize = 0.5;
     EdgeInsets mediaPadding = MediaQuery.of(context).padding;
     double maxChildSize = (maxHeight - mediaPadding.top) / maxHeight;
     //hack, why maxHeight == 0 for the first time of release???
