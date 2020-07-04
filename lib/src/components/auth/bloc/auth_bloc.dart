@@ -12,7 +12,6 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import './bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-
   @override
   AuthState get initialState => InitialAuthState();
 
@@ -21,13 +20,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthEvent event,
   ) async* {
     // TODO: Add Logic
-    if (event is InitAuthConfigEvent) {
-      yield InitAuthConfigState(authConfigModel: event.authConfigModel);
-    } else if (event is SaveAuthConfigEvent) {
-      yield SaveAuthConfigState(event.walletFileName, event.authConfigModel);
-    } else if (event is SetBioAuthEvent) {
+    if (event is SetBioAuthEvent) {
       yield SetBioAuthState(event.value, event.walletFileName);
-    }  else if (event is RefreshBioAuthConfigEvent) {
+    } else if (event is RefreshBioAuthConfigEvent) {
       yield RefreshBioAuthConfigState(event.walletFileName);
     }
   }

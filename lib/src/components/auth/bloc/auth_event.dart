@@ -5,19 +5,6 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 @immutable
 abstract class AuthEvent {}
 
-class InitAuthConfigEvent extends AuthEvent {
-  final AuthConfigModel authConfigModel;
-
-  InitAuthConfigEvent({this.authConfigModel});
-}
-
-class SaveAuthConfigEvent extends AuthEvent {
-  final AuthConfigModel authConfigModel;
-  final String walletFileName;
-
-  SaveAuthConfigEvent(this.walletFileName, this.authConfigModel);
-}
-
 class SetBioAuthEvent extends AuthEvent {
   final bool value;
   final String walletFileName;

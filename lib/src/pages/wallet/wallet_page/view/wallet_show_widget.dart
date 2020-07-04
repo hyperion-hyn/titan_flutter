@@ -545,6 +545,13 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     if (walletPassword == null) {
       return;
     }
+    await UiUtil.showSetBioAuthDialog(
+      context,
+      '提交成功',
+      widget.walletVo.wallet,
+      walletPassword,
+    );
+
     Fluttertoast.showToast(msg: walletPassword);
   }
 }

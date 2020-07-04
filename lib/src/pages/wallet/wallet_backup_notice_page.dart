@@ -233,6 +233,12 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
         var mnemonic = await WalletUtil.exportMnemonic(
             fileName: wallet.keystore.fileName, password: walletPassword);
         logger.i('your mnemonic is: $mnemonic');
+        await UiUtil.showSetBioAuthDialog(
+          context,
+          '授权成功',
+          wallet,
+          walletPassword,
+        );
         Navigator.push(
             context,
             MaterialPageRoute(

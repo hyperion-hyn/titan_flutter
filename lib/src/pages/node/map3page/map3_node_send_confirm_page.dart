@@ -498,6 +498,14 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             widget.transferAmount);
         print("join post result = $resultMsg");
       }
+
+      await UiUtil.showSetBioAuthDialog(
+        context,
+        '生物识别',
+        activatedWallet.wallet,
+        walletPassword,
+      );
+
       Application.router.navigateTo(
           context,
           Routes.map3node_broadcase_success_page +

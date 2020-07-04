@@ -55,13 +55,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
-        if (state is InitAuthConfigState) {
-          if (state.authConfigModel != null) {
-            authConfigModel = state.authConfigModel;
-          }
-          print(
-              'InitAuthConfigState:::: ${authConfigModel != null ? authConfigModel.toJSON() : 'null'}');
-        } else if (state is RefreshBioAuthConfigState) {
+        if (state is RefreshBioAuthConfigState) {
           var authConfigStr = await AppCache.getValue<String>(
               '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}');
           if (authConfigStr != null) {
@@ -111,13 +105,6 @@ class _AuthManagerState extends BaseState<_AuthManager> {
           AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
               json.encode(authConfigModel.toJSON()));
           print('SetBioAuthState:::: $authConfigModel');
-        } else if (state is SaveAuthConfigState) {
-          print(
-              '[SaveAuthConfigState] walletFileName: ${state.walletFileName} config: ${state.authConfigModel}');
-          authConfigModel = state.authConfigModel;
-          await AppCache.saveValue(
-              '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
-              json.encode(authConfigModel.toJSON()));
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(

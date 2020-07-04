@@ -74,37 +74,7 @@ class RootPageControlComponentState
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
 
-    List availableBiometricTypes = List();
-    try {
-      LocalAuthentication auth = LocalAuthentication();
-      availableBiometricTypes = await auth.getAvailableBiometrics();
-    } on PlatformException catch (e) {
-      print(e);
-    }
-    var activeWalletFileName =
-        await AppCache.getValue<String>(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
-    var authConfigStr = activeWalletFileName != null
-        ? await AppCache.getValue<String>(
-            '${PrefsKey.AUTH_CONFIG}_$activeWalletFileName')
-        : null;
-    print(
-        'activeWalletFileName: $activeWalletFileName authConfigStr: $authConfigStr');
-
-    AuthConfigModel authConfigModel = authConfigStr != null
-        ? AuthConfigModel.fromJson(json.decode(authConfigStr))
-        : AuthConfigModel(
-            walletFileName: 'default',
-            setBioAuthAsked: false,
-            lastBioAuthTime: 0,
-            useFace: false,
-            useFingerprint: false,
-            availableBiometricTypes: availableBiometricTypes,
-          );
-
     Future.delayed(Duration(milliseconds: 1500), () {
-      BlocProvider.of<AuthBloc>(context).add(InitAuthConfigEvent(
-        authConfigModel: authConfigModel,
-      ));
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
     });
   }
