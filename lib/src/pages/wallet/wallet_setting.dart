@@ -276,7 +276,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
   void updateWalletV2() async {
     String password = await UiUtil.showWalletPasswordDialogV2(
       context,
-      widget.wallet.getEthAccount().address,
+      widget.wallet,
     );
     if (password != null) {
       try {
@@ -294,7 +294,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             UiUtil.showSetBioAuthDialog(
               context,
               '更新成功',
-              widget.wallet.getEthAccount().address,
+              widget.wallet,
               password,
             );
           }
@@ -317,7 +317,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
   Future<void> deleteWallet() async {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
-      widget.wallet.getEthAccount().address,
+      widget.wallet,
     );
     print("walletPassword:$walletPassword");
     if (walletPassword == null) {
@@ -355,7 +355,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
           UiUtil.showSetBioAuthDialog(
             context,
             S.of(context).delete_wallet_success,
-            widget.wallet.getEthAccount().address,
+            widget.wallet,
             walletPassword,
           );
         }

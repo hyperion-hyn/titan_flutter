@@ -220,7 +220,7 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
   _showVerifyDialog() async {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
-      widget.wallet.getEthAccount().address,
+      widget.wallet,
     );
 
     print("walletPassword:$walletPassword");

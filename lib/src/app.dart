@@ -9,6 +9,7 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
+import 'components/auth/bloc/auth_bloc.dart';
 import 'components/quotes/quotes_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
@@ -34,15 +35,16 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return QuotesComponent(
-      child: SettingComponent(
-        child: WalletComponent(
-            child: AuthComponent(
+      child: AuthComponent(
+        child: SettingComponent(
+            child: WalletComponent(
           child: MultiBlocProvider(
             providers: [
               BlocProvider<UpdateBloc>(
                   create: (context) => UpdateBloc(context: context)),
               BlocProvider<RootPageControlBloc>(
                   create: (context) => RootPageControlBloc()),
+              BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
             ],
             child: Builder(
               builder: (context) {
