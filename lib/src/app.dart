@@ -44,7 +44,6 @@ class _AppState extends State<App> {
                   create: (context) => UpdateBloc(context: context)),
               BlocProvider<RootPageControlBloc>(
                   create: (context) => RootPageControlBloc()),
-              BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
             ],
             child: Builder(
               builder: (context) {
