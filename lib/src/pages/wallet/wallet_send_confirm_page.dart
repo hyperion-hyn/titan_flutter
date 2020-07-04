@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
@@ -354,7 +356,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 0 ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 0
+                                      ? Colors.grey
+                                      : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.only(
                                       topLeft: Radius.circular(30),
@@ -364,7 +368,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_slow,
                                     style: TextStyle(
-                                        color: selectedPriceLevel == 0 ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 0
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
@@ -392,7 +398,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 1 ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 1
+                                      ? Colors.grey
+                                      : Colors.grey[200],
                                   border: Border(),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(0))),
@@ -401,7 +409,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_normal,
                                     style: TextStyle(
-                                        color: selectedPriceLevel == 1 ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 1
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
@@ -428,7 +438,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               padding: EdgeInsets.symmetric(vertical: 4),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 2 ? Colors.grey : Colors.grey[200],
+                                  color: selectedPriceLevel == 2
+                                      ? Colors.grey
+                                      : Colors.grey[200],
                                   border: Border(),
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(30),
@@ -438,7 +450,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                   Text(
                                     S.of(context).speed_fast,
                                     style: TextStyle(
-                                        color: selectedPriceLevel == 2 ? Colors.white : Colors.black,
+                                        color: selectedPriceLevel == 2
+                                            ? Colors.white
+                                            : Colors.black,
                                         fontSize: 12),
                                   ),
                                   Text(
@@ -510,57 +524,70 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       return;
     }
 
-      try {
-        setState(() {
-          isTransferring = true;
-        });
-        var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-        if (widget.coinVo.symbol == "ETH") {
-          await _transferEth(
-              walletPassword,
-              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-              widget.receiverAddress,
-              activatedWallet.wallet);
-        } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
-          var activatedWalletVo = activatedWallet.wallet;
-          var transResult = await activatedWalletVo.sendBitcoinTransaction(
-              walletPassword,
-              activatedWalletVo.getBitcoinZPub(),
-              widget.receiverAddress,
-              gasPrice.toInt(),
-              ConvertTokenUnit.decimalToWei(Decimal.parse(widget.transferAmount), 8).toInt());
-          if(transResult["code"] != 0){
-            LogUtil.uploadException(transResult,"bitcoin upload");
-            Fluttertoast.showToast(msg: "${transResult.toString()}",
-                toastLength: Toast.LENGTH_LONG);
-            return;
-          }
-        } else {
-          await _transferErc20(
-              walletPassword,
-              ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-              widget.receiverAddress,
-              activatedWallet.wallet);
+    try {
+      setState(() {
+        isTransferring = true;
+      });
+      var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+      if (widget.coinVo.symbol == "ETH") {
+        await _transferEth(
+            walletPassword,
+            ConvertTokenUnit.strToBigInt(
+                widget.transferAmount, widget.coinVo.decimals),
+            widget.receiverAddress,
+            activatedWallet.wallet);
+      } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
+        var activatedWalletVo = activatedWallet.wallet;
+        var transResult = await activatedWalletVo.sendBitcoinTransaction(
+            walletPassword,
+            activatedWalletVo.getBitcoinZPub(),
+            widget.receiverAddress,
+            gasPrice.toInt(),
+            ConvertTokenUnit.decimalToWei(
+                    Decimal.parse(widget.transferAmount), 8)
+                .toInt());
+        if (transResult["code"] != 0) {
+          LogUtil.uploadException(transResult, "bitcoin upload");
+          Fluttertoast.showToast(
+              msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
+          return;
         }
+      } else {
+        await _transferErc20(
+            walletPassword,
+            ConvertTokenUnit.strToBigInt(
+                widget.transferAmount, widget.coinVo.decimals),
+            widget.receiverAddress,
+            activatedWallet.wallet);
+      }
 
-        Application.router.navigateTo(context, Routes.confirm_success_papge);
-      } catch (_) {
-        LogUtil.uploadException(_,"ETH or Bitcoin upload");
-        setState(() {
-          isTransferring = false;
-        });
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
+      await UiUtil.showSetBioAuthDialog(
+        context,
+        '生物识别',
+        activatedWallet.wallet,
+        walletPassword,
+      );
+
+      Application.router.navigateTo(context, Routes.confirm_success_papge);
+    } catch (_) {
+      LogUtil.uploadException(_, "ETH or Bitcoin upload");
+      setState(() {
+        isTransferring = false;
+      });
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
+      } else if (_ is RPCError) {
+        Fluttertoast.showToast(
+            msg: MemoryCache.contractErrorStr(_.message),
+            toastLength: Toast.LENGTH_LONG);
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
+    }
   }
 
   Future _transferEth(

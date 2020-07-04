@@ -284,32 +284,34 @@ class UiUtil {
     Wallet activeWallet,
     String pwd,
   ) async {
-    var result = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        child: SetBioAuthDialog(
-            AuthInheritedModel.of(context).currentBioMetricType, title));
-    if (result != null && result) {
-      AppCache.secureSaveValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${activeWallet.getEthAccount().address}',
-        pwd,
-      );
-      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-        true,
-        activeWallet.keystore.fileName,
-      ));
-      Future.delayed(Duration(milliseconds: 3));
-      Fluttertoast.showToast(
-        msg: '成功开启生物识别',
-        gravity: ToastGravity.CENTER,
-        toastLength: Toast.LENGTH_LONG,
-      );
-    } else {
-      Fluttertoast.showToast(
-        msg: '生物识别未开启',
-        gravity: ToastGravity.CENTER,
-        toastLength: Toast.LENGTH_LONG,
-      );
+    if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
+      var result = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          child: SetBioAuthDialog(
+              AuthInheritedModel.of(context).currentBioMetricType, title));
+      if (result != null && result) {
+        AppCache.secureSaveValue(
+          '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${activeWallet.getEthAccount().address}',
+          pwd,
+        );
+        BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+          true,
+          activeWallet.keystore.fileName,
+        ));
+        Future.delayed(Duration(milliseconds: 3));
+        Fluttertoast.showToast(
+          msg: '成功开启生物识别',
+          gravity: ToastGravity.CENTER,
+          toastLength: Toast.LENGTH_LONG,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: '生物识别未开启',
+          gravity: ToastGravity.CENTER,
+          toastLength: Toast.LENGTH_LONG,
+        );
+      }
     }
   }
 }

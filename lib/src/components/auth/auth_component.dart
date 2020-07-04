@@ -55,13 +55,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
-        if (state is InitAuthConfigState) {
-          if (state.authConfigModel != null) {
-            authConfigModel = state.authConfigModel;
-          }
-          print(
-              'InitAuthConfigState:::: ${authConfigModel != null ? authConfigModel.toJSON() : 'null'}');
-        } else if (state is RefreshBioAuthConfigState) {
+        if (state is RefreshBioAuthConfigState) {
           var authConfigStr = await AppCache.getValue<String>(
               '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}');
           if (authConfigStr != null) {
@@ -87,7 +81,6 @@ class _AuthManagerState extends BaseState<_AuthManager> {
           }
           print('RefreshBioAuthConfigState:::: ${authConfigModel.toJSON()}');
         } else if (state is SetBioAuthState) {
-          print('SetBioAuthState::::');
           try {
             availableBiometricTypes = await auth.getAvailableBiometrics();
           } on PlatformException catch (e) {
@@ -109,16 +102,9 @@ class _AuthManagerState extends BaseState<_AuthManager> {
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
           }
-//          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
-//              json.encode(authConfigModel.toJSON()));
-          print('SetBioAuthState:::: $authConfigModel');
-        } else if (state is SaveAuthConfigState) {
-          print(
-              '[SaveAuthConfigState] walletFileName: ${state.walletFileName} config: ${state.authConfigModel}');
-          authConfigModel = state.authConfigModel;
-          await AppCache.saveValue(
-              '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
+          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
               json.encode(authConfigModel.toJSON()));
+          print('SetBioAuthState:::: $authConfigModel');
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(
@@ -139,12 +125,8 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   ///Store quick-auth config
   final AuthConfigModel authConfigModel;
 
-  ///Only while in app
-  final bool authorized;
-
   AuthInheritedModel({
     Key key,
-    @required this.authorized,
     @required this.authConfigModel,
     @required Widget child,
   }) : super(key: key, child: child);
@@ -187,8 +169,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
 
   @override
   bool updateShouldNotify(AuthInheritedModel oldWidget) {
-    return authConfigModel != oldWidget.authConfigModel ||
-        authorized != oldWidget.authorized;
+    return authConfigModel != oldWidget.authConfigModel;
   }
 
   static AuthInheritedModel of(BuildContext context, {AuthAspect aspect}) {

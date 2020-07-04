@@ -290,14 +290,12 @@ class _WalletSettingState extends State<WalletSettingPage> {
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast('更新成功');
-          if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
-            UiUtil.showSetBioAuthDialog(
-              context,
-              '更新成功',
-              widget.wallet,
-              password,
-            );
-          }
+          await UiUtil.showSetBioAuthDialog(
+            context,
+            '更新成功',
+            widget.wallet,
+            password,
+          );
         }
         setState(() {
           _originWalletName = newName;
@@ -351,14 +349,12 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
-        if (AuthInheritedModel.of(context).showSetBioAuthDialog) {
-          UiUtil.showSetBioAuthDialog(
-            context,
-            S.of(context).delete_wallet_success,
-            widget.wallet,
-            walletPassword,
-          );
-        }
+        await UiUtil.showSetBioAuthDialog(
+          context,
+          S.of(context).delete_wallet_success,
+          widget.wallet,
+          walletPassword,
+        );
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }
