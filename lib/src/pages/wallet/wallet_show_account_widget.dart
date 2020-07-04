@@ -163,7 +163,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () {
-                                        if (dataList.length > 0) {
+                                        if (dataList.length > 1) {
                                           TransactionDetailVo transaction =
                                               dataList[1];
                                           if (transaction.state == 0 &&
