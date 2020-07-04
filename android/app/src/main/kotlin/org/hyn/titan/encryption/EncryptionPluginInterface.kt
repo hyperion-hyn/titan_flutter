@@ -93,10 +93,12 @@ class EncryptionPluginInterface(private val context: Context, private val binary
         val privateKey = call.argument<String>("privateKey") ?: ""
         val cipherText = call.argument<String>("cipherText") ?: ""
         val message = encryptionService.decrypt(privateKey, cipherText)
-        message.subscribe{
+        message.subscribe({
             Timber.i("message:$message")
             result.success(it)
-        }
+        },{
+            result.error(ErrorCode.PARAMETERS_WRONG, "decrypt error", null)
+        })
     }
 
     @SuppressLint("CheckResult")
