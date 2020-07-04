@@ -59,11 +59,8 @@ class _AuthManagerState extends BaseState<_AuthManager> {
           var authConfigStr = await AppCache.getValue<String>(
               '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}');
           if (authConfigStr != null) {
-            AuthConfigModel model =
+            authConfigModel =
                 AuthConfigModel.fromJson(json.decode(authConfigStr));
-            if (model != null) {
-              authConfigModel = model;
-            }
           } else {
             try {
               availableBiometricTypes = await auth.getAvailableBiometrics();

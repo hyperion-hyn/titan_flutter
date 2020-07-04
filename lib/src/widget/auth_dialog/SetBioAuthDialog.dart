@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -24,6 +25,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
 
   void initState() {
     super.initState();
+
     // TODO: implement initState
   }
 
@@ -210,11 +212,30 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
 
   _authenticate() async {
     bool authenticated = false;
+    var iosStrings = IOSAuthMessages(
+        cancelButton: '取消',
+        goToSettingsButton: '前往设置',
+        goToSettingsDescription: widget.biometricType == BiometricType.face
+            ? '请到设置页开启您的面容 ID'
+            : '请到设置页开启您的Touch ID',
+        lockOut: widget.biometricType == BiometricType.face
+            ? '请重新启用面容 ID'
+            : '请重新使用的Touch ID');
+    var androidStrings = AndroidAuthMessages(
+      cancelButton: '取消',
+      goToSettingsButton: '前往设置',
+      goToSettingsDescription: widget.biometricType == BiometricType.face
+          ? '请到设置页开启您的面容 ID'
+          : '请到设置页开启您的指纹识别',
+    );
     try {
       authenticated = await auth.authenticateWithBiometrics(
-          useErrorDialogs: true,
-          stickyAuth: true,
-          localizedReason: 'Use your face or fingerprint to authorize.');
+        useErrorDialogs: true,
+        stickyAuth: true,
+        localizedReason: 'Use your face or fingerprint to authorize.',
+        androidAuthStrings: androidStrings,
+        iOSAuthStrings: iosStrings,
+      );
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         Fluttertoast.showToast(msg: '暂不支持生物识别');
