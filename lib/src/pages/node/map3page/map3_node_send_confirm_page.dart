@@ -454,7 +454,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   Future _transferNew() async {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
-      activatedWallet.wallet.getEthAccount().address,
+      activatedWallet.wallet,
     );
 
     if (walletPassword == null) {

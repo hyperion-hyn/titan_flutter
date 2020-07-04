@@ -88,12 +88,12 @@ class RootPageControlComponentState
             '${PrefsKey.AUTH_CONFIG}_$activeWalletFileName')
         : null;
     print(
-        'activeWalletFileName: $activeWalletFileName authConfig: ${authConfigStr}');
-//    var authConfigStr =
-//        await AppCache.getValue<String>('${PrefsKey.AUTH_CONFIG}');
+        'activeWalletFileName: $activeWalletFileName authConfigStr: $authConfigStr');
+
     AuthConfigModel authConfigModel = authConfigStr != null
         ? AuthConfigModel.fromJson(json.decode(authConfigStr))
         : AuthConfigModel(
+            walletFileName: 'default',
             setBioAuthAsked: false,
             lastBioAuthTime: 0,
             useFace: false,
@@ -102,7 +102,7 @@ class RootPageControlComponentState
           );
 
     Future.delayed(Duration(milliseconds: 1500), () {
-      BlocProvider.of<AuthBloc>(context).add(UpdateAuthConfigEvent(
+      BlocProvider.of<AuthBloc>(context).add(InitAuthConfigEvent(
         authConfigModel: authConfigModel,
       ));
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
@@ -133,6 +133,7 @@ class RootPageControlComponentState
             create: (context) => ScaffoldMapBloc(context)),
         BlocProvider<AppTabBarBloc>(create: (context) => AppTabBarBloc()),
         BlocProvider<DiscoverBloc>(create: (context) => DiscoverBloc(context)),
+        BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
       ],
       child: BlocBuilder<RootPageControlBloc, RootPageControlState>(
         builder: (ctx, state) {

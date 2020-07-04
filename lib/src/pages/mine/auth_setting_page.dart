@@ -19,6 +19,10 @@ import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class AuthSettingPage extends StatefulWidget {
+  final BuildContext context;
+
+  AuthSettingPage(this.context);
+
   @override
   BaseState<StatefulWidget> createState() {
     return _AuthSettingPageState();
@@ -77,7 +81,10 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                     if (value) {
                       _requestWalletPwd();
                     } else {
-                      _turnOnOrOffBioAuth(BiometricType.face, value);
+                      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+                        value,
+                        _wallet.keystore.fileName,
+                      ));
                     }
                     setState(() {});
                   },
@@ -97,12 +104,16 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                       .authConfigModel
                       .useFingerprint,
                   onChanged: (bool value) async {
-                    if (value) {
-                      _requestWalletPwd();
-                    } else {
-                      _turnOnOrOffBioAuth(BiometricType.fingerprint, value);
-                    }
-                    setState(() {});
+                    setState(() {
+                      if (value) {
+                        _requestWalletPwd();
+                      } else {
+                        BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+                          value,
+                          _wallet.keystore.fileName,
+                        ));
+                      }
+                    });
                   },
                 ),
               ),
@@ -160,7 +171,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
 
     ///Check password is valid
     ///
-    var result = await WalletUtil.exportPrivateKey(
+    String result = await WalletUtil.exportPrivateKey(
       fileName: _wallet.keystore.fileName,
       password: password,
     );
@@ -170,16 +181,14 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
         '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
         password,
       );
-      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-        value: true,
+      BlocProvider.of<AuthBloc>(widget.context).add(SetBioAuthEvent(
+        true,
+        _wallet.keystore.fileName,
       ));
     } else {
-      Fluttertoast.showToast(msg: '密码错误');
+      print('密码错误, 无法开启');
+      Fluttertoast.showToast(msg: '密码错误，无法开启');
     }
     setState(() {});
-  }
-
-  _turnOnOrOffBioAuth(BiometricType biometricType, bool value) {
-    BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: value));
   }
 }

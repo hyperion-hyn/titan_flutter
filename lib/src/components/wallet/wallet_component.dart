@@ -87,7 +87,10 @@ class _WalletManagerState extends State<_WalletManager> {
               _activatedWallet.balance =
                   _calculateTotalBalance(_activatedWallet);
 
-
+              ///Refresh bio-auth config
+              BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
+                _activatedWallet.wallet.keystore.fileName,
+              ));
             }
           } else if (state is LoadingWalletState) {
             _activatedWallet = null;

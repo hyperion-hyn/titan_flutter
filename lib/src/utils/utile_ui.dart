@@ -15,6 +15,7 @@ import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
@@ -201,13 +202,14 @@ class UiUtil {
 //  }
 
   static Future<String> showWalletPasswordDialogV2(
-    BuildContext context,
-    String walletAddress,
-  ) async {
+      BuildContext context, Wallet activeWallet) async {
     if (AuthInheritedModel.of(context).bioAuthEnabled) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthInheritedModel.of(context).bioAuthExpired) {
-        var pwd = await showPasswordDialog(context, walletAddress);
+        var pwd = await showPasswordDialog(
+          context,
+          activeWallet.getEthAccount().address,
+        );
 
         ///Check password from secureStorage is correct
         var result = await WalletUtil.exportPrivateKey(
@@ -219,8 +221,9 @@ class UiUtil {
           password: pwd,
         );
         if (result != null) {
-          BlocProvider.of<AuthBloc>(context)
-              .add(UpdateLastBioAuthTimeEvent(walletAddress, pwd));
+          BlocProvider.of<AuthBloc>(context).add(
+            SetBioAuthEvent(true, activeWallet.keystore.fileName),
+          );
         }
         return pwd;
       } else {
@@ -232,7 +235,7 @@ class UiUtil {
         if (bioAuthResult != null && bioAuthResult) {
           String pwd = await WalletUtil.getPwdFromStorage(
             context,
-            walletAddress,
+            activeWallet.getEthAccount().address,
           );
           print('getPwdFromStorage: $pwd');
           if (pwd != null) {
@@ -241,7 +244,10 @@ class UiUtil {
         }
       }
     }
-    var pwd = await UiUtil.showPasswordDialog(context, walletAddress);
+    var pwd = await UiUtil.showPasswordDialog(
+      context,
+      activeWallet.getEthAccount().address,
+    );
     return pwd;
   }
 
@@ -275,7 +281,7 @@ class UiUtil {
   static showSetBioAuthDialog(
     BuildContext context,
     String title,
-    String walletAddress,
+    Wallet activeWallet,
     String pwd,
   ) async {
     var result = await showDialog(
@@ -285,10 +291,13 @@ class UiUtil {
             AuthInheritedModel.of(context).currentBioMetricType, title));
     if (result != null && result) {
       AppCache.secureSaveValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress',
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${activeWallet.getEthAccount().address}',
         pwd,
       );
-      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(value: true));
+      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+        true,
+        activeWallet.keystore.fileName,
+      ));
       Future.delayed(Duration(milliseconds: 3));
       Fluttertoast.showToast(
         msg: '成功开启生物识别',

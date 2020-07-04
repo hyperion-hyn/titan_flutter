@@ -32,10 +32,6 @@ class FinishCreatePage extends StatelessWidget {
                     BlocProvider.of<WalletCmpBloc>(context)
                         .add(ActiveWalletEvent(wallet: wallet));
 
-                    ///Refresh bio-auth config
-                    BlocProvider.of<AuthBloc>(context)
-                        .add(RefreshBioAuthConfigEvent());
-
                     ///Use digits password now
                     WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
                     await Future.delayed(Duration(milliseconds: 300));
@@ -96,9 +92,6 @@ class FinishCreatePage extends StatelessWidget {
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(ActiveWalletEvent(wallet: wallet));
 
-                      ///Refresh bio-auth config
-                      BlocProvider.of<AuthBloc>(context)
-                          .add(RefreshBioAuthConfigEvent());
 
                       ///Use digits password now
                       WalletUtil.useDigitsPwd(wallet.getEthAccount().address);

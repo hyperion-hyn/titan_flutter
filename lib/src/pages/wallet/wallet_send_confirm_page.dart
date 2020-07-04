@@ -504,7 +504,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   Future _transfer() async {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
-      activatedWallet.wallet.getEthAccount().address,
+      activatedWallet.wallet,
     );
     if (walletPassword == null) {
       return;

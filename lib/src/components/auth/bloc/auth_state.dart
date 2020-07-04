@@ -7,19 +7,28 @@ abstract class AuthState {}
 
 class InitialAuthState extends AuthState {}
 
-class UpdateAuthConfigState extends AuthState {
+class InitAuthConfigState extends AuthState {
   final AuthConfigModel authConfigModel;
 
-  UpdateAuthConfigState({this.authConfigModel});
+  InitAuthConfigState({this.authConfigModel});
+}
+
+class SetBioAuthState extends AuthState {
+  final bool value;
+  final String walletFileName;
+
+  SetBioAuthState(this.value, this.walletFileName);
+}
+
+class SaveAuthConfigState extends AuthState {
+  final AuthConfigModel authConfigModel;
+  final String walletFileName;
+
+  SaveAuthConfigState(this.walletFileName, this.authConfigModel);
 }
 
 class RefreshBioAuthConfigState extends AuthState {
+  final String walletFileName;
 
-  RefreshBioAuthConfigState();
-}
-
-class UpdateAuthStatusState extends AuthState {
-  final bool authorized;
-
-  UpdateAuthStatusState({this.authorized});
+  RefreshBioAuthConfigState(this.walletFileName);
 }

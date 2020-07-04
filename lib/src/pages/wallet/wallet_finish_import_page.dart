@@ -32,10 +32,6 @@ class FinishImportPage extends StatelessWidget {
                     BlocProvider.of<WalletCmpBloc>(context)
                         .add(ActiveWalletEvent(wallet: wallet));
 
-                    ///Refresh bio-auth config
-                    BlocProvider.of<AuthBloc>(context)
-                        .add(RefreshBioAuthConfigEvent());
-
                     await Future.delayed(Duration(milliseconds: 300));
                     BlocProvider.of<WalletCmpBloc>(context)
                         .add(UpdateActivatedWalletBalanceEvent());
@@ -96,10 +92,6 @@ class FinishImportPage extends StatelessWidget {
                     onPressed: () async {
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(ActiveWalletEvent(wallet: wallet));
-
-                      ///Refresh bio-auth config
-                      BlocProvider.of<AuthBloc>(context)
-                          .add(RefreshBioAuthConfigEvent());
 
                       await Future.delayed(Duration(milliseconds: 300));
                       BlocProvider.of<WalletCmpBloc>(context)

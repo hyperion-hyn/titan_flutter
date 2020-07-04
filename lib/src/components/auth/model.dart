@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:local_auth/local_auth.dart';
 
 class AuthConfigModel extends Equatable {
+  String walletFileName;
   bool setBioAuthAsked = false;
   int lastBioAuthTime = 0;
   bool useFace = false;
@@ -9,6 +10,7 @@ class AuthConfigModel extends Equatable {
   List<BiometricType> availableBiometricTypes = List();
 
   AuthConfigModel({
+    this.walletFileName,
     this.setBioAuthAsked,
     this.lastBioAuthTime,
     this.useFace,
@@ -33,6 +35,7 @@ class AuthConfigModel extends Equatable {
         }
       });
       return AuthConfigModel(
+        walletFileName: json['walletFileName'],
         setBioAuthAsked: json['setBioAuthAsked'],
         lastBioAuthTime: json['lastBioAuthTime'],
         useFace: json['useFace'],
@@ -41,6 +44,7 @@ class AuthConfigModel extends Equatable {
       );
     } catch (e) {
       return AuthConfigModel(
+        walletFileName: 'default',
         setBioAuthAsked: false,
         lastBioAuthTime: 0,
         useFace: false,
@@ -52,6 +56,7 @@ class AuthConfigModel extends Equatable {
 
   Map<String, dynamic> toJSON() {
     Map<String, dynamic> json = Map();
+    json['walletFileName'] = this.walletFileName;
     json['setBioAuthAsked'] = this.setBioAuthAsked;
     json['lastBioAuthTime'] = this.lastBioAuthTime;
     json['useFace'] = this.useFace;

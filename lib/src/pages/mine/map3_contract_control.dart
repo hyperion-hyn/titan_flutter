@@ -332,7 +332,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   void handleCommitAnnualized(context, type, int value) async {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
-      wallet.getEthAccount().address,
+      wallet,
     );
     if (password != null) {
       setState(() {
@@ -577,7 +577,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         var password = await UiUtil.showWalletPasswordDialogV2(
           context,
-          wallet.getEthAccount().address,
+          wallet,
         );
         var hynAssetToken = wallet.getHynToken();
         var hynErc20ContractAddress = hynAssetToken?.contractAddress;
@@ -629,7 +629,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           UiUtil.showSetBioAuthDialog(
             context,
             '提交成功',
-            wallet.getEthAccount().address,
+            wallet,
             password,
           );
         }
@@ -684,7 +684,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           UiUtil.showSetBioAuthDialog(
             context,
             '提交成功',
-            wallet.getEthAccount().address,
+            wallet,
             password,
           );
         }
@@ -739,7 +739,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           UiUtil.showSetBioAuthDialog(
             context,
             '提交成功',
-            wallet.getEthAccount().address,
+            wallet,
             password,
           );
         }

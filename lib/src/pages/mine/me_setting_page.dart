@@ -71,7 +71,7 @@ class _MeSettingState extends State<MeSettingPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AuthSettingPage()));
+                            builder: (context) => AuthSettingPage(context)));
                   })
                 : SizedBox(),
             Divider(

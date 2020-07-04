@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/components/auth/model.dart';
@@ -10,59 +12,23 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import './bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+
   @override
   AuthState get initialState => InitialAuthState();
-
-  AuthConfigModel authConfigModel;
 
   @override
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
     // TODO: Add Logic
-    if (event is UpdateAuthStatusEvent) {
-      if (event.authorized != null) {
-        yield UpdateAuthStatusState(authorized: event.authorized);
-      }
-    } else if (event is UpdateAuthConfigEvent) {
-      if (event.authConfigModel != null) {
-        authConfigModel = event.authConfigModel;
-
-        yield UpdateAuthConfigState(authConfigModel: event.authConfigModel);
-      }
+    if (event is InitAuthConfigEvent) {
+      yield InitAuthConfigState(authConfigModel: event.authConfigModel);
+    } else if (event is SaveAuthConfigEvent) {
+      yield SaveAuthConfigState(event.walletFileName, event.authConfigModel);
     } else if (event is SetBioAuthEvent) {
-      if (authConfigModel != null) {
-        if (authConfigModel.availableBiometricTypes
-            .contains(BiometricType.face)) {
-          authConfigModel.useFace = event.value;
-        }
-        if (authConfigModel.availableBiometricTypes
-            .contains(BiometricType.fingerprint)) {
-          authConfigModel.useFingerprint = event.value;
-        }
-
-        if (authConfigModel.availableBiometricTypes
-            .contains(BiometricType.iris)) {
-          authConfigModel.useFingerprint = event.value;
-        }
-
-        authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-
-        yield UpdateAuthConfigState(authConfigModel: authConfigModel);
-      }
-    } else if (event is UpdateLastBioAuthTimeEvent) {
-      if (authConfigModel != null) {
-        authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-
-        ///Update pwd in secureStorage
-        await AppCache.secureSaveValue(
-          '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${event.walletAddress}',
-          event.walletPwd,
-        );
-        yield UpdateAuthConfigState(authConfigModel: authConfigModel);
-      }
-    } else if (event is RefreshBioAuthConfigEvent) {
-      yield RefreshBioAuthConfigState();
+      yield SetBioAuthState(event.value, event.walletFileName);
+    }  else if (event is RefreshBioAuthConfigEvent) {
+      yield RefreshBioAuthConfigState(event.walletFileName);
     }
   }
 }

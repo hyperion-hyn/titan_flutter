@@ -1471,7 +1471,7 @@ class _Map3NodeContractDetailState
 
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
-      _wallet.getEthAccount().address,
+      _wallet,
     );
 
     if (walletPassword == null) {

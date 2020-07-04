@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
@@ -41,52 +42,88 @@ class _AuthManager extends StatefulWidget {
 
 class _AuthManagerState extends BaseState<_AuthManager> {
   AuthConfigModel authConfigModel;
-  bool authorized;
-  WalletVo _activatedWallet;
+  List availableBiometricTypes = List();
+  LocalAuthentication auth = LocalAuthentication();
 
   @override
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
-    _activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
-        if (state is UpdateAuthConfigState) {
-          print('UpdateAuthConfigState:::: ${state.authConfigModel.toJSON()}');
+        if (state is InitAuthConfigState) {
           if (state.authConfigModel != null) {
             authConfigModel = state.authConfigModel;
-            if (_activatedWallet != null) {
-              var fileName = _activatedWallet.wallet.keystore.fileName;
-              print('UpdateAuthConfigState::::  fileName: $fileName');
-              AppCache.saveValue<String>(
-                  '${PrefsKey.AUTH_CONFIG}_$fileName',
-                  json.encode(
-                    state.authConfigModel.toJSON(),
-                  ));
-            } else {
-              print('UpdateAuthConfigState:::: _activatedWallet: null');
-            }
           }
+          print(
+              'InitAuthConfigState:::: ${authConfigModel != null ? authConfigModel.toJSON() : 'null'}');
         } else if (state is RefreshBioAuthConfigState) {
-          if (_activatedWallet != null) {
-            var authConfigStr = await AppCache.getValue<String>(
-                '${PrefsKey.AUTH_CONFIG}_${_activatedWallet.wallet.keystore.fileName}');
-            if (authConfigStr != null) {
-              AuthConfigModel model =
-                  AuthConfigModel.fromJson(json.decode(authConfigStr));
-              if (model != null) authConfigModel = model;
+          var authConfigStr = await AppCache.getValue<String>(
+              '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}');
+          if (authConfigStr != null) {
+            AuthConfigModel model =
+                AuthConfigModel.fromJson(json.decode(authConfigStr));
+            if (model != null) {
+              authConfigModel = model;
             }
+          } else {
+            try {
+              availableBiometricTypes = await auth.getAvailableBiometrics();
+            } on PlatformException catch (e) {
+              print(e);
+            }
+            authConfigModel = AuthConfigModel(
+              walletFileName: state.walletFileName,
+              setBioAuthAsked: false,
+              lastBioAuthTime: 0,
+              useFace: false,
+              useFingerprint: false,
+              availableBiometricTypes: availableBiometricTypes,
+            );
           }
+          print('RefreshBioAuthConfigState:::: ${authConfigModel.toJSON()}');
+        } else if (state is SetBioAuthState) {
+          print('SetBioAuthState::::');
+          try {
+            availableBiometricTypes = await auth.getAvailableBiometrics();
+          } on PlatformException catch (e) {
+            print(e);
+          }
+          if (authConfigModel != null) {
+            if (authConfigModel.availableBiometricTypes
+                .contains(BiometricType.face)) {
+              authConfigModel.useFace = state.value;
+            }
+            if (authConfigModel.availableBiometricTypes
+                .contains(BiometricType.fingerprint)) {
+              authConfigModel.useFingerprint = state.value;
+            }
+            if (authConfigModel.availableBiometricTypes
+                .contains(BiometricType.iris)) {
+              authConfigModel.useFingerprint = state.value;
+            }
+            authConfigModel.lastBioAuthTime =
+                DateTime.now().millisecondsSinceEpoch;
+          }
+//          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
+//              json.encode(authConfigModel.toJSON()));
+          print('SetBioAuthState:::: $authConfigModel');
+        } else if (state is SaveAuthConfigState) {
+          print(
+              '[SaveAuthConfigState] walletFileName: ${state.walletFileName} config: ${state.authConfigModel}');
+          authConfigModel = state.authConfigModel;
+          await AppCache.saveValue(
+              '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
+              json.encode(authConfigModel.toJSON()));
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           return AuthInheritedModel(
-            authorized: authorized,
             authConfigModel: authConfigModel,
             child: widget.child,
           );
@@ -96,7 +133,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
   }
 }
 
-enum AuthAspect { authorized, config }
+enum AuthAspect { config }
 
 class AuthInheritedModel extends InheritedModel<AuthAspect> {
   ///Store quick-auth config
@@ -165,8 +202,6 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   bool updateShouldNotifyDependent(
       AuthInheritedModel oldWidget, Set<AuthAspect> dependencies) {
     return authConfigModel != oldWidget.authConfigModel &&
-            dependencies.contains(AuthAspect.config) ||
-        authorized != oldWidget.authorized &&
-            dependencies.contains(AuthAspect.authorized);
+        dependencies.contains(AuthAspect.config);
   }
 }
