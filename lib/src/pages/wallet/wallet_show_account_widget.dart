@@ -121,11 +121,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                 alignment: Alignment.center,
                                 width: 80,
                                 height: 80,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color(0xFF9B9B9B), width: 0),
-                                  shape: BoxShape.circle,
-                                ),
                                 child: Image.asset(coinVo.logo),
                               ),
                             ),
