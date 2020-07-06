@@ -173,6 +173,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     } else if (type == "location" && subType == 'share') {
       UiUtil.showDialogWidget(context,title: Text('是否解码位置密文'), actions: [
         FlatButton(
+            child: Text('取消'),
+            onPressed: () async {
+              Navigator.pop(context);
+            }),
+        FlatButton(
           child: Text('确定'),
           onPressed: () async {
             Navigator.pop(context);
@@ -189,11 +194,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
             BlocProvider.of<AppTabBarBloc>(context)
                 .add(ChangeTabBarItemEvent(index: 0));
             BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
-          }),
-        FlatButton(
-          child: Text('取消'),
-          onPressed: () async {
-            Navigator.pop(context);
           })
         ]);
     }

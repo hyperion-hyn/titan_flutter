@@ -1,11 +1,14 @@
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:web3dart/json_rpc.dart';
 
 import '../../env.dart';
 import '../global.dart';
@@ -37,7 +40,19 @@ class LogUtil {
     } else if (error is DioError) {
       if (error.type == DioErrorType.CONNECT_TIMEOUT) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).network_error);
+      }else{
+        Fluttertoast.showToast(msg: error.toString());
       }
+    } else if (error is PlatformException) {
+      if (error.code == WalletError.PASSWORD_WRONG) {
+        Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).password_incorrect);
+      } else {
+        Fluttertoast.showToast(msg: error.message);
+      }
+    } else if(error is RPCError){
+      Fluttertoast.showToast(msg: error.message);
+    } else {
+      Fluttertoast.showToast(msg: error.toString());
     }
   }
 
