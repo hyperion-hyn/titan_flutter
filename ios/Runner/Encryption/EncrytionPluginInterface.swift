@@ -80,10 +80,8 @@ class EncrytionPluginInterface {
     private func generateKey(expired: Int64, result: @escaping FlutterResult) {
         let disposeBag = DisposeBag()
         self.encryptService.generateKeyPairAndStore(expireAt: expired)
-            .subscribe(onNext: { (isSuccess) in
-                if let pub = self.encryptService.publicKey {
-                    result(pub)
-                }
+            .subscribe(onNext: { (pair:[AnyHashable : Any]) in
+                result(pair)
             }, onError: nil, onCompleted: nil, onDisposed: nil)
             .disposed(by: disposeBag)
     }

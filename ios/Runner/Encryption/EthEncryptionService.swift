@@ -42,8 +42,8 @@ class EthEncryptionService: EncryptionService {
     }
    */
     
-    func generateKeyPairAndStore(expireAt: Int64) -> Observable<Dictionary<String, Any>> {
-        return Observable<Dictionary<String, Any>>.create { observer in
+    func generateKeyPairAndStore(expireAt: Int64) -> Observable<[AnyHashable : Any]> {
+        return Observable<[AnyHashable : Any]>.create { observer in
             
             var map: Dictionary<String, Any> = [:]
             
