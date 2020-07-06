@@ -10,9 +10,9 @@ import Foundation
 import RxSwift
 
 protocol EncryptionService {
-    func generateKeyPairAndStore(expireAt: Int64) -> Observable<Bool>
+    func generateKeyPairAndStore(expireAt: Int64) -> Observable<Dictionary<String,Any>>
     func encrypt(publicKeyStr: String, message: String) -> Observable<String>
-    func decrypt(ciphertext: String) -> Observable<String>
+    func decrypt(privateKeyStr: String, ciphertext: String) -> Observable<String>
     var publicKey: String? {get}
     var expireTime: Int64 {get}
 }
