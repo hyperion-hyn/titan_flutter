@@ -641,5 +641,6 @@
   "no_screenshot_dialog_cancel": "取消",
   "no_screenshot_dialog_title": "请勿截屏",
   "forgot_password_content_1": "不支持找回密码，但你可以通过导入钱包重置密码。新密码会覆盖旧密码",
-  "forgot_password_content_2": "如果你未备份对应的助计词或私钥，可以反复输入密码尝试，没有次数限制"
+  "forgot_password_content_2": "如果你未备份对应的助计词或私钥，可以反复输入密码尝试，没有次数限制",
+  "forgot_password": "忘记密码"
 }

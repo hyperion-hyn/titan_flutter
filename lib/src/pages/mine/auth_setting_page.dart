@@ -171,15 +171,20 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
       return WalletUtil.checkPwdValid(context, password);
     });
 
-    ///Save password
-    await AppCache.secureSaveValue(
-      '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
-      password,
-    );
-    BlocProvider.of<AuthBloc>(widget.context).add(SetBioAuthEvent(
-      true,
-      _wallet.getEthAccount().address,
-    ));
+    if (password != null) {
+      ///Save password
+      await AppCache.secureSaveValue(
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
+        password,
+      );
+      BlocProvider.of<AuthBloc>(widget.context).add(SetBioAuthEvent(
+        true,
+        _wallet.getEthAccount().address,
+      ));
+      Fluttertoast.showToast(msg: '生物识别开启成功');
+    } else {
+      Fluttertoast.showToast(msg: '生物识别开启失败');
+    }
 
     setState(() {});
   }
