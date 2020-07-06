@@ -155,7 +155,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           Text(
                             _isShowBalances
                                 ? '${FormatUtil.formatPrice(widget.walletVo.balance)}'
-                                : '*************',
+                                : '*****',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 24,
@@ -491,7 +491,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   Text(
                     _isShowBalances
                         ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
-                        : '********',
+                        : '*****',
                     textAlign: TextAlign.right,
                     style: TextStyle(color: Color(0xFF252525), fontSize: 16),
                     overflow: TextOverflow.ellipsis,
@@ -504,7 +504,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     child: Text(
                       _isShowBalances
                           ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-                          : '${symbolQuote?.sign?.sign ?? ''} **********',
+                          : '${symbolQuote?.sign?.sign ?? ''} *****',
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),

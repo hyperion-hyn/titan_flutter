@@ -520,10 +520,14 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       context,
       activatedWallet.wallet,
     );
+
+    _transferWithPwd(walletPassword);
+  }
+
+  _transferWithPwd(String walletPassword) async {
     if (walletPassword == null) {
       return;
     }
-
     try {
       setState(() {
         isTransferring = true;

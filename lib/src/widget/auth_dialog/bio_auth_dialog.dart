@@ -77,7 +77,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
           }
           return AnimatedPadding(
             padding: MediaQuery.of(context).viewInsets +
-                const EdgeInsets.symmetric(horizontal: 32.0),
+                const EdgeInsets.symmetric(horizontal: 48.0),
             duration: insetAnimationDuration,
             curve: insetAnimationCurve,
             child: Center(
@@ -103,7 +103,7 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
                                     child: Text(
                                       '钱包授权登陆',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 17,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -124,21 +124,6 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
     );
   }
 
-  _resultView(bool result) {
-    return Container(
-      width: 300,
-      height: 300,
-      //      child: Center(
-      //        child: Column(
-      //          children: <Widget>[
-      //            Text(result ? '验证成功' : '验证失败'),
-      //            Text('当前钱包密码: $_currentWalletPwd'),
-      //          ],
-      //        ),
-      //      ),
-    );
-  }
-
   _faceAuthWidget(int remainCount, int maxCount) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -147,8 +132,8 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(
             'res/drawable/ic_face_id.png',
-            width: 80,
-            height: 80,
+            width: 50,
+            height: 50,
             color: Theme.of(context).primaryColor,
           ),
         ),
@@ -160,6 +145,9 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
           ),
         ),
         Text('请验证已有的Face ID'),
+        SizedBox(
+          height: 32,
+        ),
         if (remainCount < maxCount)
           InkWell(
             onTap: () {
@@ -191,8 +179,8 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(
             'res/drawable/ic_fingerprint.png',
-            width: 80,
-            height: 80,
+            width: 50,
+            height: 50,
             color: Theme.of(context).primaryColor,
           ),
         ),
@@ -219,7 +207,10 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
             ),
           ),
         Text('请验证已有的指纹'),
-        if (remainCount < maxCount) _bioAuthRemainCountHint(remainCount)
+        SizedBox(
+          height: 32,
+        ),
+        if (remainCount < maxCount) _bioAuthRemainCountHint(remainCount),
       ],
     );
   }
@@ -229,14 +220,19 @@ class _BioAuthDialogState extends BaseState<BioAuthDialog> {
       padding: const EdgeInsets.all(16.0),
       child: Wrap(
         children: <Widget>[
-          Text('识别失败，剩余$remainCount次'),
+          Text(
+            '识别失败，剩余$remainCount次',
+            style: TextStyle(
+              fontSize: 13,
+            ),
+          ),
           SizedBox(
             width: 8,
           ),
           InkWell(
             child: Text(
               '取消',
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(color: Colors.blue, fontSize: 13),
             ),
             onTap: () {
               //authDialogBloc.add(ShowPasswordAuthEvent());
