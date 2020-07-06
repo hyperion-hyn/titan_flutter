@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
@@ -230,7 +232,7 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
     );
     try {
       authenticated = await auth.authenticateWithBiometrics(
-        useErrorDialogs: true,
+        useErrorDialogs: false,
         stickyAuth: true,
         localizedReason: 'Use your face or fingerprint to authorize.',
         androidAuthStrings: androidStrings,
@@ -238,11 +240,29 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
       );
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
-        Fluttertoast.showToast(msg: '暂不支持生物识别');
+        await showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('生物识别'),
+                content: Text(androidStrings.goToSettingsDescription),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(S.of(context).cancel)),
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        TitanPlugin.jumpToBioAuthSetting();
+                      },
+                      child: Text('前往设置'))
+                ],
+              );
+            });
       } else if (e.code == auth_error.notAvailable) {
-        Fluttertoast.showToast(msg: '您当前未开启Face ID授权，请前往设置中心开启');
       } else if (e.code == auth_error.passcodeNotSet) {
-        Fluttertoast.showToast(msg: 'passcodeNotSet');
       } else if (e.code == auth_error.lockedOut) {
         Fluttertoast.showToast(msg: 'lockedOut');
       } else if (e.code == auth_error.permanentlyLockedOut) {

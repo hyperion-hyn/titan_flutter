@@ -641,5 +641,6 @@
   "no_screenshot_dialog_cancel": "cancel",
   "no_screenshot_dialog_title": "Don't screenshot",
   "forgot_password_content_1": "Password recovery is not supported, but you can reset the password by importing the wallet. The new password will overwrite the old password",
-  "forgot_password_content_2": "If you have not backed up the corresponding mnemonic word or private key, you can enter the password repeatedly to try, no limit"
+  "forgot_password_content_2": "If you have not backed up the corresponding mnemonic word or private key, you can enter the password repeatedly to try, no limit",
+  "forgot_password": "Forgot password"
 }

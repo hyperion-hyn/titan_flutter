@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.hyn.titan.tools.AppPrintTools
 import io.flutter.app.FlutterActivity
@@ -26,9 +27,8 @@ import org.hyn.titan.sensor.SensorPluginInterface
 import org.hyn.titan.umenglib.push.UMengPushImpl
 import org.hyn.titan.utils.AppToolsPlugin
 import org.hyn.titan.wallet.WalletPluginInterface
+import org.jetbrains.anko.toast
 import java.io.File
-
-
 
 
 class MainActivity : FlutterFragmentActivity() {
@@ -55,7 +55,7 @@ class MainActivity : FlutterFragmentActivity() {
             }*/
 
             Thread.sleep(10000)
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 AppPrintTools.printLog(UMengPushImpl.umengToken)
             }
         }
@@ -146,6 +146,9 @@ class MainActivity : FlutterFragmentActivity() {
                     "bluetoothEnable" -> {
                         val blueadapter: BluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
                         result.success(blueadapter.isEnabled)
+                    }
+                    "jumpToBioAuthSetting" -> {
+                        startActivity(Intent(Settings.ACTION_SECURITY_SETTINGS))
                     }
                     else -> {
                         result.notImplemented()

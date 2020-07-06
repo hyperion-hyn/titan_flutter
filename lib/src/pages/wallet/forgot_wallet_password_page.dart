@@ -20,7 +20,7 @@ class _ForgotWalletPasswordPageState extends State<ForgotWalletPasswordPage> {
         ),
         backgroundColor: Colors.white,
         title: Text(
-          '忘记密码',
+          S.of(context).forgot_password,
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
@@ -30,7 +30,7 @@ class _ForgotWalletPasswordPageState extends State<ForgotWalletPasswordPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              '忘记密码怎么办?',
+              S.of(context).forgot_password,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(
