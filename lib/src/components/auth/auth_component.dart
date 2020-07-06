@@ -57,7 +57,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
           var authConfigStr = await AppCache.getValue<String>(
-              '${PrefsKey.AUTH_CONFIG}_${state.walletFileName}');
+              '${PrefsKey.AUTH_CONFIG}_${state.walletAddress}');
           if (authConfigStr != null) {
             authConfigModel =
                 AuthConfigModel.fromJson(json.decode(authConfigStr));
@@ -68,7 +68,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
               print(e);
             }
             authConfigModel = AuthConfigModel(
-              walletFileName: state.walletFileName,
+              walletFileName: state.walletAddress,
               setBioAuthAsked: false,
               lastBioAuthTime: 0,
               useFace: false,
@@ -99,7 +99,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
           }
-          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletFileName}',
+          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletAddress}',
               json.encode(authConfigModel.toJSON()));
           print('SetBioAuthState:::: $authConfigModel');
         }

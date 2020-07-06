@@ -68,6 +68,7 @@ class WalletPluginInterface {
             result(path)
             
             return true
+            
         case "wallet_import_prvKey":
             //通过私钥Hex导入
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -93,6 +94,7 @@ class WalletPluginInterface {
             result(wallet.keyURL.lastPathComponent)
             
             return true
+            
         case "wallet_import_json":
             //通过Keystore Json导入
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -113,6 +115,7 @@ class WalletPluginInterface {
             
             result(wallet.keyURL.lastPathComponent)
             return true
+            
         case "wallet_load_keystore":
             //加载一个keystore
             guard let params = methodCall.arguments as? [String: String] else {
@@ -141,6 +144,7 @@ class WalletPluginInterface {
             result(map)
             
             return true
+            
         case "wallet_delete":
             //删除钱包
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -176,6 +180,7 @@ class WalletPluginInterface {
             }
             result(ksList)
             return true
+            
         case "wallet_update":
             //修改密码
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -207,6 +212,7 @@ class WalletPluginInterface {
             
             result(FlutterMethodNotImplemented)
             return true
+            
         case "wallet_getPrivateKey":
             //导出私钥  这里只导出eth私钥
             guard let params = methodCall.arguments as? [String: Any] else {
@@ -235,6 +241,7 @@ class WalletPluginInterface {
             
             result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
             return true
+            
         case "wallet_getMnemonic":
             //导出助记词
             guard let params = methodCall.arguments as? [String: String] else {
@@ -313,7 +320,7 @@ class WalletPluginInterface {
                                 //common
                                 let pathStr = "m/84'/0'/0'/\(it.sub)/\(it.index)"
                                 guard let path = DerivationPath(pathStr) else {
-                                     result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "path error", details: "path parse error, path:\(pathStr)"))
+                                    result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "path error", details: "path parse error, path:\(pathStr)"))
                                     return
                                 }
                                 let secretPrivateKeyBtc = wallet.getKey(at:path)
@@ -330,7 +337,7 @@ class WalletPluginInterface {
                                 let outPoint = BitcoinOutPoint.with {
                                     $0.hash = Data(reverUtxoTxId)
                                     //print("[Wallet]  it.txHash:\(it.txHash), utxoTxId:\(utxoTxId), reverUtxoTxId:\(reverUtxoTxId)")
-                                
+                                    
                                     $0.index = UInt32(it.txOutputN)
                                     //$0.sequence = 4294967293
                                     $0.sequence = UINT32_MAX
@@ -346,12 +353,12 @@ class WalletPluginInterface {
                                 
                                 //input
                                 input.privateKey.append(secretPrivateKeyBtc.data)
-
+                                
                                 if let hash = scriptHash {
                                     input.scripts[hash.hexString] = BitcoinScript.buildPayToPublicKeyHash(hash: hash).data
                                 }
                             }
-
+                            
                             
                             let output: BitcoinSigningOutput = AnySigner.sign(input: input, coin: coinBtc)
                             let signedTransaction = output.encoded.hexString
@@ -367,6 +374,43 @@ class WalletPluginInterface {
             
             result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
             return true
+            
+        case "bitcoinActive":
+            //比特币激活
+            guard let params = methodCall.arguments as? [String: Any] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params is not [String: Any]", details: nil))
+                return true
+            }
+            
+            guard let fileName = params["fileName"] as? NSString, let password = params["password"] as? NSString else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
+                return true
+            }
+            
+            for w in keyStore.wallets {
+                if(w.keyURL.lastPathComponent == fileName as String) {
+                    do {
+                        let account = try w.getAccount(password: password as String, coin: CoinType.bitcoin)
+                        let path = w.keyURL.path
+                        let success = w.key.store(path: path)
+                        //print("is store success \(success), account: \(account.address)")
+                        if (success) {
+                            print("is store path: \(path)")
+                            result(path)
+                        } else {
+                            result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "bitcoin active is fail", details: nil))
+                        }
+                    } catch {
+                        //print("export mnemonic error: \(error)")
+                        result(FlutterError.init(code: ErrorCode.PASSWORD_WRONG, message: "password error", details: "invalidPassword"))
+                    }
+                    return true
+                }
+            }
+            
+            result(FlutterError.init(code: ErrorCode.UNKNOWN_ERROR, message: "can't find wallet", details: nil))
+            return true
+            
         default:
             return false
         }
@@ -473,7 +517,7 @@ class BitcoinTransEntity{
         model.toAddress = map["toAddress"] as? String ?? ""
         model.fee = map["fee"] as? Int64 ?? 0
         model.amount = map["amount"] as? Int64 ?? 0
- 
+        
         if let utxoArr = map["utxo"] as? [Any] {
             var utxo:[Utxo] = []
             for item in utxoArr {
@@ -488,7 +532,7 @@ class BitcoinTransEntity{
         if let changeDict = map["change"] as? [String:Any] {
             model.change = Change.fromJson(map: changeDict)
         }
-
+        
         return model
     }
 }

@@ -12,13 +12,14 @@ import RxSwift
 import SwiftKeychainWrapper
 
 class EthEncryptionService: EncryptionService {
-    
+ 
     private lazy var cipher = MobileNewCipher()
     
     private var _pubStr: String? = nil
     private var _expiredTime: Int64 = 0
     
-    func generateKeyPairAndStore(expireAt: Int64) -> Observable<Bool> {
+    /*
+    func generateKeyPairAndStore_old(expireAt: Int64) -> Observable<Bool> {
         return Observable<Bool>.create { observer in
             if let pairs = self.cipher?.genKeyPair() {
                 let ps = pairs.components(separatedBy: ",")
@@ -39,6 +40,26 @@ class EthEncryptionService: EncryptionService {
             return Disposables.create()
         }
     }
+   */
+    
+    func generateKeyPairAndStore(expireAt: Int64) -> Observable<[AnyHashable : Any]> {
+        return Observable<[AnyHashable : Any]>.create { observer in
+            
+            var map: Dictionary<String, Any> = [:]
+            
+            if let pairs = self.cipher?.genKeyPair() {
+                let ps = pairs.components(separatedBy: ",")
+                if ps.count == 2 {
+                    let prvStr = ps[0]
+                    let pubStr = ps[1]
+                    map = ["publicKey": pubStr, "privateKey": prvStr]
+                }
+            }
+            observer.onNext(map)
+            observer.onCompleted()
+            return Disposables.create()
+        }
+    }
     
     func encrypt(publicKeyStr: String, message: String) -> Observable<String> {
         return Observable<String>.create { observer in
@@ -52,25 +73,21 @@ class EthEncryptionService: EncryptionService {
         }
     }
     
-    func decrypt(ciphertext: String) -> Observable<String> {
+    func decrypt(privateKeyStr: String, ciphertext: String) -> Observable<String> {
         return Observable<String>.create { observer in
-            if let savedKeyPair = KeychainWrapper.standard.string(forKey: "savedKeyPair") {
-                let ps = savedKeyPair.components(separatedBy: ",")
-                if ps.count == 3 {
-                    let priStr = ps[0]
-                    if let message = self.cipher?.decrypt(priStr, cipherText: ciphertext) {
-                        if !message.isEmpty {
-                            observer.onNext(message)
-                            observer.onCompleted()
-                            return Disposables.create()
-                        }
-                    }
+           let priStr = privateKeyStr
+            if let message = self.cipher?.decrypt(priStr, cipherText: ciphertext) {
+                if !message.isEmpty {
+                    observer.onNext(message)
+                    observer.onCompleted()
+                    return Disposables.create()
                 }
             }
             observer.onError(NSError(domain: "decrypt error", code: -1, userInfo: nil))
             return Disposables.create()
         }
     }
+    
     
     var publicKey: String? {
         get {

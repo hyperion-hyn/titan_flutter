@@ -21,9 +21,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async* {
     // TODO: Add Logic
     if (event is SetBioAuthEvent) {
-      yield SetBioAuthState(event.value, event.walletFileName);
+      yield SetBioAuthState(event.value, event.walletAddress);
     } else if (event is RefreshBioAuthConfigEvent) {
-      yield RefreshBioAuthConfigState(event.walletFileName);
+      yield RefreshBioAuthConfigState(event.walletAddress);
     }
   }
 }
