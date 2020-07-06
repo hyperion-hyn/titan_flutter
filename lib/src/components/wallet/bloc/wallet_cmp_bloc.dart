@@ -51,11 +51,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
 
-
-
       }
 
-      if (!isSameWallet) {
+      if (event.wallet != null && !isSameWallet) {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
         walletRepository.saveActivatedWalletFileName(
             _activatedWalletVo?.wallet?.keystore?.fileName);
