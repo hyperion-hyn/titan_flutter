@@ -8,6 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 
@@ -134,10 +135,16 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                   onTap: () {
 //                                    Application.router.navigateTo(
 //                                        context, Routes.wallet_import);
-                                    Fluttertoast.showToast(
-                                      msg: '钱包并不会记录用户任何密码，你可以无限次数重试，或者重新导入助记词',
-                                      toastLength: Toast.LENGTH_LONG,
-                                    );
+//                                    Fluttertoast.showToast(
+//                                      msg: '钱包并不会记录用户任何密码，你可以无限次数重试，或者重新导入助记词',
+//                                      toastLength: Toast.LENGTH_LONG,
+//                                    );
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ForgotWalletPasswordPage(),
+                                        ));
                                   },
                                 ),
                                 SizedBox(
