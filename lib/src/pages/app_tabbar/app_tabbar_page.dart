@@ -30,6 +30,7 @@ import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
@@ -170,19 +171,31 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       Application.router.navigateTo(context,
           Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (type == "location" && subType == 'share') {
-      (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)
-          ?.back();
+      UiUtil.showDialogWidget(context,title: Text('是否解码位置密文'), actions: [
+        FlatButton(
+          child: Text('确定'),
+          onPressed: () async {
+            Navigator.pop(context);
+            (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)
+                ?.back();
+            Routes.popUntilCachedEntryRouteName(context);
 
-      var encryptedMsg = content['msg'];
-      var poi = await ciphertextToPoi(
-        Injector.of(context).repository,
-        encryptedMsg,
-      );
-      ///switch to map page first, then poi can show correctly.
-      BlocProvider.of<AppTabBarBloc>(context)
-          .add(ChangeTabBarItemEvent(index: 0));
-
-      BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+            var encryptedMsg = content['msg'];
+            var poi = await ciphertextToPoi(
+              Injector.of(context).repository,
+              encryptedMsg,
+            );
+            ///switch to map page first, then poi can show correctly.
+            BlocProvider.of<AppTabBarBloc>(context)
+                .add(ChangeTabBarItemEvent(index: 0));
+            BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+          }),
+        FlatButton(
+          child: Text('取消'),
+          onPressed: () async {
+            Navigator.pop(context);
+          })
+        ]);
     }
   }
 
