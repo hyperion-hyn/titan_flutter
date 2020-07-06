@@ -104,7 +104,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             ),
             Spacer(),
             Text(
-              subTitle,
+              subTitle ?? "",
               style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 16),
             ),
             Padding(
