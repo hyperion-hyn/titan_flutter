@@ -326,7 +326,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
       var result = await widget.wallet.delete(walletPassword);
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
-        AppCache.remove(widget.wallet.getBitcoinAccount().address);
+        await AppCache.remove(widget.wallet.getBitcoinAccount().address);
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo = WalletInheritedModel.of(context,
             aspect: WalletAspect.activatedWallet);
@@ -346,6 +346,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
           //no wallet
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: null));
+          Routes.cachedEntryRouteName = null;
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
