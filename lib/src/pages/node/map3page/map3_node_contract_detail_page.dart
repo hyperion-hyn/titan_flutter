@@ -1472,6 +1472,9 @@ class _Map3NodeContractDetailState
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       _wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
 
     if (walletPassword == null) {

@@ -137,6 +137,8 @@ dependencies:
   pin_input_text_field: 3.0.3
   # https://pub.dev/packages/image_save
   image_save: 3.1.1
+  # https://pub.dev/packages/vibration
+  vibration: 1.4.0
 
   flutter_recaptcha_v2:
     git:

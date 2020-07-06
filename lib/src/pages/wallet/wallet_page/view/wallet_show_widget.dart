@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -33,6 +35,7 @@ import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_password_dialog.dart';
+import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
@@ -429,6 +432,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   child: SetBioAuthDialog(BiometricType.fingerprint, '授权成功'));
             },
           ),
+          RaisedButton(
+            child: Text('震动'),
+            onPressed: () async {
+              if (await Vibration.hasVibrator()) {
+                Vibration.vibrate();
+              }
+            },
+          )
         ],
       ),
     );
@@ -541,6 +552,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       widget.walletVo.wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (walletPassword == null) {
       return;

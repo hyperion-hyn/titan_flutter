@@ -204,16 +204,14 @@ class UiUtil {
   static Future<String> showWalletPasswordDialogV2(
     BuildContext context,
     Wallet activeWallet, {
-    CheckPwdValid onCheckPwdValid,
+    @required CheckPwdValid onCheckPwdValid,
   }) async {
     if (AuthInheritedModel.of(context).bioAuthEnabled) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthInheritedModel.of(context).bioAuthExpired) {
         var pwd = await showPasswordDialog(
-          context,
-          activeWallet.getEthAccount().address,
-          onCheckPwdValid: onCheckPwdValid
-        );
+            context, activeWallet.getEthAccount().address,
+            onCheckPwdValid: onCheckPwdValid);
 
         ///Check password from secureStorage is correct
         var result = await WalletUtil.exportPrivateKey(
@@ -259,7 +257,7 @@ class UiUtil {
   static Future<String> showPasswordDialog(
     BuildContext context,
     String walletAddress, {
-    CheckPwdValid onCheckPwdValid,
+    @required CheckPwdValid onCheckPwdValid,
   }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       walletAddress,

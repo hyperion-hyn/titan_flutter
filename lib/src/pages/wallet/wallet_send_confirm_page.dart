@@ -519,6 +519,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
 
     _transferWithPwd(walletPassword);

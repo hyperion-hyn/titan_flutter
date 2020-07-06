@@ -274,9 +274,12 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   void updateWalletV2() async {
-    String password = await UiUtil.showWalletPasswordDialogV2(
+    var password = await UiUtil.showWalletPasswordDialogV2(
       context,
       widget.wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (password != null) {
       try {
@@ -316,6 +319,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       widget.wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     print("walletPassword:$walletPassword");
     if (walletPassword == null) {

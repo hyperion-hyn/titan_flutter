@@ -11,6 +11,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:vibration/vibration.dart';
 
 typedef Future<bool> CheckPwdValid(String pwd);
 
@@ -29,6 +30,7 @@ class WalletPasswordDialog extends StatefulWidget {
 class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
   Wallet wallet;
   final TextEditingController _pinPutController = TextEditingController();
+  bool _pwdInvalid = false;
 
   void initState() {
     super.initState();
@@ -96,15 +98,21 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                               child: PinInputTextField(
                                 enabled: true,
                                 pinLength: 6,
-                                decoration: BoxTightDecoration(
-                                  strokeColor: Colors.grey,
-                                  errorTextStyle:
-                                      TextStyle(color: Colors.amberAccent),
-                                  obscureStyle: ObscureStyle(
-                                    isTextObscure: true,
-                                    obscureText: '●',
-                                  ),
-                                ),
+                                decoration: _pwdInvalid
+                                    ? BoxTightDecoration(
+                                        strokeColor: Colors.red,
+                                        obscureStyle: ObscureStyle(
+                                          isTextObscure: true,
+                                          obscureText: '●',
+                                        ),
+                                      )
+                                    : BoxTightDecoration(
+                                        strokeColor: Colors.grey,
+                                        obscureStyle: ObscureStyle(
+                                          isTextObscure: true,
+                                          obscureText: '●',
+                                        ),
+                                      ),
                                 controller: _pinPutController,
                                 autoFocus: true,
                                 textInputAction: TextInputAction.done,
@@ -116,15 +124,37 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                       Navigator.of(context).pop(pin);
                                     } else {
                                       setState(() {
+                                        setState(() {
+                                          _pwdInvalid = true;
+                                        });
                                         _pinPutController.clear();
                                       });
+                                      if (await Vibration.hasVibrator()) {
+                                        Vibration.vibrate();
+                                      }
                                     }
+                                  } else {
+                                    setState(() {
+                                      _pwdInvalid = false;
+                                    });
                                   }
                                 },
                               ),
                             ),
                             Row(
                               children: <Widget>[
+                                if (_pwdInvalid)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
+                                    ),
+                                    child: Text(
+                                      '您的密码有误',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
                                 Spacer(),
                                 InkWell(
                                   child: Text(
@@ -133,12 +163,6 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                         TextStyle(color: HexColor('#FF1F81FF')),
                                   ),
                                   onTap: () {
-//                                    Application.router.navigateTo(
-//                                        context, Routes.wallet_import);
-//                                    Fluttertoast.showToast(
-//                                      msg: '钱包并不会记录用户任何密码，你可以无限次数重试，或者重新导入助记词',
-//                                      toastLength: Toast.LENGTH_LONG,
-//                                    );
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(

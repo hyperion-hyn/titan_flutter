@@ -221,8 +221,10 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       widget.wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
-
     print("walletPassword:$walletPassword");
     if (walletPassword == null) {
       return;

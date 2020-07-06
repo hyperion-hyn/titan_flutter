@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -131,6 +132,31 @@ class WalletUtil {
         '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress');
     print('checkUseDigitsPwd: $result walletAddress: $walletAddress');
     return result != null && result;
+  }
+
+  static Future<bool> checkPwdValid(
+    BuildContext context,
+    String walletPwd,
+  ) async {
+    String result;
+    try {
+      result = await WalletUtil.exportPrivateKey(
+        fileName: WalletInheritedModel.of(context)
+            .activatedWallet
+            .wallet
+            .keystore
+            .fileName,
+        password: walletPwd,
+      );
+    } on PlatformException catch (e) {
+      result = null;
+      print(e);
+    }
+    if (result != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   static getPwdFromStorage(BuildContext context, String walletAddress) async {

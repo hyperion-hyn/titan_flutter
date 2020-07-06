@@ -168,15 +168,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
         context, _wallet.getEthAccount().address,
         onCheckPwdValid: (String password) async {
       ///Check password is valid
-      String result = await WalletUtil.exportPrivateKey(
-        fileName: _wallet.keystore.fileName,
-        password: password,
-      );
-      if (result != null) {
-        return true;
-      } else {
-        return false;
-      }
+      return WalletUtil.checkPwdValid(context, password);
     });
 
     ///Save password
@@ -188,5 +180,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
       true,
       _wallet.getEthAccount().address,
     ));
+
+    setState(() {});
   }
 }

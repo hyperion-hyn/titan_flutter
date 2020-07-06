@@ -333,6 +333,9 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
       wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (password != null) {
       setState(() {
@@ -572,8 +575,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   void handleCommitDeposit(context, Decimal value) async {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
-      wallet.getEthAccount().address,
-
+      wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (password != null) {
       setState(() {
@@ -581,12 +586,6 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
       });
 
       try {
-        var wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
-
-        var password = await UiUtil.showWalletPasswordDialogV2(
-          context,
-          wallet,
-        );
         var hynAssetToken = wallet.getHynToken();
         var hynErc20ContractAddress = hynAssetToken?.contractAddress;
         var approveToAddress = WalletConfig.map3ContractAddress;
@@ -655,7 +654,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   void handleCommitWithdraw(context, Decimal value) async {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
-      wallet.getEthAccount().address,
+      wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (password != null) {
       setState(() {
@@ -708,7 +710,10 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   void handleCommitChangeMaxDelegation(context, Decimal value) async {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
-      wallet.getEthAccount().address,
+      wallet,
+      onCheckPwdValid: (walletPwd) {
+        return WalletUtil.checkPwdValid(context, walletPwd);
+      },
     );
     if (password != null) {
       setState(() {
