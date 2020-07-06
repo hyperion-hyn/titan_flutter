@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -10,10 +11,13 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 
+typedef Future<bool> CheckPwdValid(String pwd);
+
 class WalletPasswordDialog extends StatefulWidget {
   final String title;
+  final CheckPwdValid checkPwdValid;
 
-  WalletPasswordDialog({this.title});
+  WalletPasswordDialog({this.title, this.checkPwdValid});
 
   @override
   BaseState<StatefulWidget> createState() {
@@ -93,6 +97,8 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                 pinLength: 6,
                                 decoration: BoxTightDecoration(
                                   strokeColor: Colors.grey,
+                                  errorTextStyle:
+                                      TextStyle(color: Colors.amberAccent),
                                   obscureStyle: ObscureStyle(
                                     isTextObscure: true,
                                     obscureText: '●',
@@ -101,9 +107,17 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                 controller: _pinPutController,
                                 autoFocus: true,
                                 textInputAction: TextInputAction.done,
-                                onChanged: (pin) {
+                                onChanged: (pin) async {
                                   if (pin.length == 6) {
-                                    Navigator.of(context).pop(pin);
+                                    var result =
+                                        await widget.checkPwdValid(pin);
+                                    if (result) {
+                                      Navigator.of(context).pop(pin);
+                                    } else {
+                                      setState(() {
+                                        _pinPutController.clear();
+                                      });
+                                    }
                                   }
                                 },
                               ),
@@ -118,8 +132,12 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                         TextStyle(color: HexColor('#FF1F81FF')),
                                   ),
                                   onTap: () {
-                                    Application.router.navigateTo(
-                                        context, Routes.wallet_import);
+//                                    Application.router.navigateTo(
+//                                        context, Routes.wallet_import);
+                                    Fluttertoast.showToast(
+                                      msg: '钱包并不会记录用户任何密码，你可以无限次数重试，或者重新导入助记词',
+                                      toastLength: Toast.LENGTH_LONG,
+                                    );
                                   },
                                 ),
                                 SizedBox(

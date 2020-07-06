@@ -9,13 +9,13 @@ class InitialAuthState extends AuthState {}
 
 class SetBioAuthState extends AuthState {
   final bool value;
-  final String walletFileName;
+  final String walletAddress;
 
-  SetBioAuthState(this.value, this.walletFileName);
+  SetBioAuthState(this.value, this.walletAddress);
 }
 
 class RefreshBioAuthConfigState extends AuthState {
-  final String walletFileName;
+  final String walletAddress;
 
-  RefreshBioAuthConfigState(this.walletFileName);
+  RefreshBioAuthConfigState(this.walletAddress);
 }

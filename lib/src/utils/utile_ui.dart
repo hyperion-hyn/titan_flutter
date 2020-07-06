@@ -202,13 +202,17 @@ class UiUtil {
 //  }
 
   static Future<String> showWalletPasswordDialogV2(
-      BuildContext context, Wallet activeWallet) async {
+    BuildContext context,
+    Wallet activeWallet, {
+    CheckPwdValid onCheckPwdValid,
+  }) async {
     if (AuthInheritedModel.of(context).bioAuthEnabled) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthInheritedModel.of(context).bioAuthExpired) {
         var pwd = await showPasswordDialog(
           context,
           activeWallet.getEthAccount().address,
+          onCheckPwdValid: onCheckPwdValid
         );
 
         ///Check password from secureStorage is correct
@@ -222,7 +226,7 @@ class UiUtil {
         );
         if (result != null) {
           BlocProvider.of<AuthBloc>(context).add(
-            SetBioAuthEvent(true, activeWallet.keystore.fileName),
+            SetBioAuthEvent(true, activeWallet.getEthAccount().address),
           );
         }
         return pwd;
@@ -247,14 +251,16 @@ class UiUtil {
     var pwd = await UiUtil.showPasswordDialog(
       context,
       activeWallet.getEthAccount().address,
+      onCheckPwdValid: onCheckPwdValid,
     );
     return pwd;
   }
 
   static Future<String> showPasswordDialog(
     BuildContext context,
-    String walletAddress,
-  ) async {
+    String walletAddress, {
+    CheckPwdValid onCheckPwdValid,
+  }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       walletAddress,
     );
@@ -262,8 +268,10 @@ class UiUtil {
     if (useDigits != null && useDigits) {
       return showDialog(
           context: context,
+          barrierDismissible: false,
           child: WalletPasswordDialog(
             title: '请输入钱包密码',
+            checkPwdValid: onCheckPwdValid,
           ));
     } else {
       return showModalBottomSheet(
@@ -297,7 +305,7 @@ class UiUtil {
         );
         BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
           true,
-          activeWallet.keystore.fileName,
+          activeWallet.getEthAccount().address,
         ));
         Future.delayed(Duration(milliseconds: 3));
         Fluttertoast.showToast(

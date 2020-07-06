@@ -83,7 +83,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                     } else {
                       BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
                         value,
-                        _wallet.keystore.fileName,
+                        _wallet.getEthAccount().address,
                       ));
                     }
                     setState(() {});
@@ -110,7 +110,7 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
                       } else {
                         BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
                           value,
-                          _wallet.keystore.fileName,
+                          _wallet.getEthAccount().address,
                         ));
                       }
                     });
@@ -165,30 +165,28 @@ class _AuthSettingPageState extends BaseState<AuthSettingPage> {
     ///Use password dialog
     ///
     var password = await UiUtil.showPasswordDialog(
-      context,
-      _wallet.getEthAccount().address,
-    );
-
-    ///Check password is valid
-    ///
-    String result = await WalletUtil.exportPrivateKey(
-      fileName: _wallet.keystore.fileName,
-      password: password,
-    );
-    if (result != null) {
-      ///Save password
-      await AppCache.secureSaveValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
-        password,
+        context, _wallet.getEthAccount().address,
+        onCheckPwdValid: (String password) async {
+      ///Check password is valid
+      String result = await WalletUtil.exportPrivateKey(
+        fileName: _wallet.keystore.fileName,
+        password: password,
       );
-      BlocProvider.of<AuthBloc>(widget.context).add(SetBioAuthEvent(
-        true,
-        _wallet.keystore.fileName,
-      ));
-    } else {
-      print('密码错误, 无法开启');
-      Fluttertoast.showToast(msg: '密码错误，无法开启');
-    }
-    setState(() {});
+      if (result != null) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    ///Save password
+    await AppCache.secureSaveValue(
+      '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
+      password,
+    );
+    BlocProvider.of<AuthBloc>(widget.context).add(SetBioAuthEvent(
+      true,
+      _wallet.getEthAccount().address,
+    ));
   }
 }

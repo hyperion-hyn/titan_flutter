@@ -573,6 +573,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
       wallet.getEthAccount().address,
+
     );
     if (password != null) {
       setState(() {
