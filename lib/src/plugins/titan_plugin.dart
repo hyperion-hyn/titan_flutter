@@ -102,13 +102,14 @@ class TitanPlugin {
   }
 
   static Future<String> getPublicKey() async {
-    if(publicKey == null) {
+    if (publicKey == null) {
       publicKey = await AppCache.secureGetValue(SecurePrefsKey.MY_PUBLIC_KEY);
       if (publicKey == null) {
         var pairMap = await callChannel.invokeMethod('genKeyPair');
         var privateKey = pairMap["privateKey"];
         publicKey = pairMap["publicKey"];
-        await AppCache.secureSaveValue(SecurePrefsKey.MY_PRIVATE_KEY, privateKey);
+        await AppCache.secureSaveValue(
+            SecurePrefsKey.MY_PRIVATE_KEY, privateKey);
         await AppCache.secureSaveValue(SecurePrefsKey.MY_PUBLIC_KEY, publicKey);
       }
     }
@@ -125,14 +126,15 @@ class TitanPlugin {
   }
 
   static Future<String> decrypt(String cipherText) async {
-    if(privateKey == null) {
+    if (privateKey == null) {
       privateKey = await AppCache.secureGetValue(SecurePrefsKey.MY_PRIVATE_KEY);
     }
-    if(privateKey == null){
+    if (privateKey == null) {
       Fluttertoast.showToast(msg: "密钥对异常，请重新进行位置分享操作");
       return "";
     }
-    return await callChannel.invokeMethod("decrypt", {'privateKey': privateKey, 'cipherText': cipherText} );
+    return await callChannel.invokeMethod(
+        "decrypt", {'privateKey': privateKey, 'cipherText': cipherText});
   }
 
   static StreamSubscription listenCipherEvent(onData,
@@ -204,8 +206,12 @@ class TitanPlugin {
         .invokeMethod("bitcoinSign", {'transJson': transJson});
   }
 
-  static Future<String> bitcoinActive(String fileName,String password) async {
-    return await callChannel.invokeMethod("bitcoinActive", {"fileName": fileName,"password": password});
+  static Future<String> bitcoinActive(String fileName, String password) async {
+    return await callChannel.invokeMethod(
+        "bitcoinActive", {"fileName": fileName, "password": password});
   }
 
+  static Future<void> jumpToBioAuthSetting() async {
+    await callChannel.invokeMethod('jumpToBioAuthSetting');
+  }
 }
