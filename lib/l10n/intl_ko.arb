@@ -121,7 +121,7 @@
   "input_wallet_name_hint": "지갑 명칭 입력",
   "input_wallet_name_length_hint": "지갑 명칭 이름은 6자리 이내로 입력",
   "create_wallet_password_label": "지갑 비밀번호 만들기",
-  "input_wallet_password_length_hint": "6 자리 비밀번호를 입력하십시오",
+  "input_wallet_password_length_hint": "지갑 비밀번호는 6자리 수 이상으로 입력\"",
   "reinput_wallet_password_label": "지갑 비밀번호 다시 입력",
   "input_password_again_hint": "지갑 비밀 번호 다시 입력",
   "password_not_equal_hint": "비밀번호 상이",

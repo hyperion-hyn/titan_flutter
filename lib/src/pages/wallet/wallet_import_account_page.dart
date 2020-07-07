@@ -281,10 +281,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                     child: TextFormField(
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(6),
-                        WhitelistingTextInputFormatter.digitsOnly
-                      ],
+//                      inputFormatters: [
+//                        LengthLimitingTextInputFormatter(6),
+//                        WhitelistingTextInputFormatter.digitsOnly
+//                      ],
                       validator: (value) {
                         if (!ValidatorUtil.validatePassword(value)) {
                           return S
@@ -333,7 +333,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.visiblePassword,
                       obscureText: true,
                     ),
                   ),
@@ -355,10 +355,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
                     child: TextFormField(
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(6),
-                        WhitelistingTextInputFormatter.digitsOnly,
-                      ],
+//                      inputFormatters: [
+//                        LengthLimitingTextInputFormatter(6),
+//                        WhitelistingTextInputFormatter.digitsOnly,
+//                      ],
                       validator: (value) {
                         if (value.isEmpty) {
                           return S.of(context).input_password_again_hint;
@@ -428,7 +428,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                                     ),
                             ),
                           )),
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.visiblePassword,
                       obscureText: !_isShowPassword,
                     ),
                   ),

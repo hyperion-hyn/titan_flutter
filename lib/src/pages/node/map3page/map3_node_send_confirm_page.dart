@@ -502,12 +502,12 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         print("join post result = $resultMsg");
       }
 
-      await UiUtil.showSetBioAuthDialog(
-        context,
-        '生物识别',
-        activatedWallet.wallet,
-        walletPassword,
-      );
+//      await UiUtil.showSetBioAuthDialog(
+//        context,
+//        '生物识别',
+//        activatedWallet.wallet,
+//        walletPassword,
+//      );
 
       Application.router.navigateTo(
           context,

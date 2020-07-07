@@ -366,12 +366,12 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         print('-提交成功 hash $response');
 
-        await UiUtil.showSetBioAuthDialog(
-          context,
-          '提交成功',
-          wallet,
-          password,
-        );
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '提交成功',
+//          wallet,
+//          password,
+//        );
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -632,12 +632,12 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         print('-提交成功 hash $response');
 
-        await UiUtil.showSetBioAuthDialog(
-          context,
-          '提交成功',
-          wallet,
-          password,
-        );
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '提交成功',
+//          wallet,
+//          password,
+//        );
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -687,13 +687,13 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         );
 
         print('-提交成功 hash $response');
-
-        await UiUtil.showSetBioAuthDialog(
-          context,
-          '提交成功',
-          wallet,
-          password,
-        );
+//
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '提交成功',
+//          wallet,
+//          password,
+//        );
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {
@@ -744,12 +744,12 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
         print('-提交成功 hash $response');
 
-        await UiUtil.showSetBioAuthDialog(
-          context,
-          '提交成功',
-          wallet,
-          password,
-        );
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '提交成功',
+//          wallet,
+//          password,
+//        );
 
         UiUtil.showSnackBar(context, '提交成功，请留意钱包划账记录');
       } catch (e) {

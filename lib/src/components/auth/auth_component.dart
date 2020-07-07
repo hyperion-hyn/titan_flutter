@@ -99,6 +99,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
           }
+          if (mounted) setState(() {});
           AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletAddress}',
               json.encode(authConfigModel.toJSON()));
           print('SetBioAuthState:::: $authConfigModel');

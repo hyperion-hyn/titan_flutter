@@ -238,52 +238,59 @@ class ShareDialogState extends State<ShareDialog> {
               )
             ],
           ),
-          SizedBox(
-            height: 16.0,
-          ),
-          Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: HexColor('#FFF2F2F2')),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  TextFormField(
-                    style: TextStyle(fontSize: 14),
-                    controller: pubKeyTextEditController,
-                    autofocus: true,
-                    decoration: InputDecoration.collapsed(
-                      hintText: S.of(context).receiver_encrypted_address,
-                      hintStyle: TextStyle(
-                        color: HexColor('#FF999999'),
-                        fontSize: 14,
-                      ),
-                    ),
-                    onSaved: (value) {
-                      pubAddress = value;
-                    },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+            child: TextFormField(
+              validator: validatePubAddress,
+              autofocus: true,
+              controller: pubKeyTextEditController,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: HexColor('#FFF2F2F2'),
+                hintText: S.of(context).receiver_encrypted_address,
+                hintStyle: TextStyle(
+                  color: HexColor('#FF999999'),
+                  fontSize: 13,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(
+                    color: HexColor('#FFF2F2F2'),
+                    width: 0.5,
                   ),
-                  if (addressErrorStr != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Text(
-                        addressErrorStr,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                ],
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(
+                    color: HexColor('#FFF2F2F2'),
+                    width: 0.5,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(
+                    color: HexColor('#FFF2F2F2'),
+                    width: 0.5,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide(
+                    color: Colors.red,
+                    width: 0.5,
+                  ),
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
+              style: TextStyle(fontSize: 13),
+              onSaved: (value) {
+                pubAddress = value;
+              },
             ),
           ),
           SizedBox(
-            height: 16.0,
+            height: 12.0,
           ),
           Text(
             '附言',
@@ -293,31 +300,57 @@ class ShareDialogState extends State<ShareDialog> {
                 fontWeight: FontWeight.bold),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
             child: Container(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextFormField(
-                  autofocus: true,
-                  style: TextStyle(fontSize: 14),
-                  decoration: InputDecoration(
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                    hintText: S.of(context).postscript_hint,
-                    hintStyle: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 14,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: HexColor('#FFF2F2F2')),
+              child: TextFormField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: S.of(context).postscript_hint,
+                  hintStyle: TextStyle(
+                    color: HexColor('#FF999999'),
+                    fontSize: 13,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: HexColor('#FFF2F2F2'),
+                      width: 0.5,
                     ),
                   ),
-                  onSaved: (value) {
-                    remark = value;
-                  },
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: HexColor('#FFF2F2F2'),
+                      width: 0.5,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: HexColor('#FFF2F2F2'),
+                      width: 0.5,
+                    ),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: Colors.red,
+                      width: 0.5,
+                    ),
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
+                onSaved: (value) {
+                  remark = value;
+                },
+                style: TextStyle(
+                  fontSize: 13,
                 ),
               ),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: HexColor('#FFF2F2F2')),
             ),
           ),
         ],

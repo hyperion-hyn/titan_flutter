@@ -121,7 +121,7 @@
   "input_wallet_name_hint": "Please input wallet name",
   "input_wallet_name_length_hint": "Name must be within 6 characters",
   "create_wallet_password_label": "Wallet Password",
-  "input_wallet_password_length_hint": "Wallet password must be at 6 digits",
+  "input_wallet_password_length_hint": "Wallet password must be at least 6 characters",
   "reinput_wallet_password_label": "Confirm Wallet Password",
   "input_password_again_hint": "Please re-enter the password",
   "password_not_equal_hint": "Inconsistent passwords",

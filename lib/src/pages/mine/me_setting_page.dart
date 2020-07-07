@@ -65,18 +65,18 @@ class _MeSettingState extends State<MeSettingPage> {
             Divider(
               height: 1,
             ),
-            AuthInheritedModel.of(context).bioAuthAvailable &&
-                    activeWallet != null
-                ? _buildMenuBar('生物识别', '', () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AuthSettingPage(context)));
-                  })
-                : SizedBox(),
-            Divider(
-              height: 1,
-            ),
+//            AuthInheritedModel.of(context).bioAuthAvailable &&
+//                    activeWallet != null
+//                ? _buildMenuBar('生物识别', '', () {
+//                    Navigator.push(
+//                        context,
+//                        MaterialPageRoute(
+//                            builder: (context) => AuthSettingPage(context)));
+//                  })
+//                : SizedBox(),
+//            Divider(
+//              height: 1,
+//            ),
           ],
         ));
   }

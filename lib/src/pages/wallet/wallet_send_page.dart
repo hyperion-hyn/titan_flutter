@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
@@ -185,8 +186,27 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             decoration: InputDecoration(
                               hintText: addressHint,
                               hintStyle: TextStyle(color: Colors.black12),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30)),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: HexColor('#FFD0D0D0'),
+                                  width: 0.5,
+                                ),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: HexColor('#FFD0D0D0'),
+                                  width: 0.5,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: HexColor('#FFD0D0D0'),
+                                  width: 0.5,
+                                ),
+                              ),
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                             ),

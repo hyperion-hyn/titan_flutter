@@ -1532,12 +1532,12 @@ class _Map3NodeContractDetailState
       var success = await _api.withdrawContractInstance(_contractNodeItem,
           WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
       if (success == "success") {
-        await UiUtil.showSetBioAuthDialog(
-          context,
-          '生物识别',
-          _wallet,
-          walletPassword,
-        );
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '生物识别',
+//          _wallet,
+//          walletPassword,
+//        );
         _broadcaseContractAction();
       } else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);

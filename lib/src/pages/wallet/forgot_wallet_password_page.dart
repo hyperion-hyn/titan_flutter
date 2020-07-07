@@ -38,12 +38,20 @@ class _ForgotWalletPasswordPageState extends State<ForgotWalletPasswordPage> {
             ),
             Text(
               S.of(context).forgot_password_content_1,
-              style: TextStyle(fontSize: 14),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.8,
+              ),
             ),
             SizedBox(
               height: 16,
             ),
-            Text(S.of(context).forgot_password_content_2),
+            Text(
+              S.of(context).forgot_password_content_2,
+              style: TextStyle(
+                height: 1.8,
+              ),
+            ),
           ],
         ),
       ),

@@ -206,46 +206,46 @@ class UiUtil {
     Wallet activeWallet, {
     @required CheckPwdValid onCheckPwdValid,
   }) async {
-    if (AuthInheritedModel.of(context).bioAuthEnabled) {
-      ///Bio-auth is expired, ask for pwd with password dialog.
-      if (AuthInheritedModel.of(context).bioAuthExpired) {
-        var pwd = await showPasswordDialog(
-            context, activeWallet.getEthAccount().address,
-            onCheckPwdValid: onCheckPwdValid);
-
-        ///Check password from secureStorage is correct
-        var result = await WalletUtil.exportPrivateKey(
-          fileName: WalletInheritedModel.of(context)
-              .activatedWallet
-              .wallet
-              .keystore
-              .fileName,
-          password: pwd,
-        );
-        if (result != null) {
-          BlocProvider.of<AuthBloc>(context).add(
-            SetBioAuthEvent(true, activeWallet.getEthAccount().address),
-          );
-        }
-        return pwd;
-      } else {
-        ///BioAuth is not expired, check the password from disk is correct
-        bool bioAuthResult = await showDialog(
-          context: context,
-          child: BioAuthDialog(),
-        );
-        if (bioAuthResult != null && bioAuthResult) {
-          String pwd = await WalletUtil.getPwdFromStorage(
-            context,
-            activeWallet.getEthAccount().address,
-          );
-          print('getPwdFromStorage: $pwd');
-          if (pwd != null) {
-            return pwd;
-          }
-        }
-      }
-    }
+//    if (AuthInheritedModel.of(context).bioAuthEnabled) {
+//      ///Bio-auth is expired, ask for pwd with password dialog.
+//      if (AuthInheritedModel.of(context).bioAuthExpired) {
+//        var pwd = await showPasswordDialog(
+//            context, activeWallet.getEthAccount().address,
+//            onCheckPwdValid: onCheckPwdValid);
+//
+//        ///Check password from secureStorage is correct
+//        var result = await WalletUtil.exportPrivateKey(
+//          fileName: WalletInheritedModel.of(context)
+//              .activatedWallet
+//              .wallet
+//              .keystore
+//              .fileName,
+//          password: pwd,
+//        );
+//        if (result != null) {
+//          BlocProvider.of<AuthBloc>(context).add(
+//            SetBioAuthEvent(true, activeWallet.getEthAccount().address),
+//          );
+//        }
+//        return pwd;
+//      } else {
+//        ///BioAuth is not expired, check the password from disk is correct
+//        bool bioAuthResult = await showDialog(
+//          context: context,
+//          child: BioAuthDialog(),
+//        );
+//        if (bioAuthResult != null && bioAuthResult) {
+//          String pwd = await WalletUtil.getPwdFromStorage(
+//            context,
+//            activeWallet.getEthAccount().address,
+//          );
+//          print('getPwdFromStorage: $pwd');
+//          if (pwd != null) {
+//            return pwd;
+//          }
+//        }
+//      }
+//    }
     var pwd = await UiUtil.showPasswordDialog(
       context,
       activeWallet.getEthAccount().address,
@@ -259,29 +259,38 @@ class UiUtil {
     String walletAddress, {
     @required CheckPwdValid onCheckPwdValid,
   }) async {
-    var useDigits = await WalletUtil.checkUseDigitsPwd(
-      walletAddress,
-    );
-
-    if (useDigits != null && useDigits) {
-      return showDialog(
-          context: context,
-          barrierDismissible: false,
-          child: WalletPasswordDialog(
-            title: '请输入钱包密码',
-            checkPwdValid: onCheckPwdValid,
-          ));
-    } else {
-      return showModalBottomSheet(
-          isScrollControlled: true,
-          context: context,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          builder: (BuildContext context) {
-            return EnterWalletPasswordWidget();
-          });
-    }
+//    var useDigits = await WalletUtil.checkUseDigitsPwd(
+//      walletAddress,
+//    );
+//
+//    if (useDigits != null && useDigits) {
+//      return showDialog(
+//          context: context,
+//          barrierDismissible: false,
+//          child: WalletPasswordDialog(
+//            title: '请输入钱包密码',
+//            checkPwdValid: onCheckPwdValid,
+//          ));
+//    } else {
+//      return showModalBottomSheet(
+//          isScrollControlled: true,
+//          context: context,
+//          shape: RoundedRectangleBorder(
+//            borderRadius: BorderRadius.circular(15.0),
+//          ),
+//          builder: (BuildContext context) {
+//            return EnterWalletPasswordWidget();
+//          });
+//    }
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        });
   }
 
   static showSetBioAuthDialog(
