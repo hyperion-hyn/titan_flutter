@@ -185,7 +185,10 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             controller: _receiverAddressController,
                             decoration: InputDecoration(
                               hintText: addressHint,
-                              hintStyle: TextStyle(color: Colors.black12),
+                              hintStyle: TextStyle(
+                                color: HexColor('#FF999999'),
+                                fontSize: 13,
+                              ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
@@ -204,6 +207,13 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: HexColor('#FFD0D0D0'),
+                                  width: 0.5,
+                                ),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(
+                                  color: Colors.red,
                                   width: 0.5,
                                 ),
                               ),
@@ -277,9 +287,38 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                           controller: _amountController,
                           decoration: InputDecoration(
                             hintText: S.of(context).input_transfer_num,
-                            hintStyle: TextStyle(color: Colors.black12),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30)),
+                            hintStyle: TextStyle(
+                              color: HexColor('#FF999999'),
+                              fontSize: 13,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: HexColor('#FFD0D0D0'),
+                                width: 0.5,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: HexColor('#FFD0D0D0'),
+                                width: 0.5,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: HexColor('#FFD0D0D0'),
+                                width: 0.5,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 0.5,
+                              ),
+                            ),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                           ),
