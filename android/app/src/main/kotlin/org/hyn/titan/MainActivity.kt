@@ -68,7 +68,9 @@ class MainActivity : FlutterFragmentActivity() {
 
         callChannel.setMethodCallHandler { call, result ->
             var handled = encryptionPluginInterface.setMethodCallHandler(call, result)
-            appToolsPlugin.setMethodCallHandler(this@MainActivity, call, result)
+            if (!handled) {
+                handled = appToolsPlugin.setMethodCallHandler(this@MainActivity, call, result)
+            }
             if (!handled) {
                 handled = walletPluginInterface.setMethodCallHandler(call, result)
             }
