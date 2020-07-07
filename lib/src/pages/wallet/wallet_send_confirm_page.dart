@@ -125,11 +125,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
 
   @override
   Widget build(BuildContext context) {
-    var ethQuotePrice = QuotesInheritedModel.of(context)
-            .activatedQuoteVoAndSign('ETH')
-            ?.quoteVo
-            ?.price ??
-        0;
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceEstimateStr = "";
@@ -145,6 +140,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else {
+      var ethQuotePrice = QuotesInheritedModel.of(context)
+          .activatedQuoteVoAndSign('ETH')
+          ?.quoteVo
+          ?.price ?? 0;
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
               .gasPriceRecommend;
@@ -158,7 +157,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       var gasEstimate = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
               (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(quotePrice.toString());
+      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
       gasPriceEstimateStr =
           "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }

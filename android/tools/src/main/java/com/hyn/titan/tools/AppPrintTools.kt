@@ -1,13 +1,15 @@
 package com.hyn.titan.tools
 
+import android.util.Log
+
 object AppPrintTools {
 
-    lateinit var appPrintInterface: AppPrintInterface
+    var appPrintInterface: AppPrintInterface? = null
 
     fun printLog(logMsg: String) {
         if(appPrintInterface == null){
             return
         }
-        appPrintInterface.printLog(logMsg)
+        appPrintInterface?.printLog(logMsg)
     }
 }

@@ -43,7 +43,7 @@ class _Map3AtlasIntroductionState extends State<Map3AtlasIntroductionPage> {
               children: <Widget>[
                 Text("Atlas共识节点", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white),),
                 SizedBox(height: 2,),
-                Text("为海伯利安生态提供公式保证", style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white),),
+                Text("为海伯利安生态提供共识保证", style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.white),),
               ],
             ),
           )
