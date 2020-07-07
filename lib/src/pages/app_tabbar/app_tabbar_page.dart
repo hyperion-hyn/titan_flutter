@@ -174,7 +174,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       Application.router.navigateTo(context,
           Routes.map3node_contract_detail_page + "?contractId=$contractId");
     } else if (type == "location" && subType == 'share') {
-      ///When received encrypted msg,
+      ///When received encrypted msg, show dialog
       ///
       UiUtil.showDecryptDialog(context, () async {
         Navigator.pop(context);
