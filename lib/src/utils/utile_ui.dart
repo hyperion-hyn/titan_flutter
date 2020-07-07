@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -19,6 +20,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_password_dialog.dart';
 
@@ -81,8 +83,12 @@ class UiUtil {
   }
 
   // alertView
-  static Future<T> showDialogWidget<T>(BuildContext context,
-      {Widget title, Widget content, List<Widget> actions}) {
+  static Future<T> showDialogWidget<T>(
+    BuildContext context, {
+    Widget title,
+    Widget content,
+    List<Widget> actions,
+  }) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -186,6 +192,77 @@ class UiUtil {
       return MediaQuery.of(context).padding.bottom > 0;
     }
     return false;
+  }
+
+  static Future<T> showDecryptDialog<T>(
+    BuildContext context,
+    Function onClick,
+  ) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+              Radius.circular(30.0),
+            )),
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(
+                child: Text(
+                  '您收到一个加密位置信息, 是否打开',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(),
+                ),
+              ),
+            ),
+            content: Wrap(
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  height: 32,
+                ),
+                Row(
+                  children: <Widget>[
+                    Spacer(
+                      flex: 1,
+                    ),
+                    Container(
+                      width: 120,
+                      child: Center(
+                        child: InkWell(
+                          child: Text(
+                            '取消',
+                            style: TextStyle(
+                              color: HexColor('#FF999999'),
+                            ),
+                          ),
+                          onTap: () async {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                    Spacer(
+                      flex: 2,
+                    ),
+                    ClickOvalButton(
+                      '打开',
+                      () async {
+                        onClick();
+                      },
+                      height: 45,
+                      width: 120,
+                    ),
+                    Spacer(
+                      flex: 1,
+                    )
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
 //  static Future<String> showEnterPassWordBottomSheet(
