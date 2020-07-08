@@ -189,6 +189,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           }
           fileName = _activeWallet.wallet.keystore.fileName;
           password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet, onCheckPwdValid: null);
+          if(password == null){
+            return;
+          }
         }
         Navigator.pop(context);
         (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
