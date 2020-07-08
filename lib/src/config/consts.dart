@@ -100,9 +100,6 @@ class PrefsKey {
   static final newsUpdateTime = 'news_update_time';
 
   static final WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
-
-  static final WALLET_PUB_KEY_PREFIX_KEY = 'wallet_pub_';
-
   ///auth
   static const String AUTH_CONFIG = 'auth_config';
 }
@@ -113,6 +110,10 @@ class SecurePrefsKey {
   static final String AUTH_LOCK_PATTERN_KEY = 'lockpattern';
   static final String MY_PUBLIC_KEY = 'my_public_key';
   static final String MY_PRIVATE_KEY = 'my_private_key';
+
+  ///complete key:  WALLET_P2P_PUB_KEY_PREFIX + wallet.getEthAccount().address
+  static final String WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
+
 }
 
 enum Status { idle, loading, success, failed, cancelled }

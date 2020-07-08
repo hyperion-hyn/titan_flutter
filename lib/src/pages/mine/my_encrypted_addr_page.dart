@@ -22,6 +22,8 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 
@@ -32,64 +34,70 @@ class MyEncryptedAddrPage extends StatefulWidget {
   }
 }
 
-class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
-  String _pubKey = "";
-  String _pubKeyAutoRefreshTip = "";
-
+class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with RouteAware {
   GlobalKey _qrImageBoundaryKey = GlobalKey();
 
-//  bool _walletActivated = false;
-//  String _walletPubKey = '';
-//  WalletVo _activeWallet;
+  String _walletPubKey;
+  WalletVo _activeWallet;
+  String walletSecurePubKey;
 
   @override
   void initState() {
     super.initState();
-    queryData();
   }
 
-//  @override
-//  void onCreated() {
-//    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
-//    if (_activeWallet != null) {
-//      _getCurrentWalletPubKey();
-//    }
-//  }
-
-  void queryData() async {
-    _pubKey = await TitanPlugin.getPublicKey();
-    var expireTime = await TitanPlugin.getExpiredTime();
-    _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
-    setState(() {});
+  @override
+  void onCreated() {
+    initWalletData();
   }
 
-  // _getCurrentWalletPubKey() async {
-  //      var walletPubKey = await AppCache.getValue(
-//          '${PrefsKey.WALLET_PUB_KEY_PREFIX_KEY}${_activatedWalletVo.getEthAccount().address}');
-//    var walletPubKey =
-//        await AppCache.getValue(PrefsKey.ACTIVATED_WALLET_FILE_NAME);
-//    _walletActivated = walletPubKey != null;
-//    if (walletPubKey != null) {
-//      _walletPubKey = walletPubKey;
-//      _walletActivated = true;
-//    }
-//
-//    setState(() {});
-//  }
+  @override
+  void didPopNext() {
+    setState(() {
+      initWalletData();
+    });
+    super.didPushNext();
+  }
 
-//  _activateWallet() async {
-//    ///Get pub key from TitanPlugin here
-//    ///
-//    var result = await AppCache.saveValue<String>(
-//        '${PrefsKey.WALLET_PUB_KEY_PREFIX_KEY}${_activeWallet.wallet.getEthAccount().address}',
-//        'PubKey');
-//    setState(() {
-//      _walletActivated = result;
-//    });
-//    if (!result) {
-//      Fluttertoast.showToast(msg: '授权失败');
-//    }
-//  }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    Application.routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  initWalletData() async {
+    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    if (_activeWallet != null) {
+      walletSecurePubKey = '${SecurePrefsKey.WALLET_P2P_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
+      var walletPubKey = await AppCache.secureGetValue(walletSecurePubKey);
+      print("!!!!$walletPubKey");
+      if (walletPubKey != null) {
+        _walletPubKey = walletPubKey;
+      }
+      setState(() {});
+    }
+  }
+
+  _activateWallet() async {
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet, onCheckPwdValid: null);
+    if(password == null){
+      return;
+    }
+    try {
+      _walletPubKey = await TitanPlugin.trustActiveEncrypt(password,_activeWallet.wallet.keystore.fileName);
+      await AppCache.secureSaveValue(walletSecurePubKey, _walletPubKey);
+      setState(() {
+      });
+    }catch(error){
+      LogUtil.toastException(error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +111,9 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
           backgroundColor: Colors.white,
           iconTheme: IconThemeData(color: Colors.black),
         ),
-        body: _pubKeyView());
+        body: _activeWallet != null
+            ? _walletPubKey != null ? _pubKeyView() : _walletNotActivatedView()
+            : _noActiveWalletView());
   }
 
   _pubKeyView() {
@@ -136,8 +146,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                 builder: (BuildContext context) {
                   return GestureDetector(
                     onTap: () {
-                      if (_pubKey.isNotEmpty) {
-                        Clipboard.setData(ClipboardData(text: _pubKey));
+                      if (_walletPubKey.isNotEmpty) {
+                        Clipboard.setData(ClipboardData(text: _walletPubKey));
                         Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text(
                           S.of(context).public_key_copied,
@@ -160,8 +170,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
             builder: (BuildContext context) {
               return GestureDetector(
                 onTap: () {
-                  if (_pubKey.isNotEmpty) {
-                    Clipboard.setData(ClipboardData(text: _pubKey));
+                  if (_walletPubKey.isNotEmpty) {
+                    Clipboard.setData(ClipboardData(text: _walletPubKey));
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
                       S.of(context).public_key_copied,
@@ -170,7 +180,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
                 },
                 child: Row(children: <Widget>[
                   Flexible(
-                      child: Text(_pubKey,
+                      child: Text(_walletPubKey,
                           style: TextStyle(
                             color: HexColor('#FF999999'),
                             height: 2.0,
@@ -186,7 +196,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
               child: RepaintBoundary(
             key: _qrImageBoundaryKey,
             child: QrImage(
-              data: _pubKey,
+              data: _walletPubKey,
               backgroundColor: Colors.white,
               foregroundColor: Colors.grey[800],
               version: 6,
@@ -194,28 +204,6 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
             ),
           )),
         ),
-        /*Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _pubKeyAutoRefreshTip,
-                  style: TextStyle(color: Colors.black54),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: InkWell(
-                    onTap: () => showRefreshDialog(context),
-                    child: Text(
-                      S.of(context).manually_refresh,
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                )
-              ]),
-        ),*/
         SizedBox(
           height: 36,
         ),
@@ -322,49 +310,11 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
             height: 32,
           ),
           ClickOvalButton('授权', () {
-            // _activateWallet();
+             _activateWallet();
           })
         ],
       ),
     );
-  }
-
-  void showRefreshDialog(context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(S.of(context).tips),
-            content: Text(S.of(context).refresh_keypaire_message),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(S.of(context).cancel)),
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    genNewKeys();
-                  },
-                  child: Text(S.of(context).confirm))
-            ],
-          );
-        },
-        barrierDismissible: true);
-  }
-
-  void genNewKeys() {
-    Future.delayed(const Duration(milliseconds: 200)).then((data) {
-      return TitanPlugin.genKeyPair();
-    }).then((key) {
-      _pubKey = key;
-      return TitanPlugin.getExpiredTime();
-    }).then((expireTime) {
-      var tip = getExpiredTimeShowTip(context, expireTime);
-      _pubKeyAutoRefreshTip = tip;
-      setState(() {});
-    });
   }
 
   void share() async {
@@ -393,18 +343,6 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
       Fluttertoast.showToast(msg: S.of(context).share_fail);
     }
 
-//    PermissionStatus permission = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-//    print(permission);
-//    if (permission != PermissionStatus.granted) {
-//      Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-//    }
-//
-//    ServiceStatus serviceStatus = await PermissionHandler().checkServiceStatus(PermissionGroup.storage);
-//    print(serviceStatus);
-//
-//    PermissionHandler().openAppSettings();
-//    var canInstall = await TitanPlugin.requestInstallUnknownSourceSetting();
-//    print(canInstall);
   }
 
   _saveQrImage() async {
@@ -416,7 +354,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> {
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
       result = await ImageSave.saveImage(pngBytes, "png",
-          albumName: 'titan_wallet_$_pubKey');
+          albumName: 'titan_wallet_$_walletPubKey');
     } catch (e) {
       result = false;
     }

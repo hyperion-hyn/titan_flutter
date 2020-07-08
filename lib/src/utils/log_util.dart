@@ -46,6 +46,8 @@ class LogUtil {
     } else if (error is PlatformException) {
       if (error.code == WalletError.PASSWORD_WRONG) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).password_incorrect);
+      } else if (error.code == WalletError.PARAMETERS_WRONG) {
+        Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).param_error);
       } else {
         Fluttertoast.showToast(msg: error.message);
       }

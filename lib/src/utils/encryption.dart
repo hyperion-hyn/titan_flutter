@@ -9,6 +9,7 @@ import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import '../global.dart';
 
@@ -38,7 +39,7 @@ Future<String> reEncryptPoi(
 
 Future<String> p2pEncryptPoi(String pubKey, IPoi poi, String remark) async {
   var message = _genMessage(poi, remark);
-  var ciphertext = await TitanPlugin.encrypt(pubKey, message);
+  var ciphertext = await TitanPlugin.trustEncrypt(pubKey, message);
   if (ciphertext == null || ciphertext.isEmpty) {
     throw Exception(S.of(Keys.rootKey.currentContext).not_legal_public_key);
   }
@@ -52,7 +53,7 @@ String _genMessage(IPoi poi, String remark) {
   return "${poi.name}-${poi.latLng.latitude},${poi.latLng.longitude}-${remark ?? ''}"; //title-loc-remark
 }
 
-Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
+Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext,{String password, String fileName}) async {
   var trimList = [
     Const.TITAN_SHARE_URL_PREFIX,
     Const.TITAN_SCHEMA,
@@ -72,7 +73,7 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
     if (ciphertext.startsWith(Const.CIPHER_TEXT_PREFIX)) {
       // p2p share
       ciphertext = ciphertext.substring(Const.CIPHER_TEXT_PREFIX.length);
-      cmsg = await TitanPlugin.decrypt(ciphertext);
+      cmsg = await TitanPlugin.trustDecrypt(ciphertext,password,fileName);
     } else if (ciphertext.startsWith(Const.CIPHER_TOKEN_PREFIX)) {
       // common share
       ciphertext = ciphertext.substring(Const.CIPHER_TOKEN_PREFIX.length);
@@ -88,7 +89,8 @@ Future<IPoi> ciphertextToPoi(Repository repository, String ciphertext) async {
       }
     }
   } catch (err) {
-    Fluttertoast.showToast(msg: "你无法解密该密文",toastLength: Toast.LENGTH_LONG);
+    LogUtil.toastException(err);
+//    Fluttertoast.showToast(msg: "你无法解密该密文",toastLength: Toast.LENGTH_LONG);
     logger.e(err);
   }
 

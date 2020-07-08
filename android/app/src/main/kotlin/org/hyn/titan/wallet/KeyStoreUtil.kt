@@ -1,11 +1,14 @@
 package org.hyn.titan.wallet
 
+import android.content.Context
+import org.hyn.titan.utils.md5
 import org.hyn.titan.utils.toHex
 import org.hyn.titan.utils.toHexByteArray
 import timber.log.Timber
 import wallet.core.jni.CoinType
 import wallet.core.jni.StoredKey
 import wallet.core.jni.PrivateKey
+import java.io.File
 
 object KeyStoreUtil {
     fun parseCoinType(coinTypeValue: Int?, default: CoinType = CoinType.ETHEREUM): CoinType {
@@ -75,13 +78,28 @@ object KeyStoreUtil {
 
     private fun getPrvKeyEntity(storedKey: StoredKey, password: String, coinType: CoinType): PrivateKey? {
         return if (storedKey.isMnemonic) {
-            val hdWallet = storedKey.wallet(password.toHexByteArray())
+            var hdWallet = storedKey.wallet(password.toByteArray())
+            if(hdWallet == null){
+                hdWallet = storedKey.wallet(password.toHexByteArray())
+            }
             val privateKey = hdWallet?.getKeyForCoin(coinType)
             privateKey
         } else {
-            val prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
+            var prvKey = storedKey.privateKey(coinType, password.toByteArray())
+            if(prvKey == null){
+                prvKey = storedKey.privateKey(coinType, password.toHexByteArray())
+            }
             prvKey
         }
+    }
+
+    fun getKeyStorePath(context: Context, fileName: String? = null): String {
+        val saveName = fileName ?: ("${System.currentTimeMillis()}".md5() + ".keystore")
+        return getKeyStoreDir(context).absolutePath + File.separator + saveName
+    }
+
+    fun getKeyStoreDir(context: Context): File {
+        return context.getDir("keystore", Context.MODE_PRIVATE)
     }
 
 }

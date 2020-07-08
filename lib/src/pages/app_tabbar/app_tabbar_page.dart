@@ -16,6 +16,7 @@ import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
@@ -177,14 +178,25 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       ///When received encrypted msg, show dialog
       ///
       UiUtil.showDecryptDialog(context, () async {
+        var encryptedMsg = content['msg'];
+        var fileName;
+        var password;
+        if(encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+          var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+          if (_activeWallet == null) {
+            Fluttertoast.showToast(msg: "请先导入钱包");
+            return;
+          }
+          fileName = _activeWallet.wallet.keystore.fileName;
+          password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet, onCheckPwdValid: null);
+        }
         Navigator.pop(context);
         (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
         Routes.popUntilCachedEntryRouteName(context);
 
-        var encryptedMsg = content['msg'];
         var poi = await ciphertextToPoi(
           Injector.of(context).repository,
-          encryptedMsg,
+          encryptedMsg,fileName: fileName,password: password
         );
 
         ///switch to map page first, then poi can show correctly.
@@ -192,6 +204,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
             .add(ChangeTabBarItemEvent(index: 0));
         await Future.delayed(Duration(milliseconds: 300));
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+
       });
     }
   }

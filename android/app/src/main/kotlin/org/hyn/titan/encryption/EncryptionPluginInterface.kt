@@ -54,6 +54,18 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 decrypt(call, result)
                 return true
             }
+            "trustActiveEncrypt" -> {
+                trustActiveEncrypt(call, result)
+                return true
+            }
+            "trustEncrypt" -> {
+                trustEncrypt(call, result)
+                return true
+            }
+            "trustDecrypt" -> {
+                trustDecrypt(call, result)
+                return true
+            }
         }
         return false
     }
@@ -108,13 +120,44 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 .subscribe({
                     result.success(it)
                     cipherEventSink?.success(it)
-//                    encryptionService.publicKey?.let { pubKey ->
-//                        result.success(pubKey)
-//                        cipherEventSink?.success(pubKey)
-//                    }
                 }, {
                     it.printStackTrace()
-                    result.error(it.message, null, null)
+                    result.error(null, it.message, null)
                 })
     }
+
+    private fun trustActiveEncrypt(call: MethodCall, result: MethodChannel.Result) {
+        var password = call.argument<String>("password") ?: ""
+        var fileName = call.argument<String>("fileName") ?: ""
+        var resultMapFlowable = encryptionService.trustActiveEncrypt(password, fileName)
+        resultMapFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(ErrorCode.PASSWORD_WRONG, it.message, null)
+        })
+    }
+
+    private fun trustEncrypt(call: MethodCall, result: MethodChannel.Result) {
+        var publicKey = call.argument<String>("publicKey")
+        var message = call.argument<String>("message") ?: ""
+        var resultMapFlowable = encryptionService.trustEncrypt(publicKey, message)
+        resultMapFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(ErrorCode.PARAMETERS_WRONG, it.message, null)
+        })
+    }
+
+    private fun trustDecrypt(call: MethodCall, result: MethodChannel.Result) {
+        val cipherText = call.argument<String>("cipherText") ?: ""
+        val password = call.argument<String>("password") ?: ""
+        val fileName = call.argument<String>("fileName") ?: ""
+        val messageFlowable = encryptionService.trustDecrypt(cipherText,fileName,password)
+        messageFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(it.message, "decrypt error", null)
+        })
+    }
+
 }

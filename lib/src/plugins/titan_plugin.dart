@@ -214,4 +214,18 @@ class TitanPlugin {
   static Future<void> jumpToBioAuthSetting() async {
     await callChannel.invokeMethod('jumpToBioAuthSetting');
   }
+
+  static Future<String> trustActiveEncrypt(String password, String fileName) async {
+    return await callChannel
+        .invokeMethod("trustActiveEncrypt", {'password': password, 'fileName': fileName});
+  }
+
+  static Future<String> trustEncrypt(String pubKey, String message) async {
+    return await callChannel
+        .invokeMethod("trustEncrypt", {'publicKey': pubKey, 'message': message});
+  }
+
+  static Future<String> trustDecrypt(String cipherText, String password, String fileName) async {
+    return await callChannel.invokeMethod("trustDecrypt", {'cipherText': cipherText, 'password': password, 'fileName': fileName});
+  }
 }
