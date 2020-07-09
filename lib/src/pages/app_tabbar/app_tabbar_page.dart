@@ -181,33 +181,32 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         var encryptedMsg = content['msg'];
         var fileName;
         var password;
-        if(encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+        if (encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
           if (_activeWallet == null) {
             Fluttertoast.showToast(msg: "请先导入钱包");
             return;
           }
           fileName = _activeWallet.wallet.keystore.fileName;
-          password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet, onCheckPwdValid: null);
-          if(password == null){
-            return;
-          }
+          password = await UiUtil.showWalletPasswordDialogV2(
+            context,
+            _activeWallet.wallet,
+            onCheckPwdValid: null,
+          );
         }
         Navigator.pop(context);
         (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
         Routes.popUntilCachedEntryRouteName(context);
 
         var poi = await ciphertextToPoi(
-          Injector.of(context).repository,
-          encryptedMsg,fileName: fileName,password: password
-        );
+            Injector.of(context).repository, encryptedMsg,
+            fileName: fileName, password: password);
 
         ///switch to map page first, then poi can show correctly.
         BlocProvider.of<AppTabBarBloc>(context)
             .add(ChangeTabBarItemEvent(index: 0));
         await Future.delayed(Duration(milliseconds: 300));
         BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
-
       });
     }
   }

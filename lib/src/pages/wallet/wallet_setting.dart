@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/auth/SetBioAuthPage.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -13,7 +16,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/mine/auth_setting_page.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -106,7 +108,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
             onPressed: deleteWallet,
             child: Text(
               S.of(context).delete,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: HexColor('#FF999999')),
             ),
           ),
         ],
@@ -121,19 +123,17 @@ class _WalletSettingState extends State<WalletSettingPage> {
           height: double.infinity,
           color: Colors.white,
           child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16, bottom: 24),
-                    child: Stack(
-                      children: <Widget>[
-                        walletHeaderWidget(
-                            widget.wallet.keystore.name.characters.first,
-                            size: 64,
-                            fontSize: 20,
-                            address: widget.wallet.getEthAccount()?.address),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 36),
+                  child: Stack(
+                    children: <Widget>[
+                      walletHeaderWidget(
+                          widget.wallet.keystore.name.characters.first,
+                          size: 64,
+                          fontSize: 20,
+                          address: widget.wallet.getEthAccount()?.address),
 //                      Positioned(
 //                          right: 6,
 //                          bottom: 6,
@@ -141,134 +141,248 @@ class _WalletSettingState extends State<WalletSettingPage> {
 //                            'res/drawable/ic_edit.png',
 //                            height: 12,
 //                          )),
+                    ],
+                  ),
+                ),
+                _divider(),
+                _walletInfo(),
+                _divider(),
+                _bioAuthOptions(),
+                _backUpOptions(),
+                SizedBox(
+                  height: 36,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                  constraints: BoxConstraints.expand(height: 44),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    disabledColor: Colors.grey[600],
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    disabledTextColor: Colors.white,
+                    onPressed: _hasChangeProperties ? updateWalletV2 : null,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            '保存更新',
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _divider() {
+    return Container(
+      height: 8,
+      color: HexColor('#FFF5F5F5'),
+    );
+  }
+
+  _walletInfo() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            S.of(context).wallet_name,
+            style: TextStyle(
+              color: HexColor('#FF333333'),
+              fontSize: 16,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
+            child: TextFormField(
+                enabled: true,
+                focusNode: _focusNode,
+                controller: _walletNameController,
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return S.of(context).please_input_wallet_name;
+                  } else {
+                    return null;
+                  }
+                },
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(6),
+                ],
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
+                keyboardType: TextInputType.text),
+          ),
+          Divider(),
+          SizedBox(
+            height: 8,
+          ),
+          Builder(
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  if (widget.wallet.getEthAccount().address.isNotEmpty) {
+                    Clipboard.setData(ClipboardData(
+                        text: widget.wallet.getEthAccount().address));
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                      '钱包地址已复制',
+                    )));
+                  }
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          '钱包地址',
+                          style: TextStyle(
+                            color: HexColor('#FF333333'),
+                            fontSize: 16,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Image.asset(
+                          'res/drawable/ic_copy.png',
+                          height: 18,
+                          width: 18,
+                        ),
                       ],
                     ),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).wallet_name,
-                        style: TextStyle(
-                          color: Color(0xFF6D6D6D),
-                          fontSize: 16,
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                    child: TextFormField(
-                        enabled: true,
-                        focusNode: _focusNode,
-                        controller: _walletNameController,
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return S.of(context).please_input_wallet_name;
-                          } else {
-                            return null;
-                          }
-                        },
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(6),
-                        ],
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30)),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                        ),
-                        keyboardType: TextInputType.text),
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).backup_option,
-                        style: TextStyle(
-                          color: Color(0xFF6D6D6D),
-                          fontSize: 16,
-                        ),
-                      )
-                    ],
-                  ),
-                  Divider(),
-                  InkWell(
-                    onTap: () {
-                      var walletStr = FluroConvertUtils.object2string(
-                          widget.wallet.toJson());
-                      Application.router.navigateTo(
-                          context,
-                          Routes.wallet_setting_wallet_backup_notice +
-                              '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      widget.wallet.getEthAccount().address,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: HexColor('#FF999999'),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _bioAuthOptions() {
+    if (AuthInheritedModel.of(context).bioAuthAvailable) {
+      return Column(
+        children: <Widget>[
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SetBioAuthPage()));
+                },
+                child: Row(
+                  children: <Widget>[
+                    Text('面容/指纹与密码'),
+                    Spacer(),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Color(0xFFD2D2D2),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          _divider(),
+        ],
+      );
+    } else {
+      return SizedBox();
+    }
+  }
+
+  _backUpOptions() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(
+                S.of(context).backup_option,
+                style: TextStyle(
+                  color: HexColor('#FF333333'),
+                  fontSize: 16,
+                ),
+              )
+            ],
+          ),
+          Divider(),
+          InkWell(
+            onTap: () {
+              var walletStr =
+                  FluroConvertUtils.object2string(widget.wallet.toJson());
+              Application.router.navigateTo(
+                  context,
+                  Routes.wallet_setting_wallet_backup_notice +
+                      '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
 //                Navigator.push(
 //                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.wallet)));
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.event_note,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Text(
-                            S.of(context).show_mnemonic_label,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          Spacer(),
-                          Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFFD2D2D2),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Divider(),
-                  Text(
-                    S.of(context).wallet_setting_backup_notice,
-                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.event_note,
+                    color: Theme.of(context).primaryColor,
                   ),
                   SizedBox(
-                    height: 36,
+                    width: 12,
                   ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                    constraints: BoxConstraints.expand(height: 44),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      disabledColor: Colors.grey[600],
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      disabledTextColor: Colors.white,
-                      onPressed: _hasChangeProperties ? updateWalletV2 : null,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              '保存更新',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  Text(
+                    S.of(context).show_mnemonic_label,
+                    style: TextStyle(fontSize: 16),
                   ),
+                  Spacer(),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFFD2D2D2),
+                  )
                 ],
               ),
             ),
           ),
-        ),
+          Divider(),
+          Text(
+            S.of(context).wallet_setting_backup_notice,
+            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+          ),
+        ],
       ),
     );
   }

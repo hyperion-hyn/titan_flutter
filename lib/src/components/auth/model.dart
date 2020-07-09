@@ -74,6 +74,10 @@ class AuthConfigModel extends Equatable {
     json['availableBiometricTypes'] = bioAuthTypes;
     return json;
   }
+
+  bool compare(AuthConfigModel authConfigModel) {
+    return this.toJSON() == authConfigModel.toJSON();
+  }
 }
 
 ///Use BioAuthType to store BiometricType

@@ -20,7 +20,6 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';

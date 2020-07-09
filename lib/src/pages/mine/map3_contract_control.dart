@@ -333,9 +333,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
       wallet,
-      onCheckPwdValid: (walletPwd) {
-        return WalletUtil.checkPwdValid(context, walletPwd);
-      },
+
     );
     if (password != null) {
       setState(() {
@@ -576,9 +574,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
       wallet,
-      onCheckPwdValid: (walletPwd) {
-        return WalletUtil.checkPwdValid(context, walletPwd);
-      },
+
     );
     if (password != null) {
       setState(() {
