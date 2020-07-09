@@ -76,6 +76,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
               availableBiometricTypes: availableBiometricTypes,
             );
           }
+          setState(() {});
           print('RefreshBioAuthConfigState:::: ${authConfigModel.toJSON()}');
         } else if (state is SetBioAuthState) {
           try {
@@ -85,24 +86,23 @@ class _AuthManagerState extends BaseState<_AuthManager> {
           }
           if (authConfigModel != null) {
             if (authConfigModel.availableBiometricTypes
-                .contains(BiometricType.face)) {
+                    .contains(BiometricType.face) &&
+                state.biometricType == BiometricType.face) {
               authConfigModel.useFace = state.value;
             }
             if (authConfigModel.availableBiometricTypes
-                .contains(BiometricType.fingerprint)) {
+                    .contains(BiometricType.fingerprint) &&
+                state.biometricType == BiometricType.fingerprint) {
               authConfigModel.useFingerprint = state.value;
             }
-            if (authConfigModel.availableBiometricTypes
-                .contains(BiometricType.iris)) {
-              authConfigModel.useFingerprint = state.value;
-            }
+
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
+            AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletAddress}',
+                json.encode(authConfigModel.toJSON()));
+            print('SetBioAuthState:::: $authConfigModel');
           }
-          if (mounted) setState(() {});
-          AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletAddress}',
-              json.encode(authConfigModel.toJSON()));
-          print('SetBioAuthState:::: $authConfigModel');
+          setState(() {});
         }
       },
       child: BlocBuilder<AuthBloc, AuthState>(
@@ -123,7 +123,7 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   ///Store quick-auth config
   final AuthConfigModel authConfigModel;
 
-  AuthInheritedModel({
+  const AuthInheritedModel({
     Key key,
     @required this.authConfigModel,
     @required Widget child,
@@ -155,6 +155,19 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
   }
 
   BiometricType get currentBioMetricType {
+    if (authConfigModel.availableBiometricTypes.contains(BiometricType.face) &&
+        authConfigModel.useFace) {
+      return BiometricType.face;
+    } else if (authConfigModel.availableBiometricTypes
+            .contains(BiometricType.fingerprint) &&
+        authConfigModel.useFingerprint) {
+      return BiometricType.fingerprint;
+    } else {
+      return null;
+    }
+  }
+
+  BiometricType get availableBioMetricType {
     if (authConfigModel.availableBiometricTypes.contains(BiometricType.face)) {
       return BiometricType.face;
     } else if (authConfigModel.availableBiometricTypes

@@ -3,15 +3,20 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/SetBioAuthPage.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/keyboard/pay_password.dart';
 import 'package:vibration/vibration.dart';
 
@@ -23,9 +28,15 @@ class WalletPasswordDialog extends StatefulWidget {
   String title;
   final CheckPwdValid checkPwdValid;
   final bool isDoubleCheck;
+  final bool isShowBioAuthIcon;
   bool isFirstTime = true;
 
-  WalletPasswordDialog({this.title, this.checkPwdValid, this.isDoubleCheck = false});
+  WalletPasswordDialog({
+    this.title,
+    this.checkPwdValid,
+    this.isDoubleCheck = false,
+    this.isShowBioAuthIcon = true,
+  });
 
   @override
   BaseState<StatefulWidget> createState() {
@@ -36,6 +47,7 @@ class WalletPasswordDialog extends StatefulWidget {
 class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
   Wallet wallet;
   final TextEditingController _pinPutController = TextEditingController();
+  bool _isHideLayout = false;
   bool _pwdInvalid = false;
   String firstInputPassword = "";
 
@@ -63,57 +75,61 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
       onWillPop: () {
         return;
       },
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: Center(
-                child: Container(
-                  height: 232,
-                  width: double.infinity,
-                  margin: EdgeInsets.symmetric(horizontal: 32),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: Colors.white,
-                  ),
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.white,
-                        margin: EdgeInsets.all(16.0),
-                        child: Column(
+      child: _isHideLayout
+          ? SizedBox()
+          : Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(
+                    child: Center(
+                      child: Container(
+                        height: 232,
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: 32),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          color: Colors.white,
+                        ),
+                        child: Stack(
                           children: <Widget>[
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  widget.title,
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 16.0,
-                                horizontal: 8.0,
-                              ),
-                              child: PinInputTextField(
-                                enabled: false,
-                                autoFocus: false,
-                                pinLength: 6,
-                                decoration: BoxTightDecoration(
-                                  strokeColor: DefaultColors.color999,
-                                  strokeWidth: 0.5,
-                                  obscureStyle: ObscureStyle(
-                                    isTextObscure: true,
-                                    obscureText: '●',
+                            Container(
+                              color: Colors.white,
+                              margin: EdgeInsets.all(16.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: Text(
+                                        widget.title,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                controller: _pinPutController,
-                                textInputAction: TextInputAction.done,
-                                /*onChanged: (pin) async {
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0,
+                                      horizontal: 8.0,
+                                    ),
+                                    child: PinInputTextField(
+                                      enabled: false,
+                                      autoFocus: false,
+                                      pinLength: 6,
+                                      decoration: BoxTightDecoration(
+                                        strokeColor: DefaultColors.color999,
+                                        strokeWidth: 0.5,
+                                        obscureStyle: ObscureStyle(
+                                          isTextObscure: true,
+                                          obscureText: '●',
+                                        ),
+                                      ),
+                                      controller: _pinPutController,
+                                      textInputAction: TextInputAction.done,
+                                      /*onChanged: (pin) async {
                                   if (pin.length == 6) {
                                     var result = await widget.checkPwdValid(pin);
                                     if (result) {
@@ -135,112 +151,112 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                     });
                                   }
                                 },*/
-                              ),
-                            ),
-                            Row(
-                              children: <Widget>[
-                                if (_pwdInvalid)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0,
-                                    ),
-                                    child: Text(
-                                      '您的密码有误',
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                      ),
                                     ),
                                   ),
-                                Spacer(),
-                                if (!widget.isDoubleCheck)
-                                  InkWell(
-                                  child: Text(
-                                      '忘记密码',
-                                      style: TextStyle(color: HexColor('#FF1F81FF'), fontSize: 14),
-                                    ),
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ForgotWalletPasswordPage(),
-                                          ));
-                                    },
+                                  Row(
+                                    children: <Widget>[
+                                      if (_pwdInvalid)
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8.0,
+                                          ),
+                                          child: Text(
+                                            '您的密码有误',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      Spacer(),
+                                      if (!widget.isDoubleCheck)
+                                        InkWell(
+                                          child: Text(
+                                            '忘记密码',
+                                            style: TextStyle(
+                                                color: HexColor('#FF1F81FF'),
+                                                fontSize: 14),
+                                          ),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ForgotWalletPasswordPage(),
+                                                ));
+                                          },
+                                        ),
+                                      SizedBox(
+                                        width: 8.0,
+                                      )
+                                    ],
                                   ),
-                                SizedBox(
-                                  width: 8.0,
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 16.0,
-                            ),
-                            if (!widget.isDoubleCheck)
-                              Center(
-                                child: Wrap(
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: <Widget>[
-                                    Image.asset(
-                                      'res/drawable/ic_wallet.png',
-                                      width: 20,
-                                      height: 20,
-                                    ),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      wallet.keystore.name,
-                                      style: TextStyle(
-                                        color: HexColor('#FF999999'),
+                                  SizedBox(
+                                    height: 16.0,
+                                  ),
+                                  if (!widget.isDoubleCheck)
+                                    Center(
+                                      child: Wrap(
+                                        crossAxisAlignment:
+                                            WrapCrossAlignment.center,
+                                        children: <Widget>[
+                                          Image.asset(
+                                            'res/drawable/ic_wallet.png',
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            wallet.keystore.name,
+                                            style: TextStyle(
+                                              color: HexColor('#FF999999'),
+                                            ),
+                                          )
+                                        ],
                                       ),
                                     )
-                                  ],
+                                ],
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(7.0),
+                                  child: Image.asset(
+                                    'res/drawable/ic_password_close.png',
+                                    width: 16,
+                                    height: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (!widget.isDoubleCheck &&
+                                widget.isShowBioAuthIcon)
+                              Positioned(
+                                right: 16,
+                                top: 16,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _goToBioAuthSettingPage();
+                                  },
+                                  child: _bioAuthIcon(),
                                 ),
                               )
                           ],
                         ),
                       ),
-                      Positioned(
-                        left: 10,
-                        top: 10,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(7.0),
-                            child: Image.asset(
-                              'res/drawable/ic_password_close.png',
-                              width: 16,
-                              height: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (!widget.isDoubleCheck)
-                        Positioned(
-                          right: 14,
-                          top: 14,
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Image.asset(
-                                'res/drawable/ic_password_fingerprint.png',
-                                width: 20,
-                                height: 20,
-                              ),
-                            ),
-                          ),
-                        )
-                    ],
+                    ),
                   ),
-                ),
+                  MyKeyboard(_onKeyDown)
+                ],
               ),
             ),
-            MyKeyboard(_onKeyDown)
-          ],
-        ),
-      ),
     );
   }
 
@@ -303,5 +319,53 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
       _pwdInvalid = false;
       _pinPutController.text = inputText;
     });
+  }
+
+  _bioAuthIcon() {
+    if (AuthInheritedModel.of(
+      context,
+      aspect: AuthAspect.config,
+    ).bioAuthAvailable) {
+      if (AuthInheritedModel.of(
+            context,
+            aspect: AuthAspect.config,
+          ).availableBioMetricType ==
+          BiometricType.face) {
+        return Image.asset(
+          'res/drawable/ic_face_id.png',
+          width: 20,
+          height: 20,
+        );
+      } else if (AuthInheritedModel.of(
+            context,
+            aspect: AuthAspect.config,
+          ).availableBioMetricType ==
+          BiometricType.fingerprint) {
+        return Image.asset(
+          'res/drawable/ic_fingerprint.png',
+          width: 20,
+          height: 20,
+        );
+      } else {
+        return SizedBox();
+      }
+    } else {
+      return SizedBox();
+    }
+  }
+
+  _goToBioAuthSettingPage() async {
+    await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SetBioAuthPage()));
+    setState(() {
+      _isHideLayout = true;
+    });
+
+    ///Show password dialog again
+    var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet,
+        onCheckPwdValid: (pwd) {
+      return WalletUtil.checkPwdValid(context, pwd);
+    });
+    Navigator.of(context).pop(pwd);
   }
 }

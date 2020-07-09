@@ -225,6 +225,11 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
             : '请重新使用的Touch ID');
     var androidStrings = AndroidAuthMessages(
       cancelButton: '取消',
+      signInTitle: '指纹识别title',
+      fingerprintRequiredTitle: '需要指纹title',
+      fingerprintSuccess: '指纹识别成功',
+      fingerprintHint: '指纹提示',
+      fingerprintNotRecognized: '未检测到指纹',
       goToSettingsButton: '前往设置',
       goToSettingsDescription: widget.biometricType == BiometricType.face
           ? '请到设置页开启您的面容 ID'
@@ -234,9 +239,10 @@ class _SetBioAuthDialogState extends BaseState<SetBioAuthDialog> {
       authenticated = await auth.authenticateWithBiometrics(
         useErrorDialogs: false,
         stickyAuth: true,
-        localizedReason: 'Use your face or fingerprint to authorize.',
+        localizedReason:'使用您的指纹进行授权',
         androidAuthStrings: androidStrings,
         iOSAuthStrings: iosStrings,
+        sensitiveTransaction: true
       );
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
