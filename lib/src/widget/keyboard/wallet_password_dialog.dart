@@ -145,7 +145,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                       horizontal: 8.0,
                                     ),
                                     child: Text(
-                                      '您的密码有误',
+                                      widget.isDoubleCheck ? '两次输入密码不一致' : '您的密码有误',
                                       style: TextStyle(
                                         color: Colors.red,
                                       ),
