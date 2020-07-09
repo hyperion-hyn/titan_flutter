@@ -20,6 +20,8 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -752,13 +754,48 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               try {
                 var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-                var hashTx = await activeWallet.sendBitcoinTransaction("111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                var hashTx = await activeWallet.sendBitcoinTransaction(
+                    "111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
                 logger.i('Bitcoin交易已提交，交易hash $hashTx');
               } catch (e) {
                 logger.e(e);
               }
             },
             child: Text('比特币转账'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var password = showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    child: WalletPasswordDialog(
+                      checkPwdValid: (walletPwd) {
+                        return WalletUtil.checkPwdValid(context, walletPwd);
+                      },
+                    ));
+                print("password $password");
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('数字键盘'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var password = showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    child: WalletPasswordDialog(
+                      isDoubleCheck: true,
+                    ));
+                print("password $password");
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('校验数字键盘'),
           ),
         ],
       ),

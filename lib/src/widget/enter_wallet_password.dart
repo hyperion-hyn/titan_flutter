@@ -7,7 +7,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/utils/validator_util.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
-import 'package:titan/src/widget/wallet_password_dialog.dart';
+
+import 'keyboard/wallet_password_dialog.dart';
 
 class EnterWalletPasswordWidget extends StatefulWidget {
   final bool useDigits;

@@ -35,7 +35,6 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
-import 'package:titan/src/widget/wallet_password_dialog.dart';
 import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
 
