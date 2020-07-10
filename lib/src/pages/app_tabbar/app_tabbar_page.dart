@@ -184,7 +184,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         if (encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
           if (_activeWallet == null) {
-            Fluttertoast.showToast(msg: "请先导入钱包");
+            Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
             return;
           }
           fileName = _activeWallet.wallet.keystore.fileName;
@@ -437,7 +437,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.explore, "节点", 2),
+                    tabItem(Icons.explore, S.of(context).node, 2),
                     tabItem(
                         Icons.account_balance_wallet, S.of(context).wallet, 1),
                     tabItem(Icons.description, S.of(context).information, 3),

@@ -166,7 +166,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                                   CoinType.BITCOIN) {
                                             UiUtil.showConfirmDialog(
                                               context,
-                                              content: "你有未确认的比特币转账，请稍后再试！",
+                                              content: S.of(context).has_unconfirm_btc_wait,
                                             );
                                             return;
                                           }
@@ -345,7 +345,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
     if (transactionDetail.state >= 0 &&
         transactionDetail.state < 6 &&
         widget.coinVo.coinType == CoinType.BITCOIN) {
-      title = "待确认";
+      title = S.of(context).pending;
     } else if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
@@ -473,7 +473,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> {
                                       widget.coinVo.coinType ==
                                           CoinType.BITCOIN)
                                     Text(
-                                      "确认${transactionDetail.state}次",
+                                      S.of(context).confirm_num(transactionDetail.state),
                                       style: TextStyle(
                                           color: DefaultColors.colorff4c3b,
                                           fontSize: 14,

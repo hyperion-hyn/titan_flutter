@@ -12,6 +12,7 @@ import 'package:titan/src/widget/auth_dialog/bio_auth_dialog_state.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
+@deprecated
 class BioAuthDialog extends StatefulWidget {
   @override
   BaseState<StatefulWidget> createState() {

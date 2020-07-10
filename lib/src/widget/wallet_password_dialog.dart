@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/SetBioAuthPage.dart';
@@ -155,7 +156,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                             horizontal: 8.0,
                                           ),
                                           child: Text(
-                                            '您的密码有误',
+                                            S.of(context).fund_password_error,
                                             style: TextStyle(
                                               color: Colors.red,
                                             ),
@@ -164,7 +165,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                       Spacer(),
                                       InkWell(
                                         child: Text(
-                                          '忘记密码',
+                                          S.of(context).forgot_password,
                                           style: TextStyle(
                                               color: HexColor('#FF1F81FF')),
                                         ),

@@ -16,8 +16,8 @@ class AuthUtil {
     LocalAuthentication auth = LocalAuthentication();
 
     var iosStrings = IOSAuthMessages(
-        cancelButton: '取消',
-        goToSettingsButton: '前往设置',
+        cancelButton: S.of(context).cancel,
+        goToSettingsButton: S.of(context).go_to_settings,
         goToSettingsDescription: biometricType == BiometricType.face
             ? '请到设置页开启您的面容 ID'
             : '请到设置页开启您的Touch ID',

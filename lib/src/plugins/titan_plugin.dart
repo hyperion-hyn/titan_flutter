@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
@@ -130,7 +131,7 @@ class TitanPlugin {
       privateKey = await AppCache.secureGetValue(SecurePrefsKey.MY_PRIVATE_KEY);
     }
     if (privateKey == null) {
-      Fluttertoast.showToast(msg: "密钥对异常，请重新进行位置分享操作");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).key_pair_error_share_location_again);
       return "";
     }
     return await callChannel.invokeMethod(

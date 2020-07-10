@@ -10,6 +10,7 @@ import './bloc.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'dart:convert';
 
+@deprecated
 class BioAuthDialogBloc extends Bloc<BioAuthDialogEvent, BioAuthDialogState> {
   @override
   BioAuthDialogState get initialState => InitialAuthDialogState();

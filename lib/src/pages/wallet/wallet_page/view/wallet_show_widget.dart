@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/components/auth/SetBioAuthPage.dart';
@@ -275,7 +276,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 16),
                 child: Text(
-                  "激活BTC",
+                  S.of(context).activate_btc,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               )

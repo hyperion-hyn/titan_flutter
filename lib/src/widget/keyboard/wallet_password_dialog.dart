@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/SetBioAuthPage.dart';
@@ -66,7 +67,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
     if (!widget.isDoubleCheck) {
       wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     }
-    widget.title = "请输入支付密码";
+    widget.title = S.of(context).input_payment_password;
   }
 
   @override
@@ -162,8 +163,8 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                           ),
                                           child: Text(
                                             widget.isDoubleCheck
-                                                ? '两次输入密码不一致'
-                                                : '您的密码有误',
+                                                ? S.of(context).double_check_password_error
+                                                : S.of(context).fund_password_error,
                                             style: TextStyle(
                                               color: Colors.red,
                                             ),
@@ -173,7 +174,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                       if (!widget.isDoubleCheck)
                                         InkWell(
                                           child: Text(
-                                            '忘记密码',
+                                            S.of(context).forgot_password,
                                             style: TextStyle(
                                                 color: HexColor('#FF1F81FF'),
                                                 fontSize: 14),
@@ -279,7 +280,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
           setState(() {
             widget.isFirstTime = false;
             firstInputPassword = inputText;
-            widget.title = "请再次确认支付密码";
+            widget.title = S.of(context).input_confirm_wallet_password_hint;
             _pinPutController.clear();
           });
         } else {
@@ -291,7 +292,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
               firstInputPassword = "";
               widget.isFirstTime = true;
               _pwdInvalid = true;
-              widget.title = "请输入支付密码";
+              widget.title = S.of(context).input_payment_password;
               _pinPutController.clear();
             });
             if (await Vibration.hasVibrator()) {

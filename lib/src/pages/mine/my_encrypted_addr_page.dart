@@ -226,7 +226,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
               InkWell(
                 onTap: _saveQrImage,
                 child: Text(
-                  '保存二维码',
+                  S.of(context).save_qr_code,
                   style: TextStyle(
                     color: HexColor('#FF1F81FF'),
                     fontSize: 15,
@@ -263,7 +263,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
             child: Container(
               width: 200,
               child: Text(
-                '您当前还没有钱包，请先创建或导入钱包再使用此功能',
+                S.of(context).create_import_wallet_before_using_feature,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -271,7 +271,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
           SizedBox(
             height: 32,
           ),
-          ClickOvalButton('去设置', () {
+          ClickOvalButton(S.of(context).go_setting, () {
             Application.router.navigateTo(context, Routes.wallet_manager);
           })
         ],
@@ -301,7 +301,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
             child: Container(
               width: 200,
               child: Text(
-                '获取公钥需要输入密码授权',
+                S.of(context).public_key_need_password,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -309,7 +309,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
           SizedBox(
             height: 32,
           ),
-          ClickOvalButton('授权', () {
+          ClickOvalButton(S.of(context).authorized, () {
              _activateWallet();
           })
         ],
@@ -359,7 +359,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
       result = false;
     }
     Fluttertoast.showToast(
-      msg: result ? '保存成功' : '保存失败',
+      msg: result ? S.of(context).save_success : S.of(context).save_fail,
     );
   }
 }
