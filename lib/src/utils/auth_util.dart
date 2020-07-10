@@ -45,8 +45,8 @@ class AuthUtil {
           iOSAuthStrings: iosStrings,
           sensitiveTransaction: true,
           localizedReason: biometricType == BiometricType.face
-              ? '使用您的面容进行验证'
-              : '使用您的面容指纹进行验证');
+              ? S.of(context).use_face_verify
+              : S.of(context).face_fingerprint_verify);
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         await showDialog(

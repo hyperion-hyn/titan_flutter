@@ -709,5 +709,6 @@
   "disclaimer": "免责声明",
   "disclaimer_detail_non_secret_payment": "手机厂商的生物识别技术安全等级各有差异，我们提醒用户谨慎使用该便捷功能。使用过程中出现任何生物识别技术漏洞引发的资产风险，本软件不承担法律责任。",
   "non_secret_open_success": "免密支付开启成功",
-  "non_secret_open_fail": "免密支付开启失败"
+  "non_secret_open_fail": "免密支付开启失败",
+  "use_face_verify": "使用您的面容进行验证"
 }

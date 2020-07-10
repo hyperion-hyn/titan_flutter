@@ -11,7 +11,7 @@ class WalletChannel {
     @required String name,
     @required String password,
     @required String mnemonic,
-    List<int> activeCoins = const [CoinType.ETHEREUM],
+    List<int> activeCoins = const [CoinType.ETHEREUM, CoinType.BITCOIN],
   }) async {
     return await TitanPlugin.callChannel.invokeMethod("wallet_import_mnemonic", {
       'name': name,
@@ -40,7 +40,7 @@ class WalletChannel {
     @required String password,
     @required String newPassword,
     @required String keyStoreJson,
-    List<int> activeCoins = const [CoinType.ETHEREUM],
+    List<int> activeCoins = const [CoinType.ETHEREUM, CoinType.BITCOIN],
   }) async {
     return await TitanPlugin.callChannel.invokeMethod("wallet_import_json", {
       'name': name,
@@ -64,7 +64,7 @@ class WalletChannel {
     @required oldPassword,
     @required newPassword,
     name,
-    List<int> activeCoins = const [CoinType.ETHEREUM],
+    List<int> activeCoins = const [CoinType.ETHEREUM, CoinType.BITCOIN],
   }) async {
     return await TitanPlugin.callChannel.invokeMethod("wallet_update", {
       "fileName": fileName,
