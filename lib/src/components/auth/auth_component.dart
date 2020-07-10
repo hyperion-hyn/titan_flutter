@@ -3,13 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 
@@ -57,7 +54,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
       listener: (context, state) async {
         if (state is RefreshBioAuthConfigState) {
           var authConfigStr = await AppCache.getValue<String>(
-              '${PrefsKey.AUTH_CONFIG}_${state.walletAddress}');
+              '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}');
           if (authConfigStr != null) {
             authConfigModel =
                 AuthConfigModel.fromJson(json.decode(authConfigStr));
@@ -68,7 +65,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
               print(e);
             }
             authConfigModel = AuthConfigModel(
-              walletFileName: state.walletAddress,
+              walletFileName: state.wallet.keystore.fileName,
               setBioAuthAsked: false,
               lastBioAuthTime: 0,
               useFace: false,
@@ -98,7 +95,8 @@ class _AuthManagerState extends BaseState<_AuthManager> {
 
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
-            AppCache.saveValue('${PrefsKey.AUTH_CONFIG}_${state.walletAddress}',
+            AppCache.saveValue(
+                '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}',
                 json.encode(authConfigModel.toJSON()));
             print('SetBioAuthState:::: $authConfigModel');
           }

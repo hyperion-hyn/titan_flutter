@@ -141,9 +141,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else {
       var ethQuotePrice = QuotesInheritedModel.of(context)
-          .activatedQuoteVoAndSign('ETH')
-          ?.quoteVo
-          ?.price ?? 0;
+              .activatedQuoteVoAndSign('ETH')
+              ?.quoteVo
+              ?.price ??
+          0;
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
               .gasPriceRecommend;
@@ -157,7 +158,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       var gasEstimate = ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
               (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
-      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+      var gasPriceEstimate =
+          gasEstimate * Decimal.parse(ethQuotePrice.toString());
       gasPriceEstimateStr =
           "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     }
@@ -518,9 +520,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,
-      onCheckPwdValid: (walletPwd) {
-        return WalletUtil.checkPwdValid(context, walletPwd);
-      },
     );
 
     _transferWithPwd(walletPassword);

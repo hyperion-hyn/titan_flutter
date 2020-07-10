@@ -31,6 +31,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -191,7 +192,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           password = await UiUtil.showWalletPasswordDialogV2(
             context,
             _activeWallet.wallet,
-            onCheckPwdValid: null,
           );
         }
         Navigator.pop(context);

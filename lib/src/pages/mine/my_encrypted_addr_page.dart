@@ -34,7 +34,8 @@ class MyEncryptedAddrPage extends StatefulWidget {
   }
 }
 
-class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with RouteAware {
+class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
+    with RouteAware {
   GlobalKey _qrImageBoundaryKey = GlobalKey();
 
   String _walletPubKey;
@@ -74,7 +75,8 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
   initWalletData() async {
     _activeWallet = WalletInheritedModel.of(context).activatedWallet;
     if (_activeWallet != null) {
-      walletSecurePubKey = '${SecurePrefsKey.WALLET_P2P_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
+      walletSecurePubKey =
+          '${SecurePrefsKey.WALLET_P2P_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
       var walletPubKey = await AppCache.secureGetValue(walletSecurePubKey);
       print("!!!!$walletPubKey");
       if (walletPubKey != null) {
@@ -85,16 +87,19 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
   }
 
   _activateWallet() async {
-    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet, onCheckPwdValid: null);
-    if(password == null){
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      _activeWallet.wallet,
+    );
+    if (password == null) {
       return;
     }
     try {
-      _walletPubKey = await TitanPlugin.trustActiveEncrypt(password,_activeWallet.wallet.keystore.fileName);
+      _walletPubKey = await TitanPlugin.trustActiveEncrypt(
+          password, _activeWallet.wallet.keystore.fileName);
       await AppCache.secureSaveValue(walletSecurePubKey, _walletPubKey);
-      setState(() {
-      });
-    }catch(error){
+      setState(() {});
+    } catch (error) {
       LogUtil.toastException(error);
     }
   }
@@ -310,7 +315,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
             height: 32,
           ),
           ClickOvalButton('授权', () {
-             _activateWallet();
+            _activateWallet();
           })
         ],
       ),
@@ -342,7 +347,6 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage> with Rout
       print(e.toString());
       Fluttertoast.showToast(msg: S.of(context).share_fail);
     }
-
   }
 
   _saveQrImage() async {

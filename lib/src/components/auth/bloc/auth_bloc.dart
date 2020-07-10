@@ -1,14 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:titan/src/components/auth/model.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 import './bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -24,10 +15,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield SetBioAuthState(
         event.biometricType,
         event.value,
-        event.walletAddress,
+        event.wallet,
       );
     } else if (event is RefreshBioAuthConfigEvent) {
-      yield RefreshBioAuthConfigState(event.walletAddress);
+      yield RefreshBioAuthConfigState(event.wallet);
     }
   }
 }

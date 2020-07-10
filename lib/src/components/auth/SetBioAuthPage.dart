@@ -209,7 +209,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       ///
       var password = await UiUtil.showPasswordDialog(
         context,
-        _wallet.getEthAccount().address,
+        _wallet,
         onCheckPwdValid: (String password) async {
           return WalletUtil.checkPwdValid(context, password);
         },
@@ -221,15 +221,13 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
 
         ///then check bio-auth
         if (authResult) {
-          ///Save password
-          await AppCache.secureSaveValue(
-            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
-            password,
-          );
+          ///Save password to SecureStorage
+          WalletUtil.savePwdToSecureStorage(context, _wallet, password);
+
           BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
             biometricType,
             true,
-            _wallet.getEthAccount().address,
+            _wallet,
           ));
           Fluttertoast.showToast(msg: '免密支付开启成功');
         } else {
@@ -242,7 +240,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
         biometricType,
         value,
-        _wallet.getEthAccount().address,
+        _wallet,
       ));
     }
     if (mounted) setState(() {});
