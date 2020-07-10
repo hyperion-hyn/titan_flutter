@@ -93,15 +93,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               aspect: AuthAspect.config,
             ).authConfigModel.useFace,
             onChanged: (bool value) async {
-              if (value) {
-                _setBioAuth(BiometricType.face, value);
-              } else {
-                BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-                  BiometricType.face,
-                  value,
-                  _wallet.getEthAccount().address,
-                ));
-              }
+              _setBioAuth(BiometricType.face, value);
             },
           ),
         ),

@@ -10,7 +10,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/validator_util.dart';
+import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 
 import 'wallet_finish_import_page.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -26,9 +28,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
   TextEditingController _mnemonicController = TextEditingController(text: "");
 
   TextEditingController _walletNameController = TextEditingController();
-  TextEditingController _walletPasswordController = TextEditingController();
-  TextEditingController _walletConfimPasswordController =
-      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -264,173 +263,7 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         keyboardType: TextInputType.text),
                   ),
                   SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).create_wallet_password_label,
-                        style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                    child: TextFormField(
-//                      inputFormatters: [
-//                        LengthLimitingTextInputFormatter(6),
-//                        WhitelistingTextInputFormatter.digitsOnly
-//                      ],
-                      validator: (value) {
-                        if (!ValidatorUtil.validatePassword(value)) {
-                          return S
-                              .of(context)
-                              .input_wallet_password_length_hint;
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: _walletPasswordController,
-                      decoration: InputDecoration(
-                        hintText:
-                            S.of(context).input_wallet_password_length_hint,
-                        hintStyle: TextStyle(
-                          color: HexColor('#FF999999'),
-                          fontSize: 13,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: HexColor('#FFD0D0D0'),
-                            width: 0.5,
-                          ),
-                        ),
-                        focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: HexColor('#FFD0D0D0'),
-                            width: 0.5,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: HexColor('#FFD0D0D0'),
-                            width: 0.5,
-                          ),
-                        ),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: Colors.red,
-                            width: 0.5,
-                          ),
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: true,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        S.of(context).reinput_wallet_password_label,
-                        style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                    child: TextFormField(
-//                      inputFormatters: [
-//                        LengthLimitingTextInputFormatter(6),
-//                        WhitelistingTextInputFormatter.digitsOnly,
-//                      ],
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return S.of(context).input_password_again_hint;
-                        } else if (value != _walletPasswordController.text) {
-                          return S.of(context).password_not_equal_hint;
-                        } else {
-                          return null;
-                        }
-                      },
-                      controller: _walletConfimPasswordController,
-                      decoration: InputDecoration(
-                          hintText:
-                              S.of(context).input_confirm_wallet_password_hint,
-                          hintStyle: TextStyle(
-                            color: HexColor('#FF999999'),
-                            fontSize: 13,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 0.5,
-                            ),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          suffixIcon: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isShowPassword = !_isShowPassword;
-                                });
-                              },
-                              child: _isShowPassword
-                                  ? Image.asset(
-                                      'res/drawable/ic_password_show.png',
-                                      height: 20,
-                                      width: 20,
-                                    )
-                                  : Image.asset(
-                                      'res/drawable/ic_password_hide.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                            ),
-                          )),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: !_isShowPassword,
-                    ),
+                    height: 32,
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(16, 24, 16, 48),
@@ -445,7 +278,9 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           var walletName = _walletNameController.text;
-                          var password = _walletPasswordController.text;
+                          var password = await UiUtil.showDoubleCheckPwdDialog(
+                            context,
+                          );
                           var mnemonic = _mnemonicController.text.trim();
 
                           if (!bip39.validateMnemonic(mnemonic)) {

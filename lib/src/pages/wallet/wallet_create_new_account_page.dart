@@ -7,7 +7,9 @@ import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/validator_util.dart';
+import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 
 class CreateAccountPage extends StatefulWidget {
   @override
@@ -18,9 +20,6 @@ class CreateAccountPage extends StatefulWidget {
 
 class _CreateAccountState extends State<CreateAccountPage> {
   TextEditingController _walletNameController = TextEditingController();
-  TextEditingController _walletPasswordController = TextEditingController();
-  TextEditingController _walletConfimPasswordController =
-      TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -145,172 +144,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                           keyboardType: TextInputType.text),
                     ),
                     SizedBox(
-                      height: 8.0,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          S.of(context).create_wallet_password_label,
-                          style: TextStyle(
-                              color: HexColor('#333333'),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 10),
-                      child: TextFormField(
-//                        inputFormatters: [
-//                          LengthLimitingTextInputFormatter(6),
-//                          WhitelistingTextInputFormatter.digitsOnly
-//                        ],
-                        validator: (value) {
-                          if (!ValidatorUtil.validatePassword(value)) {
-                            return S
-                                .of(context)
-                                .input_wallet_password_length_hint;
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _walletPasswordController,
-                        decoration: InputDecoration(
-                          hintText:
-                              S.of(context).input_wallet_password_length_hint,
-                          hintStyle: TextStyle(
-                            color: HexColor('#AAAAAA'),
-                            fontSize: 13,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 0.5,
-                            ),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                        ),
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: true,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          S.of(context).reinput_wallet_password_label,
-                          style: TextStyle(
-                              color: HexColor('#333333'),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 0, vertical: 10),
-                      child: TextFormField(
-//                        inputFormatters: [
-//                          LengthLimitingTextInputFormatter(6),
-//                          WhitelistingTextInputFormatter.digitsOnly,
-//                        ],
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return S.of(context).input_password_again_hint;
-                          } else if (value != _walletPasswordController.text) {
-                            return S.of(context).password_not_equal_hint;
-                          } else {
-                            return null;
-                          }
-                        },
-                        controller: _walletConfimPasswordController,
-                        decoration: InputDecoration(
-                          suffixIcon: Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8.0, horizontal: 16.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _isShowPassword = !_isShowPassword;
-                                });
-                              },
-                              child: _isShowPassword
-                                  ? Image.asset(
-                                      'res/drawable/ic_password_show.png',
-                                      height: 20,
-                                      width: 20,
-                                    )
-                                  : Image.asset(
-                                      'res/drawable/ic_password_hide.png',
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                            ),
-                          ),
-                          hintText:
-                              S.of(context).input_confirm_wallet_password_hint,
-                          hintStyle: TextStyle(
-                              color: HexColor('#AAAAAA'), fontSize: 13),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          focusedErrorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: HexColor('#FFD0D0D0'),
-                              width: 0.5,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 0.5,
-                            ),
-                          ),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                        ),
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: !_isShowPassword,
-                      ),
+                      height: 32,
                     ),
                     Container(
                       margin: EdgeInsets.fromLTRB(0, 24, 0, 48),
@@ -322,22 +156,21 @@ class _CreateAccountState extends State<CreateAccountPage> {
                         color: Theme.of(context).primaryColor,
                         textColor: Colors.white,
                         disabledTextColor: Colors.white,
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState.validate()) {
                             var walletName =
                                 FluroConvertUtils.fluroCnParamsEncode(
                                     _walletNameController.text);
-                            var password = _walletPasswordController.text;
-
-//                          createWalletNameTemp = walletName;
-//                          createWalletPasswordTemp = password;
-                            Application.router.navigateTo(
-                                context,
-                                Routes.wallet_backup_notice_for_creation +
-                                    '?walletName=$walletName&password=$password');
-
-//                          Navigator.push(
-//                              context, MaterialPageRoute(builder: (context) => CreateWalletBackupNoticePage()));
+                            var password =
+                                await UiUtil.showDoubleCheckPwdDialog(
+                              context,
+                            );
+                            if (password != null) {
+                              Application.router.navigateTo(
+                                  context,
+                                  Routes.wallet_backup_notice_for_creation +
+                                      '?walletName=$walletName&password=$password');
+                            }
                           }
                         },
                         child: Padding(

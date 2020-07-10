@@ -33,7 +33,7 @@ class WalletPasswordDialog extends StatefulWidget {
 
   WalletPasswordDialog({
     this.title,
-    this.checkPwdValid,
+    @required this.checkPwdValid,
     this.isDoubleCheck = false,
     this.isShowBioAuthIcon = true,
   });
@@ -161,7 +161,9 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                             horizontal: 8.0,
                                           ),
                                           child: Text(
-                                            widget.isDoubleCheck ? '两次输入密码不一致' : '您的密码有误',
+                                            widget.isDoubleCheck
+                                                ? '两次输入密码不一致'
+                                                : '您的密码有误',
                                             style: TextStyle(
                                               color: Colors.red,
                                             ),

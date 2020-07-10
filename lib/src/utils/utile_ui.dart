@@ -358,7 +358,7 @@ class UiUtil {
           context: context,
           barrierDismissible: false,
           child: WalletPasswordDialog(
-            title: '请输入钱包密码',
+            title: '请输入支付密码',
             checkPwdValid: onCheckPwdValid,
             isShowBioAuthIcon: isShowBioAuthIcon,
           ));
@@ -384,6 +384,16 @@ class UiUtil {
         builder: (BuildContext context) {
           return EnterWalletPasswordWidget();
         });
+  }
+
+  static Future<String> showDoubleCheckPwdDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        child: WalletPasswordDialog(
+          checkPwdValid: null,
+          isDoubleCheck: true,
+        ));
   }
 
 //  static showSetBioAuthDialog(

@@ -787,6 +787,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     context: context,
                     barrierDismissible: false,
                     child: WalletPasswordDialog(
+                      checkPwdValid: null,
                       isDoubleCheck: true,
                     ));
                 print("password $password");
