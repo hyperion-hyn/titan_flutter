@@ -61,6 +61,16 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       ),
       body: Column(
         children: <Widget>[
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Image.asset(
+                'res/drawable/ic_bio_auth.png',
+                width: 60,
+                height: 60,
+              ),
+            ),
+          ),
           if (_availableBiometrics.contains(BiometricType.face)) _faceAuth(),
           if (_availableBiometrics.contains(BiometricType.fingerprint))
             _fingerprintAuth(),
@@ -71,64 +81,34 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
   }
 
   _faceAuth() {
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Image.asset(
-              'res/drawable/ic_face_id.png',
-              width: 60,
-              height: 60,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          child: SwitchListTile(
-            title: Text('面容识别'),
-            value: AuthInheritedModel.of(
-              context,
-              aspect: AuthAspect.config,
-            ).authConfigModel.useFace,
-            onChanged: (bool value) async {
-              _setBioAuth(BiometricType.face, value);
-            },
-          ),
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      child: SwitchListTile(
+        title: Text('面容识别'),
+        value: AuthInheritedModel.of(
+          context,
+          aspect: AuthAspect.config,
+        ).authConfigModel.useFace,
+        onChanged: (bool value) async {
+          _setBioAuth(BiometricType.face, value);
+        },
+      ),
     );
   }
 
   _fingerprintAuth() {
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Image.asset(
-              'res/drawable/ic_fingerprint.png',
-              width: 60,
-              height: 60,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          child: SwitchListTile(
-            title: Text('指纹识别'),
-            value: AuthInheritedModel.of(
-              context,
-              aspect: AuthAspect.config,
-            ).authConfigModel.useFingerprint,
-            onChanged: (bool value) async {
-              _setBioAuth(BiometricType.fingerprint, value);
-            },
-          ),
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      child: SwitchListTile(
+        title: Text('指纹识别'),
+        value: AuthInheritedModel.of(
+          context,
+          aspect: AuthAspect.config,
+        ).authConfigModel.useFingerprint,
+        onChanged: (bool value) async {
+          _setBioAuth(BiometricType.fingerprint, value);
+        },
+      ),
     );
   }
 
