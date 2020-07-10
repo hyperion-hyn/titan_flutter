@@ -129,13 +129,13 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                       child: Wrap(
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: <Widget>[
-                          Icon(
-                            ExtendsIconFont.copy_content,
-                            color: Colors.blue,
-                            size: 20,
+                          Image.asset(
+                            'res/drawable/ic_copy.png',
+                            height: 23,
+                            width: 23,
                           ),
                           SizedBox(
-                            width: 4.0,
+                            width: 8.0,
                           ),
                           Text(
                             S.of(context).copy,

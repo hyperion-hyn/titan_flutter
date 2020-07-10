@@ -162,9 +162,7 @@ class _CreateAccountState extends State<CreateAccountPage> {
                                 FluroConvertUtils.fluroCnParamsEncode(
                                     _walletNameController.text);
                             var password =
-                                await UiUtil.showDoubleCheckPwdDialog(
-                              context,
-                            );
+                                await UiUtil.showDoubleCheckPwdDialog(context);
                             if (password != null) {
                               Application.router.navigateTo(
                                   context,

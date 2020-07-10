@@ -157,7 +157,10 @@ class WalletUtil {
     }
   }
 
-  static getPwdFromSecureStorage(BuildContext context, Wallet wallet) async {
+  static getPwdFromSecureStorage(
+    BuildContext context,
+    Wallet wallet,
+  ) async {
     String pwd = await AppCache.secureGetValue(
         '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
 
