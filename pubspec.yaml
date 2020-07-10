@@ -140,6 +140,8 @@ dependencies:
   # https://pub.dev/packages/vibration
   vibration: 1.4.0
 
+  #https://pub.dev/packages/oktoast
+  oktoast: ^2.3.2
   flutter_recaptcha_v2:
     git:
       url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
