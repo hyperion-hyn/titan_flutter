@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -11,7 +13,6 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-
 import 'auth_component.dart';
 import 'bloc/auth_bloc.dart';
 import 'bloc/auth_event.dart';
@@ -236,12 +237,40 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               _wallet,
             ),
           );
-          Fluttertoast.showToast(msg: '免密支付开启成功');
+
+          UiUtil.showHintToast(
+              context,
+              Image.asset(
+                'res/drawable/ic_toast_check.png',
+                width: 60,
+                height: 60,
+              ),
+              '开启成功');
         } else {
-          Fluttertoast.showToast(msg: '免密支付开启失败');
+          UiUtil.showHintToast(
+              context,
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  'res/drawable/ic_toast_cross.png',
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+              '开启失败');
         }
       } else {
-        Fluttertoast.showToast(msg: '免密支付开启失败');
+        UiUtil.showHintToast(
+            context,
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset(
+                'res/drawable/ic_toast_cross.png',
+                width: 30,
+                height: 30,
+              ),
+            ),
+            '开启失败');
       }
     } else {
       BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(

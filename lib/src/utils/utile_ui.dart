@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
+import 'package:titan/src/widget/toast_dialog.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -360,7 +362,7 @@ class UiUtil {
       wallet,
     );
 
-    if (useDigits != null && useDigits) {
+    if (useDigits) {
       return showDialog(
           context: context,
           barrierDismissible: false,
@@ -437,6 +439,42 @@ class UiUtil {
 //      }
 //    }
 //  }
+
+  static showHintToast(BuildContext context, Widget icon, msg) {
+    Widget widget = Center(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8.0),
+        child: Container(
+          width: 150,
+          height: 150,
+          color: HexColor('#4D000000'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Spacer(),
+              icon,
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                msg,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.white),
+              ),
+              Spacer()
+            ],
+          ),
+        ),
+      ),
+    );
+    showToastWidget(
+      widget,
+      duration: Duration(seconds: 1),
+      onDismiss: () {},
+    );
+  }
 }
 
 void callLater(FrameCallback callback) {
