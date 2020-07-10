@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -55,12 +56,22 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
           color: Colors.black,
         ),
         title: Text(
-          '免密支付',
+          S.of(context).secret_free_payment,
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
       body: Column(
         children: <Widget>[
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Image.asset(
+                'res/drawable/ic_bio_auth.png',
+                width: 60,
+                height: 60,
+              ),
+            ),
+          ),
           if (_availableBiometrics.contains(BiometricType.face)) _faceAuth(),
           if (_availableBiometrics.contains(BiometricType.fingerprint))
             _fingerprintAuth(),
@@ -71,64 +82,34 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
   }
 
   _faceAuth() {
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Image.asset(
-              'res/drawable/ic_face_id.png',
-              width: 60,
-              height: 60,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          child: SwitchListTile(
-            title: Text('面容识别'),
-            value: AuthInheritedModel.of(
-              context,
-              aspect: AuthAspect.config,
-            ).authConfigModel.useFace,
-            onChanged: (bool value) async {
-              _setBioAuth(BiometricType.face, value);
-            },
-          ),
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      child: SwitchListTile(
+        title: Text(S.of(context).face_recognition),
+        value: AuthInheritedModel.of(
+          context,
+          aspect: AuthAspect.config,
+        ).authConfigModel.useFace,
+        onChanged: (bool value) async {
+          _setBioAuth(BiometricType.face, value);
+        },
+      ),
     );
   }
 
   _fingerprintAuth() {
-    return Column(
-      children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Image.asset(
-              'res/drawable/ic_fingerprint.png',
-              width: 60,
-              height: 60,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-        Container(
-          color: Colors.white,
-          child: SwitchListTile(
-            title: Text('指纹识别'),
-            value: AuthInheritedModel.of(
-              context,
-              aspect: AuthAspect.config,
-            ).authConfigModel.useFingerprint,
-            onChanged: (bool value) async {
-              _setBioAuth(BiometricType.fingerprint, value);
-            },
-          ),
-        ),
-      ],
+    return Container(
+      color: Colors.white,
+      child: SwitchListTile(
+        title: Text(S.of(context).fingerprint_recognition),
+        value: AuthInheritedModel.of(
+          context,
+          aspect: AuthAspect.config,
+        ).authConfigModel.useFingerprint,
+        onChanged: (bool value) async {
+          _setBioAuth(BiometricType.fingerprint, value);
+        },
+      ),
     );
   }
 
@@ -144,7 +125,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 16,
               ),
               Text(
-                '免密支付介绍',
+                S.of(context).introduct_non_secret_payment,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -154,7 +135,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 8,
               ),
               Text(
-                '免密支付将您的钱包密码通过安全加密算法存储至手机设备的Keychain / KeyStore中，交易时调用生物识别（指纹或面容）鉴权，快速完成支付与签名。',
+                S.of(context).non_secret_payment_introduction_detail,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -164,7 +145,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 16,
               ),
               Text(
-                '开启免密支付后，请妥善备份密码。如果忘记密码，可以通过导入助计词 / 私钥，重新设置密码',
+                S.of(context).remind_after_open_non_secret_payment,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -176,12 +157,12 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  '风险提示',
+                  S.of(context).risk_warning,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
               Text(
-                '请了解你的手机设备生物识别的安全等级\n大额资产，请勿开启免密支付\n公共手机，请勿开启免密支付\n',
+                S.of(context).risk_warning_detail_non_secret_payment,
                 style: TextStyle(
                   height: 1.8,
                   fontSize: 13,
@@ -190,12 +171,12 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  '免责声明',
+                  S.of(context).disclaimer,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
               Text(
-                '手机厂商的生物识别技术安全等级各有差异，我们提醒用户谨慎使用该便捷功能。使用过程中出现任何生物识别技术漏洞引发的资产风险，本软件不承担法律责任。',
+                S.of(context).disclaimer_detail_non_secret_payment,
                 style: TextStyle(
                   height: 1.8,
                   fontSize: 13,
@@ -229,7 +210,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       ///
       var password = await UiUtil.showPasswordDialog(
         context,
-        _wallet.getEthAccount().address,
+        _wallet,
         onCheckPwdValid: (String password) async {
           return WalletUtil.checkPwdValid(context, password);
         },
@@ -241,28 +222,26 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
 
         ///then check bio-auth
         if (authResult) {
-          ///Save password
-          await AppCache.secureSaveValue(
-            '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${_wallet.getEthAccount().address}',
-            password,
-          );
+          ///Save password to SecureStorage
+          WalletUtil.savePwdToSecureStorage(context, _wallet, password);
+
           BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
             biometricType,
             true,
-            _wallet.getEthAccount().address,
+            _wallet,
           ));
-          Fluttertoast.showToast(msg: '免密支付开启成功');
+          Fluttertoast.showToast(msg: S.of(context).non_secret_open_success);
         } else {
-          Fluttertoast.showToast(msg: '免密支付开启失败');
+          Fluttertoast.showToast(msg: S.of(context).non_secret_open_fail);
         }
       } else {
-        Fluttertoast.showToast(msg: '免密支付开启失败');
+        Fluttertoast.showToast(msg: S.of(context).non_secret_open_fail);
       }
     } else {
       BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
         biometricType,
         value,
-        _wallet.getEthAccount().address,
+        _wallet,
       ));
     }
     if (mounted) setState(() {});

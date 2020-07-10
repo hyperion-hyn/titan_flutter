@@ -33,7 +33,8 @@ class FinishCreatePage extends StatelessWidget {
                         .add(ActiveWalletEvent(wallet: wallet));
 
                     ///Use digits password now
-                    WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
+                    WalletUtil.useDigitsPwd(wallet);
+
                     await Future.delayed(Duration(milliseconds: 300));
                     BlocProvider.of<WalletCmpBloc>(context)
                         .add(UpdateActivatedWalletBalanceEvent());
@@ -92,9 +93,8 @@ class FinishCreatePage extends StatelessWidget {
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(ActiveWalletEvent(wallet: wallet));
 
-
                       ///Use digits password now
-                      WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
+                      WalletUtil.useDigitsPwd(wallet);
 
                       await Future.delayed(Duration(milliseconds: 300));
                       BlocProvider.of<WalletCmpBloc>(context)

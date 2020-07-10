@@ -119,18 +119,19 @@ class WalletUtil {
     return WalletChannel.exportMnemonic(fileName: fileName, password: password);
   }
 
-  static useDigitsPwd(String walletAddress) {
-    print('useDigitsPwd:$walletAddress');
+  static useDigitsPwd(Wallet wallet) {
+    print('useDigitsPwd:${wallet.keystore.fileName}');
     AppCache.saveValue<bool>(
-      '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress',
+      '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}',
       true,
     );
   }
 
-  static checkUseDigitsPwd(String walletAddress) async {
+  static checkUseDigitsPwd(Wallet wallet) async {
     var result = await AppCache.getValue<bool>(
-        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_$walletAddress');
-    print('checkUseDigitsPwd: $result walletAddress: $walletAddress');
+        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
+    print(
+        'checkUseDigitsPwd: $result walletAddress: ${wallet.keystore.fileName}');
     return result != null && result;
   }
 
@@ -159,9 +160,9 @@ class WalletUtil {
     }
   }
 
-  static getPwdFromStorage(BuildContext context, String walletAddress) async {
+  static getPwdFromSecureStorage(BuildContext context, Wallet wallet) async {
     String pwd = await AppCache.secureGetValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}$walletAddress');
+        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
 
     ///Check password from secureStorage is correct
     String result = await WalletUtil.exportPrivateKey(
@@ -177,6 +178,17 @@ class WalletUtil {
     } else {
       return null;
     }
+  }
+
+  static savePwdToSecureStorage(
+    BuildContext context,
+    Wallet wallet,
+    String password,
+  ) async {
+    await AppCache.secureSaveValue(
+      '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}',
+      password,
+    );
   }
 
   static Future<bool> updateWallet({

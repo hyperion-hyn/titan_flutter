@@ -422,9 +422,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               var password = await UiUtil.showWalletPasswordDialogV2(
                 context,
                 widget.walletVo.wallet,
-                onCheckPwdValid: (walletPwd) {
-                  return WalletUtil.checkPwdValid(context, walletPwd);
-                },
               );
             },
           ),
@@ -555,9 +552,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       widget.walletVo.wallet,
-      onCheckPwdValid: (walletPwd) {
-        return WalletUtil.checkPwdValid(context, walletPwd);
-      },
     );
     if (walletPassword == null) {
       return;

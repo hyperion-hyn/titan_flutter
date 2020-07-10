@@ -364,11 +364,14 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
       _isHideLayout = true;
     });
 
-    ///Show password dialog again
-    var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet,
-        onCheckPwdValid: (pwd) {
-      return WalletUtil.checkPwdValid(context, pwd);
+    ///Add delay to return more smoothly, in case some devices show too fast
+    Future.delayed(Duration(milliseconds: 200), () async {
+      ///Show password dialog again
+      var pwd = await UiUtil.showWalletPasswordDialogV2(
+        context,
+        wallet,
+      );
+      Navigator.of(context).pop(pwd);
     });
-    Navigator.of(context).pop(pwd);
   }
 }

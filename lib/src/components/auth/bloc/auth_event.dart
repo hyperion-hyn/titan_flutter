@@ -1,7 +1,7 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+
 
 @immutable
 abstract class AuthEvent {}
@@ -9,17 +9,17 @@ abstract class AuthEvent {}
 class SetBioAuthEvent extends AuthEvent {
   final BiometricType biometricType;
   final bool value;
-  final String walletAddress;
+  final Wallet wallet;
 
   SetBioAuthEvent(
     this.biometricType,
     this.value,
-    this.walletAddress,
+    this.wallet,
   );
 }
 
 class RefreshBioAuthConfigEvent extends AuthEvent {
-  final String walletAddress;
+  final Wallet wallet;
 
-  RefreshBioAuthConfigEvent(this.walletAddress);
+  RefreshBioAuthConfigEvent(this.wallet);
 }

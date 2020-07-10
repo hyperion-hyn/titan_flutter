@@ -446,9 +446,6 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       activatedWallet.wallet,
-      onCheckPwdValid: (walletPwd) {
-        return WalletUtil.checkPwdValid(context, walletPwd);
-      },
     );
 
     if (walletPassword == null) {

@@ -1,5 +1,6 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:meta/meta.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 
 import '../model.dart';
 
@@ -11,17 +12,17 @@ class InitialAuthState extends AuthState {}
 class SetBioAuthState extends AuthState {
   final BiometricType biometricType;
   final bool value;
-  final String walletAddress;
+  final Wallet wallet;
 
   SetBioAuthState(
     this.biometricType,
     this.value,
-    this.walletAddress,
+    this.wallet
   );
 }
 
 class RefreshBioAuthConfigState extends AuthState {
-  final String walletAddress;
+  final Wallet wallet;
 
-  RefreshBioAuthConfigState(this.walletAddress);
+  RefreshBioAuthConfigState(this.wallet);
 }

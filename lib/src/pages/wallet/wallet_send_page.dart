@@ -149,9 +149,10 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(
-                                ExtendsIconFont.copy_content,
-                                color: Theme.of(context).primaryColor,
+                              child: Image.asset(
+                                'res/drawable/ic_copy.png',
+                                height: 23,
+                                width: 23,
                               ),
                             ),
                           ),

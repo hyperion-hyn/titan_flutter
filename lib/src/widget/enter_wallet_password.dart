@@ -214,8 +214,8 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                   ),
                 ),
                 Positioned(
-                  left: 8,
-                  top: 8,
+                  left: 16,
+                  top: 16,
                   child: InkWell(
                     child: Image.asset(
                       'res/drawable/ic_dialog_close.png',
@@ -284,10 +284,10 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
     });
 
     ///Show password dialog again
-    var pwd = await UiUtil.showWalletPasswordDialogV2(context, wallet,
-        onCheckPwdValid: (pwd) {
-      return WalletUtil.checkPwdValid(context, pwd);
-    });
+    var pwd = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      wallet,
+    );
     Navigator.of(context).pop(pwd);
   }
 

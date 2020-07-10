@@ -283,10 +283,11 @@ class UiUtil {
 
   static Future<String> showWalletPasswordDialogV2(
     BuildContext context,
-    Wallet activeWallet, {
-    @required CheckPwdValid onCheckPwdValid,
-  }) async {
-
+    Wallet activeWallet,
+  ) async {
+    CheckPwdValid onCheckPwdValid = (walletPwd) {
+      return WalletUtil.checkPwdValid(context, walletPwd);
+    };
     if (AuthInheritedModel.of(
       context,
       aspect: AuthAspect.config,
@@ -297,10 +298,13 @@ class UiUtil {
         aspect: AuthAspect.config,
       ).bioAuthExpired) {
         var pwd = await showPasswordDialog(
-            context, activeWallet.getEthAccount().address,
-            onCheckPwdValid: onCheckPwdValid);
+          context,
+          activeWallet,
+          onCheckPwdValid: onCheckPwdValid,
+        );
 
         if (pwd != null) {
+          ///Update last bio-auth time
           BlocProvider.of<AuthBloc>(context).add(
             SetBioAuthEvent(
               AuthInheritedModel.of(
@@ -308,7 +312,7 @@ class UiUtil {
                 aspect: AuthAspect.config,
               ).currentBioMetricType,
               true,
-              activeWallet.getEthAccount().address,
+              activeWallet,
             ),
           );
           return pwd;
@@ -324,12 +328,12 @@ class UiUtil {
         );
 
         if (bioAuthResult != null && bioAuthResult) {
-          String pwd = await WalletUtil.getPwdFromStorage(
+          String pwd = await WalletUtil.getPwdFromSecureStorage(
             context,
-            activeWallet.getEthAccount().address,
+            activeWallet,
           );
 
-          ///Check pwd from
+          ///Check pwd from SecureStorage
           if (await onCheckPwdValid(pwd)) {
             return pwd;
           }
@@ -338,7 +342,7 @@ class UiUtil {
     }
     var pwd = await UiUtil.showPasswordDialog(
       context,
-      activeWallet.getEthAccount().address,
+      activeWallet,
       onCheckPwdValid: onCheckPwdValid,
     );
     return pwd;
@@ -346,12 +350,12 @@ class UiUtil {
 
   static Future<String> showPasswordDialog(
     BuildContext context,
-    String walletAddress, {
+    Wallet wallet, {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
   }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
-      walletAddress,
+      wallet,
     );
 
     if (useDigits != null && useDigits) {

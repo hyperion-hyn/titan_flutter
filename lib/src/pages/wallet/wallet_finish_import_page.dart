@@ -37,7 +37,7 @@ class FinishImportPage extends StatelessWidget {
                         .add(UpdateActivatedWalletBalanceEvent());
 
                     ///Use digits password now
-                    WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
+                    WalletUtil.useDigitsPwd(wallet);
                   }
                   Routes.popUntilCachedEntryRouteName(context);
                 },
@@ -98,7 +98,7 @@ class FinishImportPage extends StatelessWidget {
                           .add(UpdateActivatedWalletBalanceEvent());
 
                       ///Use digits password now
-                      WalletUtil.useDigitsPwd(wallet.getEthAccount().address);
+                      WalletUtil.useDigitsPwd(wallet);
                       Routes.popUntilCachedEntryRouteName(context);
                     },
                     child: Padding(

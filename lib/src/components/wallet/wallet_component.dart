@@ -89,7 +89,7 @@ class _WalletManagerState extends State<_WalletManager> {
 
               ///Refresh bio-auth config
               BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
-                _activatedWallet.wallet.getEthAccount().address,
+                _activatedWallet.wallet,
               ));
             }
           } else if (state is LoadingWalletState) {
