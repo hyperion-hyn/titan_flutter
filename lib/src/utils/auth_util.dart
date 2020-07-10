@@ -44,7 +44,9 @@ class AuthUtil {
           androidAuthStrings: androidStrings,
           iOSAuthStrings: iosStrings,
           sensitiveTransaction: true,
-          localizedReason: '使用您的面容或指纹进行验证');
+          localizedReason: biometricType == BiometricType.face
+              ? '使用您的面容进行验证'
+              : '使用您的面容指纹进行验证');
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         await showDialog(

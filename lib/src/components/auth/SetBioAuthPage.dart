@@ -222,13 +222,20 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
         ///then check bio-auth
         if (authResult) {
           ///Save password to SecureStorage
-          WalletUtil.savePwdToSecureStorage(context, _wallet, password);
-
-          BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-            biometricType,
-            true,
+          WalletUtil.savePwdToSecureStorage(
+            context,
             _wallet,
-          ));
+            password,
+          );
+
+          ///
+          BlocProvider.of<AuthBloc>(context).add(
+            SetBioAuthEvent(
+              biometricType,
+              true,
+              _wallet,
+            ),
+          );
           Fluttertoast.showToast(msg: '免密支付开启成功');
         } else {
           Fluttertoast.showToast(msg: '免密支付开启失败');
