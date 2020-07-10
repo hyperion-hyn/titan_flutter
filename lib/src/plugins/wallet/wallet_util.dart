@@ -120,7 +120,6 @@ class WalletUtil {
   }
 
   static useDigitsPwd(Wallet wallet) {
-    print('useDigitsPwd:${wallet.keystore.fileName}');
     AppCache.saveValue<bool>(
       '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}',
       true,
@@ -130,8 +129,6 @@ class WalletUtil {
   static checkUseDigitsPwd(Wallet wallet) async {
     var result = await AppCache.getValue<bool>(
         '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
-    print(
-        'checkUseDigitsPwd: $result walletAddress: ${wallet.keystore.fileName}');
     return result != null && result;
   }
 

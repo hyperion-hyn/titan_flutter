@@ -380,15 +380,6 @@ class UiUtil {
             );
           });
     }
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        });
   }
 
   static Future<String> showDoubleCheckPwdDialog(BuildContext context) {

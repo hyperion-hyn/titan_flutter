@@ -223,7 +223,11 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
         ///then check bio-auth
         if (authResult) {
           ///Save password to SecureStorage
-          WalletUtil.savePwdToSecureStorage(context, _wallet, password);
+          WalletUtil.savePwdToSecureStorage(
+            context,
+            _wallet,
+            password,
+          );
 
           BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
             biometricType,
