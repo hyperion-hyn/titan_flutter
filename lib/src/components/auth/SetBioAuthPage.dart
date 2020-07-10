@@ -223,7 +223,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
         ///then check bio-auth
         if (authResult) {
           ///Save password to SecureStorage
-          WalletUtil.savePwdToSecureStorage(
+          await WalletUtil.savePwdToSecureStorage(
             context,
             _wallet,
             password,

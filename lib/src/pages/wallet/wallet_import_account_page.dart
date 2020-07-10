@@ -278,11 +278,10 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           var walletName = _walletNameController.text;
-                          var password = await UiUtil.showDoubleCheckPwdDialog(
-                            context,
-                          );
-                          var mnemonic = _mnemonicController.text.trim();
+                          var password =
+                              await UiUtil.showDoubleCheckPwdDialog(context);
 
+                          var mnemonic = _mnemonicController.text.trim();
                           if (!bip39.validateMnemonic(mnemonic)) {
                             Fluttertoast.showToast(
                                 msg: S.of(context).illegal_mnemonic);

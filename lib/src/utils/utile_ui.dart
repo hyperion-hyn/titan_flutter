@@ -340,6 +340,8 @@ class UiUtil {
         }
       }
     }
+
+    ///Bio-auth not working, use default password dialog
     var pwd = await UiUtil.showPasswordDialog(
       context,
       activeWallet,
@@ -368,7 +370,7 @@ class UiUtil {
             isShowBioAuthIcon: isShowBioAuthIcon,
           ));
     } else {
-      return showModalBottomSheet(
+      var pwd = await showModalBottomSheet(
           isScrollControlled: true,
           context: context,
           shape: RoundedRectangleBorder(
@@ -379,9 +381,16 @@ class UiUtil {
               isShowBioAuthIcon: isShowBioAuthIcon,
             );
           });
+      var result = await onCheckPwdValid(pwd);
+      if (result) {
+        return pwd;
+      } else {
+        return null;
+      }
     }
   }
 
+  ///Double-check password dialog
   static Future<String> showDoubleCheckPwdDialog(BuildContext context) {
     return showDialog(
         context: context,
