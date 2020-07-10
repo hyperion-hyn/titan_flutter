@@ -428,7 +428,7 @@ class HomePanelState extends State<HomePanel> {
                             width: 4.0,
                           ),
                           Text(
-                            '发送',
+                            S.of(context).send,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400,
@@ -469,7 +469,7 @@ class HomePanelState extends State<HomePanel> {
                             width: 4,
                           ),
                           Text(
-                            '接收',
+                            S.of(context).receiver,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w400,
@@ -711,18 +711,18 @@ class HomePanelState extends State<HomePanel> {
       "hospital"
     ];
     List<String> searchTexts = [
-      "美食",
-      "酒店",
-      "景点",
-      "停车场",
-      "加油站",
-      "银行",
-      "超市",
-      "商场",
-      "网吧",
-      "厕所",
-      "咖啡馆",
-      "医院"
+    S.of(context).foods,
+    S.of(context).hotel,
+    S.of(context).attraction,
+    S.of(context).paking,
+    S.of(context).gas_station,
+    S.of(context).bank,
+    S.of(context).supermarket,
+    S.of(context).mall,
+    S.of(context).internet_bar,
+    S.of(context).toilet,
+    S.of(context).cafe,
+    S.of(context).hospital
     ];
     List<String> titles = [
       S.of(context).foods,

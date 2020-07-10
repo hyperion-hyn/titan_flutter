@@ -6,6 +6,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 typedef GasInputChangedCallback = void Function(
     double gasPrice, double gasPriceLimit);
 
+@deprecated
 class GasInputWidget extends StatefulWidget {
   final double currentEthPrice;
   final GasInputChangedCallback callback;

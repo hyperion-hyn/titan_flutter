@@ -10,6 +10,7 @@ import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
+@deprecated
 class SetBioAuthDialog extends StatefulWidget {
   final BiometricType biometricType;
   final String title;

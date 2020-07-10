@@ -215,7 +215,7 @@ class UiUtil {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Center(
                 child: Text(
-                  '您收到一个加密位置信息, 是否打开',
+                  S.of(context).receive_an_encrypted_message,
                   textAlign: TextAlign.center,
                   style: TextStyle(),
                 ),
@@ -237,7 +237,7 @@ class UiUtil {
                       child: Center(
                         child: InkWell(
                           child: Text(
-                            '取消',
+                            S.of(context).cancel,
                             style: TextStyle(
                               color: HexColor('#FF999999'),
                             ),
@@ -252,7 +252,7 @@ class UiUtil {
                       flex: 2,
                     ),
                     ClickOvalButton(
-                      '打开',
+                      S.of(context).open,
                       () async {
                         onClick();
                       },
@@ -367,7 +367,7 @@ class UiUtil {
           context: context,
           barrierDismissible: false,
           child: WalletPasswordDialog(
-            title: '请输入支付密码',
+            title: S.of(context).input_payment_password,
             checkPwdValid: onCheckPwdValid,
             isShowBioAuthIcon: isShowBioAuthIcon,
           ));

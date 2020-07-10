@@ -16,25 +16,25 @@ class AuthUtil {
     LocalAuthentication auth = LocalAuthentication();
 
     var iosStrings = IOSAuthMessages(
-        cancelButton: '取消',
-        goToSettingsButton: '前往设置',
+        cancelButton: S.of(context).cancel,
+        goToSettingsButton: S.of(context).go_to_settings,
         goToSettingsDescription: biometricType == BiometricType.face
-            ? '请到设置页开启您的面容 ID'
-            : '请到设置页开启您的Touch ID',
+            ? S.of(context).go_to_setting_page_open_face_id
+            : S.of(context).go_to_setting_page_open_touch_id,
         lockOut: biometricType == BiometricType.face
-            ? '面容 ID不可用，请稍后重试'
-            : 'Touch ID不可用，请稍后重试');
+            ? S.of(context).face_id_not_available_try_again
+            : S.of(context).touch_id_not_available_try_again);
     var androidStrings = AndroidAuthMessages(
-      cancelButton: '取消',
-      signInTitle: biometricType == BiometricType.face ? '面容识别' : '指纹识别',
-      fingerprintRequiredTitle: '需要指纹',
-      fingerprintSuccess: '指纹识别成功',
-      fingerprintHint: '指纹传感器',
-      fingerprintNotRecognized: '未检测到指纹',
-      goToSettingsButton: '前往设置',
+      cancelButton: S.of(context).cancel,
+      signInTitle: biometricType == BiometricType.face ? S.of(context).face_recognition : S.of(context).fingerprint_recognition,
+      fingerprintRequiredTitle: S.of(context).need_fingerprint,
+      fingerprintSuccess: S.of(context).fingerprint_recognition_success,
+      fingerprintHint: S.of(context).fingerprint_sensor,
+      fingerprintNotRecognized: S.of(context).no_fingerprint_detected,
+      goToSettingsButton: S.of(context).go_to_settings,
       goToSettingsDescription: biometricType == BiometricType.face
-          ? '请到设置页开启您的面容 ID'
-          : '请到设置页开启您的指纹识别',
+          ? S.of(context).go_to_setting_page_open_face_id
+          : S.of(context).go_setting_open_fingerprint,
     );
 
     try {
@@ -45,15 +45,15 @@ class AuthUtil {
           iOSAuthStrings: iosStrings,
           sensitiveTransaction: true,
           localizedReason: biometricType == BiometricType.face
-              ? '使用您的面容进行验证'
-              : '使用您的面容指纹进行验证');
+              ? S.of(context).use_face_verify
+              : S.of(context).face_fingerprint_verify);
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         await showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('生物识别'),
+                title: Text(S.of(context).biometrics),
                 content: Text(androidStrings.goToSettingsDescription),
                 actions: <Widget>[
                   FlatButton(
@@ -66,20 +66,20 @@ class AuthUtil {
                         Navigator.of(context).pop();
                         TitanPlugin.jumpToBioAuthSetting();
                       },
-                      child: Text('前往设置'))
+                      child: Text(S.of(context).go_to_settings))
                 ],
               );
             });
       } else if (e.code == auth_error.notAvailable) {
-        Fluttertoast.showToast(msg: '生物识别不可用');
+        Fluttertoast.showToast(msg: S.of(context).biometrics_unavailable);
       } else if (e.code == auth_error.passcodeNotSet) {
-        Fluttertoast.showToast(msg: '请到设置页设置您的pin');
+        Fluttertoast.showToast(msg: S.of(context).go_setting_page_set_pin);
       } else if (e.code == auth_error.lockedOut) {
-        Fluttertoast.showToast(msg: '失败次数过多，请稍后重试');
+        Fluttertoast.showToast(msg: S.of(context).too_many_fail_try_again);
       } else if (e.code == auth_error.permanentlyLockedOut) {
-        Fluttertoast.showToast(msg: '失败次数过多，生物识别暂不可用');
+        Fluttertoast.showToast(msg: S.of(context).too_many_fail_biometrics_unavailable);
       } else if (e.code == auth_error.otherOperatingSystem) {
-        Fluttertoast.showToast(msg: '您在其他操作系统，暂不支持');
+        Fluttertoast.showToast(msg: S.of(context).not_support_other_systems);
       }
     }
     return authenticated;

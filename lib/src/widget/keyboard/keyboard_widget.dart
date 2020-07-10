@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
 import 'custom_keyboard_button.dart';
@@ -118,7 +119,7 @@ class MyKeyboardStat extends State<MyKeyboard> {
                   Spacer(),
 //                  CustomKbBtn(text: '确定', callback: (val) => onCommitChange()),
                   CustomKbBtn(text: '0', callback: (val) => onZeroChange(context)),
-                  CustomKbBtn(text: '删除', isDelBtn: true, callback: (val) => onDeleteChange()),
+                  CustomKbBtn(text: S.of(context).delete, isDelBtn: true, callback: (val) => onDeleteChange()),
                 ],
               ),
             ],

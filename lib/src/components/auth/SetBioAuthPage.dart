@@ -56,7 +56,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
           color: Colors.black,
         ),
         title: Text(
-          '免密支付',
+          S.of(context).secret_free_payment,
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
@@ -85,7 +85,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
     return Container(
       color: Colors.white,
       child: SwitchListTile(
-        title: Text('面容识别'),
+        title: Text(S.of(context).face_recognition),
         value: AuthInheritedModel.of(
           context,
           aspect: AuthAspect.config,
@@ -101,7 +101,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
     return Container(
       color: Colors.white,
       child: SwitchListTile(
-        title: Text('指纹识别'),
+        title: Text(S.of(context).fingerprint_recognition),
         value: AuthInheritedModel.of(
           context,
           aspect: AuthAspect.config,
@@ -125,7 +125,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 16,
               ),
               Text(
-                '免密支付介绍',
+                S.of(context).introduct_non_secret_payment,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -135,7 +135,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 8,
               ),
               Text(
-                '免密支付将您的钱包密码通过安全加密算法存储至手机设备的Keychain / KeyStore中，交易时调用生物识别（指纹或面容）鉴权，快速完成支付与签名。',
+                S.of(context).non_secret_payment_introduction_detail,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -145,7 +145,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 16,
               ),
               Text(
-                '开启免密支付后，请妥善备份密码。如果忘记密码，可以通过导入助计词 / 私钥，重新设置密码',
+                S.of(context).remind_after_open_non_secret_payment,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -157,12 +157,12 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  '风险提示',
+                  S.of(context).risk_warning,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
               Text(
-                '请了解你的手机设备生物识别的安全等级\n大额资产，请勿开启免密支付\n公共手机，请勿开启免密支付\n',
+                S.of(context).risk_warning_detail_non_secret_payment,
                 style: TextStyle(
                   height: 1.8,
                   fontSize: 13,
@@ -171,12 +171,12 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: Text(
-                  '免责声明',
+                  S.of(context).disclaimer,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
               ),
               Text(
-                '手机厂商的生物识别技术安全等级各有差异，我们提醒用户谨慎使用该便捷功能。使用过程中出现任何生物识别技术漏洞引发的资产风险，本软件不承担法律责任。',
+                S.of(context).disclaimer_detail_non_secret_payment,
                 style: TextStyle(
                   height: 1.8,
                   fontSize: 13,

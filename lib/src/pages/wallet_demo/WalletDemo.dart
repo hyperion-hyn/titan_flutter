@@ -797,6 +797,19 @@ class _WalletDemoState extends State<WalletDemo> {
             },
             child: Text('校验数字键盘'),
           ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var walletList = await WalletUtil.scanWallets();
+                walletList.forEach((element) {
+                  print("identifier  ${element.keystore.name} ${element.keystore.identifier}");
+                });
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('identifier'),
+          ),
         ],
       ),
     );

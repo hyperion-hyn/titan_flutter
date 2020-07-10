@@ -236,7 +236,7 @@ class DiscoverPageState extends State<DiscoverPage> {
                                           width: 4.0,
                                         ),
                                         Text(
-                                          '发送',
+                                          S.of(context).send,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w400,
@@ -280,7 +280,7 @@ class DiscoverPageState extends State<DiscoverPage> {
                                           width: 4,
                                         ),
                                         Text(
-                                          '接收',
+                                          S.of(context).receiver,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w400,

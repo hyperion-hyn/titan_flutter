@@ -853,7 +853,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     // 2.检测网络数据
     if (_openCageData == null) {
       _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
-      Fluttertoast.showToast(msg: "网络服务错误");
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).network_error);
       return;
     }
 

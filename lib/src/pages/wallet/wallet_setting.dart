@@ -169,7 +169,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            '保存更新',
+                            S.of(context).save_update,
                             style: TextStyle(
                                 fontWeight: FontWeight.normal, fontSize: 16),
                           ),
@@ -243,7 +243,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                         text: widget.wallet.getEthAccount().address));
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
-                      '钱包地址已复制',
+                      S.of(context).wallet_address_copied,
                     )));
                   }
                 },
@@ -253,7 +253,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          '钱包地址',
+                          S.of(context).wallet_address,
                           style: TextStyle(
                             color: HexColor('#FF333333'),
                             fontSize: 16,
@@ -306,7 +306,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 },
                 child: Row(
                   children: <Widget>[
-                    Text('面容/指纹与密码'),
+                    Text(S.of(context).face_fingerprint_password),
                     Spacer(),
                     Icon(
                       Icons.chevron_right,
@@ -403,7 +403,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         if (success == true) {
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: widget.wallet));
-          UiUtil.toast('更新成功');
+          UiUtil.toast(S.of(context).update_success);
 //          await UiUtil.showSetBioAuthDialog(
 //            context,
 //            '更新成功',
@@ -420,7 +420,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         if (_.code == WalletError.PASSWORD_WRONG) {
           UiUtil.toast(S.of(context).wallet_password_error);
         } else {
-          UiUtil.toast('更新出错');
+          UiUtil.toast(S.of(context).update_error);
         }
       }
     }
@@ -440,7 +440,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
       var result = await widget.wallet.delete(walletPassword);
       print("del result ${widget.wallet.keystore.fileName} $result");
       if (result) {
-        await AppCache.remove(widget.wallet.getBitcoinAccount().address);
+        await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
         List<Wallet> walletList = await WalletUtil.scanWallets();
         var activatedWalletVo = WalletInheritedModel.of(context,
             aspect: WalletAspect.activatedWallet);

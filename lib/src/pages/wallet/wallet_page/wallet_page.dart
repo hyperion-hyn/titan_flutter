@@ -228,7 +228,7 @@ class _WalletPageState extends BaseState<WalletPage>
             width: 4.0,
           ),
           Text(
-            '经过权威机构安全认证',
+            S.of(context).safety_certification_by_organizations,
             style: TextStyle(
               color: Colors.grey[500],
               fontSize: 12.0,

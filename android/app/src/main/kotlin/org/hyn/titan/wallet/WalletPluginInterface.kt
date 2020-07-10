@@ -221,15 +221,13 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                 result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                                 return true
                             }
-                            val rename = importByMnemonic(mnemonic, name, newPassword, coins)
+                            importByMnemonicOverwriteSave(mnemonic, name, newPassword, coins,fileName)
                             //delete old file
-                            File(KeyStoreUtil.getKeyStorePath(context, fileName)).delete()
-                            result.success(rename)
+                            result.success(fileName)
                         } else {
-                            val rename = importByPrvKey(prvKey, name, newPassword, firstCoin)
+                            importByPrvKeyOverwriteSave(prvKey, name, newPassword, firstCoin, fileName)
                             //delete old file
-                            File(KeyStoreUtil.getKeyStorePath(context, fileName)).delete()
-                            result.success(rename)
+                            result.success(fileName)
                         }
                     }
                 } else {
@@ -422,6 +420,30 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
     }
 
     /**
+     * 保存助记词成为keystore
+     */
+    private fun importByMnemonicOverwriteSave(mnemonic: String, name: String, password: String, coins: List<CoinType>, fileName: String): String {
+        val firstCoin = if (coins.isNotEmpty()) coins[0] else CoinType.ETHEREUM
+        var storedKey = StoredKey.importHDWallet(mnemonic, name, password.toByteArray(), firstCoin)
+        if(storedKey == null){
+            storedKey = StoredKey.importHDWallet(mnemonic, name, password.toHexByteArray(), firstCoin)
+        }
+        //active coins
+        var hdWallet = storedKey.wallet(password.toByteArray())
+        if(hdWallet == null){
+            hdWallet = storedKey.wallet(password.toHexByteArray())
+        }
+        if (hdWallet != null) {
+            for (coin in coins) {
+                storedKey.accountForCoin(coin, hdWallet)
+            }
+        }
+
+        val path = overwriteSaveStoredKeyToLocal(storedKey,fileName)
+        return path
+    }
+
+    /**
      * 保存私钥成为keystore， 私钥格式: 私钥二进制的Hex String
      */
     private fun importByPrvKey(prvKeyHex: String, name: String, password: String, coinType: CoinType): String {
@@ -480,6 +502,23 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         Timber.i("-保存keystore文件 $saveName")
         storedKey.store(savePath)
         return saveName
+    }
+
+    private fun importByPrvKeyOverwriteSave(prvKeyHex: String, name: String, password: String, coinType: CoinType,fileName: String): String {
+        var storedKey = StoredKey.importPrivateKey(prvKeyHex.toByteArray(), name, password.toByteArray(), coinType)
+        if(storedKey == null){
+            storedKey = StoredKey.importPrivateKey(prvKeyHex.toByteArray(), name, password.toHexByteArray(), coinType)
+        }
+        Timber.i("storedKey activeAccount count ${storedKey.accountCount()}, 密码: $password, 私钥: ${prvKeyHex.toByteArray().toHex()}")
+        val path = overwriteSaveStoredKeyToLocal(storedKey,fileName)
+        return path
+    }
+
+    private fun overwriteSaveStoredKeyToLocal(storedKey: StoredKey,fileName: String): String {
+        val savePath = KeyStoreUtil.getKeyStoreDir(context).absolutePath + File.separator + fileName
+        Timber.i("-保存keystore文件 $fileName")
+        storedKey.store(savePath)
+        return fileName
     }
 
     private fun loadKeyStore(fileName: String): Map<String, Any>? {

@@ -60,7 +60,7 @@ class _BackupShowResumeWordState extends State<BackupShowResumeWordPage> {
                 ),
                 FlatButton(
                   child: Text(
-                    '显示二维码',
+                    S.of(context).show_qr_code,
                     style: TextStyle(color: Colors.black),
                   ),
                   onPressed: () {

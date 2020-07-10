@@ -169,7 +169,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 16.0),
                                       child: Text(
-                                        '忘记密码',
+                                        S.of(context).forgot_password,
                                         style: TextStyle(
                                             color: HexColor('#FF1F81FF')),
                                       ),

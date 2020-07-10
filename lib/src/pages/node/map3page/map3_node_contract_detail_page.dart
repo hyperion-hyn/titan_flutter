@@ -580,7 +580,7 @@ class _Map3NodeContractDetailState
             if (_isNoWallet) {
               _pushWalletManagerAction();
             } else {
-              _actingTitle = "进行中...";
+              _actingTitle = S.of(context).in_progress;
               _joinContractAction();
             }
           };
@@ -1465,7 +1465,7 @@ class _Map3NodeContractDetailState
     }
 
     if (_contractNodeItem.appSource != source.index) {
-      Fluttertoast.showToast(msg: "该节点并非创建于${S.of(context).app_name}，提取失败");
+      Fluttertoast.showToast(msg: S.of(context).node_not_create_by_app_withdraw_fail(S.of(context).app_name));
       return;
     }
 

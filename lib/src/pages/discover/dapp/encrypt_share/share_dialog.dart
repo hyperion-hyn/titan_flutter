@@ -160,7 +160,7 @@ class ShareDialogState extends State<ShareDialog> {
                     children: <Widget>[
                       Spacer(),
                       Text(
-                        '高级模式',
+                        S.of(context).advanced_mode,
                         style: TextStyle(color: HexColor('#FF999999')),
                       ),
                       Switch(
@@ -191,7 +191,7 @@ class ShareDialogState extends State<ShareDialog> {
                             width: 4,
                           ),
                           Text(
-                            '分享',
+                            S.of(context).share,
                             style: TextStyle(
                               color: Colors.white,
                             ),
@@ -222,7 +222,7 @@ class ShareDialogState extends State<ShareDialog> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                '点对点分享',
+                S.of(context).accept_share_pub_key,
                 style: TextStyle(
                     fontSize: 17,
                     color: HexColor('#FF333333'),
@@ -293,7 +293,7 @@ class ShareDialogState extends State<ShareDialog> {
             height: 12.0,
           ),
           Text(
-            '附言',
+            S.of(context).postscript,
             style: TextStyle(
                 fontSize: 17,
                 color: HexColor('#FF333333'),

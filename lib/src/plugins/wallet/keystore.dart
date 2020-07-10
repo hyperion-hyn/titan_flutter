@@ -26,13 +26,12 @@ class KeyStore {
     if (newPassword == null) {
       newPassword = password;
     }
-    var newName = await WalletChannel.updateWallet(
+    await WalletChannel.updateWallet(
       fileName: this.fileName,
       oldPassword: password,
       newPassword: newPassword,
       name: name,
     );
-    this.fileName = newName;
     this.name = name;
     return true;
   }

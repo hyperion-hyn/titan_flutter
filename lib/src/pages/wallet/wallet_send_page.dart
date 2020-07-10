@@ -93,7 +93,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       _basicAddressReg =
           RegExp(r'^([13]|bc)[a-zA-Z0-9]{25,42}$', caseSensitive: false);
       addressHint = S.of(context).example + ': bc1q7fhqwluhcrs2ek...';
-      addressErrorHint = "请输入1、bc、或3开头的合法接收者地址";
+      addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
     } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
       addressHint = S.of(context).example + ': 0x81e7A0529AC1726e...';
