@@ -1,12 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/src/basic/http/base_http.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:http/http.dart' as http;
+
+import '../../../env.dart';
 
 class WebSocketPage extends StatefulWidget {
   final IOWebSocketChannel channel;
@@ -29,10 +34,11 @@ class _WebSocketPageState extends State<WebSocketPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
-    _requestDataFromApi('1min');
     _initWS();
+
+    _requestDataFromApi('1min');
+
+    super.initState();
   }
 
   @override
@@ -69,7 +75,7 @@ class _WebSocketPageState extends State<WebSocketPage> {
               RaisedButton(
                 child: Text('request [1day] '),
                 onPressed: () {
-                  _addDataFromApi('1day');
+                  _requestDataFromApi('1day');
                 },
               ),
               RaisedButton(
@@ -115,11 +121,14 @@ class _WebSocketPageState extends State<WebSocketPage> {
   @override
   void dispose() {
     widget.channel.sink.close();
-    print('websocket closed');
+
+    print('[WS]  closed');
     super.dispose();
   }
 
   _initWS() {
+    print('[WS]  listen');
+
     widget.channel.stream.listen(
         (data) {
           var receivedData = data;
@@ -128,13 +137,14 @@ class _WebSocketPageState extends State<WebSocketPage> {
               GZipCodec().decode(receivedData),
               allowMalformed: true,
             );
-            print(decompressedData);
+
             Map<String, dynamic> data = json.decode(decompressedData);
             if (data['ping'] != null) {
               _respondHeartBeat(data['ping']);
             } else {
               if (mounted)
                 setState(() {
+                  print("[WS] decompressedData:$decompressedData");
                   _wsStreamDataText = decompressedData;
                 });
               _addKChartDataFromWS(data);
@@ -143,7 +153,8 @@ class _WebSocketPageState extends State<WebSocketPage> {
             print(e.toString());
           }
         },
-        onDone: _reconnectWS,
+        onDone: () => print('[WS] Done!'),
+        //onDone: _reconnectWS,
         onError: (e) {
           print(e);
         });
@@ -151,64 +162,57 @@ class _WebSocketPageState extends State<WebSocketPage> {
     _subscribeKLineDataFromWS('1min');
   }
 
+  /*
   _reconnectWS() {
     Future.delayed(Duration(milliseconds: 1000)).then((_) {
       _initWS();
     });
-  }
+  }*/
 
   void _requestDataFromApi(String period, {bool isReplace}) async {
-    String result;
+    dynamic result;
     try {
       result = await getDataFromApi('$period');
     } catch (e) {
       print('获取数据失败');
     } finally {
-      Map parseJson = json.decode(result);
-      print('parseJson: ${parseJson.toString()}');
+      print('[WS] _requestDataFromApi, result：$result');
+
+      // ignore: control_flow_in_finally
+      if (result == null) return;
+
+      Map parseJson = result;
+      print('[WS] parseJson: ${parseJson.toString()}');
       List list = parseJson['data'];
-      _kChartItemList = list
-          .map((item) => KLineEntity.fromJson(item))
-          .toList()
-          .reversed
-          .toList()
-          .cast<KLineEntity>();
+      _kChartItemList = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
       KLineUtil.calculate(_kChartItemList);
-      print('current list length: ${_kChartItemList.length}');
-      Fluttertoast.showToast(
-          msg: 'current list length: ${_kChartItemList.length}');
+      print('[WS] current list length: ${_kChartItemList.length}');
+      Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
       showLoading = false;
       setState(() {});
     }
   }
 
-  void _addDataFromApi(String period, {bool isReplace}) async {
-    String result;
+ /* void _addDataFromApi(String period, {bool isReplace}) async {
+    dynamic result;
     KLineEntity lastItem;
     try {
       result = await getDataFromApi('$period');
     } catch (e) {
       print('获取数据失败');
     } finally {
-      Map parseJson = json.decode(result);
+      Map parseJson = result;
       List list = parseJson['data'];
-      lastItem = list
-          .map((item) => KLineEntity.fromJson(item))
-          .toList()
-          .reversed
-          .toList()
-          .cast<KLineEntity>()
-          .last;
+      lastItem = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>().last;
       _kChartItemList.add(lastItem);
       print(lastItem.toString());
       KLineUtil.calculate(_kChartItemList);
       showLoading = false;
       print('current list length: ${_kChartItemList.length}');
-      Fluttertoast.showToast(
-          msg: 'current list length: ${_kChartItemList.length}');
+      Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
       setState(() {});
     }
-  }
+  }*/
 
   void _addKChartDataFromWS(Map<String, dynamic> data) async {
     KLineEntity latestKLineItem;
@@ -230,17 +234,58 @@ class _WebSocketPageState extends State<WebSocketPage> {
     }
   }
 
-  Future<String> getDataFromApi(String period) async {
-    //huobi api
-    var url =
-        'https://api.huobi.br.com/market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
-    String result;
-    var response = await http.get(url).timeout(Duration(seconds: 7));
-    if (response.statusCode == 200) {
-      result = response.body;
+  Future<dynamic> getDataFromApi(String period) async {
+    //huobi api, https://api.huobi.br.com/market/history/kline?period=1min&size=300&symbol=btcusdt
+    var url = 'market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
+    dynamic result;
+    print("[WS] --> getData, url:$url");
+//    var response = await http.get(url, headers:  {'accept': 'application/dns-json'}).timeout(Duration(seconds: 15));
+    var response = await MarketHttpCore.instance.get(
+      url,
+      options: RequestOptions(contentType: "application/json"),
+    );
+
+    print("[WS] --> getData, data:${response["data"] is List}");
+
+    if (response["status"] == "ok") {
+      result = response;
     } else {
-      return Future.error("获取失败");
+      return "";
+      //return Future.error("获取失败");
     }
+    print("[WS] --> getData, result:$result");
+
     return result;
   }
+}
+
+class MarketHttpCore extends BaseHttpCore {
+  factory MarketHttpCore() => _getInstance();
+
+  MarketHttpCore._internal() : super(_dio);
+
+  static MarketHttpCore get instance => _getInstance();
+  static MarketHttpCore _instance;
+
+  static MarketHttpCore _getInstance() {
+    if (_instance == null) {
+      _instance = MarketHttpCore._internal();
+
+      // todo: test_jison_0428_close_log
+      if (env.buildType == BuildType.DEV) {
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
+      }
+    }
+    return _instance;
+  }
+
+  static var _dio = new Dio(BaseOptions(
+    baseUrl: Const.MARKET_DOMAIN,
+    connectTimeout: 5000,
+    receiveTimeout: 5000,
+//    headers: {"user-agent": "dio", "api": "1.0.0"},
+    /*contentType: ContentType.JSON,
+      responseType: ResponseType.PLAIN*/
+    contentType: 'application/x-www-form-urlencoded',
+  ));
 }

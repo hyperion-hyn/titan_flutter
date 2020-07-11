@@ -14,6 +14,8 @@ class Const {
 
   static String EXCHANGE_DOMAIN = 'http://10.10.1.120:8989/';
 
+  static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
+
 
   static String get NODE_DOMAIN {
     if(env.buildType == BuildType.DEV){

@@ -118,26 +118,28 @@ class BaseHttpCore {
     Response response;
 
     //add app source tag
-    if (options != null && options.headers == null) {
-      options.headers = Map();
-    } else if (options == null) {
-      options = RequestOptions();
-      options.headers = Map();
-    }
-    options.headers["appName"] = Config.APP_SOURCE;
-    options.headers["buildChannel"] = env.channel;
-    options.headers["buildType"] = env.buildType;
+    if (!url.contains("market")) {
+      if (options != null && options.headers == null) {
+        options.headers = Map();
+      } else if (options == null) {
+        options = RequestOptions();
+        options.headers = Map();
+      }
+      options.headers["appName"] = Config.APP_SOURCE;
+      options.headers["buildChannel"] = env.channel;
+      options.headers["buildType"] = env.buildType;
 
-    if (packageInfo == null) {
-      packageInfo = await PackageInfo.fromPlatform();
-    }
-    options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
-    options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
-    options.headers["walletAddress"] = Keys.rootKey.currentContext != null
-        ? WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? ''
-        : '';
+      if (packageInfo == null) {
+        packageInfo = await PackageInfo.fromPlatform();
+      }
+      options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
+      options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
+      options.headers["walletAddress"] = Keys.rootKey.currentContext != null
+          ? WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? ''
+          : '';
 
-    // todo rich add userid
+      // todo rich add userid
+    }
 
     if (method == GET) {
       if (params != null && params.isNotEmpty) {
@@ -190,12 +192,12 @@ class BaseHttpCore {
     try {
       map = json.decode(response.data);
     } catch (err) {
-      //print('[base_http] json decode 1 err $err');
+      print('[base_http] json decode 1 err $err');
       //String res2Json = json.encode(response.data);
       try {
         map = json.decode(response.data);
       } catch (err) {
-        //print('[base_http] json decode 2 err $err');
+        print('[base_http] json decode 2 err $err');
       }
     }
 
