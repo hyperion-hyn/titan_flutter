@@ -828,5 +828,6 @@
   "task_failed": "任务失败",
   "task_is_not_finish": "任务未达标!",
   "false_data_at_location_detail_toast": "您提交的地点存在虚假数据!",
-  "you_still_have_unfinished_tasks_detail_toast": "加油哦，你还有任务未完成"
+  "you_still_have_unfinished_tasks_detail_toast": "加油哦，你还有任务未完成",
+  "wallet_password_decrypt": "使用钱包密码解密"
 }

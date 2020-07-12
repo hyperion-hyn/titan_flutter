@@ -192,6 +192,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           password = await UiUtil.showWalletPasswordDialogV2(
             context,
             _activeWallet.wallet,
+            dialogTitle: S.of(context).wallet_password_decrypt
           );
         }
         Navigator.pop(context);

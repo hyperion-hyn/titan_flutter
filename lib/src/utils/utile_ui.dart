@@ -319,39 +319,41 @@ class UiUtil {
                 ),
                 Row(
                   children: <Widget>[
-                    Spacer(
-                      flex: 1,
+                    SizedBox(
+                      width: 10,
                     ),
-                    Container(
-                      width: 120,
-                      child: Center(
-                        child: InkWell(
-                          child: Text(
-                            S.of(context).cancel,
-                            style: TextStyle(
-                              color: HexColor('#FF999999'),
+                    Expanded(
+                      child: Container(
+                        child: Center(
+                          child: InkWell(
+                            child: Text(
+                              S.of(context).cancel,
+                              style: TextStyle(
+                                color: HexColor('#FF999999'),
+                              ),
                             ),
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
                           ),
-                          onTap: () async {
-                            Navigator.pop(context);
-                          },
                         ),
                       ),
                     ),
-                    Spacer(
-                      flex: 2,
+                    SizedBox(
+                      width: 13,
                     ),
-                    ClickOvalButton(
-                      S.of(context).open,
-                      () async {
-                        onClick();
-                      },
-                      height: 45,
-                      width: 120,
+                    Expanded(
+                      child: ClickOvalButton(
+                        S.of(context).open,
+                        () async {
+                          onClick();
+                        },
+                        height: 45,
+                      ),
                     ),
-                    Spacer(
-                      flex: 1,
-                    )
+                    SizedBox(
+                      width: 10,
+                    ),
                   ],
                 )
               ],
@@ -375,7 +377,9 @@ class UiUtil {
 
   static Future<String> showWalletPasswordDialogV2(
     BuildContext context,
-    Wallet activeWallet,
+    Wallet activeWallet,{
+    String dialogTitle,
+  }
   ) async {
     CheckPwdValid onCheckPwdValid = (walletPwd) {
       return WalletUtil.checkPwdValid(context, walletPwd);
@@ -438,6 +442,7 @@ class UiUtil {
       context,
       activeWallet,
       onCheckPwdValid: onCheckPwdValid,
+      dialogTitle: dialogTitle,
     );
     return pwd;
   }
@@ -447,6 +452,7 @@ class UiUtil {
     Wallet wallet, {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
+        String dialogTitle
   }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       wallet,
@@ -457,7 +463,7 @@ class UiUtil {
           context: context,
           barrierDismissible: false,
           child: WalletPasswordDialog(
-            title: S.of(context).input_payment_password,
+            title: dialogTitle ?? S.of(context).input_payment_password,
             checkPwdValid: onCheckPwdValid,
             isShowBioAuthIcon: isShowBioAuthIcon,
           ));
