@@ -138,6 +138,7 @@ class CustomStepper extends StatefulWidget {
     this.onStepContinue,
     this.onStepCancel,
     this.controlsBuilder,
+    this.topMargin = 30,
   })  : assert(steps != null),
         assert(type != null),
         assert(currentStep != null),
@@ -184,6 +185,8 @@ class CustomStepper extends StatefulWidget {
   ///
   /// If null, the 'cancel' button will be disabled.
   final VoidCallback onStepCancel;
+
+  final double topMargin;
 
   /// The callback for creating custom controls.
   ///
@@ -777,7 +780,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
         child: Stack(
           children: <Widget>[
             Positioned(
-              top: 30,
+              top: widget.topMargin,
               left: 0,
               right: 0,
               child: Column(
@@ -794,7 +797,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            Positioned(
+            if (widget.tickText.isNotEmpty) Positioned(
               child: tick,
               left: isRightTick ? null: tickLeft,
               right: isRightTick ? tickRight : null,

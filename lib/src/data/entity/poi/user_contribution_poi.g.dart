@@ -22,6 +22,7 @@ UserContributionPoi _$UserContributionPoiFromJson(Map<String, dynamic> json) {
     (json['images'] as List)?.map((e) => e as String)?.toList(),
     json['postcode'] as String,
     json['website'] as String,
+    json['myself'] as bool,
   )..remark = json['remark'] as String;
 }
 
@@ -41,6 +42,7 @@ Map<String, dynamic> _$UserContributionPoiToJson(
       'postcode': instance.postcode,
       'website': instance.website,
       'remark': instance.remark,
+      'remark': instance.myself,
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {
@@ -53,4 +55,22 @@ Location _$LocationFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
       'coordinates': instance.coordinates,
       'type': instance.type,
+    };
+
+UserContributionPois _$UserContributionPoisFromJson(Map<String, dynamic> json) {
+  return UserContributionPois(
+    (json['coordinates'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
+    (json['pois'] as List)
+        ?.map((e) => e == null
+            ? null
+            : UserContributionPoi.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$UserContributionPoisToJson(
+        UserContributionPois instance) =>
+    <String, dynamic>{
+      'coordinates': instance.coordinates,
+      'pois': instance.pois,
     };

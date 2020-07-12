@@ -26,11 +26,11 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
   String selectCategory = "";
   TextEditingController _searchTextController = TextEditingController();
   FocusNode _searchFocusNode = FocusNode();
-  bool _visibleCloseIcon = false;
   CustomInputText inputText;
   List<String> _tagList = [];
   String address;
   String language;
+  String _lastSearch;
 
   @override
   void onCreated() {
@@ -70,22 +70,6 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
     super.dispose();
   }
 
-  /*void searchTextChangeListener() {
-    String currentText = _searchTextController.text.trim();
-    if (currentText.isNotEmpty) {
-      if (!_visibleCloseIcon) {
-        setState(() {
-          _visibleCloseIcon = true;
-        });
-      }
-    } else {
-      if (_visibleCloseIcon) {
-        setState(() {
-          _visibleCloseIcon = false;
-        });
-      }
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +139,9 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
   Widget _buildInfoContainer(CategoryItem categoryItem) {
     return InkWell(
       onTap: () {
+        if (_lastSearch.isNotEmpty) {
+          categoryItem.title = _lastSearch +" / "+ categoryItem.title;
+        }
         Navigator.pop(context, categoryItem);
       },
       child: Container(
@@ -283,7 +270,6 @@ class _SelectCategoryState extends BaseState<SelectCategoryPage> {
     );
   }
 
-  String _lastSearch;
 
   void handleSearch(String textOrPoi,bool isForceSearch) {
     if (_lastSearch == textOrPoi && !isForceSearch) {

@@ -28,7 +28,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
   double defaultZoom = 18;
 
   var trackingMode = MyLocationTrackingMode.Tracking;
-  var enableLocation = true;
+  var enableLocation = false;
 
   @override
   void initState() {
@@ -107,12 +107,15 @@ class _SelectPositionState extends State<SelectPositionPage> {
                     ),
                   );
                 } else {
+                  Navigator.pop(context, latLng);
+                  /*
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPositionPage(latLng),
                     ),
                   );
+                  */
                 }
               }
             },

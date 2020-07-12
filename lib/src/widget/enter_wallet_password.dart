@@ -11,7 +11,6 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/validator_util.dart';
 import 'package:titan/src/widget/click_oval_button.dart';

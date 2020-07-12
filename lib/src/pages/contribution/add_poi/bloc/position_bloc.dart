@@ -1,11 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import '../../../../../env.dart';
 import 'bloc.dart';
 
 class PositionBloc extends Bloc<PositionEvent, AllPageState> {
@@ -25,8 +33,6 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       // category
       else if (event is SelectCategoryInitEvent) {
         yield SelectCategoryLoadingState(isShowSearch: false);
-//        var address = currentWalletVo.accountList[0].account.address;
-//        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
@@ -37,8 +43,6 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       } else if (event is SelectCategoryLoadingEvent) {
         yield SelectCategoryLoadingState();
       } else if (event is SelectCategoryResultEvent) {
-//        var address = currentWalletVo.accountList[0].account.address;
-//        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
@@ -48,6 +52,8 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       } else if (event is SelectCategoryClearEvent) {
         yield SelectCategoryClearState();
       } else if (event is GetOpenCageEvent) {
+        yield GetOpenCageLoadingState();
+
         var userPosition = event.userPosition;
         var query = "${userPosition.latitude},${userPosition.longitude}";
 //        var language = (appLocale ?? defaultLocale).languageCode;
@@ -55,6 +61,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         var _openCageData = await _positionApi.getOpenCageData(query, lang: event.language);
         yield GetOpenCageState(_openCageData);
       }
+
       // poi
       else if (event is StartPostPoiDataEvent) {
         await _uploadPoiData(event.poiDataModel, event.address);
@@ -65,21 +72,121 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield SuccessPostPoiDataState();
       } else if (event is FailPostPoiDataEvent) {
         yield FailPostPoiDataState(event.code);
-      } else if (event is ConfirmPositionLoadingEvent) {
-        yield ConfirmPositionLoadingState();
-      } else if (event is ConfirmPositionPageEvent) {
+      }
+
+      // poi v2
+      else if (event is PostPoiDataV2Event) {
+        yield PostPoiDataV2LoadingState();
+
+        var model = event.poiDataModel;
+        int code = await _positionApi.postPoiV2Collector(
+            model.outListImagePaths, model.inListImagePaths, event.address, model.poiCollector, (int count, int total) {
+          double progress = count * 100.0 / total;
+          //print("[PoiBloc] progress:$progress");
+
+          //add(LoadingPostPoiDataEvent(progress));
+        });
+
+        if (code == 0) {
+          yield PostPoiDataV2ResultSuccessState();
+        } else {
+          yield PostPoiDataV2ResultFailState(code: code);
+        }
+      }
+
+      // getConfirmData
+      else if (event is GetConfirmPoiDataEvent) {
+        yield GetConfirmPoiDataLoadingState();
+
         var userPosition = event.userPosition;
-//        var language = (appLocale ?? defaultLocale).languageCode;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         var _confirmPoiItem = await _positionApi
-            .getConfirmData(event.address, userPosition.longitude, userPosition.latitude, lang: event.language);
-        yield ConfirmPositionPageState(_confirmPoiItem);
-      } else if (event is ConfirmPositionResultEvent) {
-        var confirmResult = await _positionApi.postConfirmPoiData(event.address, event.answer, event.confirmPoiItem);
+            .getConfirmData(event.address, userPosition.longitude, userPosition.latitude, lang: event.language, id: event.id);
+        if (_confirmPoiItem == null) {
+          yield GetConfirmPoiDataResultFailState();
+        } else {
+          yield GetConfirmPoiDataResultSuccessState(_confirmPoiItem);
+        }
+      }
+
+      // PostConfirmPoiDataEvent
+      else if (event is PostConfirmPoiDataEvent) {
+        yield PostConfirmPoiDataLoadingState();
+
+        var confirmResult = await _positionApi.postConfirmPoiData(event.address, event.answer, event.confirmPoiItem,
+            detail: event.detail);
         print("[PositionBloc] poi confirm result = $confirmResult");
-        yield ConfirmPositionResultState(true, "");
+
+        if (confirmResult) {
+          yield PostConfirmPoiDataResultSuccessState();
+        } else {
+          yield PostConfirmPoiDataResultFailState();
+        }
+      }
+
+      // getConfirmDataV2
+      else if (event is GetConfirmPoiDataV2Event) {
+        yield GetConfirmDataV2LoadingState();
+
+        if (!isBindSuccess) {
+          await _positionApi.updateEthAddress();
+        }
+
+        if (!isBindSuccess) {
+          yield GetConfirmDataV2ResultFailState(code: -10003, message: S.of(Keys.homePageKey.currentContext).failed_to_bind_wallet_please_exit_task_and_try_again_toast);
+        } else {
+          var userPosition = event.userPosition;
+          if (event.language.startsWith('zh')) event.language = "zh-Hans";
+          var res =
+              await _positionApi.getConfirmDataV2(userPosition.longitude, userPosition.latitude, lang: event.language);
+
+          var responseEntity = ResponseEntity<UserContributionPois>.fromJson(res,
+              factory: EntityFactory((json) => UserContributionPois.fromJson(json)));
+          if (responseEntity.data == null || responseEntity.code != 0) {
+            yield GetConfirmDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
+          } else {
+            var _confirmPoiItem = responseEntity.data;
+            yield GetConfirmDataV2ResultSuccessState(_confirmPoiItem);
+          }
+        }
+      }
+
+      // postConfirmPoiDataV2
+      else if (event is PostConfirmPoiDataV2Event) {
+        yield PostConfirmPoiDataV2LoadingState();
+
+        if (!isBindSuccess) {
+          await _positionApi.updateEthAddress();
+        }
+
+        
+        if (!isBindSuccess) {
+          yield PostConfirmPoiDataV2ResultFailState(code: -10003, message: S.of(Keys.homePageKey.currentContext).failed_to_bind_wallet_please_exit_task_and_try_again_toast);
+        } else {
+          var res = await _positionApi.postConfirmPoiV2Data(event.answers, event.contributionPois);
+          var responseEntity = ResponseEntity<List<String>>.fromJson(res, factory: EntityFactory((json) {
+            var list = (json as List).map((item) {
+              return "$item";
+            }).toList();
+            print("[PositionApi] postConfirmPoiDataV2, json:$json, list:$list");
+
+            return list;
+          }));
+
+          print("[PositionBloc] postConfirmPoiDataV2, result = ${responseEntity.data}");
+
+          if (responseEntity.data == null || responseEntity.code != 0) {
+            yield PostConfirmPoiDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
+          } else {
+            yield PostConfirmPoiDataV2ResultSuccessState(responseEntity.data);
+          }
+        }
       } else if (event is ConfirmPositionResultLoadingEvent) {
         yield ConfirmPositionResultLoadingState();
+      }
+      // update
+      else if (event is UpdateConfirmPoiDataPageEvent) {
+        yield UpdateConfirmPoiDataPageState();
       }
       // poi ncov
       else if (event is StartPostPoiNcovDataEvent) {
@@ -93,16 +200,19 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield FailPostPoiNcovDataState(event.code);
       }
     } catch (code, message) {
+      // todo: test_jison_0707
+      if (env.buildType == BuildType.DEV){
+        print("[PositionBloc]---------loooon， code:$code, message:$message");
+      }
+
       yield LoadFailState();
     }
   }
 
   Future _uploadPoiData(PoiDataModel model, String address) async {
-//    var address = currentWalletVo.accountList[0].account.address;
     int code =
         await _positionApi.postPoiCollector(model.listImagePaths, address, model.poiCollector, (int count, int total) {
       double progress = count * 100.0 / total;
-      //print('[upload] total:$total, count:$count, progress:$progress%');
       add(LoadingPostPoiDataEvent(progress));
     });
 

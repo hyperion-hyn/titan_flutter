@@ -40,9 +40,15 @@ class Const {
   static const kWhiteMapStyleCn =
       'https://cn.tile.map3.network/see-it-all-boundary-cdn-en.json';
 
-//  static const kWhiteMapStyleCn = 'http://10.10.1.115:9999/titan-see-it-all.json';
   static const kWhiteMapStyle =
       'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-en.json';
+
+//white-without
+  static const kWhiteWithoutMapStyleCn =
+      'https://cn.tile.map3.network/see-it-all-boundary-cdn-without-contribution-en.json';
+
+  static const kWhiteWithoutMapStyle =
+      'https://static.hyn.space/maptiles/see-it-all-boundary-cdn-without-contribution-en.json';
 
   //black
   static const kBlackMapStyleCn =

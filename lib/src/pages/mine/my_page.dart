@@ -1,4 +1,3 @@
-import 'package:barcode_scan/barcode_scan.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,19 +5,15 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
-import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
@@ -33,7 +28,6 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  String _pubKey = "";
   Wallet _wallet;
 
   @override
@@ -43,7 +37,6 @@ class _MyPageState extends State<MyPage> {
   }
 
   Future loadData() async {
-    _pubKey = await TitanPlugin.getPublicKey();
     setState(() {});
   }
 
@@ -56,7 +49,6 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -123,30 +115,6 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  /*_buildMenuBar(S.of(context).my_initiated_map_contract, Icons.menu, () {
-                    if (_wallet != null) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_initiated_map_contract)));
-                    } else {
-                      Application.router.navigateTo(context, Routes.wallet_manager);
-                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
-                    }
-                  }, imageName: "my_contract_create"),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 56.0),
-                    child: Divider(height: 0),
-                  ),
-                  _buildMenuBar(S.of(context).my_join_map_contract, Icons.menu, () {
-                    if (_wallet != null) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyMap3ContractPage(S.of(context).my_join_map_contract)));
-                    } else {
-                      Application.router.navigateTo(context, Routes.wallet_manager);
-                      //Fluttertoast.showToast(msg: S.of(context).please_create_import_wallet, gravity: ToastGravity.CENTER);
-                    }
-                  }, imageName: "my_contract_join"),
-                  Container(
-                    height: 10,
-                    color: HexColor('#F1EFF2'),
-                  ),*/
                   _buildMenuBar(S.of(context).my_contract, Icons.menu, () {
                     if (_wallet != null) {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
@@ -190,29 +158,6 @@ class _MyPageState extends State<MyPage> {
                 ],
               ),
             ),
-            /*Padding(
-              padding: const EdgeInsets.only(top: 8, bottom: 16, left: 16),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    S.of(context).dapp_setting,
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Divider(height: 0),
-                _buildDMapItem(Icons.location_on, S.of(context).private_share,
-                    S.of(context).private_share_receive_address(shortBlockChainAddress(_pubKey)), () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
-                }),
-                Divider(height: 0),
-              ],
-            )*/
           ],
         ),
       ),
@@ -264,93 +209,6 @@ class _MyPageState extends State<MyPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDMapItem(IconData iconData, String title, String description, Function ontap) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: ontap,
-        child: Ink(
-          color: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Icon(iconData, color: Color(0xffb4b4b4), size: 32),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    description,
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-              Spacer(),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.black54,
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildScanQrCodeRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        InkWell(
-            onTap: () async {
-              // todo: test_jison_0429
-              String scanStr = await BarcodeScanner.scan();
-              print("[scan] indexInt= $scanStr");
-              if (scanStr == null) {
-                return;
-              } else if (scanStr.contains("share?id=")) {
-                int indexInt = scanStr.indexOf("=");
-                String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
-                Application.router
-                    .navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-              } else if (scanStr.contains("http") || scanStr.contains("https")) {
-                scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
-                Application.router.navigateTo(context, Routes.toolspage_webview_page + "?initUrl=$scanStr");
-              } else {
-                Application.router.navigateTo(context, Routes.toolspage_qrcode_page + "?qrCodeStr=$scanStr");
-              }
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    ExtendsIconFont.qrcode_scan,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(
-                      S.of(context).scan,
-                      style: TextStyle(fontSize: 14, color: Colors.white),
-                    ),
-                  )
-                ],
-              ),
-            )),
-      ],
     );
   }
 
@@ -433,7 +291,7 @@ class _MyPageState extends State<MyPage> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               goSetWallet(wallet);
             },
             child: Column(
@@ -462,12 +320,12 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  void goSetWallet(Wallet wallet){
+  void goSetWallet(Wallet wallet) {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 //    print(currentRouteName);
-    Application.router.navigateTo(
-        context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router
+        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {

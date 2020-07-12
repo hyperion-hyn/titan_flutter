@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,54 +9,82 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/contribution/add_poi/add_position_page_v2.dart';
-import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
+import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
-import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/enter_wallet_password.dart';
+
+import 'add_poi/select_position_page.dart';
 
 class ContributionTasksPage extends StatefulWidget {
-  static var scanSignal = "scanSignal";
-  static var confirmPOI = "confirmPOI";
-  static var confirmPOI2 = "confirmPOI2";
-  static var postPOI = "postPOI";
-
   @override
   State<StatefulWidget> createState() {
     return _DataContributionState();
   }
 }
 
-class _DataContributionState extends State<ContributionTasksPage> with RouteAware {
-  final int TAST_TIMES_ONE = 1;
-  final int TAST_TIMES_TWICE = 2;
+class _DataContributionState extends State<ContributionTasksPage>
+    with RouteAware {
+//  WalletBloc _walletBloc = WalletBloc();
+//
+//  StreamSubscription _eventbusSubcription;
+//  WalletService _walletService = WalletService();
 
   @override
-  void didChangeDependencies() async {
+  void didChangeDependencies() {
     super.didChangeDependencies();
-
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    PositionApi().updateEthAddress();
   }
 
   @override
-  void didPopNext() {}
+  void didPopNext() {
+    //print("didPopNext");
+    doDidPopNext();
+  }
+
+  Future doDidPopNext() async {
+//    if (currentWalletVo != null) {
+//      String defaultWalletFileName = await _walletService.getDefaultWalletFileName();
+//      //logger.i("defaultWalletFileName:$defaultWalletFileName");
+//      logger.i("defaultWalletFileName:$defaultWalletFileName");
+//      String updateWalletFileName = currentWalletVo.wallet.keystore.fileName;
+//      //logger.i("updateWalletFileName:$updateWalletFileName");
+//      if (defaultWalletFileName == updateWalletFileName) {
+//        //logger.i("do UpdateWalletEvent");
+//        _walletBloc.add(UpdateWalletEvent(currentWalletVo));
+//      } else {
+//        currentWalletVo = null;
+//        //logger.i("do ScanWalletEvent");
+//        _walletBloc.add(ScanWalletEvent());
+//      }
+//    } else {
+//      _walletBloc.add(ScanWalletEvent());
+//    }
+  }
 
   @override
   void dispose() {
+//    _eventbusSubcription?.cancel();
+//    routeObserver.unsubscribe(this);
     super.dispose();
   }
 
   @override
   void initState() {
+//    _walletBloc.add(ScanWalletEvent());
+//
+//    _eventbusSubcription = eventBus.on().listen((event) {
+//      if (event is ScanWalletEvent) {
+//        _walletBloc.add(ScanWalletEvent());
+//      }
+//    });
     super.initState();
   }
 
@@ -84,7 +111,39 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     } else {
       return _taskListView();
     }
+//    return BlocBuilder<WalletBloc, WalletState>(
+//      bloc: _walletBloc,
+//      builder: (BuildContext context, WalletState state) {
+//        if (state is WalletEmptyState) {
+//          return _makeWalletGuideView();
+////          return _listView();
+//        } else if (state is ShowWalletState) {
+//          currentWalletVo = state.wallet;
+////          return _walletTipsView();
+//          return _listView();
+//        } else if (state is ScanWalletLoadingState) {
+//          return _buildLoading(context);
+//        } else {
+//          return Container(
+//            width: 0.0,
+//            height: 0.0,
+//          );
+//        }
+//      },
+//    );
   }
+
+//  Widget _buildLoading(context) {
+//    return Center(
+//      child: SizedBox(
+//        height: 40,
+//        width: 40,
+//        child: CircularProgressIndicator(
+//          strokeWidth: 3,
+//        ),
+//      ),
+//    );
+//  }
 
   Widget _makeWalletGuideView() {
     return Center(
@@ -119,20 +178,31 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
+//                height: 38,
+//                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    Application.router.navigateTo(context,
-                        Routes.wallet_create + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                    Application.router.navigateTo(
+                        context,
+                        Routes.wallet_create +
+                            '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+
+//                    createWalletPopUtilName = '/data_contribution_page';
+//                    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateAccountPage()));
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).create_wallet,
-                        style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -143,20 +213,30 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: SizedBox(
+//                height: 38,
+//                width: 152,
                 child: FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(38)),
+                      side: BorderSide(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(38)),
                   onPressed: () {
-                    Application.router.navigateTo(context,
-                        Routes.wallet_import + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+                    Application.router.navigateTo(
+                        context,
+                        Routes.wallet_import +
+                            '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}');
+//                    createWalletPopUtilName = '/data_contribution_page';
+//                    Navigator.push(context, MaterialPageRoute(builder: (context) => ImportAccountPage()));
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40.0, vertical: 12.0),
                       child: Text(
                         S.of(context).import_wallet,
-                        style:
-                            TextStyle(fontSize: 14, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -171,13 +251,6 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
   }
 
   Widget _taskListView() {
-    var scanTimes = 0;
-    var postPoiTimes = 0;
-    var confirmPoiTimes = Random().nextInt(10);
-    var scanTimesReal = 0;
-    var postPoiTimesReal = 0;
-    var confirmPoiTimesReal = 0;
-
     return ListView(
       children: <Widget>[
         Container(
@@ -189,61 +262,79 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           height: 8,
           color: Colors.grey[200],
         ),
-        _buildTaskItem('signal', S.of(context).scan_signal_item_title, scanTimes ?? 0, () async {
+        _buildTaskItem('signal', S.of(context).scan_signal_item_title,
+            () async {
           bool status = await checkSignalPermission();
           print('[Permission] -->status:$status');
 
           if (status) {
             var latLng = await getLatlng();
             if (latLng != null) {
-              var latLngStr = json.encode(LocationConverter.latLngToJson(latLng));
-              Application.router.navigateTo(context, Routes.contribute_scan_signal + '?latLng=$latLngStr');
+              var latLngStr =
+                  json.encode(LocationConverter.latLngToJson(latLng));
+              Application.router.navigateTo(context,
+                  Routes.contribute_scan_signal + '?latLng=$latLngStr');
+//              Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => ScanSignalContributionPage(initLocation: latLng),
+//                ),
+//              );
             }
           }
-        }, isOpen: true, realTimes: scanTimesReal),
+        }, isOpen: true),
         _divider(),
-        _buildTaskItem('position', S.of(context).add_poi_item_title, postPoiTimes ?? 0, () async {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddPositionPageV2(),
-            ),
-          );
-        }, isOpen: true, realTimes: postPoiTimesReal),
-        _divider(),
-        _buildTaskItem('check', S.of(context).check_poi_item_title, confirmPoiTimes ?? 0, () async {
+        _buildTaskItem('position', S.of(context).add_poi_item_title, () async {
           var latlng = await getLatlng();
           if (latlng != null) {
-            // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
-            // todo: test_jison_0707
-            //confirmPoiTimes = 0;
-            print("[Radion] confirmPoiTimes:$confirmPoiTimes");
-
-            if (confirmPoiTimes % 2 == 0 /*|| env.buildType == BuildType.DEV*/) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => VerifyPoiPageV2(userPosition: latlng),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectPositionPage(
+                  initLocation: latlng,
+                  type: SelectPositionPage.SELECT_PAGE_TYPE_POI,
                 ),
-              );
-            } else {
+              ),
+            );
+          }
+        }, isOpen: true),
+        _divider(),
+        _buildTaskItem('check', S.of(context).check_poi_item_title, () async {
+          var latlng = await getLatlng();
+          if (latlng != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => VerifyPoiPage(userPosition: latlng),
+              ),
+            );
+          }
+        }, isOpen: true),
+        _divider(),
+        if (Platform.isAndroid)
+          _buildTaskItem('ncov', S.of(context).add_ncov_item_title, () async {
+            var latlng = await getLatlng();
+            if (latlng != null) {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => VerifyPoiPageV3(userPosition: latlng),
+                  builder: (context) => SelectPositionPage(
+                    initLocation: latlng,
+                    type: SelectPositionPage.SELECT_PAGE_TYPE_NCOV,
+                  ),
                 ),
               );
             }
-          }
-        }, isOpen: true, realTimes: confirmPoiTimesReal),
-        _divider(),
+          }, isOpen: true),
+        if (Platform.isAndroid) _divider()
       ],
     );
   }
 
   Future<LatLng> getLatlng() async {
-    var latlng =
-        await (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController?.lastKnownLocation();
+    var latlng = await (Keys.mapContainerKey.currentState as MapContainerState)
+        ?.mapboxMapController
+        ?.lastKnownLocation();
     if (latlng == null) {
       UiUtil.showConfirmDialog(
         context,
@@ -273,7 +364,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
               alignment: Alignment.center,
               width: 40,
               height: 40,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor),
               child: Stack(
                 children: <Widget>[
                   Align(
@@ -293,7 +386,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 Text(
                   activeWalletVo?.wallet?.keystore?.name ?? "",
                   textAlign: TextAlign.left,
-                  style: TextStyle(fontWeight: FontWeight.w500, color: HexColor('#333333')),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500, color: HexColor('#333333')),
                 ),
                 SizedBox(
                   height: 8,
@@ -301,8 +395,13 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(activeWalletVo?.wallet?.getEthAccount()?.address) ?? "",
-                    style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
+                    shortBlockChainAddress(
+                            activeWalletVo?.wallet?.getEthAccount()?.address) ??
+                        "",
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Color(0xFF9B9B9B),
+                        fontSize: 12),
                   ),
                 )
               ],
@@ -325,8 +424,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     );
   }
 
-  Widget _buildTaskItem(String iconName, String title, int todayTimes, Function ontap,
-      {bool isOpen = false, int realTimes = 0}) {
+  Widget _buildTaskItem(String iconName, String title, Function ontap,
+      {bool isOpen = false}) {
     return InkWell(
       onTap: ontap,
       child: Row(
@@ -342,12 +441,39 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
               )),
           Text(
             title,
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: HexColor('#333333')),
+            style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 14,
+                color: HexColor('#333333')),
           ),
           Spacer(),
+          _end(isOpen: isOpen),
         ],
       ),
     );
+  }
+
+  Widget _end({bool isOpen = false}) {
+    if (isOpen) {
+      return Padding(
+        padding: const EdgeInsets.all(14),
+        child: Icon(
+          Icons.chevron_right,
+          color: HexColor('#E9E9E9'),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18),
+        child: Text(
+          S.of(context).coming_soon,
+          style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 12,
+              color: HexColor('#AAAAAA')),
+        ),
+      );
+    }
   }
 
   Widget _divider() {
@@ -399,7 +525,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     bool blueAvailable = await TitanPlugin.bluetoothEnable();
     if (Platform.isAndroid) {
       if (!blueAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_bluetooth, S.of(context).please_open_bluetooth, () {
+        UiUtil.showDialogs(context, S.of(context).open_bluetooth,
+            S.of(context).please_open_bluetooth, () {
           AppSettings.openBluetoothSettings();
         });
         return false;
@@ -414,7 +541,9 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     if (Platform.isAndroid) {
       bool wifiAvailable = await TitanPlugin.wifiEnable();
       if (!wifiAvailable) {
-        UiUtil.showDialogs(context, S.of(context).open_wifi, S.of(context).please_open_wifi, () {
+        UiUtil.showDialogs(
+            context, S.of(context).open_wifi, S.of(context).please_open_wifi,
+            () {
           AppSettings.openWIFISettings();
         });
         return false;
@@ -423,4 +552,6 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
 
     return true;
   }
+
+
 }

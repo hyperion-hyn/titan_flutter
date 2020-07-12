@@ -15,6 +15,8 @@ import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/bloc/bloc.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
@@ -41,10 +43,6 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
   UserContributionPoi confirmPoiItem;
 
-  bool _isLoadingPageData = true;
-  bool _isLoadPageDataEmpty = false;
-  bool _isLoadPageDataFail = false;
-
   bool _isPostingData = false;
   String language;
   String address;
@@ -55,15 +53,13 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
     language = SettingInheritedModel.of(context).languageCode;
     address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
 
-    _positionBloc.add(ConfirmPositionLoadingEvent());
-    _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition,language,address));
+    _positionBloc.add(GetConfirmPoiDataEvent(widget.userPosition, language, address));
   }
 
   @override
   void initState() {
-
     _positionBloc.listen((state) {
-      if (state is ConfirmPositionPageState) {
+      if (state is GetConfirmPoiDataResultSuccessState) {
         confirmPoiItem = state.confirmPoiItem;
         if (confirmPoiItem?.name == null) {
           showDialog(
@@ -74,6 +70,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
+
                         Navigator.of(context)..pop()..pop();
                       },
                       child: Text(S.of(context).confirm))
@@ -86,13 +83,11 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
         }
       } else if (state is ConfirmPositionResultState) {
         if (state.confirmResult) {
-          Application.router.navigateTo(context,Routes.contribute_position_finish
-              + '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
-//          Navigator.pushReplacement(
-//            context,
-//            MaterialPageRoute(
-//                builder: (context) => FinishAddPositionPage(FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM)),
-//          );
+
+          Application.router.navigateTo(
+              context,
+              Routes.contribute_position_finish +
+                  '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
         }
       }
     });
@@ -112,6 +107,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
 
     super.initState();
   }
+
 
   void _loadOnePoiNeedToBeVerify(LatLng position) async {
     var userPosition = position;
@@ -166,7 +162,6 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
               FlatButton(
                   onPressed: () {
                     _isPostingData = true;
-//                    _positionBloc.add(ConfirmPositionResultLoadingEvent());
                     Navigator.of(context).pop(true);
                   },
                   child: Text(S.of(context).confirm))
@@ -184,11 +179,11 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
     return BlocBuilder<PositionBloc, AllPageState>(
         bloc: _positionBloc,
         builder: (BuildContext context, AllPageState state) {
-          if (state is ConfirmPositionLoadingState) {
+          if (state is GetConfirmDataV2LoadingState) {
             return LoadDataWidget(
               isLoading: true,
             );
-          } else if (state is ConfirmPositionPageState) {
+          } else if (state is GetConfirmPoiDataResultSuccessState) {
             confirmPoiItem = state.confirmPoiItem;
             if (confirmPoiItem?.name == null) {
               return Container(
@@ -213,9 +208,8 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
             }
           } else {
 //            return buildWidgetByNormalState(context, state);
-            return AllPageStateContainer(state,(){
-              _positionBloc.add(ConfirmPositionLoadingEvent());
-              _positionBloc.add(ConfirmPositionPageEvent(widget.userPosition,language,address));
+            return AllPageStateContainer(state, () {
+              _positionBloc.add(GetConfirmPoiDataEvent(widget.userPosition, language, address));
             });
           }
         });
@@ -373,7 +367,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
               onPressed: () async {
                 var option = await showConfirmDialog(S.of(context).poi_confirm_title_error);
                 if (option == true) {
-                  _positionBloc.add(ConfirmPositionResultEvent(0, confirmPoiItem,address));
+                  _positionBloc.add(PostConfirmPoiDataEvent(0, confirmPoiItem, address));
                 }
               },
               child: Row(
@@ -404,7 +398,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
               onPressed: () async {
                 var option = await showConfirmDialog(S.of(context).poi_confirm_title_hint);
                 if (option == true) {
-                  _positionBloc.add(ConfirmPositionResultEvent(1, confirmPoiItem,address));
+                  _positionBloc.add(PostConfirmPoiDataEvent(1, confirmPoiItem, address));
                 }
               },
               child: Row(

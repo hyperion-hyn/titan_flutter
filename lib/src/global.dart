@@ -6,6 +6,9 @@ import 'package:logger/logger.dart';
 
 var logger = Logger();
 
+String userEthAddress = "";
+
+bool isBindSuccess = false;
 //double bottomBarHeight = 65;
 
 /////some const
