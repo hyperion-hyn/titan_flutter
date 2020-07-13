@@ -125,10 +125,9 @@ class FinishImportPage extends StatelessWidget {
       await Future.delayed(Duration(milliseconds: 300));
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateActivatedWalletBalanceEvent());
-
-      ///Use digits password now
-      WalletUtil.useDigitsPwd(wallet);
     }
+    ///Use digits password now
+    WalletUtil.useDigitsPwd(wallet);
     Routes.popUntilCachedEntryRouteName(context);
   }
 
