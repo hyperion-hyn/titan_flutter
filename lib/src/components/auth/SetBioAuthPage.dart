@@ -7,6 +7,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -19,7 +20,9 @@ import 'bloc/auth_bloc.dart';
 import 'bloc/auth_event.dart';
 
 class SetBioAuthPage extends StatefulWidget {
-  SetBioAuthPage();
+  final Wallet _wallet;
+
+  SetBioAuthPage(this._wallet);
 
   @override
   State<StatefulWidget> createState() {
@@ -28,15 +31,15 @@ class SetBioAuthPage extends StatefulWidget {
 }
 
 class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
-  Wallet _wallet;
   final LocalAuthentication auth = LocalAuthentication();
   List<BiometricType> _availableBiometrics = List();
+  AuthConfigModel authConfigModel;
 
   @override
-  void onCreated() {
+  Future<void> onCreated() async {
     // TODO: implement onCreated
     super.onCreated();
-    _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    authConfigModel = await AuthUtil.getAuthConfigByWallet(widget._wallet);
   }
 
   @override
@@ -87,10 +90,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       color: Colors.white,
       child: SwitchListTile(
         title: Text(S.of(context).face_recognition),
-        value: AuthInheritedModel.of(
-          context,
-          aspect: AuthAspect.config,
-        ).authConfigModel.useFace,
+        value: authConfigModel.useFace,
         onChanged: (bool value) async {
           _setBioAuth(BiometricType.face, value);
         },
@@ -103,10 +103,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       color: Colors.white,
       child: SwitchListTile(
         title: Text(S.of(context).fingerprint_recognition),
-        value: AuthInheritedModel.of(
-          context,
-          aspect: AuthAspect.config,
-        ).authConfigModel.useFingerprint,
+        value: authConfigModel.useFingerprint,
         onChanged: (bool value) async {
           _setBioAuth(BiometricType.fingerprint, value);
         },
@@ -211,9 +208,13 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       ///
       var password = await UiUtil.showPasswordDialog(
         context,
-        _wallet,
+        widget._wallet,
         onCheckPwdValid: (String password) async {
-          return WalletUtil.checkPwdValid(context, password);
+          return WalletUtil.checkPwdValid(
+            context,
+            widget._wallet,
+            password,
+          );
         },
         isShowBioAuthIcon: false,
       );
@@ -226,18 +227,27 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
           ///Save password to SecureStorage
           await WalletUtil.savePwdToSecureStorage(
             context,
-            _wallet,
+            widget._wallet,
             password,
           );
+//          ///
+//          BlocProvider.of<AuthBloc>(context).add(
+//            SetBioAuthEvent(
+//              biometricType,
+//              true,
+//              widget._wallet,
+//            ),
+//          );
 
-          ///
-          BlocProvider.of<AuthBloc>(context).add(
-            SetBioAuthEvent(
-              biometricType,
-              true,
-              _wallet,
-            ),
-          );
+          if (biometricType == BiometricType.face) {
+            authConfigModel.useFace = true;
+          } else if (biometricType == BiometricType.fingerprint) {
+            authConfigModel.useFingerprint = true;
+          }
+          authConfigModel.lastBioAuthTime =
+              DateTime.now().millisecondsSinceEpoch;
+
+          AuthUtil.saveAuthConfig(authConfigModel, widget._wallet);
 
           UiUtil.showHintToast(
               context,
@@ -274,11 +284,19 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
             '开启失败');
       }
     } else {
-      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-        biometricType,
-        value,
-        _wallet,
-      ));
+//      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
+//        biometricType,
+//        value,
+//        widget._wallet,
+//      ));
+      if (biometricType == BiometricType.face) {
+        authConfigModel.useFace = false;
+      } else if (biometricType == BiometricType.fingerprint) {
+        authConfigModel.useFingerprint = false;
+      }
+      authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+
+      AuthUtil.saveAuthConfig(authConfigModel, widget._wallet);
     }
     if (mounted) setState(() {});
   }

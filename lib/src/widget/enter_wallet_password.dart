@@ -21,11 +21,13 @@ class EnterWalletPasswordWidget extends StatefulWidget {
   final bool useDigits;
   final CheckPwdValid onPwdSubmitted;
   final bool isShowBioAuthIcon;
+  final Wallet wallet;
 
   EnterWalletPasswordWidget({
     this.useDigits = false,
     this.onPwdSubmitted,
     this.isShowBioAuthIcon = true,
+    this.wallet
   });
 
   @override
@@ -277,7 +279,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
 
   _goToBioAuthSettingPage() async {
     await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SetBioAuthPage()));
+        context, MaterialPageRoute(builder: (context) => SetBioAuthPage(widget.wallet)));
     setState(() {
       _isHideLayout = true;
     });

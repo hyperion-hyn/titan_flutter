@@ -302,7 +302,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SetBioAuthPage()));
+                          builder: (context) => SetBioAuthPage(widget.wallet)));
                 },
                 child: Row(
                   children: <Widget>[

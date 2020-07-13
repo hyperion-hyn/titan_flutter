@@ -134,16 +134,13 @@ class WalletUtil {
 
   static Future<bool> checkPwdValid(
     BuildContext context,
+    Wallet wallet,
     String walletPwd,
   ) async {
     String result;
     try {
       result = await WalletUtil.exportPrivateKey(
-        fileName: WalletInheritedModel.of(context)
-            .activatedWallet
-            .wallet
-            .keystore
-            .fileName,
+        fileName: wallet.keystore.fileName,
         password: walletPwd,
       );
     } on PlatformException catch (e) {
@@ -165,14 +162,13 @@ class WalletUtil {
         '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
 
     ///Check password from secureStorage is correct
-    String result = await WalletUtil.exportPrivateKey(
-      fileName: WalletInheritedModel.of(context)
-          .activatedWallet
-          .wallet
-          .keystore
-          .fileName,
-      password: pwd,
-    );
+    String result;
+    try {
+      result = await WalletUtil.exportPrivateKey(
+        fileName: wallet.keystore.fileName,
+        password: pwd,
+      );
+    } catch (e) {}
     if (result != null) {
       return pwd;
     } else {

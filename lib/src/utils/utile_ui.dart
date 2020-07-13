@@ -87,11 +87,11 @@ class UiUtil {
   // alertView
   static Future<bool> showAlertView<T>(BuildContext context,
       {String title,
-        List<Widget> actions,
-        String content,
-        String detail = "",
-        String boldContent = "",
-        String suffixContent = ""}) {
+      List<Widget> actions,
+      String content,
+      String detail = "",
+      String boldContent = "",
+      String suffixContent = ""}) {
     return showDialog<bool>(
       barrierDismissible: true,
       // 传入 context
@@ -105,7 +105,8 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   Positioned(
@@ -137,17 +138,26 @@ class UiUtil {
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#333333"),
+                                    height: 1.8),
                                 children: [
-                                  TextSpan(
-                                    text: boldContent,
-                                    style: TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
-                                  ),
-                                  TextSpan(
-                                    text: suffixContent,
-                                    style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
-                                  ),
-                                ])),
+                              TextSpan(
+                                text: boldContent,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#FF4C3B"),
+                                    height: 1.8),
+                              ),
+                              TextSpan(
+                                text: suffixContent,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#333333"),
+                                    height: 1.8),
+                              ),
+                            ])),
                       ),
                       if (detail.isNotEmpty)
                         Padding(
@@ -377,56 +387,56 @@ class UiUtil {
 
   static Future<String> showWalletPasswordDialogV2(
     BuildContext context,
-    Wallet activeWallet,{
+    Wallet wallet, {
     String dialogTitle,
-  }
-  ) async {
+  }) async {
     CheckPwdValid onCheckPwdValid = (walletPwd) {
-      return WalletUtil.checkPwdValid(context, walletPwd);
-    };
-    if (AuthInheritedModel.of(
-      context,
-      aspect: AuthAspect.config,
-    ).bioAuthEnabled) {
-      ///Bio-auth is expired, ask for pwd with password dialog.
-      if (AuthInheritedModel.of(
+      return WalletUtil.checkPwdValid(
         context,
-        aspect: AuthAspect.config,
-      ).bioAuthExpired) {
+        wallet,
+        walletPwd,
+      );
+    };
+
+    var authConfig = await AuthUtil.getAuthConfigByWallet(wallet);
+    if (AuthUtil.bioAuthEnabled(authConfig)) {
+      ///Bio-auth is expired, ask for pwd with password dialog.
+      if (AuthUtil.bioAuthExpired(authConfig)) {
         var pwd = await showPasswordDialog(
           context,
-          activeWallet,
+          wallet,
           onCheckPwdValid: onCheckPwdValid,
         );
 
         if (pwd != null) {
           ///Update last bio-auth time
-          BlocProvider.of<AuthBloc>(context).add(
-            SetBioAuthEvent(
-              AuthInheritedModel.of(
-                context,
-                aspect: AuthAspect.config,
-              ).currentBioMetricType,
-              true,
-              activeWallet,
-            ),
-          );
+//          BlocProvider.of<AuthBloc>(context).add(
+//            SetBioAuthEvent(
+//              AuthInheritedModel.of(
+//                context,
+//                aspect: AuthAspect.config,
+//              ).currentBioMetricType,
+//              true,
+//              wallet,
+//            ),
+//          );
+
+          authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+          AuthUtil.saveAuthConfig(authConfig, wallet);
+
           return pwd;
         }
       } else {
         ////BioAuth is not expired, check the password from disk is correct
         var bioAuthResult = await AuthUtil.bioAuth(
           context,
-          AuthInheritedModel.of(
-            context,
-            aspect: AuthAspect.config,
-          ).currentBioMetricType,
+          AuthUtil.currentBioMetricType(authConfig),
         );
 
         if (bioAuthResult != null && bioAuthResult) {
           String pwd = await WalletUtil.getPwdFromSecureStorage(
             context,
-            activeWallet,
+            wallet,
           );
 
           ///Check pwd from SecureStorage
@@ -440,7 +450,7 @@ class UiUtil {
     ///Bio-auth not working, use default password dialog
     var pwd = await UiUtil.showPasswordDialog(
       context,
-      activeWallet,
+      wallet,
       onCheckPwdValid: onCheckPwdValid,
       dialogTitle: dialogTitle,
     );
@@ -452,7 +462,7 @@ class UiUtil {
     Wallet wallet, {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
-        String dialogTitle
+    String dialogTitle,
   }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       wallet,
@@ -466,6 +476,7 @@ class UiUtil {
             title: dialogTitle ?? S.of(context).input_payment_password,
             checkPwdValid: onCheckPwdValid,
             isShowBioAuthIcon: isShowBioAuthIcon,
+            wallet: wallet,
           ));
     } else {
       var pwd = await showModalBottomSheet(
@@ -477,6 +488,7 @@ class UiUtil {
           builder: (BuildContext context) {
             return EnterWalletPasswordWidget(
               isShowBioAuthIcon: isShowBioAuthIcon,
+              wallet: wallet,
             );
           });
       var result = await onCheckPwdValid(pwd);

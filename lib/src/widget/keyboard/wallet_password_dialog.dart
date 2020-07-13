@@ -30,14 +30,15 @@ class WalletPasswordDialog extends StatefulWidget {
   final CheckPwdValid checkPwdValid;
   final bool isDoubleCheck;
   final bool isShowBioAuthIcon;
+  final Wallet wallet;
   bool isFirstTime = true;
 
-  WalletPasswordDialog({
-    this.title,
-    @required this.checkPwdValid,
-    this.isDoubleCheck = false,
-    this.isShowBioAuthIcon = true,
-  });
+  WalletPasswordDialog(
+      {this.title,
+      @required this.checkPwdValid,
+      this.isDoubleCheck = false,
+      this.isShowBioAuthIcon = true,
+      this.wallet});
 
   @override
   BaseState<StatefulWidget> createState() {
@@ -65,7 +66,8 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
   void onCreated() {
     super.onCreated();
     if (!widget.isDoubleCheck) {
-      wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+      //wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+      wallet = widget.wallet;
     }
     widget.title ??= S.of(context).input_payment_password;
   }
@@ -163,8 +165,12 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                                           ),
                                           child: Text(
                                             widget.isDoubleCheck
-                                                ? S.of(context).double_check_password_error
-                                                : S.of(context).fund_password_error,
+                                                ? S
+                                                    .of(context)
+                                                    .double_check_password_error
+                                                : S
+                                                    .of(context)
+                                                    .fund_password_error,
                                             style: TextStyle(
                                               color: Colors.red,
                                             ),
@@ -358,8 +364,8 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
   }
 
   _goToBioAuthSettingPage() async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SetBioAuthPage()));
+    await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => SetBioAuthPage(wallet)));
     setState(() {
       _isHideLayout = true;
     });

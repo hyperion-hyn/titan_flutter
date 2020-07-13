@@ -431,7 +431,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SetBioAuthPage()));
+                      builder: (context) => SetBioAuthPage(widget.walletVo.wallet)));
             },
           ),
           RaisedButton(
