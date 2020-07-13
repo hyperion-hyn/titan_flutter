@@ -673,7 +673,7 @@
   "update_error": "업데이트 오류가 발생했습니다.",
   "has_unconfirm_btc_wait": "아직 확인하지 않은 비트코인 계좌 이체가 있습니다.잠시후 다시 시도해주십시요.",
   "pending": "확인중",
-  "confirm_num": "确认{num}次","확인{num}회",
+  "confirm_num": "확인{num}회",
   "go_to_settings": "설정하기",
   "go_to_setting_page_open_face_id": "설정 페이지에서 얼굴  ID 열기",
   "go_to_setting_page_open_touch_id": "설정 페이지에서 Touch ID 열기",
