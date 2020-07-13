@@ -106,8 +106,12 @@ class PrefsKey {
   static final newsUpdateTime = 'news_update_time';
 
   static final WALLET_USE_DIGITS_PWD_PREFIX = 'digits_pwd';
+
   ///auth
   static const String AUTH_CONFIG = 'auth_config';
+
+  //contribution
+  static const String VERIFY_DATE = 'verify_date';
 }
 
 class SecurePrefsKey {

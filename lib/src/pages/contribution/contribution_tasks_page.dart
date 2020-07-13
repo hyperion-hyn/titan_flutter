@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_position_page_v2.dart';
@@ -215,11 +216,15 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
           var latlng = await getLatlng();
           if (latlng != null) {
             // 注释：第0次，自检：图片， 后面，第N次，ta检查，都是第三方验证，多任务校验
-            // todo: test_jison_0707
-            //confirmPoiTimes = 0;
-            print("[Radion] confirmPoiTimes:$confirmPoiTimes");
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
+            var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
+            //print("[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
-            if (confirmPoiTimes % 2 == 0 /*|| env.buildType == BuildType.DEV*/) {
+
+            if (lastDate > 0 && duration.inDays > 0) {
+              prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
