@@ -300,7 +300,11 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
               firstInputPassword = "";
               widget.isFirstTime = true;
               _pwdInvalid = true;
-              widget.title = S.of(context).input_payment_password;
+              if (!widget.isDoubleCheck) {
+                widget.title = S.of(context).input_payment_password;
+              } else {
+                widget.title = S.of(context).setting_payment_password;
+              }
               _pinPutController.clear();
             });
             if (await Vibration.hasVibrator()) {
