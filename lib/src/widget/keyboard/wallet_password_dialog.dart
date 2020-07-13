@@ -66,8 +66,10 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
     super.onCreated();
     if (!widget.isDoubleCheck) {
       wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+      widget.title ??= S.of(context).input_payment_password;
+    }else{
+      widget.title ??= S.of(context).setting_payment_password;
     }
-    widget.title ??= S.of(context).input_payment_password;
   }
 
   @override
