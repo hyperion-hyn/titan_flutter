@@ -205,7 +205,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         print("[PositionBloc]---------loooon， code:$code, message:$message");
       }
 
-      yield LoadFailState();
+      yield LoadFailState(message: S.of(Keys.homePageKey.currentContext).network_error);
     }
   }
 

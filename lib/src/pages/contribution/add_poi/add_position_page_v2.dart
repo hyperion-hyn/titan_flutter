@@ -472,7 +472,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
             itemCount: outItemCount,
           ),
         ),
-        _buildImageTitleRow("室内", "（最多$_inListImagePathsMaxLength张）", false),
+        _buildImageTitleRow(S.of(context).indoor, "（${S.of(context).most} ${S.of(context).unit_zhang("$_inListImagePathsMaxLength")}）", false),
         Container(
           color: Colors.white,
           height: inContainerHeight,

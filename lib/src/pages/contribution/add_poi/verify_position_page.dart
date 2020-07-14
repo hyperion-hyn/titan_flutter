@@ -125,7 +125,7 @@ class _VerifyPositionState extends State<VerifyPositionPage> {
           tiltGesturesEnabled: false,
           enableLogo: false,
           enableAttribution: false,
-          minMaxZoomPreference: MinMaxZoomPreference(1.1, 21.0),
+          minMaxZoomPreference: MinMaxZoomPreference(1.1, 19.0),
           myLocationEnabled: false,
           languageCode: languageCode,
         ),

@@ -948,7 +948,7 @@ class _Map3NodeContractDetailState
                       Container(
                         height: 4,
                       ),
-                      Text(title, style: TextStyles.textC333S11),
+                      Text(title, style: TextStyles.textC333S11, textAlign: TextAlign.center,),
                     ],
                   )),
                 );

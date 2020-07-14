@@ -85,6 +85,8 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
   List<Map<String, dynamic>> _imageAnswers = [];
   List<String> _imageAnswersLabel = [];
 
+  bool _isKo = false;
+
   // super
   @override
   void onCreated() {
@@ -111,6 +113,9 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
       S.of(context).uncertain
     ];
     _answerDefaultList = [S.of(context).isolation_yes, S.of(context).isolation_no, S.of(context).uncertain];
+
+    var selectedLanguageModel = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
+    _isKo = selectedLanguageModel.locale.languageCode == "ko";
   }
 
   @override
@@ -621,7 +626,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
               },
             ),
           ),
-          if (_answerOfFirstStep != _answerExistList[0])
+          if (S.of(context).name == _titles[_currentIndex])
             InkWell(
               onTap: () async {
                 var option = await _showIgnoreAlertView();
@@ -697,7 +702,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 8, right: 15, top: 8),
+                        padding: EdgeInsets.only(left: _isKo?0:8, right: 15, top: 8),
                         child: RadioButtonGroup(
                           key: GlobalKey(),
                           picked: imageAnswer,
@@ -917,7 +922,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
   void _updateUI({bool isPost = true}) {
     var title = _titles[_currentIndex];
     if (title == S.of(context).name) {
-      _questionList = [S.of(context).map_in_title, _confirmPoiItem.name, S.of(context).map_in_exist_subtitle];
+      _questionList = [S.of(context).map_in_title, "  ${_confirmPoiItem.name}  ", S.of(context).map_in_exist_subtitle];
       _answerList = _answerExistList;
     } else if (title == S.of(context).category) {
       _questionList = [S.of(context).category_title, _confirmPoiItem.category, S.of(context).category_suffix_title];
@@ -925,7 +930,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
     } else if (title == S.of(context).address) {
       _questionList = [
         S.of(context).map_in_title,
-        _confirmPoiItem.name,
+        "  ${_confirmPoiItem.name}  ",
         S.of(context).map_in_subtitle,
         _confirmPoiItem.address
       ];
@@ -974,7 +979,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
           ),
         ),
         SizedBox(
-          width: 20,
+          width: _isKo?10:20,
         ),
         ClickOvalButton(
           confirmTitle.isEmpty ? S.of(context).correct : confirmTitle,
