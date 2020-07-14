@@ -836,5 +836,8 @@
   "update_wallet": "更新钱包",
   "delete_wallet": "删除钱包",
   "bio_auth_title_face": "请验证面容",
-  "bio_auth_title_fingerprint": "请验证指纹"
+  "bio_auth_title_fingerprint": "请验证指纹",
+  "indoor": "室內",
+  "most": "最多",
+  "ps_gas_hint": "PS: 為避免轉賬失敗，系統默認GAS值偏大，最終以實際鏈上GAS扣除量為準。"
 }

@@ -723,5 +723,8 @@
   "delete_wallet": "지갑 삭제",
   "bio_auth_title_face": "당신의 얼굴을 확인하십시오",
   "bio_auth_title_fingerprint": "지문을 확인하십시오",
-  "forgot_password": "비밀번호 분실"
+  "forgot_password": "비밀번호 분실",
+  "indoor": "옥내",
+  "most": "대부분",
+  "ps_gas_hint": "추신 : 전송 실패를 피하기 위해 시스템 기본 GAS 값이 너무 커서 체인에서 실제 GAS 공제가 우선합니다."
 }

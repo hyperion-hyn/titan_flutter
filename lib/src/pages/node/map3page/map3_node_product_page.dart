@@ -184,7 +184,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
               children: <Widget>[
                 Expanded(child: Text("")),
                 SizedBox(
-                  height: 24,
+                  height: 30,
                   width: 92,
                   child: FlatButton(
                     //color: DefaultColors.colorffdb58,

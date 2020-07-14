@@ -354,14 +354,14 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
       dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
-      dateDesc = S.of(context).active + dateDesc;
+      dateDesc = S.of(context).active + " "+ dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
-      dateDesc = S.of(context).expired + dateDesc;
+      dateDesc = S.of(context).left + " " + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).expired + " " + dateDesc;
       break;
 
     case ContractState.DUE:

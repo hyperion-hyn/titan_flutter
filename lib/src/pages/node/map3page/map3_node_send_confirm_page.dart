@@ -394,7 +394,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                         ],
                       ),
                     ),
-                    Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf"))),
+                    Text(S.of(context).ps_gas_hint,style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
                   ],
                 ),
               ),
