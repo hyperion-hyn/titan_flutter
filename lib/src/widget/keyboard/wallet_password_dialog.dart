@@ -101,7 +101,7 @@ class _WalletPasswordDialogState extends BaseState<WalletPasswordDialog> {
                           children: <Widget>[
                             Container(
                               color: Colors.white,
-                              margin: EdgeInsets.all(16.0),
+                              margin: EdgeInsets.all(12.0),
                               child: Column(
                                 children: <Widget>[
                                   Center(

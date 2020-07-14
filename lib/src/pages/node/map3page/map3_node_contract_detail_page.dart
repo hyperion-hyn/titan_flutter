@@ -36,8 +36,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
@@ -53,12 +52,10 @@ class Map3NodeContractDetailPage extends StatefulWidget {
   Map3NodeContractDetailPage(this.contractId);
 
   @override
-  _Map3NodeContractDetailState createState() =>
-      new _Map3NodeContractDetailState();
+  _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
 }
 
-class _Map3NodeContractDetailState
-    extends BaseState<Map3NodeContractDetailPage> {
+class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
 
@@ -94,8 +91,7 @@ class _Map3NodeContractDetailState
 
   get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
-  get _isUserDelegatable =>
-      double.parse(_contractNodeItem?.remainDelegation) > 0;
+  get _isUserDelegatable => double.parse(_contractNodeItem?.remainDelegation) > 0;
 
   get _currentStep {
     if (_contractState == null) return 0;
@@ -306,42 +302,31 @@ class _Map3NodeContractDetailState
       // create
       case UserDelegateState.PRE_CREATE:
       case UserDelegateState.PENDING:
-        if (double.parse(_contractDetailItem?.amountPreDelegation ?? "0") ==
-            0) {
+        if (double.parse(_contractDetailItem?.amountPreDelegation ?? "0") == 0) {
           _contractNotifyDetail = "";
         } else {
-          var input =
-              "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
-          _contractNotifyDetail = S
-              .of(context)
-              .your_last_input_to_contract_func(
-                  input, S.of(context).task_pending);
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
         break;
 
       // cancel
       case UserDelegateState.CANCELLED:
-        _contractNotifyDetail =
-            S.of(context).contract_launch_fail_please_get_back;
+        _contractNotifyDetail = S.of(context).contract_launch_fail_please_get_back;
 
         break;
 
       case UserDelegateState.FAIL:
         if (double.parse(_contractDetailItem?.amountPreDelegation ?? "0") > 0) {
-          var input =
-              "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
-          _contractNotifyDetail = S
-              .of(context)
-              .your_last_input_to_contract_func(
-                  input, S.of(context).task_pending);
+          var input = "${FormatUtil.amountToString(_contractDetailItem.amountPreDelegation)}HYN";
+          _contractNotifyDetail = S.of(context).your_last_input_to_contract_func(input, S.of(context).task_pending);
         }
         break;
 
       case UserDelegateState.PRE_CANCELLED_COLLECTED:
       case UserDelegateState.PRE_HALFDUE_COLLECTED:
       case UserDelegateState.PRE_DUE_COLLECTED:
-        _contractNotifyDetail =
-            S.of(context).collect_request_have_post_please_wait_hint;
+        _contractNotifyDetail = S.of(context).collect_request_have_post_please_wait_hint;
         break;
 
       case UserDelegateState.CANCELLED_COLLECTED:
@@ -363,8 +348,7 @@ class _Map3NodeContractDetailState
         if (double.parse(_contractDetailItem.lastRecord.amount) == 0) {
           _contractNotifyDetail = "";
         } else {
-          BillsOperaState operaState = enumBillsOperaStateFromString(
-              _contractDetailItem.lastRecord.operaType);
+          BillsOperaState operaState = enumBillsOperaStateFromString(_contractDetailItem.lastRecord.operaType);
           var amount = "0";
           if (operaState == BillsOperaState.WITHDRAW) {
             amount = _contractDetailItem.lastRecord.amount;
@@ -372,10 +356,7 @@ class _Map3NodeContractDetailState
             amount = _contractDetailItem.withdrawn;
           }
           var output = "${FormatUtil.amountToString(amount)}HYN";
-          _contractNotifyDetail = S
-              .of(context)
-              .your_last_output_to_contract_func(
-                  output, S.of(context).task_finished);
+          _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_finished);
         }
 
         break;
@@ -398,9 +379,7 @@ class _Map3NodeContractDetailState
       case ContractState.PRE_CREATE:
       case ContractState.PENDING:
         if (double.parse(_contractNodeItem.remainDelegation) > 0) {
-          var remainDelegation =
-              FormatUtil.amountToString(_contractNodeItem.remainDelegation) +
-                  "HYN";
+          var remainDelegation = FormatUtil.amountToString(_contractNodeItem.remainDelegation) + "HYN";
           _contractStateDetail = S.of(context).remain + remainDelegation;
         } else {
           _contractStateDetail = S.of(context).delegation_full_will_active_hint;
@@ -410,9 +389,8 @@ class _Map3NodeContractDetailState
 
       case ContractState.ACTIVE:
         var suffix = S.of(context).expire_date;
-        _contractStateDetail = FormatUtil.timeStringSimple(
-                context, _contractNodeItem.completeSecondsLeft.toDouble()) +
-            suffix;
+        _contractStateDetail =
+            FormatUtil.timeStringSimple(context, _contractNodeItem.completeSecondsLeft.toDouble()) + suffix;
         break;
 
       case ContractState.DUE:
@@ -442,10 +420,8 @@ class _Map3NodeContractDetailState
         case UserDelegateState.ACTIVE:
           var pre = S.of(context).left;
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
-          _contractStateDetail = pre +
-              FormatUtil.timeStringSimple(
-                  context, _contractNodeItem.halfCompleteSecondsLeft) +
-              suffix;
+          _contractStateDetail =
+              pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         case UserDelegateState.HALFDUE:
@@ -456,10 +432,8 @@ class _Map3NodeContractDetailState
         case UserDelegateState.HALFDUE_COLLECTED:
           var suffix = S.of(context).expire_date;
           var pre = S.of(context).left;
-          _contractStateDetail = pre +
-              FormatUtil.timeStringSimple(
-                  context, _contractNodeItem.halfCompleteSecondsLeft) +
-              suffix;
+          _contractStateDetail =
+              pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
         default:
@@ -472,9 +446,7 @@ class _Map3NodeContractDetailState
   void _initBottomButtonData() {
     switch (_contractState) {
       case ContractState.PENDING:
-        _actionTitle = _isDelegated
-            ? S.of(context).increase_investment
-            : S.of(context).join_delegate;
+        _actionTitle = _isDelegated ? S.of(context).increase_investment : S.of(context).join_delegate;
         _visible = true;
         break;
 
@@ -501,8 +473,7 @@ class _Map3NodeContractDetailState
           break;
 
         case UserDelegateState.PENDING:
-          BillsRecordState billsRecordState = enumBillsRecordStateFromString(
-              _contractDetailItem.lastRecord?.state);
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
           switch (billsRecordState) {
             case BillsRecordState.PRE_CREATE:
               _visible = false;
@@ -535,8 +506,7 @@ class _Map3NodeContractDetailState
 
         case UserDelegateState.FAIL:
           _actionTitle = S.of(context).reset_input_contract;
-          if (double.parse(_contractDetailItem?.amountPreDelegation ?? "0") >
-              0) {
+          if (double.parse(_contractDetailItem?.amountPreDelegation ?? "0") > 0) {
             _visible = false;
             _actionTitle = "";
           }
@@ -544,8 +514,7 @@ class _Map3NodeContractDetailState
 
         case UserDelegateState.DUE:
         case UserDelegateState.CANCELLED:
-          BillsRecordState billsRecordState = enumBillsRecordStateFromString(
-              _contractDetailItem.lastRecord?.state);
+          BillsRecordState billsRecordState = enumBillsRecordStateFromString(_contractDetailItem.lastRecord?.state);
           switch (billsRecordState) {
             /*case BillsRecordState.PRE_CREATE:// PRE_DUE_COLLECTED, PRE_HALFDUE_COLLECTED, PRE_CANCELLED_COLLECTED
             case BillsRecordState.CONFIRMED: // DUE_COLLECTED, HALFDUE_COLLECTED ,CANCELLED_COLLECTED
@@ -554,8 +523,7 @@ class _Map3NodeContractDetailState
               break;*/
 
             case BillsRecordState.FAIL:
-              BillsOperaState operaState = enumBillsOperaStateFromString(
-                  _contractDetailItem.lastRecord.operaType);
+              BillsOperaState operaState = enumBillsOperaStateFromString(_contractDetailItem.lastRecord.operaType);
               if (operaState == BillsOperaState.WITHDRAW) {
                 _visible = true;
                 _actionTitle = S.of(context).reset_output_contract;
@@ -606,8 +574,7 @@ class _Map3NodeContractDetailState
   }
 
   get _isShowLaunchDate =>
-      _contractState.index <= ContractState.PENDING.index &&
-      double.parse(_contractNodeItem.remainDelegation) > 0;
+      _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
   @override
   void onCreated() {
@@ -650,8 +617,7 @@ class _Map3NodeContractDetailState
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
       return Scaffold(
-        appBar: AppBar(
-            centerTitle: true, title: Text(S.of(context).node_contract_detail)),
+        appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
@@ -661,9 +627,7 @@ class _Map3NodeContractDetailState
       );
     }
 
-    var remainDay = S.of(context).left +
-        FormatUtil.timeStringSimple(
-            context, _contractNodeItem.launcherSecondsLeft);
+    var remainDay = S.of(context).left + FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft);
 
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
@@ -678,8 +642,7 @@ class _Map3NodeContractDetailState
               SliverToBoxAdapter(
                 child: Container(
                     color: Colors.white,
-                    child: getMap3NodeProductHeadItem(
-                        context, _contractNodeItem,
+                    child: getMap3NodeProductHeadItem(context, _contractNodeItem,
                         isJoin: true, isDetail: false, hasShare: true)),
               ),
 
@@ -745,10 +708,7 @@ class _Map3NodeContractDetailState
             disabledTextColor: Colors.white,
             color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
-                side: BorderSide(
-                    color: _isTransferring
-                        ? Colors.grey[600]
-                        : Theme.of(context).primaryColor),
+                side: BorderSide(color: _isTransferring ? Colors.grey[600] : Theme.of(context).primaryColor),
                 borderRadius: BorderRadius.circular(0)),
             child: Text(_isTransferring ? _actingTitle : _lastActionTitle,
                 style: TextStyle(fontSize: 16, color: Colors.white70)),
@@ -773,13 +733,11 @@ class _Map3NodeContractDetailState
                       fontSize: 14, /*color: _stateColor*/
                     )),
                 Spacer(),
-                if (_contractNodeItem?.remoteNodeUrl?.isNotEmpty == true &&
-                    _contractState == ContractState.ACTIVE)
+                if (_contractNodeItem?.remoteNodeUrl?.isNotEmpty == true && _contractState == ContractState.ACTIVE)
                   InkWell(
                       onTap: _pushNodeInfoAction,
                       child: Text(S.of(context).click_view_detail,
-                          style: TextStyle(
-                              fontSize: 14, color: HexColor("#666666"))))
+                          style: TextStyle(fontSize: 14, color: HexColor("#666666"))))
               ],
             ),
           ),
@@ -809,10 +767,8 @@ class _Map3NodeContractDetailState
                       Container(
                           width: 100,
                           child: Text(S.of(context).service_provider,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#92979a")))),
-                      new Text("${_contractNodeItem.nodeProviderName}",
-                          style: TextStyles.textC333S14)
+                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${_contractNodeItem.nodeProviderName}", style: TextStyles.textC333S14)
                     ],
                   ),
                 ),
@@ -823,10 +779,8 @@ class _Map3NodeContractDetailState
                       Container(
                           width: 100,
                           child: Text(S.of(context).node_location,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#92979a")))),
-                      new Text("${_contractNodeItem.nodeRegionName}",
-                          style: TextStyles.textC333S14)
+                              style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                      new Text("${_contractNodeItem.nodeRegionName}", style: TextStyles.textC333S14)
                     ],
                   ),
                 ),
@@ -840,28 +794,21 @@ class _Map3NodeContractDetailState
   }
 
   Widget _contractNotifyWidget() {
-    if (!_isDelegated ||
-        _contractDetailItem == null ||
-        _userDelegateState == null) {
+    if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
       return Container();
     }
 
-    var amountDelegation =
-        FormatUtil.amountToString(_contractDetailItem.amountDelegation);
-    var total = double.parse(_contractDetailItem.expectedYield) +
-        double.parse(_contractDetailItem.amountDelegation);
+    var amountDelegation = FormatUtil.amountToString(_contractDetailItem.amountDelegation);
+    var total = double.parse(_contractDetailItem.expectedYield) + double.parse(_contractDetailItem.amountDelegation);
     var expectedYield = FormatUtil.amountToString(total.toString());
     var commission = FormatUtil.amountToString(_contractDetailItem.commission);
-    var textColor = _userDelegateState == UserDelegateState.CANCELLED
-        ? HexColor("#B51414")
-        : HexColor("#5C4304");
-    var withdrawn =
-        FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
-    var managerTip = Map3NodeUtil.managerTip(_contractNodeItem.contract,
-        double.parse(_contractDetailItem.amountDelegation),
+    var textColor = _userDelegateState == UserDelegateState.CANCELLED ? HexColor("#B51414") : HexColor("#5C4304");
+    var withdrawn = FormatUtil.amountToString(_contractDetailItem.withdrawn) + "HYN";
+    var managerTip = Map3NodeUtil.managerTip(
+        _contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation),
         isOwner: _isOwner);
-    var endProfit = Map3NodeUtil.getEndProfit(_contractNodeItem.contract,
-        double.parse(_contractDetailItem.amountDelegation));
+    var endProfit =
+        Map3NodeUtil.getEndProfit(_contractNodeItem.contract, double.parse(_contractDetailItem.amountDelegation));
     print(
         '[Detail] commission:$commission vs $managerTip, expectedYield:$expectedYield vs $endProfit ,withdrawn: $withdrawn}');
 
@@ -884,8 +831,7 @@ class _Map3NodeContractDetailState
                   ),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                       child: Text(
                         _contractNotifyDetail,
                         style: TextStyle(fontSize: 12, color: textColor),
@@ -916,9 +862,7 @@ class _Map3NodeContractDetailState
                     break;
 
                   case 3:
-                    title = _isOwner
-                        ? S.of(context).get_manage_tip_hyn
-                        : S.of(context).out_mange_tip_hyn;
+                    title = _isOwner ? S.of(context).get_manage_tip_hyn : S.of(context).out_mange_tip_hyn;
                     detail = commission;
                     break;
 
@@ -931,14 +875,12 @@ class _Map3NodeContractDetailState
                     break;
                 }
 
-                var isPreCreate =
-                    (_userDelegateState == UserDelegateState.PRE_CREATE);
+                var isPreCreate = (_userDelegateState == UserDelegateState.PRE_CREATE);
                 if (isPreCreate) {
                   detail = "0";
                 }
 
-                TextStyle style = TextStyle(
-                    fontSize: 19, color: color, fontWeight: FontWeight.w600);
+                TextStyle style = TextStyle(fontSize: 19, color: color, fontWeight: FontWeight.w600);
 
                 return Expanded(
                   child: Center(
@@ -948,7 +890,11 @@ class _Map3NodeContractDetailState
                       Container(
                         height: 4,
                       ),
-                      Text(title, style: TextStyles.textC333S11, textAlign: TextAlign.center,),
+                      Text(
+                        title,
+                        style: TextStyles.textC333S11,
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   )),
                 );
@@ -978,22 +924,17 @@ class _Map3NodeContractDetailState
                     height: 10,
                     //color: Colors.red,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: _stateColor,
-                        border: Border.all(color: Colors.grey, width: 1.0)),
+                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: _contractStateDesc,
-                      style: TextStyle(fontSize: 14, color: _stateColor)),
+                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
                 if (_isShowLaunchDate)
                   Text(
                     S.of(context).launcher_time_left(
-                        FormatUtil.timeStringSimple(
-                            context, _contractNodeItem.launcherSecondsLeft)),
+                        FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
                     style: TextStyles.textC999S14,
                   ),
               ],
@@ -1027,9 +968,7 @@ class _Map3NodeContractDetailState
         _contractNodeItem.instanceActiveTime,
         0,
         _contractNodeItem.instanceDueTime,
-        _contractState.index < ContractState.ACTIVE.index
-            ? 0
-            : _contractNodeItem.instanceFinishTime,
+        _contractState.index < ContractState.ACTIVE.index ? 0 : _contractNodeItem.instanceFinishTime,
 
 //        _userDelegateState?.index<UserDelegateState?.ACTIVE?.index? 0:_contractNodeItem.instanceFinishTime,
       ];
@@ -1051,9 +990,7 @@ class _Map3NodeContractDetailState
         _contractNodeItem.instanceStartTime,
         _contractNodeItem.instanceActiveTime,
         _contractNodeItem.instanceDueTime,
-        _contractState.index < ContractState.ACTIVE.index
-            ? 0
-            : _contractNodeItem.instanceFinishTime,
+        _contractState.index < ContractState.ACTIVE.index ? 0 : _contractNodeItem.instanceFinishTime,
       ];
       progressHints = [
         S.of(context).n_day(7.toString()),
@@ -1072,36 +1009,24 @@ class _Map3NodeContractDetailState
       steps: titles.map(
         (title) {
           var index = titles.indexOf(title);
-          var subtitle = subtitles[index] > 0
-              ? FormatUtil.formatDate(subtitles[index])
-              : "";
+          var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
           var date = progressHints[index];
-          var textColor =
-              _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           bool isMiddle = titles.length == 5 && index == 2;
 
           return CustomStep(
             title: Text(
               title,
-              style: TextStyle(
-                  fontSize: isMiddle ? 10 : 12,
-                  color: textColor,
-                  fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: isMiddle ? 10 : 12, color: textColor, fontWeight: FontWeight.normal),
             ),
             progressHint: Text(
               date,
-              style: TextStyle(
-                  fontSize: 12,
-                  color: HexColor("#4B4B4B"),
-                  fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
             ),
             subtitle: Text(
               subtitle,
-              style: TextStyle(
-                  fontSize: 10,
-                  color: textColor,
-                  fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: 10, color: textColor, fontWeight: FontWeight.normal),
             ),
             content: Container(),
             isActive: true,
@@ -1135,8 +1060,7 @@ class _Map3NodeContractDetailState
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(S.of(context).account_flow,
-                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ],
         ),
       ),
@@ -1151,12 +1075,10 @@ class _Map3NodeContractDetailState
       shortName = item.userName.characters.first;
 //      shortName = item.userName.substring(0, 1);
     }
-    String userAddress =
-        shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
+    String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
-    var isPengding = operaState == BillsOperaState.WITHDRAW &&
-        recordState == BillsRecordState.PRE_CREATE;
+    var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
 
     return Container(
       color: Colors.white,
@@ -1175,8 +1097,7 @@ class _Map3NodeContractDetailState
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: walletHeaderWidget(shortName,
-                        address: item.userAddress),
+                    child: walletHeaderWidget(shortName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,
@@ -1188,10 +1109,7 @@ class _Map3NodeContractDetailState
                           RichText(
                             text: TextSpan(
                               text: "${item.userName}",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: HexColor("#000000"),
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
                             ),
                           ),
                           Container(
@@ -1199,8 +1117,7 @@ class _Map3NodeContractDetailState
                           ),
                           Text(
                             userAddress,
-                            style: TextStyle(
-                                fontSize: 12, color: HexColor("#999999")),
+                            style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                           ),
                         ],
                       ),
@@ -1221,13 +1138,8 @@ class _Map3NodeContractDetailState
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                isPengding
-                                    ? "*"
-                                    : FormatUtil.amountToString(item.amount),
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    fontWeight: FontWeight.bold),
+                                isPengding ? "*" : FormatUtil.amountToString(item.amount),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
                             _billStateWidget(item)
@@ -1236,11 +1148,8 @@ class _Map3NodeContractDetailState
                         Container(
                           height: 8.0,
                         ),
-                        Text(
-                            FormatUtil.formatDate(item.createAt,
-                                isSecond: true),
-                            style: TextStyle(
-                                fontSize: 10, color: HexColor("#999999")))
+                        Text(FormatUtil.formatDate(item.createAt, isSecond: true),
+                            style: TextStyle(fontSize: 10, color: HexColor("#999999")))
                       ],
                     ),
                   ),
@@ -1281,10 +1190,7 @@ class _Map3NodeContractDetailState
               operaState == BillsOperaState.DELEGATE
                   ? S.of(context).input_confirm_pending
                   : S.of(context).output_confirm_pending,
-              style: TextStyle(
-                  fontSize: 6,
-                  color: HexColor("#FFFFFF"),
-                  fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
             ),
           ),
         );
@@ -1292,19 +1198,14 @@ class _Map3NodeContractDetailState
 
       case BillsRecordState.FAIL:
         return Container(
-          decoration: BoxDecoration(
-              color: HexColor("#F2F2F2"),
-              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
             child: Text(
               operaState == BillsOperaState.DELEGATE
                   ? S.of(context).input_confirm_fail
                   : S.of(context).output_confirm_fail,
-              style: TextStyle(
-                  fontSize: 6,
-                  color: HexColor("#CC2D1E"),
-                  fontWeight: FontWeight.normal),
+              style: TextStyle(fontSize: 6, color: HexColor("#CC2D1E"), fontWeight: FontWeight.normal),
             ),
           ),
         );
@@ -1313,33 +1214,25 @@ class _Map3NodeContractDetailState
       default:
         if (operaState == BillsOperaState.DELEGATE) {
           return Container(
-            decoration: BoxDecoration(
-                color: HexColor("#F2F2F2"),
-                borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            decoration:
+                BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
               child: Text(
                 S.of(context).input_confirm_success,
-                style: TextStyle(
-                    fontSize: 6,
-                    color: HexColor("#999999"),
-                    fontWeight: FontWeight.normal),
+                style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
               ),
             ),
           );
         } else {
           return Container(
-            decoration: BoxDecoration(
-                color: HexColor("#1FB9C7"),
-                borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            decoration:
+                BoxDecoration(color: HexColor("#1FB9C7"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
               child: Text(
                 S.of(context).output_confirm_success,
-                style: TextStyle(
-                    fontSize: 6,
-                    color: HexColor("#FFFFFF"),
-                    fontWeight: FontWeight.normal),
+                style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
               ),
             ),
           );
@@ -1353,8 +1246,8 @@ class _Map3NodeContractDetailState
       _currentPage = 0;
       _delegateRecordList = [];
 
-      List<ContractDelegateRecordItem> tempMemberList = await _nodeApi
-          .getContractDelegateRecord(widget.contractId, page: _currentPage);
+      List<ContractDelegateRecordItem> tempMemberList =
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1374,8 +1267,8 @@ class _Map3NodeContractDetailState
   Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<ContractDelegateRecordItem> tempMemberList = await _nodeApi
-          .getContractDelegateRecord(widget.contractId, page: _currentPage);
+      List<ContractDelegateRecordItem> tempMemberList =
+          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1400,20 +1293,16 @@ class _Map3NodeContractDetailState
     try {
       // 0.
       if (_isNoWallet) {
-        _contractNodeItem =
-            await _api.getContractInstanceItem("${widget.contractId}");
+        _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
       } else {
-        _isDelegated =
-            await _api.checkIsDelegatedContractInstance(widget.contractId);
+        _isDelegated = await _api.checkIsDelegatedContractInstance(widget.contractId);
         if (_isDelegated) {
           _contractDetailItem = await _api.getContractDetail(widget.contractId);
           _contractNodeItem = _contractDetailItem?.instance;
 
-          _userDelegateState =
-              enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
+          _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
         } else {
-          _contractNodeItem =
-              await _api.getContractInstanceItem("${widget.contractId}");
+          _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
         }
       }
 
@@ -1472,7 +1361,6 @@ class _Map3NodeContractDetailState
     var walletPassword = await UiUtil.showWalletPasswordDialogV2(
       context,
       _wallet,
-
     );
 
     if (walletPassword == null) {
@@ -1487,48 +1375,32 @@ class _Map3NodeContractDetailState
         });
       }
 
-      var gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .gasPriceRecommend;
+      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
       var gasPrice = gasPriceRecommend.average.toInt();
 
-      var gasLimit = SettingInheritedModel.ofConfig(context)
-          .systemConfigEntity
-          .collectMap3NodeCreatorGasLimit;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
       if (_userDelegateState == UserDelegateState.HALFDUE) {
-        gasLimit = SettingInheritedModel.ofConfig(context)
-            .systemConfigEntity
-            .collectHalfMap3NodeGasLimit;
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectHalfMap3NodeGasLimit;
       } else {
         if (_isOwner) {
           int delegatorCount = _contractDetailItem.delegatorCount;
           if (delegatorCount <= 21) {
-            gasLimit = SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .collectMap3NodeCreatorGasLimit21;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
           } else if (delegatorCount > 21 && delegatorCount <= 41) {
-            gasLimit = SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .collectMap3NodeCreatorGasLimit41;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
           } else if (delegatorCount > 41 && delegatorCount <= 61) {
-            gasLimit = SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .collectMap3NodeCreatorGasLimit61;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
           } else {
-            gasLimit = SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .collectMap3NodeCreatorGasLimit81;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
           }
           print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
         } else {
-          gasLimit = SettingInheritedModel.ofConfig(context)
-              .systemConfigEntity
-              .collectMap3NodePartnerGasLimit;
+          gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodePartnerGasLimit;
         }
       }
 
-      var success = await _api.withdrawContractInstance(_contractNodeItem,
-          WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
+      var success = await _api.withdrawContractInstance(
+          _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
       if (success == "success") {
 //        await UiUtil.showSetBioAuthDialog(
 //          context,
@@ -1562,9 +1434,7 @@ class _Map3NodeContractDetailState
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
       } else if (_ is RPCError) {
-        Fluttertoast.showToast(
-            msg: MemoryCache.contractErrorStr(_.message),
-            toastLength: Toast.LENGTH_LONG);
+        Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
       } else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
@@ -1579,16 +1449,14 @@ class _Map3NodeContractDetailState
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                    initUrl: _contractNodeItem.remoteNodeUrl ??
-                        "https://www.map3.network",
+                    initUrl: _contractNodeItem.remoteNodeUrl ?? "https://www.map3.network",
                     title: "",
                   )));
     }
   }
 
   void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
-    var isChinaMainland =
-        SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
     if (url != null) {
       Navigator.push(
@@ -1603,9 +1471,7 @@ class _Map3NodeContractDetailState
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context,
-        Routes.map3node_create_wallet +
-            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
@@ -1616,18 +1482,14 @@ class _Map3NodeContractDetailState
       });
     }
 
-    var entryRouteName =
-        Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    await Application.router.navigateTo(
-        context,
-        Routes.map3node_join_contract_page +
-            "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    await Application.router.navigateTo(context,
+        Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
     _nextAction();
   }
 
   void _broadcaseContractAction() async {
-    var entryRouteName =
-        Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(
         context,
         Routes.map3node_broadcase_success_page +
