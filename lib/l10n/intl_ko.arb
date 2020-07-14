@@ -411,7 +411,7 @@
   "signal_total_data": "총 신호 데이터",
   "poi_total_data": "POI 데이터 분포",
   "wait_start_node_contract": "잠시만 기다려 주세요. 곧 노드 계약 됩니다",
-  "earth_outpace_server_node": "전세계 초과 몇% 이상 지구 서비스 사이트",
+  "earth_outpace_server_node": "전세계 초과 몇%d 이상 지구 서비스 사이트",
   "map_provide_stable_server": "하이페리온은 안정적이고 신뢰할 수 있는 지도 서비스를 제공합니다",
   "create_contract": "계약 만들기",
   "highest": "최고",

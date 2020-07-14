@@ -412,7 +412,7 @@
   "signal_total_data": "Total signal data:",
   "poi_total_data": "POI data distribution:",
   "wait_start_node_contract": "Pending contract",
-  "earth_outpace_server_node": "Over % global service nodes",
+  "earth_outpace_server_node": "Over %d global service nodes",
   "map_provide_stable_server": "Serves stable and reliable map data to Hyperion MapChain",
   "create_contract": "Create a contract",
   "highest": "Highest",
