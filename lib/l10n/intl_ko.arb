@@ -539,7 +539,7 @@
   "get_device_fail_cant_contribution": "설비 정보 권한 획득에 실패하여 인근 신호 정보를 기여할수 없습니다.",
   "month": "월",
   "day": "일",
-  "create_import_wallet_account": "지갑 계정 새로 만들기/가져오기",
+  "create_import_wallet_account": "지갑 생성 / 소개",
   "isnt_trustwallet_cant_export": "TrustWallet 지갑이 아니므로 도움말 가져오기를 지원할수 없습니다.",
   "example": "만일",
   "can_use": "사용 가능",
