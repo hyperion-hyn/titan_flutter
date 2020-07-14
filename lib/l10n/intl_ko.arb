@@ -421,7 +421,7 @@
   "node_version": "노드 버전",
   "service_provider": "서비스 공급자",
   "node_location": "노드 위치",
-  "please_confirm_eth_gas_enough": "请确保钱包账户（{walletName}）的ETH GAS费充足",
+  "please_confirm_eth_gas_enough": "지갑 계정 （{walletName}）의 ETH GAS비용이 충족하도록 확보해야 합니다.",
   "create_no_enough_hyn_start_fail": "생성 후 7일 이내에 필요한 HYN을 시작하기에 충분한 HYN이 축적되어 있지 않으면, Map3 노드 모기지 계약이 실패되고 투자된 HYN은 자체적으로 회수할 수 있습니다.",
   "contract_create_cant_destroy": "Map3 노드 모기지 계약이 생성된 후에 취소할 수 없습니다",
   "freeze_balance_reward_direct_push": "노드를 만들려면 직접 추천인에게 추천장려금을 지불하기 위해 500U 계정 잔액을 일시적으로 동결해야 합니다. 추천장려금은 노드 총 수익의 5 %",
