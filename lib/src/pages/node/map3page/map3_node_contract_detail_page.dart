@@ -1464,7 +1464,7 @@ class _Map3NodeContractDetailState
       source = AppSource.STARRICH;
     }
 
-    if (_contractNodeItem.appSource != source.index) {
+    if (_contractNodeItem.appSource != source.index && _isOwner) {
       Fluttertoast.showToast(msg: S.of(context).node_not_create_by_app_withdraw_fail(S.of(context).app_name));
       return;
     }
