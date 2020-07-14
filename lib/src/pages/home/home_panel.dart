@@ -858,10 +858,16 @@ class HomePanelState extends State<HomePanel> {
     if (scanStr == null) {
       return;
     } else if (scanStr.contains("share?id=")) {
-      int indexInt = scanStr.indexOf("=");
-      String contractId = scanStr.substring(indexInt + 1, indexInt + 2);
+      var andList = scanStr.split("&");
+      if(andList.length == 0){
+        return;
+      }
+      var idList = andList[0].split("id=");
+      if(idList.length < 1){
+        return;
+      }
       Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + "?contractId=$contractId");
+          Routes.map3node_contract_detail_page + "?contractId=${idList[1]}");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(
