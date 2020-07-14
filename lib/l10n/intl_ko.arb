@@ -828,5 +828,6 @@
   "task_failed": "미션 실패",
   "task_is_not_finish": "미션 미 완성",
   "false_data_at_location_detail_toast": "당신이 제출한 지점은 허위 데이터가 존재합니다.",
+  "wallet_password_decrypt": "지갑 비밀번호를 사용하여 해독",
   "you_still_have_unfinished_tasks_detail_toast": "화이팅하세요,아직 완성하지 못한 미션이 있습니다."
 }
