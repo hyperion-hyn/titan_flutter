@@ -274,7 +274,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
                 height: 30,
               ),
             ),
-            '开启失败');
+            S.of(context).set_bio_auth_fail);
       }
     } else {
 //      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
