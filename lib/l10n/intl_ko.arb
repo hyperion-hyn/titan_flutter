@@ -715,12 +715,13 @@
   "to_be_confirmed": "확인중",
   "unconfirmed_btc_transfer_please_try_again_later_hint": "미확인 상태의 비트코인 계좌 이체가 있습니다.잠시후 다시 시도해주십시요.",
   "transaction_detail_state_func": "확인{transactionDetailState}회",
-  "setting_payment_password": "请设置支付密码",
+  "setting_payment_password": "결제 비밀번호를 설정하십시오",
   "set_bio_auth_success": "성공적으로 열다",
   "set_bio_auth_fail": "열지 못했습니다",
-  "unlock_decrypted_location": "解开加密位置",
-  "update_wallet": "更新钱包",
-  "delete_wallet": "删除钱包",
+  "unlock_decrypted_location": "암호화 된 위치를 잠금 해제",
+  "update_wallet": "지갑 업데이트",
+  "delete_wallet": "지갑 삭제",
   "bio_auth_title_face": "당신의 얼굴을 확인하십시오",
-  "bio_auth_title_fingerprint": "지문을 확인하십시오"
+  "bio_auth_title_fingerprint": "지문을 확인하십시오",
+  "forgot_password": "비밀번호 분실"
 }

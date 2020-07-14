@@ -52,7 +52,7 @@ class AuthUtil {
           androidAuthStrings: androidStrings,
           iOSAuthStrings: iosStrings,
           sensitiveTransaction: true,
-          localizedReason: '');
+          localizedReason: ' ');
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         await showDialog(
