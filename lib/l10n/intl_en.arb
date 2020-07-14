@@ -830,5 +830,7 @@
   "false_data_at_location_detail_toast": "您提交的地点存在虚假数据!",
   "you_still_have_unfinished_tasks_detail_toast": "加油哦，你还有任务未完成",
   "wallet_password_decrypt": "使用钱包密码解密",
-  "setting_payment_password": "请设置支付密码"
+  "setting_payment_password": "请设置支付密码",
+  "set_bio_auth_success": "Turn on successfully",
+  "set_bio_auth_fail": "Failed to turn on"
 }

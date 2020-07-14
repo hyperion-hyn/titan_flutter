@@ -87,6 +87,7 @@ class _AuthManagerState extends BaseState<_AuthManager> {
                 state.biometricType == BiometricType.face) {
               authConfigModel.useFace = state.value;
             }
+
             if (authConfigModel.availableBiometricTypes
                     .contains(BiometricType.fingerprint) &&
                 state.biometricType == BiometricType.fingerprint) {
@@ -95,9 +96,12 @@ class _AuthManagerState extends BaseState<_AuthManager> {
 
             authConfigModel.lastBioAuthTime =
                 DateTime.now().millisecondsSinceEpoch;
+
             AppCache.saveValue(
-                '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}',
-                json.encode(authConfigModel.toJSON()));
+              '${PrefsKey.AUTH_CONFIG}_${state.wallet.keystore.fileName}',
+              json.encode(authConfigModel.toJSON()),
+            );
+
             print('SetBioAuthState:::: $authConfigModel');
           }
           setState(() {});

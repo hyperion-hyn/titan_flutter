@@ -117,8 +117,6 @@ class AuthUtil {
         availableBiometricTypes: availableBiometricTypes,
       );
     }
-    print('getAuthConfigByWallet: authConfigStr: ${authConfigStr}');
-    print('getAuthConfigByWallet: authConfig: ${authConfigModel.toJSON()}');
     return authConfigModel;
   }
 

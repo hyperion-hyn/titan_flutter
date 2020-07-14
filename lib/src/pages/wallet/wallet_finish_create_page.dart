@@ -34,7 +34,7 @@ class FinishCreatePage extends StatelessWidget {
           ),
         ),
         body: WillPopScope(
-          onWillPop: (){
+          onWillPop: () {
             onClosePage(context);
             return;
           },
@@ -58,7 +58,8 @@ class FinishCreatePage extends StatelessWidget {
                     child: Text(
                       S.of(context).wallet_create_success,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
                   Padding(

@@ -95,7 +95,7 @@ class HomePanelState extends State<HomePanel> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       //margin: EdgeInsets.only(top: 16),
-      height: 180,
+      height: 190,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -219,11 +219,17 @@ class HomePanelState extends State<HomePanel> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Text(
-                                      S.of(context).Hyperion,
-                                      style: TextStyle(
+                                    Container(
+                                      width: 100,
+                                      child: Text(
+                                        S.of(context).Hyperion,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.white),
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
@@ -668,7 +674,9 @@ class HomePanelState extends State<HomePanel> {
                   color: Color(0xff777777),
                 ),
               ),
-              SizedBox(width: 34,),
+              SizedBox(
+                width: 34,
+              ),
               Text(
                 S.of(context).search_or_decode,
                 style: TextStyle(
@@ -711,18 +719,18 @@ class HomePanelState extends State<HomePanel> {
       "hospital"
     ];
     List<String> searchTexts = [
-    S.of(context).foods,
-    S.of(context).hotel,
-    S.of(context).attraction,
-    S.of(context).paking,
-    S.of(context).gas_station,
-    S.of(context).bank,
-    S.of(context).supermarket,
-    S.of(context).mall,
-    S.of(context).internet_bar,
-    S.of(context).toilet,
-    S.of(context).cafe,
-    S.of(context).hospital
+      S.of(context).foods,
+      S.of(context).hotel,
+      S.of(context).attraction,
+      S.of(context).paking,
+      S.of(context).gas_station,
+      S.of(context).bank,
+      S.of(context).supermarket,
+      S.of(context).mall,
+      S.of(context).internet_bar,
+      S.of(context).toilet,
+      S.of(context).cafe,
+      S.of(context).hospital
     ];
     List<String> titles = [
       S.of(context).foods,
@@ -801,7 +809,7 @@ class HomePanelState extends State<HomePanel> {
 
   Widget _category() {
     return Container(
-      padding: const EdgeInsets.only(top:3),
+      padding: const EdgeInsets.only(top: 3),
       height: 55,
       //color: Colors.red,
       child: ListView.builder(
@@ -826,10 +834,11 @@ class HomePanelState extends State<HomePanel> {
                 alignment: Alignment.center,
                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 2),
                 decoration: BoxDecoration(
-                    border: Border.all(color: HexColor("#dedede")),
-                    borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: HexColor("#dedede")),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(model.title,style: TextStyle(fontSize: 15,color: HexColor("#999999"))),
+                child: Text(model.title,
+                    style: TextStyle(fontSize: 15, color: HexColor("#999999"))),
               ),
             ),
           );

@@ -715,5 +715,7 @@
   "to_be_confirmed": "확인중",
   "unconfirmed_btc_transfer_please_try_again_later_hint": "미확인 상태의 비트코인 계좌 이체가 있습니다.잠시후 다시 시도해주십시요.",
   "transaction_detail_state_func": "확인{transactionDetailState}회",
-  "setting_payment_password": "请设置支付密码"
+  "setting_payment_password": "请设置支付密码",
+  "set_bio_auth_success": "성공적으로 열다",
+  "set_bio_auth_fail": "열지 못했습니다"
 }
