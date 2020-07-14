@@ -207,22 +207,22 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
               context, _activeWallet.wallet,
               dialogTitle: S.of(context).wallet_password_decrypt);
         }
-        if (password != null) {
+        if((password != null && encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) || !encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           Navigator.pop(context);
           (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
           Routes.popUntilCachedEntryRouteName(context);
-
-          var poi = await ciphertextToPoi(
-              Injector.of(context).repository, encryptedMsg,
-              fileName: fileName, password: password);
-
-          ///switch to map page first, then poi can show correctly.
-          BlocProvider.of<AppTabBarBloc>(context)
-              .add(ChangeTabBarItemEvent(index: 0));
-          await Future.delayed(Duration(milliseconds: 300));
-          BlocProvider.of<ScaffoldMapBloc>(context)
-              .add(SearchPoiEvent(poi: poi));
         }
+
+        var poi = await ciphertextToPoi(
+            Injector.of(context).repository, encryptedMsg,
+            fileName: fileName, password: password);
+
+        ///switch to map page first, then poi can show correctly.
+        BlocProvider.of<AppTabBarBloc>(context)
+            .add(ChangeTabBarItemEvent(index: 0));
+        await Future.delayed(Duration(milliseconds: 300));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: poi));
       });
     }
   }
