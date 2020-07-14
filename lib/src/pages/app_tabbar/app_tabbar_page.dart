@@ -72,6 +72,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
+  var homePageFirst = true;
 
   @override
   void initState() {
@@ -129,6 +130,18 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(AppTabBarPage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -548,7 +561,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     } else {
       return BlocProvider(
           create: (ctx) => HomeBloc(ctx),
-          child: HomePage(key: Keys.homePageKey));
+          child: HomePage(homePageFirst,  (){
+            homePageFirst = false;
+          },key: Keys.homePageKey ));
     }
   }
 }

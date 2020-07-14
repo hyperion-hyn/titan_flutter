@@ -32,16 +32,27 @@ class ButtonState extends State<CustomKbBtn> {
     return Container(
         height: 52.0,
         width: _screenWidth / 3,
-        color: widget.isDelBtn ? Colors.transparent : Colors.white,
-        child: OutlineButton(
+//        color: widget.isDelBtn ? Colors.transparent : Colors.white,
+        decoration: BoxDecoration(
+          border: Border.all(color: Color(0xffededed), width: 0.5),
+          color: widget.isDelBtn ? Colors.transparent : Colors.white,
+          shape: BoxShape.rectangle,
+//            border: BorderSide(style: color: Color(0xffededed))
+        ),
+        child: FlatButton(
           // 直角
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+//          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
           // 边框颜色
-          borderSide: BorderSide(color: Color(0xffededed)),
-          child: widget.isDelBtn ? Image.asset("res/drawable/ic_password_back_del.png",width: 22,) : Text(
-            widget.text,
-            style: TextStyle(color: Color(0xff333333), fontSize: 20.0),
-          ),
+//           borderSide: BorderSide(style: color: Color(0xffededed)),
+          child: widget.isDelBtn
+              ? Image.asset(
+                  "res/drawable/ic_password_back_del.png",
+                  width: 22,
+                )
+              : Text(
+                  widget.text,
+                  style: TextStyle(color: Color(0xff333333), fontSize: 20.0),
+                ),
           onPressed: back,
         ));
   }

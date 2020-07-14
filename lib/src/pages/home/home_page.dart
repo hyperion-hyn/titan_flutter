@@ -14,7 +14,11 @@ import 'package:titan/src/routes/routes.dart';
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+
+  Function function;
+  bool homePageFirst;
+
+  HomePage(this.homePageFirst, this.function, {Key key}) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
@@ -24,6 +28,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    widget.function();
     return myWidget.DraggableScrollableActuator(
         child: BlocListener<ScaffoldMapBloc, ScaffoldMapState>(
           listener: (context, state) {
@@ -50,7 +55,7 @@ class HomePageState extends State<HomePage> {
     double maxHeight = boxConstraints.biggest.height;
     double anchorSize = 0.5;
     double minChildSize = 88.0 / maxHeight;
-    double initSize = 0.5;
+    double initSize = widget.homePageFirst ? 0.5 : minChildSize;
     EdgeInsets mediaPadding = MediaQuery.of(context).padding;
     double maxChildSize = (maxHeight - mediaPadding.top) / maxHeight;
     //hack, why maxHeight == 0 for the first time of release???
