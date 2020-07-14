@@ -717,5 +717,10 @@
   "transaction_detail_state_func": "확인{transactionDetailState}회",
   "setting_payment_password": "请设置支付密码",
   "set_bio_auth_success": "성공적으로 열다",
-  "set_bio_auth_fail": "열지 못했습니다"
+  "set_bio_auth_fail": "열지 못했습니다",
+  "unlock_decrypted_location": "解开加密位置",
+  "update_wallet": "更新钱包",
+  "delete_wallet": "删除钱包",
+  "bio_auth_title_face": "당신의 얼굴을 확인하십시오",
+  "bio_auth_title_fingerprint": "지문을 확인하십시오"
 }

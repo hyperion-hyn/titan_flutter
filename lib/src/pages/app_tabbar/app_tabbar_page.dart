@@ -185,29 +185,31 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         if (encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
           if (_activeWallet == null) {
-            Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
+            Fluttertoast.showToast(
+                msg: S.of(context).create_or_import_wallet_first);
             return;
           }
           fileName = _activeWallet.wallet.keystore.fileName;
           password = await UiUtil.showWalletPasswordDialogV2(
-            context,
-            _activeWallet.wallet,
-            dialogTitle: S.of(context).wallet_password_decrypt
-          );
+              context, _activeWallet.wallet,
+              dialogTitle: S.of(context).wallet_password_decrypt);
         }
-        Navigator.pop(context);
-        (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
-        Routes.popUntilCachedEntryRouteName(context);
+        if (password != null) {
+          Navigator.pop(context);
+          (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
+          Routes.popUntilCachedEntryRouteName(context);
 
-        var poi = await ciphertextToPoi(
-            Injector.of(context).repository, encryptedMsg,
-            fileName: fileName, password: password);
+          var poi = await ciphertextToPoi(
+              Injector.of(context).repository, encryptedMsg,
+              fileName: fileName, password: password);
 
-        ///switch to map page first, then poi can show correctly.
-        BlocProvider.of<AppTabBarBloc>(context)
-            .add(ChangeTabBarItemEvent(index: 0));
-        await Future.delayed(Duration(milliseconds: 300));
-        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
+          ///switch to map page first, then poi can show correctly.
+          BlocProvider.of<AppTabBarBloc>(context)
+              .add(ChangeTabBarItemEvent(index: 0));
+          await Future.delayed(Duration(milliseconds: 300));
+          BlocProvider.of<ScaffoldMapBloc>(context)
+              .add(SearchPoiEvent(poi: poi));
+        }
       });
     }
   }

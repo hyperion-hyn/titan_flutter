@@ -832,5 +832,10 @@
   "wallet_password_decrypt": "使用钱包密码解密",
   "setting_payment_password": "请设置支付密码",
   "set_bio_auth_success": "Turn on successfully",
-  "set_bio_auth_fail": "Failed to turn on"
+  "set_bio_auth_fail": "Failed to turn on",
+  "unlock_decrypted_location": "解开加密位置",
+  "update_wallet": "更新钱包",
+  "delete_wallet": "删除钱包",
+  "bio_auth_title_face": "Please verify your face",
+  "bio_auth_title_fingerprint": "Please verify your fingerprint"
 }

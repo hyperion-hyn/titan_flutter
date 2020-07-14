@@ -431,13 +431,17 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SetBioAuthPage(widget.walletVo.wallet)));
+                      builder: (context) =>
+                          SetBioAuthPage(widget.walletVo.wallet)));
             },
           ),
           RaisedButton(
             child: Text('bio-auth'),
             onPressed: () async {
-              await AuthUtil.bioAuth(context, BiometricType.fingerprint);
+              await AuthUtil.bioAuth(
+                context,
+                BiometricType.fingerprint,
+              );
             },
           )
         ],

@@ -388,10 +388,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   void updateWalletV2() async {
-    var password = await UiUtil.showWalletPasswordDialogV2(
-      context,
-      widget.wallet,
-    );
+    var password =
+        await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
     if (password != null) {
       try {
         var newName = _walletNameController.text;

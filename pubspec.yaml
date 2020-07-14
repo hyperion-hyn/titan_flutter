@@ -60,7 +60,7 @@ dependencies:
   #https://pub.dev/packages/logger#-installing-tab-
   logger: ^0.8.3
   #https://pub.dev/packages/flutter_statusbarcolor#-installing-tab-
-#  flutter_statusbarcolor: ^0.2.3
+  #  flutter_statusbarcolor: ^0.2.3
   #https://github.com/dart-lang/json_serializable
   #  json_annotation: ^2.4.0
   #https://pub.dev/packages/esys_flutter_share
@@ -139,7 +139,6 @@ dependencies:
   image_save: 3.1.1
   # https://pub.dev/packages/vibration
   vibration: 1.4.0
-
   #https://pub.dev/packages/oktoast
   oktoast: ^2.3.2
   flutter_recaptcha_v2:

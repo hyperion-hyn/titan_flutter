@@ -33,11 +33,11 @@ class AuthUtil {
     var androidStrings = AndroidAuthMessages(
       cancelButton: S.of(context).cancel,
       signInTitle: biometricType == BiometricType.face
-          ? S.of(context).face_recognition
-          : S.of(context).fingerprint_recognition,
+          ? S.of(context).bio_auth_title_face
+          : S.of(context).bio_auth_title_fingerprint,
       fingerprintRequiredTitle: S.of(context).need_fingerprint,
       fingerprintSuccess: S.of(context).fingerprint_recognition_success,
-      fingerprintHint: S.of(context).fingerprint_sensor,
+      fingerprintHint: '',
       fingerprintNotRecognized: S.of(context).no_fingerprint_detected,
       goToSettingsButton: S.of(context).go_to_settings,
       goToSettingsDescription: biometricType == BiometricType.face
@@ -52,9 +52,7 @@ class AuthUtil {
           androidAuthStrings: androidStrings,
           iOSAuthStrings: iosStrings,
           sensitiveTransaction: true,
-          localizedReason: biometricType == BiometricType.face
-              ? S.of(context).use_face_verify
-              : S.of(context).face_fingerprint_verify);
+          localizedReason: '');
     } on PlatformException catch (e) {
       if (e.code == auth_error.notEnrolled) {
         await showDialog(
@@ -79,16 +77,16 @@ class AuthUtil {
               );
             });
       } else if (e.code == auth_error.notAvailable) {
-        Fluttertoast.showToast(msg: S.of(context).biometrics_unavailable);
+        //Fluttertoast.showToast(msg: S.of(context).biometrics_unavailable);
       } else if (e.code == auth_error.passcodeNotSet) {
-        Fluttertoast.showToast(msg: S.of(context).go_setting_page_set_pin);
+        //Fluttertoast.showToast(msg: S.of(context).go_setting_page_set_pin);
       } else if (e.code == auth_error.lockedOut) {
-        Fluttertoast.showToast(msg: S.of(context).too_many_fail_try_again);
+        //Fluttertoast.showToast(msg: S.of(context).too_many_fail_try_again);
       } else if (e.code == auth_error.permanentlyLockedOut) {
-        Fluttertoast.showToast(
-            msg: S.of(context).too_many_fail_biometrics_unavailable);
+//        Fluttertoast.showToast(
+//            msg: S.of(context).too_many_fail_biometrics_unavailable);
       } else if (e.code == auth_error.otherOperatingSystem) {
-        Fluttertoast.showToast(msg: S.of(context).not_support_other_systems);
+        // Fluttertoast.showToast(msg: S.of(context).not_support_other_systems);
       }
     }
     return authenticated;

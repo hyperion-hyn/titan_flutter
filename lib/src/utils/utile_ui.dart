@@ -548,7 +548,7 @@ class UiUtil {
 //    }
 //  }
 
-  static  showHintToast(BuildContext context, Widget icon, msg) {
+  static showHintToast(BuildContext context, Widget icon, msg) {
     Widget widget = Center(
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),

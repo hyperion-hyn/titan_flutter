@@ -648,8 +648,8 @@
   "node": "节点",
   "input_payment_password": "请输入支付密码",
   "double_check_password_error": "两次输入密码不一致",
-  "receive_an_encrypted_message": "您收到一个加密位置信息, 是否打开",
-  "open": "打开",
+  "receive_an_encrypted_message": "您收到一个加密位置信息, 是否解开",
+  "open": "解开",
   "key_pair_error_share_location_again": "密钥对异常，请重新进行位置分享操作",
   "activate_btc": "激活BTC",
   "safety_certification_by_organizations": "经过权威机构安全认证",
@@ -824,5 +824,10 @@
   "wallet_password_decrypt": "使用钱包密码解密",
   "setting_payment_password": "请设置支付密码",
   "set_bio_auth_success": "开启成功",
-  "set_bio_auth_fail": "开启失败"
+  "set_bio_auth_fail": "开启失败",
+  "unlock_decrypted_location": "解开加密位置",
+  "update_wallet": "更新钱包",
+  "delete_wallet": "删除钱包",
+  "bio_auth_title_face": "请验证面容",
+  "bio_auth_title_fingerprint": "请验证指纹"
 }
