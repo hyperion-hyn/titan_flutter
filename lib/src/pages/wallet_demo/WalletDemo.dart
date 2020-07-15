@@ -802,7 +802,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   "c": 'c_p',
                   'b': 'b_p'
                 };
-                await Signer.signMessage(context, password, params);
+//                await Signer.signMessage(context, password, params);
                 print(params);
               } catch (e) {
                 logger.e(e);
