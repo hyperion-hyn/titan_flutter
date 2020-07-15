@@ -219,10 +219,10 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             SharedPreferences prefs = await SharedPreferences.getInstance();
             var lastDate = prefs.getInt(PrefsKey.VERIFY_DATE) ?? 0;
             var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
-            //print("[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
+            print("[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
 
 
-            if (lastDate > 0 && duration.inDays > 0) {
+            if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
               prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
 
               Navigator.push(

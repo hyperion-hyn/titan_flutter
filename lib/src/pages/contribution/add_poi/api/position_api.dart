@@ -282,9 +282,20 @@ class PositionApi {
     return json;
   }
 
-  Future<dynamic> getConfirmDataV2(double lon, double lat, {String lang = "zh-Hans"}) async {
+ /* Future<dynamic> getConfirmDataV2(double lon, double lat, {String lang = "zh-Hans"}) async {
     //print("[PositionApi] getConfirmDataV2, address = $userEthAddress");
     return await HttpCore.instance.get("map-collector/poi/query/v2",
+        params: {'lon': lon, 'lat': lat, 'language': lang},
+        options: RequestOptions(headers: {
+          "Lang": lang,
+          "UUID": userEthAddress,
+          //"Iso-3166-1": "CN"
+        }, contentType: "application/json"));
+  }*/
+
+  Future<dynamic> getConfirmV2Data(double lon, double lat, {String lang = "zh-Hans"}) async {
+    //print("[PositionApi] getConfirmDataV2, address = $userEthAddress");
+    return await HttpCore.instance.get("map-collector/poi/v2/query",
         params: {'lon': lon, 'lat': lat, 'language': lang},
         options: RequestOptions(headers: {
           "Lang": lang,

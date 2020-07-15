@@ -10,8 +10,6 @@ import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import '../../../../../env.dart';
 import 'bloc.dart';
@@ -138,7 +136,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
           var userPosition = event.userPosition;
           if (event.language.startsWith('zh')) event.language = "zh-Hans";
           var res =
-              await _positionApi.getConfirmDataV2(userPosition.longitude, userPosition.latitude, lang: event.language);
+              await _positionApi.getConfirmV2Data(userPosition.longitude, userPosition.latitude, lang: event.language);
 
           var responseEntity = ResponseEntity<UserContributionPois>.fromJson(res,
               factory: EntityFactory((json) => UserContributionPois.fromJson(json)));
