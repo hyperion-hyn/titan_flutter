@@ -50,6 +50,8 @@
 	<string>Please allow obtain camera permission</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Please allow obtain contacts permission</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Please allow use face ID</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Please allow obtain location permission</string>
 	<key>NSLocationAlwaysUsageDescription</key>

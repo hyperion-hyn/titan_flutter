@@ -394,7 +394,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
                       _onPressed();
                     },
-              color: HexColor("#CC941E"),
+              color: Theme.of(context).primaryColor,
               disabledColor: Colors.grey,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 13),

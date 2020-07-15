@@ -63,8 +63,10 @@ class _QuotesManagerState extends State<_QuotesManager> {
             _quotesSign = state.sign;
           }
           if (state is GasPriceState) {
-            if (state.status == Status.success) {
+            if (state.status == Status.success && state.gasPriceRecommend != null) {
               _gasPriceRecommend = state.gasPriceRecommend;
+            }
+            if (state.status == Status.success && state.btcGasPriceRecommend != null) {
               _btcGasPriceRecommend = state.btcGasPriceRecommend;
             }
           }

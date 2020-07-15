@@ -1,13 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -16,10 +23,13 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -31,8 +41,11 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage>
+    with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
+
+  final LocalAuthentication auth = LocalAuthentication();
 
   @override
   bool get wantKeepAlive => true;
@@ -44,69 +57,108 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   void didPopNext() async {
     callLater((_) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent());
     });
   }
 
   @override
-  void onCreated() {
+  Future<void> onCreated() async {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      children: <Widget>[
-        Expanded(child: _buildWalletView(context)),
-        //hyn quotes view
-        hynQuotesView(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: Center(
+          child: Text(
+            S.of(context).wallet,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
+          ),
+        ),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Expanded(child: _buildWalletView(context)),
+            //hyn quotes view
+            // hynQuotesView(),
+            _authorizedView(),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
-          onLoadData: (){
+          onLoadData: () {
             listLoadingData();
           },
           onRefresh: () async {
             listLoadingData();
           },
           child: SingleChildScrollView(
-              scrollDirection: Axis.vertical, child: ShowWalletView(activatedWalletVo, loadDataBloc)));
+              scrollDirection: Axis.vertical,
+              child: ShowWalletView(activatedWalletVo, loadDataBloc)));
     }
 
-    return BlocBuilder<WalletCmpBloc, WalletCmpState>(
-      builder: (BuildContext context, WalletCmpState state) {
-        switch (state.runtimeType) {
-          case LoadingWalletState:
-            return loadingView(context);
-          default:
-            return EmptyWalletView();
-        }
-      },
+    return BlocListener<WalletCmpBloc, WalletCmpState>(
+      listener: (ctx, state) {},
+      child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
+        builder: (BuildContext context, WalletCmpState state) {
+          switch (state.runtimeType) {
+            case LoadingWalletState:
+              return loadingView(context);
+            default:
+              return EmptyWalletView();
+          }
+        },
+      ),
     );
   }
 
   Future listLoadingData() async {
     //update quotes
-    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign =
-    quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
 
     await Future.delayed(Duration(milliseconds: 700));
 
@@ -117,7 +169,8 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -146,11 +199,42 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: HexColor('#333333'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _authorizedView() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: <Widget>[
+          Spacer(),
+          Image.asset(
+            'res/drawable/logo_manwu.png',
+            width: 23,
+            height: 23,
+            color: Colors.grey[500],
+          ),
+          SizedBox(
+            width: 4.0,
+          ),
+          Text(
+            S.of(context).safety_certification_by_organizations,
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 12.0,
+            ),
+          ),
+          Spacer()
         ],
       ),
     );

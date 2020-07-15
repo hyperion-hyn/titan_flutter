@@ -32,7 +32,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
   ScaffoldMapBloc(this.context /*, this.store*/);
 
   @override
-  Stream<Transition<ScaffoldMapEvent, ScaffoldMapState>> transformEvents(Stream<ScaffoldMapEvent> events, transitionFn) {
+  Stream<Transition<ScaffoldMapEvent, ScaffoldMapState>> transformEvents(
+      Stream<ScaffoldMapEvent> events, transitionFn) {
 //    return super.transformEvents(events, transitionFn);
     return events.switchMap(transitionFn);
   }
@@ -63,7 +64,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
         } catch (e) {
           logger.e(e);
 
-          yield FocusingPoiState(status: Status.failed, poi: poi, message: e.message);
+          yield FocusingPoiState(
+              status: Status.failed, poi: poi, message: e.message);
         }
       } else if (poi.address == null) {
         //this should be mapbox poi, we need to fill more info about it.
@@ -71,8 +73,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
         try {
           var searchInteractor = Injector.of(context).searchInteractor;
-          MapBoxPoi searchPoi =
-              await searchInteractor.reverseGeoSearch(poi.latLng, Localizations.localeOf(context).languageCode);
+          MapBoxPoi searchPoi = await searchInteractor.reverseGeoSearch(
+              poi.latLng, Localizations.localeOf(context).languageCode);
           if (poi.name == null) {
             poi.name = searchPoi.name;
           }
@@ -85,7 +87,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
           MapBoxPoi poi = MapBoxPoi();
           poi.name = event.poi.name ?? S.of(context).unknown_locations;
-          poi.address = event.poi.address ?? '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
+          poi.address = event.poi.address ??
+              '${event.poi.latLng.latitude},${event.poi.latLng.longitude}';
           poi.remark = event.poi.remark;
           poi.latLng = event.poi.latLng;
 
@@ -114,7 +117,8 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
     // search
     //--------------
     else if (event is SearchTextEvent) {
-      yield FocusingSearchState(status: Status.loading, searchText: event.searchText);
+      yield FocusingSearchState(
+          status: Status.loading, searchText: event.searchText);
 
       try {
         if (event.isCategorySearch != true) {
@@ -122,34 +126,50 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
           var languageCode = Localizations.localeOf(context).languageCode;
           //we search mapbox and user contribution pois
           var poiList = await Future.wait([
-            searchInteractor.searchPoiByTitan(event.searchText, event.center, languageCode),
-            searchInteractor.searchPoiByMapbox(event.searchText, event.center, languageCode)
+            searchInteractor.searchPoiByTitan(
+                event.searchText, event.center, languageCode),
+            searchInteractor.searchPoiByMapbox(
+                event.searchText, event.center, languageCode)
           ]);
           List<IPoi> sum = [];
           sum.addAll(poiList[0]);
           sum.addAll(poiList[1]);
-          yield FocusingSearchState(status: Status.success, searchText: event.searchText, pois: sum);
+          yield FocusingSearchState(
+              status: Status.success, searchText: event.searchText, pois: sum);
         } else {
           //gaode search
           var _api = Api();
           var model;
 
-          if (SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel?.isChinaMainland == true) {
+          if (SettingInheritedModel.of(context, aspect: SettingAspect.area)
+                  .areaModel
+                  ?.isChinaMainland ==
+              true) {
             model = await _api.searchByGaode(
-                lat: event.center.latitude, lon: event.center.longitude, type: event.gaodeType);
+                lat: event.center.latitude,
+                lon: event.center.longitude,
+                type: event.gaodeType);
           } else {
             model = await _api.searchNearByHyn(
                 lat: event.center.latitude,
                 lon: event.center.longitude,
                 type: event.typeOfNearBy,
-                language: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageCode);
+                language: SettingInheritedModel.of(context,
+                        aspect: SettingAspect.language)
+                    .languageCode);
           }
 
-          yield FocusingSearchState(status: Status.success, searchText: event.searchText, pois: model.data);
+          yield FocusingSearchState(
+              status: Status.success,
+              searchText: event.searchText,
+              pois: model.data);
         }
       } catch (e) {
         logger.e(e);
-        yield FocusingSearchState(status: Status.failed, searchText: event.searchText, pois: e.message);
+        yield FocusingSearchState(
+            status: Status.failed,
+            searchText: event.searchText,
+            pois: e.message);
       }
     }
     //--------------
@@ -165,8 +185,9 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
       );
 
       try {
-        String routeResp =
-            await _fetchRoute(event.fromPoi.latLng, event.toPoi.latLng, event.language, profile: event.profile);
+        String routeResp = await _fetchRoute(
+            event.fromPoi.latLng, event.toPoi.latLng, event.language,
+            profile: event.profile);
         var model = RouteDataModel(
           startLatLng: event.fromPoi.latLng,
           endLatLng: event.toPoi.latLng,
@@ -237,12 +258,14 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 //  }
 
   ///profile: driving, walking, cycling";
-  Future<String> _fetchRoute(LatLng start, LatLng end, String language, {String profile = 'driving'}) async {
+  Future<String> _fetchRoute(LatLng start, LatLng end, String language,
+      {String profile = 'driving'}) async {
     _cancelSearchingRouteToken = CancelToken();
     var url =
         'https://api.hyn.space/directions/v5/hyperion/$profile/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=polyline6&language=$language&steps=true&banner_instructions=true&voice_instructions=true&voice_units=metric&access_token=pk.hyn';
 //    print("[bloccc] _fetchRoute:$_fetchRoute");
-    var responseMap = await HttpCore.instance.get(url, cancelToken: _cancelSearchingRouteToken);
+    var responseMap = await HttpCore.instance
+        .get(url, cancelToken: _cancelSearchingRouteToken);
     _cancelSearchingRouteToken = null;
     var response = json.encode(responseMap);
     return response;

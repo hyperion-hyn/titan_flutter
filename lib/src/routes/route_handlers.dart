@@ -41,7 +41,8 @@ import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 import '../config/consts.dart';
 import 'fluro_convert_utils.dart';
 
-var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+var rootHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return RootPageControlComponent(key: Keys.rootKey);
 });
 
@@ -78,14 +79,17 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
   return ShowAccountPage(params['coinVo']?.first);
 });
 
-var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
+var walletAccountSendTransactionHandler =
+    Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
   return WalletSendConfirmPage(
-      params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['receiverAddress']?.first);
+      params['coinVo']?.first,
+      '${params['transferAmount']?.first ?? 0}',
+      params['receiverAddress']?.first);
 });
 
 var managerWalletHandler = Handler(
@@ -97,13 +101,15 @@ var managerWalletHandler = Handler(
 
 var settingWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  Wallet wallet =
+      Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
   return WalletSettingPage(wallet);
 });
 
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  Wallet wallet =
+      Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
   return WalletBackupNoticePage(wallet);
 });
 
@@ -122,8 +128,10 @@ var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return ConfirmResumeWordPage(params['mnemonic']?.first,
-      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first), params['password']?.first);
+  return ConfirmResumeWordPage(
+      params['mnemonic']?.first,
+      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first),
+      params['password']?.first);
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
@@ -136,7 +144,8 @@ var contributionTasksHandler = Handler(handlerFunc: (context, params) {
 });
 
 var contributionDoneHandler = Handler(handlerFunc: (context, params) {
-  return ContributionFinishUploadPage(backRouteName: params['backRouteName']?.first);
+  return ContributionFinishUploadPage(
+      backRouteName: params['backRouteName']?.first);
 });
 
 var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
@@ -168,8 +177,8 @@ var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
-  ContractNodeItem contractNodeItem =
-      ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(
+      FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   var transferAmount = params['transferAmount']?.first ?? '0';
 
   return Map3NodeSendConfirmPage(
@@ -189,7 +198,8 @@ var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem;
   var item = params['contractNodeItem']?.first;
   if (item != null) {
-    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+    contractNodeItem =
+        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
   }
   return Map3NodeBroadcaseSuccessPage(
     params['pageType']?.first,
@@ -204,8 +214,8 @@ var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
-  ContractNodeItem contractNodeItem =
-      ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(
+      FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSharePage(contractNodeItem);
 });
 

@@ -23,6 +23,7 @@ PoiCollector _$PoiCollectorFromJson(Map<String, dynamic> json) {
     json['work_time'] as String,
     json['phone'] as String,
     json['website'] as String,
+    json['category'] as String,
   );
 }
 
@@ -43,4 +44,5 @@ Map<String, dynamic> _$PoiCollectorToJson(PoiCollector instance) =>
       'work_time': instance.workTime,
       'phone': instance.phone,
       'website': instance.website,
+      'category': instance.category,
     };

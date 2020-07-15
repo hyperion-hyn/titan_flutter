@@ -20,10 +20,11 @@ class WalletReceivePage extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Colors.black),
         title: Text(
           S.of(context).receiver_symbol(coinVo.symbol),
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.black),
         ),
       ),
       body: Column(
@@ -36,7 +37,9 @@ class WalletReceivePage extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 24),
                 width: 224,
                 decoration: BoxDecoration(
-                    color: Colors.white, shape: BoxShape.rectangle, borderRadius: BorderRadius.circular(8)),
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(8)),
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(16),
                 child: Column(
@@ -70,15 +73,17 @@ class WalletReceivePage extends StatelessWidget {
                     builder: (BuildContext context) {
                       return InkWell(
                         onTap: () {
-                          Clipboard.setData(ClipboardData(text: coinVo.address));
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
+                          Clipboard.setData(
+                              ClipboardData(text: coinVo.address));
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(S.of(context).address_copied)));
                         },
                         child: Row(
                           children: <Widget>[
-                            Icon(
-                              ExtendsIconFont.copy_content,
-                              color: Theme.of(context).primaryColor,
-                              size: 24,
+                            Image.asset(
+                              'res/drawable/ic_copy.png',
+                              height: 23,
+                              width: 23,
                             ),
                             SizedBox(
                               width: 8,
@@ -101,7 +106,8 @@ class WalletReceivePage extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Share.text(S.of(context).my_symbol_address(coinVo.symbol), coinVo.address, "text/plain");
+                      Share.text(S.of(context).my_symbol_address(coinVo.symbol),
+                          coinVo.address, "text/plain");
                     },
                     child: Row(
                       children: <Widget>[

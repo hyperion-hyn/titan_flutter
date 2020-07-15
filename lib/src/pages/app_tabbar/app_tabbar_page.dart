@@ -1,29 +1,41 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_statusbarcolor/flutter_statusbarcolor.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
+import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
+import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/encryption.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
@@ -44,7 +56,8 @@ class AppTabBarPage extends StatefulWidget {
   }
 }
 
-class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMixin {
+class AppTabBarPageState extends BaseState<AppTabBarPage>
+    with TickerProviderStateMixin {
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
@@ -59,6 +72,7 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
   ScaffoldMapState _mapState;
   var _isShowAnnounceDialog = false;
+  var homePageFirst = true;
 
   @override
   void initState() {
@@ -67,8 +81,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 //    TitanPlugin.getClipboardData();
     getClipboardData();
 
-    BlocProvider.of<SettingBloc>(context).listen((state){
-      if(state is UpdatedSettingState){
+    BlocProvider.of<SettingBloc>(context).listen((state) {
+      if (state is UpdatedSettingState) {
         Future.delayed(Duration(milliseconds: 2000)).then((value) {
           MemoryCache.setContractErrorStr();
         });
@@ -88,7 +102,13 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     );
 
     //set the status bar color
-    FlutterStatusbarcolor.setStatusBarColor(Colors.black12);
+//    FlutterStatusbarcolor.setStatusBarColor(Colors.transparent);
+    SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    );
+    SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
@@ -112,9 +132,28 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     };
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(AppTabBarPage oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void onCreated() {
+    TitanPlugin.f2pDeeplink();
+    super.onCreated();
+  }
+
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if(clipboardData != null && clipboardData.text.contains("titan://contract/detail")){
+    if (clipboardData != null &&
+        clipboardData.text.contains("titan://contract/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
     }
@@ -130,30 +169,62 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
         context,
         MaterialPageRoute(
             builder: (context) => InfoDetailPage(
-              id: 0,
-              url: url,
-              title: title,
-              content: content,
-            )));
+                  id: 0,
+                  url: url,
+                  title: title,
+                  content: content,
+                )));
   }
 
-  void _urlLauncherAction(Map values) {
+  Future<void> _urlLauncherAction(Map values) async {
     var type = values["type"];
     var subType = values["subType"];
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
     if (type == "contract" && subType == "detail") {
-
       var contractId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
-    }/*else if(type == "save" && subType == "shareUser"){
-      var shareUser = content["shareUserValue"];
-      MemoryCache.shareKey = shareUser;
-      print("shareuser clipboard $shareUser");
-    }*/
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page + "?contractId=$contractId");
+    } else if (type == "location" && subType == 'share') {
+      ///When received encrypted msg, show dialog
+      ///
+      UiUtil.showDecryptDialog(context, () async {
+        var encryptedMsg = content['msg'];
+        var fileName;
+        var password;
+        if (encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+          var _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+          if (_activeWallet == null) {
+            Fluttertoast.showToast(
+                msg: S.of(context).create_or_import_wallet_first);
+            return;
+          }
+          fileName = _activeWallet.wallet.keystore.fileName;
+          password = await UiUtil.showWalletPasswordDialogV2(
+              context, _activeWallet.wallet,
+              dialogTitle: S.of(context).wallet_password_decrypt);
+        }
+        if((password != null && encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) || !encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+          Navigator.pop(context);
+          (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
+          Routes.popUntilCachedEntryRouteName(context);
+        }
+
+        var poi = await ciphertextToPoi(
+            Injector.of(context).repository, encryptedMsg,
+            fileName: fileName, password: password);
+
+        ///switch to map page first, then poi can show correctly.
+        BlocProvider.of<AppTabBarBloc>(context)
+            .add(ChangeTabBarItemEvent(index: 0));
+        await Future.delayed(Duration(milliseconds: 300));
+        BlocProvider.of<ScaffoldMapBloc>(context)
+            .add(SearchPoiEvent(poi: poi));
+      });
+    }
   }
 
   @override
@@ -161,6 +232,8 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
     _clearBadgeSubcription.cancel();
     super.dispose();
   }
+
+  CreateDAppWidgetFunction createDAppWidgetFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -172,9 +245,11 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
             listener: (context, state) {
               _mapState = state;
               if (state is DefaultScaffoldMapState) {
-                _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
+                _bottomBarPositionAnimationController.animateBack(0,
+                    curve: Curves.easeInQuart);
               } else {
-                _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
+                _bottomBarPositionAnimationController.animateTo(1,
+                    curve: Curves.easeOutQuint);
               }
             },
           ),
@@ -187,49 +262,82 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
               }
             },
           ),
+          BlocListener<DiscoverBloc, DiscoverState>(
+            listener: (context, state) {
+              if (state is ActiveDMapState) {
+                DMapCreationModel model = DMapDefine.kMapList[state.name];
+                print("[app_Dmap] ---1");
+
+                if (model != null) {
+                  this.setState(() {
+                    print("[app_Dmap] ---2 - 2");
+                    createDAppWidgetFunction = model.createDAppWidgetFunction;
+                  });
+                }
+              } else {
+                this.setState(() {
+                  print("[app_Dmap] ---2 - 3");
+                  createDAppWidgetFunction = null;
+                });
+              }
+            },
+          ),
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
           drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
-              bool isHomePanelMoving = notification.context.widget.key == Keys.homePanelKey;
+              bool isHomePanelMoving =
+                  notification.context.widget.key == Keys.homePanelKey;
               if (notification.extent <= notification.anchorExtent &&
-                  ((_isDefaultState && isHomePanelMoving) || (!_isDefaultState && !isHomePanelMoving))) {
+                  ((_isDefaultState && isHomePanelMoving) ||
+                      (!_isDefaultState && !isHomePanelMoving))) {
                 SchedulerBinding.instance.addPostFrameCallback((_) {
-                  var toValue = (notification.extent * (notification.maxHeight + _fabsHeight)) / notification.maxHeight;
+                  var toValue = (notification.extent *
+                          (notification.maxHeight + _fabsHeight)) /
+                      notification.maxHeight;
                   _fabsBarPositionAnimationController.value = toValue;
                 });
               }
 
               var shouldShow = notification.extent <= notification.anchorExtent;
               SchedulerBinding.instance.addPostFrameCallback((_) {
-                (_bottomBarKey.currentState as BottomFabsWidgetState).setVisible(shouldShow);
+                (_bottomBarKey.currentState as BottomFabsWidgetState)
+                    .setVisible(shouldShow);
               });
 
               return true;
             },
             child: WillPopScope(
               onWillPop: () async {
-                var isHandled = (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
+                var isHandled =
+                    (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)
+                        ?.back();
                 if (isHandled == true) {
                   return false;
                 }
 
-                isHandled = (_discoverKey.currentState as DiscoverPageState)?.back();
+                isHandled =
+                    (_discoverKey.currentState as DiscoverPageState)?.back();
                 if (isHandled == true) {
                   return false;
                 }
 
-                if (_lastPressedAt == null || DateTime.now().difference(_lastPressedAt) > Duration(seconds: 2)) {
+                if (_lastPressedAt == null ||
+                    DateTime.now().difference(_lastPressedAt) >
+                        Duration(seconds: 2)) {
                   _lastPressedAt = DateTime.now();
-                  Fluttertoast.showToast(msg: S.of(context).click_again_to_exist_app);
+                  Fluttertoast.showToast(
+                      msg: S.of(context).click_again_to_exist_app);
                   return false;
                 }
                 return true;
               },
-              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(builder: (context, state) {
-                if (state is CheckNewAnnouncementState && state.announcement != null) {
+              child: BlocBuilder<AppTabBarBloc, AppTabBarState>(
+                  builder: (context, state) {
+                if (state is CheckNewAnnouncementState &&
+                    state.announcement != null) {
                   //todo maprich _isShowAnnounceDialog 为 true
                   _isShowAnnounceDialog = false;
                   Application.isUpdateAnnounce = true;
@@ -240,16 +348,20 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                     ScaffoldMap(key: Keys.scaffoldMap),
                     userLocationBar(),
                     Padding(
-                      padding:
-                          EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight),
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom +
+                              kBottomNavigationBarHeight),
                       child: _getTabView(_currentTabIndex),
                     ),
                     bottomNavigationBar(),
-                    
-                    if (_isShowAnnounceDialog && state is CheckNewAnnouncementState)
+                    if (createDAppWidgetFunction != null)
+                      createDAppWidgetFunction(context),
+                    if (_isShowAnnounceDialog &&
+                        state is CheckNewAnnouncementState)
                       AnnouncementDialog(state.announcement, () {
                         _isShowAnnounceDialog = false;
-                        BlocProvider.of<AppTabBarBloc>(context).add(InitialAppTabBarEvent());
+                        BlocProvider.of<AppTabBarBloc>(context)
+                            .add(InitialAppTabBarEvent());
                       })
                   ],
                 );
@@ -272,9 +384,15 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
 
         var bottomMostRelative = RelativeRect.fromLTRB(
-            0.0, constraints.biggest.height - _fabsHeight - (_isDefaultState ? barHeight : 0), 0.0, 0.0);
+            0.0,
+            constraints.biggest.height -
+                _fabsHeight -
+                (_isDefaultState ? barHeight : 0),
+            0.0,
+            0.0);
         var topMostRelative = RelativeRect.fromLTRB(0.0, 0, 0.0, 0);
-        final Animation<RelativeRect> barAnimationRect = _fabsBarPositionAnimationController.drive(
+        final Animation<RelativeRect> barAnimationRect =
+            _fabsBarPositionAnimationController.drive(
           RelativeRectTween(
             begin: bottomMostRelative,
             end: topMostRelative,
@@ -300,9 +418,12 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
       builder: (context, constraints) {
         var additionalBottomPadding = MediaQuery.of(context).padding.bottom;
         var barHeight = additionalBottomPadding + kBottomNavigationBarHeight;
-        var expandedRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
-        var hideRelative = RelativeRect.fromLTRB(0.0, constraints.biggest.height, 0.0, -barHeight);
-        final Animation<RelativeRect> barAnimationRect = _bottomBarPositionAnimationController.drive(
+        var expandedRelative = RelativeRect.fromLTRB(
+            0.0, constraints.biggest.height - barHeight, 0.0, 0.0);
+        var hideRelative = RelativeRect.fromLTRB(
+            0.0, constraints.biggest.height, 0.0, -barHeight);
+        final Animation<RelativeRect> barAnimationRect =
+            _bottomBarPositionAnimationController.drive(
           RelativeRectTween(
             begin: expandedRelative,
             end: hideRelative,
@@ -324,13 +445,17 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                     ),
                   ],
                 ),
-                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, left: 8, right: 8),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                    left: 8,
+                    right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.account_balance_wallet, S.of(context).wallet, 1),
-                    tabItem(Icons.explore, S.of(context).discover, 2),
+                    tabItem(Icons.explore, S.of(context).node, 2),
+                    tabItem(
+                        Icons.account_balance_wallet, S.of(context).wallet, 1),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
                   ],
@@ -374,11 +499,17 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
                   ),
                 Icon(
                   iconData,
-                  color: selected ? Theme.of(context).primaryColor : Colors.black38,
+                  color: selected
+                      ? Theme.of(context).primaryColor
+                      : Colors.black38,
                 ),
                 Text(
                   text,
-                  style: TextStyle(fontSize: 12, color: selected ? Theme.of(context).primaryColor : Colors.black38),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: selected
+                          ? Theme.of(context).primaryColor
+                          : Colors.black38),
                 ),
               ],
             ),
@@ -406,38 +537,33 @@ class AppTabBarPageState extends State<AppTabBarPage> with TickerProviderStateMi
 
     switch (index) {
       case 1:
-        return WalletTabsPage();
+        return WalletPage();
+
       case 2:
-        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage(key: _discoverKey,));
+        return Map3NodeTabsPage();
+
+      /*return BlocProvider(
+            create: (ctx) => DiscoverBloc(ctx),
+            child: DiscoverPage(
+              key: _discoverKey,
+            ));*/
+
       case 3:
         return InformationPage();
+//        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
+
       case 4:
         return MyPage();
     }
-    return BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey));
-  }
 
-//  Widget home() {
-//    return Container(
-//      color: Colors.red,
-//      child: Center(
-//        child: RaisedButton(
-//          onPressed: () {
-//            _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
-//            if (_isShowBottomNavigationBar) {
-//              //show
-//              _bottomBarPositionAnimationController.animateBack(0, curve: Curves.easeInQuart);
-//            } else {
-//              //hide
-//              _bottomBarPositionAnimationController.animateTo(1, curve: Curves.easeOutQuint);
-//            }
-////            setState(() {
-////              _isShowBottomNavigationBar = !_isShowBottomNavigationBar;
-////            });
-//          },
-//          child: Text('hhh'),
-//        ),
-//      ),
-//    );
-//  }
+    if (createDAppWidgetFunction != null) {
+      return createDAppWidgetFunction(context);
+    } else {
+      return BlocProvider(
+          create: (ctx) => HomeBloc(ctx),
+          child: HomePage(homePageFirst,  (){
+            homePageFirst = false;
+          },key: Keys.homePageKey ));
+    }
+  }
 }

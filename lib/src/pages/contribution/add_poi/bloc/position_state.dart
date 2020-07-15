@@ -40,6 +40,8 @@ class SelectCategoryClearState extends PositionState {
 }
 
 // get
+class GetOpenCageLoadingState extends PositionState {}
+
 class GetOpenCageState extends PositionState {
   Map<String, dynamic> openCageData;
 
@@ -63,16 +65,30 @@ class FailPostPoiDataState extends PositionState {
   FailPostPoiDataState(this.code);
 }
 
-// confirm
-class ConfirmPositionLoadingState extends PositionState {
-  ConfirmPositionLoadingState();
+// uploading poi v2
+class PostPoiDataV2ResultFailState extends PositionState {
+  final int code;
+  PostPoiDataV2ResultFailState({this.code});
 }
 
-class ConfirmPositionPageState extends PositionState {
+class PostPoiDataV2ResultSuccessState extends PositionState {}
+
+class PostPoiDataV2LoadingState extends PositionState {}
+
+// confirm - v1
+class GetConfirmPoiDataLoadingState extends PositionState {
+  GetConfirmPoiDataLoadingState();
+}
+
+class GetConfirmPoiDataResultSuccessState extends PositionState {
   UserContributionPoi confirmPoiItem;
 
-  ConfirmPositionPageState(this.confirmPoiItem);
+  GetConfirmPoiDataResultSuccessState(this.confirmPoiItem);
 }
+
+class GetConfirmPoiDataResultFailState extends PositionState {}
+
+class PostConfirmPoiDataLoadingState extends PositionState {}
 
 class ConfirmPositionResultLoadingState extends PositionState {}
 
@@ -81,6 +97,42 @@ class ConfirmPositionResultState extends PositionState {
   String errorMsg;
 
   ConfirmPositionResultState(this.confirmResult, this.errorMsg);
+}
+
+class PostConfirmPoiDataResultFailState extends PositionState {}
+
+class PostConfirmPoiDataResultSuccessState extends PositionState {}
+
+// confirm - v2
+class GetConfirmDataV2LoadingState extends PositionState {
+  GetConfirmDataV2LoadingState();
+}
+
+class GetConfirmDataV2ResultSuccessState extends PositionState {
+  UserContributionPois userContributionPois;
+
+  GetConfirmDataV2ResultSuccessState(this.userContributionPois);
+}
+
+class UpdateConfirmPoiDataPageState extends PositionState {}
+
+class PostConfirmPoiDataV2LoadingState extends PositionState {}
+
+class GetConfirmDataV2ResultFailState extends PositionState {
+  int code;
+  String message;
+  GetConfirmDataV2ResultFailState({this.code, this.message});
+}
+
+class PostConfirmPoiDataV2ResultFailState extends PositionState {
+  int code;
+  String message;
+  PostConfirmPoiDataV2ResultFailState({this.code, this.message});
+}
+
+class PostConfirmPoiDataV2ResultSuccessState extends PositionState {
+  List<String> confirmResult;
+  PostConfirmPoiDataV2ResultSuccessState(this.confirmResult);
 }
 
 // uploading poi ncov

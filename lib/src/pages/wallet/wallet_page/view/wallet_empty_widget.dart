@@ -35,7 +35,10 @@ class EmptyWalletView extends StatelessWidget {
             child: Text(
               tips ?? S.of(context).private_wallet_tips,
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14, color: Colors.grey[600]),
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 12,
+                  color: Colors.grey[600]),
             ),
           ),
           Padding(
@@ -45,18 +48,26 @@ class EmptyWalletView extends StatelessWidget {
               children: <Widget>[
                 FlatButton(
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Theme.of(context).primaryColor), borderRadius: BorderRadius.circular(36)),
+                      side: BorderSide(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(36)),
                   onPressed: () {
-                    var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                    Application.router.navigateTo(context, Routes.wallet_create + '?entryRouteName=$currentRouteName');
+                    var currentRouteName =
+                        RouteUtil.encodeRouteNameWithoutParams(context);
+                    Application.router.navigateTo(
+                        context,
+                        Routes.wallet_create +
+                            '?entryRouteName=$currentRouteName');
                   },
                   child: Container(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 52.0, vertical: 10.0),
                       child: Text(
                         S.of(context).create_wallet,
-                        style:
-                            TextStyle(fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -69,17 +80,23 @@ class EmptyWalletView extends StatelessWidget {
                         side: BorderSide(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(36)),
                     onPressed: () {
-                      var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
-                      Application.router
-                          .navigateTo(context, Routes.wallet_import + '?entryRouteName=$currentRouteName');
+                      var currentRouteName =
+                          RouteUtil.encodeRouteNameWithoutParams(context);
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_import +
+                              '?entryRouteName=$currentRouteName');
                     },
                     child: Container(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 52.0, vertical: 10.0),
                         child: Text(
                           S.of(context).import_wallet,
                           style: TextStyle(
-                              fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.w500),
+                              fontSize: 16,
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),

@@ -842,8 +842,8 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     }
   }
 
-  _uploadPoiData() {
-    //print('[add] --> 存储中。。。');
+  _uploadPoiData() async {
+    print('[add] --> 存储中。。。');
 
     // 0. 检测地点名称
     if (!_addressNameKey.currentState.validate()) {
@@ -852,8 +852,7 @@ class _AddPositionState extends BaseState<AddPositionPage> {
 
     // 2.检测网络数据
     if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(widget.userPosition, language));
-      Fluttertoast.showToast(msg: "网络服务错误");
+      Fluttertoast.showToast(msg: S.of(context).network_service_error_toast);
       return;
     }
 
@@ -876,7 +875,9 @@ class _AddPositionState extends BaseState<AddPositionPage> {
       return;
     }
 
+
     var categoryId = _categoryItem.id;
+    var category = _categoryItem.title;
     var country = _openCageData["country"] ?? "";
     var state = _openCageData["state"];
     var city = _openCageData["county"];
@@ -893,10 +894,11 @@ class _AddPositionState extends BaseState<AddPositionPage> {
     var postalCode = _maxLengthLimit(_addressPostcodeController);
 
     var collector = PoiCollector(categoryId, widget.userPosition, poiName, countryCode, country, state, city, county,
-        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite);
+        poiAddress, "", poiHouseNum, postalCode, _timeText, poiPhoneNum, poiWebsite, category);
 
-    var model = PoiDataModel(listImagePaths: _listImagePaths, poiCollector: collector);
-    _positionBloc.add(StartPostPoiDataEvent(model,address));
+    var model = PoiDataV2Model(
+        inListImagePaths: [], outListImagePaths: [], poiCollector: collector);
+    _positionBloc.add(PostPoiDataV2Event(model, address));
     setState(() {
       _isUploading = true;
     });

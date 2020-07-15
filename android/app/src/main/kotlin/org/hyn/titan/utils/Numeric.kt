@@ -60,4 +60,15 @@ object Numeric {
     fun toHexString(input: ByteArray?): String {
         return toHexString(input, 0, input!!.size, true)
     }
+
+    fun toHexString(input: ByteArray?, withPrefix: Boolean = true): String {
+        val stringBuilder = StringBuilder()
+        if(withPrefix) {
+            stringBuilder.append("0x")
+        }
+        input?.forEach { element ->
+            stringBuilder.append(String.format("%02x", element and 0xFF.toByte()))
+        }
+        return stringBuilder.toString()
+    }
 }

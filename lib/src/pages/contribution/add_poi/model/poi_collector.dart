@@ -51,8 +51,11 @@ class PoiCollector extends Object {
   @JsonKey(name: 'website')
   String website;
 
+  @JsonKey(name: 'category')
+  String category;
+
   PoiCollector(this.categoryId, this.location, this.name, this.countryCode, this.country, this.state, this.city,
-      this.county, this.road, this.address2, this.houseNumber, this.postCode, this.workTime, this.phone, this.website);
+      this.county, this.road, this.address2, this.houseNumber, this.postCode, this.workTime, this.phone, this.website, this.category);
 
   factory PoiCollector.fromJson(Map<String, dynamic> srcJson) => _$PoiCollectorFromJson(srcJson);
 

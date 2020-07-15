@@ -50,6 +50,10 @@ class RadioButtonGroup extends StatefulWidget {
   /// Empty space surrounding the RadioButtonGroup.
   final EdgeInsetsGeometry margin;
 
+  final double leftMargin;
+
+  final double rowHeight;
+
   RadioButtonGroup({
     Key key,
     @required this.labels,
@@ -63,6 +67,9 @@ class RadioButtonGroup extends StatefulWidget {
     this.itemBuilder,
     this.padding = const EdgeInsets.all(0.0),
     this.margin = const EdgeInsets.all(0.0),
+    this.leftMargin = 38,
+    this.rowHeight = 40
+    ,
   }) : super(key: key);
 
   @override
@@ -77,18 +84,19 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
     super.initState();
 
     //set the selected to the picked (if not null)
-    _selected = widget.picked ?? "";
+    _selected = widget.picked ?? widget.labels.first;
   }
 
   @override
   Widget build(BuildContext context) {
     //set the selected to the picked (if not null)
-    //_selected = widget.picked ?? _selected;
+//    _selected = widget.picked ?? widget.labels.first;
 
     List<Widget> content = [];
     for (int i = 0; i < widget.labels.length; i++) {
       Radio rb = Radio(
         activeColor: widget.activeColor ?? Theme.of(context).toggleableActiveColor,
+        hoverColor: Color(0xff999999),
         groupValue: widget.labels.indexOf(_selected),
         value: i,
 
@@ -118,20 +126,24 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
 
         //vertical orientation means Column with Row inside
         if (widget.orientation == GroupedButtonsOrientation.VERTICAL) {
-          content.add(Row(children: <Widget>[
-            SizedBox(width: 38.0),
-            InkWell(
-              onTap: () {
-                rb.onChanged(i);
-              },
-              child: Row(
+          content.add(SizedBox(
+            height: widget.rowHeight,
+            child: Row(
                 children: <Widget>[
-                  rb,
-                  t,
-                ],
+              SizedBox(width: widget.leftMargin),
+              InkWell(
+                onTap: () {
+                  rb.onChanged(i);
+                },
+                child: Row(
+                  children: <Widget>[
+                    rb,
+                    t,
+                  ],
+                ),
               ),
-            ),
-          ]));
+            ]),
+          ));
         } else {
           //horizontal orientation means Row with Column inside
 
@@ -156,10 +168,12 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
       padding: widget.padding,
       margin: widget.margin,
       child: widget.orientation == GroupedButtonsOrientation.VERTICAL
-          ? Column(children: content)
+          ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: content)
           : Padding(
-              padding: const EdgeInsets.only(left: 38, right: 38),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: content),
+              padding: EdgeInsets.only(left: widget.leftMargin, right: widget.leftMargin),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: content),
             ),
     );
   }

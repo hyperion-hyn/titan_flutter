@@ -1,14 +1,16 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
-typedef GasInputChangedCallback = void Function(double gasPrice, double gasPriceLimit);
+typedef GasInputChangedCallback = void Function(
+    double gasPrice, double gasPriceLimit);
 
+@deprecated
 class GasInputWidget extends StatefulWidget {
-
   final double currentEthPrice;
   final GasInputChangedCallback callback;
+
   GasInputWidget({this.currentEthPrice, this.callback});
 
   @override
@@ -16,7 +18,6 @@ class GasInputWidget extends StatefulWidget {
 }
 
 class _GasInputWidgetState extends State<GasInputWidget> {
-
   double _minGasPriceLimit = 21000;
   double _defaultGasPriceLimit = 50000;
   double _minGasPrice = 34.10;
@@ -52,7 +53,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterialLocalizations(context));
 
-    var _gasPriceValue = (_gasPrice * _gasPriceLimit) / (10000*10000*10);
+    var _gasPriceValue = (_gasPrice * _gasPriceLimit) / (10000 * 10000 * 10);
     var _gasPriceString = _gasPriceValue.toStringAsPrecision(4);
 
     var _rmbPrice = _gasPriceValue * _ethPrice;
@@ -69,19 +70,24 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8),
               child: Row(
                 children: <Widget>[
-                  Text("矿工费用"),
+                  Text(
+                    "矿工费",
+                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                  ),
                   Spacer(),
                   Text(
                     "$_gasPriceString ether ≈ ￥$_rmbPriceString",
-                    style: TextStyle(color: Theme.of(context).primaryColor),
+                    style: TextStyle(color: HexColor("#1F81FF")),
                   ),
                 ],
               ),
             ),
             _isOpen ? _highWidget() : _normalWidget(),
             SizedBox(
-              height: 40,
+              height: 12,
             ),
+            Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",
+                style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8),
               child: Row(
@@ -90,7 +96,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                   Spacer(),
                   Text(
                     "高级模式",
-                    style: TextStyle(color: Colors.grey[400]),
+                    style: TextStyle(color: HexColor("#999999")),
                   ),
                   Switch(
                     value: _isOpen,
@@ -101,13 +107,13 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                         _isOpen = newValue;
 
 //                        if (_gasPriceController.text.isEmpty) {
-                          _gasPriceController.text = "${_gasPrice.toStringAsPrecision(4)}";
+                        _gasPriceController.text =
+                            "${_gasPrice.toStringAsPrecision(4)}";
 //                        }
 
 //                        if (_gasPriceLimitController.text.isEmpty) {
-                          _gasPriceLimitController.text = "${_gasPriceLimit}";
+                        _gasPriceLimitController.text = "${_gasPriceLimit}";
 //                        }
-
                       });
                     },
                   )
@@ -128,10 +134,10 @@ class _GasInputWidgetState extends State<GasInputWidget> {
           child: Row(
             children: <Widget>[
               Image.asset(
-                'res/drawable/slow_speed.jpg',
+                'res/drawable/slow_speed.png',
                 fit: BoxFit.cover,
-                width: 20,
-                height: 20,
+                width: 19,
+                height: 16,
               ),
               Flexible(
                 flex: 3,
@@ -149,7 +155,6 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                       if (widget.callback != null) {
                         widget.callback(_gasPrice, _gasPriceLimit);
                       }
-
                     });
                   },
                   semanticFormatterCallback: (double newValue) {
@@ -158,10 +163,10 @@ class _GasInputWidgetState extends State<GasInputWidget> {
                 ),
               ),
               Image.asset(
-                'res/drawable/quickly_speed.jpg',
+                'res/drawable/quickly_speed.png',
                 fit: BoxFit.cover,
-                width: 22,
-                height: 20,
+                width: 19,
+                height: 19,
               ),
             ],
           ),
@@ -173,7 +178,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               Spacer(),
               Text(
                 "${_gasPrice.toStringAsPrecision(4)} gwei",
-                style: TextStyle(color: Colors.grey[300]),
+                style: TextStyle(color: HexColor("#999999")),
               ),
               Spacer(),
             ],
@@ -191,17 +196,16 @@ class _GasInputWidgetState extends State<GasInputWidget> {
       ],
     );
   }
+
   //width: MediaQuery.of(context).size.width - 16.0 * 5.0,
 
   void _onEditingComplete() {
-
     FocusScope.of(context).requestFocus(FocusNode());
 
     if (!_isOpen) {
       return;
     }
     String toast;
-
 
     // _gasPrice
     if (_gasPriceController.text.isEmpty) {
@@ -245,12 +249,11 @@ class _GasInputWidgetState extends State<GasInputWidget> {
       widget.callback(_gasPrice, _gasPriceLimit);
     }
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
-  Widget _textField(TextEditingController controller, String hintText, String suffixText) {
+  Widget _textField(
+      TextEditingController controller, String hintText, String suffixText) {
     //print("[textfield] $initialValue, controller:$controller");
 
     return Padding(
@@ -270,7 +273,7 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               /*onChanged: (String inputText) {
                 print('[add] --> onChanged, inputText:${inputText}');
               },*/
-              onEditingComplete: (){
+              onEditingComplete: () {
                 print('[add] --> onEditingComplete, text:${controller.text}');
 
                 _onEditingComplete();
@@ -289,25 +292,33 @@ class _GasInputWidgetState extends State<GasInputWidget> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: hintText,
-                suffixIcon:  SizedBox(
-                child: Center(
-                widthFactor: 0.0,
-                child: Text(
-                  suffixText,
-                  style: TextStyle(color: Colors.grey[300]),
+                suffixIcon: SizedBox(
+                  child: Center(
+                    widthFactor: 0.0,
+                    child: Text(
+                      suffixText,
+                      style: TextStyle(color: Colors.grey[300]),
+                    ),
+                  ),
                 ),
-              ),
-            ),
                 hintStyle: TextStyle(fontSize: 14, color: Colors.grey[300]),
                 focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                    BorderSide(width: 0.5, color: Colors.blue, style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                    borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.blue,
+                        style: BorderStyle.solid)),
+                //输入框启用时，下划线的样式
                 disabledBorder: UnderlineInputBorder(
-                    borderSide:
-                    BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                    borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey[300],
+                        style: BorderStyle.solid)),
+                //输入框启用时，下划线的样式
                 enabledBorder: UnderlineInputBorder(
-                    borderSide:
-                    BorderSide(width: 0.5, color: Colors.grey[300], style: BorderStyle.solid)), //输入框启用时，下划线的样式
+                    borderSide: BorderSide(
+                        width: 0.5,
+                        color: Colors.grey[300],
+                        style: BorderStyle.solid)), //输入框启用时，下划线的样式
               ),
               keyboardType: TextInputType.number,
             ),
@@ -316,5 +327,4 @@ class _GasInputWidgetState extends State<GasInputWidget> {
       ),
     );
   }
-
 }
