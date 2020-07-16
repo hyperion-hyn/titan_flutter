@@ -58,7 +58,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         walletRepository.saveActivatedWalletFileName(
             _activatedWalletVo?.wallet?.keystore?.fileName);
 
-        _recoverBalanceFromDisk(_activatedWalletVo);
+        if(_activatedWalletVo != null) {
+          _recoverBalanceFromDisk(_activatedWalletVo);
+        }
 
         //sync wallet account to server
         if (event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false) {
