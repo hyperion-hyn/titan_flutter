@@ -95,7 +95,7 @@ class _AboueMeState extends BaseState<AboutMePage> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '软件协议',
+                      S.of(context).software_agreement,
                       style: TextStyle(color: Colors.black, fontSize: 15),
                     ),
                     Spacer(),

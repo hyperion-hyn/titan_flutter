@@ -1,5 +1,6 @@
 package org.hyn.titan.utils
 
+import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Context
 import android.net.Uri
@@ -32,22 +33,34 @@ class AppToolsPlugin(private val context: Context) : MethodChannel.MethodCallHan
                 return
             }
             var host = data.host
-            if("contract" == host){
+//            if("contract" == host){
                 var params = data.pathSegments
                 if(params.size == 1){
-                    var contractId = data.getQueryParameter("contractId")
+                    var contentMap:MutableMap<String,String> = mutableMapOf()
+                    data.queryParameterNames.mapIndexed { index, keyStr ->
+                        contentMap.put(keyStr, data.getQueryParameter(keyStr) ?: "")
+                    }
+                    var mapValue = mapOf("type" to host,"subType" to params[0],"content" to contentMap)
+                    methodChannel.invokeMethod("p2fDeeplink",mapValue)
+                    /*var contractId = data.getQueryParameter("contractId")
                     var key = data.getQueryParameter("key")
                     var mapValue = mapOf("type" to host,"subType" to params[0],"content" to mapOf("contractId" to contractId,"key" to key))
-                    methodChannel.invokeMethod("urlLauncher",mapValue)
+                    methodChannel.invokeMethod("urlLauncher",mapValue)*/
                 }
-            }
+//            }
         }
     }
 
-    fun setMethodCallHandler(call: MethodCall, result: MethodChannel.Result): Boolean {
+    fun setMethodCallHandler(context: Context, call: MethodCall, result: MethodChannel.Result): Boolean {
         return when (call.method) {
             "clipboardData" -> {
                 getClipboardData()
+                result.success(true)
+                true
+            }
+            "f2pDeeplink" -> {
+                var intent = (context as Activity).intent
+                deeplinkStart(intent.data)
                 result.success(true)
                 true
             }

@@ -86,12 +86,12 @@ class EncryptShareState extends State<EncryptShare> {
               Material(
                 color: Colors.transparent,
                 child: Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                      Colors.black38,
-                      Colors.transparent,
-                    ]),
-                  ),
+//                  decoration: BoxDecoration(
+//                    gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+//                      Colors.black38,
+//                      Colors.transparent,
+//                    ]),
+//                  ),
                   padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).padding.top + 100,
@@ -108,7 +108,7 @@ class EncryptShareState extends State<EncryptShare> {
                               padding: const EdgeInsets.only(left: 24.0, top: 8),
                               child: Text(
                                 S.of(context).close,
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
                               ),
                             ),
                           ),
@@ -124,6 +124,7 @@ class EncryptShareState extends State<EncryptShare> {
                                 if (selectedPoi != null) {
                                   var suc = await showDialog(
                                       context: context,
+                                      barrierDismissible: false,
                                       builder: (context) {
                                         return ShareDialog(poi: selectedPoi);
                                       });

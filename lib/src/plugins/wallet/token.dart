@@ -39,7 +39,7 @@ class SupportedTokens {
     name: 'Ethereum',
     decimals: 18,
     contractAddress: null,
-    logo: 'res/drawable/eth_logo.png',
+    logo: 'res/drawable/ic_eth.png',
     symbol: 'ETH',
   );
 
@@ -47,7 +47,7 @@ class SupportedTokens {
       name: 'Hyperion',
       decimals: 18,
       contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
-      logo: 'res/drawable/hyn_logo.png',
+      logo: "res/drawable/ic_hyn_logo_new.png",
       symbol: 'HYN');
 
   static const USDT_ERC20 = const AssetToken(
@@ -71,21 +71,21 @@ class SupportedTokens {
       name: 'Hyperion ROPSTEN',
       decimals: 18,
       contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
-      logo: 'res/drawable/hyn_logo.png',
+      logo: "res/drawable/ic_hyn_logo_new.png",
       symbol: 'HYN');
 
   static const HYN_RINKEBY = const AssetToken(
       name: 'Hyperion RINKEBY',
       decimals: 18,
       contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
-      logo: 'res/drawable/hyn_logo.png',
+      logo: "res/drawable/ic_hyn_logo_new.png",
       symbol: 'HYN');
 
   static final HYN_LOCAL = AssetToken(
       name: 'Hyperion LOCAL',
       decimals: 18,
       contractAddress: ContractTestConfig.hynContractAddress,
-      logo: 'res/drawable/hyn_logo.png',
+      logo: "res/drawable/ic_hyn_logo_new.png",
       symbol: 'HYN');
 
   static List<AssetToken> allContractTokens(EthereumNetType netType) {

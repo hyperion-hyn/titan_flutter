@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
@@ -41,13 +42,58 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
 
   void _showFireModalBottomSheet(context) {
     showModalBottomSheet(
+      backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+        ),
         context: context,
         builder: (ctx) {
           return Container(
-            margin: EdgeInsets.all(8),
+//            decoration: BoxDecoration(
+//            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),),
+            margin: EdgeInsets.only(top: 12,bottom: 31),
             child: new Wrap(
               children: <Widget>[
-                new ListTile(
+                InkWell(
+                  onTap: (){
+                    Navigator.pop(ctx);
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return BurningDialog();
+                        });
+                    _clean(context);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width: 20,),
+                        Image.asset('res/drawable/ic_home_clear.png',width: 15,),
+                        SizedBox(width: 12,),
+                        Text(S.of(context).Clean,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
+                      ]
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.pop(ctx);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+//                    padding: const EdgeInsets.only(top:5,bottom: 10,left: 10,right: 10),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width: 21,),
+                        Image.asset('res/drawable/ic_close.png',width: 12,),
+                        SizedBox(width: 15,),
+                        Text(S.of(context).cancel,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
+                      ],
+                    ),
+                  ),
+                )
+                /*new ListTile(
                     leading: new Icon(Icons.vertical_align_bottom),
                     title: new Text(S.of(context).Clean,
                         style: TextStyle(color: Color(0xffac2229), fontWeight: FontWeight.w500)),
@@ -65,7 +111,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                   leading: new Icon(Icons.close),
                   title: new Text(S.of(context).cancel),
                   onTap: () => Navigator.pop(ctx),
-                ),
+                ),*/
               ],
             ),
           );

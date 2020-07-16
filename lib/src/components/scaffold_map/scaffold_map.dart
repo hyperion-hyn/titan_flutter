@@ -18,6 +18,7 @@ import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/data/entity/poi/search_history_aware_poi.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/search/search_page.dart';
 import 'package:titan/src/widget/header_height_notification.dart';
 
@@ -148,6 +149,9 @@ class ScaffoldCmpMapState extends State<ScaffoldMap> {
       var lastRuntimeType = _stateStack.last.runtimeType;
       if (lastRuntimeType != DefaultScaffoldMapState && lastRuntimeType != FocusingDMapState) {
         backToPreviewState();
+        return true;
+      }else if(lastRuntimeType != DefaultScaffoldMapState && lastRuntimeType == FocusingDMapState){
+        BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
         return true;
       }
     }

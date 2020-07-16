@@ -12,7 +12,7 @@ import RxSwift
 class EncrytionPluginInterface {
     
     private lazy var encryptService: EncryptionService = EthEncryptionService()
-
+    
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: @escaping FlutterResult) -> Bool {
         switch(methodCall.method) {
             
@@ -29,15 +29,15 @@ class EncrytionPluginInterface {
             let expired = methodCall.arguments as? Int64 ?? 3600
             self.generateKey(expired: expired, result: result)
             return true
-
+            
         case "getPublicKey":
             result(self.encryptService.publicKey)
             return true
-
+            
         case "getExpired":
             result(self.encryptService.expireTime)
             return true
-
+            
         case "encrypt":
             guard let params = methodCall.arguments as? [String: String] else {
                 result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
@@ -54,20 +54,24 @@ class EncrytionPluginInterface {
                     result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
                 }, onCompleted: nil, onDisposed: nil)
             return true
-
+            
         case "decrypt":
-            guard let ciphertext = methodCall.arguments as? String else {
-                result(FlutterError.init(code: "-1", message: "params is not String", details: nil))
+            guard let params = methodCall.arguments as? [String: String] else {
+                result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
                 return true
             }
-            self.encryptService.decrypt(ciphertext: ciphertext)
+            guard let privateKey = params["privateKey"], let cipherText = params["cipherText"] else {
+                result(FlutterError.init(code: "-1", message: "params can not find message", details: nil))
+                return true
+            }
+            self.encryptService.decrypt(privateKeyStr: privateKey, ciphertext: cipherText)
                 .subscribe(onNext: { (message) in
                     result(message)
                 }, onError: { error in
                     result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
                 }, onCompleted: nil, onDisposed: nil)
             return true
-
+            
         default:
             return false
         }
@@ -76,10 +80,8 @@ class EncrytionPluginInterface {
     private func generateKey(expired: Int64, result: @escaping FlutterResult) {
         let disposeBag = DisposeBag()
         self.encryptService.generateKeyPairAndStore(expireAt: expired)
-            .subscribe(onNext: { (isSuccess) in
-                if let pub = self.encryptService.publicKey {
-                    result(pub)
-                }
+            .subscribe(onNext: { (pair:[AnyHashable : Any]) in
+                result(pair)
             }, onError: nil, onCompleted: nil, onDisposed: nil)
             .disposed(by: disposeBag)
     }

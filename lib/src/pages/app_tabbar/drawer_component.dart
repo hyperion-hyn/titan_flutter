@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/app.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/pages/wallet_demo/WalletDemo.dart';
@@ -85,7 +86,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                       ],
                     ),
                     SizedBox(height: 16),
-                    Text(S.of(context).nav_my_privacy_map, style: TextStyle(color: Colors.white70))
+                    Text(S.of(context).nav_my_privacy_map,
+                        style: TextStyle(color: Colors.white70))
                   ],
                 ),
               ),
@@ -98,7 +100,10 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyEncryptedAddrPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyEncryptedAddrPage()));
                   },
                   leading: Icon(Icons.lock),
                   title: Text(S.of(context).main_my_public_key),
@@ -112,7 +117,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                     onTap: () {
                       if (_pubKey.isNotEmpty) {
                         Clipboard.setData(ClipboardData(text: _pubKey));
-                        Fluttertoast.showToast(msg: S.of(context).public_key_copied);
+                        Fluttertoast.showToast(
+                            msg: S.of(context).public_key_copied);
                       }
                     },
                     child: Row(
@@ -122,7 +128,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                           _pubKey,
                           softWrap: false,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 13),
                         )),
                         Padding(
                           padding: const EdgeInsets.only(left: 4),
@@ -137,14 +144,21 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Text(_pubKeyAutoRefreshTip, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Text(_pubKeyAutoRefreshTip,
+                      style: TextStyle(fontSize: 12, color: Colors.grey)),
                 ),
                 Container(height: 8, color: Colors.grey[100]),
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletPage()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Scaffold(
+                                  body: SafeArea(child: WalletPage()),
+                                )));
                   },
                   leading: Icon(Icons.account_balance_wallet),
                   title: Text(S.of(context).wallet),
@@ -168,7 +182,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AboutMePage()));
                   },
                   leading: Icon(Icons.info),
                   title: Text(S.of(context).nav_about_us),
@@ -178,7 +193,8 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => WalletDemo()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => WalletDemo()));
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('钱包测试'),
@@ -212,6 +228,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
     }
 
     final ByteData imageByte = await rootBundle.load(shareAppImage);
-    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
+    await Share.file(S.of(context).nav_share_app, 'app.png',
+        imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }

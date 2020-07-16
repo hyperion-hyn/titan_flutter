@@ -28,6 +28,7 @@ import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
@@ -45,8 +46,8 @@ class Map3NodeSendConfirmPage extends StatefulWidget {
   final String region;
   final ContractNodeItem contractNodeItem;
 
-  Map3NodeSendConfirmPage(
-      String coinVo, this.contractNodeItem, this.transferAmount, this.receiverAddress, this.pageType, this.contractId,
+  Map3NodeSendConfirmPage(String coinVo, this.contractNodeItem,
+      this.transferAmount, this.receiverAddress, this.pageType, this.contractId,
       {this.provider, this.region})
       : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
@@ -71,7 +72,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   @override
   void onCreated() {
-    activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    activatedQuoteSign = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign(widget.coinVo.symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     _speedOnTap(1);
@@ -84,7 +86,9 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Decimal get gasPrice {
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var gasPriceRecommend =
+        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+            .gasPriceRecommend;
     switch (selectedPriceLevel) {
       case 0:
         return gasPriceRecommend.safeLow;
@@ -99,21 +103,35 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+    var activatedQuoteSign = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign(widget.coinVo.symbol);
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var gasPriceRecommend =
+        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+            .gasPriceRecommend;
 
-    var totalGasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit
-        + SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
+    var totalGasLimit = SettingInheritedModel.ofConfig(context)
+            .systemConfigEntity
+            .erc20TransferGasLimit +
+        SettingInheritedModel.ofConfig(context)
+            .systemConfigEntity
+            .createMap3NodeGasLimit;
     var gasEstimate = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
+        weiBigInt: BigInt.parse(
+            (gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
-    var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
+    var ethQuotePrice = QuotesInheritedModel.of(context)
+            .activatedQuoteVoAndSign('ETH')
+            ?.quoteVo
+            ?.price ??
+        0; //
 
-    var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+    var gasPriceEstimate =
+        gasEstimate * Decimal.parse(ethQuotePrice.toString());
 
-    print("[confirm] gasPriceEstimate:$gasPriceEstimate, ethQuotePrice:$ethQuotePrice");
+    print(
+        "[confirm] gasPriceEstimate:$gasPriceEstimate, ethQuotePrice:$ethQuotePrice");
 
     return WillPopScope(
       onWillPop: () async {
@@ -148,15 +166,20 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                             size: 48,
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 8),
                             child: Text(
                               "-${widget.transferAmount} ${widget.coinVo.symbol}",
-                              style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                              style: TextStyle(
+                                  color: Color(0xFF252525),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
                             ),
                           ),
                           Text(
                             "≈ $quoteSign${FormatUtil.formatPrice(widget.transferAmount.toDouble() * quotePrice)}",
-                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                            style: TextStyle(
+                                color: Color(0xFF9B9B9B), fontSize: 14),
                           )
                         ],
                       ),
@@ -175,14 +198,18 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Text(
                             "From",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                color: Color(0xFF9B9B9B)),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
                             "${activatedWallet.wallet.keystore.name}(${shortBlockChainAddress(widget.coinVo.address)})",
-                            style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF252525)),
                             overflow: TextOverflow.ellipsis,
                             softWrap: true,
                           ),
@@ -206,14 +233,19 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: Text(
                             "To",
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B)),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                color: Color(0xFF9B9B9B)),
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
-                            S.of(context).map_node_contract_address(shortBlockChainAddress(widget.receiverAddress)),
-                            style: TextStyle(fontSize: 16, color: Color(0xFF252525)),
+                            S.of(context).map_node_contract_address(
+                                shortBlockChainAddress(widget.receiverAddress)),
+                            style: TextStyle(
+                                fontSize: 16, color: Color(0xFF252525)),
                           ),
                         )
                       ],
@@ -229,7 +261,6 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // todo: test_jison_0520_close
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
@@ -363,10 +394,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                         ],
                       ),
                     ),
-                    /*GasInputWidget(currentEthPrice: ethQuotePrice, callback: (double gasPrice, double gasPriceLimit){
-                      print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                    }),*/
-                    Text("PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
+                    Text(S.of(context).ps_gas_hint,style: TextStyle(fontSize: 10,color: HexColor("#bfbfbf")))
                   ],
                 ),
               ),
@@ -377,7 +405,8 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                 margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
                 constraints: BoxConstraints.expand(height: 48),
                 child: RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
                   disabledColor: Colors.grey[600],
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
@@ -389,8 +418,11 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          _isTransferring ? S.of(context).please_waiting : S.of(context).send,
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                          _isTransferring
+                              ? S.of(context).please_waiting
+                              : S.of(context).send,
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],
                     ),
@@ -411,70 +443,93 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   }
 
   Future _transferNew() async {
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      activatedWallet.wallet,
+    );
+
+    if (walletPassword == null) {
+      return;
+    }
+
+    try {
+      if (mounted) {
+        setState(() {
+          _isTransferring = true;
+        });
       }
 
-      try {
-        if (mounted) {
-          setState(() {
-            _isTransferring = true;
-          });
-        }
+      var startJoin = StartJoinInstance(
+          activatedWallet.wallet.getEthAccount().address,
+          widget.provider,
+          widget.region);
+      //ContractDetailItem _detailItem;
+      String resultMsg = "";
+      ContractNodeItem contractNodeItem;
+      if (widget.pageType ==
+          Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
+        contractNodeItem = await _nodeApi.startContractInstance(
+            widget.contractNodeItem,
+            activatedWallet,
+            walletPassword,
+            gasPrice.toInt(),
+            widget.contractId,
+            startJoin,
+            widget.transferAmount);
+        print("creat post result = $resultMsg");
+      } else {
+        contractNodeItem = widget.contractNodeItem;
+        resultMsg = await _nodeApi.joinContractInstance(
+            widget.contractNodeItem,
+            activatedWallet,
+            walletPassword,
+            gasPrice.toInt(),
+            widget.contractNodeItem.owner,
+            widget.contractId,
+            widget.transferAmount);
+        print("join post result = $resultMsg");
+      }
 
-        var startJoin =
-            StartJoinInstance(activatedWallet.wallet.getEthAccount().address, widget.provider, widget.region);
-        //ContractDetailItem _detailItem;
-        String resultMsg = "";
-        ContractNodeItem contractNodeItem;
-        if (widget.pageType == Map3NodeCreateContractPage.CONTRACT_PAGE_TYPE_CREATE) {
-          contractNodeItem = await _nodeApi.startContractInstance(widget.contractNodeItem, activatedWallet,
-              walletPassword, gasPrice.toInt(), widget.contractId, startJoin, widget.transferAmount);
-          print("creat post result = $resultMsg");
+//      await UiUtil.showSetBioAuthDialog(
+//        context,
+//        '生物识别',
+//        activatedWallet.wallet,
+//        walletPassword,
+//      );
+
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_broadcase_success_page +
+              "?pageType=${widget.pageType}" +
+              "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+    } catch (_) {
+      logger.e(_);
+
+      if (mounted) {
+        setState(() {
+          _isTransferring = false;
+        });
+      }
+
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
         } else {
-          contractNodeItem = widget.contractNodeItem;
-          resultMsg = await _nodeApi.joinContractInstance(widget.contractNodeItem, activatedWallet, walletPassword,
-              gasPrice.toInt(), widget.contractNodeItem.owner, widget.contractId, widget.transferAmount);
-          print("join post result = $resultMsg");
+          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_broadcase_success_page +
-                "?pageType=${widget.pageType}" +
-                "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-      } catch (_) {
-        logger.e(_);
+      } else if (_ is RPCError) {
+        Fluttertoast.showToast(
+            msg: MemoryCache.contractErrorStr(_.message),
+            toastLength: Toast.LENGTH_LONG);
 
-        if (mounted) {
-          setState(() {
-            _isTransferring = false;
-          });
-        }
-
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
-
-          /*if (_.errorCode == -32000) {
+        /*if (_.errorCode == -32000) {
             Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
           } else {
             Fluttertoast.showToast(msg: S.of(context).transfer_fail);
           }*/
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
-    });
+    }
   }
 }

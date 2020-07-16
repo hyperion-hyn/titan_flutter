@@ -55,7 +55,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "分享合约",
+          S.of(context).share_contract,
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
@@ -151,7 +151,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
               ),
             ),
             Text(
-              "扫描二维码查看详情",
+              S.of(context).scan_qr_code_detail,
               style: TextStyle(color: Colors.white, fontSize: 15),
             ),
           ],

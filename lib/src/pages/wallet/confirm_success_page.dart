@@ -23,7 +23,9 @@ class _ConfirmSuccessPage extends State<ConfirmSuccessPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
         ),
           body: Center(
         child: Container(

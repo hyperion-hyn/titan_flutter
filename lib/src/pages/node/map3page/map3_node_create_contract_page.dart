@@ -442,11 +442,11 @@ Widget getHoldInNum(
                               if (textStr.length == 0) {
                                 return S.of(context).please_input_hyn_count;
                               } else if (minTotal == 0) {
-                                return "抵押已满";
+                                return S.of(context).delegation_amount_full;
                               } else if (int.parse(textStr) < minTotal) {
                                 return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                               } else if (int.parse(textStr) > remainTotal) {
-                                return "不能超过剩余份额";
+                                return S.of(context).not_exceed_remain_share;
                               } else if (Decimal.parse(textStr) >
                                   Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                 return S.of(context).hyn_balance_no_enough;

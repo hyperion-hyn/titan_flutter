@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +12,7 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -18,6 +20,7 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -46,10 +49,12 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var index = EthereumNetType.values.indexOf(WalletConfig.netType);
               setState(() {
-                WalletConfig.netType = EthereumNetType.values[(index + 1) % EthereumNetType.values.length];
+                WalletConfig.netType = EthereumNetType
+                    .values[(index + 1) % EthereumNetType.values.length];
               });
             },
-            child: Text('${WalletConfig.netType.toString().split('.')[1]} 点击切换网络类型'),
+            child: Text(
+                '${WalletConfig.netType.toString().split('.')[1]} 点击切换网络类型'),
           ),
           Divider(
             height: 16,
@@ -58,7 +63,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.length > 0) {
-                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(ActiveWalletEvent(wallet: wallets[0]));
               }
             },
             child: Text('激活一个钱包'),
@@ -89,12 +95,15 @@ class _WalletDemoState extends State<WalletDemo> {
               //var walletName = "我的助记词钱包1";
               var walletName = _mnemonic.split(" ").first;
               var password = '111111';
-              var wallet = await WalletUtil.storeByMnemonic(name: walletName, password: password, mnemonic: _mnemonic);
+              var wallet = await WalletUtil.storeByMnemonic(
+                  name: walletName, password: password, mnemonic: _mnemonic);
               if (wallet != null) {
                 _mnemonic = null;
-                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallet));
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(ActiveWalletEvent(wallet: wallet));
 
-                logger.i("-快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
+                logger.i(
+                    "-快捷一步，创建一个新钱包, name:$walletName, keystore: ${wallet.keystore.fileName}， 成功！");
               } else {
                 logger.i("-快捷一步，创建一个新钱包：错误 ");
               }
@@ -108,19 +117,23 @@ class _WalletDemoState extends State<WalletDemo> {
               } else {
                 final client = WalletUtil.getWeb3Client();
                 String privateKey = ContractTestConfig.privateKey;
-                final credentials = await client.credentialsFromPrivateKey(privateKey);
+                final credentials =
+                    await client.credentialsFromPrivateKey(privateKey);
 
                 final address = await credentials.extractAddress();
                 print(address.hexEip55);
                 print(await client.getBalance(address));
 
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+                var activeWallet =
+                    WalletInheritedModel.of(context).activatedWallet?.wallet;
                 if (activeWallet != null) {
                   var toAddress = activeWallet.getEthAccount().address;
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05); //.toRadixString(16);
+                  var amount = ConvertTokenUnit.etherToWei(
+                      etherDouble: 0.05); //.toRadixString(16);
 //                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.5); //.toRadixString(16);
 
-                  var count = await client.getTransactionCount(EthereumAddress.fromHex(address.hexEip55));
+                  var count = await client.getTransactionCount(
+                      EthereumAddress.fromHex(address.hexEip55));
 
                   var txHash = await client.sendTransaction(
                     credentials,
@@ -128,23 +141,32 @@ class _WalletDemoState extends State<WalletDemo> {
                       to: EthereumAddress.fromHex(toAddress),
                       value: EtherAmount.inWei(amount),
                       nonce: count,
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                      maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
+                      gasPrice: EtherAmount.inWei(
+                          BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      maxGas: SettingInheritedModel.ofConfig(context)
+                          .systemConfigEntity
+                          .ethTransferGasLimit,
                     ),
                     fetchChainIdFromNetworkId: true,
                   );
                   logger.i('ETH交易已提交，交易hash $txHash');
 
-                  var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                  var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 505000); //三十万
+                  var hynErc20Contract = WalletUtil.getHynErc20Contract(
+                      ContractTestConfig.hynContractAddress);
+                  var hynAmount =
+                      ConvertTokenUnit.etherToWei(etherDouble: 505000); //三十万
                   txHash = await client.sendTransaction(
                     credentials,
                     Transaction.callContract(
                       contract: hynErc20Contract,
                       function: hynErc20Contract.function('transfer'),
-                      parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
+                      parameters: [
+                        EthereumAddress.fromHex(toAddress),
+                        hynAmount
+                      ],
                       nonce: count + 1,
-                      gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                      gasPrice: EtherAmount.inWei(
+                          BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
                       maxGas: 500000,
                     ),
                     fetchChainIdFromNetworkId: true,
@@ -158,7 +180,8 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
 //              var wallets = await WalletUtil.scanWallets();
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               if (activeWallet != null) {
                 var balance;
                 Account account = activeWallet.getEthAccount();
@@ -187,10 +210,13 @@ class _WalletDemoState extends State<WalletDemo> {
               if (wallets.length > 0) {
                 var wallet0 = wallets[0];
                 final client = WalletUtil.getWeb3Client();
-                var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+                var map3Contract = WalletUtil.getMap3Contract(
+                    WalletConfig.map3ContractAddress);
 
-                final ret = await client
-                    .call(contract: map3Contract, function: map3Contract.function('maxTotalDelegation'), params: []);
+                final ret = await client.call(
+                    contract: map3Contract,
+                    function: map3Contract.function('maxTotalDelegation'),
+                    params: []);
                 logger.i('map3 maxTotalDelegation, result: $ret');
               }
             },
@@ -205,18 +231,22 @@ class _WalletDemoState extends State<WalletDemo> {
 
                 var maxStakingAmount = 1000000; //一百万
                 var myStaking = 0.4 * maxStakingAmount; //最小抵押量
-                var hynErc20ContractAddress = wallet0.getEthAccount().contractAssetTokens[0].contractAddress;
+                var hynErc20ContractAddress = wallet0
+                    .getEthAccount()
+                    .contractAssetTokens[0]
+                    .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
                   var signedHex = await wallet0.signApproveErc20Token(
                       contractAddress: hynErc20ContractAddress,
                       approveToAddress: approveToAddress,
-                      amount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                      amount:
+                          ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                       password: '111111',
                       gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                       gasLimit: 5000000);
-                  var ret =
-                      await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+                  var ret = await WalletUtil.postToEthereumNetwork(
+                      method: 'eth_sendRawTransaction', params: [signedHex]);
 
                   logger.i('hyn approve, result: $ret');
                 } catch (e) {
@@ -272,15 +302,19 @@ class _WalletDemoState extends State<WalletDemo> {
 //                    params: [bytesToHex(signed, include0x: true, padToEvenLength: true)]);
 
                 signedHex = await wallet0.signCreateMap3Node(
-                  stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  stakingAmount:
+                      ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                   type: durationType,
-                  firstHalfPubKey: '0x75c452bab9f8a838f6880290d537867adf0b7d744edba34806cb3c9455517435',
-                  secondHalfPubKey: '0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d',
+                  firstHalfPubKey:
+                      '0x75c452bab9f8a838f6880290d537867adf0b7d744edba34806cb3c9455517435',
+                  secondHalfPubKey:
+                      '0xe5dede8ce87e38149f1e8df57da67d43d12a27f61d11d7f6d14ebbb6132a850d',
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
                   password: '111111',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 createNode, result: $ret');
               }
@@ -294,18 +328,21 @@ class _WalletDemoState extends State<WalletDemo> {
               if (wallets != null) {
                 var wallet0 = wallets.wallet;
 
-                var createNodeWalletAddress = wallet0.getEthAccount().address; //创建节点合约的钱包地址
+                var createNodeWalletAddress =
+                    wallet0.getEthAccount().address; //创建节点合约的钱包地址
                 double myStaking = 100000; //我要抵押的量
                 var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
                 var signedHex = await wallet0.signDelegateMap3Node(
                   createNodeWalletAddress: createNodeWalletAddress,
-                  stakingAmount: ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  stakingAmount:
+                      ConvertTokenUnit.etherToWei(etherDouble: myStaking),
                   gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
                   gasLimit: gasLimit,
                   password: '111111',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 delegate, result: $ret');
               }
@@ -328,7 +365,8 @@ class _WalletDemoState extends State<WalletDemo> {
                   gasLimit: gasLimit,
                   password: '111111',
                 );
-                var ret = await WalletUtil.postToEthereumNetwork(method: 'eth_sendRawTransaction', params: [signedHex]);
+                var ret = await WalletUtil.postToEthereumNetwork(
+                    method: 'eth_sendRawTransaction', params: [signedHex]);
 
                 logger.i('map3 collect, result: $ret');
               }
@@ -488,7 +526,8 @@ class _WalletDemoState extends State<WalletDemo> {
 //                        wallet: wallet, oldPassword: 'new password', newPassword: "111111", name: '修改的钱包');
                     if (success) {
                       print('-修改成功');
-                      print('-最后成为${wallet.wallet.keystore.name} ${wallet.wallet.keystore.fileName}');
+                      print(
+                          '-最后成为${wallet.wallet.keystore.name} ${wallet.wallet.keystore.fileName}');
                     }
                   }
                 },
@@ -502,7 +541,10 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     print('-即将修改${wallet.keystore.fileName} 的密码');
                     var success = await WalletUtil.updateWallet(
-                        wallet: wallet, password: '111111_wrong', newPassword: "new password", name: '修改的钱包');
+                        wallet: wallet,
+                        password: '111111_wrong',
+                        newPassword: "new password",
+                        name: '修改的钱包');
                     if (success) {
                       print('-修改密码成功');
                       print('-最后成为${wallet.keystore.fileName}');
@@ -521,8 +563,9 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     var wallet = wallets[0];
                     try {
-                      var prvKey =
-                          await WalletUtil.exportPrivateKey(fileName: wallet.keystore.fileName, password: '111111');
+                      var prvKey = await WalletUtil.exportPrivateKey(
+                          fileName: wallet.keystore.fileName,
+                          password: '111111');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -538,7 +581,8 @@ class _WalletDemoState extends State<WalletDemo> {
                     var wallet = wallets[0];
                     try {
                       var prvKey = await WalletUtil.exportPrivateKey(
-                          fileName: wallet.keystore.fileName, password: '111111_wrong');
+                          fileName: wallet.keystore.fileName,
+                          password: '111111_wrong');
                       logger.i('your prvKey is: $prvKey');
                     } catch (e) {
                       logger.e(e);
@@ -557,9 +601,11 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     var wallet = wallets[0];
                     try {
-                      if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
-                        var mnemonic =
-                            await WalletUtil.exportMnemonic(fileName: wallet.keystore.fileName, password: '111111');
+                      if ((wallet.keystore is KeyStore) &&
+                          wallet.keystore.isMnemonic) {
+                        var mnemonic = await WalletUtil.exportMnemonic(
+                            fileName: wallet.keystore.fileName,
+                            password: '111111');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('-不是TrustWallet钱包，不支持导出助记词');
@@ -577,9 +623,11 @@ class _WalletDemoState extends State<WalletDemo> {
                   if (wallets.length > 0) {
                     var wallet = wallets[0];
                     try {
-                      if ((wallet.keystore is KeyStore) && wallet.keystore.isMnemonic) {
+                      if ((wallet.keystore is KeyStore) &&
+                          wallet.keystore.isMnemonic) {
                         var mnemonic = await WalletUtil.exportMnemonic(
-                            fileName: wallet.keystore.fileName, password: '111111_wrong');
+                            fileName: wallet.keystore.fileName,
+                            password: '111111_wrong');
                         logger.i('your mnemonic is: $mnemonic');
                       } else {
                         print('-不是TrustWallet钱包，不支持导出助记词');
@@ -604,9 +652,11 @@ class _WalletDemoState extends State<WalletDemo> {
 
               wallets = await WalletUtil.scanWallets();
               if (wallets.length == 0) {
-                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(ActiveWalletEvent(wallet: null));
               } else {
-                BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: wallets[0]));
+                BlocProvider.of<WalletCmpBloc>(context)
+                    .add(ActiveWalletEvent(wallet: wallets[0]));
               }
             },
             child: Text('删除所有钱包'),
@@ -616,7 +666,8 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet.wallet;
               if (activeWallet != null) {
                 final client = WalletUtil.getWeb3Client();
                 var ethAddress = activeWallet.getEthAccount().address;
@@ -636,7 +687,8 @@ class _WalletDemoState extends State<WalletDemo> {
 //                  }
 //                }
 
-                var count = await client.getTransactionCount(EthereumAddress.fromHex(ethAddress));
+                var count = await client
+                    .getTransactionCount(EthereumAddress.fromHex(ethAddress));
                 logger.i('pending nonce is $count');
               }
             },
@@ -657,7 +709,8 @@ class _WalletDemoState extends State<WalletDemo> {
               var wallets = await WalletUtil.scanWallets();
               if (wallets.isNotEmpty) {
                 var wallet = wallets.first;
-                var createNodeWalletAddress = wallet.getEthAccount().address; //创建节点合约的钱包地址
+                var createNodeWalletAddress =
+                    wallet.getEthAccount().address; //创建节点合约的钱包地址
                 double myStaking = 100000; //我要抵押的量
                 var gasLimit = 1000000; //TODO 暂定的，到时候要调成合适的.
 
@@ -686,7 +739,8 @@ class _WalletDemoState extends State<WalletDemo> {
             onPressed: () async {
               try {
                 var password = '111111';
-                var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.01); //.toRadixString(16);
+                var amount = ConvertTokenUnit.etherToWei(
+                    etherDouble: 0.01); //.toRadixString(16);
                 var wallet = WalletInheritedModel.of(context).activatedWallet;
                 if (wallet != null) {
                   var toAddress = '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A';
@@ -709,11 +763,16 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var activeWallet =
+                    WalletInheritedModel.of(context).activatedWallet.wallet;
                 if (activeWallet != null) {
                   var password = '111111';
-                  var amount = ConvertTokenUnit.etherToWei(etherDouble: 1000000000000000); //.toRadixString(16);
-                  var hynErc20ContractAddress = activeWallet.getEthAccount().contractAssetTokens[0].contractAddress;
+                  var amount = ConvertTokenUnit.etherToWei(
+                      etherDouble: 1000000000000000); //.toRadixString(16);
+                  var hynErc20ContractAddress = activeWallet
+                      .getEthAccount()
+                      .contractAssetTokens[0]
+                      .contractAddress;
 
                   var toAddress = '0x89A9855032047fAF65BAA95F43128af6EE5721eD';
 
@@ -735,28 +794,16 @@ class _WalletDemoState extends State<WalletDemo> {
           ),
           RaisedButton(
             onPressed: () async {
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-              if (activeWallet == null) {
-                print('请导入钱包');
-              }
-
               try {
                 var password = '111111';
                 Map<String, dynamic> params = {
                   "a": 1,
-                  "b": "b_p",
-                  "c": "c_p",
-                  "d": "d_p",
-                  "ts": "1593316816860",
-                  "address": "0xb0a2432e01b85F1c00032d3EB21DCF0298f52A15",
+                  "d": 'd_p',
+                  "c": 'c_p',
+                  'b': 'b_p'
                 };
-
-                var method = 'POST';
-                var host = "10.10.1.120:8989";
-                var path = "/api/index/testWalletSign";
-
-                var signed = await Signer.signApi(activeWallet, password, method, host, path, params);
-                print(signed);
+//                await Signer.signMessage(context, password, params);
+                print(params);
               } catch (e) {
                 logger.e(e);
               }
@@ -766,16 +813,76 @@ class _WalletDemoState extends State<WalletDemo> {
           RaisedButton(
             onPressed: () async {
               try {
-                var activeWallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var activeWallet =
+                    WalletInheritedModel.of(context).activatedWallet.wallet;
                 var hashTx = await activeWallet.sendBitcoinTransaction(
-                    "111111", activeWallet.getBitcoinZPub(), "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc", 13, 10000);
+                    "111111",
+                    activeWallet.getBitcoinZPub(),
+                    "bc1q5ldpsdpnds87wkvtgss9us2zf6rmtr80qeelzc",
+                    13,
+                    10000);
                 logger.i('Bitcoin交易已提交，交易hash $hashTx');
               } catch (e) {
                 logger.e(e);
               }
             },
             child: Text('比特币转账'),
-          )
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var password = showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    child: WalletPasswordDialog(
+                      checkPwdValid: (walletPwd) {
+                        return WalletUtil.checkPwdValid(
+                          context,
+                          WalletInheritedModel.of(context)
+                              .activatedWallet
+                              .wallet,
+                          walletPwd,
+                        );
+                      },
+                    ));
+                print("password $password");
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('数字键盘'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var password = showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    child: WalletPasswordDialog(
+                      checkPwdValid: null,
+                      isDoubleCheck: true,
+                    ));
+                print("password $password");
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('校验数字键盘'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              try {
+                var walletList = await WalletUtil.scanWallets();
+                walletList.forEach((element) {
+                  print(
+                      "identifier  ${element.keystore.name} ${element.keystore.identifier}");
+                });
+              } catch (e) {
+                logger.e(e);
+              }
+            },
+            child: Text('identifier'),
+          ),
         ],
       ),
     );

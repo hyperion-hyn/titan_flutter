@@ -45,10 +45,15 @@ class UserContributionPoi with SearchHistoryAwarePoi implements IPoi {
   @JsonKey(name: 'website')
   String website;
 
+  @JsonKey(name: 'myself')
+  bool myself;
+
   UserContributionPoi.empty();
 
   UserContributionPoi(this.id, this.name, this.address, this.category, this.location, this.ext, this.state, this.phone,
-      this.workTime, this.images, this.postcode, this.website);
+      this.workTime, this.images, this.postcode, this.website, this.myself);
+
+  UserContributionPoi.onlyId(this.id);
 
   factory UserContributionPoi.fromJson(Map<String, dynamic> srcJson) => _$UserContributionPoiFromJson(srcJson);
 
@@ -84,6 +89,29 @@ class Location extends Object {
   factory Location.fromJson(Map<String, dynamic> srcJson) => _$LocationFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+}
+
+@JsonSerializable()
+class UserContributionPois extends Object {
+  @JsonKey(name: 'coordinates')
+  List<double> coordinates;
+
+  @JsonKey(name: 'pois')
+  List<UserContributionPoi> pois;
+
+  UserContributionPois(
+    this.coordinates,
+    this.pois,
+  );
+
+  Map<String, dynamic> toJson() => _$UserContributionPoisToJson(this);
+
+  factory UserContributionPois.fromJson(Map<String, dynamic> srcJson) => _$UserContributionPoisFromJson(srcJson);
 
   @override
   String toString() {

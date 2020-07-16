@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -29,9 +30,11 @@ import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -545,7 +548,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             if (_isNoWallet) {
               _pushWalletManagerAction();
             } else {
-              _actingTitle = "进行中...";
+              _actingTitle = S.of(context).in_progress;
               _joinContractAction();
             }
           };
@@ -887,7 +890,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                       Container(
                         height: 4,
                       ),
-                      Text(title, style: TextStyles.textC333S11),
+                      Text(
+                        title,
+                        style: TextStyles.textC333S11,
+                        textAlign: TextAlign.center,
+                      ),
                     ],
                   )),
                 );
@@ -1346,88 +1353,92 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       source = AppSource.STARRICH;
     }
 
-    if (_contractNodeItem.appSource != source.index) {
-      Fluttertoast.showToast(msg: "该节点并非创建于${S.of(context).app_name}，提取失败");
+    if (_contractNodeItem.appSource != source.index && _isOwner) {
+      Fluttertoast.showToast(msg: S.of(context).node_not_create_by_app_withdraw_fail(S.of(context).app_name));
       return;
     }
 
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      _wallet,
+    );
+
+    if (walletPassword == null) {
+      return;
+    }
+
+    try {
+      if (mounted) {
+        setState(() {
+          _lastActionTitle = _actionTitle;
+          _isTransferring = true;
+        });
       }
 
-      try {
-        if (mounted) {
-          setState(() {
-            _lastActionTitle = _actionTitle;
-            _isTransferring = true;
-          });
-        }
+      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+      var gasPrice = gasPriceRecommend.average.toInt();
 
-        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-        var gasPrice = gasPriceRecommend.average.toInt();
-
-        var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
-        if (_userDelegateState == UserDelegateState.HALFDUE) {
-          gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectHalfMap3NodeGasLimit;
-        } else {
-          if (_isOwner) {
-            int delegatorCount = _contractDetailItem.delegatorCount;
-            if (delegatorCount <= 21) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
-            } else if (delegatorCount > 21 && delegatorCount <= 41) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
-            } else if (delegatorCount > 41 && delegatorCount <= 61) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
-            } else {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
-            }
-            print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
+      if (_userDelegateState == UserDelegateState.HALFDUE) {
+        gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectHalfMap3NodeGasLimit;
+      } else {
+        if (_isOwner) {
+          int delegatorCount = _contractDetailItem.delegatorCount;
+          if (delegatorCount <= 21) {
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
+          } else if (delegatorCount > 21 && delegatorCount <= 41) {
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
+          } else if (delegatorCount > 41 && delegatorCount <= 61) {
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
           } else {
-            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodePartnerGasLimit;
+            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
           }
-        }
-
-        var success = await _api.withdrawContractInstance(
-            _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-        if (success == "success") {
-          _broadcaseContractAction();
+          print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
         } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-
-          if (mounted) {
-            setState(() {
-              _isTransferring = false;
-            });
-          }
+          gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodePartnerGasLimit;
         }
-      } catch (_) {
-        logger.e(_);
+      }
+
+      var success = await _api.withdrawContractInstance(
+          _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
+      if (success == "success") {
+//        await UiUtil.showSetBioAuthDialog(
+//          context,
+//          '生物识别',
+//          _wallet,
+//          walletPassword,
+//        );
+        _broadcaseContractAction();
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
 
         if (mounted) {
           setState(() {
             _isTransferring = false;
           });
         }
+      }
+    } catch (_) {
+      logger.e(_);
 
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
+      if (mounted) {
+        setState(() {
+          _isTransferring = false;
+        });
+      }
+
+      if (_ is PlatformException) {
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
         } else {
           Fluttertoast.showToast(msg: S.of(context).transfer_fail);
         }
+      } else if (_ is RPCError) {
+        Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
+      } else {
+        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }
-    });
+    }
   }
 
   void _pushNodeInfoAction() {

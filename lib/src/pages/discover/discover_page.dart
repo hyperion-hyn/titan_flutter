@@ -7,13 +7,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/scaffold_map/map.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dapp/ncov/ncov_map_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
+import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/news/model/focus_response.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/widget/custom_click_oval_button.dart';
 
 class DiscoverPage extends StatefulWidget {
   DiscoverPage({Key key}) : super(key: key);
@@ -26,7 +29,8 @@ class DiscoverPage extends StatefulWidget {
 
 class DiscoverPageState extends State<DiscoverPage> {
   List<FocusImage> focusImages = [
-    FocusImage('https://news.hyn.space/wp-content/uploads/2019/10/经济模型.jpeg', "https://www.hyn.space")
+    FocusImage('https://news.hyn.space/wp-content/uploads/2019/10/经济模型.jpeg',
+        "https://www.hyn.space")
   ];
 
   @override
@@ -42,7 +46,9 @@ class DiscoverPageState extends State<DiscoverPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String ss1 = prefs.getString("disc_focus");
     if (ss1 != null) {
-      var flist = (jsonDecode(ss1) as List<dynamic>).map((element) => FocusImage.fromJson(element)).toList();
+      var flist = (jsonDecode(ss1) as List<dynamic>)
+          .map((element) => FocusImage.fromJson(element))
+          .toList();
       if (flist != null && flist.isNotEmpty) {
         focusImages = flist;
 
@@ -55,7 +61,7 @@ class DiscoverPageState extends State<DiscoverPage> {
 
   bool back() {
     var state = BlocProvider.of<DiscoverBloc>(context).state;
-    if(state is ActiveDMapState) {
+    if (state is ActiveDMapState) {
       BlocProvider.of<DiscoverBloc>(context).add(InitDiscoverEvent());
       return true;
     }
@@ -90,7 +96,8 @@ class DiscoverPageState extends State<DiscoverPage> {
                         radius: Radius.circular(0),
                         onImageTap: (int index) {
                           var focusImage = focusImages[index];
-                          if (focusImage.link == null || focusImage.link.isEmpty) {
+                          if (focusImage.link == null ||
+                              focusImage.link.isEmpty) {
                             return;
                           }
                           Navigator.push(
@@ -127,11 +134,15 @@ class DiscoverPageState extends State<DiscoverPage> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
                                 Text(S.of(context).dmap_document_title,
-                                    textAlign: TextAlign.center, style: TextStyle(fontSize: 13)),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 13)),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(S.of(context).document_optimization,
-                                      textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                                  child: Text(
+                                      S.of(context).document_optimization,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
                                 )
                               ],
                             ),
@@ -154,49 +165,50 @@ class DiscoverPageState extends State<DiscoverPage> {
                           padding: const EdgeInsets.only(top: 16, bottom: 24),
                           child: Text(
                             S.of(context).map_dmap,
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 17),
                           ),
                         ),
-                        Text(S.of(context).dmap_tools, style: TextStyle(color: Colors.grey)),
-                        Padding(
-                          padding: EdgeInsets.only(top: 16),
-                          child: InkWell(
-                            onTap: () async {
-                              await activeDMap('encryptShare');
-                              var mapboxController =
-                                  (Keys.mapContainerKey.currentState as MapContainerState)?.mapboxMapController;
-
-                              var lastLocation = await mapboxController?.lastKnownLocation();
-                              if (lastLocation != null) {
-                                Future.delayed(Duration(milliseconds: 500)).then((value) {
-                                  mapboxController?.animateCamera(CameraUpdate.newLatLngZoom(lastLocation, 17));
-                                });
-                              }
-                            },
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                            child: Container(
-                              padding: EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0xFFE9E9E9)),
-                                  borderRadius: BorderRadius.all(Radius.circular(4))),
-                              child: Row(
+                        Text(S.of(context).dmap_tools,
+                            style: TextStyle(color: Colors.grey)),
+                        SizedBox(height: 16.0),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: HexColor('#FFEDFCFF'),
+                          ),
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
                                 children: <Widget>[
-                                  Image.asset('res/drawable/ic_dmap_location_share.png', width: 32, height: 32),
+                                  Image.asset(
+                                      'res/drawable/ic_dmap_location_share.png',
+                                      width: 32,
+                                      height: 32),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.only(left: 8.0),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
                                           Text(
                                             S.of(context).private_sharing,
-                                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 12),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
                                             child: Text(
-                                              S.of(context).private_sharing_text,
-                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                              S
+                                                  .of(context)
+                                                  .private_sharing_text,
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 12),
                                             ),
                                           ),
                                         ],
@@ -205,141 +217,120 @@ class DiscoverPageState extends State<DiscoverPage> {
                                   ),
                                 ],
                               ),
-                            ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Spacer(),
+                                  CustomClickOvalButton(
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.lock_open,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 4.0,
+                                        ),
+                                        Text(
+                                          S.of(context).send,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13.0),
+                                        )
+                                      ],
+                                    ),
+                                    () async {
+                                      await activeDMap('encryptShare');
+                                      var mapboxController =
+                                          (Keys.mapContainerKey.currentState
+                                                  as MapContainerState)
+                                              ?.mapboxMapController;
+
+                                      var lastLocation = await mapboxController
+                                          ?.lastKnownLocation();
+                                      if (lastLocation != null) {
+                                        Future.delayed(
+                                                Duration(milliseconds: 500))
+                                            .then((value) {
+                                          mapboxController?.animateCamera(
+                                              CameraUpdate.newLatLngZoom(
+                                                  lastLocation, 17));
+                                        });
+                                      }
+                                    },
+                                    width: 110,
+                                    height: 37,
+                                  ),
+                                  Spacer(),
+                                  CustomClickOvalButton(
+                                    Wrap(
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.lock_outline,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          S.of(context).receiver,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 13.0),
+                                        )
+                                      ],
+                                    ),
+                                    () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MyEncryptedAddrPage()));
+                                    },
+                                    width: 110,
+                                    height: 37,
+                                  ),
+                                  Spacer()
+                                ],
+                              )
+                            ],
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 24.0),
-                          child: Text(S.of(context).dmap_life, style: TextStyle(color: Colors.grey)),
+                          child: Text(S.of(context).dmap_life,
+                              style: TextStyle(color: Colors.grey)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 16),
                           child: SizedBox(
-                            height: Platform.isIOS ? 80:180,
-                            child: Platform.isIOS ? Row(
-                              children: <Widget>[
-                                //全球大使馆
-                                Expanded(
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                                    onTap: () {
-                                      activeDMap('embassy');
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: Color(0xFFE9E9E9)),
-                                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Image.asset(
-                                            'res/drawable/ic_dmap_mbassy.png',
-                                            width: 28,
-                                            height: 28,
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text(
-                                                    S.of(context).embassy_guide,
-                                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(top: 8.0),
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Expanded(
-                                                          child: Text(
-                                                            S.of(context).global_embassies,
-                                                            style: TextStyle(color: Colors.grey, fontSize: 12),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                //警察服务站
-                                Expanded(
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                                    onTap: () {
-                                      activeDMap('policeStation');
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: Color(0xFFE9E9E9)),
-                                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Image.asset(
-                                            'res/drawable/ic_dmap_police.png',
-                                            width: 28,
-                                            height: 28,
-                                          ),
-                                          Flexible(
-                                            flex: 2,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(left: 8.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text(
-                                                    S.of(context).police_security_station,
-                                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-                                                  ),
-                                                  Flexible(
-                                                    flex: 2,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(top: 8.0),
-                                                      child: Text(
-                                                        S.of(context).police_station_text,
-                                                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ):Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Column(
+                            height: Platform.isIOS ? 80 : 180,
+                            child: Platform.isIOS
+                                ? Row(
                                     children: <Widget>[
                                       //全球大使馆
                                       Expanded(
                                         child: InkWell(
-                                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(4)),
                                           onTap: () {
                                             activeDMap('embassy');
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.all(16),
                                             decoration: BoxDecoration(
-                                                border: Border.all(color: Color(0xFFE9E9E9)),
-                                                borderRadius: BorderRadius.all(Radius.circular(4))),
+                                                border: Border.all(
+                                                    color: Color(0xFFE9E9E9)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4))),
                                             child: Row(
                                               children: <Widget>[
                                                 Image.asset(
@@ -349,22 +340,41 @@ class DiscoverPageState extends State<DiscoverPage> {
                                                 ),
                                                 Expanded(
                                                   child: Padding(
-                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0),
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: <Widget>[
                                                         Text(
-                                                          S.of(context).embassy_guide,
-                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                                          S
+                                                              .of(context)
+                                                              .embassy_guide,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 12),
                                                         ),
                                                         Padding(
-                                                          padding: const EdgeInsets.only(top: 8.0),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  top: 8.0),
                                                           child: Row(
                                                             children: <Widget>[
                                                               Expanded(
                                                                 child: Text(
-                                                                  S.of(context).global_embassies,
-                                                                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                                  S
+                                                                      .of(context)
+                                                                      .global_embassies,
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .grey,
+                                                                      fontSize:
+                                                                          12),
                                                                 ),
                                                               ),
                                                             ],
@@ -380,20 +390,24 @@ class DiscoverPageState extends State<DiscoverPage> {
                                         ),
                                       ),
                                       SizedBox(
-                                        height: 12,
+                                        width: 12,
                                       ),
                                       //警察服务站
                                       Expanded(
                                         child: InkWell(
-                                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(4)),
                                           onTap: () {
                                             activeDMap('policeStation');
                                           },
                                           child: Container(
-                                            padding: const EdgeInsets.fromLTRB(16, 16, 6, 8),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                16, 16, 6, 8),
                                             decoration: BoxDecoration(
-                                                border: Border.all(color: Color(0xFFE9E9E9)),
-                                                borderRadius: BorderRadius.all(Radius.circular(4))),
+                                                border: Border.all(
+                                                    color: Color(0xFFE9E9E9)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4))),
                                             child: Row(
                                               children: <Widget>[
                                                 Image.asset(
@@ -404,21 +418,39 @@ class DiscoverPageState extends State<DiscoverPage> {
                                                 Flexible(
                                                   flex: 2,
                                                   child: Padding(
-                                                    padding: const EdgeInsets.only(left: 8.0),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 8.0),
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: <Widget>[
                                                         Text(
-                                                          S.of(context).police_security_station,
-                                                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                                          S
+                                                              .of(context)
+                                                              .police_security_station,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 12),
                                                         ),
                                                         Flexible(
                                                           flex: 2,
                                                           child: Padding(
-                                                            padding: const EdgeInsets.only(top: 8.0),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8.0),
                                                             child: Text(
-                                                              S.of(context).police_station_text,
-                                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                                              S
+                                                                  .of(context)
+                                                                  .police_station_text,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  fontSize: 12),
                                                             ),
                                                           ),
                                                         ),
@@ -432,54 +464,244 @@ class DiscoverPageState extends State<DiscoverPage> {
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                //疫情
-
-                                Expanded(
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.all(Radius.circular(4)),
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => NcovMapPage()));
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: Color(0xFFE9E9E9)),
-                                          borderRadius: BorderRadius.all(Radius.circular(4))),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Image.asset(
-                                            'res/drawable/ic_dmap_ncov.png',
-                                            width: 32,
-                                            height: 32,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 16.0),
-                                            child: Text(
-                                              S.of(context).epidemic_map,
-                                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+                                  )
+                                : Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            //全球大使馆
+                                            Expanded(
+                                              child: InkWell(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4)),
+                                                onTap: () {
+                                                  activeDMap('embassy');
+                                                },
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(16),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xFFE9E9E9)),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  4))),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Image.asset(
+                                                        'res/drawable/ic_dmap_mbassy.png',
+                                                        width: 28,
+                                                        height: 28,
+                                                      ),
+                                                      Expanded(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 8.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                S
+                                                                    .of(context)
+                                                                    .embassy_guide,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .only(
+                                                                        top:
+                                                                            8.0),
+                                                                child: Row(
+                                                                  children: <
+                                                                      Widget>[
+                                                                    Expanded(
+                                                                      child:
+                                                                          Text(
+                                                                        S
+                                                                            .of(context)
+                                                                            .global_embassies,
+                                                                        style: TextStyle(
+                                                                            color:
+                                                                                Colors.grey,
+                                                                            fontSize: 12),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 8.0),
-                                            child: Text(
-                                              S.of(context).epidemic_map_desc,
-                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                            SizedBox(
+                                              height: 12,
                                             ),
-                                          ),
-                                        ],
+                                            //警察服务站
+                                            Expanded(
+                                              child: InkWell(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4)),
+                                                onTap: () {
+                                                  activeDMap('policeStation');
+                                                },
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          16, 16, 6, 8),
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Color(
+                                                              0xFFE9E9E9)),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  4))),
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Image.asset(
+                                                        'res/drawable/ic_dmap_police.png',
+                                                        width: 28,
+                                                        height: 28,
+                                                      ),
+                                                      Flexible(
+                                                        flex: 2,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  left: 8.0),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: <Widget>[
+                                                              Text(
+                                                                S
+                                                                    .of(context)
+                                                                    .police_security_station,
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    fontSize:
+                                                                        12),
+                                                              ),
+                                                              Flexible(
+                                                                flex: 2,
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                          .only(
+                                                                      top: 8.0),
+                                                                  child: Text(
+                                                                    S
+                                                                        .of(context)
+                                                                        .police_station_text,
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .grey,
+                                                                        fontSize:
+                                                                            12),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        width: 12,
+                                      ),
+                                      //疫情
+
+                                      Expanded(
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(4)),
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        NcovMapPage()));
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Color(0xFFE9E9E9)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4))),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Image.asset(
+                                                  'res/drawable/ic_dmap_ncov.png',
+                                                  width: 32,
+                                                  height: 32,
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 16.0),
+                                                  child: Text(
+                                                    S.of(context).epidemic_map,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 8.0),
+                                                  child: Text(
+                                                    S
+                                                        .of(context)
+                                                        .epidemic_map_desc,
+                                                    style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
                           ),
                         ),
                         Padding(
@@ -488,7 +710,8 @@ class DiscoverPageState extends State<DiscoverPage> {
                               alignment: Alignment.center,
                               child: Text(
                                 S.of(context).more_dmap,
-                                style: TextStyle(color: Colors.grey, fontSize: 13),
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 13),
                               )),
                         )
                       ],
@@ -508,8 +731,10 @@ class DiscoverPageState extends State<DiscoverPage> {
 
     var model = DMapDefine.kMapList[dMapName];
     if (model != null) {
-      if (model.dMapConfigModel.defaultLocation != null && model.dMapConfigModel.defaultZoom != null) {
-        MapContainerState mapState = (Keys.mapContainerKey.currentState as MapContainerState);
+      if (model.dMapConfigModel.defaultLocation != null &&
+          model.dMapConfigModel.defaultZoom != null) {
+        MapContainerState mapState =
+            (Keys.mapContainerKey.currentState as MapContainerState);
         mapState.updateMyLocationTrackingMode(MyLocationTrackingMode.None);
         await Future.delayed(Duration(milliseconds: 300));
 

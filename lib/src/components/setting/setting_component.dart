@@ -45,9 +45,11 @@ class _SettingManagerState extends BaseState<_SettingManager> {
 
   @override
   void onCreated() async {
-    var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
-    if(systemConfigStr != null){
-      systemConfigEntity = SystemConfigEntity.fromJson(json.decode(systemConfigStr));
+    var systemConfigStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
+    if (systemConfigStr != null) {
+      systemConfigEntity =
+          SystemConfigEntity.fromJson(json.decode(systemConfigStr));
     }
     super.onCreated();
   }
@@ -61,7 +63,8 @@ class _SettingManagerState extends BaseState<_SettingManager> {
             Config.updateConfig(state.areaModel);
           }
           if (state.quotesSign != null) {
-            BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: state.quotesSign));
+            BlocProvider.of<QuotesCmpBloc>(context)
+                .add(UpdateQuotesSignEvent(sign: state.quotesSign));
           }
         }
       },
@@ -124,18 +127,25 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
         systemConfigEntity != oldWidget.systemConfigEntity;
   }
 
-  static SettingInheritedModel of(BuildContext context, {SettingAspect aspect}) {
-    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: aspect);
+  static SettingInheritedModel of(BuildContext context,
+      {SettingAspect aspect}) {
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context,
+        aspect: aspect);
   }
 
   static SettingInheritedModel ofConfig(BuildContext context) {
-    return InheritedModel.inheritFrom<SettingInheritedModel>(context, aspect: SettingAspect.systemConfig);
+    return InheritedModel.inheritFrom<SettingInheritedModel>(context,
+        aspect: SettingAspect.systemConfig);
   }
 
   @override
-  bool updateShouldNotifyDependent(SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
-    return ((languageModel != oldWidget.languageModel && dependencies.contains(SettingAspect.language)) ||
-        (areaModel != oldWidget.areaModel && dependencies.contains(SettingAspect.area)) ||
-        (systemConfigEntity != oldWidget.systemConfigEntity && dependencies.contains(SettingAspect.systemConfig)));
+  bool updateShouldNotifyDependent(
+      SettingInheritedModel oldWidget, Set<SettingAspect> dependencies) {
+    return ((languageModel != oldWidget.languageModel &&
+            dependencies.contains(SettingAspect.language)) ||
+        (areaModel != oldWidget.areaModel &&
+            dependencies.contains(SettingAspect.area)) ||
+        (systemConfigEntity != oldWidget.systemConfigEntity &&
+            dependencies.contains(SettingAspect.systemConfig)));
   }
 }

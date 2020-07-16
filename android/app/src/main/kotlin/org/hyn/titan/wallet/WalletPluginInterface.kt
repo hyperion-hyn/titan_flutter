@@ -151,20 +151,20 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                     return true
                 }
 
-                val prvKeyHex = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, coinType)
+                val prvKeyHex = KeyStoreUtil.getPrvKey(KeyStoreUtil.getKeyStorePath(context, fileName), password, coinType)
                 if (prvKeyHex == null) {
                     result.error(ErrorCode.PASSWORD_WRONG, "password is wrong", null)
                     return true
                 }
 
-                val ret = File(getKeyStorePath(fileName)).delete()
+                val ret = File(KeyStoreUtil.getKeyStorePath(context, fileName)).delete()
                 result.success(ret)
 
                 true
             }
             /*获取本地keystore*/
             "wallet_all_keystore" -> {
-                val listPath = getKeyStoreDir().list { dir, name -> isTrustWallet(name)/* || isV3KeyStore(name)*/ }
+                val listPath = KeyStoreUtil.getKeyStoreDir(context).list { dir, name -> isTrustWallet(name)/* || isV3KeyStore(name)*/ }
                 val ksList: ArrayList<Map<String, Any>> = ArrayList()
                 for (path in listPath) {
 //                    Timber.i("path $path")
@@ -198,7 +198,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
 
                 //trust wallet's json
                 if (isTrustWallet(fileName)) {
-                    val storedKey = StoredKey.load(getKeyStorePath(fileName))
+                    val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context, fileName))
                     if (storedKey == null) {
                         result.error(ErrorCode.UNKNOWN_ERROR, "file not exist.", null)
                         return true
@@ -221,15 +221,13 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                 result.error(ErrorCode.PASSWORD_WRONG, "old password error.", null)
                                 return true
                             }
-                            val rename = importByMnemonic(mnemonic, name, newPassword, coins)
+                            importByMnemonicOverwriteSave(mnemonic, name, newPassword, coins,fileName)
                             //delete old file
-                            File(getKeyStorePath(fileName)).delete()
-                            result.success(rename)
+                            result.success(fileName)
                         } else {
-                            val rename = importByPrvKey(prvKey, name, newPassword, firstCoin)
+                            importByPrvKeyOverwriteSave(prvKey, name, newPassword, firstCoin, fileName)
                             //delete old file
-                            File(getKeyStorePath(fileName)).delete()
-                            result.success(rename)
+                            result.success(fileName)
                         }
                     }
                 } else {
@@ -247,7 +245,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val coinType = KeyStoreUtil.parseCoinType(coinTypeValue)
 
                 if (fileName != null && password != null) {
-                    val prvKeyHex = KeyStoreUtil.getPrvKey(getKeyStorePath(fileName), password, coinType)
+                    val prvKeyHex = KeyStoreUtil.getPrvKey(KeyStoreUtil.getKeyStorePath(context, fileName), password, coinType)
                     if (prvKeyHex != null) {
                         result.success(prvKeyHex)
                     } else {
@@ -264,8 +262,8 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val fileName = call.argument<String>("fileName")
                 if (fileName != null && password != null) {
                     if (isTrustWallet(fileName)) {
-                        Timber.i("-加载keystore文件 ${getKeyStorePath(fileName)}")
-                        val storedKey = StoredKey.load(getKeyStorePath(fileName))
+                        Timber.i("-加载keystore文件 ${KeyStoreUtil.getKeyStorePath(context, fileName)}")
+                        val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context, fileName))
                         if (storedKey.isMnemonic) {
                             var mnemonic = storedKey.decryptMnemonic(password.toByteArray())
                             if(mnemonic == null){
@@ -298,8 +296,8 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                 val fileName = call.argument<String>("fileName")
                 if (fileName != null && password != null) {
                     if (isTrustWallet(fileName)) {
-                        Timber.i("-加载keystore文件 ${getKeyStorePath(fileName)}")
-                        val storedKey = StoredKey.load(getKeyStorePath(fileName))
+                        Timber.i("-加载keystore文件 ${KeyStoreUtil.getKeyStorePath(context,fileName)}")
+                        val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context, fileName))
                         if (storedKey.isMnemonic) {
                             var mnemonic = storedKey.decryptMnemonic(password.toByteArray())
                             if(mnemonic == null){
@@ -311,7 +309,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
                                 var hdWallet = HDWallet(mnemonic,"")
                                 if (hdWallet != null) {
                                     storedKey.accountForCoin(CoinType.BITCOIN, hdWallet)
-                                    val savePath = getKeyStoreDir().absolutePath + File.separator + fileName
+                                    val savePath = KeyStoreUtil.getKeyStoreDir(context).absolutePath + File.separator + fileName
                                     Timber.i("-保存keystore文件 $fileName")
                                     storedKey.store(savePath)
 
@@ -334,7 +332,7 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
     }
 
     private fun signBitcoin(bitcoinTransEntity: BitcoinTransEntity, result: MethodChannel.Result) {
-        val storedKey = StoredKey.load(getKeyStorePath(bitcoinTransEntity.fileName))
+        val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context, bitcoinTransEntity.fileName))
         if (storedKey.isMnemonic) {
             var mnemonic = storedKey.decryptMnemonic(bitcoinTransEntity.password.toByteArray())
             if(mnemonic == null){
@@ -395,57 +393,6 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         }else{
             result.error(ErrorCode.UNKNOWN_ERROR, "cannot get mnemonic.", null)
         }
-
-
-
-        /*var wallet = HDWallet("math predict session country grant spray energy news runway biology tube tide","")
-        val coinBtc: CoinType = CoinType.BITCOIN
-        val addressBtc = wallet.getAddressForCoin(coinBtc)
-
-        val secretPrivateKeyBtc = wallet.getKeyForCoin(coinBtc)
-
-        val toAddress = "1MoXrqTD6MfecxYBA3NMTaLcB9y1Ucu2LK"
-        val changeAddress = "bc1q7fhqwluhcrs2ekkme0cu5nlvav2mdx7j7jel9t"
-
-        val script = BitcoinScript.buildForAddress(addressBtc, coinBtc)
-        val scriptHash = script.matchPayToWitnessPublicKeyHash()
-
-        val utxoTxId = BitNumeric.hexStringToByteArray("b3cbc89fdf9640bddf9eff15d53047e405b3339f7e31f6e272a8b1f8f055fed0")
-        utxoTxId.reverse()
-
-        val outPoint = Bitcoin.OutPoint.newBuilder().apply {
-            this.hash = ByteString.copyFrom(utxoTxId)
-            this.index = 0
-            this.sequence = (4294967293).toInt()
-        }.build()
-
-        val utxo = Bitcoin.UnspentTransaction.newBuilder().apply {
-            this.amount = 360476
-            this.outPoint = outPoint
-            this.script = ByteString.copyFrom(script.data())
-        }.build()
-
-        val input = Bitcoin.SigningInput.newBuilder().apply {
-            this.amount = 50000
-            this.hashType = BitcoinSigHashType.ALL.value()
-            this.toAddress = toAddress
-            this.changeAddress = changeAddress
-            this.byteFee = 62
-            this.coinType = coinBtc.value()
-            this.addPrivateKey(ByteString.copyFrom(secretPrivateKeyBtc.data()))
-            this.putScripts(BitNumeric.toHexString(scriptHash), ByteString.copyFrom(BitcoinScript.buildPayToPublicKeyHash(scriptHash).data()))
-        }
-
-        input.addUtxo(utxo)
-
-        val plan = AnySigner.plan(input.build(), CoinType.BITCOIN, Bitcoin.TransactionPlan.parser())
-
-        input.plan = plan
-        val output = AnySigner.sign(input.build(), CoinType.BITCOIN, Bitcoin.SigningOutput.parser())
-
-        assert(output.error.isEmpty())
-        val signedTransaction = output.encoded?.toByteArray()
-        Log.i("!!!!!", "Signed BTC transaction1: ${BitNumeric.toHexString(signedTransaction)}")*/
     }
 
     /**
@@ -469,7 +416,30 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
         }
 
         val path = saveStoredKeyToLocal(storedKey)
-//        Timber.i("importByMnemonic name: $name, password: $password, path: $path, 助记词: $mnemonic")
+        return path
+    }
+
+    /**
+     * 保存助记词成为keystore
+     */
+    private fun importByMnemonicOverwriteSave(mnemonic: String, name: String, password: String, coins: List<CoinType>, fileName: String): String {
+        val firstCoin = if (coins.isNotEmpty()) coins[0] else CoinType.ETHEREUM
+        var storedKey = StoredKey.importHDWallet(mnemonic, name, password.toByteArray(), firstCoin)
+        if(storedKey == null){
+            storedKey = StoredKey.importHDWallet(mnemonic, name, password.toHexByteArray(), firstCoin)
+        }
+        //active coins
+        var hdWallet = storedKey.wallet(password.toByteArray())
+        if(hdWallet == null){
+            hdWallet = storedKey.wallet(password.toHexByteArray())
+        }
+        if (hdWallet != null) {
+            for (coin in coins) {
+                storedKey.accountForCoin(coin, hdWallet)
+            }
+        }
+
+        val path = overwriteSaveStoredKeyToLocal(storedKey,fileName)
         return path
     }
 
@@ -528,19 +498,31 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
 
     private fun saveStoredKeyToLocal(storedKey: StoredKey): String {
         val saveName = "${storedKey.name()}${System.currentTimeMillis()}".md5() + ".keystore"
-        val savePath = getKeyStoreDir().absolutePath + File.separator + saveName
+        val savePath = KeyStoreUtil.getKeyStoreDir(context).absolutePath + File.separator + saveName
         Timber.i("-保存keystore文件 $saveName")
         storedKey.store(savePath)
         return saveName
     }
 
-    private fun getKeyStorePath(fileName: String? = null): String {
-        val saveName = fileName ?: ("${System.currentTimeMillis()}".md5() + ".keystore")
-        return getKeyStoreDir().absolutePath + File.separator + saveName
+    private fun importByPrvKeyOverwriteSave(prvKeyHex: String, name: String, password: String, coinType: CoinType,fileName: String): String {
+        var storedKey = StoredKey.importPrivateKey(prvKeyHex.toByteArray(), name, password.toByteArray(), coinType)
+        if(storedKey == null){
+            storedKey = StoredKey.importPrivateKey(prvKeyHex.toByteArray(), name, password.toHexByteArray(), coinType)
+        }
+        Timber.i("storedKey activeAccount count ${storedKey.accountCount()}, 密码: $password, 私钥: ${prvKeyHex.toByteArray().toHex()}")
+        val path = overwriteSaveStoredKeyToLocal(storedKey,fileName)
+        return path
+    }
+
+    private fun overwriteSaveStoredKeyToLocal(storedKey: StoredKey,fileName: String): String {
+        val savePath = KeyStoreUtil.getKeyStoreDir(context).absolutePath + File.separator + fileName
+        Timber.i("-保存keystore文件 $fileName")
+        storedKey.store(savePath)
+        return fileName
     }
 
     private fun loadKeyStore(fileName: String): Map<String, Any>? {
-        val storedKey = StoredKey.load(getKeyStorePath(fileName))
+        val storedKey = StoredKey.load(KeyStoreUtil.getKeyStorePath(context, fileName))
 
         if (storedKey != null) {
             val map = HashMap<String, Any>()
@@ -567,10 +549,6 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
             return map
         }
         return null
-    }
-
-    private fun getKeyStoreDir(): File {
-        return context.getDir("keystore", Context.MODE_PRIVATE)
     }
 
     private fun isTrustWallet(fileName: String): Boolean {

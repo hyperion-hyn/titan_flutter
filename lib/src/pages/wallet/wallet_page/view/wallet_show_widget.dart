@@ -1,7 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/components/auth/SetBioAuthPage.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
+import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/auth/bloc/auth_state.dart';
+import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
@@ -12,27 +24,47 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/image_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
+import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
+import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../../env.dart';
 import '../../../../global.dart';
 
-class ShowWalletView extends StatelessWidget {
+class ShowWalletView extends StatefulWidget {
   final WalletVo walletVo;
   final LoadDataBloc loadDataBloc;
 
   ShowWalletView(this.walletVo, this.loadDataBloc);
 
+  @override
+  State<StatefulWidget> createState() {
+    return _ShowWalletViewState();
+  }
+}
+
+class _ShowWalletViewState extends State<ShowWalletView> {
   int _lastRequestCoinTime = 0;
+  bool _isShowBalances = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,65 +77,99 @@ class ShowWalletView extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Material(
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 elevation: 10,
                 child: Container(
-                  padding: EdgeInsets.only(top: 16, bottom: 16, left: 24, right: 16),
-                  child: Row(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      //balance
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            InkWell(
+                              onTap: () {
+                                Application.router.navigateTo(
+                                  context,
+                                  Routes.wallet_manager,
+                                );
+                              },
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
+                                    "${UiUtil.shortString(
+                                      widget.walletVo.wallet.keystore.name,
+                                      limitLength: 6,
+                                    )}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                            InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  _isShowBalances = !_isShowBalances;
+                                });
+                              },
+                              child: _isShowBalances
+                                  ? Image.asset(
+                                      'res/drawable/ic_wallet_show_balances.png',
+                                      height: 20,
+                                      width: 20,
+                                    )
+                                  : Image.asset(
+                                      'res/drawable/ic_wallet_hide_balances.png',
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Row(
                         children: <Widget>[
                           Text(
-                            "${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.quote ?? ''}",
-                            style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 16),
+                            QuotesInheritedModel.of(context,
+                                        aspect: QuotesAspect.quote)
+                                    .activeQuotesSign
+                                    ?.sign ??
+                                '',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              color: Colors.white,
+                            ),
                           ),
                           SizedBox(
-                            height: 8,
+                            width: 8,
                           ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.sign ??
-                                    '',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                              ),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text(
-                                "${FormatUtil.formatPrice(walletVo.balance)}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 24, color: Theme.of(context).primaryColor),
-                              ),
-                            ],
+                          Text(
+                            _isShowBalances
+                                ? '${FormatUtil.formatPrice(widget.walletVo.balance)}'
+                                : '*****',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 24,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          Application.router.navigateTo(context, Routes.wallet_manager);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "${UiUtil.shortString(walletVo.wallet.keystore.name, limitLength: 6)}",
-                                style: TextStyle(color: Color(0xFF252525)),
-                              ),
-                              Icon(
-                                Icons.chevron_right,
-                                color: Color(0xFF9B9B9B),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -118,23 +184,27 @@ class ShowWalletView extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onTap: () {
-                      var coinVo = walletVo.coins[index];
-                      var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
-                      Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+                      var coinVo = widget.walletVo.coins[index];
+                      var coinVoJsonStr =
+                          FluroConvertUtils.object2string(coinVo.toJson());
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_account_detail +
+                              '?coinVo=$coinVoJsonStr');
                     },
-                    child: _buildAccountItem(context, walletVo.coins[index]));
+                    child: _buildAccountItem(
+                        context, widget.walletVo.coins[index]));
               },
-              itemCount: walletVo.coins.length,
+              itemCount: widget.walletVo.coins.length,
             ),
-            if(walletVo.wallet.getBitcoinAccount() == null)
+            if (widget.walletVo.wallet.getBitcoinAccount() == null)
               _bitcoinEmptyView(context),
-            if (env.buildType == BuildType.DEV)
-              _testWalletView(context),
+            if (env.buildType == BuildType.DEV) _testWalletView(context),
           ]),
     );
   }
 
-  Widget _bitcoinEmptyView(BuildContext context){
+  Widget _bitcoinEmptyView(BuildContext context) {
     /*FlatButton(
       onPressed: () {
         showModalBottomSheet(
@@ -169,7 +239,7 @@ class ShowWalletView extends StatelessWidget {
       balance: BigInt.from(0),
     );
     return InkWell(
-      onTap: (){
+      onTap: () {
         showModalBottomSheet(
             isScrollControlled: true,
             context: context,
@@ -180,12 +250,16 @@ class ShowWalletView extends StatelessWidget {
             return;
           }
 
-          await walletVo.wallet.bitcoinActive(walletPassword);
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(LoadLocalDiskWalletAndActiveEvent());
-          Future.delayed(Duration(milliseconds: 500),(){
-            loadDataBloc.add(LoadingEvent());
-          });
+          try {
+            await widget.walletVo.wallet.bitcoinActive(walletPassword);
+            BlocProvider.of<WalletCmpBloc>(context)
+                .add(LoadLocalDiskWalletAndActiveEvent());
+            Future.delayed(Duration(milliseconds: 500), () {
+              widget.loadDataBloc.add(LoadingEvent());
+            });
+          } catch (error) {
+            LogUtil.toastException(error);
+          }
         });
       },
       child: Column(
@@ -194,19 +268,27 @@ class ShowWalletView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-            Image.asset("res/drawable/ic_key_view.png",width: 16,height: 16,),
-            Padding(
-              padding: const EdgeInsets.only(left:10,right: 16),
-              child: Text("激活BTC",style: TextStyle(fontSize: 14,color: HexColor("#1F81FF")),),
-            )
-          ],)
+              Image.asset(
+                "res/drawable/ic_key_view.png",
+                width: 16,
+                height: 16,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 16),
+                child: Text(
+                  S.of(context).activate_btc,
+                  style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+                ),
+              )
+            ],
+          )
         ],
       ),
     );
   }
 
   Widget _testWalletView(BuildContext context) {
-    return  Padding(
+    return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
@@ -214,14 +296,17 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请0.05ETH'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
@@ -230,9 +315,12 @@ class ShowWalletView extends StatelessWidget {
                   Transaction(
                     to: EthereumAddress.fromHex(toAddress),
                     value: EtherAmount.inWei(amount),
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
 //                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .ethTransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -246,27 +334,35 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请20万HYN'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
+                var hynErc20Contract = WalletUtil.getHynErc20Contract(
+                    ContractTestConfig.hynContractAddress);
+                var hynAmount =
+                    ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: hynErc20Contract,
                     function: hynErc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -281,27 +377,35 @@ class ShowWalletView extends StatelessWidget {
             child: Text('-测试申请100USDT'),
             onPressed: () async {
               var time = DateTime.now().millisecondsSinceEpoch;
-              if(time - _lastRequestCoinTime < 60 * 1000) { //1分钟
+              if (time - _lastRequestCoinTime < 60 * 1000) {
+                //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
-                return ;
+                return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var erc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.usdtContractAddress);
-                var amount = ConvertTokenUnit.numToWei(100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
+                var erc20Contract = WalletUtil.getHynErc20Contract(
+                    ContractTestConfig.usdtContractAddress);
+                var amount = ConvertTokenUnit.numToWei(
+                    100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: erc20Contract,
                     function: erc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), amount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -312,13 +416,42 @@ class ShowWalletView extends StatelessWidget {
               }
             },
           ),
+          RaisedButton(
+            child: Text('password'),
+            onPressed: () async {
+              var password = await UiUtil.showWalletPasswordDialogV2(
+                context,
+                widget.walletVo.wallet,
+              );
+            },
+          ),
+          RaisedButton(
+            child: Text('quick-auth page'),
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SetBioAuthPage(widget.walletVo.wallet)));
+            },
+          ),
+          RaisedButton(
+            child: Text('bio-auth'),
+            onPressed: () async {
+              await AuthUtil.bioAuth(
+                context,
+                BiometricType.fingerprint,
+              );
+            },
+          )
         ],
       ),
     );
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
-    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
+    var symbolQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -327,10 +460,6 @@ class ShowWalletView extends StatelessWidget {
             alignment: Alignment.center,
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-              border: Border.all(color: Color(0xFF9B9B9B), width: 0),
-              shape: BoxShape.circle,
-            ),
             child: ImageUtil.getCoinImage(coin.logo),
           ),
           SizedBox(
@@ -343,7 +472,10 @@ class ShowWalletView extends StatelessWidget {
               children: <Widget>[
                 Text(
                   coin.symbol,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF252525)),
                 ),
                 SizedBox(
                   height: 4,
@@ -372,8 +504,12 @@ class ShowWalletView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    "${FormatUtil.coinBalanceHumanReadFormat(coin)}",textAlign: TextAlign.right,
-                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),overflow: TextOverflow.ellipsis,
+                    _isShowBalances
+                        ? "${FormatUtil.coinBalanceHumanReadFormat(coin)}"
+                        : '*****',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(color: Color(0xFF252525), fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(
                     height: 4,
@@ -381,7 +517,9 @@ class ShowWalletView extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}",
+                      _isShowBalances
+                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
+                          : '${symbolQuote?.sign?.sign ?? ''} *****',
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),
@@ -412,5 +550,23 @@ class ShowWalletView extends StatelessWidget {
         ),
       );
     }
+  }
+
+  _showPasswordBottomSheet() async {
+    var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      widget.walletVo.wallet,
+    );
+    if (walletPassword == null) {
+      return;
+    }
+//    await UiUtil.showSetBioAuthDialog(
+//      context,
+//      '提交成功',
+//      widget.walletVo.wallet,
+//      walletPassword,
+//    );
+
+    Fluttertoast.showToast(msg: walletPassword);
   }
 }

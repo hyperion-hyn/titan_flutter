@@ -96,7 +96,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyMap3ContractPage(MyContractModel("最新启动节点", MyContractType.active))));
+                        builder: (context) => MyMap3ContractPage(MyContractModel(S.of(context).latest_boot_node, MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
@@ -104,11 +104,11 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                      "最新启动节点",
+                          S.of(context).latest_boot_node,
                       style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
                     )),
                     Text(
-                      "查看更多",
+                      S.of(context).see_more,
                       style: TextStyles.textC999S14,
                     ),
                     Icon(

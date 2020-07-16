@@ -6,6 +6,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.hyn.titan.ErrorCode
 import timber.log.Timber
 
 class EncryptionPluginInterface(private val context: Context, private val binaryMessenger: BinaryMessenger) {
@@ -53,6 +54,18 @@ class EncryptionPluginInterface(private val context: Context, private val binary
                 decrypt(call, result)
                 return true
             }
+            "trustActiveEncrypt" -> {
+                trustActiveEncrypt(call, result)
+                return true
+            }
+            "trustEncrypt" -> {
+                trustEncrypt(call, result)
+                return true
+            }
+            "trustDecrypt" -> {
+                trustDecrypt(call, result)
+                return true
+            }
         }
         return false
     }
@@ -60,56 +73,91 @@ class EncryptionPluginInterface(private val context: Context, private val binary
     private fun initKeyPair(call: MethodCall, result: MethodChannel.Result) {
         val expired = if (call.arguments is Number) (call.arguments as Number).toLong() else 3600
         Timber.i("$expired ${call.arguments}")
-        initOrCreateKeyPair(expired, result)
+        initOrCreateKeyPair(result)
     }
 
     private fun genKeyPair(call: MethodCall, result: MethodChannel.Result) {
-        val expired = if (call.arguments is Long) call.arguments as Long else 3600
-        Timber.i("$expired ${call.arguments}")
-        generateKey(expired, result)
+        generateKey(result)
     }
 
     private fun getPublicKey(call: MethodCall, result: MethodChannel.Result) {
         result.success(encryptionService.publicKey)
     }
 
-    private fun initOrCreateKeyPair(expired: Long, result: MethodChannel.Result) {
-        if (encryptionService.publicKey == null || System.currentTimeMillis() > encryptionService.expireTime) {
-            generateKey(expired, result)
+    private fun initOrCreateKeyPair(result: MethodChannel.Result) {
+        if (encryptionService.publicKey == null) {
+            generateKey(result)
         }
     }
 
     private fun encrypt(call: MethodCall, result: MethodChannel.Result) {
-
-        val pub = call.argument<String>("pub");
-        val message = call.argument<String>("message");
+        val pub = call.argument<String>("pub")
+        val message = call.argument<String>("message")
         val ciphertext = encryptionService.encrypt(pub!!, message!!)
         ciphertext.subscribe({
-            result.success(it);
+            result.success(it)
+        },{
+            result.error(ErrorCode.PARAMETERS_WRONG, "encrypt error", null)
         })
     }
 
     private fun decrypt(call: MethodCall, result: MethodChannel.Result) {
-        val ciphertext = call.arguments as String;
-        val message = encryptionService.decrypt(ciphertext)
+        val privateKey = call.argument<String>("privateKey") ?: ""
+        val cipherText = call.argument<String>("cipherText") ?: ""
+        val message = encryptionService.decrypt(privateKey, cipherText)
         message.subscribe({
             Timber.i("message:$message")
-            result.success(it);
+            result.success(it)
+        },{
+            result.error(ErrorCode.PARAMETERS_WRONG, "decrypt error", null)
         })
     }
 
     @SuppressLint("CheckResult")
-    private fun generateKey(expired: Long, result: MethodChannel.Result) {
+    private fun generateKey(result: MethodChannel.Result) {
         Timber.i("-生成密钥")
-        encryptionService.generateKeyPairAndStore(expired)
+        encryptionService.generateKeyPairAndStore()
                 .subscribe({
-                    encryptionService.publicKey?.let { pubKey ->
-                        result.success(pubKey)
-                        cipherEventSink?.success(pubKey)
-                    }
+                    result.success(it)
+                    cipherEventSink?.success(it)
                 }, {
                     it.printStackTrace()
-                    result.error(it.message, null, null)
+                    result.error(null, it.message, null)
                 })
     }
+
+    private fun trustActiveEncrypt(call: MethodCall, result: MethodChannel.Result) {
+        var password = call.argument<String>("password") ?: ""
+        var fileName = call.argument<String>("fileName") ?: ""
+        var resultMapFlowable = encryptionService.trustActiveEncrypt(password, fileName)
+        resultMapFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(ErrorCode.PASSWORD_WRONG, it.message, null)
+        })
+    }
+
+    private fun trustEncrypt(call: MethodCall, result: MethodChannel.Result) {
+        var publicKey = call.argument<String>("publicKey")
+        var message = call.argument<String>("message") ?: ""
+        var resultMapFlowable = encryptionService.trustEncrypt(publicKey, message)
+        resultMapFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(ErrorCode.PARAMETERS_WRONG, it.message, null)
+        })
+    }
+
+    private fun trustDecrypt(call: MethodCall, result: MethodChannel.Result) {
+        val cipherText = call.argument<String>("cipherText") ?: ""
+        val password = call.argument<String>("password") ?: ""
+        val fileName = call.argument<String>("fileName") ?: ""
+        val messageFlowable = encryptionService.trustDecrypt(cipherText,fileName,password)
+        messageFlowable.subscribe({
+            result.success(it)
+        }, {
+            result.error(it.message, "decrypt error", null)
+        })
+    }
+
 }

@@ -318,7 +318,7 @@ class _Map3NodeState extends State<Map3NodePage> {
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
     await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
     final result = ModalRoute.of(context).settings?.arguments;
-    print("[detail] -----> back, _broadcaseContractAction, result:$result");
+    //print("[detail] -----> back, _broadcaseContractAction, result:$result");
     // 记得清理
     if (result != null && result is Map) {
       var item = result["result"];
@@ -354,14 +354,14 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
       dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
-      dateDesc = S.of(context).active + dateDesc;
+      dateDesc = S.of(context).active + " "+ dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
-      dateDesc = S.of(context).expired + dateDesc;
+      dateDesc = S.of(context).left + " " + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).expired + " " + dateDesc;
       break;
 
     case ContractState.DUE:

@@ -10,6 +10,16 @@ class PoiDataModel {
   PoiDataModel({this.listImagePaths, this.poiCollector});
 }
 
+class PoiDataV2Model {
+  List<Media> inListImagePaths = List();
+
+  List<Media> outListImagePaths = List();
+
+  PoiCollector poiCollector;
+
+  PoiDataV2Model({this.inListImagePaths, this.outListImagePaths, this.poiCollector});
+}
+
 class PoiNcovDataModel {
   List<Media> listImagePaths = List();
 
