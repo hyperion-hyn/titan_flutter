@@ -50,7 +50,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         _lastUpdateBalanceTime = 0; //set can update balance in time.
         walletRepository.saveActivatedWalletFileName(_activatedWalletVo?.wallet?.keystore?.fileName);
 
-        _recoverBalanceFromDisk(_activatedWalletVo);
+        if(_activatedWalletVo != null) {
+          _recoverBalanceFromDisk(_activatedWalletVo);
+        }
 
         //sync wallet account to server
         if(event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false){
