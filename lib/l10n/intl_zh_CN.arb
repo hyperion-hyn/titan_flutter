@@ -508,7 +508,7 @@
   "param_error": "参数错误",
   "unauthorized": "未授权",
   "insufficient_permission": "权限不足",
-  "content_confict": "内容冲突",
+  "content_conflict": "内容冲突",
   "no_content": "无内容",
   "network_error": "网络错误",
   "create_account_fail": "创建用户失败",

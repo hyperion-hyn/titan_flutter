@@ -509,7 +509,7 @@
   "param_error": "매개변수 오류",
   "unauthorized": "권한 없음",
   "insufficient_permission": "사용권한 부족",
-  "content_confict": "콘텐츠 충돌",
+  "content_conflict": "콘텐츠 충돌",
   "no_content": "콘텐츠 없음",
   "network_error": "네트워크 오류",
   "create_account_fail": "계정 생성 실패",
