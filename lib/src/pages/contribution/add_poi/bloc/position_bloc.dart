@@ -1,19 +1,13 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/entity/poi/user_contribution_poi.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/contribution/add_poi/api/position_api.dart';
 import 'package:titan/src/pages/contribution/add_poi/model/poi_data.dart';
-import 'package:titan/src/utils/log_util.dart';
-import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import '../../../../../env.dart';
 import 'bloc.dart';
 
 class PositionBloc extends Bloc<PositionEvent, AllPageState> {
@@ -24,8 +18,8 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 
   @override
   Stream<AllPageState> mapEventToState(
-    PositionEvent event,
-  ) async* {
+      PositionEvent event,
+      ) async* {
     try {
       if (event is AddPositionEvent) {
         yield AddPositionState();
@@ -37,7 +31,7 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String countryCode = prefs.getString(PrefsKey.mapboxCountryCode) ?? "CN";
         var categoryList =
-            await _positionApi.getCategoryList("", event.address, lang: event.language, countryCode: countryCode);
+        await _positionApi.getCategoryList("", event.address, lang: event.language, countryCode: countryCode);
 
         yield SelectCategoryInitState(categoryList);
       } else if (event is SelectCategoryLoadingEvent) {
@@ -100,8 +94,9 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
 
         var userPosition = event.userPosition;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
-        var _confirmPoiItem = await _positionApi
-            .getConfirmData(event.address, userPosition.longitude, userPosition.latitude, lang: event.language, id: event.id);
+        var _confirmPoiItem = await _positionApi.getConfirmData(
+            event.address, userPosition.longitude, userPosition.latitude,
+            lang: event.language, id: event.id);
         if (_confirmPoiItem == null) {
           yield GetConfirmPoiDataResultFailState();
         } else {
@@ -128,26 +123,20 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       else if (event is GetConfirmPoiDataV2Event) {
         yield GetConfirmDataV2LoadingState();
 
-        if (!isBindSuccess) {
-          await _positionApi.updateEthAddress();
-        }
+        var userPosition = event.userPosition;
+        if (event.language.startsWith('zh')) event.language = "zh-Hans";
+        var res =
+        await _positionApi.getConfirmV2Data(userPosition.longitude, userPosition.latitude, lang: event.language);
 
-        if (!isBindSuccess) {
-          yield GetConfirmDataV2ResultFailState(code: -10003, message: S.of(Keys.homePageKey.currentContext).failed_to_bind_wallet_please_exit_task_and_try_again_toast);
+        var responseEntity = ResponseEntity<UserContributionPois>.fromJson(res,
+            factory: EntityFactory((json){
+              return UserContributionPois.fromJson(json);
+            }));
+        if (responseEntity.data == null || responseEntity.code != 0) {
+          yield GetConfirmDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
         } else {
-          var userPosition = event.userPosition;
-          if (event.language.startsWith('zh')) event.language = "zh-Hans";
-          var res =
-              await _positionApi.getConfirmDataV2(userPosition.longitude, userPosition.latitude, lang: event.language);
-
-          var responseEntity = ResponseEntity<UserContributionPois>.fromJson(res,
-              factory: EntityFactory((json) => UserContributionPois.fromJson(json)));
-          if (responseEntity.data == null || responseEntity.code != 0) {
-            yield GetConfirmDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
-          } else {
-            var _confirmPoiItem = responseEntity.data;
-            yield GetConfirmDataV2ResultSuccessState(_confirmPoiItem);
-          }
+          var _confirmPoiItem = responseEntity.data;
+          yield GetConfirmDataV2ResultSuccessState(_confirmPoiItem);
         }
       }
 
@@ -155,31 +144,22 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
       else if (event is PostConfirmPoiDataV2Event) {
         yield PostConfirmPoiDataV2LoadingState();
 
-        if (!isBindSuccess) {
-          await _positionApi.updateEthAddress();
-        }
+        var res = await _positionApi.postConfirmPoiV2Data(event.answers, event.contributionPois);
+        var responseEntity = ResponseEntity<List<String>>.fromJson(res, factory: EntityFactory((json) {
+          var list = (json as List).map((item) {
+            return "$item";
+          }).toList();
+          print("[PositionApi] postConfirmPoiDataV2, json:$json, list:$list");
 
-        
-        if (!isBindSuccess) {
-          yield PostConfirmPoiDataV2ResultFailState(code: -10003, message: S.of(Keys.homePageKey.currentContext).failed_to_bind_wallet_please_exit_task_and_try_again_toast);
+          return list;
+        }));
+
+        print("[PositionBloc] postConfirmPoiDataV2, result = ${responseEntity.data}");
+
+        if (responseEntity.data == null || responseEntity.code != 0) {
+          yield PostConfirmPoiDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
         } else {
-          var res = await _positionApi.postConfirmPoiV2Data(event.answers, event.contributionPois);
-          var responseEntity = ResponseEntity<List<String>>.fromJson(res, factory: EntityFactory((json) {
-            var list = (json as List).map((item) {
-              return "$item";
-            }).toList();
-            print("[PositionApi] postConfirmPoiDataV2, json:$json, list:$list");
-
-            return list;
-          }));
-
-          print("[PositionBloc] postConfirmPoiDataV2, result = ${responseEntity.data}");
-
-          if (responseEntity.data == null || responseEntity.code != 0) {
-            yield PostConfirmPoiDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);
-          } else {
-            yield PostConfirmPoiDataV2ResultSuccessState(responseEntity.data);
-          }
+          yield PostConfirmPoiDataV2ResultSuccessState(responseEntity.data);
         }
       } else if (event is ConfirmPositionResultLoadingEvent) {
         yield ConfirmPositionResultLoadingState();
@@ -200,18 +180,13 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         yield FailPostPoiNcovDataState(event.code);
       }
     } catch (code, message) {
-      // todo: test_jison_0707
-      if (env.buildType == BuildType.DEV){
-        print("[PositionBloc]---------loooon， code:$code, message:$message");
-      }
-
-      yield LoadFailState(message: S.of(Keys.homePageKey.currentContext).network_error);
+      yield LoadFailState(message: S.of(Keys.rootKey.currentContext).net_error_hint);
     }
   }
 
   Future _uploadPoiData(PoiDataModel model, String address) async {
     int code =
-        await _positionApi.postPoiCollector(model.listImagePaths, address, model.poiCollector, (int count, int total) {
+    await _positionApi.postPoiCollector(model.listImagePaths, address, model.poiCollector, (int count, int total) {
       double progress = count * 100.0 / total;
       add(LoadingPostPoiDataEvent(progress));
     });
@@ -226,11 +201,11 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
   Future _uploadPoiNcovData(PoiNcovDataModel model, String address) async {
 //    var address = currentWalletVo.accountList[0].account.address;
     int code = await _positionApi.postPoiNcovCollector(model.listImagePaths, address, model.poiCollector,
-        (int count, int total) {
-      double progress = count * 100.0 / total;
-      //print('[upload] total:$total, count:$count, progress:$progress%');
-      add(LoadingPostPoiNcovDataEvent(progress));
-    });
+            (int count, int total) {
+          double progress = count * 100.0 / total;
+          //print('[upload] total:$total, count:$count, progress:$progress%');
+          add(LoadingPostPoiNcovDataEvent(progress));
+        });
 
     if (code == 0) {
       add(SuccessPostPoiNcovDataEvent());

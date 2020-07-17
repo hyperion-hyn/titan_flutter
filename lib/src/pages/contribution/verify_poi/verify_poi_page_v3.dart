@@ -343,7 +343,7 @@ class _VerifyPoiPageV3State extends BaseState<VerifyPoiPageV3> {
                     iconTheme: IconThemeData(color: Colors.white),
                     centerTitle: true,
                   ),
-                  body: AllPageStateContainer(state, () {
+                  body: AllPageStateContainer(LoadFailState(), () {
                     _positionBloc.add(GetConfirmPoiDataEvent(widget.userPosition, _language, _address));
                   }),
                 );

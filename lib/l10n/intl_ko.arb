@@ -829,5 +829,12 @@
   "task_is_not_finish": "미션 미 완성",
   "false_data_at_location_detail_toast": "당신이 제출한 지점은 허위 데이터가 존재합니다.",
   "wallet_password_decrypt": "지갑 비밀번호를 사용하여 해독",
-  "you_still_have_unfinished_tasks_detail_toast": "화이팅하세요,아직 완성하지 못한 미션이 있습니다."
+  "you_still_have_unfinished_tasks_detail_toast": "화이팅하세요,아직 완성하지 못한 미션이 있습니다.",
+  "indoor": "옥내",
+  "most": "대부분",
+  "ps_gas_hint": "추신 : 전송 실패를 피하기 위해 시스템 기본 GAS 값이 너무 커서 체인에서 실제 GAS 공제가 우선합니다.",
+  "verify_location_hint": "지도에서 선택한 위치를 확대하고 이동합니다",
+  "please_edit_location_hint": "위치 맵 위치를 편집하십시오",
+  "support_format": "jpg, jpeg, png, gif, heic, webp 형식 지원",
+  "net_error_hint": "네트워크 오류"
 }

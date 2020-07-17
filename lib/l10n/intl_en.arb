@@ -842,6 +842,10 @@
   "bio_auth_title_face": "Please verify your face",
   "bio_auth_title_fingerprint": "Please verify your fingerprint",
   "indoor": "Indoor",
-   "most": "Most",
-   "ps_gas_hint": "PS: In order to avoid transfer failure, the system default GAS value is too large, and the GAS deduction on the actual chain shall prevail in the end."
+  "most": "Most",
+  "ps_gas_hint": "PS: In order to avoid transfer failure, the system default GAS value is too large, and the GAS deduction on the actual chain shall prevail in the end.",
+  "verify_location_hint": "Zoom and move the selected location on the map",
+  "please_edit_location_hint": "Please edit location map location",
+  "support_format": "Support jpg, jpeg, png, gif, heic, webp formats",
+  "net_error_hint": "Network error"
  }
