@@ -100,10 +100,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 '?entryRouteName=${Uri.encodeComponent(Routes.contribute_tasks_list)}&pageType=${FinishAddPositionPage.FINISH_PAGE_TYPE_CONFIRM}');
       } else if (state is GetConfirmDataV2ResultSuccessState) {
         _contributionPois = state.userContributionPois;
-        _confirmPoiItem = _contributionPois.pois.first;
-        // todo: test_jison_0707
-        //_confirmPoiItem = null;
-        if (_confirmPoiItem?.name == null || _contributionPois.pois.isEmpty) {
+        if (_contributionPois?.pois?.isEmpty ?? true) {
           showDialog(
             context: context,
             builder: (context) {
@@ -195,15 +192,14 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
             );
           } else if (state is GetConfirmDataV2ResultSuccessState) {
             _contributionPois = state.userContributionPois;
-            _confirmPoiItem = _contributionPois.pois.first;
-
-            if (_confirmPoiItem?.name == null || _contributionPois.pois.isEmpty) {
+            if (_contributionPois?.pois?.isEmpty ?? true) {
               return Center(
                 child: Container(
                   child: Text(S.of(context).no_verifiable_poi_around_hint),
                 ),
               );
             } else {
+              _confirmPoiItem = _contributionPois.pois.first;
               _isolationTextList = [];
               _isolationTextList = [
                 S.of(context).isolation_yes,
@@ -223,7 +219,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
           } else if (state is GetConfirmDataV2ResultFailState) {
             UiUtil.toast(S.of(context).failed_to_request_data_to_be_verified_error_code_toast_func(state.code));
 
-            return AllPageStateContainer(state, () {
+            return AllPageStateContainer(LoadFailState(), () {
               _positionBloc.add(GetConfirmPoiDataV2Event(widget.userPosition, _language));
             });
           } else if ((state is UpdateConfirmPoiDataPageState) || (state is PostConfirmPoiDataV2LoadingState)) {
@@ -240,7 +236,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
             }
 
             if (_confirmPoiItem?.name == null || _contributionPois.pois.isEmpty) {
-              return AllPageStateContainer(state, () {
+              return AllPageStateContainer(LoadFailState(), () {
                 _positionBloc.add(GetConfirmPoiDataV2Event(widget.userPosition, _language));
               });
             } else {

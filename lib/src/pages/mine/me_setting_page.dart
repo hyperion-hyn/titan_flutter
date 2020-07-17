@@ -32,7 +32,7 @@ class _MeSettingState extends State<MeSettingPage> {
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
         .areaModel
         .name(context);
-    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
+
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -83,7 +83,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Text(
-                title,
+                title?.isNotEmpty??false?title:"",
                 style: TextStyle(
                     color: HexColor("#333333"),
                     fontSize: 16,
@@ -92,7 +92,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             ),
             Spacer(),
             Text(
-              subTitle ?? "",
+              subTitle?.isNotEmpty??false?subTitle:"",
               style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 16),
             ),
             Padding(

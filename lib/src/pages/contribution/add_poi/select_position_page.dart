@@ -6,7 +6,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/contribution/add_poi/add_ncov_page.dart';
-import 'package:titan/src/pages/contribution/add_poi/add_position_page.dart';
+
 
 class SelectPositionPage extends StatefulWidget {
   final LatLng initLocation;
@@ -25,10 +25,14 @@ class SelectPositionPage extends StatefulWidget {
 class _SelectPositionState extends State<SelectPositionPage> {
   MapboxMapController mapController;
   LatLng userPosition;
-  double defaultZoom = 18;
+  double defaultZoom = 16;
 
   var trackingMode = MyLocationTrackingMode.Tracking;
   var enableLocation = false;
+
+  bool _isLoadedFinish = false;
+
+  GlobalKey _globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -62,6 +66,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _globalKey,
       appBar: AppBar(
         elevation: 0,
         title: Text(
@@ -162,7 +167,12 @@ class _SelectPositionState extends State<SelectPositionPage> {
             mapController.addListener(_mapMoveListener);
           },
           onMapCreated: (mapboxController) {
-            mapController = mapboxController;
+            Future.delayed(Duration(milliseconds: 500)).then((value) {
+
+              mapController = mapboxController;
+
+              _showSnackBar();
+            });
           },
           myLocationEnabled: enableLocation,
           myLocationTrackingMode: trackingMode,
@@ -190,4 +200,17 @@ class _SelectPositionState extends State<SelectPositionPage> {
       ],
     );
   }
+
+  _showSnackBar() {
+    if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) return;
+
+    if (!_isLoadedFinish) {
+      _isLoadedFinish = true;
+      if (_globalKey.currentState is ScaffoldState) {
+        var _scaffoldState = _globalKey.currentState as ScaffoldState;
+        _scaffoldState.showSnackBar(SnackBar(content: Text(S.of(context).verify_location_hint), duration: Duration(seconds: 10),));
+      }
+    }
+  }
+
 }
