@@ -10,6 +10,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   Stream<SocketState> mapEventToState(
     SocketEvent event,
   ) async* {
-    // TODO: Add Logic
+    if (event is SubChannelEvent) {
+
+      yield SubChannelSuccessState();
+    }
   }
 }
