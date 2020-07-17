@@ -531,7 +531,7 @@ class HomePanelState extends State<HomePanel> {
                           ),
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 2.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
