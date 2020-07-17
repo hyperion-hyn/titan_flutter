@@ -509,7 +509,7 @@
   "param_error": "參數錯誤",
   "unauthorized": "未授權",
   "insufficient_permission": "權限不足",
-  "content_confict": "內容沖突",
+  "content_conflict": "內容沖突",
   "no_content": "無內容",
   "network_error": "網絡錯誤",
   "create_account_fail": "創建用戶失敗",

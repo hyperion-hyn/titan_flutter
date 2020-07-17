@@ -508,7 +508,7 @@
   "param_error": "The parameter is incorret",
   "insufficient_permission": "no permission",
   "unauthorized": "unauthorized",
-  "content_confict": "Content does not match",
+  "content_conflict": "Content does not match",
   "no_content": "Null",
   "network_error": "Network error",
   "create_account_fail": "Failed to create account",
