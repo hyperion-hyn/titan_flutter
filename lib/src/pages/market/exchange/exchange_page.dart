@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
-import 'package:titan/src/pages/market/exchange/exchange_detail_page.dart';
+//import 'package:titan/src/pages/market/exchange/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/order_mangement_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';

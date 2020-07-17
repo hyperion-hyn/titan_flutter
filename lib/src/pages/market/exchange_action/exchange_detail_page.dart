@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/market/model/exc_detail_chart.dart';
-import 'package:titan/src/pages/market/order/entity/order_entity.dart';
+//import 'package:titan/src/basic/utils/hex_color.dart';
+//import 'package:titan/src/pages/market/model/exc_detail_chart.dart';
+//import 'package:titan/src/pages/market/order/entity/order_entity.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
 //  final String symbol;
