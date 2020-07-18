@@ -58,7 +58,6 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

@@ -146,6 +146,14 @@ dependencies:
     git:
       url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
+  #K-Line Chart
+  #https://github.com/lanceqiuz/flutter_k_chart
+  flutter_k_chart:
+    git:
+      url: git@github.com:lanceqiuz/flutter_k_chart.git
+
+  # WebSocket: https://pub.dev/packages/web_socket_channel
+  web_socket_channel: 1.1.0
 
 dev_dependencies:
   flutter_driver:
