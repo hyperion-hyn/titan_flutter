@@ -509,7 +509,7 @@
   "param_error": "參數錯誤",
   "unauthorized": "未授權",
   "insufficient_permission": "權限不足",
-  "content_confict": "內容沖突",
+  "content_conflict": "內容沖突",
   "no_content": "無內容",
   "network_error": "網絡錯誤",
   "create_account_fail": "創建用戶失敗",
@@ -832,5 +832,9 @@
   "bio_auth_title_fingerprint": "請驗證指紋",
   "indoor": "室內",
   "most": "最多",
-  "ps_gas_hint": "PS: 為避免轉賬失敗，系統默認GAS值偏大，最終以實際鏈上GAS扣除量為準。"
+  "ps_gas_hint": "PS: 為避免轉賬失敗，系統默認GAS值偏大，最終以實際鏈上GAS扣除量為準。",
+  "verify_location_hint": "縮放、移動地圖選定地點位置",
+  "please_edit_location_hint": "請編輯所在地圖位置",
+  "support_format": "支持jpg、jpeg、png、gif、heic、webp格式",
+  "net_error_hint": "網絡錯誤"
 }

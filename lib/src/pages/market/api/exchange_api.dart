@@ -5,6 +5,7 @@ import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
@@ -29,7 +30,8 @@ class ExchangeHttp extends BaseHttpCore {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
       if (env.buildType == BuildType.DEV) {
-        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
+        _instance.dio.interceptors
+            .add(LogInterceptor(responseBody: true, requestBody: true));
       }
     }
     return _instance;
@@ -74,9 +76,6 @@ class ExchangeApi {
     Wallet wallet,
     String password,
     String address,
-    String email,
-    String token,
-    String code,
   }) async {
     var path = '/api/user/walletSignLogin';
 
@@ -85,12 +84,16 @@ class ExchangeApi {
     var params = {
       'address': address,
       'seed': seed,
-      'email': email,
-      'token': token,
-      'code': code,
     };
     //sign request with seed
-    var signed = await Signer.signApi(wallet, password, 'POST', Const.EXCHANGE_DOMAIN.split('//')[1], path, params);
+    var signed = await Signer.signApi(
+      wallet,
+      password,
+      'POST',
+      Const.EXCHANGE_DOMAIN.split('//')[1],
+      path,
+      params,
+    );
     params['sign'] = signed;
 
     return await ExchangeHttp.instance.postEntity(
@@ -98,5 +101,21 @@ class ExchangeApi {
       null,
       params: params,
     );
+  }
+
+  Future<dynamic> checkUseAssets() async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ACCOUNT_ASSETS,
+      null,
+      params: {},
+    );
+  }
+
+  Future<dynamic> testRecharge(String type, double balance) async {
+    return await ExchangeHttp.instance
+        .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
+      "type": type,
+      "balance": balance,
+    });
   }
 }

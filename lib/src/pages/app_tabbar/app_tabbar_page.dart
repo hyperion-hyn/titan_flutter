@@ -537,7 +537,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
     switch (index) {
       case 1:
-        return WalletPage();
+        return WalletTabsPage();
 
       case 2:
         return Map3NodeTabsPage();

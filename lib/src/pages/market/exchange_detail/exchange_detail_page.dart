@@ -7,13 +7,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/order/entity/order_entity.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:syncfusion_flutter_core/theme.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 
-import 'bloc/exchange_bloc.dart';
+import 'bloc/exchange_detail_bloc.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
   final String symbol;

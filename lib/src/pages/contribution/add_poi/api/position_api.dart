@@ -130,15 +130,15 @@ class PositionApi {
       {String lang = "zh-Hans", String id = ""}) async {
     var confirmPoiItem = await HttpCore.instance.getEntity("map-collector/poi/query/v1",
         EntityFactory<UserContributionPoi>((dataList) {
-      print("[get] dataList:$dataList");
-      //return UserContributionPoi.onlyId("-1");
+          print("[get] dataList:$dataList");
+          //return UserContributionPoi.onlyId("-1");
 
-      if ((dataList as List).length > 0) {
-        return UserContributionPoi.fromJson(dataList[0]);
-      } else {
-        return UserContributionPoi.onlyId("-1");
-      }
-    }),
+          if ((dataList as List).length > 0) {
+            return UserContributionPoi.fromJson(dataList[0]);
+          } else {
+            return UserContributionPoi.onlyId("-1");
+          }
+        }),
         params: id?.isEmpty ?? false
             ? {'lon': lon, 'lat': lat, 'language': lang}
             : {'lon': lon, 'lat': lat, 'language': lang, 'id': id},
@@ -155,7 +155,7 @@ class PositionApi {
     var data = await HttpCore.instance.getEntity(
         "/map-collector/poi/detail/$pid",
         EntityFactory<List<UserContributionPoi>>(
-            (list) => (list as List).map((item) => UserContributionPoi.fromJson(item)).toList()),
+                (list) => (list as List).map((item) => UserContributionPoi.fromJson(item)).toList()),
         options: RequestOptions(headers: {
           "Lang": lang,
         }, contentType: "application/json"));
@@ -257,7 +257,7 @@ class PositionApi {
     var data = await HttpCore.instance.getEntity(
         "/map-collector/ncov/poi/detail/$pid",
         EntityFactory<List<NcovPoiEntity>>(
-            (list) => (list as List).map((item) => NcovPoiEntity.fromJson(item)).toList()),
+                (list) => (list as List).map((item) => NcovPoiEntity.fromJson(item)).toList()),
         options: RequestOptions(headers: {
           "Lang": lang,
         }, contentType: "application/json"));
@@ -282,9 +282,10 @@ class PositionApi {
     return json;
   }
 
-  Future<dynamic> getConfirmDataV2(double lon, double lat, {String lang = "zh-Hans"}) async {
-    //print("[PositionApi] getConfirmDataV2, address = $userEthAddress");
-    return await HttpCore.instance.get("map-collector/poi/query/v2",
+  Future<dynamic> getConfirmV2Data(double lon, double lat, {String lang = "zh-Hans"}) async {
+    getEthAddress();
+
+    return await HttpCore.instance.get("map-collector/poi/v2/query",
         params: {'lon': lon, 'lat': lat, 'language': lang},
         options: RequestOptions(headers: {
           "Lang": lang,
@@ -293,36 +294,10 @@ class PositionApi {
         }, contentType: "application/json"));
   }
 
-  Future<dynamic> postConfirmPoiDataV2(List<bool> answers, UserContributionPois contributionPois,
-      {String lang = "zh-Hans"}) async {
-    List<Map<String, dynamic>> data = [];
-
-    for (var contributionPoi in contributionPois.pois) {
-      var index = contributionPois.pois.indexOf(contributionPoi);
-      var answer = answers[index];
-      if (contributionPoi.id.isNotEmpty) {
-        data.add({"poiID": contributionPoi.id, "answer": answer});
-      }
-    }
-
-    Map<String, dynamic> params = {
-      "coordinates": contributionPois.coordinates,
-      "data": data,
-    };
-
-    //print("[PositionApi] postConfirmPoiDataV2, params = $params");
-
-    return await HttpCore.instance.post("/map-collector/poi/confirm/v2",
-        params: params,
-        options: RequestOptions(headers: {
-          "Lang": lang,
-          "UUID": userEthAddress,
-        }, contentType: "application/json"));
-  }
-
   Future<dynamic> postConfirmPoiV2Data(List<int> answers, UserContributionPois contributionPois,
       {String lang = "zh-Hans"}) async {
     List<Map<String, dynamic>> data = [];
+    getEthAddress();
 
     for (var contributionPoi in contributionPois.pois) {
       var index = contributionPois.pois.indexOf(contributionPoi);
@@ -350,6 +325,8 @@ class PositionApi {
 // ✅： [position_api] --> postBindWallets, formData:{wallets: [{"address":"0x2b0a973b4a569Db234dcA5e4Af7628465Bef3A08","isMaster":true},{"address":"0x2d31F32E26b8C3E7418352DE57A6d5eC3507EaFd","isMaster":false}]}
 // ❎  [position_api] --> postBindWallets, formData:{wallets: [{address: 0x2b0a973b4a569Db234dcA5e4Af7628465Bef3A08, isMaster: true}, {address: 0x2d31F32E26b8C3E7418352DE57A6d5eC3507EaFd, isMaster: false}]}
   Future<bool> postBindWallets({String lang = "zh-Hans"}) async {
+    getEthAddress();
+
     List<Map<String, dynamic>> postData = [];
     if (userEthAddress.isNotEmpty) {
       postData.add({"address": userEthAddress, "isMaster": true});
@@ -366,7 +343,7 @@ class PositionApi {
     var postDataStr = json.encode(postData);
     Map<String, dynamic> map = {"wallets": postDataStr};
     FormData formData = FormData.fromMap(map);
-    print("[position_api] --> postBindWallets, postData:$postData");
+    //print("[position_api] --> postBindWallets, formData:$map");
 
     var res = await HttpCore.instance.post("/map-collector/wallet/bind",
         data: formData,
@@ -381,14 +358,14 @@ class PositionApi {
     return responseEntity.code == 0;
   }
 
-  Future updateEthAddress() async {
-    if (userEthAddress.isEmpty) {
+  Future getEthAddress() async {
+    if (userEthAddress?.isEmpty??true) {
       var _wallet = WalletInheritedModel.of(Keys.homePageKey.currentContext).activatedWallet?.wallet;
 
       userEthAddress = _wallet.getEthAccount().address;
     }
 
-    isBindSuccess = await postBindWallets();
+    //isBindSuccess = await postBindWallets();
     //print("[API] 钱包绑定:${isBindSuccess}");
   }
 }

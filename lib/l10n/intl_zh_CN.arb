@@ -508,7 +508,7 @@
   "param_error": "参数错误",
   "unauthorized": "未授权",
   "insufficient_permission": "权限不足",
-  "content_confict": "内容冲突",
+  "content_conflict": "内容冲突",
   "no_content": "无内容",
   "network_error": "网络错误",
   "create_account_fail": "创建用户失败",
@@ -839,5 +839,9 @@
   "bio_auth_title_fingerprint": "请验证指纹",
   "indoor": "室內",
   "most": "最多",
-  "ps_gas_hint": "PS: 為避免轉賬失敗，系統默認GAS值偏大，最終以實際鏈上GAS扣除量為準。"
+  "ps_gas_hint": "PS: 为避免转账失败，系统默认GAS值偏大，最终以实际链上GAS扣除量为准。",
+  "verify_location_hint": "缩放、移动地图选定地点位置",
+  "please_edit_location_hint": "请编辑所在地图位置",
+  "support_format": "支持jpg、jpeg、png、gif、heic、webp格式",
+  "net_error_hint": "网络错误"
 }

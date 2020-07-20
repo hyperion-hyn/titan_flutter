@@ -16,6 +16,8 @@ import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -62,8 +64,18 @@ class _ShowWalletViewState extends State<ShowWalletView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
+    // todo: test_socket
+    /*
+    BlocProvider.of<SocketBloc>(context).listen((state) {
+      if (state is SubChannelSuccessState) {
+        print("[_ShowWalletViewState] 订阅成功");
+      }
+      else if (state is UnSubChannelSuccessState) {
+        print("[_ShowWalletViewState] 取阅成功");
+      }
+    });*/
   }
 
   @override
@@ -93,6 +105,15 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           children: <Widget>[
                             InkWell(
                               onTap: () {
+                                // todo: test_socket
+                                /*
+                                var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
+                                BlocProvider.of<SocketBloc>(context)
+                                    .add(UnSubChannelEvent(channel: channel));
+                                print("[Socket] 取消订阅， channel：$channel");
+
+                                return;*/
+
                                 Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,
@@ -184,6 +205,16 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onTap: () {
+
+                      // todo: test_socket
+                      /*
+                      var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
+                      BlocProvider.of<SocketBloc>(context)
+                          .add(SubChannelEvent(channel: channel));
+                      print("[Socket] 发起订阅， channel：$channel");
+
+                      return;*/
+
                       var coinVo = widget.walletVo.coins[index];
                       var coinVoJsonStr =
                           FluroConvertUtils.object2string(coinVo.toJson());

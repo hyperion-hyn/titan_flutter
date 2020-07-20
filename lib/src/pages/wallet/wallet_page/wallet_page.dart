@@ -58,7 +58,6 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -84,23 +83,26 @@ class _WalletPageState extends BaseState<WalletPage>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Center(
-          child: Text(
-            S.of(context).wallet,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
-        ),
-      ),
+//      appBar: AppBar(
+//        elevation: 0,
+//        backgroundColor: Colors.white,
+//        title: Center(
+//          child: Text(
+//            S.of(context).wallet,
+//            style: TextStyle(
+//              color: Colors.black,
+//              fontSize: 18,
+//            ),
+//          ),
+//        ),
+//      ),
       body: Container(
         color: Colors.white,
         child: Column(
           children: <Widget>[
+            SizedBox(
+              height: 16,
+            ),
             Expanded(child: _buildWalletView(context)),
             //hyn quotes view
             // hynQuotesView(),

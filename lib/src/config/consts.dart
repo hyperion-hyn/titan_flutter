@@ -11,7 +11,8 @@ class Const {
     return 'https://api.hyn.space/';
   }
 
-  static String EXCHANGE_DOMAIN = 'http://10.10.1.120:8989';
+  static const EXCHANGE_DOMAIN =
+      "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com";
 
   static String get NODE_DOMAIN {
     if (env.buildType == BuildType.DEV) {
@@ -125,7 +126,6 @@ class SecurePrefsKey {
 
   ///complete key:  WALLET_P2P_PUB_KEY_PREFIX + wallet.getEthAccount().address
   static final String WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
-
 }
 
 enum Status { idle, loading, success, failed, cancelled }

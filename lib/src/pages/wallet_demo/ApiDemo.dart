@@ -3,7 +3,8 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/api/exchange_api.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
@@ -62,26 +63,48 @@ class _ApiDemoState extends State {
               var wallet = WalletInheritedModel.of(context).activatedWallet;
               if (wallet != null) {
                 var address = wallet.wallet.getEthAccount().address;
-                var walletPassword = '111111';
-
-                var email = 'moyaying@163.com';
-                var code = '128181'; //验证码，需要从邮件查看
-                var token = '007a84e1f4c4e99380ad51466a1af540'; //从 sendSms 请求那里返回
+                var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+                    context, wallet.wallet);
 
                 var ret = await _exchangeApi.walletSignLogin(
                   wallet: wallet.wallet,
                   password: walletPassword,
                   address: address,
-                  email: email,
-                  code: code,
-                  token: token,
                 );
 
                 print(ret);
               }
             },
             child: Text('使用钱包注册账户'),
-          )
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await _exchangeApi.checkUseAssets();
+              print(ret);
+            },
+            child: Text('查看用户资产'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await _exchangeApi.testRecharge('HYN', 10000);
+              print(ret);
+            },
+            child: Text('充10000HYN'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await _exchangeApi.testRecharge('USDT', 1000);
+              print(ret);
+            },
+            child: Text('充1000USDT'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var ret = await _exchangeApi.testRecharge('ETH', 1000);
+              print(ret);
+            },
+            child: Text('充1000ETH'),
+          ),
         ],
       ),
     );

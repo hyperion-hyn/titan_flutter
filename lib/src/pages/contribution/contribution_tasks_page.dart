@@ -46,7 +46,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
     super.didChangeDependencies();
 
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
-    PositionApi().updateEthAddress();
+    PositionApi().getEthAddress();
   }
 
   @override
@@ -204,10 +204,12 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
         }, isOpen: true, realTimes: scanTimesReal),
         _divider(),
         _buildTaskItem('position', S.of(context).add_poi_item_title, postPoiTimes ?? 0, () async {
+          var latLng = await getLatlng();
+
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddPositionPageV2(),
+              builder: (context) => AddPositionPageV2(userPosition: latLng,),
             ),
           );
         }, isOpen: true, realTimes: postPoiTimesReal),

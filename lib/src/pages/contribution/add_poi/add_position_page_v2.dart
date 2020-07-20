@@ -89,12 +89,13 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
   String address;
 
   LatLng _selectedPosition;
+  LatLng _initSelectedPosition;
 
   ScrollController _scrollController = ScrollController();
 
   @override
   void onCreated() {
-    _selectedPosition = widget.userPosition;
+    _initSelectedPosition = widget.userPosition;
 
     language = SettingInheritedModel.of(context).languageCode;
     address = WalletInheritedModel.of(context).activatedWallet.wallet.accounts[0].address;
@@ -396,11 +397,13 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       outItemCount = _outListImagePathsMaxLength;
     }
     double outContainerHeight = 16 + (16 + itemHeight) * ((outItemCount / 3).ceil());
+    var supportFormat = S.of(context).support_format;
 
     return Column(
       children: <Widget>[
         _buildTitleRow('camera', Size(19, 15), S.of(context).scene_photographed, true),
-        _buildImageTitleRow(S.of(context).outdoor, "（${S.of(context).unit_zhang("1-$_outListImagePathsMaxLength")}）", true),
+        _buildImageTitleRow(S.of(context).outdoor,
+            "(${S.of(context).unit_zhang("1-$_outListImagePathsMaxLength")},$supportFormat)", true),
         Container(
           color: Colors.white,
           height: outContainerHeight,
@@ -1019,30 +1022,36 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       child: Row(
         children: <Widget>[
           Padding(
-              padding:
-                  isVisibleStar ? const EdgeInsets.fromLTRB(14, 18, 10, 0) : const EdgeInsets.fromLTRB(14, 8, 10, 0),
+              padding: EdgeInsets.fromLTRB(14, isVisibleStar ? 18 : 8, 8, 0),
               child: RichText(
                 text: TextSpan(
-                    text: title,
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 14,
-                    ),
-                    children: [
-                      TextSpan(
-                          text: subTitle,
-                          style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 12,
-                          ))
-                    ]),
+                  text: title,
+                  style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 14,
+                  ),
+                ),
               )),
           Visibility(
             visible: isVisibleStar,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 18, 10, 0),
+              padding: const EdgeInsets.only(top: 18, right: 8),
               child: Image.asset('res/drawable/add_position_star.png', width: 8, height: 9),
             ),
+          ),
+          Expanded(
+            child: Padding(
+                padding: EdgeInsets.only(top: isVisibleStar ? 18 : 8, right: 8),
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: subTitle,
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                        ))
+                  ]),
+                )),
           ),
         ],
       ),
@@ -1167,7 +1176,7 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       context,
       MaterialPageRoute(
         builder: (context) => SelectPositionPage(
-          initLocation: _selectedPosition,
+          initLocation: _selectedPosition != null ? _selectedPosition : _initSelectedPosition,
           type: SelectPositionPage.SELECT_PAGE_TYPE_POI,
         ),
       ),
@@ -1256,24 +1265,29 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       return;
     }
 
-    // 2.检测网络数据
-    if (_openCageData == null) {
-      _positionBloc.add(GetOpenCageEvent(_selectedPosition, language));
-      Fluttertoast.showToast(msg: S.of(context).network_service_error_toast);
-      return;
-    }
-
     // 1.检测必须类别、图片
     var _isEmptyOfCategory = (_categoryItem == null || _categoryItem.title.length == 0 || _categoryItem.title == "");
-    var _isEmptyOfImages = (_outListImagePaths.length == 0);
 
     if (_isEmptyOfCategory) {
       Fluttertoast.showToast(msg: S.of(context).category_cannot_be_empty_hint);
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
       return;
     }
 
+    // 2.检测网络数据
+    if (_openCageData == null) {
+      _positionBloc.add(GetOpenCageEvent(_selectedPosition, language));
+      Fluttertoast.showToast(msg: S.of(context).please_edit_location_hint);
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
+      return;
+    }
+
+    // 3.检测图片数据
+    var _isEmptyOfImages = (_outListImagePaths.length == 0);
+
     if (_isEmptyOfImages) {
       Fluttertoast.showToast(msg: S.of(context).take_pictures_must_not_be_empty_hint);
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300, microseconds: 33), curve: Curves.linear);
       return;
     }
 
@@ -1281,8 +1295,9 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
       Fluttertoast.showToast(msg: S.of(context).poi_upload_protocol_not_accepted_hint);
       return;
     }
-    
-    var option = await showConfirmDialog(context, S.of(context).add_location_data_please_confirm_actual_situation_toast);
+
+    var option =
+    await showConfirmDialog(context, S.of(context).add_location_data_please_confirm_actual_situation_toast);
     if (!option) return;
 
     var categoryId = _categoryItem.id;

@@ -49,7 +49,7 @@ List<HttpResponseCodeNotSuccess> NOT_SUCCESS_ERROR_CODE_LIST = [
   HttpResponseCodeNotSuccess(-10001, S.of(Keys.rootKey.currentContext).param_error),
   HttpResponseCodeNotSuccess(-10002, S.of(Keys.rootKey.currentContext).unauthorized),
   HttpResponseCodeNotSuccess(-1003, S.of(Keys.rootKey.currentContext).insufficient_permission),
-  HttpResponseCodeNotSuccess(-1004, S.of(Keys.rootKey.currentContext).content_confict),
+  HttpResponseCodeNotSuccess(-1004, S.of(Keys.rootKey.currentContext).content_conflict),
   HttpResponseCodeNotSuccess(-1005, S.of(Keys.rootKey.currentContext).no_content),
   HttpResponseCodeNotSuccess(-1006, S.of(Keys.rootKey.currentContext).network_error),
   ERROR_OUT_OF_RANGE,
