@@ -39,7 +39,7 @@ class _WalletDemoState extends State<WalletDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Wallet Demo1"),
+        title: Text("Wallet Demo"),
       ),
       body: ListView(
         shrinkWrap: true,
@@ -67,7 +67,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     .add(ActiveWalletEvent(wallet: wallets[0]));
               }
             },
-            child: Text('激活一个钱包'),
+            child: Text('激活一个钱包aa'),
           ),
           RaisedButton(
             onPressed: () async {
