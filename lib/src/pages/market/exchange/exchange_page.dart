@@ -10,6 +10,7 @@ import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange_auth_page.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
+import '../quote/kline_detail_page.dart';
 import '../order/entity/order_entity.dart';
 
 class ExchangePage extends StatefulWidget {
@@ -254,7 +255,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             ),
           )
         : Expanded(
-            flex: 2,
+            flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: _coinList(),
@@ -391,82 +392,88 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _quotesItem() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text.rich(TextSpan(children: [
-                TextSpan(
-                    text: 'HYN',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 20,
-                    )),
-                TextSpan(
-                    text: '/ETH',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w300,
-                      color: Colors.grey,
-                      fontSize: 16,
-                    )),
-              ])),
-              SizedBox(
-                height: 4,
-              ),
-              Text(
-                '24H量 12313',
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
+    return InkWell(
+      onTap: (){
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => KLineDetailPage()));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text.rich(TextSpan(children: [
+                  TextSpan(
+                      text: 'HYN',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 20,
+                      )),
+                  TextSpan(
+                      text: '/ETH',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w300,
+                        color: Colors.grey,
+                        fontSize: 16,
+                      )),
+                ])),
+                SizedBox(
+                  height: 4,
                 ),
-              )
-            ],
-          ),
-          Spacer(),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                '0.1223',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Text(
-                '\$100',
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.grey,
-                ),
-              )
-            ],
-          ),
-          Spacer(),
-          Container(
-            width: 80,
-            height: 39,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.0),
-              color: HexColor('#FF53AE86'),
+                Text(
+                  '24H量 12313',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                )
+              ],
             ),
-            child: Center(
-              child: Text(
-                '+99.99%',
-                style: TextStyle(
-                  color: Colors.white,
+            Spacer(),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '0.1223',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  '\$100',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Colors.grey,
+                  ),
+                )
+              ],
+            ),
+            Spacer(),
+            Container(
+              width: 80,
+              height: 39,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4.0),
+                color: HexColor('#FF53AE86'),
+              ),
+              child: Center(
+                child: Text(
+                  '+99.99%',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
