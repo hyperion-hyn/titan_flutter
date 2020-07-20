@@ -14,11 +14,8 @@ class UnSubChannelEvent extends SocketEvent {
 }
 
 class ReceivedDataEvent extends SocketEvent {
-
   final dynamic data;
   ReceivedDataEvent({this.data});
 }
 
-class HeartEvent extends SocketEvent {
-
-}
+class HeartEvent extends SocketEvent {}

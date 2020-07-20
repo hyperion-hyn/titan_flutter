@@ -49,4 +49,7 @@ class SocketConfig {
   static String channelUserTick(String uid, String symbol) {
     return "user.$uid.tick.$symbol";
   }
+
 }
+
+

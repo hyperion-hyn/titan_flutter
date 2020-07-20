@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/market/exchange/DepositPage.dart';
+import 'package:titan/src/pages/market/exchange/deposit_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
-import 'exchange/WithdrawPage.dart';
+import 'exchange/withdraw_page.dart';
 
 class BalancesPage extends StatefulWidget {
   @override

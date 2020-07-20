@@ -11,8 +11,7 @@ class SubChannelState extends SocketState {
   SubChannelState({this.period});
 }
 
-class SubChannelSuccessState extends SocketState {
-}
+class SubChannelSuccessState extends SocketState {}
 
 class SubChannelFailState extends SocketState {}
 
@@ -22,8 +21,7 @@ class UnSubChannelState extends SocketState {
   UnSubChannelState({this.period});
 }
 
-class UnSubChannelSuccessState extends SocketState {
-}
+class UnSubChannelSuccessState extends SocketState {}
 
 class UnSubChannelFailState extends SocketState {}
 

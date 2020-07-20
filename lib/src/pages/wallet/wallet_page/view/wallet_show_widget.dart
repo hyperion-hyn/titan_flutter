@@ -67,6 +67,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     super.initState();
 
     // todo: test_socket
+    /*
     BlocProvider.of<SocketBloc>(context).listen((state) {
       if (state is SubChannelSuccessState) {
         print("[_ShowWalletViewState] 订阅成功");
@@ -74,7 +75,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       else if (state is UnSubChannelSuccessState) {
         print("[_ShowWalletViewState] 取阅成功");
       }
-    });
+    });*/
   }
 
   @override
@@ -105,12 +106,13 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                             InkWell(
                               onTap: () {
                                 // todo: test_socket
+                                /*
                                 var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
                                 BlocProvider.of<SocketBloc>(context)
                                     .add(UnSubChannelEvent(channel: channel));
                                 print("[Socket] 取消订阅， channel：$channel");
 
-                                return;
+                                return;*/
 
                                 Application.router.navigateTo(
                                   context,
@@ -205,12 +207,13 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     onTap: () {
 
                       // todo: test_socket
+                      /*
                       var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
                       BlocProvider.of<SocketBloc>(context)
                           .add(SubChannelEvent(channel: channel));
                       print("[Socket] 发起订阅， channel：$channel");
 
-                      return;
+                      return;*/
 
                       var coinVo = widget.walletVo.coins[index];
                       var coinVoJsonStr =
