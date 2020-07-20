@@ -4,3 +4,5 @@ import 'package:meta/meta.dart';
 abstract class ExchangeEvent {}
 
 class SwitchToAuthEvent extends ExchangeEvent {}
+
+class SwitchToContentEvent extends ExchangeEvent {}

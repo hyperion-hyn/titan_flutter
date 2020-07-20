@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
-import 'package:titan/src/pages/market/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
 import '../quote/kline_detail_page.dart';
 import '../order/entity/order_entity.dart';
+import 'bloc/bloc.dart';
 
 class ExchangePage extends StatefulWidget {
   @override
@@ -24,6 +29,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'usdt';
   var _exchangeType = ExchangeType.SELL;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
+  ExchangeApi _exchangeApi = ExchangeApi();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _exchangeBloc.close();
+  }
 
   @override
   void onCreated() {
@@ -46,7 +59,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         bloc: _exchangeBloc,
         builder: (context, state) {
           if (state is SwitchToAuthState) {
-            return ExchangeAuthPage();
+            return ExchangeAuthPage(_exchangeBloc);
+          } else if (state is SwitchToContentState) {
+            return _contentView();
           }
           return _contentView();
         },
@@ -184,13 +199,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-//          Application.router.navigateTo(
-//            context,
-//            Routes.exchange_auth_page,
-//          );
-          //_exchangeBloc.add(SwitchToAuthEvent());
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => BalancesPage()));
+          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+              null) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => BalancesPage()));
+          } else {
+            _exchangeBloc.add(SwitchToAuthEvent());
+          }
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,20 +229,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
             ),
             Spacer(),
-            Text.rich(
-              TextSpan(children: [
-                TextSpan(
-                    text: ExchangeInheritedModel.of(context)
-                            .exchangeModel
-                            .isShowBalances
-                        ? '1231231'
-                        : '******'),
-                TextSpan(
-                    text: '(CNY)',
-                    style: TextStyle(color: Colors.grey, fontSize: 13))
-              ]),
-              textAlign: TextAlign.center,
-            ),
+            _assetView(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Icon(
@@ -239,6 +241,27 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         ),
       ),
     );
+  }
+
+  _assetView() {
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+        null) {
+      return Text.rich(
+        TextSpan(children: [
+          TextSpan(
+              text: ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances
+                  ? '1231231'
+                  : '******'),
+          TextSpan(
+              text: '(CNY)', style: TextStyle(color: Colors.grey, fontSize: 13))
+        ]),
+        textAlign: TextAlign.center,
+      );
+    } else {
+      return Text('未授权登录');
+    }
   }
 
   _exchangeItem(bool isHynCoin) {

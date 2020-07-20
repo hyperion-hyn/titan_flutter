@@ -205,7 +205,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onTap: () {
-
                       // todo: test_socket
                       /*
                       var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
