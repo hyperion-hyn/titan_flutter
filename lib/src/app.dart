@@ -7,6 +7,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
@@ -42,50 +43,52 @@ class _AppState extends State<App> {
           child: SettingComponent(
               child: WalletComponent(
             child: SocketComponent(
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider<UpdateBloc>(
-                      create: (context) => UpdateBloc(context: context)),
-                  BlocProvider<RootPageControlBloc>(
-                      create: (context) => RootPageControlBloc()),
-                ],
-                child: Builder(
-                  builder: (context) {
-                    return RefreshConfiguration(
-                      //pull to refresh config
-                      dragSpeedRatio: 0.91,
-                      headerTriggerDistance: 80,
-                      footerTriggerDistance: 80,
-                      maxOverScrollExtent: 100,
-                      maxUnderScrollExtent: 0,
-                      headerBuilder: () => WaterDropMaterialHeader(),
-                      footerBuilder: () => ClassicFooter(),
-                      autoLoad: true,
-                      enableLoadingWhenFailed: false,
-                      hideFooterWhenNotFull: true,
-                      enableBallisticLoad: true,
-                      child: MaterialApp(
-                        key: Keys.materialAppKey,
-                        debugShowCheckedModeBanner: false,
-                        locale: SettingInheritedModel.of(context,
-                                aspect: SettingAspect.language)
-                            .languageModel
-                            ?.locale,
-                        title: 'titan',
-                        theme: appTheme,
-                        localizationsDelegates: [
-                          S.delegate,
-                          GlobalMaterialLocalizations.delegate,
-                          GlobalWidgetsLocalizations.delegate,
-                          GlobalCupertinoLocalizations.delegate,
-                          RefreshLocalizations.delegate,
-                        ],
-                        supportedLocales: S.delegate.supportedLocales,
-                        navigatorObservers: [Application.routeObserver],
-                        onGenerateRoute: Application.router.generator,
-                      ),
-                    );
-                  },
+              child: ExchangeComponent(
+                child: MultiBlocProvider(
+                  providers: [
+                    BlocProvider<UpdateBloc>(
+                        create: (context) => UpdateBloc(context: context)),
+                    BlocProvider<RootPageControlBloc>(
+                        create: (context) => RootPageControlBloc()),
+                  ],
+                  child: Builder(
+                    builder: (context) {
+                      return RefreshConfiguration(
+                        //pull to refresh config
+                        dragSpeedRatio: 0.91,
+                        headerTriggerDistance: 80,
+                        footerTriggerDistance: 80,
+                        maxOverScrollExtent: 100,
+                        maxUnderScrollExtent: 0,
+                        headerBuilder: () => WaterDropMaterialHeader(),
+                        footerBuilder: () => ClassicFooter(),
+                        autoLoad: true,
+                        enableLoadingWhenFailed: false,
+                        hideFooterWhenNotFull: true,
+                        enableBallisticLoad: true,
+                        child: MaterialApp(
+                          key: Keys.materialAppKey,
+                          debugShowCheckedModeBanner: false,
+                          locale: SettingInheritedModel.of(context,
+                                  aspect: SettingAspect.language)
+                              .languageModel
+                              ?.locale,
+                          title: 'titan',
+                          theme: appTheme,
+                          localizationsDelegates: [
+                            S.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            RefreshLocalizations.delegate,
+                          ],
+                          supportedLocales: S.delegate.supportedLocales,
+                          navigatorObservers: [Application.routeObserver],
+                          onGenerateRoute: Application.router.generator,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

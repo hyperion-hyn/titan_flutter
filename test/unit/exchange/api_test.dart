@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:titan/env.dart';
-import 'package:titan/src/data/api/exchange_api.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

@@ -10,15 +10,17 @@ class ClickOvalIconButton extends StatefulWidget {
   Function onTap;
   bool isLoading = false;
   Widget child;
+  double radius;
 
   ClickOvalIconButton(
-      this.text,
-      this.onTap, {
-        this.height = 36,
-        this.width = 180,
-        this.fontSize = 13,
-        this.child,
-      });
+    this.text,
+    this.onTap, {
+    this.height = 36,
+    this.width = 180,
+    this.radius,
+    this.fontSize = 13,
+    this.child,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -33,12 +35,16 @@ class _ClickOvalIconButtonState extends State<ClickOvalIconButton> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(widget.height / 2)),
+        borderRadius: BorderRadius.all(Radius.circular(
+          widget.radius != null ? widget.radius : widget.height / 2,
+        )),
         gradient: getGradient(),
       ),
       child: FlatButton(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(22.0)),
+            borderRadius: BorderRadius.all(Radius.circular(
+              widget.radius != null ? widget.radius : 2.0,
+            )),
           ),
           padding: const EdgeInsets.all(0.0),
           child: Row(
@@ -51,18 +57,18 @@ class _ClickOvalIconButtonState extends State<ClickOvalIconButton> {
                 style: TextStyle(
                   fontSize: widget.fontSize,
                   color:
-                  widget.isLoading ? DefaultColors.color999 : Colors.white,
+                      widget.isLoading ? DefaultColors.color999 : Colors.white,
                 ),
               ),
               widget.child != null
                   ? Row(
-                children: <Widget>[
-                  SizedBox(
-                    width: 4.0,
-                  ),
-                  widget.child
-                ],
-              )
+                      children: <Widget>[
+                        SizedBox(
+                          width: 4.0,
+                        ),
+                        widget.child
+                      ],
+                    )
                   : SizedBox(),
               Spacer(
                 flex: 1,
@@ -72,14 +78,14 @@ class _ClickOvalIconButtonState extends State<ClickOvalIconButton> {
           onPressed: widget.isLoading
               ? null
               : () async {
-            setState(() {
-              widget.isLoading = true;
-            });
-            await widget.onTap();
-            setState(() {
-              widget.isLoading = false;
-            });
-          }),
+                  setState(() {
+                    widget.isLoading = true;
+                  });
+                  await widget.onTap();
+                  setState(() {
+                    widget.isLoading = false;
+                  });
+                }),
     );
   }
 
@@ -90,7 +96,7 @@ class _ClickOvalIconButtonState extends State<ClickOvalIconButton> {
       );
     } else {
       return LinearGradient(
-        colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
+        colors: <Color>[Color(0xff1097B4), Color(0xff1097B4)],
       );
     }
   }

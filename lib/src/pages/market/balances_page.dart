@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/market/exchange/deposit_page.dart';
-import 'package:titan/src/style/titan_sytle.dart';
-
+import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'exchange/deposit_page.dart';
 import 'exchange/withdraw_page.dart';
 
 class BalancesPage extends StatefulWidget {
@@ -16,22 +14,37 @@ class BalancesPage extends StatefulWidget {
 
 class _BalancesPageState extends State<BalancesPage> {
   double total = 9876.00;
+  bool _isShowBalances = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-        '交易账户',
-      )),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _totalBalances(),
-          Expanded(
-            child: _coinList(),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          centerTitle: true,
+          iconTheme: IconThemeData(
+            color: Colors.black,
           ),
-        ],
+          title: Text(
+            '交易账户',
+            style: TextStyle(color: Colors.black, fontSize: 18),
+          )),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 16,
+            ),
+            _totalBalances(),
+            _divider(),
+            Expanded(
+              child: _coinList(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -39,73 +52,114 @@ class _BalancesPageState extends State<BalancesPage> {
   _totalBalances() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '交易账户总资产折合(CNY)',
-            style: TextStyle(
-              fontSize: 16.0,
-            ),
-          ),
-          Text(
-            '≈￥9876.00',
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Row(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 30,
-                  child: OutlineButton(
-                    child: Text(
-                      '充币',
-                      style: TextStyle(color: HexColor('#FF1095B0')),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    '交易账户总资产折合(CNY)',
+                    style: TextStyle(
+                      fontSize: 16.0,
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DepositPage()));
-                    },
-                    borderSide: BorderSide(
-                      color: HexColor('#FF1095B0'),
-                      width: 1,
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0)),
                   ),
-                ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    ExchangeInheritedModel.of(context)
+                            .exchangeModel
+                            .isShowBalances
+                        ? '≈￥9876.00'
+                        : '*****',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 30,
-                  child: OutlineButton(
-                    child: Text(
-                      '提币',
-                      style: TextStyle(color: HexColor('#FF1095B0')),
+              SizedBox(
+                height: 16,
+              ),
+              Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 30,
+                      child: OutlineButton(
+                        child: Text(
+                          '充币',
+                          style: TextStyle(color: HexColor('#FF1095B0')),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => DepositPage()));
+                        },
+                        borderSide: BorderSide(
+                          color: HexColor('#FF1095B0'),
+                          width: 1,
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)),
+                      ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WithdrawPage()));
-                    },
-                    borderSide: BorderSide(
-                      color: HexColor('#FF1095B0'),
-                      width: 1,
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0)),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 30,
+                      child: OutlineButton(
+                        child: Text(
+                          '提币',
+                          style: TextStyle(color: HexColor('#FF1095B0')),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WithdrawPage()));
+                        },
+                        borderSide: BorderSide(
+                          color: HexColor('#FF1095B0'),
+                          width: 1,
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0)),
+                      ),
+                    ),
+                  )
+                ],
               )
             ],
+          ),
+          Spacer(),
+          InkWell(
+            onTap: () async {
+              setState(() {
+                _isShowBalances = !_isShowBalances;
+              });
+            },
+            child: _isShowBalances
+                ? Image.asset(
+                    'res/drawable/ic_wallet_show_balances.png',
+                    height: 20,
+                    width: 20,
+                    color: HexColor('#FF228BA1'),
+                  )
+                : Image.asset(
+                    'res/drawable/ic_wallet_hide_balances.png',
+                    height: 20,
+                    width: 20,
+                    color: HexColor('#FF228BA1'),
+                  ),
           )
         ],
       ),
@@ -118,6 +172,13 @@ class _BalancesPageState extends State<BalancesPage> {
         itemBuilder: (ctx, index) {
           return CoinItem('USDT');
         });
+  }
+
+  _divider() {
+    return Container(
+      height: 8,
+      color: HexColor('#FFF5F5F5'),
+    );
   }
 }
 
@@ -152,8 +213,8 @@ class CoinItemState extends State<CoinItem> {
                     'USDT',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                      color: HexColor('#FF228BA1'),
                     ),
                   ),
                 ],
@@ -192,7 +253,7 @@ class CoinItemState extends State<CoinItem> {
                             ),
                           ),
                           SizedBox(
-                            height: 4.0,
+                            height: 8.0,
                           ),
                           Text(
                             '9090.42',
@@ -219,7 +280,7 @@ class CoinItemState extends State<CoinItem> {
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Text(
                       '0.002',
@@ -242,7 +303,7 @@ class CoinItemState extends State<CoinItem> {
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Row(
                       children: <Widget>[

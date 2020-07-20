@@ -47,6 +47,10 @@ class Routes {
   static const String map3node_contract_detail_page = '/map3node/contract_detail_page';
   static const String map3node_share_page = '/map3node/share_page';
 
+  ///exchange
+  static const String exchange_auth_page = '/exchange/exchange_auth_page';
+
+
   static String cachedEntryRouteName;
 
   static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
@@ -127,6 +131,8 @@ class Routes {
     router.define(map3node_contract_detail_page,
         handler: map3NodeContractDetailHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: pushNewPageTransitionType);
+
+    router.define(exchange_auth_page, handler: exchangeAuthHandler, transitionType: pushNewPageTransitionType);
   }
 
   static TransitionType get pushNewPageTransitionType {

@@ -11,5 +11,8 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     ExchangeEvent event,
   ) async* {
     // TODO: Add Logic
+    if (event is SwitchToAuthEvent) {
+      yield SwitchToAuthState();
+    }
   }
 }

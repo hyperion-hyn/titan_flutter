@@ -4,3 +4,5 @@ import 'package:meta/meta.dart';
 abstract class ExchangeState {}
 
 class InitialExchangeState extends ExchangeState {}
+
+class SwitchToAuthState extends ExchangeState {}

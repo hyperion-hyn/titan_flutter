@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
-//import 'package:titan/src/pages/market/exchange/exchange_detail_page.dart';
-import 'package:titan/src/pages/market/order/item_order.dart';
-import 'package:titan/src/pages/market/order/order_mangement_page.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
-import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
+import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
+import 'package:titan/src/pages/market/exchange_auth_page.dart';
+import 'package:titan/src/widget/click_oval_icon_button.dart';
 
 import '../order/entity/order_entity.dart';
 
@@ -17,9 +19,16 @@ class ExchangePage extends StatefulWidget {
   }
 }
 
-class _ExchangePageState extends State<ExchangePage> {
+class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'usdt';
   var _exchangeType = ExchangeType.SELL;
+  ExchangeBloc _exchangeBloc = ExchangeBloc();
+
+  @override
+  void onCreated() {
+    // TODO: implement onCreated
+    super.onCreated();
+  }
 
   @override
   void initState() {
@@ -29,16 +38,31 @@ class _ExchangePageState extends State<ExchangePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          _banner(),
-          _exchange(),
-          _openOrderListWidget(),
-          Spacer(),
-          _bottom()
-        ],
+    return BlocListener<ExchangeBloc, ExchangeState>(
+      bloc: _exchangeBloc,
+      listener: (context, state) {},
+      child: BlocBuilder<ExchangeBloc, ExchangeState>(
+        bloc: _exchangeBloc,
+        builder: (context, state) {
+          if (state is SwitchToAuthState) {
+            return ExchangeAuthPage();
+          }
+          return _contentView();
+        },
       ),
+    );
+  }
+
+  _contentView() {
+    return Column(
+      children: <Widget>[
+        _banner(),
+        _account(),
+        _exchange(),
+        _divider(),
+        _quotesView(),
+        _authorizedView()
+      ],
     );
   }
 
@@ -73,150 +97,145 @@ class _ExchangePageState extends State<ExchangePage> {
   }
 
   _exchange() {
-    return Padding(
-      padding: EdgeInsets.all(4.0),
-      child: Column(
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => BalancesPage()));
-            },
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 8.0,
-                  ),
-                  child: Image.asset(
-                    'res/drawable/ic_market_account.png',
-                    width: 15,
-                    height: 15,
-                  ),
-                ),
-                Text(
-                  '交易账户',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 17,
-                  ),
-                ),
-                Spacer(),
-                Text.rich(
-                  TextSpan(children: [
-                    TextSpan(text: '******'),
-                    TextSpan(
-                        text: '(CNY)',
-                        style: TextStyle(color: Colors.grey, fontSize: 13))
-                  ]),
-                  textAlign: TextAlign.center,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              borderRadius: BorderRadius.circular(16),
-              elevation: 5.0,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Row(
-                  children: <Widget>[
-                    _exchangeItem(_exchangeType == ExchangeType.SELL),
-                    Expanded(
-                      flex: 1,
-                      child: IconButton(
-                        icon: Image.asset(
-                          'res/drawable/market_exchange_btn_icon.png',
-                          width: 25,
-                          height: 25,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _exchangeType = _exchangeType == ExchangeType.BUY
-                                ? ExchangeType.SELL
-                                : ExchangeType.BUY;
-                          });
-                        },
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Material(
+            borderRadius: BorderRadius.circular(16),
+            elevation: 3.0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                children: <Widget>[
+                  _exchangeItem(_exchangeType == ExchangeType.SELL),
+                  Expanded(
+                    flex: 1,
+                    child: IconButton(
+                      icon: Image.asset(
+                        'res/drawable/market_exchange_btn_icon.png',
+                        width: 25,
+                        height: 25,
                       ),
+                      onPressed: () {
+                        setState(() {
+                          _exchangeType = _exchangeType == ExchangeType.BUY
+                              ? ExchangeType.SELL
+                              : ExchangeType.BUY;
+                        });
+                      },
                     ),
-                    _exchangeItem(_exchangeType == ExchangeType.BUY),
-                  ],
-                ),
+                  ),
+                  _exchangeItem(_exchangeType == ExchangeType.BUY),
+                ],
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    '汇率',
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                Text(
-                  '1HYN = 242.8880303 USDT',
-                ),
-                Spacer(),
-                /*ClickOvalIconButton(
-                  '交易',
-                  () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ExchangeDetailPage(
-                                  symbol: 'USDT',
-                                  type: ExchangeType.BUY,
-                                )));
-                  },
-                  width: 80,
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 15,
-                    color: Colors.white,
-                  ),
-                ),*/
-              ],
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 16.0,
+            horizontal: 8.0,
           ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.all(Radius.circular(4.0))),
-            margin: EdgeInsets.all(8.0),
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Text(
-                  '24H 量 ¥8.89M',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  '汇率',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
                 ),
-                Spacer(),
-                Text(
-                  '最新兑换0.8HYN — 194.20USDT',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                )
-              ],
+              ),
+              Text(
+                '1HYN = 242.8880303 USDT',
+              ),
+              Spacer(),
+              ClickOvalIconButton(
+                '交易',
+                () {},
+                width: 88,
+                height: 38,
+                radius: 22,
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 15,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                width: 8,
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  _account() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () {
+//          Application.router.navigateTo(
+//            context,
+//            Routes.exchange_auth_page,
+//          );
+          //_exchangeBloc.add(SwitchToAuthEvent());
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => BalancesPage()));
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 8.0,
+              ),
+              child: Image.asset(
+                'res/drawable/ic_market_account.png',
+                width: 20,
+                height: 20,
+              ),
             ),
-          )
-        ],
+            Text(
+              '交易账户',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 17,
+              ),
+            ),
+            Spacer(),
+            Text.rich(
+              TextSpan(children: [
+                TextSpan(
+                    text: ExchangeInheritedModel.of(context)
+                            .exchangeModel
+                            .isShowBalances
+                        ? '1231231'
+                        : '******'),
+                TextSpan(
+                    text: '(CNY)',
+                    style: TextStyle(color: Colors.grey, fontSize: 13))
+              ]),
+              textAlign: TextAlign.center,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -316,96 +335,174 @@ class _ExchangePageState extends State<ExchangePage> {
     );
   }
 
-  _openOrderListWidget() {
-    return Column(
-      children: [
-        Row(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                '当前委托',
+  _quotesView() {
+    return Expanded(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16.0,
+              horizontal: 16.0,
+            ),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  '名称',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                Spacer(
+                  flex: 5,
+                ),
+                Text(
+                  '最新价',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                Spacer(
+                  flex: 4,
+                ),
+                Text(
+                  '跌涨幅',
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+              ],
+            ),
+          ),
+          _quotesItemList()
+        ],
+      ),
+    );
+  }
+
+  _quotesItemList() {
+    return Expanded(
+      child: ListView(
+        children: List.generate(3, (index) => _quotesItem()),
+      ),
+    );
+  }
+
+  _quotesItem() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text.rich(TextSpan(children: [
+                TextSpan(
+                    text: 'HYN',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    )),
+                TextSpan(
+                    text: '/ETH',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w300,
+                      color: Colors.grey,
+                      fontSize: 16,
+                    )),
+              ])),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                '24H量 12313',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
+              )
+            ],
+          ),
+          Spacer(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                '0.1223',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                ),
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                '\$100',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey,
+                ),
+              )
+            ],
+          ),
+          Spacer(),
+          Container(
+            width: 80,
+            height: 39,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4.0),
+              color: HexColor('#FF53AE86'),
+            ),
+            child: Center(
+              child: Text(
+                '+99.99%',
+                style: TextStyle(
+                  color: Colors.white,
                 ),
               ),
             ),
-            Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => OrderManagementPage()));
-                },
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.table_chart,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 4.0,
-                    ),
-                    Text(
-                      '全部',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Divider(
-            height: 2,
-            thickness: 1.0,
           ),
-        ),
-        _openOrderListView(),
-      ],
+        ],
+      ),
     );
   }
 
-  _openOrderListView() {
-    return Column(
-      children: List.generate(
-          2,
-          (index) => OrderItem(
-                OrderEntity()..type = ExchangeType.BUY,
-              )),
-    );
-  }
-
-  _bottom() {
+  Widget _authorizedView() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: Row(
         children: <Widget>[
           Spacer(),
           Image.asset(
-            'res/drawable/manwu_logo.png',
-            width: 30,
-            height: 30,
+            'res/drawable/logo_manwu.png',
+            width: 23,
+            height: 23,
+            color: Colors.grey[500],
           ),
           SizedBox(
-            width: 8.0,
+            width: 4.0,
           ),
           Text(
-            '经过权威安全认证',
-            style: TextStyle(color: HexColor('#FF999999')),
+            S.of(context).safety_certification_by_organizations,
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 12.0,
+            ),
           ),
-          Spacer(),
+          Spacer()
         ],
       ),
+    );
+  }
+
+  _divider() {
+    return Container(
+      height: 8,
+      color: HexColor('#FFF5F5F5'),
     );
   }
 }
