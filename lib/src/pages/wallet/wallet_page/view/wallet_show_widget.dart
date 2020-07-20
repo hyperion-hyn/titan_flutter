@@ -17,6 +17,7 @@ import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_util.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -104,7 +105,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                             InkWell(
                               onTap: () {
                                 // todo: test_socket
-                                var channel = "market.btcusdt.kline.1min";
+                                var channel = SocketUtil.channelKLinePeriod("btcusdt", "1min");
                                 BlocProvider.of<SocketBloc>(context)
                                     .add(UnSubChannelEvent(channel: channel));
                                 print("[Socket] 取消订阅， channel：$channel");
@@ -204,7 +205,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     onTap: () {
 
                       // todo: test_socket
-                      var channel = "market.btcusdt.kline.1min";
+                      var channel = SocketUtil.channelKLinePeriod("btcusdt", "1min");
                       BlocProvider.of<SocketBloc>(context)
                           .add(SubChannelEvent(channel: channel));
                       print("[Socket] 发起订阅， channel：$channel");

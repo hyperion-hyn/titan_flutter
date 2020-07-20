@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:web_socket_channel/io.dart';
+import '../socket_util.dart';
 import './bloc.dart';
+
+//https://cloudapidoc.github.io/API_Docs/v1/ws/#websocket-api
 
 class SocketBloc extends Bloc<SocketEvent, SocketState> {
   @override
@@ -18,15 +21,13 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   ) async* {
     if (event is SubChannelEvent) {
       _subChannelRequestAction(event.channel);
-      
+
       yield SubChannelState(period: event.channel);
-    }
-    else if (event is UnSubChannelEvent) {
+    } else if (event is UnSubChannelEvent) {
       _unSubChannelRequestAction(event.channel);
-      
+
       yield UnSubChannelState(period: event.channel);
-    }
-    else if (event is ReceivedDataEvent) {
+    } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
       try {
         var decompressedData = utf8.decode(
@@ -40,36 +41,41 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         if (data["ping"] != null) {
           _heartPongRequestAction(data["ping"]);
         } else {
-
           var status = data["status"];
-          var id = data["id"];
 
-          if (status == "ok") {
-            var subbed = data["subbed"];
+          var event = data["event"];
 
-            var unSubbed = data["unsubbed"];
-            if (subbed != null) {
-              yield SubChannelSuccessState(response: event.data);
+          if (status == 0) {
+            var channel = data["channel"];
+
+            if (event == SocketUtil.sub) {
+              var response = data["data"];
+              if (response != null) {
+                yield ReceivedDataSuccessState(response: response);
+              } else {
+                if (channel != null) {
+                  yield SubChannelSuccessState(response: event.data);
+                }
+              }
+            } else if (event == SocketUtil.unSub) {
+              if (channel != null) {
+                yield UnSubChannelSuccessState(response: event.data);
+              }
             }
-
-            if (unSubbed != null) {
-              yield UnSubChannelSuccessState(response: event.data);
-            }
-
           } else {
             var errMsg = data["err-msg"];
             var errCode = data["err-code"];
 
-            if (id == subId) {
+            if (event == SocketUtil.sub) {
               yield SubChannelFailState();
-            }
-            else if (id == unSubId) {
+            } else if (event == SocketUtil.unSub) {
               yield UnSubChannelFailState();
             }
             print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+
+            yield ReceivedDataFailState();
           }
         }
-        yield ReceivedDataState(response: data);
       } catch (e) {
         print(e.toString());
         yield ReceivedDataFailState();
@@ -89,24 +95,20 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   void _subChannelRequestAction(String channel) {
     print('[WS] sub，正式发起订阅, channel:$channel');
 
-    Map<String, dynamic> requestKLine = Map<String, dynamic>();
-    requestKLine['sub'] = channel;
-    requestKLine['id'] = subId;
+    Map<String, dynamic> params = Map<String, dynamic>();
+    params['channel'] = channel;
+    params['event'] = SocketUtil.sub;
 
-    socketChannel.sink.add(json.encode(requestKLine));
+    socketChannel.sink.add(json.encode(params));
   }
 
   void _unSubChannelRequestAction(String channel) {
     print('[WS] unSub，正式取消订阅, period:$channel');
 
-    Map<String, dynamic> requestKLine = Map<String, dynamic>();
-    requestKLine['unsub'] = channel;
-    requestKLine['id'] = unSubId;
+    Map<String, dynamic> params = Map<String, dynamic>();
+    params['channel'] = channel;
+    params['event'] = SocketUtil.unSub;
 
-    socketChannel.sink.add(json.encode(requestKLine));
+    socketChannel.sink.add(json.encode(params));
   }
-  
-  final String subId = "sub_id";
-  final String unSubId = "un_sub_id";
-
 }

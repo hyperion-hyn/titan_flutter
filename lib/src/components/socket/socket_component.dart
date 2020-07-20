@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_util.dart';
 import 'package:web_socket_channel/io.dart';
 
 class SocketComponent extends StatefulWidget {
@@ -15,9 +16,11 @@ class SocketComponent extends StatefulWidget {
 }
 
 class _SocketState extends State<SocketComponent> {
-  final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
+  /*final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
     'wss://api.huobi.pro/ws',
-  );
+  );*/
+
+  final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(SocketUtil.domain);
 
   @override
   void initState() {
@@ -40,7 +43,6 @@ class _SocketState extends State<SocketComponent> {
       print('[WS]  listen, data');
 
       BlocProvider.of<SocketBloc>(context).add(ReceivedDataEvent(data: data));
-
     }, onDone: () {
       print('[WS] Done!');
 

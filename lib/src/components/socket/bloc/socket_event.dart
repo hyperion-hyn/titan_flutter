@@ -18,9 +18,3 @@ class ReceivedDataEvent extends SocketEvent {
   final dynamic data;
   ReceivedDataEvent({this.data});
 }
-
-class HeartResponseEvent extends SocketEvent {
-
-  final dynamic ping;
-  HeartResponseEvent({this.ping});
-}
