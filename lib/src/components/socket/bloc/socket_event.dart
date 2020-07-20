@@ -18,3 +18,7 @@ class ReceivedDataEvent extends SocketEvent {
   final dynamic data;
   ReceivedDataEvent({this.data});
 }
+
+class HeartEvent extends SocketEvent {
+
+}

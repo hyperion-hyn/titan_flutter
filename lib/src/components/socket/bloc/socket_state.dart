@@ -12,8 +12,6 @@ class SubChannelState extends SocketState {
 }
 
 class SubChannelSuccessState extends SocketState {
-  final Map<String, dynamic> response;
-  SubChannelSuccessState({this.response});
 }
 
 class SubChannelFailState extends SocketState {}
@@ -25,8 +23,6 @@ class UnSubChannelState extends SocketState {
 }
 
 class UnSubChannelSuccessState extends SocketState {
-  final Map<String, dynamic> response;
-  UnSubChannelSuccessState({this.response});
 }
 
 class UnSubChannelFailState extends SocketState {}
@@ -45,4 +41,6 @@ class ReceivedDataSuccessState extends SocketState {
 
 class ReceivedDataFailState extends SocketState {}
 
+class HeartState extends SocketState {}
 
+class HeartSuccessState extends SocketState {}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
@@ -20,36 +22,53 @@ class _SocketState extends State<SocketComponent> {
     'wss://api.huobi.pro/ws',
   );*/
 
-  final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(SocketUtil.domain);
+  IOWebSocketChannel _socketChannel;
+
+  SocketBloc _bloc;
 
   @override
   void initState() {
     super.initState();
 
     _initWS();
+    _initBloc();
   }
 
   @override
   void dispose() {
-    socketChannel.sink.close();
     print('[WS]  closed');
+
+    _socketChannel.sink.close();
+    _bloc.close();
     super.dispose();
   }
 
   _initWS() {
     print('[WS]  init');
+    _socketChannel = IOWebSocketChannel.connect(SocketUtil.domain);
 
-    socketChannel.stream.listen((data) {
-      print('[WS]  listen, data');
+    print('[WS]  listen');
+    _socketChannel.stream.listen((data) {
+      print('[WS]  listen..., data');
 
-      BlocProvider.of<SocketBloc>(context).add(ReceivedDataEvent(data: data));
+      _bloc.add(ReceivedDataEvent(data: data));
     }, onDone: () {
       print('[WS] Done!');
 
       _reconnectWS();
     }, onError: (e) {
-      print('[WS] Error, $e');
+      // e is :WebSocketChannelException
+      print('[WS] Error, e:$e');
     });
+
+    // 心跳，预防一分钟没有消息，自动断开链接。
+    Timer.periodic(Duration(seconds : 30), (t) {
+      _bloc.add(HeartEvent());
+    });
+  }
+
+  _initBloc() {
+    _bloc = SocketBloc(socketChannel: _socketChannel);
   }
 
   _reconnectWS() {
@@ -62,6 +81,6 @@ class _SocketState extends State<SocketComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (ctx) => SocketBloc(socketChannel: socketChannel), child: widget.child);
+    return BlocProvider(create: (ctx) => _bloc, child: widget.child);
   }
 }

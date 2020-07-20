@@ -4,6 +4,8 @@ class SocketUtil {
   //static final String domain = "ws://127.0.0.1:8081";
   static final String domain = "ws://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com:8081";
 
+  static final String cid = "hyn_titan";
+
   static final String sub = "sub";
   static final String unSub = "unsub";
 

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:web_socket_channel/io.dart';
 import '../socket_util.dart';
@@ -19,7 +18,10 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   Stream<SocketState> mapEventToState(
     SocketEvent event,
   ) async* {
-    if (event is SubChannelEvent) {
+    if (event is HeartEvent) {
+      _heartAction();
+      yield HeartState();
+    } else if (event is SubChannelEvent) {
       _subChannelRequestAction(event.channel);
 
       yield SubChannelState(period: event.channel);
@@ -29,66 +31,60 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       yield UnSubChannelState(period: event.channel);
     } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
+      print("[SocketBloc] mapEventToState, receivedData:$receivedData");
+
       try {
-        var decompressedData = utf8.decode(
-          GZipCodec().decode(receivedData),
-          allowMalformed: true,
-        );
+        Map<String, dynamic> dataMap = json.decode(receivedData);
+        print("[SocketBloc] mapEventToState, dataMap:$dataMap, receivedData is String:${dataMap["status"] is int}");
 
-        Map<String, dynamic> data = json.decode(decompressedData);
-        print("[SocketBloc] mapEventToState, response:$data");
+        var status = dataMap["status"];
+        var eventAction = dataMap["event"];
+        var errMsg = dataMap["err"];
+        var errCode = dataMap["err-code"];
+        var channel = dataMap["channel"];
+        var response = dataMap["data"];
 
-        if (data["ping"] != null) {
-          _heartPongRequestAction(data["ping"]);
-        } else {
-          var status = data["status"];
-
-          var event = data["event"];
-
-          if (status == 0) {
-            var channel = data["channel"];
-
-            if (event == SocketUtil.sub) {
-              var response = data["data"];
-              if (response != null) {
-                yield ReceivedDataSuccessState(response: response);
-              } else {
-                if (channel != null) {
-                  yield SubChannelSuccessState(response: event.data);
-                }
-              }
-            } else if (event == SocketUtil.unSub) {
+        if (status == 0) {
+          if (eventAction == SocketUtil.sub) {
+            if (response != null) {
+              yield ReceivedDataSuccessState(response: response);
+            } else {
               if (channel != null) {
-                yield UnSubChannelSuccessState(response: event.data);
+                yield SubChannelSuccessState();
               }
             }
-          } else {
-            var errMsg = data["err-msg"];
-            var errCode = data["err-code"];
-
-            if (event == SocketUtil.sub) {
-              yield SubChannelFailState();
-            } else if (event == SocketUtil.unSub) {
-              yield UnSubChannelFailState();
+          } else if (eventAction == SocketUtil.unSub) {
+            if (channel != null) {
+              yield UnSubChannelSuccessState();
             }
-            print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          }
+        } else if (status == 200) {
+          if (errMsg != null) {
+            print("[SocketBloc] 接收心跳,正常");
 
-            yield ReceivedDataFailState();
+            yield HeartSuccessState();
+          }
+        } else {
+          print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+
+          if (eventAction == SocketUtil.sub) {
+            yield SubChannelFailState();
+          } else if (eventAction == SocketUtil.unSub) {
+            yield UnSubChannelFailState();
           }
         }
       } catch (e) {
-        print(e.toString());
+        print("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
     }
   }
 
-  ///respond heartbeat[ping-pong]
-  void _heartPongRequestAction(dynamic ping) {
-    print('[WS] heart，心跳正常。。。。。');
 
-    Map<String, dynamic> pong = Map<String, dynamic>();
-    pong['pong'] = ping;
+  void _heartAction() {
+    print('[WS] heart，发送心跳');
+
+    var pong = "heart time fired!";
     socketChannel.sink.add(json.encode(pong));
   }
 
@@ -98,6 +94,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;
     params['event'] = SocketUtil.sub;
+    params['cid'] = SocketUtil.cid;
 
     socketChannel.sink.add(json.encode(params));
   }
@@ -108,6 +105,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;
     params['event'] = SocketUtil.unSub;
+    params['cid'] = SocketUtil.cid;
 
     socketChannel.sink.add(json.encode(params));
   }
