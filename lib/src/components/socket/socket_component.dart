@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
-import 'package:titan/src/components/socket/socket_util.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:web_socket_channel/io.dart';
 
 class SocketComponent extends StatefulWidget {
@@ -45,7 +45,7 @@ class _SocketState extends State<SocketComponent> {
 
   _initWS() {
     print('[WS]  init');
-    _socketChannel = IOWebSocketChannel.connect(SocketUtil.domain);
+    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
 
     print('[WS]  listen');
     _socketChannel.stream.listen((data) {

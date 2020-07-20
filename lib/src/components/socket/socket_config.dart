@@ -1,5 +1,5 @@
 
-class SocketUtil {
+class SocketConfig {
 
   //static final String domain = "ws://127.0.0.1:8081";
   static final String domain = "ws://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com:8081";

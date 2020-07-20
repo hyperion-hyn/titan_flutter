@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:web_socket_channel/io.dart';
-import '../socket_util.dart';
+import '../socket_config.dart';
 import './bloc.dart';
 
 //https://cloudapidoc.github.io/API_Docs/v1/ws/#websocket-api
@@ -45,7 +45,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         var response = dataMap["data"];
 
         if (status == 0) {
-          if (eventAction == SocketUtil.sub) {
+          if (eventAction == SocketConfig.sub) {
             if (response != null) {
               yield ReceivedDataSuccessState(response: response);
             } else {
@@ -53,7 +53,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 yield SubChannelSuccessState();
               }
             }
-          } else if (eventAction == SocketUtil.unSub) {
+          } else if (eventAction == SocketConfig.unSub) {
             if (channel != null) {
               yield UnSubChannelSuccessState();
             }
@@ -67,9 +67,9 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         } else {
           print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
-          if (eventAction == SocketUtil.sub) {
+          if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
-          } else if (eventAction == SocketUtil.unSub) {
+          } else if (eventAction == SocketConfig.unSub) {
             yield UnSubChannelFailState();
           }
         }
@@ -93,8 +93,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;
-    params['event'] = SocketUtil.sub;
-    params['cid'] = SocketUtil.cid;
+    params['event'] = SocketConfig.sub;
+    params['cid'] = SocketConfig.cid;
 
     socketChannel.sink.add(json.encode(params));
   }
@@ -104,8 +104,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;
-    params['event'] = SocketUtil.unSub;
-    params['cid'] = SocketUtil.cid;
+    params['event'] = SocketConfig.unSub;
+    params['cid'] = SocketConfig.cid;
 
     socketChannel.sink.add(json.encode(params));
   }
