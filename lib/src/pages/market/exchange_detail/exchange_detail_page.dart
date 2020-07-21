@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -29,19 +30,29 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
   ExchangeBloc exchangeBloc = ExchangeBloc();
 
   List<ExcDetailEntity> chartList = [];
-  String _selectType = '限价委托';
   bool isLoading = false;
   bool isLogin = true;
   bool isBuy = true;
   bool isLimit = true;
+  double currentPrice = 0;
+  double totalPrice = 0;
+  double currentNum = 0;
+  String currentPriceStr = "";
+  String totalPriceStr = "";
+  String currentNumStr = "";
+
+  TextEditingController priceEditController = new TextEditingController();
+  TextEditingController numEditController = new TextEditingController();
 
   final int contrOptionsTypeBuy = 0;
   final int contrOptionsTypeSell = 1;
   final int contrOptionsTypeLimit = 2;
   final int contrOptionsTypeMarket = 3;
+  final int contrOptionsTypePrice = 4;
+  final int contrOptionsTypePriceAdd = 5;
+  final int contrOptionsTypePriceDecrease = 6;
+  final int contrOptionsTypeNum = 7;
   StreamController<int> optionsController = StreamController.broadcast();
-
-
 
   @override
   void initState() {
@@ -162,6 +173,31 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
             isLimit = true;
           } else if (optionType.data == contrOptionsTypeMarket) {
             isLimit = false;
+          } else if (optionType.data == contrOptionsTypePrice) {
+            totalPrice = currentPrice * currentNum;
+          } else if (optionType.data == contrOptionsTypePriceAdd) {
+            currentPrice += 0.1;
+            totalPrice = currentPrice * currentNum;
+            totalPriceStr = totalPrice.toStringAsFixed(4);
+
+            currentPriceStr = currentPrice.toStringAsFixed(4);
+            priceEditController.text = currentPriceStr;
+            priceEditController.selection = TextSelection.fromPosition(TextPosition(
+                offset: currentPriceStr.length));
+          } else if (optionType.data == contrOptionsTypePriceDecrease) {
+            currentPrice -= 0.1;
+            totalPrice = currentPrice * currentNum;
+            totalPriceStr = totalPrice.toStringAsFixed(4);
+
+            currentPriceStr = currentPrice.toStringAsFixed(4);
+            priceEditController.text = currentPriceStr;
+            priceEditController.selection = TextSelection.fromPosition(TextPosition(
+                offset: '$currentPriceStr'.length));
+          } else if (optionType.data == contrOptionsTypeNum) {
+            totalPrice = currentPrice * currentNum;
+            totalPriceStr = totalPrice.toStringAsFixed(4);
+
+            currentPriceStr = currentPrice.toStringAsFixed(4);
           }
           return Container(
             padding: const EdgeInsets.only(left: 14.0, right: 14),
@@ -174,7 +210,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                   children: <Widget>[
                     Expanded(
                       child: InkWell(
-                        onTap: (){
+                        onTap: () {
                           optionsController.add(contrOptionsTypeBuy);
                         },
                         child: Container(
@@ -194,7 +230,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                     ),
                     Expanded(
                       child: InkWell(
-                        onTap: (){
+                        onTap: () {
                           optionsController.add(contrOptionsTypeSell);
                         },
                         child: Container(
@@ -253,30 +289,58 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                 Container(
                     height: 32,
                     margin: EdgeInsets.only(top: 10, bottom: 2),
-                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    padding: const EdgeInsets.only(left: 10),
                     decoration: BoxDecoration(
                         border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
                         borderRadius: BorderRadius.all(Radius.circular(3))),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text("9494"),
-                        Spacer(),
+                        Expanded(
+                          child: TextField(
+                            controller: priceEditController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                            decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                              border: InputBorder.none,
+                              hintStyle: TextStyles.textCaaaS14,
+                              hintText: "价格",
+                            ),
+                            onChanged: (price){
+                              currentPrice = double.parse(price);
+                              optionsController.add(contrOptionsTypePrice);
+                            },
+                          ),
+                        ),
                         Container(
-                          margin: const EdgeInsets.only(left: 12, right: 12),
                           width: 1,
                           color: DefaultColors.colord0d0d0,
                         ),
-                        Text(
-                          "-",
-                          style: TextStyle(fontSize: 21, color: DefaultColors.color999),
+                        InkWell(
+                          onTap: (){
+                            optionsController.add(contrOptionsTypePriceDecrease);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 12,right: 12),
+                            child: Text(
+                              "-",
+                              style: TextStyle(fontSize: 21, color: DefaultColors.color999),
+                            ),
+                          ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(left: 12, right: 12),
                           width: 1,
                           height: 20,
                           color: DefaultColors.colord0d0d0,
                         ),
-                        Text("+", style: TextStyle(color: DefaultColors.color999)),
+                        InkWell(
+                            onTap: (){
+                              optionsController.add(contrOptionsTypePriceAdd);
+                            },
+                            child: Padding(
+                                padding: EdgeInsets.only(top:5,bottom: 5,left: 12,right: 12),
+                                child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
                       ],
                     )),
                 Text("≈324234 CNY"),
@@ -290,10 +354,20 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        child: TextFormField(
-                          maxLines: 1,
-                          decoration: InputDecoration(border: InputBorder.none),
-                          keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        child: TextField(
+                          controller: numEditController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                          decoration: new InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                            border: InputBorder.none,
+                            hintStyle: TextStyles.textCaaaS14,
+                            hintText: "数量",
+                          ),
+                          onChanged: (number){
+                            currentNum = double.parse(number);
+                            optionsController.add(contrOptionsTypeNum);
+                          },
                         ),
                       ),
                       Spacer(),
@@ -302,7 +376,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                   ),
                 ),
                 Text("可用 0.323423424 USDT"),
-                Container(
+                /*Container(
                     margin: EdgeInsets.only(top: 21),
                     height: 22,
                     width: double.infinity,
@@ -314,7 +388,8 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                       indicatorRadius: 10,
                       sectionColor: DefaultColors.color53ae86,
                       indicatorImg: "res/drawable/ic_exchange_num_progress_buy.png",
-                    )),
+                    )),*/
+                Text("交易额 ${totalPriceStr}USDT"),
                 Container(
                   height: 30,
                   width: double.infinity,
