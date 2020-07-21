@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/pages/market/model/asset_list.dart';
 
 part 'exchange_account.g.dart';
 
@@ -42,6 +43,8 @@ class ExchangeAccount extends Object {
 
   @JsonKey(name: 'beNew')
   int beNew;
+
+  AssetList assetList;
 
   ExchangeAccount(
     this.id,

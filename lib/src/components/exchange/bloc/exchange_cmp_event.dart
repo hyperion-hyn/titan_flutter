@@ -15,3 +15,5 @@ class UpdateExchangeAccountEvent extends ExchangeCmpEvent {
 
   UpdateExchangeAccountEvent(this.account);
 }
+
+class UpdateAssetsEvent extends ExchangeCmpEvent{}

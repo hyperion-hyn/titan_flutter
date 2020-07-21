@@ -79,7 +79,7 @@ class _ApiDemoState extends State {
           ),
           RaisedButton(
             onPressed: () async {
-              var ret = await _exchangeApi.checkUseAssets();
+              var ret = await _exchangeApi.getAssetsList();
               print(ret);
             },
             child: Text('查看用户资产'),
