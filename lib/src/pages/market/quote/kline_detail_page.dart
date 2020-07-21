@@ -5,15 +5,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/market/api/market_http_core.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_atlas_introduction.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
-import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:web_socket_channel/io.dart';
 
 import '../../../../env.dart';
@@ -25,36 +19,54 @@ class KLineDetailPage extends StatefulWidget {
   }
 }
 
-class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProviderStateMixin {
+class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderStateMixin {
   final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
     'wss://api.huobi.pro/ws',
   );
   List<KLineEntity> _kChartItemList;
   bool showLoading = true;
 
-  TabController _tabController;
+  TabController _detailTabController;
+  TabController _periodTabController;
 
-  int currentIndex = 0;
+  int _detailCurrentIndex = 0;
+  int _periodCurrentIndex = 0;
 
-  List<ExcDetailEntity> chartList = [];
+  List<ExcDetailEntity> buyChartList = [];
+  List<ExcDetailEntity> sailChartList = [];
+
+  bool _isShowMore = false;
+  bool _isShowSetting = false;
 
   @override
   void initState() {
-    chartList.add(ExcDetailEntity(4, 0, 10));
-    chartList.add(ExcDetailEntity(4, 3, 7));
-    chartList.add(ExcDetailEntity(4, 4, 6));
-    chartList.add(ExcDetailEntity(4, 5, 5));
-    chartList.add(ExcDetailEntity(4, 6, 4));
-    chartList.add(ExcDetailEntity(2, 6, 4));
-    chartList.add(ExcDetailEntity(2, 5, 5));
-    chartList.add(ExcDetailEntity(2, 4, 6));
-    chartList.add(ExcDetailEntity(2, 3, 7));
-    chartList.add(ExcDetailEntity(2, 0, 10));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 5, 5));
+    buyChartList.add(ExcDetailEntity(2, 4, 6));
+    buyChartList.add(ExcDetailEntity(2, 3, 7));
+    for (int i = 0; i < 10; i++) {
+      buyChartList.add(ExcDetailEntity(2, 0, 10));
+    }
 
-    _tabController = new TabController(
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 5, 5));
+    sailChartList.add(ExcDetailEntity(4, 6, 4));
+    sailChartList.add(ExcDetailEntity(4, 7, 3));
+    for (int i = 0; i < 10; i++) {
+      sailChartList.add(ExcDetailEntity(4, 10, 0));
+    }
+    _detailTabController = new TabController(
       initialIndex: 0,
       vsync: this,
       length: 2,
+    );
+
+    _periodTabController = new TabController(
+      initialIndex: 0,
+      vsync: this,
+      length: 7,
     );
 
     _initWS();
@@ -64,57 +76,69 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      appBar: _appBar(),
       body: SafeArea(
-        child: CustomScrollView(slivers: <Widget>[
-          _appBar(),
-          _divider(),
-          _kLine(),
-          _divider(),
-          _exchange(),
-          _detail(),
-        ]),
+        child: Container(
+          color: Colors.white,
+          child: CustomScrollView(slivers: <Widget>[
+            _headerWidget(),
+            _dividerWidget(),
+            _periodTabWidget(),
+            _dividerWidget(height: 0.5),
+            _kLineWidget(),
+            _dividerWidget(),
+            _detailTabWidget(),
+            _detailWidget(),
+          ]),
+        ),
       ),
     );
   }
 
   Widget _appBar() {
+    return PreferredSize(
+      preferredSize: Size.fromHeight(kToolbarHeight),
+      child: Container(
+        color: Colors.white,
+        child: SafeArea(
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              //Icon(Icons.format_align_center),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+//              'HYN/${widget.symbol}',
+                  'HYN/USDT',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                ),
+              ),
+              Spacer(),
+//                Padding(
+//                  padding: EdgeInsets.all(8.0),
+//                  child: Icon(Icons.share),
+//                )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _headerWidget() {
     return SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 14, 12),
-            child: Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Icon(Icons.format_align_center),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Text(
-//              'HYN/${widget.symbol}',
-                    'HYN/USDT',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.share),
-                )
-              ],
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 0, 14, 7),
             child: Row(
@@ -205,34 +229,177 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
     );
   }
 
-  Widget _divider() {
+  Widget _dividerWidget({double height = 5}) {
     return SliverToBoxAdapter(
       child: Container(
         color: HexColor("#F5F5F5"),
-        height: 5,
+        height: height,
       ),
     );
   }
 
-  Widget _kLine() {
+  Widget _kLineWidget() {
     return SliverToBoxAdapter(
-      child: Container(
-        width: double.infinity,
-        height: 346,
+      child: Stack(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: 340,
 //        color: Colors.amber,
-        color: Colors.white,
-        child: KChartWidget(
-          _kChartItemList,
-          isLine: false,
-        ),
+            color: Colors.white,
+            child: KChartWidget(
+              _kChartItemList,
+              isLine: false,
+            ),
+          ),
+          Visibility(
+            visible: _isShowMore,
+            child: Container(
+              margin: const EdgeInsets.only(left: 14, top: 3, right: 14),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: HexColor("#F5F5F5"),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: ["分时", "1分钟", "5分钟", "30分钟", "1周", "1月"]
+                    .map((e) => InkWell(
+                  onTap: (){
+                    setState(() {
+                      _isShowMore = false;
+                    });
+                  },
+                      child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              e,
+                              style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                            ),
+                          ),
+                    ))
+                    .toList(),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: _isShowSetting,
+            child: Container(
+              margin: const EdgeInsets.only(left: 14, top: 3, right: 14),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: HexColor("#F5F5F5"),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 14),
+                        child: Text(
+                          "主图",
+                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        "MA",
+                        style: TextStyle(color: HexColor("#228BA1"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      Text(
+                        "BOLL",
+                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      IconButton(
+                        icon: Icon(
+                          Icons.lock,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider(
+                      height: 0.5,
+                      color: HexColor("#DEDEDE"),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 14),
+                        child: Text(
+                          "副图",
+                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        "MACD",
+                        style: TextStyle(color: HexColor("#228BA1"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      Text(
+                        "KDJ",
+                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      Text(
+                        "RSI",
+                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      Text(
+                        "WR",
+                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                      ),
+                      Spacer(),
+                      IconButton(
+                        icon: Icon(
+                          Icons.lock,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider(
+                      height: 0.5,
+                      color: HexColor("#DEDEDE"),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 14, top: 12, bottom: 12),
+                        child: Text(
+                          "指标设置",
+                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _exchange() {
+  Widget _periodTabWidget() {
     return SliverToBoxAdapter(
       child: TabBar(
-        controller: _tabController,
+        controller: _periodTabController,
         isScrollable: true,
         labelColor: HexColor('#228BA1'),
         labelStyle: TextStyle(
@@ -241,12 +408,93 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
         ),
         indicatorSize: TabBarIndicatorSize.label,
         indicatorColor: HexColor('#228BA1'),
-        indicatorWeight: 3,
+        indicatorWeight: 2,
         indicatorPadding: EdgeInsets.only(bottom: 2),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
           setState(() {
-            currentIndex = index;
+            if (index == 4 && !_isShowMore) {
+              _isShowMore = true;
+            } else {
+              _isShowMore = false;
+            }
+            _isShowSetting = false;
+
+            _periodCurrentIndex = index;
+          });
+        },
+        tabs: [
+          Tab(
+            child: Text(
+              "15分钟",
+              style: TextStyle(),
+            ),
+          ),
+          Tab(
+            child: Text(
+              '1小时',
+              style: TextStyle(),
+            ),
+          ),
+          Tab(
+            child: Text(
+              '4小时',
+              style: TextStyle(),
+            ),
+          ),
+          Tab(
+            child: Text(
+              '1天',
+              style: TextStyle(),
+            ),
+          ),
+          Tab(
+            child: Text(
+              '更多',
+              style: TextStyle(color: HexColor("#333333")),
+            ),
+          ),
+          Tab(
+            child: Text(
+              '深度图',
+              style: TextStyle(),
+            ),
+          ),
+          Tab(
+            child: IconButton(
+              icon: Icon(
+                Icons.more,
+              ),
+              onPressed: () {
+                _isShowMore = false;
+                _isShowSetting = !_isShowSetting;
+                setState(() {});
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailTabWidget() {
+    return SliverToBoxAdapter(
+      child: TabBar(
+        controller: _detailTabController,
+        isScrollable: true,
+        labelColor: HexColor('#228BA1'),
+        labelStyle: TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+        indicatorSize: TabBarIndicatorSize.label,
+        indicatorColor: HexColor('#228BA1'),
+        indicatorWeight: 2,
+        indicatorPadding: EdgeInsets.only(bottom: 2),
+        unselectedLabelColor: HexColor("#999999"),
+        onTap: (int index) {
+          setState(() {
+            _detailCurrentIndex = index;
           });
         },
         tabs: [
@@ -267,16 +515,16 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
     );
   }
 
-  Widget _detail() {
+  Widget _detailWidget() {
     return SliverToBoxAdapter(
       child: Stack(
         children: [
           Visibility(
-            visible: currentIndex == 0,
+            visible: _detailCurrentIndex == 0,
             child: _depthChart(),
           ),
           Visibility(
-            visible: currentIndex == 1,
+            visible: _detailCurrentIndex == 1,
             child: _exchangeChart(),
           ),
         ],
@@ -285,53 +533,208 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
   }
 
   Widget _depthChart() {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          ExcDetailEntity excDetailEntity = chartList[index];
-          if (excDetailEntity.viewType == 2 || excDetailEntity.viewType == 4) {
-            Color bgColor = excDetailEntity.viewType == 2 ? HexColor("#EBF8F2") : HexColor("#F9EFEF");
-            return Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: excDetailEntity.leftPercent,
-                      child: Container(
-                        height: 23,
-                        color: HexColor("#ffffff"),
-                      ),
+    return Container(
+      padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+      color: Colors.white,
+      child: ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            ExcDetailEntity buyEntity = buyChartList[index];
+            ExcDetailEntity sailEntity = sailChartList[index];
+
+            return index == 0
+                ? Container(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "买盘 数量(HYN)",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor("#777777"),
+                          ),
+                        ),
+                        Text(
+                          "价格(USDT)",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor("#777777"),
+                          ),
+                        ),
+                        Text(
+                          "数量(HYN)卖盘",
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor("#777777"),
+                          ),
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      flex: excDetailEntity.rightPercent,
-                      child: Container(
-                        height: 23,
-                        color: HexColor("#EBF8F2"),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "1111",
-                    ),
-                    Spacer(),
-                    Text(
-                      "1111",
-                    )
-                  ],
-                ),
-              ],
-            );
-          } else {
-            return Text("");
-          }
-        },
-        itemCount: chartList.length);
+                  )
+                : Row(
+                    children: <Widget>[
+                      Expanded(
+                          flex: 1,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: buyEntity.leftPercent,
+                                    child: Container(
+                                      height: 25,
+                                      color: HexColor("#ffffff"),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: buyEntity.rightPercent,
+                                    child: Container(
+                                      height: 25,
+                                      color: HexColor("#EBF8F2"),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "$index",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#999999"),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "1.43543",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#333333"),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      height: 25,
+                                      padding: const EdgeInsets.only(right: 5),
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        "180.39",
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#53AE86"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
+                      Expanded(
+                          flex: 1,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: sailEntity.leftPercent,
+                                    child: Container(
+                                      height: 25,
+                                      color: HexColor("#F9EFEF"),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: sailEntity.rightPercent,
+                                    child: Container(
+                                      height: 25,
+                                      color: HexColor("#ffffff"),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      height: 25,
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        "180.39",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#CC5858"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      "1.43543",
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#333333"),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    child: Text(
+                                      "$index",
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#999999"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )),
+                    ],
+                  );
+          },
+          itemCount: buyChartList.length),
+    );
   }
 
   Widget _exchangeChart() {
@@ -342,82 +745,87 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
           physics: NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
-            ExcDetailEntity excDetailEntity = chartList[index];
-            return index == 0?Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                        "时间",
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+            ExcDetailEntity excDetailEntity = buyChartList[index];
+            return index == 0
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "时间",
+                            style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            "方向",
+                            style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "价格(USDT)",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "数量(HYN)",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      "方向",
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "14:35:43",
+                            style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            excDetailEntity.viewType == 2 ? "卖出" : "买入",
+                            style: TextStyle(
+                                color: HexColor(excDetailEntity.viewType == 2 ? "#CC5858" : "#53AE86"),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "181.43",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "1.43543",
+                            textAlign: TextAlign.end,
+                            style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "价格(USDT)",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "数量(HYN)",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                ],
-              ),
-            ):Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "14:35:43",
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child:  Text(
-                      excDetailEntity.viewType == 2?"卖出":"买入",
-                      style: TextStyle(color: HexColor(excDetailEntity.viewType == 2?"#CC5858":"#53AE86"), fontSize: 10, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "181.43",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "1.43543",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                    ),
-                  ),
-                ],
-              ),
-            );
+                  );
           },
-          itemCount: chartList.length),
+          itemCount: buyChartList.length),
     );
   }
 
@@ -574,35 +982,4 @@ class _KLineDetailPageState extends State<KLineDetailPage> with SingleTickerProv
 
     return result;
   }
-}
-
-class MarketHttpCore extends BaseHttpCore {
-  factory MarketHttpCore() => _getInstance();
-
-  MarketHttpCore._internal() : super(_dio);
-
-  static MarketHttpCore get instance => _getInstance();
-  static MarketHttpCore _instance;
-
-  static MarketHttpCore _getInstance() {
-    if (_instance == null) {
-      _instance = MarketHttpCore._internal();
-
-      // todo: test_jison_0428_close_log
-      if (env.buildType == BuildType.DEV) {
-        _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
-      }
-    }
-    return _instance;
-  }
-
-  static var _dio = new Dio(BaseOptions(
-    baseUrl: Const.MARKET_DOMAIN,
-    connectTimeout: 5000,
-    receiveTimeout: 5000,
-//    headers: {"user-agent": "dio", "api": "1.0.0"},
-    /*contentType: ContentType.JSON,
-      responseType: ResponseType.PLAIN*/
-    contentType: 'application/x-www-form-urlencoded',
-  ));
 }
