@@ -11,6 +11,8 @@ class Const {
     return 'https://api.hyn.space/';
   }
 
+  static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
+
   static const EXCHANGE_DOMAIN =
       "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com";
 

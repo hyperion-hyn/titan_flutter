@@ -8,6 +8,8 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/model/asset_list.dart';
 
 import 'bloc/bloc.dart';
 
@@ -38,6 +40,7 @@ class _ExchangeManager extends StatefulWidget {
 
 class _ExchangeManagerState extends BaseState<_ExchangeManager> {
   ExchangeModel exchangeModel = ExchangeModel();
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void onCreated() {
@@ -53,6 +56,12 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           exchangeModel.isShowBalances = state.isShow;
         } else if (state is UpdateExchangeAccountState) {
           exchangeModel.activeAccount = state.account;
+        } else if (state is UpdateAssetsState) {
+          if (exchangeModel.activeAccount != null) {
+            var ret = await _exchangeApi.getAssetsList();
+            exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            setState(() {});
+          }
         }
       },
       child: BlocBuilder<ExchangeCmpBloc, ExchangeCmpState>(
@@ -79,7 +88,7 @@ class ExchangeInheritedModel extends InheritedModel<String> {
 
   @override
   bool updateShouldNotify(ExchangeInheritedModel oldWidget) {
-    return oldWidget.exchangeModel != exchangeModel;
+    return true;
   }
 
   static ExchangeInheritedModel of(BuildContext context) {
@@ -90,7 +99,9 @@ class ExchangeInheritedModel extends InheritedModel<String> {
 
   @override
   bool updateShouldNotifyDependent(
-      ExchangeInheritedModel old, Set<String> dependencies) {
+    ExchangeInheritedModel old,
+    Set<String> dependencies,
+  ) {
     return exchangeModel != old.exchangeModel &&
         dependencies.contains('ExchangeModel');
   }

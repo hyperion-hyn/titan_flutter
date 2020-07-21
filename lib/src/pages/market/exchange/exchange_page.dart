@@ -11,6 +11,7 @@ import 'package:titan/src/pages/market/balances_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
@@ -174,7 +175,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               Spacer(),
               ClickOvalIconButton(
                 '交易',
-                () {},
+                () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(symbol: "USDT",type: 0)));
+                },
                 width: 88,
                 height: 38,
                 radius: 22,

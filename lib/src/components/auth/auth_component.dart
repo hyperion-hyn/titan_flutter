@@ -192,8 +192,6 @@ class AuthInheritedModel extends InheritedModel<AuthAspect> {
     );
   }
 
-
-
   @override
   bool updateShouldNotifyDependent(
       AuthInheritedModel oldWidget, Set<AuthAspect> dependencies) {

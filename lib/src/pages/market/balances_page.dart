@@ -2,8 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/model/asset_list.dart';
+import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'deposit_page.dart';
 import 'withdraw_page.dart';
 
@@ -14,8 +20,27 @@ class BalancesPage extends StatefulWidget {
   }
 }
 
-class _BalancesPageState extends State<BalancesPage> {
-  double total = 9876.00;
+class _BalancesPageState extends BaseState<BalancesPage> {
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  void onCreated() {
+    // TODO: implement onCreated
+    super.onCreated();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _loadDataBloc.close();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +53,30 @@ class _BalancesPageState extends State<BalancesPage> {
             color: Colors.black,
           ),
           title: Text(
-            '交易账户',
+            '资产',
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(
-              height: 16,
-            ),
-            _totalBalances(),
-            _divider(),
-            Expanded(
-              child: _coinList(),
-            ),
-          ],
+      body: LoadDataContainer(
+        bloc: _loadDataBloc,
+        onRefresh: () {
+          BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+          _loadDataBloc.add(RefreshSuccessEvent());
+        },
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                height: 16,
+              ),
+              _totalBalances(),
+              _divider(),
+              Expanded(
+                child: _accountTabView(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -53,8 +85,7 @@ class _BalancesPageState extends State<BalancesPage> {
   _totalBalances() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: <Widget>[
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +94,7 @@ class _BalancesPageState extends State<BalancesPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '交易账户总资产折合(CNY)',
+                    '总资产估值(BTC)',
                     style: TextStyle(
                       fontSize: 16.0,
                     ),
@@ -71,16 +102,37 @@ class _BalancesPageState extends State<BalancesPage> {
                   SizedBox(
                     height: 8,
                   ),
-                  Text(
-                    ExchangeInheritedModel.of(context)
-                            .exchangeModel
-                            .isShowBalances
-                        ? '≈￥9876.00'
-                        : '*****',
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .isShowBalances
+                            ? '3.34563667'
+                            : '*****',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 3,
+                      ),
+                      SizedBox(
+                        width: 8.0,
+                      ),
+                      Text(
+                        ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .isShowBalances
+                            ? '≈1923443.34 CNY'
+                            : '*****',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        maxLines: 3,
+                      )
+                    ],
                   ),
                 ],
               ),
@@ -119,7 +171,7 @@ class _BalancesPageState extends State<BalancesPage> {
                       height: 30,
                       child: OutlineButton(
                         child: Text(
-                          '提币',
+                          '划转',
                           style: TextStyle(color: HexColor('#FF1095B0')),
                         ),
                         onPressed: () {
@@ -141,41 +193,140 @@ class _BalancesPageState extends State<BalancesPage> {
               )
             ],
           ),
-          Spacer(),
-          InkWell(
-            onTap: () async {
-              BlocProvider.of<ExchangeCmpBloc>(context).add(
-                  SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
+          Positioned(
+            right: 8,
+            top: 0,
+            child: InkWell(
+              onTap: () async {
+                BlocProvider.of<ExchangeCmpBloc>(context).add(
+                    SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
+                        .exchangeModel
+                        .isShowBalances));
+                setState(() {});
+              },
+              child: ExchangeInheritedModel.of(context)
                       .exchangeModel
-                      .isShowBalances));
-              setState(() {});
-            },
-            child:
-                ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
-                    ? Image.asset(
-                        'res/drawable/ic_wallet_show_balances.png',
-                        height: 20,
-                        width: 20,
-                        color: HexColor('#FF228BA1'),
-                      )
-                    : Image.asset(
-                        'res/drawable/ic_wallet_hide_balances.png',
-                        height: 20,
-                        width: 20,
-                        color: HexColor('#FF228BA1'),
-                      ),
+                      .isShowBalances
+                  ? Image.asset(
+                      'res/drawable/ic_wallet_show_balances.png',
+                      height: 20,
+                      width: 20,
+                      color: HexColor('#FF228BA1'),
+                    )
+                  : Image.asset(
+                      'res/drawable/ic_wallet_hide_balances.png',
+                      height: 20,
+                      width: 20,
+                      color: HexColor('#FF228BA1'),
+                    ),
+            ),
           )
         ],
       ),
     );
   }
 
-  _coinList() {
-    return ListView.builder(
-        itemCount: 4,
-        itemBuilder: (ctx, index) {
-          return CoinItem('USDT');
-        });
+  _accountTabView() {
+    return new DefaultTabController(
+      length: 2,
+      child: new Scaffold(
+        appBar: new PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: new Container(
+            width: double.infinity,
+            height: 50.0,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: TabBar(
+                    labelColor: HexColor('#FF228BA1'),
+                    labelStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorColor: HexColor('#FF228BA1'),
+                    indicatorWeight: 3,
+                    indicatorPadding: EdgeInsets.only(bottom: 2),
+                    unselectedLabelColor: HexColor("#FF333333"),
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          '资金账户',
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          '交易账户',
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                )
+              ],
+            ),
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _accountAssetListView(
+              ExchangeInheritedModel.of(context)
+                  .exchangeModel
+                  .activeAccount
+                  .assetList,
+            ),
+            _exchangeAssetListView(ExchangeInheritedModel.of(context)
+                .exchangeModel
+                .activeAccount
+                .assetList),
+          ],
+        ),
+      ),
+    );
+    ;
+  }
+
+  _accountAssetListView(AssetList _assetList) {
+    if (_assetList != null) {
+      return ListView(
+        children: <Widget>[
+          AssetItem('account', 'HYN', _assetList.HYN),
+          AssetItem('account', 'USDT', _assetList.USDT),
+          AssetItem('account', 'ETH', _assetList.ETH),
+          AssetItem('account', 'BTC', _assetList.BTC),
+        ],
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: Text('加载中'),
+        ),
+      );
+    }
+  }
+
+  _exchangeAssetListView(AssetList _assetList) {
+    if (_assetList != null) {
+      return ListView(
+        children: <Widget>[
+          AssetItem('exchange', 'HYN', _assetList.HYN),
+          AssetItem('exchange', 'USDT', _assetList.USDT),
+          AssetItem('exchange', 'ETH', _assetList.ETH),
+          AssetItem('exchange', 'BTC', _assetList.BTC),
+        ],
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: Text('加载中'),
+        ),
+      );
+    }
   }
 
   _divider() {
@@ -186,24 +337,30 @@ class _BalancesPageState extends State<BalancesPage> {
   }
 }
 
-class CoinItem extends StatefulWidget {
+class AssetItem extends StatefulWidget {
+  final String _accountType;
   final String _symbol;
+  final AssetType _assetType;
 
-  CoinItem(this._symbol);
+  AssetItem(
+    this._accountType,
+    this._symbol,
+    this._assetType,
+  );
 
   @override
   State<StatefulWidget> createState() {
-    return CoinItemState();
+    return AssetItemState();
   }
 }
 
-class CoinItemState extends State<CoinItem> {
+class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 8.0,
+          height: 16.0,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -214,7 +371,7 @@ class CoinItemState extends State<CoinItem> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'USDT',
+                    widget._symbol,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -260,7 +417,9 @@ class CoinItemState extends State<CoinItem> {
                             height: 8.0,
                           ),
                           Text(
-                            '9090.42',
+                            widget._accountType == 'exchange'
+                                ? widget._assetType.exchangeAvailable
+                                : widget._assetType.accountAvailable,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500, fontSize: 12),
                           ),
@@ -287,7 +446,9 @@ class CoinItemState extends State<CoinItem> {
                       height: 8.0,
                     ),
                     Text(
-                      '0.002',
+                      widget._accountType == 'exchange'
+                          ? widget._assetType.exchangeFreeze
+                          : widget._assetType.accountFreeze,
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                     ),
@@ -313,7 +474,7 @@ class CoinItemState extends State<CoinItem> {
                       children: <Widget>[
                         Spacer(),
                         Text(
-                          '0',
+                          '${widget._assetType.btc}',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

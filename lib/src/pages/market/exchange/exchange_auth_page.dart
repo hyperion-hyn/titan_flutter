@@ -108,6 +108,9 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                     Fluttertoast.showToast(msg: '登录成功!');
                     BlocProvider.of<ExchangeCmpBloc>(context)
                         .add(UpdateExchangeAccountEvent(account));
+
+                    BlocProvider.of<ExchangeCmpBloc>(context)
+                        .add(UpdateAssetsEvent());
                   }
                 } catch (e) {}
               }

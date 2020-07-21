@@ -15,6 +15,8 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
       yield SetShowBalancesState(event.isShow);
     } else if (event is UpdateExchangeAccountEvent) {
       yield UpdateExchangeAccountState(event.account);
+    } else if (event is UpdateAssetsEvent) {
+      yield UpdateAssetsState();
     }
   }
 }
