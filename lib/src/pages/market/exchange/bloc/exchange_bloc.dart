@@ -13,6 +13,8 @@ class ExchangeBloc extends Bloc<ExchangeEvent, ExchangeState> {
     // TODO: Add Logic
     if (event is SwitchToAuthEvent) {
       yield SwitchToAuthState();
+    } else if (event is SwitchToContentEvent) {
+      yield SwitchToContentState();
     }
   }
 }

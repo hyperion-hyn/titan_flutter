@@ -48,7 +48,13 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ExchangeCmpBloc, ExchangeCmpState>(
-      listener: (context, state) async {},
+      listener: (context, state) async {
+        if (state is SetShowBalancesState) {
+          exchangeModel.isShowBalances = state.isShow;
+        } else if (state is UpdateExchangeAccountState) {
+          exchangeModel.activeAccount = state.account;
+        }
+      },
       child: BlocBuilder<ExchangeCmpBloc, ExchangeCmpState>(
         builder: (context, state) {
           print('ExchangeComponent[builder]: ${state}');

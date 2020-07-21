@@ -11,5 +11,10 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
     ExchangeCmpEvent event,
   ) async* {
     // TODO: Add Logic
+    if (event is SetShowBalancesEvent) {
+      yield SetShowBalancesState(event.isShow);
+    } else if (event is UpdateExchangeAccountEvent) {
+      yield UpdateExchangeAccountState(event.account);
+    }
   }
 }

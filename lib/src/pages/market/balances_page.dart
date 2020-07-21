@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'exchange/deposit_page.dart';
-import 'exchange/withdraw_page.dart';
+import 'deposit_page.dart';
+import 'withdraw_page.dart';
 
 class BalancesPage extends StatefulWidget {
   @override
@@ -14,7 +16,6 @@ class BalancesPage extends StatefulWidget {
 
 class _BalancesPageState extends State<BalancesPage> {
   double total = 9876.00;
-  bool _isShowBalances = true;
 
   @override
   Widget build(BuildContext context) {
@@ -143,23 +144,26 @@ class _BalancesPageState extends State<BalancesPage> {
           Spacer(),
           InkWell(
             onTap: () async {
-              setState(() {
-                _isShowBalances = !_isShowBalances;
-              });
+              BlocProvider.of<ExchangeCmpBloc>(context).add(
+                  SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances));
+              setState(() {});
             },
-            child: _isShowBalances
-                ? Image.asset(
-                    'res/drawable/ic_wallet_show_balances.png',
-                    height: 20,
-                    width: 20,
-                    color: HexColor('#FF228BA1'),
-                  )
-                : Image.asset(
-                    'res/drawable/ic_wallet_hide_balances.png',
-                    height: 20,
-                    width: 20,
-                    color: HexColor('#FF228BA1'),
-                  ),
+            child:
+                ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
+                    ? Image.asset(
+                        'res/drawable/ic_wallet_show_balances.png',
+                        height: 20,
+                        width: 20,
+                        color: HexColor('#FF228BA1'),
+                      )
+                    : Image.asset(
+                        'res/drawable/ic_wallet_hide_balances.png',
+                        height: 20,
+                        width: 20,
+                        color: HexColor('#FF228BA1'),
+                      ),
           )
         ],
       ),
