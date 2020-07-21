@@ -103,11 +103,21 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> checkUseAssets() async {
+  Future<dynamic> getAssetsList() async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ACCOUNT_ASSETS,
       null,
       params: {},
+    );
+  }
+
+  Future<dynamic> type2currency(String type, String currency) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_TYPE_TO_CURRENCY,
+      null,
+      params: {
+        
+      },
     );
   }
 
