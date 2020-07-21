@@ -5,8 +5,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/order/entity/order_entity.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
+import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
@@ -26,7 +32,7 @@ class ExchangeDetailPage extends StatefulWidget {
   }
 }
 
-class ExchangeDetailPageState extends State<ExchangeDetailPage> {
+class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   ExchangeBloc exchangeBloc = ExchangeBloc();
 
   List<ExcDetailEntity> chartList = [];
@@ -53,6 +59,10 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
   final int contrOptionsTypePriceDecrease = 6;
   final int contrOptionsTypeNum = 7;
   StreamController<int> optionsController = StreamController.broadcast();
+  String userTickChannel;
+  String depthChannel;
+  List<OrderEntity> _currentOrders = List();
+  ExchangeModel exchangeModel;
 
   @override
   void initState() {
@@ -71,7 +81,25 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
   }
 
   @override
+  void onCreated() {
+    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "symbo");
+    depthChannel = SocketConfig.channelExchangeDepth("symbo", 1);
+//    BlocProvider.of(context).add(SubChannelEvent(channel: userTickChannel));
+//    BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
+
+    _currentOrders.addAll((List.generate(
+      10,
+      (index) => OrderEntity()..type = ExchangeType.SELL,
+    )));
+    super.onCreated();
+  }
+
+  @override
   void dispose() {
+//    BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+//    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
+
     optionsController.close();
     exchangeBloc.close();
     super.dispose();
@@ -105,16 +133,23 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
   Widget exchangePageView() {
     return SafeArea(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _appBar(),
-          Row(
-            children: <Widget>[
-              Expanded(flex: 6, child: _exchangeOptions()),
-              Expanded(flex: 4, child: _depthChart()),
-            ],
+          Expanded(
+            child: SingleChildScrollView(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(flex: 6, child: _exchangeOptions()),
+                    Expanded(flex: 4, child: _depthChart()),
+                  ],
+                ),
+                _consignList()
+              ],
+            )),
           ),
-          _consignList()
         ],
       ),
     );
@@ -182,8 +217,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
 
             currentPriceStr = currentPrice.toStringAsFixed(4);
             priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(
-                offset: currentPriceStr.length));
+            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
           } else if (optionType.data == contrOptionsTypePriceDecrease) {
             currentPrice -= 0.1;
             totalPrice = currentPrice * currentNum;
@@ -191,8 +225,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
 
             currentPriceStr = currentPrice.toStringAsFixed(4);
             priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(
-                offset: '$currentPriceStr'.length));
+            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionType.data == contrOptionsTypeNum) {
             totalPrice = currentPrice * currentNum;
             totalPriceStr = totalPrice.toStringAsFixed(4);
@@ -307,7 +340,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                               hintStyle: TextStyles.textCaaaS14,
                               hintText: "价格",
                             ),
-                            onChanged: (price){
+                            onChanged: (price) {
                               currentPrice = double.parse(price);
                               optionsController.add(contrOptionsTypePrice);
                             },
@@ -318,11 +351,11 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                           color: DefaultColors.colord0d0d0,
                         ),
                         InkWell(
-                          onTap: (){
+                          onTap: () {
                             optionsController.add(contrOptionsTypePriceDecrease);
                           },
                           child: Padding(
-                            padding: EdgeInsets.only(left: 12,right: 12),
+                            padding: EdgeInsets.only(left: 12, right: 12),
                             child: Text(
                               "-",
                               style: TextStyle(fontSize: 21, color: DefaultColors.color999),
@@ -335,11 +368,11 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                           color: DefaultColors.colord0d0d0,
                         ),
                         InkWell(
-                            onTap: (){
+                            onTap: () {
                               optionsController.add(contrOptionsTypePriceAdd);
                             },
                             child: Padding(
-                                padding: EdgeInsets.only(top:5,bottom: 5,left: 12,right: 12),
+                                padding: EdgeInsets.only(top: 5, bottom: 5, left: 12, right: 12),
                                 child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
                       ],
                     )),
@@ -364,7 +397,7 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
                             hintStyle: TextStyles.textCaaaS14,
                             hintText: "数量",
                           ),
-                          onChanged: (number){
+                          onChanged: (number) {
                             currentNum = double.parse(number);
                             optionsController.add(contrOptionsTypeNum);
                           },
@@ -476,11 +509,18 @@ class ExchangeDetailPageState extends State<ExchangeDetailPage> {
   }
 
   Widget _consignList() {
-    return Text(
-      "aaabbb",
-      key: GlobalKey(),
-    );
+    return ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        itemCount: _currentOrders.length,
+        itemBuilder: (ctx, index) => OrderItem(_currentOrders[index]));
   }
 
-  buyAction() {}
+  Future changeDepthLevel(int newLevel) {
+    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
+    depthChannel = SocketConfig.channelExchangeDepth("symbo", newLevel);
+    BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
+  }
+
+  Future buyAction() {}
 }
