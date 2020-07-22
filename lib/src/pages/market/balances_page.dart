@@ -54,7 +54,7 @@ class _BalancesPageState extends BaseState<BalancesPage> {
             color: Colors.black,
           ),
           title: Text(
-            '资产',
+            '交易账户',
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
       body: LoadDataContainer(
@@ -75,7 +75,12 @@ class _BalancesPageState extends BaseState<BalancesPage> {
               _totalBalances(),
               _divider(),
               Expanded(
-                child: _accountTabView(),
+                child: _exchangeAssetListView(
+                  ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .activeAccount
+                      .assetList,
+                ),
               ),
             ],
           ),
@@ -149,30 +154,6 @@ class _BalancesPageState extends BaseState<BalancesPage> {
                       height: 30,
                       child: OutlineButton(
                         child: Text(
-                          '充币',
-                          style: TextStyle(color: HexColor('#FF1095B0')),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => DepositPage()));
-                        },
-                        borderSide: BorderSide(
-                          color: HexColor('#FF1095B0'),
-                          width: 1,
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 30,
-                      child: OutlineButton(
-                        child: Text(
                           '划转',
                           style: TextStyle(color: HexColor('#FF1095B0')),
                         ),
@@ -226,90 +207,6 @@ class _BalancesPageState extends BaseState<BalancesPage> {
         ],
       ),
     );
-  }
-
-  _accountTabView() {
-    return new DefaultTabController(
-      length: 2,
-      child: new Scaffold(
-        appBar: new PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: new Container(
-            width: double.infinity,
-            height: 50.0,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: TabBar(
-                    labelColor: HexColor('#FF228BA1'),
-                    labelStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorColor: HexColor('#FF228BA1'),
-                    indicatorWeight: 3,
-                    indicatorPadding: EdgeInsets.only(bottom: 2),
-                    unselectedLabelColor: HexColor("#FF333333"),
-                    tabs: [
-                      Tab(
-                        child: Text(
-                          '资金账户',
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
-                          '交易账户',
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(),
-                )
-              ],
-            ),
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            _accountAssetListView(
-              ExchangeInheritedModel.of(context)
-                  .exchangeModel
-                  .activeAccount
-                  .assetList,
-            ),
-            _exchangeAssetListView(ExchangeInheritedModel.of(context)
-                .exchangeModel
-                .activeAccount
-                .assetList),
-          ],
-        ),
-      ),
-    );
-    ;
-  }
-
-  _accountAssetListView(AssetList _assetList) {
-    if (_assetList != null) {
-      return ListView(
-        children: <Widget>[
-          AssetItem('account', 'HYN', _assetList.HYN),
-          AssetItem('account', 'USDT', _assetList.USDT),
-          AssetItem('account', 'ETH', _assetList.ETH),
-          AssetItem('account', 'BTC', _assetList.BTC),
-        ],
-      );
-    } else {
-      return Container(
-        child: Center(
-          child: Text('加载中'),
-        ),
-      );
-    }
   }
 
   _exchangeAssetListView(AssetList _assetList) {

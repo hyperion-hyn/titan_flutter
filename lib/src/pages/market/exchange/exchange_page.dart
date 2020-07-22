@@ -6,6 +6,8 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -40,7 +42,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   @override
   void onCreated() {
     // TODO: implement onCreated
+    ///
     super.onCreated();
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(
+      channel: SocketConfig.channelKLine24Hour,
+    ));
   }
 
   @override
@@ -51,9 +57,22 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ExchangeBloc, ExchangeState>(
-      bloc: _exchangeBloc,
-      listener: (context, state) {},
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ExchangeBloc, ExchangeState>(
+          bloc: _exchangeBloc,
+          listener: (context, state) {},
+        ),
+        BlocListener<SocketBloc, SocketState>(
+          listener: (context, state) {
+            if (state is SubChannelState) {
+              print('[ExchangePage] SubChannelState :${state.period}');
+            } else if (state is ReceivedDataState) {
+              print('[ExchangePage] ReceivedDataState: ${state.response}');
+            }
+          },
+        ),
+      ],
       child: BlocBuilder<ExchangeBloc, ExchangeState>(
         bloc: _exchangeBloc,
         builder: (context, state) {
