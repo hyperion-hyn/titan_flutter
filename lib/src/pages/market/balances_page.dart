@@ -10,6 +10,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
+import 'package:titan/src/pages/market/transfer_page.dart';
 import 'deposit_page.dart';
 import 'withdraw_page.dart';
 
@@ -58,6 +59,7 @@ class _BalancesPageState extends BaseState<BalancesPage> {
           )),
       body: LoadDataContainer(
         bloc: _loadDataBloc,
+        enablePullUp: false,
         onRefresh: () {
           BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
           _loadDataBloc.add(RefreshSuccessEvent());
@@ -178,7 +180,7 @@ class _BalancesPageState extends BaseState<BalancesPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => WithdrawPage()));
+                                  builder: (context) => TransferPage()));
                         },
                         borderSide: BorderSide(
                           color: HexColor('#FF1095B0'),

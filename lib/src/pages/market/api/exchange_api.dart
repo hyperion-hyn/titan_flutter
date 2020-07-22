@@ -116,7 +116,8 @@ class ExchangeApi {
       ExchangeConst.PATH_TYPE_TO_CURRENCY,
       null,
       params: {
-        
+        type: type,
+        currency: currency,
       },
     );
   }
@@ -127,5 +128,33 @@ class ExchangeApi {
       "type": type,
       "balance": balance,
     });
+  }
+
+  Future<ResponseEntity> transferAccountToExchange(
+    String type,
+    String balance,
+  ) async {
+    return await ExchangeHttp.instance.postResponseEntity(
+      ExchangeConst.PATH_TO_EXCHANGE,
+      null,
+      params: {
+        "type": type,
+        "balance": balance,
+      },
+    );
+  }
+
+  Future<ResponseEntity> transferExchangeToAccount(
+    String type,
+    String balance,
+  ) async {
+    return await ExchangeHttp.instance.postResponseEntity(
+      ExchangeConst.PATH_TO_ACCOUNT,
+      null,
+      params: {
+        "type": type,
+        "balance": balance,
+      },
+    );
   }
 }
