@@ -16,6 +16,7 @@ import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/order/entity/order_entity.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
+import 'package:titan/src/pages/market/quote/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
@@ -41,7 +42,6 @@ class ExchangeDetailPage extends StatefulWidget {
 class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
 
-  List<ExcDetailEntity> chartList = [];
   bool isLoading = false;
   bool isBuy = true;
   bool isLimit = true;
@@ -75,6 +75,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   String symbol;
   String marketCoin;
   MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1,2,3,4,5]);
+  List<ExcDetailEntity> buyChartList = [];
+  List<ExcDetailEntity> sailChartList = [];
 
   @override
   void initState() {
@@ -83,16 +85,19 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     marketCoin = "HYN/${widget.selectedCoin}";
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
 
-    chartList.add(ExcDetailEntity(4, 0, 10));
-    chartList.add(ExcDetailEntity(4, 3, 7));
-    chartList.add(ExcDetailEntity(4, 4, 6));
-    chartList.add(ExcDetailEntity(4, 5, 5));
-    chartList.add(ExcDetailEntity(4, 6, 4));
-    chartList.add(ExcDetailEntity(2, 6, 4));
-    chartList.add(ExcDetailEntity(2, 5, 5));
-    chartList.add(ExcDetailEntity(2, 4, 6));
-    chartList.add(ExcDetailEntity(2, 3, 7));
-    chartList.add(ExcDetailEntity(2, 0, 10));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 5, 5));
+    buyChartList.add(ExcDetailEntity(2, 4, 6));
+    buyChartList.add(ExcDetailEntity(2, 3, 7));
+
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 5, 5));
+    sailChartList.add(ExcDetailEntity(4, 6, 4));
+    sailChartList.add(ExcDetailEntity(4, 7, 3));
 
     super.initState();
   }
@@ -170,12 +175,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
+                delegationListView(buyChartList,sailChartList),
+                /*Row(
                   children: <Widget>[
-//                    Expanded(flex: 6, child: _exchangeOptionsOld()),
                     Expanded(flex: 4, child: _depthChart()),
                   ],
-                ),
+                ),*/
                 _exchangeOptions(),
                 _consignList()
               ],
@@ -710,55 +715,55 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 //        });
 //  }
 
-  Widget _depthChart() {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          ExcDetailEntity excDetailEntity = chartList[index];
-          if (excDetailEntity.viewType == 2 || excDetailEntity.viewType == 4) {
-            Color bgColor = excDetailEntity.viewType == 2 ? HexColor("#EBF8F2") : HexColor("#F9EFEF");
-            return Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: excDetailEntity.leftPercent,
-                      child: Container(
-                        height: 23,
-                        color: HexColor("#ffffff"),
-                      ),
-                    ),
-                    Expanded(
-                      flex: excDetailEntity.rightPercent,
-                      child: Container(
-                        height: 23,
-                        color: bgColor,
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      "1111",
-                    ),
-                    Spacer(),
-                    Text(
-                      "1111",
-                    )
-                  ],
-                ),
-              ],
-            );
-          } else {
-            return Text("");
-          }
-        },
-        itemCount: chartList.length);
-  }
+//  Widget _depthChart() {
+//    return ListView.builder(
+//        shrinkWrap: true,
+//        physics: NeverScrollableScrollPhysics(),
+//        scrollDirection: Axis.vertical,
+//        itemBuilder: (context, index) {
+//          ExcDetailEntity excDetailEntity = chartList[index];
+//          if (excDetailEntity.viewType == 2 || excDetailEntity.viewType == 4) {
+//            Color bgColor = excDetailEntity.viewType == 2 ? HexColor("#EBF8F2") : HexColor("#F9EFEF");
+//            return Stack(
+//              alignment: Alignment.center,
+//              children: <Widget>[
+//                Row(
+//                  children: <Widget>[
+//                    Expanded(
+//                      flex: excDetailEntity.leftPercent,
+//                      child: Container(
+//                        height: 23,
+//                        color: HexColor("#ffffff"),
+//                      ),
+//                    ),
+//                    Expanded(
+//                      flex: excDetailEntity.rightPercent,
+//                      child: Container(
+//                        height: 23,
+//                        color: bgColor,
+//                      ),
+//                    )
+//                  ],
+//                ),
+//                Row(
+//                  children: <Widget>[
+//                    Text(
+//                      "1111",
+//                    ),
+//                    Spacer(),
+//                    Text(
+//                      "1111",
+//                    )
+//                  ],
+//                ),
+//              ],
+//            );
+//          } else {
+//            return Text("");
+//          }
+//        },
+//        itemCount: chartList.length);
+//  }
 
   Widget _consignList() {
     return ListView.builder(
