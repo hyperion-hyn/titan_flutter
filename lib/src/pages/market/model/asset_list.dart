@@ -31,4 +31,18 @@ class AssetList {
     ret['BTC'] = BTC.toJson();
     return ret;
   }
+
+  AssetType getAsset(String type){
+    if(type == 'HYN'){
+      return HYN;
+    }else if(type == 'USDT'){
+      return USDT;
+    }else if(type == 'ETH'){
+      return ETH;
+    }else {
+      return null;
+    }
+
+  }
+
 }

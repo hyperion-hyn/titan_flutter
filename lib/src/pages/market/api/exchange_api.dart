@@ -116,7 +116,8 @@ class ExchangeApi {
       ExchangeConst.PATH_TYPE_TO_CURRENCY,
       null,
       params: {
-        
+        type: type,
+        currency: currency,
       },
     );
   }

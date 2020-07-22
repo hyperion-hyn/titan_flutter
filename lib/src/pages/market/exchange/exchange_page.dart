@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/pages/market/balances_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
-import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
 import '../quote/kline_detail_page.dart';
@@ -30,7 +29,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'usdt';
   var _exchangeType = ExchangeType.SELL;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
-  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void dispose() {
@@ -176,7 +174,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ClickOvalIconButton(
                 '交易',
                 () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(symbol: "USDT",type: 0)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ExchangeDetailPage(symbol: "USDT", type: 0)));
                 },
                 width: 88,
                 height: 38,
@@ -247,6 +249,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
+    var symbolQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
       return Text.rich(
@@ -255,10 +259,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               text: ExchangeInheritedModel.of(context)
                       .exchangeModel
                       .isShowBalances
-                  ? '1231231'
+                  ? "${FormatUtil.formatPrice(10000.0 * (symbolQuote?.quoteVo?.price ?? 0))}"
                   : '******'),
           TextSpan(
-              text: '(CNY)', style: TextStyle(color: Colors.grey, fontSize: 13))
+              text: ' (${symbolQuote?.sign?.quote ?? ''})',
+              style: TextStyle(color: Colors.grey, fontSize: 13))
         ]),
         textAlign: TextAlign.center,
       );
@@ -419,9 +424,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _quotesItem() {
     return InkWell(
-      onTap: (){
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => KLineDetailPage()));
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => KLineDetailPage()));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),

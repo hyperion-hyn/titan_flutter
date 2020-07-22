@@ -4,7 +4,4 @@ class ExchangeModel {
   bool isShowBalances = true;
 
   ExchangeAccount activeAccount;
-
-
-
 }
