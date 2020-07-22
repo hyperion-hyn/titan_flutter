@@ -47,6 +47,20 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         if (status == 0) {
           if (eventAction == SocketConfig.sub) {
             if (response != null) {
+              if (channel != null && channel is String) {
+                String channelValue = channel;
+                if (channelValue == SocketConfig.channelKLine24Hour) {
+                  yield ChannelKLine24HourState(response: response);
+                } else if (channelValue.contains("depth")) {
+                  yield ChannelExchangeDepthState(response: response);
+                } else if (channelValue.contains("trade.detail")) {
+                  yield ChannelExchangeDepthState(response: response);
+                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                  yield ChannelUserTickState(response: response);
+                } else {
+                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
+                }
+              }
               yield ReceivedDataSuccessState(response: response);
             } else {
               if (channel != null) {
@@ -79,7 +93,6 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       }
     }
   }
-
 
   void _heartAction() {
     print('[WS] heart，发送心跳');

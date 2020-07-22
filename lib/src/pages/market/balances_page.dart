@@ -59,6 +59,7 @@ class _BalancesPageState extends BaseState<BalancesPage> {
           )),
       body: LoadDataContainer(
         bloc: _loadDataBloc,
+        enablePullUp: false,
         onRefresh: () {
           BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
           _loadDataBloc.add(RefreshSuccessEvent());
