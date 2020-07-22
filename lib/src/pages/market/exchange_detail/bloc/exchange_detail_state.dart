@@ -8,3 +8,7 @@ class ExchangeInitial extends ExchangeDetailState {
   List<Object> get props => [];
 }
 
+class ExchangeMarketInfoState extends ExchangeDetailState {
+  final MarketInfoEntity marketInfoEntity;
+  ExchangeMarketInfoState(this.marketInfoEntity);
+}

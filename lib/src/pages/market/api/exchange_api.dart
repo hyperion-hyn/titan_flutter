@@ -6,6 +6,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
@@ -154,6 +155,42 @@ class ExchangeApi {
       params: {
         "type": type,
         "balance": balance,
+      },
+    );
+  }
+
+  Future<MarketInfoEntity> getMarketInfo(String market) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_MARKET_INFO,
+      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      params: {
+        "market": market,
+      },
+    );
+  }
+
+  Future<dynamic> orderPutLimit(String market, exchangeType,String price,String amount) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_LIMIT,
+      null,
+      params: {
+        "market": market,
+        "side": exchangeType,
+        "price": price,
+        "amount": amount,
+        "option": "GTC",
+      },
+    );
+  }
+
+  Future<dynamic> orderPutMarket(String market, exchangeType,String amount) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_MARKET,
+      null,
+      params: {
+        "market": market,
+        "side": exchangeType,
+        "amount": amount,
       },
     );
   }

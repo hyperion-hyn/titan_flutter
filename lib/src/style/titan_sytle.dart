@@ -78,4 +78,5 @@ class DefaultColors {
   static Color color7c5b00 = HexColor("#7c5b00");
   static Color color2277869e = HexColor("#2277869e");
   static Color color53ae86 = HexColor("#53ae86");
+  static Color colorcc5858 = HexColor("#cc5858");
 }
