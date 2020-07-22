@@ -29,15 +29,15 @@ class AssetType extends Object {
   String btc;
 
   AssetType(
-      this.accountAvailable,
-      this.accountFreeze,
-      this.withdrawFee,
-      this.recharge,
-      this.withdraw,
-      this.exchangeAvailable,
-      this.exchangeFreeze,
-      this.btc,
-      );
+    this.accountAvailable,
+    this.accountFreeze,
+    this.withdrawFee,
+    this.recharge,
+    this.withdraw,
+    this.exchangeAvailable,
+    this.exchangeFreeze,
+    this.btc,
+  );
 
   factory AssetType.fromJson(Map<String, dynamic> srcJson) =>
       _$AssetTypeFromJson(srcJson);
