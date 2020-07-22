@@ -193,7 +193,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
                 ListTile(
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(symbol: "USDT",type: 0)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(rightSymbol: "usdt")));
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('交易详情页'),

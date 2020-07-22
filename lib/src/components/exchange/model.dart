@@ -5,6 +5,8 @@ class ExchangeModel {
 
   ExchangeAccount activeAccount;
 
-
+  bool isActiveAccount(){
+    return activeAccount != null;
+  }
 
 }

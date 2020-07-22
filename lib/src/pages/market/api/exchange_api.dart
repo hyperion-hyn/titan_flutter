@@ -128,4 +128,30 @@ class ExchangeApi {
       "balance": balance,
     });
   }
+
+  Future<dynamic> orderPutLimit(String market, exchangeType,double price,double amount) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_LIMIT,
+      null,
+      params: {
+        "market": market,
+        "side": exchangeType,
+        "price": price,
+        "amount": amount,
+        "option": "GTC",
+      },
+    );
+  }
+
+  Future<dynamic> orderPutMarket(String market, exchangeType,double amount) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_MARKET,
+      null,
+      params: {
+        "market": market,
+        "side": exchangeType,
+        "amount": amount,
+      },
+    );
+  }
 }

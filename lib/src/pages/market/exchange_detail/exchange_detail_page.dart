@@ -10,6 +10,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/order/entity/order_entity.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
@@ -21,10 +22,12 @@ import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'bloc/exchange_detail_bloc.dart';
 
 class ExchangeDetailPage extends StatefulWidget {
-  final String symbol;
-  final int type;
+  final String leftSymbol;
+  final String rightSymbol;
+  var _selectedCoin = 'usdt';
+  var _exchangeType = ExchangeType.SELL;
 
-  ExchangeDetailPage({@required this.symbol, @required this.type});
+  ExchangeDetailPage({this.leftSymbol,this.rightSymbol});
 
   @override
   State<StatefulWidget> createState() {
@@ -33,7 +36,7 @@ class ExchangeDetailPage extends StatefulWidget {
 }
 
 class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
-  ExchangeBloc exchangeBloc = ExchangeBloc();
+  ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
 
   List<ExcDetailEntity> chartList = [];
   bool isLoading = false;
@@ -59,13 +62,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   final int contrOptionsTypePriceDecrease = 6;
   final int contrOptionsTypeNum = 7;
   StreamController<int> optionsController = StreamController.broadcast();
-  String userTickChannel;
+  String userTickChannel = "";
   String depthChannel;
   List<OrderEntity> _currentOrders = List();
   ExchangeModel exchangeModel;
+  String symbol;
 
   @override
   void initState() {
+    symbol = "hyn${widget.rightSymbol}";
+
     chartList.add(ExcDetailEntity(4, 0, 10));
     chartList.add(ExcDetailEntity(4, 3, 7));
     chartList.add(ExcDetailEntity(4, 4, 6));
@@ -77,14 +83,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     chartList.add(ExcDetailEntity(2, 3, 7));
     chartList.add(ExcDetailEntity(2, 0, 10));
 
+
+
     super.initState();
   }
 
   @override
   void onCreated() {
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-    userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "symbo");
-    depthChannel = SocketConfig.channelExchangeDepth("symbo", 1);
+    if(exchangeModel.isActiveAccount()){
+      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
+    }
+    depthChannel = SocketConfig.channelExchangeDepth(symbol, 1);
 //    BlocProvider.of(context).add(SubChannelEvent(channel: userTickChannel));
 //    BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
 
@@ -101,18 +111,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 //    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
 
     optionsController.close();
-    exchangeBloc.close();
+    exchangeDetailBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocListener<ExchangeBloc, AllPageState>(
-        bloc: exchangeBloc,
+      body: BlocListener<ExchangeDetailBloc, AllPageState>(
+        bloc: exchangeDetailBloc,
         listener: (ctx, state) {},
-        child: BlocBuilder<ExchangeBloc, AllPageState>(
-          bloc: exchangeBloc,
+        child: BlocBuilder<ExchangeDetailBloc, AllPageState>(
+          bloc: exchangeDetailBloc,
           condition: (ctx, state) {
             if (state is ExchangeInitial) {
               return true;
@@ -170,7 +180,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Text(
-            'HYN/${widget.symbol}',
+            'HYN/${widget.rightSymbol.toUpperCase()}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
@@ -179,12 +189,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           child: Text(
             '+13.0%',
             style: TextStyle(
-              color: widget.type == ExchangeType.BUY ? Colors.red[400] : Colors.green[400],
+              color: isBuy ? HexColor("#53AE86") : HexColor("#CC5858"),
               fontSize: 13.0,
             ),
           ),
           decoration: BoxDecoration(
-              color: widget.type == ExchangeType.BUY ? Colors.red[50] : Colors.green[200],
+              color: isBuy ? HexColor("#EBF8F2") : HexColor("#F9EFEF"),
               borderRadius: BorderRadius.circular(4.0)),
         ),
         Spacer(),
@@ -428,14 +438,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    color: DefaultColors.color53ae86,
+                    color: isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
                   ),
                   child: FlatButton(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(22.0)),
                       ),
                       padding: const EdgeInsets.all(0.0),
-                      child: Text(isLogin ? "买入ETH" : "请登录",
+                      child: Text(isLogin ? isBuy ? "买入HYN" : "卖出HYN" : "请登录",
                           style: TextStyle(
                             fontSize: 14,
                             color: isLoading ? DefaultColors.color999 : Colors.white,
@@ -512,8 +522,40 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        itemCount: _currentOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(_currentOrders[index]));
+        itemCount: _currentOrders.length + 1,
+        itemBuilder: (ctx, index) {
+          if(index == 0){
+            return Padding(
+              padding: const EdgeInsets.only(top:13.0,bottom: 11,left: 13,right: 13),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text("当前委托",style: TextStyle(fontSize: 16,color: DefaultColors.color333),),
+                      Spacer(),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom:2.0),
+                            child: Image.asset("res/drawable/ic_exhange_all_consign.png",width: 12,height: 12,),
+                          ),
+                          SizedBox(width: 4,),
+                          Text("全部",style: TextStyle(fontSize: 12,color: DefaultColors.color999))
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 11,),
+                  Divider(height: 1,)
+                ],
+              ),
+            );
+          }
+
+          return OrderItem(_currentOrders[index - 1]);
+        });
   }
 
   Future changeDepthLevel(int newLevel) {
@@ -522,5 +564,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
   }
 
-  Future buyAction() {}
+  Future buyAction() {
+    isLimit = false;
+    if(exchangeModel.isActiveAccount()){
+      if(isLimit){
+        exchangeDetailBloc.add(LimitExchangeEvent("USDT", ExchangeType.SELL, 0.5, 10));
+      }else{
+        exchangeDetailBloc.add(MarketExchangeEvent("USDT", ExchangeType.SELL, 10));
+      }
+    }else{
+      //todo login
+    }
+  }
 }

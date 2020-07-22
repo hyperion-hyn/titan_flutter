@@ -176,7 +176,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ClickOvalIconButton(
                 '交易',
                 () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(symbol: "USDT",type: 0)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(leftSymbol: "hyn",rightSymbol: _selectedCoin)));
                 },
                 width: 88,
                 height: 38,
