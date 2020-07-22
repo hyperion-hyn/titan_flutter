@@ -6,6 +6,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
@@ -130,7 +131,17 @@ class ExchangeApi {
     });
   }
 
-  Future<dynamic> orderPutLimit(String market, exchangeType,double price,double amount) async {
+  Future<MarketInfoEntity> getMarketInfo(String market) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_MARKET_INFO,
+      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      params: {
+        "market": market,
+      },
+    );
+  }
+
+  Future<dynamic> orderPutLimit(String market, exchangeType,String price,String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
@@ -144,7 +155,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutMarket(String market, exchangeType,double amount) async {
+  Future<dynamic> orderPutMarket(String market, exchangeType,String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,

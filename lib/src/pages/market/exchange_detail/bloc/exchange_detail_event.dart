@@ -3,17 +3,22 @@ part of 'exchange_detail_bloc.dart';
 abstract class ExchangeDetailEvent {
 }
 
+class MarketInfoEvent extends ExchangeDetailEvent{
+  String marketCoin;
+  MarketInfoEvent(this.marketCoin);
+}
+
 class LimitExchangeEvent extends ExchangeDetailEvent{
-  String selectCoin;
+  String marketCoin;
   int exchangeType;
-  double price;
-  double amount;
-  LimitExchangeEvent(this.selectCoin,this.exchangeType,this.price,this.amount);
+  String price;
+  String amount;
+  LimitExchangeEvent(this.marketCoin,this.exchangeType,this.price,this.amount);
 }
 
 class MarketExchangeEvent extends ExchangeDetailEvent{
-  String selectCoin;
+  String marketCoin;
   int exchangeType;
-  double amount;
-  MarketExchangeEvent(this.selectCoin,this.exchangeType,this.amount);
+  String amount;
+  MarketExchangeEvent(this.marketCoin,this.exchangeType,this.amount);
 }
