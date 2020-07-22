@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/api/market_http_core.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
+import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:web_socket_channel/io.dart';
 
 import '../../../../env.dart';
@@ -24,56 +26,54 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     'wss://api.huobi.pro/ws',
   );
   List<KLineEntity> _kChartItemList;
-  bool showLoading = true;
+
+  bool _showLoading = true;
+  bool _isShowMore = false;
+  bool _isShowSetting = false;
+  bool _isLine = false;
+  bool _isDepth = false;
+
+  String _periodParameter = "15分钟";
+  List<String> _normalPeriodList = ["15分钟", "1小时", "4小时", "1天"];
+  List<String> _morePeriodList = ["分时", "1分钟", "5分钟", "30分钟", "1周", "1月"];
+
+  String _periodParameterValue = "15min";
+  List<String> _normalPeriodValueList = ["15min", "60min", "4hour", "1day"];
+  List<String> _morePeriodValueList = ["分时", "1min", "5min", "30min", "1week", "1mon"];
+
+  MainState _mainState = MainState.MA;
+  bool get _isOpenMainState => _mainState != MainState.NONE;
+
+  SecondaryState _secondaryState = SecondaryState.MACD;
+  bool get _isOpenSecondaryState => _secondaryState != SecondaryState.NONE;
 
   TabController _detailTabController;
-  TabController _periodTabController;
-
   int _detailCurrentIndex = 0;
+
+  TabController _periodTabController;
   int _periodCurrentIndex = 0;
 
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
-  bool _isShowMore = false;
-  bool _isShowSetting = false;
+  List<DepthEntity> _bids, _asks;
 
   @override
   void initState() {
-    buyChartList.add(ExcDetailEntity(2, 6, 4));
-    buyChartList.add(ExcDetailEntity(2, 6, 4));
-    buyChartList.add(ExcDetailEntity(2, 5, 5));
-    buyChartList.add(ExcDetailEntity(2, 4, 6));
-    buyChartList.add(ExcDetailEntity(2, 3, 7));
-    for (int i = 0; i < 10; i++) {
-      buyChartList.add(ExcDetailEntity(2, 0, 10));
-    }
-
-    sailChartList.add(ExcDetailEntity(4, 4, 6));
-    sailChartList.add(ExcDetailEntity(4, 4, 6));
-    sailChartList.add(ExcDetailEntity(4, 5, 5));
-    sailChartList.add(ExcDetailEntity(4, 6, 4));
-    sailChartList.add(ExcDetailEntity(4, 7, 3));
-    for (int i = 0; i < 10; i++) {
-      sailChartList.add(ExcDetailEntity(4, 10, 0));
-    }
-    _detailTabController = new TabController(
-      initialIndex: 0,
-      vsync: this,
-      length: 2,
-    );
-
-    _periodTabController = new TabController(
-      initialIndex: 0,
-      vsync: this,
-      length: 7,
-    );
+    _initData();
 
     _initWS();
 
-    _requestDataFromApi('1min');
+    _requestDataFromApi(_periodParameterValue);
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    socketChannel.sink.close();
+    print('[WS]  closed');
+    super.dispose();
   }
 
   @override
@@ -201,26 +201,16 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        '190.83',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        '190.83',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        '321412',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
-                      ),
-                    ]),
+                    children: ['190.83', '1', '190.83', '1', '321412']
+                        .map((text) => text == '1'
+                            ? SizedBox(
+                                height: 6,
+                              )
+                            : Text(
+                                text,
+                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
+                              ))
+                        .toList()),
               ],
             ),
           ),
@@ -239,45 +229,48 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 
   Widget _kLineWidget() {
+    double kLineHeight = 340;
+    print("_bids is empty:${_bids?.isEmpty??true}");
+
     return SliverToBoxAdapter(
       child: Stack(
         children: <Widget>[
           Container(
             width: double.infinity,
-            height: 340,
-//        color: Colors.amber,
+            height: kLineHeight,
             color: Colors.white,
             child: KChartWidget(
               _kChartItemList,
-              isLine: false,
+              isLine: _isLine,
+            ),
+          ),
+          Visibility(
+            visible: _isDepth,
+            child: Container(
+              width: double.infinity,
+              height: kLineHeight,
+              color: Colors.white,
+              child: DepthChart(_bids, _asks),
             ),
           ),
           Visibility(
             visible: _isShowMore,
             child: Container(
-              margin: const EdgeInsets.only(left: 14, top: 3, right: 14),
+              //duration: Duration(milliseconds: 333),
+              margin: EdgeInsets.only(left: 14, top: 3, right: 14),
               width: double.infinity,
+              //height: _isShowMore ? 32 : 0,
               decoration: BoxDecoration(
                 color: HexColor("#F5F5F5"),
                 borderRadius: BorderRadius.circular(2),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: ["分时", "1分钟", "5分钟", "30分钟", "1周", "1月"]
-                    .map((e) => InkWell(
-                  onTap: (){
-                    setState(() {
-                      _isShowMore = false;
-                    });
-                  },
-                      child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            child: Text(
-                              e,
-                              style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                            ),
-                          ),
-                    ))
+                children: _morePeriodList
+                    .map((title) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: _periodTextWidget(title),
+                        ))
                     .toList(),
               ),
             ),
@@ -285,8 +278,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           Visibility(
             visible: _isShowSetting,
             child: Container(
-              margin: const EdgeInsets.only(left: 14, top: 3, right: 14),
+              //duration: Duration(milliseconds: 333),
+              margin: EdgeInsets.only(left: 14, top: 3, right: 14),
               width: double.infinity,
+              //height: _isShowSetting ? 98 : 0,
               decoration: BoxDecoration(
                 color: HexColor("#F5F5F5"),
                 borderRadius: BorderRadius.circular(2),
@@ -303,22 +298,30 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                           style: TextStyle(color: HexColor("#333333"), fontSize: 12),
                         ),
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "MA",
-                        style: TextStyle(color: HexColor("#228BA1"), fontSize: 12),
+                        true,
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "BOLL",
-                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                        true,
                       ),
                       Spacer(),
                       IconButton(
-                        icon: Icon(
-                          Icons.lock,
+                        icon: Image.asset(
+                          'res/drawable/k_line_eye_${_isOpenMainState ? "open" : "close"}.png',
+                          width: 16,
+                          height: 11,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_isOpenMainState) {
+                            setState(() {
+                              _mainState = MainState.NONE;
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -339,51 +342,40 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                           style: TextStyle(color: HexColor("#333333"), fontSize: 12),
                         ),
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "MACD",
-                        style: TextStyle(color: HexColor("#228BA1"), fontSize: 12),
+                        false,
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "KDJ",
-                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                        false,
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "RSI",
-                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                        false,
                       ),
-                      Spacer(),
-                      Text(
+                      _spacerWidget,
+                      _textWidget(
                         "WR",
-                        style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                        false,
                       ),
                       Spacer(),
                       IconButton(
-                        icon: Icon(
-                          Icons.lock,
+                        icon: Image.asset(
+                          'res/drawable/k_line_eye_${_isOpenSecondaryState ? "open" : "close"}.png',
+                          width: 16,
+                          height: 11,
                         ),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Divider(
-                      height: 0.5,
-                      color: HexColor("#DEDEDE"),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 14, top: 12, bottom: 12),
-                        child: Text(
-                          "指标设置",
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
-                        ),
+                        onPressed: () {
+                          if (_isOpenSecondaryState) {
+                            setState(() {
+                              _secondaryState = SecondaryState.NONE;
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -391,12 +383,141 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
               ),
             ),
           ),
+          Visibility(
+            visible: _showLoading,
+            child: Container(
+                width: double.infinity, height: kLineHeight, alignment: Alignment.center, child: CircularProgressIndicator()),
+          ),
+
         ],
       ),
     );
   }
 
+  Widget get _spacerWidget => SizedBox(
+        width: 30,
+      );
+
+  // MainState
+  MainState enumMainStateFromString(String fruit) {
+    fruit = 'MainState.$fruit';
+    return MainState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+  }
+
+  // SecondaryState
+  SecondaryState enumSecondaryStateFromString(String fruit) {
+    fruit = 'SecondaryState.$fruit';
+    return SecondaryState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+  }
+
+  Widget _textWidget(String title, bool isMain) {
+
+    var isSelected = false;
+    if (isMain) {
+      isSelected = enumMainStateFromString(title) == _mainState;
+    } else {
+      isSelected = enumSecondaryStateFromString(title) == _secondaryState;
+    }
+
+    return InkWell(
+      onTap: () {
+        setState(() {
+          if (isMain) {
+            _mainState = enumMainStateFromString(title);
+          } else {
+            _secondaryState = enumSecondaryStateFromString(title);
+          }
+        });
+      },
+      child: Text(
+        title,
+        style: TextStyle(color: isSelected ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+      ),
+    );
+  }
+
+  Widget _periodTextWidget(String title) {
+    var equalValue = _periodParameter;
+    return InkWell(
+      onTap: () {
+        _isShowMore = false;
+        _periodParameter = title;
+
+        var index = _morePeriodList.indexOf(title);
+        if (index != 0) {
+          _periodParameterValue = _morePeriodValueList[index];
+          _requestDataFromApi(_periodParameterValue);
+          _subscribeKLineDataFromWS(_periodParameterValue);
+          _isLine = false;
+        } else {
+          _isLine = true;
+        }
+
+        setState(() {
+
+        });
+      },
+      child: Text(
+        title,
+        style: TextStyle(color: title == equalValue ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+      ),
+    );
+  }
+
   Widget _periodTabWidget() {
+    List<Widget> tabs = [];
+    var iterable = _normalPeriodList
+        .map((title) => Tab(
+              child: Text(
+                title,
+                style: TextStyle(),
+              ),
+            ))
+        .toList();
+    tabs.addAll(iterable);
+
+    iterable = [
+      Tab(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              _periodParameter.isNotEmpty && _morePeriodList.contains(_periodParameter) ? _periodParameter : '更多',
+              //style: TextStyle(color: HexColor("#333333")),
+            ),
+            Image.asset(
+              'res/drawable/k_line_down_arrow.png',
+              width: 5,
+              height: 5,
+              color: _periodCurrentIndex == 4 ? HexColor("#228BA1") : HexColor("#999999"),
+            ),
+          ],
+        ),
+      ),
+      Tab(
+        child: Text(
+          '深度图',
+          style: TextStyle(),
+        ),
+      ),
+      Tab(
+        child: IconButton(
+          icon: Image.asset(
+            'res/drawable/k_line_setting.png',
+            width: 15,
+            height: 13,
+            color: _isShowSetting ? HexColor("#228BA1") : HexColor("#333333"),
+          ),
+          onPressed: () {
+            _isShowMore = false;
+            _isShowSetting = !_isShowSetting;
+            setState(() {});
+          },
+        ),
+      ),
+    ];
+    tabs.addAll(iterable);
+
     return SliverToBoxAdapter(
       child: TabBar(
         controller: _periodTabController,
@@ -412,67 +533,31 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         indicatorPadding: EdgeInsets.only(bottom: 2),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
-          setState(() {
-            if (index == 4 && !_isShowMore) {
-              _isShowMore = true;
-            } else {
-              _isShowMore = false;
-            }
-            _isShowSetting = false;
+          if (index == 4 && !_isShowMore) {
+            _isShowMore = true;
+          } else {
+            _isShowMore = false;
+          }
+          _isShowSetting = false;
 
-            _periodCurrentIndex = index;
-          });
+          _isLine = false;
+
+          _periodCurrentIndex = index;
+
+          if (index < _normalPeriodList.length) {
+
+            _periodParameter = _normalPeriodList[index];
+            _periodParameterValue = _normalPeriodValueList[index];
+            _requestDataFromApi(_periodParameterValue);
+            _subscribeKLineDataFromWS(_periodParameterValue);
+          }
+
+          _isDepth = (index == 5);
+
+          setState(() {});
+
         },
-        tabs: [
-          Tab(
-            child: Text(
-              "15分钟",
-              style: TextStyle(),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '1小时',
-              style: TextStyle(),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '4小时',
-              style: TextStyle(),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '1天',
-              style: TextStyle(),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '更多',
-              style: TextStyle(color: HexColor("#333333")),
-            ),
-          ),
-          Tab(
-            child: Text(
-              '深度图',
-              style: TextStyle(),
-            ),
-          ),
-          Tab(
-            child: IconButton(
-              icon: Icon(
-                Icons.more,
-              ),
-              onPressed: () {
-                _isShowMore = false;
-                _isShowSetting = !_isShowSetting;
-                setState(() {});
-              },
-            ),
-          ),
-        ],
+        tabs: tabs,
       ),
     );
   }
@@ -521,18 +606,18 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         children: [
           Visibility(
             visible: _detailCurrentIndex == 0,
-            child: _depthChart(),
+            child: _delegationListView(),
           ),
           Visibility(
             visible: _detailCurrentIndex == 1,
-            child: _exchangeChart(),
+            child: _transactionListView(),
           ),
         ],
       ),
     );
   }
 
-  Widget _depthChart() {
+  Widget _delegationListView() {
     return Container(
       padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
       color: Colors.white,
@@ -737,7 +822,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     );
   }
 
-  Widget _exchangeChart() {
+  Widget _transactionListView() {
     return Padding(
       padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
       child: ListView.builder(
@@ -844,12 +929,79 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     socketChannel.sink.add(json.encode(requestKLine));
   }
 
-  @override
-  void dispose() {
-    socketChannel.sink.close();
+  _initData() {
+    // todo: test_jison_0722
+    // buy
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 6, 4));
+    buyChartList.add(ExcDetailEntity(2, 5, 5));
+    buyChartList.add(ExcDetailEntity(2, 4, 6));
+    buyChartList.add(ExcDetailEntity(2, 3, 7));
+    for (int i = 0; i < 10; i++) {
+      buyChartList.add(ExcDetailEntity(2, 0, 10));
+    }
 
-    print('[WS]  closed');
-    super.dispose();
+    // sail
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 4, 6));
+    sailChartList.add(ExcDetailEntity(4, 5, 5));
+    sailChartList.add(ExcDetailEntity(4, 6, 4));
+    sailChartList.add(ExcDetailEntity(4, 7, 3));
+    for (int i = 0; i < 10; i++) {
+      sailChartList.add(ExcDetailEntity(4, 10, 0));
+    }
+
+    _detailTabController = TabController(
+      initialIndex: 0,
+      vsync: this,
+      length: 2,
+    );
+
+    _periodTabController = TabController(
+      initialIndex: 0,
+      vsync: this,
+      length: 7,
+    );
+
+    initDepthData();
+
+  }
+
+  initDepthData() async {
+    await rootBundle.loadString('res/kline/depth.json').then((result) {
+      print("[result] result:$result");
+
+      final parseJson = json.decode(result);
+      Map tick = parseJson['tick'];
+      var bids = tick['bids'].map((item) => DepthEntity(item[0], item[1])).toList().cast<DepthEntity>();
+      var asks = tick['asks'].map((item) => DepthEntity(item[0], item[1])).toList().cast<DepthEntity>();
+      initDepth(bids, asks);
+    });
+  }
+
+
+  void initDepth(List<DepthEntity> bids, List<DepthEntity> asks) {
+    if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
+    _bids = List();
+    _asks = List();
+    double amount = 0.0;
+    bids?.sort((left, right) => left.price.compareTo(right.price));
+    //倒序循环 //累加买入委托量
+    bids.reversed.forEach((item) {
+      amount += item.amount;
+      item.amount = amount;
+      _bids.insert(0, item);
+    });
+
+    amount = 0.0;
+    asks?.sort((left, right) => left.price.compareTo(right.price));
+    //循环 //累加买入委托量
+    asks?.forEach((item) {
+      amount += item.amount;
+      item.amount = amount;
+      _asks.add(item);
+    });
+
   }
 
   _initWS() {
@@ -884,17 +1036,13 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           print(e);
         });
 
-    _subscribeKLineDataFromWS('1min');
+    _subscribeKLineDataFromWS(_periodParameterValue);
   }
 
-  /*
-  _reconnectWS() {
-    Future.delayed(Duration(milliseconds: 1000)).then((_) {
-      _initWS();
-    });
-  }*/
-
   void _requestDataFromApi(String period, {bool isReplace}) async {
+    _showLoading = true;
+    setState(() {});
+
     dynamic result;
     try {
       result = await getDataFromApi('$period');
@@ -913,31 +1061,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       KLineUtil.calculate(_kChartItemList);
       print('[WS] current list length: ${_kChartItemList.length}');
       Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
-      showLoading = false;
+      _showLoading = false;
       setState(() {});
     }
   }
-
-  /* void _addDataFromApi(String period, {bool isReplace}) async {
-    dynamic result;
-    KLineEntity lastItem;
-    try {
-      result = await getDataFromApi('$period');
-    } catch (e) {
-      print('获取数据失败');
-    } finally {
-      Map parseJson = result;
-      List list = parseJson['data'];
-      lastItem = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>().last;
-      _kChartItemList.add(lastItem);
-      print(lastItem.toString());
-      KLineUtil.calculate(_kChartItemList);
-      showLoading = false;
-      print('current list length: ${_kChartItemList.length}');
-      Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
-      setState(() {});
-    }
-  }*/
 
   void _addKChartDataFromWS(Map<String, dynamic> data) async {
     KLineEntity latestKLineItem;
@@ -945,14 +1072,19 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       latestKLineItem = KLineEntity.fromJson(data['tick']);
       print(latestKLineItem.toString());
       if (latestKLineItem.id != _kChartItemList.last.id) {
-        Fluttertoast.showToast(msg: 'Add new Data ${latestKLineItem.id} ');
+        //Fluttertoast.showToast(msg: 'Add Data ${latestKLineItem.id} ');
+
         _kChartItemList.add(latestKLineItem);
         KLineUtil.calculate(_kChartItemList);
-        showLoading = false;
+
+        _showLoading = false;
       } else {
+        //Fluttertoast.showToast(msg: 'Update Data ${latestKLineItem.id} ');
+
         _kChartItemList.last = latestKLineItem;
         KLineUtil.calculate(_kChartItemList);
-        showLoading = false;
+
+        _showLoading = false;
       }
     } catch (e) {
       print('[_addKChartDataFromWS]]: 解析KEntity失败: ${e.toString()}');
@@ -982,4 +1114,5 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
     return result;
   }
+
 }
