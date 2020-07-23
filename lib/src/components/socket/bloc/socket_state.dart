@@ -66,7 +66,7 @@ class ChannelTradeDetailState extends SocketState {
 }
 
 class ChannelUserTickState extends SocketState {
-  final Map<String, dynamic> response;
+  final List<dynamic> response;
   ChannelUserTickState({this.response});
 }
 

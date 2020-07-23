@@ -8,8 +8,9 @@ import 'entity/order_entity.dart';
 
 class OrderItem extends StatefulWidget {
   final OrderEntity _order;
+  String selectedCoin;
 
-  OrderItem(this._order);
+  OrderItem(this._order,{this.selectedCoin = 'usdt'});
 
   @override
   State<StatefulWidget> createState() {
@@ -98,7 +99,7 @@ class OrderItemState extends State<OrderItem> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            '价格(USDT)',
+                            '价格(${widget.selectedCoin.toUpperCase()})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -108,7 +109,7 @@ class OrderItemState extends State<OrderItem> {
                             height: 4.0,
                           ),
                           Text(
-                            '9090.42',
+                            "${widget._order.price}",
                             style: TextStyle(
                               color: DefaultColors.color333,
                                 fontWeight: FontWeight.w500, fontSize: 12),
@@ -136,7 +137,7 @@ class OrderItemState extends State<OrderItem> {
                       height: 4.0,
                     ),
                     Text(
-                      '0.002',
+                      "${widget._order.total}",
                       style:
                           TextStyle(color:DefaultColors.color333,fontWeight: FontWeight.w500, fontSize: 12),
                     ),
@@ -162,7 +163,7 @@ class OrderItemState extends State<OrderItem> {
                       children: <Widget>[
                         Spacer(),
                         Text(
-                          '0',
+                          "${widget._order.amount}",
                           style: TextStyle(
                             color:DefaultColors.color333,
                             fontSize: 12,

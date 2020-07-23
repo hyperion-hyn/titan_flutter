@@ -22,6 +22,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       _heartAction();
       yield HeartState();
     } else if (event is SubChannelEvent) {
+      print("channel = ${event.channel}");
       _subChannelRequestAction(event.channel);
 
       yield SubChannelState(period: event.channel);
@@ -56,12 +57,13 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                  print("!!!!!userdata $response");
                   yield ChannelUserTickState(response: response);
                 } else {
                   yield ChannelKLinePeriodState(channel: channelValue, response: response);
                 }
               }
-              yield ReceivedDataSuccessState(response: response);
+              yield ReceivedDataSuccessState(response: dataMap);
             } else {
               if (channel != null) {
                 yield SubChannelSuccessState();

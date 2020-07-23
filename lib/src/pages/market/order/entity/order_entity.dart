@@ -25,7 +25,18 @@ class OrderEntity {
 
   OrderEntity();
 
-  OrderEntity.fromJson(Map<String, dynamic> json) {}
+  OrderEntity.fromJson(dynamic json) {
+  }
+
+  OrderEntity.fromSocketJson(List<dynamic> orderItem) {
+    this.date = orderItem[0].toString();
+    this.id = orderItem[1].toString();
+    this.state = orderItem[2];
+    this.total = double.parse(orderItem[3]);
+    this.amount = this.total - double.parse(orderItem[4]);
+    this.price = double.parse(orderItem[5]);
+    this.type = int.parse(orderItem[6]);
+  }
 }
 
 class ExchangeType {

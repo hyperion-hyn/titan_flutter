@@ -178,7 +178,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              ExchangeDetailPage(selectedCoin:"USDT", exchangeType:0)));
+                              ExchangeDetailPage(selectedCoin: _selectedCoin, exchangeType: _exchangeType)));
                 },
                 width: 88,
                 height: 38,

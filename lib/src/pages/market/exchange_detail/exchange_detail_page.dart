@@ -67,22 +67,27 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   final int contrOptionsTypeNum = 7;
   final int contrOptionsTypeNumPreError = 10;
   final int contrOptionsTypeRefresh = 8;
+
+  final int contrConsignTypeRefresh = 11;
   StreamController<int> optionsController = StreamController.broadcast();
+  StreamController<int> consignListController = StreamController.broadcast();
   String userTickChannel = "";
   String depthChannel;
   List<OrderEntity> _currentOrders = List();
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
-  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1,2,3,4,5]);
+  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
   @override
   void initState() {
 //    symbol = "hyn${widget.rightSymbol}";
-    symbol = "hyn";
-    marketCoin = "HYN/${widget.selectedCoin}";
+    print("!!!111${widget.selectedCoin}");
+    symbol = "hyn${widget.selectedCoin.toLowerCase()}";
+    marketCoin = "HYN/${widget.selectedCoin.toUpperCase()}";
+    print("!!!111222${widget.selectedCoin}");
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
 
     buyChartList.add(ExcDetailEntity(2, 6, 4));
@@ -104,25 +109,29 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
   @override
   void onCreated() {
-    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    exchangeModel = ExchangeInheritedModel
+        .of(context)
+        .exchangeModel;
     if (exchangeModel.isActiveAccount()) {
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
+      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
     depthChannel = SocketConfig.channelExchangeDepth(symbol, 1);
-//    BlocProvider.of(context).add(SubChannelEvent(channel: userTickChannel));
-//    BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
 
-    _currentOrders.addAll((List.generate(
-      10,
-      (index) => OrderEntity()..type = ExchangeType.SELL,
-    )));
+//    _currentOrders.addAll((List.generate(
+//      10,
+//      (index) => OrderEntity()..type = ExchangeType.SELL,
+//    )));
     super.onCreated();
   }
 
   @override
   void dispose() {
-//    BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
-//    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
+    if (exchangeModel.isActiveAccount()) {
+      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+    }
+    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
 
     optionsController.close();
     exchangeDetailBloc.close();
@@ -133,15 +142,27 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<SocketBloc, SocketState>(
-        bloc: BlocProvider.of(context),
+        bloc: BlocProvider.of<SocketBloc>(context),
         listener: (ctx, state) {
-          if(state is ExchangeMarketInfoState){
+          if (state is ChannelUserTickState) {
+            var temOrders = List<OrderEntity>();
+            state.response.forEach((entity) => {
+              if((entity as List<dynamic>).length >= 7){
+                temOrders.add(OrderEntity.fromSocketJson(entity))
+              }
+            });
+            if (temOrders.length > 0) {
+              print("!!!!!!!${state.response}");
+              _currentOrders.clear();
+              _currentOrders.addAll(temOrders);
+              consignListController.add(contrConsignTypeRefresh);
+            }
           }
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
           bloc: exchangeDetailBloc,
           listener: (ctx, state) {
-            if(state is ExchangeMarketInfoState){
+            if (state is ExchangeMarketInfoState) {
               marketInfoEntity = state.marketInfoEntity;
             }
           },
@@ -173,18 +194,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           Expanded(
             child: SingleChildScrollView(
                 child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                delegationListView(buyChartList,sailChartList),
-                /*Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    delegationListView(buyChartList, sailChartList),
+                    /*Row(
                   children: <Widget>[
                     Expanded(flex: 4, child: _depthChart()),
                   ],
                 ),*/
-                _exchangeOptions(),
-                _consignList()
-              ],
-            )),
+                    _exchangeOptions(),
+                    _consignList()
+                  ],
+                )),
           ),
         ],
       ),
@@ -206,8 +227,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Text(
-            '',
-//            'HYN/${widget.rightSymbol.toUpperCase()}',
+            marketCoin,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
         ),
@@ -278,24 +298,56 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           } else if (optionType.data == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
             numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
-          } else if (optionType.data == contrOptionsTypeRefresh) {
-
-          }
+          } else if (optionType.data == contrOptionsTypeRefresh) {}
           return Column(
             children: <Widget>[
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  FlatButton(
-                      child: Text("买入"),
-                      onPressed: () {
-                        isBuy = true;
-                      }),
-                  FlatButton(
-                      child: Text("卖出"),
-                      onPressed: () {
-                        isBuy = false;
-                      }),
                   Expanded(
+                    flex: 3,
+                    child: InkWell(
+                      onTap: () {
+                        optionsController.add(contrOptionsTypeBuy);
+                      },
+                      child: Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          image: DecorationImage(
+                              image: AssetImage(isBuy
+                                  ? "res/drawable/ic_exchange_bg_left_buy_select.png"
+                                  : "res/drawable/ic_exchange_bg_left_buy.png"),
+                              fit: BoxFit.fitWidth),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text('买入'),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: InkWell(
+                      onTap: () {
+                        optionsController.add(contrOptionsTypeSell);
+                      },
+                      child: Container(
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          image: DecorationImage(
+                              image: AssetImage(isBuy
+                                  ? "res/drawable/ic_exchange_bg_right_sell.png"
+                                  : "res/drawable/ic_exchange_bg_right_sell_select.png"),
+                              fit: BoxFit.fitWidth),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text('卖出'),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
                     child: Container(
                         height: 28,
                         padding: const EdgeInsets.only(left: 10, right: 10),
@@ -358,14 +410,17 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         hintText: "价格",
                       ),
                       onChanged: (price) {
-                        if(price.contains(".")){
+                        if (price.contains(".")) {
                           var priceAfter = price.split(".")[1];
-                          if(priceAfter.length <= marketInfoEntity.pricePrecision){
+                          if (priceAfter.length <= marketInfoEntity.pricePrecision) {
                             currentPrice = double.parse(price);
                             optionsController.add(contrOptionsTypePrice);
-                          }else{
+                          } else {
                             optionsController.add(contrOptionsTypePricePreError);
                           }
+                        } else {
+                          currentPrice = double.parse(price);
+                          optionsController.add(contrOptionsTypePrice);
                         }
                       },
                     ),
@@ -395,16 +450,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         hintText: "数量",
                       ),
                       onChanged: (number) {
-                        if(number.contains(".")){
+                        if (number.contains(".")) {
                           var priceAfter = number.split(".")[1];
-                          if(priceAfter.length <= marketInfoEntity.amountPrecision){
+                          if (priceAfter.length <= marketInfoEntity.amountPrecision) {
                             currentNum = double.parse(number);
                             optionsController.add(contrOptionsTypeNum);
-                          }else{
+                          } else {
                             optionsController.add(contrOptionsTypeNumPreError);
                           }
+                        } else {
+                          currentNum = double.parse(number);
+                          optionsController.add(contrOptionsTypeNum);
                         }
-
                       },
                     ),
                   )
@@ -766,56 +823,64 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 //  }
 
   Widget _consignList() {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: _currentOrders.length + 1,
-        itemBuilder: (ctx, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 13.0, bottom: 11, left: 13, right: 13),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+    return StreamBuilder<int>(
+      stream: consignListController.stream,
+      builder: (context, optionType) {
+        if (optionType.data == contrConsignTypeRefresh) {
+
+        }
+        return ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: _currentOrders.length + 1,
+            itemBuilder: (ctx, index) {
+              if (index == 0) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 13.0, bottom: 11, left: 13, right: 13),
+                  child: Column(
                     children: <Widget>[
-                      Text(
-                        "当前委托",
-                        style: TextStyle(fontSize: 16, color: DefaultColors.color333),
-                      ),
-                      Spacer(),
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.end,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 2.0),
-                            child: Image.asset(
-                              "res/drawable/ic_exhange_all_consign.png",
-                              width: 12,
-                              height: 12,
-                            ),
+                          Text(
+                            "当前委托",
+                            style: TextStyle(fontSize: 16, color: DefaultColors.color333),
                           ),
-                          SizedBox(
-                            width: 4,
+                          Spacer(),
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.end,
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 2.0),
+                                child: Image.asset(
+                                  "res/drawable/ic_exhange_all_consign.png",
+                                  width: 12,
+                                  height: 12,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text("全部", style: TextStyle(fontSize: 12, color: DefaultColors.color999))
+                            ],
                           ),
-                          Text("全部", style: TextStyle(fontSize: 12, color: DefaultColors.color999))
                         ],
                       ),
+                      SizedBox(
+                        height: 11,
+                      ),
+                      Divider(
+                        height: 1,
+                      )
                     ],
                   ),
-                  SizedBox(
-                    height: 11,
-                  ),
-                  Divider(
-                    height: 1,
-                  )
-                ],
-              ),
-            );
-          }
+                );
+              }
 
-          return OrderItem(_currentOrders[index - 1]);
-        });
+              return OrderItem(_currentOrders[index - 1],selectedCoin: widget.selectedCoin,);
+            });
+      },
+    );
   }
 
   Future changeDepthLevel(int newLevel) {
@@ -826,13 +891,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
   void buyAction() {
     if (exchangeModel.isActiveAccount()) {
-      if(isLimit && currentPriceStr.isEmpty){
+      if (isLimit && currentPriceStr.isEmpty) {
         Fluttertoast.showToast(msg: "价格不能为0");
-        return ;
+        return;
       }
-      if(currentNumStr.isEmpty){
+      if (currentNumStr.isEmpty) {
         Fluttertoast.showToast(msg: "数量不能为0");
-        return ;
+        return;
       }
       var exchangeType = isBuy ? ExchangeType.BUY : ExchangeType.SELL;
       if (isLimit) {
