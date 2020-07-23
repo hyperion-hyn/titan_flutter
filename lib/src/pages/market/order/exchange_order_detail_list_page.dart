@@ -1,25 +1,29 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/pages/market/order/api/api_orders.dart';
+import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 
 import '../../../global.dart';
-import 'entity/order_entity.dart';
 import 'item_order.dart';
+import 'item_order_detail.dart';
 
-class OpenOrdersPage extends StatefulWidget {
+class ExchangeOrderDetailListPage extends StatefulWidget {
+  final String market;
+
+  ExchangeOrderDetailListPage(this.market);
+
   @override
   State<StatefulWidget> createState() {
-    return OpenOrdersPageState();
+    return ExchangeOrderDetailListPageState();
   }
 }
 
-class OpenOrdersPageState extends State<OpenOrdersPage>
+class ExchangeOrderDetailListPageState
+    extends State<ExchangeOrderDetailListPage>
     with AutomaticKeepAliveClientMixin {
-  List<OrderEntity> _openOrders = List();
+  List<OrderDetail> _orderDetails = List();
   RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
@@ -55,8 +59,8 @@ class OpenOrdersPageState extends State<OpenOrdersPage>
         _loadMore();
       },
       child: ListView.builder(
-        itemCount: _openOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(_openOrders[index]),
+        itemCount: _orderDetails.length,
+        itemBuilder: (ctx, index) => OrderDetailItem(_orderDetails[index]),
       ),
     );
   }
@@ -66,11 +70,11 @@ class OpenOrdersPageState extends State<OpenOrdersPage>
     await Future.delayed(Duration(milliseconds: 1000));
 
     ///clear list before refresh
-    _openOrders.clear();
-    _openOrders.addAll(
+    _orderDetails.clear();
+    _orderDetails.addAll(
       (List.generate(
         5,
-        (index) => OrderEntity()..type = ExchangeType.SELL,
+        (index) => OrderDetail.fromJson({}),
       )),
     );
     _loadDataBloc.add(RefreshSuccessEvent());
@@ -80,14 +84,12 @@ class OpenOrdersPageState extends State<OpenOrdersPage>
 
   _loadMore() async {
     _currentPage++;
-    try {
-
-    } catch (e) {
+    try {} catch (e) {
       logger.e(e.toString());
     }
     await Future.delayed(Duration(milliseconds: 1000));
-    _openOrders.addAll((List.generate(
-        10, (index) => OrderEntity()..type = ExchangeType.SELL)));
+    _orderDetails
+        .addAll((List.generate(10, (index) => OrderDetail.fromJson({}))));
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
     _refreshController.loadComplete();

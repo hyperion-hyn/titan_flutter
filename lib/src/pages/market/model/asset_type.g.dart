@@ -16,16 +16,20 @@ AssetType _$AssetTypeFromJson(Map<String, dynamic> json) {
     json['exchange_available'] as String,
     json['exchange_freeze'] as String,
     json['btc'] as String,
+    json['usd'] as String,
+    json['cny'] as String,
   );
 }
 
 Map<String, dynamic> _$AssetTypeToJson(AssetType instance) => <String, dynamic>{
-  'account_available': instance.accountAvailable,
-  'account_freeze': instance.accountFreeze,
-  'withdraw_fee': instance.withdrawFee,
-  'recharge': instance.recharge,
-  'withdraw': instance.withdraw,
-  'exchange_available': instance.exchangeAvailable,
-  'exchange_freeze': instance.exchangeFreeze,
-  'btc': instance.btc,
-};
+      'account_available': instance.accountAvailable,
+      'account_freeze': instance.accountFreeze,
+      'withdraw_fee': instance.withdrawFee,
+      'recharge': instance.recharge,
+      'withdraw': instance.withdraw,
+      'exchange_available': instance.exchangeAvailable,
+      'exchange_freeze': instance.exchangeFreeze,
+      'btc': instance.btc,
+      'usd': instance.usd,
+      'cny': instance.cny,
+    };
