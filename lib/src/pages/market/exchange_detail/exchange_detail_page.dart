@@ -22,6 +22,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 
 import 'bloc/exchange_detail_bloc.dart';
 
@@ -46,15 +47,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   bool isBuy = true;
   bool isLimit = true;
   double currentPrice = 0;
-  double totalPrice = 0;
   double currentNum = 0;
   String currentPriceStr = "";
   String totalPriceStr = "";
-  String validNumStr = "";
+  String validNumStr = "~";
   String currentNumStr = "";
 
   TextEditingController priceEditController = new TextEditingController();
   TextEditingController numEditController = new TextEditingController();
+  TextEditingController totalEditController = new TextEditingController();
 
   final int contrOptionsTypeBuy = 0;
   final int contrOptionsTypeSell = 1;
@@ -109,10 +110,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
   @override
   void onCreated() {
-    exchangeModel = ExchangeInheritedModel
-        .of(context)
-        .exchangeModel;
+    print("oncreate");
+    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
     if (exchangeModel.isActiveAccount()) {
+      validNumStr = exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable;
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
@@ -147,12 +148,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           if (state is ChannelUserTickState) {
             var temOrders = List<OrderEntity>();
             state.response.forEach((entity) => {
-              if((entity as List<dynamic>).length >= 7){
-                temOrders.add(OrderEntity.fromSocketJson(entity))
-              }
-            });
+                  if ((entity as List<dynamic>).length >= 7) {temOrders.add(OrderEntity.fromSocketJson(entity))}
+                });
             if (temOrders.length > 0) {
-              print("!!!!!!!${state.response}");
+              print("!!!!!!!order= ${state.response}");
               _currentOrders.clear();
               _currentOrders.addAll(temOrders);
               consignListController.add(contrConsignTypeRefresh);
@@ -194,18 +193,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           Expanded(
             child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    delegationListView(buyChartList, sailChartList),
-                    /*Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                delegationListView(buyChartList, sailChartList),
+                /*Row(
                   children: <Widget>[
                     Expanded(flex: 4, child: _depthChart()),
                   ],
                 ),*/
-                    _exchangeOptions(),
-                    _consignList()
-                  ],
-                )),
+                _exchangeOptions(),
+                _consignList()
+              ],
+            )),
           ),
         ],
       ),
@@ -252,21 +251,44 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     );
   }
 
+  updateTotalView(double totalPrice) {
+    totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+    totalEditController.text = totalPriceStr;
+    totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
+  }
+
+  double getValidNum(){
+    if(exchangeModel.isActiveAccount()){
+      if(isBuy){
+        return double.parse(exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable);
+      }else{
+        return double.parse(exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable);
+      }
+    }else{
+      return 0;
+    }
+  }
+
   Widget _exchangeOptions() {
     return StreamBuilder<int>(
         stream: optionsController.stream,
         builder: (context, optionType) {
           if (optionType.data == contrOptionsTypeBuy) {
             isBuy = true;
+            validNumStr = exchangeModel.activeAccount?.assetList
+                    ?.getAsset(widget.selectedCoin.toUpperCase())
+                    ?.exchangeAvailable ??
+                "~";
           } else if (optionType.data == contrOptionsTypeSell) {
             isBuy = false;
+            validNumStr = exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable ?? "~";
           } else if (optionType.data == contrOptionsTypeLimit) {
             isLimit = true;
           } else if (optionType.data == contrOptionsTypeMarket) {
             isLimit = false;
           } else if (optionType.data == contrOptionsTypePrice) {
-            totalPrice = currentPrice * currentNum;
-            totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+            var totalPrice = currentPrice * currentNum;
+            updateTotalView(totalPrice);
 
             currentPriceStr = currentPrice.toString();
           } else if (optionType.data == contrOptionsTypePricePreError) {
@@ -275,8 +297,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           } else if (optionType.data == contrOptionsTypePriceAdd) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice += (1 / preNum);
-            totalPrice = currentPrice * currentNum;
-            totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+            var totalPrice = currentPrice * currentNum;
+            updateTotalView(totalPrice);
 
             currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
@@ -284,228 +306,409 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           } else if (optionType.data == contrOptionsTypePriceDecrease) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice -= (1 / preNum);
-            totalPrice = currentPrice * currentNum;
-            totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+            var totalPrice = currentPrice * currentNum;
+            updateTotalView(totalPrice);
 
             currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionType.data == contrOptionsTypeNum) {
-            totalPrice = currentPrice * currentNum;
-            totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+            var totalPrice = currentPrice * currentNum;
+            updateTotalView(totalPrice);
 
             currentNumStr = currentNum.toString();
           } else if (optionType.data == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
             numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
           } else if (optionType.data == contrOptionsTypeRefresh) {}
-          return Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    flex: 3,
-                    child: InkWell(
-                      onTap: () {
-                        optionsController.add(contrOptionsTypeBuy);
-                      },
-                      child: Container(
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(
-                              image: AssetImage(isBuy
-                                  ? "res/drawable/ic_exchange_bg_left_buy_select.png"
-                                  : "res/drawable/ic_exchange_bg_left_buy.png"),
-                              fit: BoxFit.fitWidth),
+          return Padding(
+            padding: const EdgeInsets.only(top: 20.0, bottom: 16, left: 14, right: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: InkWell(
+                        onTap: () {
+                          optionsController.add(contrOptionsTypeBuy);
+                        },
+                        child: Container(
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            image: DecorationImage(
+                                image: AssetImage(isBuy
+                                    ? "res/drawable/ic_exchange_bg_left_buy_select.png"
+                                    : "res/drawable/ic_exchange_bg_left_buy.png"),
+                                fit: BoxFit.fitWidth),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text('买入'),
                         ),
-                        alignment: Alignment.center,
-                        child: Text('买入'),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: InkWell(
-                      onTap: () {
-                        optionsController.add(contrOptionsTypeSell);
-                      },
-                      child: Container(
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          image: DecorationImage(
-                              image: AssetImage(isBuy
-                                  ? "res/drawable/ic_exchange_bg_right_sell.png"
-                                  : "res/drawable/ic_exchange_bg_right_sell_select.png"),
-                              fit: BoxFit.fitWidth),
+                    Expanded(
+                      flex: 3,
+                      child: InkWell(
+                        onTap: () {
+                          optionsController.add(contrOptionsTypeSell);
+                        },
+                        child: Container(
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            image: DecorationImage(
+                                image: AssetImage(isBuy
+                                    ? "res/drawable/ic_exchange_bg_right_sell.png"
+                                    : "res/drawable/ic_exchange_bg_right_sell_select.png"),
+                                fit: BoxFit.fitWidth),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text('卖出'),
                         ),
-                        alignment: Alignment.center,
-                        child: Text('卖出'),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Container(
-                        height: 28,
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-                            borderRadius: BorderRadius.all(Radius.circular(3))),
-                        child: new DropdownButtonHideUnderline(
-                            child: new DropdownButton(
-                              icon: Image.asset(
-                                "res/drawable/ic_exchange_down_triangle.png",
-                                width: 10,
+                    Expanded(
+                      flex: 4,
+                      child: Container(
+                          height: 28,
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                              borderRadius: BorderRadius.all(Radius.circular(3))),
+                          child: new DropdownButtonHideUnderline(
+                              child: new DropdownButton(
+                            icon: Image.asset(
+                              "res/drawable/ic_exchange_down_triangle.png",
+                              width: 10,
+                            ),
+                            items: [
+                              new DropdownMenuItem(
+                                child: new Text('限价委托'),
+                                value: contrOptionsTypeLimit,
                               ),
-                              items: [
-                                new DropdownMenuItem(
-                                  child: new Text('限价委托'),
-                                  value: contrOptionsTypeLimit,
-                                ),
-                                new DropdownMenuItem(
-                                  child: new Text('市价委托'),
-                                  value: contrOptionsTypeMarket,
-                                ),
-                              ],
-                              hint: new Text('请选择'),
-                              onChanged: (value) {
-                                optionsController.add(value);
-                              },
-                              isExpanded: true,
-                              value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
-                              style: new TextStyle(
-                                color: DefaultColors.color333,
-                                fontSize: 14,
+                              new DropdownMenuItem(
+                                child: new Text('市价委托'),
+                                value: contrOptionsTypeMarket,
                               ),
-                            ))),
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  InkWell(
-                    onTap: () {
-                      optionsController.add(contrOptionsTypePriceDecrease);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 12, right: 12),
-                      child: Text(
-                        "-",
-                        style: TextStyle(fontSize: 21, color: DefaultColors.color999),
-                      ),
+                            ],
+                            hint: new Text('请选择'),
+                            onChanged: (value) {
+                              optionsController.add(value);
+                            },
+                            isExpanded: true,
+                            value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
+                            style: new TextStyle(
+                              color: DefaultColors.color333,
+                              fontSize: 14,
+                            ),
+                          ))),
                     ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: priceEditController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                      decoration: new InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                        border: InputBorder.none,
-                        hintStyle: TextStyles.textCaaaS14,
-                        hintText: "价格",
-                      ),
-                      onChanged: (price) {
-                        if (price.contains(".")) {
-                          var priceAfter = price.split(".")[1];
-                          if (priceAfter.length <= marketInfoEntity.pricePrecision) {
-                            currentPrice = double.parse(price);
-                            optionsController.add(contrOptionsTypePrice);
-                          } else {
-                            optionsController.add(contrOptionsTypePricePreError);
-                          }
-                        } else {
-                          currentPrice = double.parse(price);
-                          optionsController.add(contrOptionsTypePrice);
-                        }
-                      },
-                    ),
-                  ),
-                  Text("USDT"),
-                  InkWell(
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    height: 36,
+                    margin: EdgeInsets.only(top: 10, bottom: 2),
+                    padding: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                        borderRadius: BorderRadius.all(Radius.circular(3))),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "价格",
+                          style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: priceEditController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                            decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.only(bottom: 12.0),
+                              border: InputBorder.none,
+                              hintStyle: TextStyles.textCaaaS14,
+                            ),
+                            onChanged: (price) {
+                              if (price.contains(".")) {
+                                var priceAfter = price.split(".")[1];
+                                if (priceAfter.length <= marketInfoEntity.pricePrecision) {
+                                  currentPrice = double.parse(price);
+                                  optionsController.add(contrOptionsTypePrice);
+                                } else {
+                                  optionsController.add(contrOptionsTypePricePreError);
+                                }
+                              } else {
+                                if (price.length == 0) {
+                                  currentPrice = 0;
+                                } else {
+                                  currentPrice = double.parse(price);
+                                }
+                                optionsController.add(contrOptionsTypePrice);
+                              }
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          color: DefaultColors.colord0d0d0,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            optionsController.add(contrOptionsTypePriceDecrease);
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(top: 4, bottom: 4, left: 17, right: 17),
+                            child: Text(
+                              "-",
+                              style: TextStyle(fontSize: 21, color: DefaultColors.color999),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 20,
+                          color: DefaultColors.colord0d0d0,
+                        ),
+                        InkWell(
+                            onTap: () {
+                              optionsController.add(contrOptionsTypePriceAdd);
+                            },
+                            child: Padding(
+                                padding: EdgeInsets.only(top: 7, bottom: 7, left: 17, right: 17),
+                                child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
+                      ],
+                    )),
+                /*Row(
+                  children: <Widget>[
+                    InkWell(
                       onTap: () {
-                        optionsController.add(contrOptionsTypePriceAdd);
+                        optionsController.add(contrOptionsTypePriceDecrease);
                       },
                       child: Padding(
-                          padding: EdgeInsets.only(top: 5, bottom: 5, left: 12, right: 12),
-                          child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("数量"),
-                  Expanded(
-                    child: TextField(
-                      controller: numEditController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                      decoration: new InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                        border: InputBorder.none,
-                        hintStyle: TextStyles.textCaaaS14,
-                        hintText: "数量",
+                        padding: EdgeInsets.only(left: 12, right: 12),
+                        child: Text(
+                          "-",
+                          style: TextStyle(fontSize: 21, color: DefaultColors.color999),
+                        ),
                       ),
-                      onChanged: (number) {
-                        if (number.contains(".")) {
-                          var priceAfter = number.split(".")[1];
-                          if (priceAfter.length <= marketInfoEntity.amountPrecision) {
-                            currentNum = double.parse(number);
-                            optionsController.add(contrOptionsTypeNum);
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: priceEditController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                        decoration: new InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                          border: InputBorder.none,
+                          hintStyle: TextStyles.textCaaaS14,
+                          hintText: "价格",
+                        ),
+                        onChanged: (price) {
+                          if (price.contains(".")) {
+                            var priceAfter = price.split(".")[1];
+                            if (priceAfter.length <= marketInfoEntity.pricePrecision) {
+                              currentPrice = double.parse(price);
+                              optionsController.add(contrOptionsTypePrice);
+                            } else {
+                              optionsController.add(contrOptionsTypePricePreError);
+                            }
                           } else {
-                            optionsController.add(contrOptionsTypeNumPreError);
+                            currentPrice = double.parse(price);
+                            optionsController.add(contrOptionsTypePrice);
                           }
-                        } else {
-                          currentNum = double.parse(number);
-                          optionsController.add(contrOptionsTypeNum);
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  )
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("交易额 ${totalPriceStr}USDT"),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("可用 ${validNumStr}USDT"),
-                ],
-              ),
-              Container(
-                height: 30,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  color: isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
+                    Text("USDT"),
+                    InkWell(
+                        onTap: () {
+                          optionsController.add(contrOptionsTypePriceAdd);
+                        },
+                        child: Padding(
+                            padding: EdgeInsets.only(top: 5, bottom: 5, left: 12, right: 12),
+                            child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
+                  ],
+                ),*/
+                Container(
+                  height: 36,
+                  margin: EdgeInsets.only(top: 10, bottom: 2),
+                  padding: const EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "数量",
+                        style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: numEditController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                          decoration: new InputDecoration(
+                            contentPadding: EdgeInsets.only(bottom: 12.0),
+                            border: InputBorder.none,
+                            hintStyle: TextStyles.textCaaaS14,
+                          ),
+                          onChanged: (number) {
+                            if (number.contains(".")) {
+                              var priceAfter = number.split(".")[1];
+                              if (priceAfter.length <= marketInfoEntity.amountPrecision) {
+                                currentNum = double.parse(number);
+                                optionsController.add(contrOptionsTypeNum);
+                              } else {
+                                optionsController.add(contrOptionsTypeNumPreError);
+                              }
+                            } else {
+                              if (number.length == 0) {
+                                currentNum = 0;
+                              } else {
+                                currentNum = double.parse(number);
+                              }
+                              optionsController.add(contrOptionsTypeNum);
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: 36,
+                        child: FlatButton(
+                            padding: const EdgeInsets.all(0),
+                            onPressed: () {},
+                            child: Text(
+                              "25%",
+                              style: TextStyle(fontSize: 10, color: DefaultColors.color999),
+                            )),
+                      ),
+                      SizedBox(
+                        width: 36,
+                        child: FlatButton(
+                            padding: const EdgeInsets.all(0),
+                            onPressed: () {},
+                            child: Text("50%", style: TextStyle(fontSize: 10, color: DefaultColors.color999))),
+                      ),
+                      SizedBox(
+                        width: 36,
+                        child: FlatButton(
+                            padding: const EdgeInsets.all(0),
+                            onPressed: () {},
+                            child: Text(
+                              "100%",
+                              style: TextStyle(fontSize: 10, color: DefaultColors.color999),
+                            )),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      )
+                    ],
+                  ),
                 ),
-                child: FlatButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(22.0)),
-                    ),
-                    padding: const EdgeInsets.all(0.0),
-                    child: Text(exchangeModel.isActiveAccount() ? isBuy ? "买入HYN" : "卖出HYN" : "请登录",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isLoading ? DefaultColors.color999 : Colors.white,
-                        )),
-                    onPressed: isLoading
-                        ? null
-                        : () async {
-                      isLoading = true;
-                      optionsController.add(contrOptionsTypeRefresh);
+                Container(
+                  height: 36,
+                  margin: EdgeInsets.only(top: 10, bottom: 2),
+                  padding: const EdgeInsets.only(left: 10),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+                      borderRadius: BorderRadius.all(Radius.circular(3))),
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "金额",
+                        style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: totalEditController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                          decoration: new InputDecoration(
+                            contentPadding: EdgeInsets.only(bottom: 12.0),
+                            border: InputBorder.none,
+                            hintStyle: TextStyles.textCaaaS14,
+                          ),
+                          onChanged: (number) {
+                            if (number.contains(".")) {
+                              var priceAfter = number.split(".")[1];
+                              if (priceAfter.length <= marketInfoEntity.amountPrecision) {
+                                currentNum = double.parse(number);
+                                optionsController.add(contrOptionsTypeNum);
+                              } else {
+                                optionsController.add(contrOptionsTypeNumPreError);
+                              }
+                            } else {
+                              currentNum = double.parse(number);
+                              optionsController.add(contrOptionsTypeNum);
+                            }
+                          },
+                        ),
+                      ),
+//                      Expanded(child: Text("$totalPriceStr")),
+                      Text(
+                        "USDT",
+                        style: TextStyle(fontSize: 14, color: DefaultColors.color777),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                  child: Text(
+                    "可用  ${getValidNum() == 0 ? "~" : getValidNum()}  USDT",
+                    style: TextStyle(color: DefaultColors.color999, fontSize: 10),
+                  ),
+                ),
+                Container(
+                  height: 36,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    color: isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
+                  ),
+                  child: FlatButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(22.0)),
+                      ),
+                      padding: const EdgeInsets.all(0.0),
+                      child: Text(exchangeModel.isActiveAccount() ? isBuy ? "买入" : "卖出" : "请登录",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isLoading ? DefaultColors.color999 : Colors.white,
+                          )),
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              isLoading = true;
+                              optionsController.add(contrOptionsTypeRefresh);
 
-                      await buyAction();
-                      isLoading = false;
-                      optionsController.add(contrOptionsTypeRefresh);
-                    }),
-              )
-            ],
+                              await buyAction();
+                              isLoading = false;
+                              optionsController.add(contrOptionsTypeRefresh);
+                            }),
+                )
+              ],
+            ),
           );
         });
   }
@@ -826,9 +1029,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     return StreamBuilder<int>(
       stream: consignListController.stream,
       builder: (context, optionType) {
-        if (optionType.data == contrConsignTypeRefresh) {
-
-        }
+        if (optionType.data == contrConsignTypeRefresh) {}
         return ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -877,7 +1078,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                 );
               }
 
-              return OrderItem(_currentOrders[index - 1],selectedCoin: widget.selectedCoin,);
+              return OrderItem(
+                _currentOrders[index - 1],
+                selectedCoin: widget.selectedCoin,
+              );
             });
       },
     );
@@ -906,7 +1110,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
         exchangeDetailBloc.add(MarketExchangeEvent(marketCoin, exchangeType, currentNumStr));
       }
     } else {
-      //todo login
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
     }
   }
 }
