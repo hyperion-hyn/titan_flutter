@@ -13,9 +13,10 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
-import 'package:titan/src/pages/market/order/entity/order_entity.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
+import 'package:titan/src/pages/market/order/exchange_order_mangement_page.dart';
 import 'package:titan/src/pages/market/quote/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -74,11 +75,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   StreamController<int> consignListController = StreamController.broadcast();
   String userTickChannel = "";
   String depthChannel;
-  List<OrderEntity> _currentOrders = List();
+  List<Order> _currentOrders = List();
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
-  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
+  MarketInfoEntity marketInfoEntity =
+      MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
@@ -118,7 +120,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
     depthChannel = SocketConfig.channelExchangeDepth(symbol, 1);
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+    BlocProvider.of<SocketBloc>(context)
+        .add(SubChannelEvent(channel: depthChannel));
 
 //    _currentOrders.addAll((List.generate(
 //      10,
@@ -146,9 +149,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
         bloc: BlocProvider.of<SocketBloc>(context),
         listener: (ctx, state) {
           if (state is ChannelUserTickState) {
-            var temOrders = List<OrderEntity>();
+            var temOrders = List<Order>();
             state.response.forEach((entity) => {
-                  if ((entity as List<dynamic>).length >= 7) {temOrders.add(OrderEntity.fromSocketJson(entity))}
+                  if ((entity as List<dynamic>).length >= 7)
+                    {temOrders.add(Order.fromSocket(entity))}
                 });
             if (temOrders.length > 0) {
               print("!!!!!!!order= ${state.response}");
@@ -240,7 +244,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             ),
           ),
           decoration: BoxDecoration(
-              color: isBuy ? HexColor("#EBF8F2") : HexColor("#F9EFEF"), borderRadius: BorderRadius.circular(4.0)),
+              color: isBuy ? HexColor("#EBF8F2") : HexColor("#F9EFEF"),
+              borderRadius: BorderRadius.circular(4.0)),
         ),
         Spacer(),
         Padding(
@@ -293,25 +298,30 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             currentPriceStr = currentPrice.toString();
           } else if (optionType.data == contrOptionsTypePricePreError) {
             priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
+            priceEditController.selection = TextSelection.fromPosition(
+                TextPosition(offset: currentPriceStr.length));
           } else if (optionType.data == contrOptionsTypePriceAdd) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice += (1 / preNum);
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
-            currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
+            currentPriceStr =
+                currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
+            priceEditController.selection = TextSelection.fromPosition(
+                TextPosition(offset: currentPriceStr.length));
           } else if (optionType.data == contrOptionsTypePriceDecrease) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice -= (1 / preNum);
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
-            currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
+            currentPriceStr =
+                currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
+            priceEditController.selection = TextSelection.fromPosition(
+                TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionType.data == contrOptionsTypeNum) {
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
@@ -319,7 +329,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             currentNumStr = currentNum.toString();
           } else if (optionType.data == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
-            numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
+            numEditController.selection = TextSelection.fromPosition(
+                TextPosition(offset: currentNumStr.length));
           } else if (optionType.data == contrOptionsTypeRefresh) {}
           return Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 16, left: 14, right: 14),
@@ -1037,7 +1048,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             itemBuilder: (ctx, index) {
               if (index == 0) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: 13.0, bottom: 11, left: 13, right: 13),
+                  padding: const EdgeInsets.only(
+                      top: 13.0, bottom: 11, left: 13, right: 13),
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -1045,7 +1057,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         children: <Widget>[
                           Text(
                             "当前委托",
-                            style: TextStyle(fontSize: 16, color: DefaultColors.color333),
+                            style: TextStyle(
+                                fontSize: 16, color: DefaultColors.color333),
                           ),
                           Spacer(),
                           Wrap(
@@ -1062,7 +1075,22 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                               SizedBox(
                                 width: 4,
                               ),
-                              Text("全部", style: TextStyle(fontSize: 12, color: DefaultColors.color999))
+                              InkWell(
+                                child: Text("全部",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: DefaultColors.color999,
+                                    )),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              ExchangeOrderManagementPage(
+                                                marketCoin,
+                                              )));
+                                },
+                              )
                             ],
                           ),
                         ],
@@ -1080,7 +1108,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
               return OrderItem(
                 _currentOrders[index - 1],
-                selectedCoin: widget.selectedCoin,
+                market: marketCoin,
               );
             });
       },
@@ -1105,9 +1133,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
       }
       var exchangeType = isBuy ? ExchangeType.BUY : ExchangeType.SELL;
       if (isLimit) {
-        exchangeDetailBloc.add(LimitExchangeEvent(marketCoin, exchangeType, currentPriceStr, currentNumStr));
+        exchangeDetailBloc.add(LimitExchangeEvent(
+            marketCoin, exchangeType, currentPriceStr, currentNumStr));
       } else {
-        exchangeDetailBloc.add(MarketExchangeEvent(marketCoin, exchangeType, currentNumStr));
+        exchangeDetailBloc
+            .add(MarketExchangeEvent(marketCoin, exchangeType, currentNumStr));
       }
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));

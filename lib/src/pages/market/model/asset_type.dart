@@ -28,6 +28,12 @@ class AssetType extends Object {
   @JsonKey(name: 'btc')
   String btc;
 
+  @JsonKey(name: 'usd')
+  String usd;
+
+  @JsonKey(name: 'cny')
+  String cny;
+
   AssetType(
     this.accountAvailable,
     this.accountFreeze,
@@ -37,6 +43,8 @@ class AssetType extends Object {
     this.exchangeAvailable,
     this.exchangeFreeze,
     this.btc,
+    this.usd,
+    this.cny,
   );
 
   factory AssetType.fromJson(Map<String, dynamic> srcJson) =>

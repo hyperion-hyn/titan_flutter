@@ -115,15 +115,50 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                   print('使用钱包授权登录: account: $account');
 
                   if (account != null) {
-                    Fluttertoast.showToast(msg: '登录成功!');
+//                    UiUtil.showHintToast(
+//                        context,
+//                        Image.asset(
+//                          'res/drawable/ic_toast_check.png',
+//                          width: 60,
+//                          height: 60,
+//                        ),
+//                        '授权登录成功');
+                    Fluttertoast.showToast(msg: '授权登录成功');
+
                     BlocProvider.of<ExchangeCmpBloc>(context)
                         .add(UpdateExchangeAccountEvent(account));
 
                     BlocProvider.of<ExchangeCmpBloc>(context)
                         .add(UpdateAssetsEvent());
                     Navigator.of(context).pop();
+                  } else {
+                    Fluttertoast.showToast(msg: '授权登录成功');
+//                    UiUtil.showHintToast(
+//                        context,
+//                        Padding(
+//                          padding: const EdgeInsets.all(16.0),
+//                          child: Image.asset(
+//                            'res/drawable/ic_toast_cross.png',
+//                            width: 30,
+//                            height: 30,
+//                          ),
+//                        ),
+//                        '授权登录失败');
                   }
-                } catch (e) {}
+                } catch (e) {
+                  Fluttertoast.showToast(msg: '授权登录成功');
+//                  UiUtil.showHintToast(
+//                      context,
+//                      Padding(
+//                        padding: const EdgeInsets.all(16.0),
+//                        child: Image.asset(
+//                          'res/drawable/ic_toast_cross.png',
+//                          width: 30,
+//                          height: 30,
+//                        ),
+//                      ),
+//                      '授权登录失败');
+                }
               }
             },
             height: 45,

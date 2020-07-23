@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/basic/http/signer.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -104,6 +106,13 @@ class _ApiDemoState extends State {
               print(ret);
             },
             child: Text('充1000ETH'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(ClearExchangeAccountEvent());
+            },
+            child: Text('清除当前交易账户'),
           ),
         ],
       ),
