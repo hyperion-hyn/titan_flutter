@@ -18,4 +18,6 @@ class UpdateExchangeAccountState extends ExchangeCmpState {
   UpdateExchangeAccountState(this.account);
 }
 
+class ClearExchangeAccountState extends ExchangeCmpState{}
+
 class UpdateAssetsState extends ExchangeCmpState {}

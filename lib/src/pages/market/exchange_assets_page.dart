@@ -7,21 +7,23 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
-import 'package:titan/src/pages/market/transfer_page.dart';
+import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'deposit_page.dart';
 import 'withdraw_page.dart';
 
-class BalancesPage extends StatefulWidget {
+class ExchangeAssetsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _BalancesPageState();
+    return _ExchangeAssetsPageState();
   }
 }
 
-class _BalancesPageState extends BaseState<BalancesPage> {
+class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
@@ -158,10 +160,8 @@ class _BalancesPageState extends BaseState<BalancesPage> {
                           style: TextStyle(color: HexColor('#FF1095B0')),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TransferPage()));
+                          Application.router.navigateTo(
+                              context, Routes.exchange_transfer_page);
                         },
                         borderSide: BorderSide(
                           color: HexColor('#FF1095B0'),

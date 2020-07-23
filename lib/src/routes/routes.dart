@@ -34,6 +34,12 @@ class Routes {
       '/wallet/create/confirm_resume_word';
   static const String confirm_success_papge = '/wallet/transfer/success_page';
 
+  ///Exchange
+  static const String exchange_assets_page = '/exchange/assets';
+  static const String exchange_transfer_page = '/exchange/transfer';
+  static const String exchange_transfer_success_page =
+      '/exchange/transfer_success';
+
   //contribution
   static const String contribute_tasks_list = '/contribution/tasks';
   static const String contribute_done = '/contribution/done';
@@ -143,6 +149,23 @@ class Routes {
     router.define(confirm_success_papge,
         handler: confirmSuccessHandler,
         transitionType: pushNewPageTransitionType);
+
+    ///Exchange
+    router.define(
+      exchange_assets_page,
+      handler: exchangeAssetsHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(
+      exchange_transfer_page,
+      handler: exchangeTransferHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(
+      exchange_transfer_success_page,
+      handler: exchangeTransferSuccessHandler,
+      transitionType: pushNewPageTransitionType,
+    );
 
     //contribution
     router.define(contribute_tasks_list,

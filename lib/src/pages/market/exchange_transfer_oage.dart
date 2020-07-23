@@ -10,22 +10,24 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/transfer_success_page.dart';
+import 'package:titan/src/pages/market/exchange_transfer_success_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 
 import 'model/asset_list.dart';
 
-class TransferPage extends StatefulWidget {
+class ExchangeTransferPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _TransferPageState();
+    return _ExchangeTransferPageState();
   }
 }
 
-class _TransferPageState extends BaseState<TransferPage> {
+class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   String _selectedCoinType = 'HYN';
   TextEditingController _amountController = TextEditingController();
   final _fromKey = GlobalKey<FormState>();
@@ -479,10 +481,6 @@ class _TransferPageState extends BaseState<TransferPage> {
   _transfer() async {
     if (_fromExchangeToWallet) {
     } else {}
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TransferSuccessPage(),
-        ));
+    Application.router.navigateTo(context, Routes.exchange_transfer_success_page);
   }
 }

@@ -8,11 +8,13 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
-import 'package:titan/src/pages/market/balances_page.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/market/exchange_assets_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
@@ -77,7 +79,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         bloc: _exchangeBloc,
         builder: (context, state) {
           if (state is SwitchToAuthState) {
-            return ExchangeAuthPage(_exchangeBloc);
+            return ExchangeAuthPage();
           } else if (state is SwitchToContentState) {
             return _contentView();
           }
@@ -196,8 +198,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ExchangeDetailPage(selectedCoin:"USDT", exchangeType:0)));
+                          builder: (context) => ExchangeDetailPage(
+                              selectedCoin: "USDT", exchangeType: 0)));
                 },
                 width: 88,
                 height: 38,
@@ -225,10 +227,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         onTap: () {
           if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
               null) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BalancesPage()));
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
           } else {
-            _exchangeBloc.add(SwitchToAuthEvent());
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           }
         },
         child: Row(

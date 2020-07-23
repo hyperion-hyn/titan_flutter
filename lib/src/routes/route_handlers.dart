@@ -8,6 +8,9 @@ import 'package:titan/src/components/root_page_control_component/root_page_contr
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange_assets_page.dart';
+import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
+import 'package:titan/src/pages/market/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
@@ -137,6 +140,21 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
   return ConfirmSuccessPage();
+});
+
+///Exchange
+var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeAssetsPage();
+});
+
+var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeTransferPage();
+});
+
+var exchangeTransferSuccessHandler = Handler(handlerFunc: (context, params) {
+  return ExchangeTransferSuccessPage();
 });
 
 //contribution

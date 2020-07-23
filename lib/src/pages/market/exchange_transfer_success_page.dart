@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/pages/market/transfer_page.dart';
+import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
 import 'package:titan/src/routes/routes.dart';
 
-class TransferSuccessPage extends StatefulWidget {
-  TransferSuccessPage();
+class ExchangeTransferSuccessPage extends StatefulWidget {
+  ExchangeTransferSuccessPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _TransferSuccessPageState();
+    return _ExchangeTransferSuccessPageState();
   }
 }
 
-class _TransferSuccessPageState extends State<TransferSuccessPage> {
+class _ExchangeTransferSuccessPageState
+    extends State<ExchangeTransferSuccessPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -74,7 +75,7 @@ class _TransferSuccessPageState extends State<TransferSuccessPage> {
                       textColor: Colors.white,
                       disabledTextColor: Colors.white,
                       onPressed: () async {
-                        Navigator.of(context).pop();
+                        Routes.popUntilCachedEntryRouteName(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
