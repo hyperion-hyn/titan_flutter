@@ -49,10 +49,9 @@ class ChannelKLine24HourState extends SocketState {
 }
 
 class ChannelKLinePeriodState extends SocketState {
-
   final String channel;
   final Map<String, dynamic> response;
-  ChannelKLinePeriodState({this.channel, pe,this.response});
+  ChannelKLinePeriodState({this.channel, this.response});
 }
 
 class ChannelExchangeDepthState extends SocketState {
@@ -69,5 +68,3 @@ class ChannelUserTickState extends SocketState {
   final Map<String, dynamic> response;
   ChannelUserTickState({this.response});
 }
-
-
