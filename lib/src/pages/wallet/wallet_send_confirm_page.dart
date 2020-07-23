@@ -566,13 +566,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
             activatedWallet.wallet);
       }
 
-//      await UiUtil.showSetBioAuthDialog(
-//        context,
-//        '生物识别',
-//        activatedWallet.wallet,
-//        walletPassword,
-//      );
-
       Application.router.navigateTo(context, Routes.confirm_success_papge);
     } catch (_) {
       LogUtil.uploadException(_, "ETH or Bitcoin upload");

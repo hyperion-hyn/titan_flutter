@@ -56,6 +56,8 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           exchangeModel.isShowBalances = state.isShow;
         } else if (state is UpdateExchangeAccountState) {
           exchangeModel.activeAccount = state.account;
+        } else if (state is ClearExchangeAccountState) {
+          exchangeModel.activeAccount = null;
         } else if (state is UpdateAssetsState) {
           if (exchangeModel.activeAccount != null) {
             var ret = await _exchangeApi.getAssetsList();

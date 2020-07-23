@@ -10,29 +10,28 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/transfer_success_page.dart';
+import 'package:titan/src/pages/market/exchange_transfer_success_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 
 import 'model/asset_list.dart';
 
-class TransferPage extends StatefulWidget {
+class ExchangeTransferPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _TransferPageState();
+    return _ExchangeTransferPageState();
   }
 }
 
-class _TransferPageState extends BaseState<TransferPage> {
+class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   String _selectedCoinType = 'HYN';
   TextEditingController _amountController = TextEditingController();
   final _fromKey = GlobalKey<FormState>();
-  TransferType _transferType = TransferType.AccountToExchange;
-  bool _isFromAccount = true;
-  List<DropdownMenuItem> _transferItemList = List();
-  String _selectedTransferTypeValue = 'exchange';
+  bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi;
 
   @override
@@ -41,8 +40,6 @@ class _TransferPageState extends BaseState<TransferPage> {
     super.onCreated();
 
     _exchangeApi = ExchangeInheritedModel.of(context).exchangeApi;
-
-    _initTransferItemList();
   }
 
   @override
@@ -95,57 +92,12 @@ class _TransferPageState extends BaseState<TransferPage> {
     );
   }
 
-  _initTransferItemList() {
-    _transferItemList.add(
-      DropdownMenuItem(
-        value: 'wallet',
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            '海伯利安钱包',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-    _transferItemList.add(
-      DropdownMenuItem(
-        value: 'exchange',
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            '交易账户',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  TransferType _curretnTransferType() {
-    if (_isFromAccount && _selectedTransferTypeValue == 'exchange') {
-      return TransferType.AccountToExchange;
-    } else if (_isFromAccount && _selectedTransferTypeValue == 'wallet') {
-      return TransferType.AccountToWallet;
-    } else if (!_isFromAccount && _selectedTransferTypeValue == 'exchange') {
-      return TransferType.ExchangeToAccount;
-    } else if (!_isFromAccount && _selectedTransferTypeValue == 'wallet') {
-      return TransferType.WalletToAccount;
-    }
-  }
-
-  _transferTypeItem(bool isAccountItem) {
-    if (isAccountItem) {
+  _transferTypeItem(bool _isExchange) {
+    if (_isExchange) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
         child: Text(
-          '资金账户',
+          '交易账户',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -153,16 +105,14 @@ class _TransferPageState extends BaseState<TransferPage> {
         ),
       );
     } else {
-      return DropdownButtonHideUnderline(
-        child: DropdownButton(
-          onChanged: (value) {
-            setState(() {
-              _selectedTransferTypeValue = value;
-              _transferType = _curretnTransferType();
-            });
-          },
-          value: _selectedTransferTypeValue,
-          items: _transferItemList,
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+        child: Text(
+          '海伯利安钱包',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       );
     }
@@ -231,7 +181,7 @@ class _TransferPageState extends BaseState<TransferPage> {
                         SizedBox(
                           width: 32,
                         ),
-                        _transferTypeItem(_isFromAccount),
+                        _transferTypeItem(_fromExchangeToWallet),
                       ],
                     ),
                     Divider(),
@@ -246,7 +196,7 @@ class _TransferPageState extends BaseState<TransferPage> {
                         SizedBox(
                           width: 32,
                         ),
-                        _transferTypeItem(!_isFromAccount),
+                        _transferTypeItem(!_fromExchangeToWallet),
                       ],
                     ),
                   ],
@@ -263,8 +213,7 @@ class _TransferPageState extends BaseState<TransferPage> {
                 ),
                 onTap: () {
                   setState(() {
-                    _isFromAccount = !_isFromAccount;
-                    _transferType = _curretnTransferType();
+                    _fromExchangeToWallet = !_fromExchangeToWallet;
                   });
                 },
               )
@@ -491,16 +440,6 @@ class _TransferPageState extends BaseState<TransferPage> {
   }
 
   _transferHint() {
-    var msg;
-    if (_transferType == TransferType.AccountToExchange) {
-      msg = '只有将资产划转到交易账户才可以进行交易。资金账户<->交易账户互转不收取手续费。';
-    } else if (_transferType == TransferType.ExchangeToAccount) {
-      msg = '只有将资产划转到交易账户才可以进行交易。资金账户<->交易账户互转不收取手续费。';
-    } else if (_transferType == TransferType.AccountToWallet) {
-      msg = '从资金账户划转到钱包账户每笔需要收取50手续费';
-    } else if (_transferType == TransferType.WalletToAccount) {
-      msg = '从钱包账户划转到资金账户，需要等待整个网络的确认，大约需要15-30分钟。';
-    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0),
       child: Container(
@@ -512,7 +451,9 @@ class _TransferPageState extends BaseState<TransferPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            msg,
+            _fromExchangeToWallet
+                ? '从交易账户划转到钱包账户每笔需要收取50HYN手续费'
+                : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
             style: TextStyle(
                 color: HexColor('#FF777777'), fontSize: 14, height: 1.8),
           ),
@@ -522,21 +463,14 @@ class _TransferPageState extends BaseState<TransferPage> {
   }
 
   _availableAmount(String type) {
-    if (_isFromAccount) {
-      return ExchangeInheritedModel.of(context)
-          .exchangeModel
-          .activeAccount
-          .assetList
-          .getAsset(_selectedCoinType)
-          .accountAvailable;
-    } else if (_selectedTransferTypeValue == 'exchange') {
+    if (_fromExchangeToWallet) {
       return ExchangeInheritedModel.of(context)
           .exchangeModel
           .activeAccount
           .assetList
           .getAsset(_selectedCoinType)
           .exchangeAvailable;
-    } else if (_selectedTransferTypeValue == 'wallet') {
+    } else {
       return FormatUtil.coinBalanceHumanRead(WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
@@ -545,43 +479,8 @@ class _TransferPageState extends BaseState<TransferPage> {
   }
 
   _transfer() async {
-    if (_transferType == TransferType.AccountToExchange) {
-      var ret = await _exchangeApi.transferAccountToExchange(
-          _selectedCoinType, _amountController.text);
-      if (ret.code == 0) {
-        BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TransferSuccessPage(_transferType),
-            ));
-        setState(() {});
-      } else {
-        Fluttertoast.showToast(msg: ret.msg);
-      }
-    } else if (_transferType == TransferType.ExchangeToAccount) {
-      var ret = await _exchangeApi.transferExchangeToAccount(
-          _selectedCoinType, _amountController.text);
-      if (ret.code == 0) {
-        BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TransferSuccessPage(_transferType),
-            ));
-        setState(() {});
-      } else {
-        Fluttertoast.showToast(msg: ret.msg);
-      }
-    } else if (_transferType == TransferType.AccountToWallet) {
-    } else if (_transferType == TransferType.WalletToAccount) {}
+    if (_fromExchangeToWallet) {
+    } else {}
+    Application.router.navigateTo(context, Routes.exchange_transfer_success_page);
   }
-}
-
-///划转类型
-enum TransferType {
-  WalletToAccount,
-  AccountToWallet,
-  AccountToExchange,
-  ExchangeToAccount,
 }

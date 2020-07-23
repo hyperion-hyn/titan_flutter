@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,10 +17,6 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 
 class ExchangeAuthPage extends StatefulWidget {
-  final ExchangeBloc exchangeBloc;
-
-  ExchangeAuthPage(this.exchangeBloc);
-
   @override
   State<StatefulWidget> createState() {
     return _ExchangeAuthPageState();
@@ -27,8 +24,6 @@ class ExchangeAuthPage extends StatefulWidget {
 }
 
 class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
-  bool _isNoWallet = false;
-
   @override
   Future<void> onCreated() async {
     // TODO: implement onCreated
@@ -39,13 +34,28 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _isWalletListEmpty();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(WalletInheritedModel.of(context).activatedWallet);
     return Scaffold(
-      body: _isNoWallet ? _noWalletView() : _authorizeView(),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: debugInstrumentationEnabled,
+        iconTheme: IconThemeData(color: Colors.black),
+        elevation: 0,
+        title: Text(
+          '授权',
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      body: WalletInheritedModel.of(context).activatedWallet == null
+          ? _noWalletView()
+          : _authorizeView(),
     );
   }
 
@@ -111,12 +121,10 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
 
                     BlocProvider.of<ExchangeCmpBloc>(context)
                         .add(UpdateAssetsEvent());
+                    Navigator.of(context).pop();
                   }
                 } catch (e) {}
               }
-
-              ///
-              widget.exchangeBloc.add(SwitchToContentEvent());
             },
             height: 45,
           )
@@ -163,9 +171,6 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             S.of(context).create_wallet,
             () {
               ///
-              widget.exchangeBloc.add(SwitchToContentEvent());
-
-              ///
               Application.router.navigateTo(
                 context,
                 Routes.wallet_manager,
@@ -176,12 +181,5 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
         ],
       ),
     );
-  }
-
-  _isWalletListEmpty() async {
-    var wallets = await WalletUtil.scanWallets();
-    print('_isWalletListEmpty: ${wallets.length}');
-    _isNoWallet = wallets.length == 0;
-    setState(() {});
   }
 }

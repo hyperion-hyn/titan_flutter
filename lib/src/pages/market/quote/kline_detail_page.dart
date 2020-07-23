@@ -27,19 +27,30 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   );
   List<KLineEntity> _kChartItemList;
 
+  PeriodModel _periodParameter;
+
   bool _showLoading = true;
   bool _isShowMore = false;
   bool _isShowSetting = false;
-  bool _isLine = false;
-  bool _isDepth = false;
 
-  String _periodParameter = "15分钟";
-  List<String> _normalPeriodList = ["15分钟", "1小时", "4小时", "1天"];
-  List<String> _morePeriodList = ["分时", "1分钟", "5分钟", "30分钟", "1周", "1月"];
+  bool get _isDepth => _periodCurrentIndex == 5;
+  bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
-  String _periodParameterValue = "15min";
-  List<String> _normalPeriodValueList = ["15min", "60min", "4hour", "1day"];
-  List<String> _morePeriodValueList = ["分时", "1min", "5min", "30min", "1week", "1mon"];
+  List<PeriodModel> _normalPeriodList = [
+    PeriodModel(name: "15分钟", value: "15min",), 
+    PeriodModel(name: "1小时", value: "60min"), 
+    PeriodModel(name: "4小时", value: "4hour"), 
+    PeriodModel(name: "1天", value: "1day")];
+  
+  List<PeriodModel> _morePeriodList = [
+    PeriodModel(name: "分时", value: "分时",),
+    PeriodModel(name: "1分钟", value: "1min"),
+    PeriodModel(name: "5分钟", value: "5min"),
+    PeriodModel(name: "30分钟", value: "30min"),
+    PeriodModel(name: "1周", value: "1week"),
+    PeriodModel(name: "1月", value: "1mon"),
+  ];
+
 
   MainState _mainState = MainState.MA;
   bool get _isOpenMainState => _mainState != MainState.NONE;
@@ -51,12 +62,14 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   int _detailCurrentIndex = 0;
 
   TabController _periodTabController;
-  int _periodCurrentIndex = 0;
+  int _periodCurrentIndex = 4;
 
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
-  List<DepthEntity> _bids, _asks;
+  List<DepthEntity> _bids = [];
+  List<DepthEntity> _asks = [];
+
 
   @override
   void initState() {
@@ -64,7 +77,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
     _initWS();
 
-    _requestDataFromApi(_periodParameterValue);
+    _requestDataFromApi(_periodParameter.value);
 
     super.initState();
   }
@@ -230,7 +243,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
-    print("_bids is empty:${_bids?.isEmpty??true}");
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -242,6 +254,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
             child: KChartWidget(
               _kChartItemList,
               isLine: _isLine,
+              mainState: _mainState,
+              secondaryState: _secondaryState,
             ),
           ),
           Visibility(
@@ -267,10 +281,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: _morePeriodList
-                    .map((title) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: _periodTextWidget(title),
-                        ))
+                    .map((item) => _periodTextWidget(item))
                     .toList(),
               ),
             ),
@@ -309,20 +320,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         true,
                       ),
                       Spacer(),
-                      IconButton(
-                        icon: Image.asset(
-                          'res/drawable/k_line_eye_${_isOpenMainState ? "open" : "close"}.png',
-                          width: 16,
-                          height: 11,
-                        ),
-                        onPressed: () {
-                          if (_isOpenMainState) {
-                            setState(() {
-                              _mainState = MainState.NONE;
-                            });
-                          }
-                        },
-                      ),
+                      _iconWidget(isMain: true),
                     ],
                   ),
                   Padding(
@@ -363,20 +361,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         false,
                       ),
                       Spacer(),
-                      IconButton(
-                        icon: Image.asset(
-                          'res/drawable/k_line_eye_${_isOpenSecondaryState ? "open" : "close"}.png',
-                          width: 16,
-                          height: 11,
-                        ),
-                        onPressed: () {
-                          if (_isOpenSecondaryState) {
-                            setState(() {
-                              _secondaryState = SecondaryState.NONE;
-                            });
-                          }
-                        },
-                      ),
+                      _iconWidget(isMain: false),
                     ],
                   ),
                 ],
@@ -386,32 +371,48 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           Visibility(
             visible: _showLoading,
             child: Container(
-                width: double.infinity, height: kLineHeight, alignment: Alignment.center, child: CircularProgressIndicator()),
+                width: double.infinity,
+                height: kLineHeight,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator()),
           ),
-
         ],
       ),
     );
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: 30,
+        width: 20,
       );
 
-  // MainState
-  MainState enumMainStateFromString(String fruit) {
-    fruit = 'MainState.$fruit';
-    return MainState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
-  }
+  Widget _iconWidget({bool isMain}) {
+    var isOpen = isMain ? _isOpenMainState : _isOpenSecondaryState;
 
-  // SecondaryState
-  SecondaryState enumSecondaryStateFromString(String fruit) {
-    fruit = 'SecondaryState.$fruit';
-    return SecondaryState.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
+    return IconButton(
+      icon: Container(
+        //color: Colors.red,
+        padding: const EdgeInsets.all(8),
+        child: Image.asset(
+          'res/drawable/k_line_eye_${isOpen ? "open" : "close"}.png',
+          width: 16,
+          height: 11,
+        ),
+      ),
+      onPressed: () {
+        if (isOpen) {
+          setState(() {
+            if (isMain) {
+              _mainState = MainState.NONE;
+            } else {
+              _secondaryState = SecondaryState.NONE;
+            }
+          });
+        }
+      },
+    );
   }
 
   Widget _textWidget(String title, bool isMain) {
-
     var isSelected = false;
     if (isMain) {
       isSelected = enumMainStateFromString(title) == _mainState;
@@ -429,37 +430,43 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           }
         });
       },
-      child: Text(
-        title,
-        style: TextStyle(color: isSelected ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+      child: Container(
+        //color: Colors.red,
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        child: Text(
+          title,
+          style: TextStyle(color: isSelected ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+        ),
       ),
     );
   }
 
-  Widget _periodTextWidget(String title) {
+  Widget _periodTextWidget(PeriodModel item) {
     var equalValue = _periodParameter;
     return InkWell(
       onTap: () {
         _isShowMore = false;
-        _periodParameter = title;
 
-        var index = _morePeriodList.indexOf(title);
+        var index = _morePeriodList.indexOf(item);
         if (index != 0) {
-          _periodParameterValue = _morePeriodValueList[index];
-          _requestDataFromApi(_periodParameterValue);
-          _subscribeKLineDataFromWS(_periodParameterValue);
-          _isLine = false;
+          _unsubscribeKLineDataFromWS(_periodParameter.value);
+          _periodParameter = item;
+
+          _requestDataFromApi(_periodParameter.value);
+          _subscribeKLineDataFromWS(_periodParameter.value);
+
         } else {
-          _isLine = true;
+          _periodParameter = item;
         }
 
-        setState(() {
-
-        });
+        setState(() {});
       },
-      child: Text(
-        title,
-        style: TextStyle(color: title == equalValue ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Text(
+          item.name,
+          style: TextStyle(color: item.name == equalValue.name ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+        ),
       ),
     );
   }
@@ -467,9 +474,9 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   Widget _periodTabWidget() {
     List<Widget> tabs = [];
     var iterable = _normalPeriodList
-        .map((title) => Tab(
+        .map((item) => Tab(
               child: Text(
-                title,
+                item.name,
                 style: TextStyle(),
               ),
             ))
@@ -482,7 +489,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
-              _periodParameter.isNotEmpty && _morePeriodList.contains(_periodParameter) ? _periodParameter : '更多',
+              _periodParameter.name.isNotEmpty && _morePeriodList.contains(_periodParameter) ? _periodParameter.name : '更多',
               //style: TextStyle(color: HexColor("#333333")),
             ),
             Image.asset(
@@ -540,22 +547,16 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           }
           _isShowSetting = false;
 
-          _isLine = false;
-
           _periodCurrentIndex = index;
 
           if (index < _normalPeriodList.length) {
-
+            _unsubscribeKLineDataFromWS(_periodParameter.value);
             _periodParameter = _normalPeriodList[index];
-            _periodParameterValue = _normalPeriodValueList[index];
-            _requestDataFromApi(_periodParameterValue);
-            _subscribeKLineDataFromWS(_periodParameterValue);
+            _requestDataFromApi(_periodParameter.value);
+            _subscribeKLineDataFromWS(_periodParameter.value);
           }
 
-          _isDepth = (index == 5);
-
           setState(() {});
-
         },
         tabs: tabs,
       ),
@@ -713,6 +714,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   void _respondHeartBeat(dynamic ping) {
     Map<String, dynamic> pong = Map<String, dynamic>();
     pong['pong'] = ping;
+    print("[WS] _respondHeartBeat, pong:$pong");
     socketChannel.sink.add(json.encode(pong));
   }
 
@@ -720,12 +722,24 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     Map<String, dynamic> requestKLine = Map<String, dynamic>();
     requestKLine['sub'] = 'market.btcusdt.kline.$period';
     requestKLine['id'] = 'hyn_client';
+    print("[WS] _subscribeKLineDataFromWS, period:$period");
+    socketChannel.sink.add(json.encode(requestKLine));
+  }
 
+  void _unsubscribeKLineDataFromWS(String period) {
+
+    Map<String, dynamic> requestKLine = Map<String, dynamic>();
+    requestKLine['unsub'] = 'market.btcusdt.kline.$period';
+    requestKLine['id'] = 'hyn_client';
+    print("[WS] _unsubscribeKLineDataFromWS, period:$period");
     socketChannel.sink.add(json.encode(requestKLine));
   }
 
   _initData() {
     // todo: test_jison_0722
+//    _periodParameter = _normalPeriodList[0];
+    _periodParameter = _morePeriodList[1];
+
     // buy
     buyChartList.add(ExcDetailEntity(2, 6, 4));
     buyChartList.add(ExcDetailEntity(2, 6, 4));
@@ -753,13 +767,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     );
 
     _periodTabController = TabController(
-      initialIndex: 0,
+      initialIndex: _periodCurrentIndex,
       vsync: this,
       length: 7,
     );
 
     initDepthData();
-
   }
 
   initDepthData() async {
@@ -773,7 +786,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       initDepth(bids, asks);
     });
   }
-
 
   void initDepth(List<DepthEntity> bids, List<DepthEntity> asks) {
     if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
@@ -796,7 +808,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       item.amount = amount;
       _asks.add(item);
     });
-
   }
 
   _initWS() {
@@ -812,17 +823,25 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
             );
 
             Map<String, dynamic> data = json.decode(decompressedData);
+            print("[WS] data:$data");
+
             if (data['ping'] != null) {
               _respondHeartBeat(data['ping']);
             } else {
               if (mounted)
                 setState(() {
-                  //print("[WS] decompressedData:$decompressedData");
                 });
-              _addKChartDataFromWS(data);
+              if (data["subbed"] != null) {
+                Fluttertoast.showToast(msg: '订阅 ${data["subbed"]} 成功');
+              }
+              else if (data["unsubbed"] != null) {
+                Fluttertoast.showToast(msg: '取阅 ${data["unsubbed"]} 成功');
+              } else {
+                _addKChartDataFromWS(data);
+              }
             }
           } catch (e) {
-            print(e.toString());
+            print("[WS] e.toString():${e.toString()}");
           }
         },
         onDone: () => print('[WS] Done!'),
@@ -831,7 +850,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           print(e);
         });
 
-    _subscribeKLineDataFromWS(_periodParameterValue);
+    _subscribeKLineDataFromWS(_periodParameter.value);
   }
 
   void _requestDataFromApi(String period, {bool isReplace}) async {
@@ -855,7 +874,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       _kChartItemList = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
       KLineUtil.calculate(_kChartItemList);
       print('[WS] current list length: ${_kChartItemList.length}');
-      Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
+      //Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
       _showLoading = false;
       setState(() {});
     }
@@ -863,21 +882,26 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
   void _addKChartDataFromWS(Map<String, dynamic> data) async {
     KLineEntity latestKLineItem;
+    String channel = data["ch"];
+    if (!(channel?.endsWith(_periodParameter.value)??true)) {
+      _unsubscribeKLineDataFromWS(channel.split(".").last);
+      print("[WS] 取消不是当前选中的channel:$channel");
+    }
+
     try {
       latestKLineItem = KLineEntity.fromJson(data['tick']);
-      print(latestKLineItem.toString());
+
       if (latestKLineItem.id != _kChartItemList.last.id) {
         //Fluttertoast.showToast(msg: 'Add Data ${latestKLineItem.id} ');
 
-        _kChartItemList.add(latestKLineItem);
-        KLineUtil.calculate(_kChartItemList);
+        KLineUtil.addLastData(_kChartItemList, latestKLineItem);
 
         _showLoading = false;
       } else {
         //Fluttertoast.showToast(msg: 'Update Data ${latestKLineItem.id} ');
 
         _kChartItemList.last = latestKLineItem;
-        KLineUtil.calculate(_kChartItemList);
+        KLineUtil.updateLastData(_kChartItemList);
 
         _showLoading = false;
       }
@@ -910,7 +934,26 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     return result;
   }
 
+  // MainState
+  MainState enumMainStateFromString(String fruit) {
+    fruit = 'MainState.$fruit';
+    return MainState.values.firstWhere((f) => f.toString() == fruit, orElse: () => null);
+  }
+
+  // SecondaryState
+  SecondaryState enumSecondaryStateFromString(String fruit) {
+    fruit = 'SecondaryState.$fruit';
+    return SecondaryState.values.firstWhere((f) => f.toString() == fruit, orElse: () => null);
+  }
 }
+
+ 
+class PeriodModel {
+  final String name;
+  final String value;
+  PeriodModel({this.name, this.value});
+}
+
 
 Widget delegationListView(List<ExcDetailEntity> buyChartList,List<ExcDetailEntity> sailChartList) {
   return Container(
@@ -1116,3 +1159,4 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList,List<ExcDetailEntit
         itemCount: buyChartList.length),
   );
 }
+

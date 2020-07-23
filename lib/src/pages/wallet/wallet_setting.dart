@@ -9,6 +9,7 @@ import 'package:titan/src/components/auth/SetBioAuthPage.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -462,6 +463,10 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Routes.popUntilCachedEntryRouteName(context);
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
+
+        ///Clear current exchange account if already authorized by this wallet
+        BlocProvider.of<ExchangeCmpBloc>(context)
+            .add(ClearExchangeAccountEvent());
 //        await UiUtil.showSetBioAuthDialog(
 //          context,
 //          S.of(context).delete_wallet_success,
