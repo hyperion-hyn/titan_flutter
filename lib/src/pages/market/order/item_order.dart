@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 
 import 'entity/order_entity.dart';
 
@@ -31,17 +32,16 @@ class OrderItemState extends State<OrderItem> {
               padding: EdgeInsets.only(
                   left: 16.0, top: 8.0, bottom: 8.0, right: 8.0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
                     widget._order.type == 0
                         ? "买入"
                         : "卖出",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 14,
                       color:
-                          widget._order.type == 0 ? Colors.green : Colors.red,
-                      fontWeight: FontWeight.bold,
+                          widget._order.type == 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
                     ),
                   ),
                   SizedBox(
@@ -50,7 +50,7 @@ class OrderItemState extends State<OrderItem> {
                   Text(
                     '10:37 06/11',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                       color: Colors.grey,
                     ),
                   )
@@ -61,17 +61,19 @@ class OrderItemState extends State<OrderItem> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
-                width: 60,
-                height: 25,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                  ),
+                width: 50,
+                height: 22,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3.0)),
+                  color: HexColor('#F2F2F2')
+                ),
+                child: FlatButton(
+                  padding: EdgeInsets.only(left: 13.0,right: 13,bottom: 2),
                   textColor: HexColor('#FF1F81FF'),
                   child: Text(
                     '撤销',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 12,
                     ),
                   ),
                   onPressed: () {},
@@ -98,7 +100,7 @@ class OrderItemState extends State<OrderItem> {
                           Text(
                             '价格(USDT)',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: DefaultColors.color999,
                               fontSize: 12,
                             ),
                           ),
@@ -108,6 +110,7 @@ class OrderItemState extends State<OrderItem> {
                           Text(
                             '9090.42',
                             style: TextStyle(
+                              color: DefaultColors.color333,
                                 fontWeight: FontWeight.w500, fontSize: 12),
                           ),
                         ],
@@ -125,7 +128,7 @@ class OrderItemState extends State<OrderItem> {
                     Text(
                       '数量(HYN)',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: DefaultColors.color999,
                         fontSize: 12,
                       ),
                     ),
@@ -135,7 +138,7 @@ class OrderItemState extends State<OrderItem> {
                     Text(
                       '0.002',
                       style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                          TextStyle(color:DefaultColors.color333,fontWeight: FontWeight.w500, fontSize: 12),
                     ),
                   ],
                 ),
@@ -148,7 +151,7 @@ class OrderItemState extends State<OrderItem> {
                     Text(
                       '实际成交(HYN)',
                       style: TextStyle(
-                        color: Colors.grey,
+                        color: DefaultColors.color999,
                         fontSize: 12,
                       ),
                     ),
@@ -161,6 +164,7 @@ class OrderItemState extends State<OrderItem> {
                         Text(
                           '0',
                           style: TextStyle(
+                            color:DefaultColors.color333,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),

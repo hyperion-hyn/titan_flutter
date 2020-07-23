@@ -607,7 +607,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         children: [
           Visibility(
             visible: _detailCurrentIndex == 0,
-            child: _delegationListView(),
+            child: delegationListView(buyChartList,sailChartList),
           ),
           Visibility(
             visible: _detailCurrentIndex == 1,
@@ -615,211 +615,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           ),
         ],
       ),
-    );
-  }
-
-  Widget _delegationListView() {
-    return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
-      color: Colors.white,
-      child: ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            ExcDetailEntity buyEntity = buyChartList[index];
-            ExcDetailEntity sailEntity = sailChartList[index];
-
-            return index == 0
-                ? Container(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          "买盘 数量(HYN)",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                        Text(
-                          "价格(USDT)",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                        Text(
-                          "数量(HYN)卖盘",
-                          textAlign: TextAlign.right,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Row(
-                    children: <Widget>[
-                      Expanded(
-                          flex: 1,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: buyEntity.leftPercent,
-                                    child: Container(
-                                      height: 25,
-                                      color: HexColor("#ffffff"),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: buyEntity.rightPercent,
-                                    child: Container(
-                                      height: 25,
-                                      color: HexColor("#EBF8F2"),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
-                                    height: 25,
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "$index",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#999999"),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "1.43543",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#333333"),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      height: 25,
-                                      padding: const EdgeInsets.only(right: 5),
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        "180.39",
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                          color: HexColor("#53AE86"),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                      Expanded(
-                          flex: 1,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: sailEntity.leftPercent,
-                                    child: Container(
-                                      height: 25,
-                                      color: HexColor("#F9EFEF"),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: sailEntity.rightPercent,
-                                    child: Container(
-                                      height: 25,
-                                      color: HexColor("#ffffff"),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
-                                      height: 25,
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: Text(
-                                        "180.39",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w500,
-                                          color: HexColor("#CC5858"),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      "1.43543",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#333333"),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                    child: Text(
-                                      "$index",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#999999"),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )),
-                    ],
-                  );
-          },
-          itemCount: buyChartList.length),
     );
   }
 
@@ -1152,8 +947,216 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 }
 
+ 
 class PeriodModel {
   final String name;
   final String value;
   PeriodModel({this.name, this.value});
 }
+
+
+Widget delegationListView(List<ExcDetailEntity> buyChartList,List<ExcDetailEntity> sailChartList) {
+  return Container(
+    padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+    color: Colors.white,
+    child: ListView.builder(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        itemBuilder: (context, index) {
+          ExcDetailEntity buyEntity = buyChartList[index];
+          ExcDetailEntity sailEntity = sailChartList[index];
+
+          return index == 0
+              ? Container(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "买盘 数量(HYN)",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.normal,
+                    color: HexColor("#777777"),
+                  ),
+                ),
+                Text(
+                  "价格(USDT)",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.normal,
+                    color: HexColor("#777777"),
+                  ),
+                ),
+                Text(
+                  "数量(HYN)卖盘",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.normal,
+                    color: HexColor("#777777"),
+                  ),
+                ),
+              ],
+            ),
+          )
+              : Row(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: buyEntity.leftPercent,
+                            child: Container(
+                              height: 25,
+                              color: HexColor("#ffffff"),
+                            ),
+                          ),
+                          Expanded(
+                            flex: buyEntity.rightPercent,
+                            child: Container(
+                              height: 25,
+                              color: HexColor("#EBF8F2"),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            height: 25,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "$index",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: HexColor("#999999"),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 25,
+                            padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "1.43543",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: HexColor("#333333"),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              height: 25,
+                              padding: const EdgeInsets.only(right: 5),
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                "180.39",
+                                textAlign: TextAlign.end,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: HexColor("#53AE86"),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+              Expanded(
+                  flex: 1,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: sailEntity.leftPercent,
+                            child: Container(
+                              height: 25,
+                              color: HexColor("#F9EFEF"),
+                            ),
+                          ),
+                          Expanded(
+                            flex: sailEntity.rightPercent,
+                            child: Container(
+                              height: 25,
+                              color: HexColor("#ffffff"),
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              height: 25,
+                              alignment: Alignment.centerLeft,
+                              padding: const EdgeInsets.only(left: 5),
+                              child: Text(
+                                "180.39",
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w500,
+                                  color: HexColor("#CC5858"),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 25,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              "1.43543",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: HexColor("#333333"),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            height: 25,
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                            child: Text(
+                              "$index",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: HexColor("#999999"),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+            ],
+          );
+        },
+        itemCount: buyChartList.length),
+  );
+}
+

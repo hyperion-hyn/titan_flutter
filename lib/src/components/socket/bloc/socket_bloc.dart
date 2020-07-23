@@ -12,6 +12,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   SocketState get initialState => InitialSocketState();
 
   final IOWebSocketChannel socketChannel;
+
   SocketBloc({this.socketChannel});
 
   @override
@@ -35,7 +36,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        print("[SocketBloc] mapEventToState, dataMap:$dataMap, receivedData is String:${dataMap["status"] is int}");
+        print(
+            "[SocketBloc] mapEventToState, dataMap:$dataMap, receivedData is String:${dataMap["status"] is int}");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -55,10 +57,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelExchangeDepthState(response: response);
-                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                } else if (channelValue.startsWith("user") &&
+                    channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
                 } else {
-                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(
+                      channel: channelValue, response: response);
                 }
               }
               yield ReceivedDataSuccessState(response: response);
@@ -79,7 +83,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             yield HeartSuccessState();
           }
         } else {
-          print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          print(
+              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
