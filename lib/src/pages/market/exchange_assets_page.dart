@@ -7,12 +7,15 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'deposit_page.dart';
 import 'withdraw_page.dart';
 
@@ -25,6 +28,7 @@ class ExchangeAssetsPage extends StatefulWidget {
 
 class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  ActiveQuoteVoAndSign symbolQuote;
 
   @override
   void initState() {
@@ -36,6 +40,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
+    symbolQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
   }
 
   @override
@@ -103,7 +109,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    '总资产估值(BTC)',
+                    '总资产估值(USDT)',
                     style: TextStyle(
                       fontSize: 16.0,
                     ),
@@ -118,7 +124,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ExchangeInheritedModel.of(context)
                                 .exchangeModel
                                 .isShowBalances
-                            ? '3.34563667'
+                            ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotalByUSDT()}'
                             : '*****',
                         style: TextStyle(
                           fontSize: 20,
@@ -133,7 +139,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ExchangeInheritedModel.of(context)
                                 .exchangeModel
                                 .isShowBalances
-                            ? '≈1923443.34 CNY'
+                            ? '≈${FormatUtil.formatPrice(10000.0 * (symbolQuote?.quoteVo?.price ?? 0))}'
                             : '*****',
                         style: TextStyle(
                           fontSize: 16,
@@ -360,7 +366,7 @@ class AssetItemState extends State<AssetItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '折合(CNY)',
+                      '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -373,7 +379,7 @@ class AssetItemState extends State<AssetItem> {
                       children: <Widget>[
                         Spacer(),
                         Text(
-                          '${widget._assetType.btc}',
+                          '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
