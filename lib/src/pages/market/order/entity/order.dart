@@ -48,8 +48,8 @@ class Order extends Object {
 
   Order.fromSocket(List<dynamic> orderItem) {
     this.ctime = orderItem[0].toString();
-    this.orderId = orderItem[1].toString();
-    this.status = orderItem[2];
+    this.orderId = orderItem[1];
+    this.status = orderItem[2].toString();
     this.amount = orderItem[3];
     this.amountNoDeal = orderItem[4];
     this.amountDeal =

@@ -11,6 +11,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -41,7 +42,7 @@ class ExchangeDetailPage extends StatefulWidget {
   }
 }
 
-class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
+class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAware {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
 
   bool isLoading = false;
@@ -51,7 +52,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   double currentNum = 0;
   String currentPriceStr = "";
   String totalPriceStr = "";
-  String validNumStr = "~";
   String currentNumStr = "";
 
   TextEditingController priceEditController = new TextEditingController();
@@ -67,11 +67,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   final int contrOptionsTypePriceDecrease = 6;
   final int contrOptionsTypePricePreError = 9;
   final int contrOptionsTypeNum = 7;
+  final int contrOptionsTypeNumPercent = 11;
   final int contrOptionsTypeNumPreError = 10;
   final int contrOptionsTypeRefresh = 8;
 
   final int contrConsignTypeRefresh = 11;
-  StreamController<int> optionsController = StreamController.broadcast();
+  StreamController<Map> optionsController = StreamController.broadcast();
   StreamController<int> consignListController = StreamController.broadcast();
   String userTickChannel = "";
   String depthChannel;
@@ -80,7 +81,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
   String symbol;
   String marketCoin;
   MarketInfoEntity marketInfoEntity =
-      MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
+  MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
@@ -112,22 +113,24 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
   @override
   void onCreated() {
-    print("oncreate");
-    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-    if (exchangeModel.isActiveAccount()) {
-      validNumStr = exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable;
-      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
-      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
-    }
+    getAccountData();
+
     depthChannel = SocketConfig.channelExchangeDepth(symbol, 1);
     BlocProvider.of<SocketBloc>(context)
         .add(SubChannelEvent(channel: depthChannel));
-
-//    _currentOrders.addAll((List.generate(
-//      10,
-//      (index) => OrderEntity()..type = ExchangeType.SELL,
-//    )));
     super.onCreated();
+  }
+
+  @override
+  void didPopNext() {
+    getAccountData();
+    super.didPopNext();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
@@ -135,11 +138,22 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     if (exchangeModel.isActiveAccount()) {
       BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
     }
+    Application.routeObserver.unsubscribe(this);
     BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
 
     optionsController.close();
     exchangeDetailBloc.close();
     super.dispose();
+  }
+
+  void getAccountData() {
+    exchangeModel = ExchangeInheritedModel
+        .of(context)
+        .exchangeModel;
+    if (exchangeModel.isActiveAccount()) {
+      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
+      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
+    }
   }
 
   @override
@@ -151,9 +165,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
           if (state is ChannelUserTickState) {
             var temOrders = List<Order>();
             state.response.forEach((entity) => {
-                  if ((entity as List<dynamic>).length >= 7)
-                    {temOrders.add(Order.fromSocket(entity))}
-                });
+            if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
+              temOrders.add(Order.fromSocket(entity))}
+            });
+
             if (temOrders.length > 0) {
               print("!!!!!!!order= ${state.response}");
               _currentOrders.clear();
@@ -191,26 +206,29 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
 
   Widget exchangePageView() {
     return SafeArea(
-      child: Column(
-        children: <Widget>[
-          _appBar(),
-          Expanded(
-            child: SingleChildScrollView(
-                child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                delegationListView(buyChartList, sailChartList),
-                /*Row(
-                  children: <Widget>[
-                    Expanded(flex: 4, child: _depthChart()),
-                  ],
-                ),*/
-                _exchangeOptions(),
-                _consignList()
-              ],
-            )),
-          ),
-        ],
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            _appBar(),
+            Expanded(
+              child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      delegationListView(buyChartList, sailChartList),
+                      /*Row(
+                    children: <Widget>[
+                      Expanded(flex: 4, child: _depthChart()),
+                    ],
+                  ),*/
+                      _exchangeOptions(),
+                      _consignList()
+                    ],
+                  )),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -262,45 +280,47 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
     totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
   }
 
-  double getValidNum(){
-    if(exchangeModel.isActiveAccount()){
-      if(isBuy){
-        return double.parse(exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable);
-      }else{
-        return double.parse(exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable);
+  double getValidNum() {
+    if (exchangeModel.isActiveAccount()) {
+      if (isBuy) {
+        return double.parse(exchangeModel.activeAccount.assetList
+            .getAsset(widget.selectedCoin.toUpperCase())
+            .exchangeAvailable);
+      } else {
+        return double.parse(exchangeModel.activeAccount?.assetList
+            ?.getAsset("HYN")
+            ?.exchangeAvailable);
       }
-    }else{
+    } else {
       return 0;
     }
   }
 
   Widget _exchangeOptions() {
-    return StreamBuilder<int>(
+    return StreamBuilder<Map>(
         stream: optionsController.stream,
         builder: (context, optionType) {
-          if (optionType.data == contrOptionsTypeBuy) {
+          Map optionData = optionType.data;
+          var optionKey = optionData?.keys?.elementAt(0) ?? -1;
+          var optionValue = optionData?.values?.elementAt(0) ?? "";
+          if (optionKey == contrOptionsTypeBuy) {
             isBuy = true;
-            validNumStr = exchangeModel.activeAccount?.assetList
-                    ?.getAsset(widget.selectedCoin.toUpperCase())
-                    ?.exchangeAvailable ??
-                "~";
-          } else if (optionType.data == contrOptionsTypeSell) {
+          } else if (optionKey == contrOptionsTypeSell) {
             isBuy = false;
-            validNumStr = exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable ?? "~";
-          } else if (optionType.data == contrOptionsTypeLimit) {
+          } else if (optionKey == contrOptionsTypeLimit) {
             isLimit = true;
-          } else if (optionType.data == contrOptionsTypeMarket) {
+          } else if (optionKey == contrOptionsTypeMarket) {
             isLimit = false;
-          } else if (optionType.data == contrOptionsTypePrice) {
+          } else if (optionKey == contrOptionsTypePrice) {
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
             currentPriceStr = currentPrice.toString();
-          } else if (optionType.data == contrOptionsTypePricePreError) {
+          } else if (optionKey == contrOptionsTypePricePreError) {
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(
                 TextPosition(offset: currentPriceStr.length));
-          } else if (optionType.data == contrOptionsTypePriceAdd) {
+          } else if (optionKey == contrOptionsTypePriceAdd) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice += (1 / preNum);
             var totalPrice = currentPrice * currentNum;
@@ -311,7 +331,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(
                 TextPosition(offset: currentPriceStr.length));
-          } else if (optionType.data == contrOptionsTypePriceDecrease) {
+          } else if (optionKey == contrOptionsTypePriceDecrease) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice -= (1 / preNum);
             var totalPrice = currentPrice * currentNum;
@@ -322,16 +342,27 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(
                 TextPosition(offset: '$currentPriceStr'.length));
-          } else if (optionType.data == contrOptionsTypeNum) {
+          } else if (optionKey == contrOptionsTypeNum) {
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
             currentNumStr = currentNum.toString();
-          } else if (optionType.data == contrOptionsTypeNumPreError) {
+          } else if (optionKey == contrOptionsTypeNumPercent) {
+            if(exchangeModel.isActiveAccount()){
+              currentNum = getValidNum() * double.parse(optionValue);
+              var totalPrice = currentPrice * currentNum;
+              updateTotalView(totalPrice);
+
+              currentNumStr = currentNum.toStringAsFixed(marketInfoEntity.amountPrecision);
+              numEditController.text = currentNumStr;
+              numEditController.selection = TextSelection.fromPosition(
+                  TextPosition(offset: currentNumStr.length));
+            }
+          } else if (optionKey == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
             numEditController.selection = TextSelection.fromPosition(
                 TextPosition(offset: currentNumStr.length));
-          } else if (optionType.data == contrOptionsTypeRefresh) {}
+          } else if (optionKey == contrOptionsTypeRefresh) {}
           return Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 16, left: 14, right: 14),
             child: Column(
@@ -344,7 +375,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          optionsController.add(contrOptionsTypeBuy);
+                          optionsController.add({contrOptionsTypeBuy:""});
                         },
                         child: Container(
                           height: 30,
@@ -365,7 +396,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          optionsController.add(contrOptionsTypeSell);
+                          optionsController.add({contrOptionsTypeSell:""});
                         },
                         child: Container(
                           height: 30,
@@ -384,7 +415,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                     ),
                     Expanded(
                       flex: 4,
-                      child: Container(
+                      child: SizedBox(),
+                      /*child: Container(
                           height: 28,
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           decoration: BoxDecoration(
@@ -416,7 +448,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                               color: DefaultColors.color333,
                               fontSize: 14,
                             ),
-                          ))),
+                          ))),*/
                     ),
                   ],
                 ),
@@ -455,9 +487,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                                 var priceAfter = price.split(".")[1];
                                 if (priceAfter.length <= marketInfoEntity.pricePrecision) {
                                   currentPrice = double.parse(price);
-                                  optionsController.add(contrOptionsTypePrice);
+                                  optionsController.add({contrOptionsTypePrice:""});
                                 } else {
-                                  optionsController.add(contrOptionsTypePricePreError);
+                                  optionsController.add({contrOptionsTypePricePreError:""});
                                 }
                               } else {
                                 if (price.length == 0) {
@@ -465,7 +497,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                                 } else {
                                   currentPrice = double.parse(price);
                                 }
-                                optionsController.add(contrOptionsTypePrice);
+                                optionsController.add({contrOptionsTypePrice:""});
                               }
                             },
                           ),
@@ -476,7 +508,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         ),
                         InkWell(
                           onTap: () {
-                            optionsController.add(contrOptionsTypePriceDecrease);
+                            optionsController.add({contrOptionsTypePriceDecrease:""});
                           },
                           child: Padding(
                             padding: EdgeInsets.only(top: 4, bottom: 4, left: 17, right: 17),
@@ -493,7 +525,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         ),
                         InkWell(
                             onTap: () {
-                              optionsController.add(contrOptionsTypePriceAdd);
+                              optionsController.add({contrOptionsTypePriceAdd:""});
                             },
                             child: Padding(
                                 padding: EdgeInsets.only(top: 7, bottom: 7, left: 17, right: 17),
@@ -582,9 +614,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                               var priceAfter = number.split(".")[1];
                               if (priceAfter.length <= marketInfoEntity.amountPrecision) {
                                 currentNum = double.parse(number);
-                                optionsController.add(contrOptionsTypeNum);
+                                optionsController.add({contrOptionsTypeNum:""});
                               } else {
-                                optionsController.add(contrOptionsTypeNumPreError);
+                                optionsController.add({contrOptionsTypeNumPreError:""});
                               }
                             } else {
                               if (number.length == 0) {
@@ -592,7 +624,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                               } else {
                                 currentNum = double.parse(number);
                               }
-                              optionsController.add(contrOptionsTypeNum);
+                              optionsController.add({contrOptionsTypeNum:""});
                             }
                           },
                         ),
@@ -601,7 +633,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         width: 36,
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
-                            onPressed: () {},
+                            onPressed: () {
+                              optionsController.add({contrOptionsTypeNumPercent:"0.25"});
+                            },
                             child: Text(
                               "25%",
                               style: TextStyle(fontSize: 10, color: DefaultColors.color999),
@@ -611,14 +645,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                         width: 36,
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
-                            onPressed: () {},
+                            onPressed: () {
+                              optionsController.add({contrOptionsTypeNumPercent:"0.5"});
+                            },
                             child: Text("50%", style: TextStyle(fontSize: 10, color: DefaultColors.color999))),
                       ),
                       SizedBox(
                         width: 36,
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
-                            onPressed: () {},
+                            onPressed: () {
+                              optionsController.add({contrOptionsTypeNumPercent:"1"});
+                            },
                             child: Text(
                               "100%",
                               style: TextStyle(fontSize: 10, color: DefaultColors.color999),
@@ -661,20 +699,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                               var priceAfter = number.split(".")[1];
                               if (priceAfter.length <= marketInfoEntity.amountPrecision) {
                                 currentNum = double.parse(number);
-                                optionsController.add(contrOptionsTypeNum);
+                                optionsController.add({contrOptionsTypeNum:""});
                               } else {
-                                optionsController.add(contrOptionsTypeNumPreError);
+                                optionsController.add({contrOptionsTypeNumPreError:""});
                               }
                             } else {
                               currentNum = double.parse(number);
-                              optionsController.add(contrOptionsTypeNum);
+                              optionsController.add({contrOptionsTypeNum:""});
                             }
                           },
                         ),
                       ),
 //                      Expanded(child: Text("$totalPriceStr")),
                       Text(
-                        "USDT",
+                        "${widget.selectedCoin.toUpperCase()}",
                         style: TextStyle(fontSize: 14, color: DefaultColors.color777),
                       ),
                       SizedBox(
@@ -686,7 +724,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: Text(
-                    "可用  ${getValidNum() == 0 ? "~" : getValidNum()}  USDT",
+                    "可用  ${getValidNum() == 0 ? "~" : getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
                     style: TextStyle(color: DefaultColors.color999, fontSize: 10),
                   ),
                 ),
@@ -710,13 +748,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> {
                       onPressed: isLoading
                           ? null
                           : () async {
-                              isLoading = true;
-                              optionsController.add(contrOptionsTypeRefresh);
+                        isLoading = true;
+                        optionsController.add({contrOptionsTypeRefresh:""});
 
-                              await buyAction();
-                              isLoading = false;
-                              optionsController.add(contrOptionsTypeRefresh);
-                            }),
+                        await buyAction();
+                        isLoading = false;
+                        optionsController.add({contrOptionsTypeRefresh:""});
+                      }),
                 )
               ],
             ),
