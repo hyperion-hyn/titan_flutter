@@ -38,9 +38,21 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp, {bool isSecond = false}) {
+  static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
-    timestamp = timestamp * 1000;
+    if (!isMillisecond) {
+      timestamp = timestamp * 1000;
+    }
+
+    var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
+    //print("[format]   timestamp:$timestamp, date:$date");
+
+    return DateFormat(format).format(date) ?? "";
+  }
+
+  static String formatSecondDate(int timestamp) {
+    var format = "HH:mm:ss" ;
+
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
     //print("[format]   timestamp:$timestamp, date:$date");
 
