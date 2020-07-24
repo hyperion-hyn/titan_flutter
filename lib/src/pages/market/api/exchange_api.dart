@@ -183,6 +183,8 @@ class ExchangeApi {
     );
   }
 
+
+
   Future<dynamic> orderPutMarket(String market, exchangeType,String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
@@ -194,4 +196,41 @@ class ExchangeApi {
       },
     );
   }
+
+
+  Future<dynamic> historyTrade(String symbol, {String limit = '100'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_TRADE,
+      null,
+      params: {
+        "symbol": symbol,
+        "limit": limit,
+      },
+    );
+  }
+
+
+
+  Future<dynamic> historyDepth(String symbol, {String precision = '-1'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_DEPTH,
+      null,
+      params: {
+        "symbol": symbol,
+        "precision": precision,
+      },
+    );
+  }
+
+  Future<dynamic> historyKline(String symbol, {String period = '15min'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_KLINE,
+      null,
+      params: {
+        "name": symbol,
+        "period": period,
+      },
+    );
+  }
+
 }

@@ -233,9 +233,12 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     if (widget.model.type == MyContractType.create) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
       dataList  = createContractList;
-    } else {
+    } else if (widget.model.type == MyContractType.join){
       List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
       dataList = joinContractList;
+    } else {
+      List<ContractNodeItem> activeContractList = await api.getContractActiveList(page: _currentPage);
+      dataList  = activeContractList;
     }
 
     if (dataList.length == 0) {
@@ -271,8 +274,8 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           break;
 
         default:
-          List<ContractNodeItem> createContractList = await api.getContractActiveList();
-          dataList  = createContractList;
+          List<ContractNodeItem> activeContractList = await api.getContractActiveList();
+          dataList  = activeContractList;
           break;
       }
 
