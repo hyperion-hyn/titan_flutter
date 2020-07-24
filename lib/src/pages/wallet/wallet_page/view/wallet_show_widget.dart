@@ -8,7 +8,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/components/auth/SetBioAuthPage.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -455,25 +455,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               );
             },
           ),
-          RaisedButton(
-            child: Text('quick-auth page'),
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          SetBioAuthPage(widget.walletVo.wallet)));
-            },
-          ),
-          RaisedButton(
-            child: Text('bio-auth'),
-            onPressed: () async {
-              await AuthUtil.bioAuth(
-                context,
-                BiometricType.fingerprint,
-              );
-            },
-          )
         ],
       ),
     );
