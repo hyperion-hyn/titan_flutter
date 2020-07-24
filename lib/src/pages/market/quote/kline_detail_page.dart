@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
+import 'dart:math';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,13 +8,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/api/market_http_core.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
-import 'package:titan/src/widget/load_data_widget.dart';
-import 'package:web_socket_channel/io.dart';
-
-import '../../../../env.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class KLineDetailPage extends StatefulWidget {
   @override
@@ -29,16 +22,13 @@ class KLineDetailPage extends StatefulWidget {
 class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderStateMixin {
   final ExchangeApi api = ExchangeApi();
 
-  final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
-    'wss://api.huobi.pro/ws',
-  );
-  List<KLineEntity> _kChartItemList;
-  List<TradeInfoEntity> _tradeItemList;
-  List<DepthInfoEntity> _buyDepthItemList;
-  List<DepthInfoEntity> _sellDepthItemList;
+  List<KLineEntity> _kChartItemList = [];
+  List<TradeInfoEntity> _tradeItemList = [];
+  List<DepthInfoEntity> _buyDepthItemList = [];
+  List<DepthInfoEntity> _sellDepthItemList = [];
 
   PeriodInfoEntity _periodParameter;
-  String _symbol = 'btcusdt';
+  String _symbol = 'hynusdt';
   KLineEntity _channel24HourKLineEntity;
 
   bool _showLoading = true;
@@ -83,8 +73,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   int _periodCurrentIndex = 0;
   int _lastSelectedIndex = 0;
 
-  List<ExcDetailEntity> buyChartList = [];
-  List<ExcDetailEntity> sailChartList = [];
+  List<ExcDetailEntity> _buyChartList = [];
+  List<ExcDetailEntity> _sellChartList = [];
 
   List<DepthEntity> _bids = [];
   List<DepthEntity> _asks = [];
@@ -93,17 +83,17 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   void initState() {
     _initData();
 
-    _initWS();
+    _initChannel();
 
-    _requestDataFromApi(_periodParameter.value);
+    _setupRequest();
 
     super.initState();
   }
 
   @override
   void dispose() {
-    socketChannel.sink.close();
-    print('[WS]  closed');
+    _unSubChannels();
+
     super.dispose();
   }
 
@@ -167,6 +157,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 
   Widget _headerWidget() {
+    var _open = _channel24HourKLineEntity.open.toString();
+    var _high = _channel24HourKLineEntity.high.toString();
+    var _low = _channel24HourKLineEntity.low.toString();
+    var _24Hour = _channel24HourKLineEntity.amount.toString();
     return SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
@@ -178,7 +172,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '190.00',
+                      _open,
                       style: TextStyle(fontWeight: FontWeight.w500, fontSize: 28, color: HexColor("#53AE86")),
                     ),
                     SizedBox(
@@ -232,7 +226,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: ['190.83', '1', '190.83', '1', '321412']
+                    children: [_high, '1', _low, '1', _24Hour]
                         .map((text) => text == '1'
                             ? SizedBox(
                                 height: 6,
@@ -282,7 +276,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
               width: double.infinity,
               height: kLineHeight,
               color: Colors.white,
-              child: DepthChart(_bids, _asks),
+              child: DepthChart(_buyDepthItemList,_sellDepthItemList),
             ),
           ),
           Visibility(
@@ -463,13 +457,15 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       onTap: () {
         _isShowMore = false;
         _periodTabController.index = 3;
+
         var index = _morePeriodList.indexOf(item);
         if (index != 0) {
-          _unsubscribeKLineDataFromWS(_periodParameter.value);
+          // old
+          _unSubPeriodChannel();
           _periodParameter = item;
-
-          _requestDataFromApi(_periodParameter.value);
-          _subscribeKLineDataFromWS(_periodParameter.value);
+          _getPeriodData();
+          // new
+          _subPeriodChannel();
         } else {
           _periodParameter = item;
         }
@@ -577,10 +573,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           print("_periodCurrentIndex:$_periodCurrentIndex");
 
           if (index < _normalPeriodList.length) {
-            _unsubscribeKLineDataFromWS(_periodParameter.value);
+            // old
+            _unSubPeriodChannel();
+            // new
             _periodParameter = _normalPeriodList[index];
-            _requestDataFromApi(_periodParameter.value);
-            _subscribeKLineDataFromWS(_periodParameter.value);
+            _getPeriodData();
+            _subPeriodChannel();
           }
 
           setState(() {});
@@ -634,7 +632,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         children: [
           Visibility(
             visible: _detailCurrentIndex == 0,
-            child: delegationListView(buyChartList, sailChartList),
+            child: delegationListView(_buyChartList, _sellChartList),
           ),
           Visibility(
             visible: _detailCurrentIndex == 1,
@@ -653,7 +651,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           physics: NeverScrollableScrollPhysics(),
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) {
-            ExcDetailEntity excDetailEntity = buyChartList[index];
+            var excDetailEntity = _tradeItemList[index];
             return index == 0
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 20),
@@ -699,16 +697,17 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "14:35:43",
+                            FormatUtil.formatSecondDate(excDetailEntity.date),
+//                            FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
                             style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
                           ),
                         ),
                         Expanded(
                           flex: 1,
                           child: Text(
-                            excDetailEntity.viewType == 2 ? "卖出" : "买入",
+                            excDetailEntity.actionType,
                             style: TextStyle(
-                                color: HexColor(excDetailEntity.viewType == 2 ? "#CC5858" : "#53AE86"),
+                                color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500),
                           ),
@@ -716,7 +715,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "181.43",
+                            excDetailEntity.price,
                             textAlign: TextAlign.end,
                             style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
                           ),
@@ -724,7 +723,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         Expanded(
                           flex: 2,
                           child: Text(
-                            "1.43543",
+                            excDetailEntity.amount,
                             textAlign: TextAlign.end,
                             style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
                           ),
@@ -733,58 +732,13 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                     ),
                   );
           },
-          itemCount: buyChartList.length),
+          itemCount: _tradeItemList.length),
     );
   }
 
-  ///respond heartbeat[ping-pong]
-  void _respondHeartBeat(dynamic ping) {
-    Map<String, dynamic> pong = Map<String, dynamic>();
-    pong['pong'] = ping;
-    print("[WS] _respondHeartBeat, pong:$pong");
-    socketChannel.sink.add(json.encode(pong));
-  }
-
-  void _subscribeKLineDataFromWS(String period) {
-    Map<String, dynamic> requestKLine = Map<String, dynamic>();
-    requestKLine['sub'] = 'market.btcusdt.kline.$period';
-    requestKLine['id'] = 'hyn_client';
-    print("[WS] _subscribeKLineDataFromWS, period:$period");
-    socketChannel.sink.add(json.encode(requestKLine));
-  }
-
-  void _unsubscribeKLineDataFromWS(String period) {
-    Map<String, dynamic> requestKLine = Map<String, dynamic>();
-    requestKLine['unsub'] = 'market.btcusdt.kline.$period';
-    requestKLine['id'] = 'hyn_client';
-    print("[WS] _unsubscribeKLineDataFromWS, period:$period");
-    socketChannel.sink.add(json.encode(requestKLine));
-  }
-
   _initData() {
-    // todo: test_jison_0722
     _periodParameter = _normalPeriodList[0];
 //    _periodParameter = _normalPeriodList[1];
-
-    // buy
-    buyChartList.add(ExcDetailEntity(2, 6, 4));
-    buyChartList.add(ExcDetailEntity(2, 6, 4));
-    buyChartList.add(ExcDetailEntity(2, 5, 5));
-    buyChartList.add(ExcDetailEntity(2, 4, 6));
-    buyChartList.add(ExcDetailEntity(2, 3, 7));
-    for (int i = 0; i < 10; i++) {
-      buyChartList.add(ExcDetailEntity(2, 0, 10));
-    }
-
-    // sail
-    sailChartList.add(ExcDetailEntity(4, 4, 6));
-    sailChartList.add(ExcDetailEntity(4, 4, 6));
-    sailChartList.add(ExcDetailEntity(4, 5, 5));
-    sailChartList.add(ExcDetailEntity(4, 6, 4));
-    sailChartList.add(ExcDetailEntity(4, 7, 3));
-    for (int i = 0; i < 10; i++) {
-      sailChartList.add(ExcDetailEntity(4, 10, 0));
-    }
 
     _detailTabController = TabController(
       initialIndex: 0,
@@ -798,163 +752,52 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       length: 6,
     );
 
-    initDepthData();
+    // todo: test_jison_0722
+    _initTradeData();
+
+    //_initDepthData();
+
+    _init24HourData();
   }
 
-  initDepthData() async {
-    await rootBundle.loadString('res/kline/depth.json').then((result) {
-      print("[result] result:$result");
+  _initTradeData() {
+    // buy
+    _buyChartList.add(ExcDetailEntity(2, 6, 4));
+    _buyChartList.add(ExcDetailEntity(2, 6, 4));
+    _buyChartList.add(ExcDetailEntity(2, 5, 5));
+    _buyChartList.add(ExcDetailEntity(2, 4, 6));
+    _buyChartList.add(ExcDetailEntity(2, 3, 7));
+    for (int i = 0; i < 10; i++) {
+      _buyChartList.add(ExcDetailEntity(2, 0, 10));
+    }
 
-      final parseJson = json.decode(result);
-      Map tick = parseJson['tick'];
-      var bids = tick['bids'].map((item) => DepthEntity(item[0], item[1])).toList().cast<DepthEntity>();
-      var asks = tick['asks'].map((item) => DepthEntity(item[0], item[1])).toList().cast<DepthEntity>();
-      initDepth(bids, asks);
-    });
-  }
-
-  void initDepth(List<DepthEntity> bids, List<DepthEntity> asks) {
-    if (bids == null || asks == null || bids.isEmpty || asks.isEmpty) return;
-    _bids = List();
-    _asks = List();
-    double amount = 0.0;
-    bids?.sort((left, right) => left.price.compareTo(right.price));
-    //倒序循环 //累加买入委托量
-    bids.reversed.forEach((item) {
-      amount += item.amount;
-      item.amount = amount;
-      _bids.insert(0, item);
-    });
-
-    amount = 0.0;
-    asks?.sort((left, right) => left.price.compareTo(right.price));
-    //循环 //累加买入委托量
-    asks?.forEach((item) {
-      amount += item.amount;
-      item.amount = amount;
-      _asks.add(item);
-    });
-  }
-
-  _initWS() {
-    print('[WS]  listen');
-
-    socketChannel.stream.listen(
-        (data) {
-          var receivedData = data;
-          try {
-            var decompressedData = utf8.decode(
-              GZipCodec().decode(receivedData),
-              allowMalformed: true,
-            );
-
-            Map<String, dynamic> data = json.decode(decompressedData);
-            print("[WS] data:$data");
-
-            if (data['ping'] != null) {
-              _respondHeartBeat(data['ping']);
-            } else {
-              if (mounted) setState(() {});
-              if (data["subbed"] != null) {
-                Fluttertoast.showToast(msg: '订阅 ${data["subbed"]} 成功');
-              } else if (data["unsubbed"] != null) {
-                Fluttertoast.showToast(msg: '取阅 ${data["unsubbed"]} 成功');
-              } else {
-                _addKChartDataFromWS(data);
-              }
-            }
-          } catch (e) {
-            print("[WS] e.toString():${e.toString()}");
-          }
-        },
-        onDone: () => print('[WS] Done!'),
-        //onDone: _reconnectWS,
-        onError: (e) {
-          print(e);
-        });
-
-    _subscribeKLineDataFromWS(_periodParameter.value);
-  }
-
-  void _requestDataFromApi(String period, {bool isReplace}) async {
-    _showLoading = true;
-    setState(() {});
-
-    dynamic result;
-    try {
-      result = await getDataFromApi('$period');
-    } catch (e) {
-      print('获取数据失败');
-    } finally {
-      print('[WS] _requestDataFromApi, result：$result');
-
-      // ignore: control_flow_in_finally
-      if (result == null) return;
-
-      Map parseJson = result;
-      print('[WS] parseJson: ${parseJson.toString()}');
-      List list = parseJson['data'];
-      _kChartItemList = list.map((item) => KLineEntity.fromJson(item)).toList().reversed.toList().cast<KLineEntity>();
-      KLineUtil.calculate(_kChartItemList);
-      print('[WS] current list length: ${_kChartItemList.length}');
-      //Fluttertoast.showToast(msg: 'current list length: ${_kChartItemList.length}');
-      _showLoading = false;
-      setState(() {});
+    // sail
+    _sellChartList.add(ExcDetailEntity(4, 4, 6));
+    _sellChartList.add(ExcDetailEntity(4, 4, 6));
+    _sellChartList.add(ExcDetailEntity(4, 5, 5));
+    _sellChartList.add(ExcDetailEntity(4, 6, 4));
+    _sellChartList.add(ExcDetailEntity(4, 7, 3));
+    for (int i = 0; i < 10; i++) {
+      _sellChartList.add(ExcDetailEntity(4, 10, 0));
     }
   }
 
-  void _addKChartDataFromWS(Map<String, dynamic> data) async {
-    KLineEntity latestKLineItem;
-    String channel = data["ch"];
-    if (!(channel?.endsWith(_periodParameter.value) ?? true)) {
-      _unsubscribeKLineDataFromWS(channel.split(".").last);
-      print("[WS] 取消不是当前选中的channel:$channel");
-    }
-
-    try {
-      latestKLineItem = KLineEntity.fromJson(data['tick']);
-
-      if (latestKLineItem.id != _kChartItemList.last.id) {
-        //Fluttertoast.showToast(msg: 'Add Data ${latestKLineItem.id} ');
-
-        KLineUtil.addLastData(_kChartItemList, latestKLineItem);
-
-        _showLoading = false;
-      } else {
-        //Fluttertoast.showToast(msg: 'Update Data ${latestKLineItem.id} ');
-
-        _kChartItemList.last = latestKLineItem;
-        KLineUtil.updateLastData(_kChartItemList);
-
-        _showLoading = false;
-      }
-    } catch (e) {
-      print('[_addKChartDataFromWS]]: 解析KEntity失败: ${e.toString()}');
-    }
+  _init24HourData() {
+    var json = {
+      'open': 190.00,
+      'high': 190.83,
+      'low': 189.83,
+      'close': 190.00,
+      'vol': 1000,
+      'amount': 321412,
+    };
+    _channel24HourKLineEntity = KLineEntity.fromJson(json);
   }
 
-  Future<dynamic> getDataFromApi(String period) async {
-    //huobi api, https://api.huobi.br.com/market/history/kline?period=1min&size=300&symbol=btcusdt
-    var url = 'market/history/kline?period=${period ?? '1day'}&size=300&symbol=btcusdt';
-    dynamic result;
-    print("[WS] --> getData, url:$url");
-//    var response = await http.get(url, headers:  {'accept': 'application/dns-json'}).timeout(Duration(seconds: 15));
-    var response = await MarketHttpCore.instance.get(
-      url,
-      options: RequestOptions(contentType: "application/json"),
-    );
-
-    print("[WS] --> getData, data:${response["data"] is List}");
-
-    if (response["status"] == "ok") {
-      result = response;
-    } else {
-      return "";
-      //return Future.error("获取失败");
-    }
-    print("[WS] --> getData, result:$result");
-
-    return result;
+  _setupRequest() {
+    _getPeriodData();
+    _getTradeData();
+    _getDepthData();
   }
 
 /*
@@ -968,48 +811,49 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   "2410311.2760000000" //数量
   ]
   */
-  Future getPeriodData(String period) async {
-    var response = await api.historyKline("hynusdt", period: period);
-    print("[WS] --> getData, response:$response");
+  Future _getPeriodData() async {
+    setState(() {
+      _showLoading = true;
+    });
 
-    if (response["code"] == 0) {
-      var data = response["data"];
-      _dealPeriodData(data);
-    }
+    var data = await api.historyKline(_symbol, period: _periodParameter.value);
+    print("[WS] --> _getPeriodData, data:$data");
+    _dealPeriodData(data);
   }
 
   _dealPeriodData(dynamic data, {bool isReplace = true, String symbol = ''}) {
-    print("[WS] --> getData, data:${data is List}");
+    print("[WS] --> _dealPeriodData, data:${data is List}");
 
     if (!(data is List)) {
       return;
     }
 
     List dataList = data;
-    List kLineDataList = dataList
-        .map((item) {
+    List kLineDataList = dataList.map((item) {
       Map<String, dynamic> json = {};
       if (item is List) {
         List itemList = item;
         if (itemList.length >= 7) {
           json = {
-            'open': itemList[1],
-            'high': itemList[2],
-            'low': itemList[3],
-            'close': itemList[4],
-            'vol': itemList[5],
-            'amount': itemList[6],
+            'open': double.parse(itemList[1].toString()),
+            'high': double.parse(itemList[2].toString()),
+            'low': double.parse(itemList[3].toString()),
+            'close': double.parse(itemList[4].toString()),
+            'vol': double.parse(itemList[5].toString()),
+            'amount': 0,
+            'count': 0,
+            'id': int.parse(itemList[0].toString()) / 1000,
           };
         }
       }
+
       return KLineEntity.fromJson(json);
-    })
-        .toList()
-        .reversed
-        .toList()
-        .cast<KLineEntity>();
-    print("[WS] --> getData, _kChartItemList.length:${_kChartItemList.length}, symbol:$symbol");
-    
+    }).toList();
+//        .reversed
+//        .toList()
+//        .cast<KLineEntity>();
+    print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
+
     if (symbol.isNotEmpty) {
       if (symbol == _symbol && kLineDataList.isNotEmpty) {
         _channel24HourKLineEntity = kLineDataList.last;
@@ -1026,6 +870,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         }
       }
     }
+
+    setState(() {
+      _showLoading = false;
+    });
   }
 
   /*
@@ -1042,15 +890,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   "sell" // 卖
   ]
   * */
-  Future getTradeData() async {
-    var response = await api.historyTrade("hynusdt");
-    print("[WS] --> getData, response:$response");
+  Future _getTradeData() async {
+    var data = await api.historyTrade(_symbol);
+    print("[WS] --> _getTradeData, data:$data");
 
-    if (response["code"] == 0) {
-      var data = response["data"];
-      _dealTradeData(data);
-      print("[WS] --> getData, data:${data is List}");
-    }
+    _dealTradeData(data);
+    print("[WS] --> _getTradeData, data:${data is List}");
   }
 
   _dealTradeData(dynamic data, {bool isReplace = true}) {
@@ -1072,8 +917,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       }
       return entity;
     }).toList();
-    print("[WS] --> getData, tradeInfoEntityList.length:${tradeInfoEntityList.length}");
-
+    print("[WS] --> _dealTradeData, tradeInfoEntityList.length:${tradeInfoEntityList.length}");
 
     if (isReplace) {
       if (tradeInfoEntityList.isNotEmpty) {
@@ -1098,15 +942,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   ] ......
   ]
   */
-  Future getDepthData() async {
-    var response = await api.historyDepth("hynusdt");
-    print("[WS] --> getData, response:$response");
+  Future _getDepthData() async {
+    var data = await api.historyDepth(_symbol);
+    print("[WS] --> _getDepthData, data:$data");
 
-    if (response["code"] == 0) {
-      var data = response["data"];
-      print("[WS] --> getData, data:${data is List}");
-      _dealDepthData(data);
-    }
+    _dealDepthData(data);
+    print("[WS] --> _getDepthData, data:${data is List}");
   }
 
   _dealDepthData(dynamic data, {bool isReplace = true}) {
@@ -1124,14 +965,14 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           if (item is List) {
             List itemList = item;
             if (itemList.length >= 2) {
-              entity.price = itemList[0];
-              entity.amount = itemList[1];
+              entity.price = double.parse(itemList[0].toString());
+              entity.amount = double.parse(itemList[1].toString());
               entity.actionType = actionType;
             }
           }
           return entity;
         }).toList();
-        print("[WS] --> getData, depthInfoEntityList.length:${depthInfoEntityList.length}");
+        print("[WS] --> _getDepthData, depthInfoEntityList.length:${depthInfoEntityList.length}");
         return depthInfoEntityList;
       }
       return [];
@@ -1142,7 +983,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
     var sell = dataMap["sell"];
     var sellList = deptList(sell, "sell");
-    print("[WS] --> getData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
+    print("[WS] --> _getDepthData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
 
     if (isReplace) {
       if (buyList.isNotEmpty) {
@@ -1161,6 +1002,52 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         _sellDepthItemList.addAll(sellList);
       }
     }
+
+
+    // doing
+    List<ExcDetailEntity> buyEntityList = [];
+    List<ExcDetailEntity> sellEntityList = [];
+
+    for (int index = 0; index < min(10, min(_buyDepthItemList.length, _sellDepthItemList.length)); index++) {
+      var left = 10 - index;
+      var right = index;
+      var buy = _buyDepthItemList[index];
+      var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
+      buyEntityList.add(entity);
+
+      left = index;
+      right = 10 - index;
+      var sell = _sellDepthItemList[index];
+      entity = ExcDetailEntity(2, left, right, depthEntity: sell);
+      sellEntityList.add(entity);
+    }
+
+    if (buyEntityList.isNotEmpty) {
+      _buyChartList = buyEntityList;
+    }
+
+    if (sellEntityList.isNotEmpty) {
+      _sellChartList = sellEntityList;
+    }
+
+    setState(() {});
+  }
+
+  // channel
+  _initChannel() {
+    _sub24HourChannel();
+    _subPeriodChannel();
+    _subDepthChannel();
+    _subTradeChannel();
+
+    _initListenChannel();
+  }
+
+  _unSubChannels() {
+    _unSub24HourChannel();
+    _unSubPeriodChannel();
+    _unSubDepthChannel();
+    _unSubTradeChannel();
   }
 
   // 24hour
@@ -1173,15 +1060,15 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     var channel = SocketConfig.channelKLine24Hour;
     _unSubChannel(channel);
   }
-  
+
   // period
-  void _subPeriodChannel(String period) {
-    var channel = SocketConfig.channelKLinePeriod(_symbol, period);
+  void _subPeriodChannel() {
+    var channel = SocketConfig.channelKLinePeriod(_symbol, _periodParameter.value);
     _subChannel(channel);
   }
 
-  void _unSubPeriodChannel(String period) {
-    var channel = SocketConfig.channelKLinePeriod(_symbol, period);
+  void _unSubPeriodChannel({String period = ''}) {
+    var channel = SocketConfig.channelKLinePeriod(_symbol, period.isEmpty ? _periodParameter.value : period);
     _unSubChannel(channel);
   }
 
@@ -1206,24 +1093,17 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     var channel = SocketConfig.channelExchangeDepth(_symbol, -1);
     _unSubChannel(channel);
   }
-  
+
   // sub
   void _subChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context)
-        .add(SubChannelEvent(channel: channel));
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
   }
 
   // unSub
   void _unSubChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context)
-        .add(UnSubChannelEvent(channel: channel));
+    BlocProvider.of<SocketBloc>(context).add(UnSubChannelEvent(channel: channel));
   }
-  
-  void _initSubChannel() {
-    _sub24HourChannel();
-    _subPeriodChannel(_periodParameter.value);
-  }
-  
+
   void _initListenChannel() {
     BlocProvider.of<SocketBloc>(context).listen((state) {
       if (state is SubChannelSuccessState) {
@@ -1233,7 +1113,11 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       } else if (state is ChannelKLine24HourState) {
         _dealPeriodData(state.response, symbol: state.symbol);
       } else if (state is ChannelKLinePeriodState) {
-        _addPeriodData(state.channel, state.response);
+        if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
+          _unSubPeriodChannel(period: state.channel.split(".").last);
+          print("[WS] 取消不是当前选中的channel:${state.channel}");
+        }
+        _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
         _dealDepthData(state.response, isReplace: false);
       } else if (state is ChannelTradeDetailState) {
@@ -1241,220 +1125,212 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       }
     });
   }
-
-  void _addPeriodData(String channel, List data) async {
-
-    if (!(channel?.endsWith(_periodParameter.value) ?? true)) {
-      _unSubPeriodChannel(channel.split(".").last);
-      print("[WS] 取消不是当前选中的channel:$channel");
-    }
-    _dealPeriodData(data, isReplace: false);
-  }
-
 }
 
 Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sailChartList) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
-    child: ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        itemBuilder: (context, index) {
-          ExcDetailEntity buyEntity = buyChartList[index];
-          ExcDetailEntity sailEntity = sailChartList[index];
+    child: Column(
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "买盘 数量(HYN)",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.normal,
+                  color: HexColor("#777777"),
+                ),
+              ),
+              Text(
+                "价格(USDT)",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.normal,
+                  color: HexColor("#777777"),
+                ),
+              ),
+              Text(
+                "数量(HYN)卖盘",
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.normal,
+                  color: HexColor("#777777"),
+                ),
+              ),
+            ],
+          ),
+        ),
+        ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              ExcDetailEntity buyEntity = buyChartList[index];
+              ExcDetailEntity sailEntity = sailChartList[index];
 
-          return index == 0
-              ? Container(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "买盘 数量(HYN)",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal,
-                          color: HexColor("#777777"),
-                        ),
-                      ),
-                      Text(
-                        "价格(USDT)",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal,
-                          color: HexColor("#777777"),
-                        ),
-                      ),
-                      Text(
-                        "数量(HYN)卖盘",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal,
-                          color: HexColor("#777777"),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Row(
-                  children: <Widget>[
-                    Expanded(
-                        flex: 1,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: buyEntity.leftPercent,
-                                  child: Container(
-                                    height: 25,
-                                    color: HexColor("#ffffff"),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: buyEntity.rightPercent,
-                                  child: Container(
-                                    height: 25,
-                                    color: HexColor("#EBF8F2"),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
+              return Row(
+                children: <Widget>[
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                flex: buyEntity.leftPercent,
+                                child: Container(
                                   height: 25,
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "$index",
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                      color: HexColor("#999999"),
-                                    ),
-                                  ),
+                                  color: HexColor("#ffffff"),
                                 ),
-                                Container(
+                              ),
+                              Expanded(
+                                flex: buyEntity.rightPercent,
+                                child: Container(
                                   height: 25,
-                                  padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "1.43543",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                      color: HexColor("#333333"),
-                                    ),
+                                  color: HexColor("#EBF8F2"),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 25,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "${index + 1}",
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: HexColor("#999999"),
                                   ),
                                 ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    height: 25,
-                                    padding: const EdgeInsets.only(right: 5),
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      "180.39",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#53AE86"),
-                                      ),
-                                    ),
+                              ),
+                              Container(
+                                height: 25,
+                                padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  buyEntity?.depthEntity?.amount.toString(),
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: HexColor("#333333"),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        )),
-                    Expanded(
-                        flex: 1,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: sailEntity.leftPercent,
-                                  child: Container(
-                                    height: 25,
-                                    color: HexColor("#F9EFEF"),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: sailEntity.rightPercent,
-                                  child: Container(
-                                    height: 25,
-                                    color: HexColor("#ffffff"),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    height: 25,
-                                    alignment: Alignment.centerLeft,
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: Text(
-                                      "180.39",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#CC5858"),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Container(
                                   height: 25,
+                                  padding: const EdgeInsets.only(right: 5),
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    "1.43543",
+                                    buyEntity?.depthEntity?.price.toString(),
                                     textAlign: TextAlign.end,
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
-                                      color: HexColor("#333333"),
+                                      color: HexColor("#53AE86"),
                                     ),
                                   ),
                                 ),
-                                Container(
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                flex: sailEntity.leftPercent,
+                                child: Container(
                                   height: 25,
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                  color: HexColor("#F9EFEF"),
+                                ),
+                              ),
+                              Expanded(
+                                flex: sailEntity.rightPercent,
+                                child: Container(
+                                  height: 25,
+                                  color: HexColor("#ffffff"),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  height: 25,
+                                  alignment: Alignment.centerLeft,
+                                  padding: const EdgeInsets.only(left: 5),
                                   child: Text(
-                                    "$index",
-                                    textAlign: TextAlign.end,
+                                    sailEntity?.depthEntity?.price.toString(),
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
-                                      color: HexColor("#999999"),
+                                      color: HexColor("#CC5858"),
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ],
-                        )),
-                  ],
-                );
-        },
-        itemCount: buyChartList.length),
+                              ),
+                              Container(
+                                height: 25,
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  sailEntity?.depthEntity?.amount.toString(),
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: HexColor("#333333"),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 25,
+                                alignment: Alignment.centerRight,
+                                padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                child: Text(
+                                  "${index + 1}",
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500,
+                                    color: HexColor("#999999"),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )),
+                ],
+              );
+            },
+            itemCount: buyChartList.length),
+      ],
+    ),
   );
 }
-

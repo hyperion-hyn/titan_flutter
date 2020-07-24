@@ -8,11 +8,24 @@ class TradeInfoEntity {
   TradeInfoEntity({this.date, this.price, this.amount, this.actionType});
 }
 
-class DepthInfoEntity {
+/*class DepthInfoEntity {
   String price;
   String amount;
   String actionType; // sell, buy
-  DepthInfoEntity({this.price, this.amount, this.actionType});
+  DepthInfoEntity({this.price, this.amount, this.actionType='sell'});
+}*/
+
+class DepthInfoEntity extends DepthEntity {
+
+  DepthInfoEntity({this.actionType, double price, double amount}) : super(price, amount);
+
+  @override
+  String toString() {
+    return 'Data{price: $price, amount: $amount}, actionType:$actionType';
+  }
+
+  String actionType;
+
 }
 
 class PeriodInfoEntity {
