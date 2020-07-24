@@ -25,6 +25,7 @@ import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
 
 import 'bloc/exchange_detail_bloc.dart';
 
@@ -1079,7 +1080,69 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       stream: consignListController.stream,
       builder: (context, optionType) {
         if (optionType.data == contrConsignTypeRefresh) {}
-        return ListView.builder(
+        return Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                  top: 13.0, bottom: 11, left: 13, right: 13),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        "当前委托",
+                        style: TextStyle(
+                            fontSize: 16, color: DefaultColors.color333),
+                      ),
+                      Spacer(),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.end,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 2.0),
+                            child: Image.asset(
+                              "res/drawable/ic_exhange_all_consign.png",
+                              width: 12,
+                              height: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          InkWell(
+                            child: Text("全部",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: DefaultColors.color999,
+                                )),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ExchangeOrderManagementPage(
+                                            marketCoin,
+                                          )));
+                            },
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 11,
+                  ),
+                  Divider(
+                    height: 1,
+                  )
+                ],
+              ),
+            ),
+            ExchangeActiveOrderListPage(marketCoin)
+          ],
+        );
+        /*return ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             itemCount: _currentOrders.length + 1,
@@ -1148,7 +1211,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 _currentOrders[index - 1],
                 market: marketCoin,
               );
-            });
+            });*/
       },
     );
   }

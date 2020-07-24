@@ -229,9 +229,18 @@ class ExchangeApi {
     String method,
   ) async {
     return await ExchangeHttp.instance.postEntity(
-        ExchangeConst.PATH_ORDER_MARKET,
-        EntityFactory<List<Order>>((list) =>
-            (list as List).map((item) => Order.fromJson(item)).toList()),
+        ExchangeConst.PATH_ORDER_LIST,
+        EntityFactory<List<Order>>((response) {
+          var orderList = List<Order>();
+          if(response is Map && response.length == 0){
+            return orderList;
+          }
+          var dataList = response['data'];
+          (dataList as List).forEach((item) {
+            orderList.add(Order.fromJson(item));
+          });
+          return orderList;
+        }),
         params: {
           'market': market,
           'page': page,
