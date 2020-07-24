@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 
 import '../../../global.dart';
@@ -22,12 +23,14 @@ class ExchangeOrderHistoryPage extends StatefulWidget {
 class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     with AutomaticKeepAliveClientMixin {
   List<Order> _orders = List();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
-  int _currentPage = 0;
+  int _currentPage = 1;
+  int _size = 30;
+  String _method = 'history';
 
   @override
   void initState() {
@@ -48,7 +51,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     return LoadDataContainer(
       bloc: _loadDataBloc,
       onLoadData: () async {
-        _loadMore();
+        _refresh();
       },
       onRefresh: () async {
         _refresh();
@@ -63,33 +66,43 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     );
   }
 
-  void _refresh() async {
-    _currentPage = 0;
-    await Future.delayed(Duration(milliseconds: 1000));
+  _refresh() async {
+    _currentPage = 1;
 
     ///clear list before refresh
     _orders.clear();
-    _orders.addAll(
-      (List.generate(
-        5,
-        (index) => Order.fromJson({}),
-      )),
-    );
-    _loadDataBloc.add(RefreshSuccessEvent());
+    List<Order> resultList =
+        await ExchangeInheritedModel.of(context).exchangeApi.getOrderList(
+              widget.market,
+              _currentPage,
+              _size,
+              _method,
+            );
+    print('[ExchangeOrderHistoryPage] _refresh: resultList $resultList');
+    if (resultList != null) {
+      _orders.addAll(resultList);
+    }
+
     if (mounted) setState(() {});
+    _loadDataBloc.add(RefreshSuccessEvent());
     _refreshController.refreshCompleted();
   }
 
   _loadMore() async {
     _currentPage++;
-    try {} catch (e) {
-      logger.e(e.toString());
+    List<Order> resultList =
+        await ExchangeInheritedModel.of(context).exchangeApi.getOrderList(
+              widget.market,
+              _currentPage,
+              _size,
+              _method,
+            );
+    print('[ExchangeOrderHistoryPage] _loadMore: resultList $resultList');
+    if (resultList != null) {
+      _orders.addAll(resultList);
     }
-    await Future.delayed(Duration(milliseconds: 1000));
-    _orders.addAll((List.generate(
-        10, (index) => Order.fromJson({}))));
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
+    _loadDataBloc.add(LoadingMoreSuccessEvent());
     _refreshController.loadComplete();
   }
 

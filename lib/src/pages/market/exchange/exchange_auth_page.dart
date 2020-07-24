@@ -8,6 +8,7 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/bloc/bloc.dart';
 import 'package:titan/src/pages/market/model/exchange_account.dart';
@@ -152,8 +153,11 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     if (wallet != null) {
       var address = wallet.wallet.getEthAccount().address;
-      var walletPassword =
-          await UiUtil.showWalletPasswordDialogV2(context, wallet.wallet);
+      var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+        context,
+        wallet.wallet,
+        authType: AuthType.exchange,
+      );
       if (walletPassword != null) {
         BlocProvider.of<ExchangeCmpBloc>(context)
             .add(LoginEvent(wallet.wallet, walletPassword, address));

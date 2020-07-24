@@ -6,7 +6,7 @@ class ExchangeModel {
   ExchangeAccount activeAccount;
 
   bool isActiveAccount(){
-    return activeAccount != null;
+    return activeAccount != null && activeAccount.assetList != null;
   }
 
 }

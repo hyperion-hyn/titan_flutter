@@ -63,6 +63,10 @@ class FormatUtil {
     return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
+  static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
+    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+  }
+
   static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {

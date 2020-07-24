@@ -7,6 +7,8 @@ import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
@@ -162,14 +164,16 @@ class ExchangeApi {
   Future<MarketInfoEntity> getMarketInfo(String market) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_MARKET_INFO,
-      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      EntityFactory<MarketInfoEntity>(
+          (marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
       params: {
         "market": market,
       },
     );
   }
 
-  Future<dynamic> orderPutLimit(String market, exchangeType,String price,String amount) async {
+  Future<dynamic> orderPutLimit(
+      String market, exchangeType, String price, String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
@@ -183,9 +187,8 @@ class ExchangeApi {
     );
   }
 
-
-
-  Future<dynamic> orderPutMarket(String market, exchangeType,String amount) async {
+  Future<dynamic> orderPutMarket(
+      String market, exchangeType, String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,
@@ -196,7 +199,6 @@ class ExchangeApi {
       },
     );
   }
-
 
   Future<dynamic> historyTrade(String symbol, {String limit = '100'}) async {
     return await ExchangeHttp.instance.postEntity(
@@ -209,8 +211,6 @@ class ExchangeApi {
     );
   }
 
-
-
   Future<dynamic> historyDepth(String symbol, {String precision = '-1'}) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_HISTORY_DEPTH,
@@ -218,6 +218,52 @@ class ExchangeApi {
       params: {
         "symbol": symbol,
         "precision": precision,
+      },
+    );
+  }
+
+  Future<List<Order>> getOrderList(
+    String market,
+    int page,
+    int size,
+    String method,
+  ) async {
+    return await ExchangeHttp.instance.postEntity(
+        ExchangeConst.PATH_ORDER_LIST,
+        EntityFactory<List<Order>>((response) {
+          var orderList = List<Order>();
+          if(response is Map && response.length == 0){
+            return orderList;
+          }
+          var dataList = response['data'];
+          (dataList as List).forEach((item) {
+            orderList.add(Order.fromJson(item));
+          });
+          return orderList;
+        }),
+        params: {
+          'market': market,
+          'page': page,
+          'size': size,
+          'method': method,
+        });
+  }
+
+  Future<List<OrderDetail>> getOrderDetailList(
+    String market,
+    int page,
+    int size,
+  ) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_LOG_LIST,
+      EntityFactory<List<OrderDetail>>(
+        (list) =>
+            (list as List).map((item) => OrderDetail.fromJson(item)).toList(),
+      ),
+      params: {
+        'market': market,
+        'page': page,
+        'size': size,
       },
     );
   }
@@ -232,5 +278,4 @@ class ExchangeApi {
       },
     );
   }
-
 }

@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
@@ -92,12 +93,18 @@ class AuthUtil {
     return authenticated;
   }
 
-  static Future<AuthConfigModel> getAuthConfigByWallet(Wallet wallet) async {
+  static Future<AuthConfigModel> getAuthConfigByWallet(
+    Wallet wallet, {
+    AuthType authType = AuthType.pay,
+  }) async {
     AuthConfigModel authConfigModel;
     List availableBiometricTypes = List();
     LocalAuthentication auth = LocalAuthentication();
-    var authConfigStr = await AppCache.getValue<String>(
-        '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}');
+
+    ///
+    var authConfigStr = await AppCache.getValue<String>(authType == AuthType.pay
+        ? '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}'
+        : '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}');
     if (authConfigStr != null) {
       authConfigModel = AuthConfigModel.fromJson(json.decode(authConfigStr));
     } else {
@@ -118,9 +125,15 @@ class AuthUtil {
     return authConfigModel;
   }
 
-  static saveAuthConfig(AuthConfigModel authConfigModel, Wallet wallet) async {
+  static saveAuthConfig(
+    AuthConfigModel authConfigModel,
+    Wallet wallet, {
+    AuthType authType = AuthType.pay,
+  }) async {
     await AppCache.saveValue(
-      '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}',
+      authType == AuthType.pay
+          ? '${PrefsKey.AUTH_CONFIG}_${wallet.keystore.fileName}'
+          : '${PrefsKey.AUTH_CONFIG}_exchange_${wallet.keystore.fileName}',
       json.encode(authConfigModel.toJSON()),
     );
   }

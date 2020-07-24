@@ -4,12 +4,14 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class OrderItem extends StatefulWidget {
   final Order _order;
   final String market;
+  final Function revokeOrder;
 
-  OrderItem(this._order, {this.market = 'HYN/USDT'});
+  OrderItem(this._order, {this.revokeOrder, this.market = 'HYN/USDT'});
 
   @override
   State<StatefulWidget> createState() {
@@ -35,10 +37,10 @@ class OrderItemState extends State<OrderItem> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    widget._order.side == '0' ? "买入" : "卖出",
+                    widget._order.side == ExchangeType.BUY.toString() ? "买入" : "卖出",
                     style: TextStyle(
                       fontSize: 14,
-                      color: widget._order.side == '0'
+                      color: widget._order.side == ExchangeType.BUY.toString()
                           ? HexColor("#53AE86")
                           : HexColor("#CC5858"),
                     ),
@@ -47,7 +49,7 @@ class OrderItemState extends State<OrderItem> {
                     width: 8.0,
                   ),
                   Text(
-                    '10:37 06/11',
+                    "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime))}",
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
@@ -74,7 +76,9 @@ class OrderItemState extends State<OrderItem> {
                       fontSize: 12,
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    widget.revokeOrder(widget._order);
+                  },
                 ),
               ),
             )
@@ -163,7 +167,7 @@ class OrderItemState extends State<OrderItem> {
                       children: <Widget>[
                         Spacer(),
                         Text(
-                          "${widget._order.amount}",
+                          "${widget._order.amountDeal}",
                           style: TextStyle(
                             color: DefaultColors.color333,
                             fontSize: 12,
