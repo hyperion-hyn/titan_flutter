@@ -50,7 +50,7 @@ class ExchangeActiveOrderListPageState
     return LoadDataContainer(
       bloc: _loadDataBloc,
       onLoadData: () async {
-        _loadMore();
+        _refresh();
       },
       onRefresh: () async {
         _refresh();
