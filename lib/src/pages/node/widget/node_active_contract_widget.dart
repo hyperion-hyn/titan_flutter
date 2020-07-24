@@ -70,7 +70,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
 
   void getContractActiveList() async {
     _currentPage = 0;
-    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(_currentPage);
+    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(page: _currentPage);
 
     //print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {

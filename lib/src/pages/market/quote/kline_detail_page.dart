@@ -4,11 +4,16 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/market_http_core.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
+import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -22,35 +27,48 @@ class KLineDetailPage extends StatefulWidget {
 }
 
 class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderStateMixin {
+  final ExchangeApi api = ExchangeApi();
+
   final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
     'wss://api.huobi.pro/ws',
   );
   List<KLineEntity> _kChartItemList;
+  List<TradeInfoEntity> _tradeItemList;
+  List<DepthInfoEntity> _buyDepthItemList;
+  List<DepthInfoEntity> _sellDepthItemList;
 
-  PeriodModel _periodParameter;
+  PeriodInfoEntity _periodParameter;
+  String _symbol = 'btcusdt';
+  KLineEntity _channel24HourKLineEntity;
 
   bool _showLoading = true;
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => _periodCurrentIndex == 5;
+  bool get _isDepth => _periodTabController.index == 4;
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
-  List<PeriodModel> _normalPeriodList = [
-    PeriodModel(name: "15分钟", value: "15min",), 
-    PeriodModel(name: "1小时", value: "60min"), 
-    PeriodModel(name: "4小时", value: "4hour"), 
-    PeriodModel(name: "1天", value: "1day")];
-  
-  List<PeriodModel> _morePeriodList = [
-    PeriodModel(name: "分时", value: "分时",),
-    PeriodModel(name: "1分钟", value: "1min"),
-    PeriodModel(name: "5分钟", value: "5min"),
-    PeriodModel(name: "30分钟", value: "30min"),
-    PeriodModel(name: "1周", value: "1week"),
-    PeriodModel(name: "1月", value: "1mon"),
+//  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
+  List<PeriodInfoEntity> _normalPeriodList = [
+    PeriodInfoEntity(
+      name: "15分钟",
+      value: "15min",
+    ),
+    PeriodInfoEntity(name: "1小时", value: "60min"),
+    PeriodInfoEntity(name: "1天", value: "1day")
   ];
 
+  List<PeriodInfoEntity> _morePeriodList = [
+    PeriodInfoEntity(
+      name: "分时",
+      value: "分时",
+    ),
+    PeriodInfoEntity(name: "1分钟", value: "1min"),
+    PeriodInfoEntity(name: "5分钟", value: "5min"),
+    PeriodInfoEntity(name: "30分钟", value: "30min"),
+    PeriodInfoEntity(name: "1周", value: "1week"),
+    PeriodInfoEntity(name: "1月", value: "1mon"),
+  ];
 
   MainState _mainState = MainState.MA;
   bool get _isOpenMainState => _mainState != MainState.NONE;
@@ -62,14 +80,14 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   int _detailCurrentIndex = 0;
 
   TabController _periodTabController;
-  int _periodCurrentIndex = 4;
+  int _periodCurrentIndex = 0;
+  int _lastSelectedIndex = 0;
 
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
 
   List<DepthEntity> _bids = [];
   List<DepthEntity> _asks = [];
-
 
   @override
   void initState() {
@@ -280,9 +298,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: _morePeriodList
-                    .map((item) => _periodTextWidget(item))
-                    .toList(),
+                children: _morePeriodList.map((item) => _periodTextWidget(item)).toList(),
               ),
             ),
           ),
@@ -441,12 +457,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     );
   }
 
-  Widget _periodTextWidget(PeriodModel item) {
+  Widget _periodTextWidget(PeriodInfoEntity item) {
     var equalValue = _periodParameter;
     return InkWell(
       onTap: () {
         _isShowMore = false;
-
+        _periodTabController.index = 3;
         var index = _morePeriodList.indexOf(item);
         if (index != 0) {
           _unsubscribeKLineDataFromWS(_periodParameter.value);
@@ -454,7 +470,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
           _requestDataFromApi(_periodParameter.value);
           _subscribeKLineDataFromWS(_periodParameter.value);
-
         } else {
           _periodParameter = item;
         }
@@ -465,7 +480,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         padding: const EdgeInsets.all(8),
         child: Text(
           item.name,
-          style: TextStyle(color: item.name == equalValue.name ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
+          style:
+              TextStyle(color: item.name == equalValue.name ? HexColor("#228BA1") : HexColor("#999999"), fontSize: 12),
         ),
       ),
     );
@@ -489,14 +505,19 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
-              _periodParameter.name.isNotEmpty && _morePeriodList.contains(_periodParameter) ? _periodParameter.name : '更多',
-              //style: TextStyle(color: HexColor("#333333")),
+              _morePeriodList.contains(_periodParameter) ? _periodParameter.name : '更多',
+              style: TextStyle(
+                  color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 3)
+                      ? HexColor("#228BA1")
+                      : HexColor("#999999")),
             ),
             Image.asset(
               'res/drawable/k_line_down_arrow.png',
               width: 5,
               height: 5,
-              color: _periodCurrentIndex == 4 ? HexColor("#228BA1") : HexColor("#999999"),
+              color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 3)
+                  ? HexColor("#228BA1")
+                  : HexColor("#999999"),
             ),
           ],
         ),
@@ -540,14 +561,20 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         indicatorPadding: EdgeInsets.only(bottom: 2),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
-          if (index == 4 && !_isShowMore) {
-            _isShowMore = true;
+          _lastSelectedIndex = _periodTabController.previousIndex;
+
+          if (index == 3) {
+            _isShowMore = !_isShowMore;
+
+            if (!_morePeriodList.contains(_periodParameter)) {
+              _periodTabController.index = _lastSelectedIndex;
+            }
           } else {
             _isShowMore = false;
           }
           _isShowSetting = false;
-
           _periodCurrentIndex = index;
+          print("_periodCurrentIndex:$_periodCurrentIndex");
 
           if (index < _normalPeriodList.length) {
             _unsubscribeKLineDataFromWS(_periodParameter.value);
@@ -607,7 +634,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         children: [
           Visibility(
             visible: _detailCurrentIndex == 0,
-            child: delegationListView(buyChartList,sailChartList),
+            child: delegationListView(buyChartList, sailChartList),
           ),
           Visibility(
             visible: _detailCurrentIndex == 1,
@@ -727,7 +754,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 
   void _unsubscribeKLineDataFromWS(String period) {
-
     Map<String, dynamic> requestKLine = Map<String, dynamic>();
     requestKLine['unsub'] = 'market.btcusdt.kline.$period';
     requestKLine['id'] = 'hyn_client';
@@ -737,8 +763,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
   _initData() {
     // todo: test_jison_0722
-//    _periodParameter = _normalPeriodList[0];
-    _periodParameter = _morePeriodList[1];
+    _periodParameter = _normalPeriodList[0];
+//    _periodParameter = _normalPeriodList[1];
 
     // buy
     buyChartList.add(ExcDetailEntity(2, 6, 4));
@@ -769,7 +795,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     _periodTabController = TabController(
       initialIndex: _periodCurrentIndex,
       vsync: this,
-      length: 7,
+      length: 6,
     );
 
     initDepthData();
@@ -828,13 +854,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
             if (data['ping'] != null) {
               _respondHeartBeat(data['ping']);
             } else {
-              if (mounted)
-                setState(() {
-                });
+              if (mounted) setState(() {});
               if (data["subbed"] != null) {
                 Fluttertoast.showToast(msg: '订阅 ${data["subbed"]} 成功');
-              }
-              else if (data["unsubbed"] != null) {
+              } else if (data["unsubbed"] != null) {
                 Fluttertoast.showToast(msg: '取阅 ${data["unsubbed"]} 成功');
               } else {
                 _addKChartDataFromWS(data);
@@ -883,7 +906,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   void _addKChartDataFromWS(Map<String, dynamic> data) async {
     KLineEntity latestKLineItem;
     String channel = data["ch"];
-    if (!(channel?.endsWith(_periodParameter.value)??true)) {
+    if (!(channel?.endsWith(_periodParameter.value) ?? true)) {
       _unsubscribeKLineDataFromWS(channel.split(".").last);
       print("[WS] 取消不是当前选中的channel:$channel");
     }
@@ -934,28 +957,303 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     return result;
   }
 
-  // MainState
-  MainState enumMainStateFromString(String fruit) {
-    fruit = 'MainState.$fruit';
-    return MainState.values.firstWhere((f) => f.toString() == fruit, orElse: () => null);
+/*
+  [
+  1591799700000, //日期
+  "9400.5900000000", //开
+  "9400.5900000000", //高
+  "9400.5900000000", //低
+  "9400.5900000000", //收
+  "256.4000000000", //额度
+  "2410311.2760000000" //数量
+  ]
+  */
+  Future getPeriodData(String period) async {
+    var response = await api.historyKline("hynusdt", period: period);
+    print("[WS] --> getData, response:$response");
+
+    if (response["code"] == 0) {
+      var data = response["data"];
+      _dealPeriodData(data);
+    }
   }
 
-  // SecondaryState
-  SecondaryState enumSecondaryStateFromString(String fruit) {
-    fruit = 'SecondaryState.$fruit';
-    return SecondaryState.values.firstWhere((f) => f.toString() == fruit, orElse: () => null);
+  _dealPeriodData(dynamic data, {bool isReplace = true, String symbol = ''}) {
+    print("[WS] --> getData, data:${data is List}");
+
+    if (!(data is List)) {
+      return;
+    }
+
+    List dataList = data;
+    List kLineDataList = dataList
+        .map((item) {
+      Map<String, dynamic> json = {};
+      if (item is List) {
+        List itemList = item;
+        if (itemList.length >= 7) {
+          json = {
+            'open': itemList[1],
+            'high': itemList[2],
+            'low': itemList[3],
+            'close': itemList[4],
+            'vol': itemList[5],
+            'amount': itemList[6],
+          };
+        }
+      }
+      return KLineEntity.fromJson(json);
+    })
+        .toList()
+        .reversed
+        .toList()
+        .cast<KLineEntity>();
+    print("[WS] --> getData, _kChartItemList.length:${_kChartItemList.length}, symbol:$symbol");
+    
+    if (symbol.isNotEmpty) {
+      if (symbol == _symbol && kLineDataList.isNotEmpty) {
+        _channel24HourKLineEntity = kLineDataList.last;
+      }
+    } else {
+      if (isReplace) {
+        if (kLineDataList.isNotEmpty) {
+          _kChartItemList = kLineDataList;
+          KLineUtil.calculate(_kChartItemList);
+        }
+      } else {
+        if (kLineDataList.isNotEmpty) {
+          KLineUtil.addLastData(_kChartItemList, kLineDataList.last);
+        }
+      }
+    }
   }
+
+  /*
+    [
+  "1592299815201", //时间
+  "9472.1800000000", //价格
+  "1.10000000", //数量
+  "buy" // 买
+  ],
+  [
+  "1592299812125",
+  "9472.1800000000",
+  "4.10000000",
+  "sell" // 卖
+  ]
+  * */
+  Future getTradeData() async {
+    var response = await api.historyTrade("hynusdt");
+    print("[WS] --> getData, response:$response");
+
+    if (response["code"] == 0) {
+      var data = response["data"];
+      _dealTradeData(data);
+      print("[WS] --> getData, data:${data is List}");
+    }
+  }
+
+  _dealTradeData(dynamic data, {bool isReplace = true}) {
+    if (!(data is List)) {
+      return;
+    }
+
+    List dataList = data;
+    var tradeInfoEntityList = dataList.map((item) {
+      TradeInfoEntity entity = TradeInfoEntity();
+      if (item is List) {
+        List itemList = item;
+        if (itemList.length >= 4) {
+          entity.date = int.parse(itemList[0]);
+          entity.price = itemList[1];
+          entity.amount = itemList[2];
+          entity.actionType = itemList[3];
+        }
+      }
+      return entity;
+    }).toList();
+    print("[WS] --> getData, tradeInfoEntityList.length:${tradeInfoEntityList.length}");
+
+
+    if (isReplace) {
+      if (tradeInfoEntityList.isNotEmpty) {
+        _tradeItemList = tradeInfoEntityList;
+      }
+    } else {
+      if (tradeInfoEntityList.isNotEmpty) {
+        _tradeItemList.addAll(tradeInfoEntityList);
+      }
+    }
+  }
+
+/*
+  "buy":[ //买盘数据[
+  9448.37, //价格
+  0.0538 //数量
+  ] ......
+  ],
+  "sell":[ //卖盘数据[
+  9448.37,
+  0.0538
+  ] ......
+  ]
+  */
+  Future getDepthData() async {
+    var response = await api.historyDepth("hynusdt");
+    print("[WS] --> getData, response:$response");
+
+    if (response["code"] == 0) {
+      var data = response["data"];
+      print("[WS] --> getData, data:${data is List}");
+      _dealDepthData(data);
+    }
+  }
+
+  _dealDepthData(dynamic data, {bool isReplace = true}) {
+    if (!(data is Map)) {
+      return;
+    }
+
+    Map dataMap = data;
+
+    List<DepthInfoEntity> deptList(dynamic cache, String actionType) {
+      if (cache is List) {
+        List dataList = cache;
+        var depthInfoEntityList = dataList.map((item) {
+          DepthInfoEntity entity = DepthInfoEntity();
+          if (item is List) {
+            List itemList = item;
+            if (itemList.length >= 2) {
+              entity.price = itemList[0];
+              entity.amount = itemList[1];
+              entity.actionType = actionType;
+            }
+          }
+          return entity;
+        }).toList();
+        print("[WS] --> getData, depthInfoEntityList.length:${depthInfoEntityList.length}");
+        return depthInfoEntityList;
+      }
+      return [];
+    }
+
+    var buy = dataMap["buy"];
+    var buyList = deptList(buy, "buy");
+
+    var sell = dataMap["sell"];
+    var sellList = deptList(sell, "sell");
+    print("[WS] --> getData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
+
+    if (isReplace) {
+      if (buyList.isNotEmpty) {
+        _buyDepthItemList = buyList;
+      }
+
+      if (sellList.isNotEmpty) {
+        _sellDepthItemList = sellList;
+      }
+    } else {
+      if (buyList.isNotEmpty) {
+        _buyDepthItemList.addAll(buyList);
+      }
+
+      if (sellList.isNotEmpty) {
+        _sellDepthItemList.addAll(sellList);
+      }
+    }
+  }
+
+  // 24hour
+  void _sub24HourChannel() {
+    var channel = SocketConfig.channelKLine24Hour;
+    _subChannel(channel);
+  }
+
+  void _unSub24HourChannel() {
+    var channel = SocketConfig.channelKLine24Hour;
+    _unSubChannel(channel);
+  }
+  
+  // period
+  void _subPeriodChannel(String period) {
+    var channel = SocketConfig.channelKLinePeriod(_symbol, period);
+    _subChannel(channel);
+  }
+
+  void _unSubPeriodChannel(String period) {
+    var channel = SocketConfig.channelKLinePeriod(_symbol, period);
+    _unSubChannel(channel);
+  }
+
+  // trade
+  void _subTradeChannel() {
+    var channel = SocketConfig.channelTradeDetail(_symbol);
+    _subChannel(channel);
+  }
+
+  void _unSubTradeChannel() {
+    var channel = SocketConfig.channelTradeDetail(_symbol);
+    _unSubChannel(channel);
+  }
+
+  // depth
+  void _subDepthChannel() {
+    var channel = SocketConfig.channelExchangeDepth(_symbol, -1);
+    _subChannel(channel);
+  }
+
+  void _unSubDepthChannel() {
+    var channel = SocketConfig.channelExchangeDepth(_symbol, -1);
+    _unSubChannel(channel);
+  }
+  
+  // sub
+  void _subChannel(String channel) {
+    BlocProvider.of<SocketBloc>(context)
+        .add(SubChannelEvent(channel: channel));
+  }
+
+  // unSub
+  void _unSubChannel(String channel) {
+    BlocProvider.of<SocketBloc>(context)
+        .add(UnSubChannelEvent(channel: channel));
+  }
+  
+  void _initSubChannel() {
+    _sub24HourChannel();
+    _subPeriodChannel(_periodParameter.value);
+  }
+  
+  void _initListenChannel() {
+    BlocProvider.of<SocketBloc>(context).listen((state) {
+      if (state is SubChannelSuccessState) {
+        Fluttertoast.showToast(msg: '订阅 ${state.channel} 成功');
+      } else if (state is UnSubChannelSuccessState) {
+        Fluttertoast.showToast(msg: '取阅 ${state.channel} 成功');
+      } else if (state is ChannelKLine24HourState) {
+        _dealPeriodData(state.response, symbol: state.symbol);
+      } else if (state is ChannelKLinePeriodState) {
+        _addPeriodData(state.channel, state.response);
+      } else if (state is ChannelExchangeDepthState) {
+        _dealDepthData(state.response, isReplace: false);
+      } else if (state is ChannelTradeDetailState) {
+        _dealTradeData(state.response, isReplace: false);
+      }
+    });
+  }
+
+  void _addPeriodData(String channel, List data) async {
+
+    if (!(channel?.endsWith(_periodParameter.value) ?? true)) {
+      _unSubPeriodChannel(channel.split(".").last);
+      print("[WS] 取消不是当前选中的channel:$channel");
+    }
+    _dealPeriodData(data, isReplace: false);
+  }
+
 }
 
- 
-class PeriodModel {
-  final String name;
-  final String value;
-  PeriodModel({this.name, this.value});
-}
-
-
-Widget delegationListView(List<ExcDetailEntity> buyChartList,List<ExcDetailEntity> sailChartList) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sailChartList) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -969,192 +1267,192 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList,List<ExcDetailEntit
 
           return index == 0
               ? Container(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "买盘 数量(HYN)",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
-                    color: HexColor("#777777"),
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "买盘 数量(HYN)",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                          color: HexColor("#777777"),
+                        ),
+                      ),
+                      Text(
+                        "价格(USDT)",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                          color: HexColor("#777777"),
+                        ),
+                      ),
+                      Text(
+                        "数量(HYN)卖盘",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                          color: HexColor("#777777"),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Text(
-                  "价格(USDT)",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
-                    color: HexColor("#777777"),
-                  ),
-                ),
-                Text(
-                  "数量(HYN)卖盘",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
-                    color: HexColor("#777777"),
-                  ),
-                ),
-              ],
-            ),
-          )
+                )
               : Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            flex: buyEntity.leftPercent,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#ffffff"),
-                            ),
-                          ),
-                          Expanded(
-                            flex: buyEntity.rightPercent,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#EBF8F2"),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: 25,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "$index",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: HexColor("#999999"),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: 25,
-                            padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "1.43543",
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: HexColor("#333333"),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 25,
-                              padding: const EdgeInsets.only(right: 5),
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                "180.39",
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: HexColor("#53AE86"),
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: buyEntity.leftPercent,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#ffffff"),
+                                  ),
                                 ),
-                              ),
+                                Expanded(
+                                  flex: buyEntity.rightPercent,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#EBF8F2"),
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
-              Expanded(
-                  flex: 1,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            flex: sailEntity.leftPercent,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#F9EFEF"),
-                            ),
-                          ),
-                          Expanded(
-                            flex: sailEntity.rightPercent,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#ffffff"),
-                            ),
-                          )
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              height: 25,
-                              alignment: Alignment.centerLeft,
-                              padding: const EdgeInsets.only(left: 5),
-                              child: Text(
-                                "180.39",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: HexColor("#CC5858"),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  height: 25,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "$index",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: HexColor("#999999"),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                Container(
+                                  height: 25,
+                                  padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "1.43543",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: HexColor("#333333"),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    height: 25,
+                                    padding: const EdgeInsets.only(right: 5),
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      "180.39",
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#53AE86"),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Container(
-                            height: 25,
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              "1.43543",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: HexColor("#333333"),
-                              ),
+                          ],
+                        )),
+                    Expanded(
+                        flex: 1,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: sailEntity.leftPercent,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#F9EFEF"),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: sailEntity.rightPercent,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#ffffff"),
+                                  ),
+                                )
+                              ],
                             ),
-                          ),
-                          Container(
-                            height: 25,
-                            alignment: Alignment.centerRight,
-                            padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                            child: Text(
-                              "$index",
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: HexColor("#999999"),
-                              ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    height: 25,
+                                    alignment: Alignment.centerLeft,
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                      "180.39",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#CC5858"),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 25,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    "1.43543",
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: HexColor("#333333"),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  height: 25,
+                                  alignment: Alignment.centerRight,
+                                  padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                  child: Text(
+                                    "$index",
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: HexColor("#999999"),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
-            ],
-          );
+                          ],
+                        )),
+                  ],
+                );
         },
         itemCount: buyChartList.length),
   );

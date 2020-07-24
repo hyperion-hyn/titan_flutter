@@ -200,6 +200,28 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> historyTrade(String symbol, {String limit = '100'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_TRADE,
+      null,
+      params: {
+        "symbol": symbol,
+        "limit": limit,
+      },
+    );
+  }
+
+  Future<dynamic> historyDepth(String symbol, {String precision = '-1'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_DEPTH,
+      null,
+      params: {
+        "symbol": symbol,
+        "precision": precision,
+      },
+    );
+  }
+
   Future<List<Order>> getOrderList(
     String market,
     int page,
@@ -207,16 +229,15 @@ class ExchangeApi {
     String method,
   ) async {
     return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_ORDER_MARKET,
-      EntityFactory<List<Order>>(
-              (list) => (list as List).map((item) => Order.fromJson(item)).toList()),
-      params: {
-        'market': market,
-        'page': page,
-        'size': size,
-        'method': method,
-      },
-    );
+        ExchangeConst.PATH_ORDER_MARKET,
+        EntityFactory<List<Order>>((list) =>
+            (list as List).map((item) => Order.fromJson(item)).toList()),
+        params: {
+          'market': market,
+          'page': page,
+          'size': size,
+          'method': method,
+        });
   }
 
   Future<List<OrderDetail>> getOrderDetailList(
@@ -234,6 +255,17 @@ class ExchangeApi {
         'market': market,
         'page': page,
         'size': size,
+      },
+    );
+  }
+
+  Future<dynamic> historyKline(String symbol, {String period = '15min'}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_KLINE,
+      null,
+      params: {
+        "name": symbol,
+        "period": period,
       },
     );
   }

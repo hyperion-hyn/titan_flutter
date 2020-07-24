@@ -37,8 +37,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        print(
-            "[SocketBloc] mapEventToState, dataMap:$dataMap, receivedData is String:${dataMap["status"] is int}");
+        print("[SocketBloc] mapEventToState, dataMap:$dataMap}");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -53,7 +52,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
               if (channel != null && channel is String) {
                 String channelValue = channel;
                 if (channelValue == SocketConfig.channelKLine24Hour) {
-                  yield ChannelKLine24HourState(response: response);
+                  var symbol = dataMap["symbol"];
+                  yield ChannelKLine24HourState(symbol:symbol,response: response);
                 } else if (channelValue.contains("depth")) {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
@@ -69,12 +69,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
               yield ReceivedDataSuccessState(response: dataMap);
             } else {
               if (channel != null) {
-                yield SubChannelSuccessState();
+                yield SubChannelSuccessState(channel: channel);
               }
             }
           } else if (eventAction == SocketConfig.unSub) {
             if (channel != null) {
-              yield UnSubChannelSuccessState();
+              yield UnSubChannelSuccessState(channel: channel);
             }
           }
         } else if (status == 200) {
