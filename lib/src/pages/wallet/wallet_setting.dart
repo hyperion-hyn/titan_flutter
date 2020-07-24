@@ -5,7 +5,8 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/auth/SetBioAuthPage.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -303,7 +304,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => SetBioAuthPage(widget.wallet)));
+                          builder: (context) =>
+                              BioAuthOptionsPage(widget.wallet)));
                 },
                 child: Row(
                   children: <Widget>[

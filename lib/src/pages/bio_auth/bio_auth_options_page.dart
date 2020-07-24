@@ -6,61 +6,54 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
-import 'me_area_page.dart';
-import 'me_language_page.dart';
-import 'me_price_page.dart';
+class BioAuthOptionsPage extends StatefulWidget {
+  final Wallet wallet;
 
-class MeSettingPage extends StatefulWidget {
+  BioAuthOptionsPage(this.wallet);
+
   @override
   State<StatefulWidget> createState() {
-    return _MeSettingState();
+    return _BioAuthOptionsPage();
   }
 }
 
-class _MeSettingState extends State<MeSettingPage> {
+class _BioAuthOptionsPage extends State<BioAuthOptionsPage> {
   @override
   Widget build(BuildContext context) {
-    var language =
-        SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            .languageModel
-            .name;
-    var quoteStr = QuotesInheritedModel.of(context, aspect: QuotesAspect.quote)
-        .activeQuotesSign
-        ?.quote;
-    var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
-        .areaModel
-        .name(context);
-
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
           title: Text(
-            S.of(context).setting,
-            style: TextStyle(color: Colors.white),
+            '生物识别',
+            style: TextStyle(color: Colors.black, fontSize: 18),
           ),
           centerTitle: true,
         ),
         body: Column(
           children: <Widget>[
-            _buildMenuBar(S.of(context).price_show, quoteStr, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MePricePage()));
+            SizedBox(height: 16,),
+            Divider(
+              height: 1,
+            ),
+            _buildMenuBar('免密支付', '', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BioAuthPage(widget.wallet, AuthType.pay)));
             }),
             Divider(
               height: 1,
             ),
-            _buildMenuBar(S.of(context).language, language, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MeLanguagePage()));
-            }),
-            Divider(
-              height: 1,
-            ),
-            _buildMenuBar(S.of(context).app_area_setting, area, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MeAreaPage()));
+            _buildMenuBar('授权', '', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BioAuthPage(widget.wallet, AuthType.exchange)));
             }),
             Divider(
               height: 1,
@@ -83,7 +76,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Text(
-                title?.isNotEmpty??false?title:"",
+                title?.isNotEmpty ?? false ? title : "",
                 style: TextStyle(
                     color: HexColor("#333333"),
                     fontSize: 16,
@@ -92,7 +85,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             ),
             Spacer(),
             Text(
-              subTitle?.isNotEmpty??false?subTitle:"",
+              subTitle?.isNotEmpty ?? false ? subTitle : "",
               style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 16),
             ),
             Padding(

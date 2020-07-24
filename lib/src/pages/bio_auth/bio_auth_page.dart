@@ -9,18 +9,19 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 
-class SetBioAuthPage extends StatefulWidget {
+class BioAuthPage extends StatefulWidget {
   final Wallet _wallet;
+  final AuthType _authType;
 
-  SetBioAuthPage(this._wallet);
+  BioAuthPage(this._wallet, this._authType);
 
   @override
   State<StatefulWidget> createState() {
-    return _SetBioAuthPageState();
+    return _BioAuthPageState();
   }
 }
 
-class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
+class _BioAuthPageState extends BaseState<BioAuthPage> {
   final LocalAuthentication auth = LocalAuthentication();
   List<BiometricType> _availableBiometrics = List();
   AuthConfigModel authConfigModel;
@@ -29,7 +30,10 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
   Future<void> onCreated() async {
     // TODO: implement onCreated
     super.onCreated();
-    authConfigModel = await AuthUtil.getAuthConfigByWallet(widget._wallet);
+    authConfigModel = await AuthUtil.getAuthConfigByWallet(
+      widget._wallet,
+      authType: widget._authType,
+    );
   }
 
   @override
@@ -50,7 +54,9 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
           color: Colors.black,
         ),
         title: Text(
-          S.of(context).secret_free_payment,
+          widget._authType == AuthType.pay
+              ? S.of(context).secret_free_payment
+              : '授权',
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
@@ -206,6 +212,7 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
             password,
           );
         },
+        authType: widget._authType,
         isShowBioAuthIcon: false,
       );
 
@@ -220,14 +227,6 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
             widget._wallet,
             password,
           );
-//          ///
-//          BlocProvider.of<AuthBloc>(context).add(
-//            SetBioAuthEvent(
-//              biometricType,
-//              true,
-//              widget._wallet,
-//            ),
-//          );
 
           if (biometricType == BiometricType.face) {
             authConfigModel.useFace = true;
@@ -240,7 +239,11 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
               DateTime.now().millisecondsSinceEpoch;
 
           ///Save auth config
-          AuthUtil.saveAuthConfig(authConfigModel, widget._wallet);
+          AuthUtil.saveAuthConfig(
+            authConfigModel,
+            widget._wallet,
+            authType: widget._authType,
+          );
 
           UiUtil.showHintToast(
               context,
@@ -277,11 +280,6 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
             S.of(context).set_bio_auth_fail);
       }
     } else {
-//      BlocProvider.of<AuthBloc>(context).add(SetBioAuthEvent(
-//        biometricType,
-//        value,
-//        widget._wallet,
-//      ));
       if (biometricType == BiometricType.face) {
         authConfigModel.useFace = false;
       } else if (biometricType == BiometricType.fingerprint) {
@@ -289,8 +287,14 @@ class _SetBioAuthPageState extends BaseState<SetBioAuthPage> {
       }
       authConfigModel.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
 
-      AuthUtil.saveAuthConfig(authConfigModel, widget._wallet);
+      AuthUtil.saveAuthConfig(
+        authConfigModel,
+        widget._wallet,
+        authType: widget._authType,
+      );
     }
     if (mounted) setState(() {});
   }
 }
+
+enum AuthType { pay, exchange }
