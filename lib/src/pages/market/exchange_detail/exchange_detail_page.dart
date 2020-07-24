@@ -75,7 +75,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   final int contrConsignTypeRefresh = 11;
   StreamController<Map> optionsController = StreamController.broadcast();
   StreamController<int> consignListController = StreamController.broadcast();
-  String userTickChannel = "";
+//  String userTickChannel = "";
   String depthChannel;
   List<Order> _currentOrders = List();
   ExchangeModel exchangeModel;
@@ -137,9 +137,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void dispose() {
-    if (exchangeModel.isActiveAccount()) {
-      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
-    }
+//    if (exchangeModel.isActiveAccount()) {
+//      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+//    }
     Application.routeObserver.unsubscribe(this);
     BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
 
@@ -152,10 +152,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     exchangeModel = ExchangeInheritedModel
         .of(context)
         .exchangeModel;
-    if (exchangeModel.isActiveAccount()) {
+    /*if (exchangeModel.isActiveAccount()) {
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
-    }
+    }*/
   }
 
   @override
@@ -351,7 +351,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             currentNumStr = currentNum.toString();
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if(exchangeModel.isActiveAccount()){
-              currentNum = getValidNum() * double.parse(optionValue);
+              if(isBuy){
+                currentNum = getValidNum() * double.parse(optionValue) / currentPrice;
+              }else {
+                currentNum = getValidNum() * double.parse(optionValue);
+              }
               var totalPrice = currentPrice * currentNum;
               updateTotalView(totalPrice);
 

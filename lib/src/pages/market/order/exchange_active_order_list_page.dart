@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 
@@ -24,19 +29,52 @@ class ExchangeActiveOrderListPage extends StatefulWidget {
 }
 
 class ExchangeActiveOrderListPageState
-    extends State<ExchangeActiveOrderListPage>
-    with AutomaticKeepAliveClientMixin {
+    extends BaseState<ExchangeActiveOrderListPage>
+    with AutomaticKeepAliveClientMixin,RouteAware {
   var exchangeApi = ExchangeApi(); 
   List<Order> _activeOrders = List();
+  ExchangeModel exchangeModel;
+  String userTickChannel;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void onCreated() {
+    exchangeModel = ExchangeInheritedModel
+        .of(context)
+        .exchangeModel;
+    if (exchangeModel.isActiveAccount()) {
+      var symbolList = widget.market.split("/");
+      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
+      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
+    }
     _loadData();
+    super.onCreated();
+  }
+
+  @override
+  void didPopNext() {
+    print("sub didPopNext");
+    _loadData();
+    super.didPopNext();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
   void dispose() {
+    if (exchangeModel.isActiveAccount()) {
+      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+    }
+    Application.routeObserver.unsubscribe(this);
+
     super.dispose();
   }
 
@@ -87,7 +125,7 @@ class ExchangeActiveOrderListPageState
         itemCount: _activeOrders.length,
         itemBuilder: (ctx, index) => OrderItem(_activeOrders[index],revokeOrder: (orderEntity){
 
-        },),
+        },market: widget.market,),
       ),
     );
   }
