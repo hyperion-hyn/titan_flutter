@@ -125,6 +125,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   @override
   void didPopNext() {
     getAccountData();
+    consignListController.add(contrConsignTypeRefresh);
     super.didPopNext();
   }
 
@@ -163,7 +164,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       body: BlocListener<SocketBloc, SocketState>(
         bloc: BlocProvider.of<SocketBloc>(context),
         listener: (ctx, state) {
-          if (state is ChannelUserTickState) {
+          /*if (state is ChannelUserTickState) {
             var temOrders = List<Order>();
             state.response.forEach((entity) => {
             if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
@@ -176,7 +177,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               _currentOrders.addAll(temOrders);
               consignListController.add(contrConsignTypeRefresh);
             }
-          }
+          }*/
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
           bloc: exchangeDetailBloc,
