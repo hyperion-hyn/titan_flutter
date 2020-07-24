@@ -11,7 +11,10 @@ class SubChannelState extends SocketState {
   SubChannelState({this.period});
 }
 
-class SubChannelSuccessState extends SocketState {}
+class SubChannelSuccessState extends SocketState {
+  final String channel;
+  SubChannelSuccessState({this.channel});
+}
 
 class SubChannelFailState extends SocketState {}
 
@@ -21,7 +24,10 @@ class UnSubChannelState extends SocketState {
   UnSubChannelState({this.period});
 }
 
-class UnSubChannelSuccessState extends SocketState {}
+class UnSubChannelSuccessState extends SocketState {
+  final String channel;
+  UnSubChannelSuccessState({this.channel});
+}
 
 class UnSubChannelFailState extends SocketState {}
 
@@ -44,13 +50,14 @@ class HeartState extends SocketState {}
 class HeartSuccessState extends SocketState {}
 
 class ChannelKLine24HourState extends SocketState {
-  final Map<String, dynamic> response;
-  ChannelKLine24HourState({this.response});
+  final String symbol;
+  final List response;
+  ChannelKLine24HourState({this.symbol,this.response});
 }
 
 class ChannelKLinePeriodState extends SocketState {
   final String channel;
-  final Map<String, dynamic> response;
+  final List response;
   ChannelKLinePeriodState({this.channel, this.response});
 }
 
@@ -60,7 +67,7 @@ class ChannelExchangeDepthState extends SocketState {
 }
 
 class ChannelTradeDetailState extends SocketState {
-  final Map<String, dynamic> response;
+  final List response;
   ChannelTradeDetailState({this.response});
 }
 

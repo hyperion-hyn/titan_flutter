@@ -10,6 +10,7 @@ import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
+import 'package:titan/src/pages/market/model/exchange_account.dart';
 
 import 'bloc/bloc.dart';
 
@@ -52,7 +53,30 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
   Widget build(BuildContext context) {
     return BlocListener<ExchangeCmpBloc, ExchangeCmpState>(
       listener: (context, state) async {
-        if (state is SetShowBalancesState) {
+        if (state is LoginState) {
+          try {
+            var ret = await _exchangeApi.walletSignLogin(
+                wallet: state.wallet,
+                password: state.password,
+                address: state.address);
+            var account = ExchangeAccount.fromJson(ret);
+
+            print('使用钱包授权登录: account: $account');
+
+            if (account != null) {
+              exchangeModel.activeAccount = account;
+
+              var ret = await _exchangeApi.getAssetsList();
+              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(LoginSuccessEvent());
+            } else {
+              BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
+            }
+          } catch (e) {
+            BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
+          }
+        } else if (state is SetShowBalancesState) {
           exchangeModel.isShowBalances = state.isShow;
         } else if (state is UpdateExchangeAccountState) {
           exchangeModel.activeAccount = state.account;

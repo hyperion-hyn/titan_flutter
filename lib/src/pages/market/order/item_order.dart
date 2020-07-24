@@ -6,7 +6,6 @@ import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-
 class OrderItem extends StatefulWidget {
   final Order _order;
   final String market;
@@ -62,7 +61,7 @@ class OrderItemState extends State<OrderItem> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
-                width: 50,
+                width: 60,
                 height: 22,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(3.0)),
@@ -95,7 +94,7 @@ class OrderItemState extends State<OrderItem> {
                   child: Row(
                     children: <Widget>[
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             '价格(${widget.market.split("/")[1]})',

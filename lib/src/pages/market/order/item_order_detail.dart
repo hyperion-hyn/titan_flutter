@@ -130,7 +130,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '实际成交(${widget.market.split('/')[0]})',
+                          '成交价(${widget.market.split('/')[1]})',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -143,7 +143,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           children: <Widget>[
                             Spacer(),
                             Text(
-                              "${widget._orderDetail.amount}",
+                              "${widget._orderDetail.price}",
                               style: TextStyle(
                                 color: DefaultColors.color333,
                                 fontSize: 12,
@@ -171,7 +171,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '价格(${widget.market.split("/")[0]})',
+                                '成交量(${widget.market.split("/")[0]})',
                                 style: TextStyle(
                                   color: DefaultColors.color999,
                                   fontSize: 12,
@@ -181,7 +181,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                                 height: 4.0,
                               ),
                               Text(
-                                "${widget._orderDetail.price}",
+                                "${widget._orderDetail.amount}",
                                 style: TextStyle(
                                     color: DefaultColors.color333,
                                     fontWeight: FontWeight.w500,
