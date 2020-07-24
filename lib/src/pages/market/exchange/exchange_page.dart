@@ -14,12 +14,12 @@ import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
 
 import '../quote/kline_detail_page.dart';
-import '../order/entity/order_entity.dart';
 import 'bloc/bloc.dart';
 
 class ExchangePage extends StatefulWidget {
@@ -199,7 +199,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ExchangeDetailPage(
-                              selectedCoin: "USDT", exchangeType: 0)));
+                              selectedCoin: _selectedCoin,
+                              exchangeType: _exchangeType)));
                 },
                 width: 88,
                 height: 38,

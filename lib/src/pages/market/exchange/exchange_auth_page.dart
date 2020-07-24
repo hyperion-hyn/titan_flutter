@@ -24,6 +24,8 @@ class ExchangeAuthPage extends StatefulWidget {
 }
 
 class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
+  bool isLoggingIn = false;
+
   @override
   Future<void> onCreated() async {
     // TODO: implement onCreated
@@ -39,23 +41,39 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   @override
   Widget build(BuildContext context) {
     print(WalletInheritedModel.of(context).activatedWallet);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: debugInstrumentationEnabled,
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
-        title: Text(
-          '授权',
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.black,
+    return BlocListener<ExchangeCmpBloc, ExchangeCmpState>(
+      listener: (context, state) {
+        if (state is LoginSuccessState) {
+          setState(() {
+            isLoggingIn = false;
+          });
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(msg: '登录成功!');
+        } else if (state is LoginFailState) {
+          setState(() {
+            isLoggingIn = false;
+          });
+          Fluttertoast.showToast(msg: '登录失败');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          centerTitle: debugInstrumentationEnabled,
+          iconTheme: IconThemeData(color: Colors.black),
+          elevation: 0,
+          title: Text(
+            '授权',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black,
+            ),
           ),
         ),
+        body: WalletInheritedModel.of(context).activatedWallet == null
+            ? _noWalletView()
+            : _authorizeView(),
       ),
-      body: WalletInheritedModel.of(context).activatedWallet == null
-          ? _noWalletView()
-          : _authorizeView(),
     );
   }
 
@@ -93,44 +111,57 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           SizedBox(
             height: 32,
           ),
-          ClickOvalButton(
-            '使用钱包授权登录',
-            () async {
-              var wallet = WalletInheritedModel.of(context).activatedWallet;
-              if (wallet != null) {
-                var address = wallet.wallet.getEthAccount().address;
-                var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-                    context, wallet.wallet);
-
-                ExchangeApi _exchangeApi = ExchangeApi();
-
-                try {
-                  var ret = await _exchangeApi.walletSignLogin(
-                    wallet: wallet.wallet,
-                    password: walletPassword,
-                    address: address,
-                  );
-                  var account = ExchangeAccount.fromJson(ret);
-
-                  print('使用钱包授权登录: account: $account');
-
-                  if (account != null) {
-                    Fluttertoast.showToast(msg: '登录成功!');
-                    BlocProvider.of<ExchangeCmpBloc>(context)
-                        .add(UpdateExchangeAccountEvent(account));
-
-                    BlocProvider.of<ExchangeCmpBloc>(context)
-                        .add(UpdateAssetsEvent());
-                    Navigator.of(context).pop();
-                  }
-                } catch (e) {}
-              }
-            },
-            height: 45,
-          )
+          Container(
+            width: 200,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: isLoggingIn
+                  ? null
+                  : () {
+                      _startLogin();
+                    },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      isLoggingIn ? '登录中' : '使用钱包授权登录',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  _startLogin() async {
+    var wallet = WalletInheritedModel.of(context).activatedWallet;
+    if (wallet != null) {
+      var address = wallet.wallet.getEthAccount().address;
+      var walletPassword =
+          await UiUtil.showWalletPasswordDialogV2(context, wallet.wallet);
+      if (walletPassword != null) {
+        BlocProvider.of<ExchangeCmpBloc>(context)
+            .add(LoginEvent(wallet.wallet, walletPassword, address));
+        setState(() {
+          isLoggingIn = true;
+        });
+      }
+    }
   }
 
   _noWalletView() {

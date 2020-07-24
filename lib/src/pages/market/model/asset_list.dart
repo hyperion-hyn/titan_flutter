@@ -32,17 +32,21 @@ class AssetList {
     return ret;
   }
 
-  AssetType getAsset(String type){
-    if(type == 'HYN'){
+  AssetType getAsset(String type) {
+    if (type == 'HYN') {
       return HYN;
-    }else if(type == 'USDT'){
+    } else if (type == 'USDT') {
       return USDT;
-    }else if(type == 'ETH'){
+    } else if (type == 'ETH') {
       return ETH;
-    }else {
+    } else {
       return null;
     }
-
   }
 
+  double getTotalByUSDT() {
+    double total = 0;
+
+    return total;
+  }
 }

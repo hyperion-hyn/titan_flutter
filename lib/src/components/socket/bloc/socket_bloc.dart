@@ -23,6 +23,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       _heartAction();
       yield HeartState();
     } else if (event is SubChannelEvent) {
+      print("channel = ${event.channel}");
       _subChannelRequestAction(event.channel);
 
       yield SubChannelState(period: event.channel);
@@ -65,7 +66,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                       channel: channelValue, response: response);
                 }
               }
-              yield ReceivedDataSuccessState(response: response);
+              yield ReceivedDataSuccessState(response: dataMap);
             } else {
               if (channel != null) {
                 yield SubChannelSuccessState(channel: channel);
