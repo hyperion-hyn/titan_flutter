@@ -76,9 +76,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sellChartList = [];
 
-  List<DepthEntity> _bids = [];
-  List<DepthEntity> _asks = [];
-
   @override
   void initState() {
     _initData();
@@ -157,10 +154,10 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 
   Widget _headerWidget() {
-    var _open = _channel24HourKLineEntity.open.toString();
-    var _high = _channel24HourKLineEntity.high.toString();
-    var _low = _channel24HourKLineEntity.low.toString();
-    var _24Hour = _channel24HourKLineEntity.amount.toString();
+    var _open = _channel24HourKLineEntity?.open?.toString()??"--";
+    var _high = _channel24HourKLineEntity?.high?.toString()??"--";
+    var _low = _channel24HourKLineEntity?.low?.toString()??"--";
+    var _24Hour = _channel24HourKLineEntity?.amount?.toString()??"--";
     return SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
@@ -518,12 +515,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
           ],
         ),
       ),
-      Tab(
+      /*Tab(
         child: Text(
           '深度图',
           style: TextStyle(),
         ),
-      ),
+      ),*/
       Tab(
         child: IconButton(
           icon: Image.asset(
@@ -697,8 +694,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
                         Expanded(
                           flex: 2,
                           child: Text(
-                            FormatUtil.formatSecondDate(excDetailEntity.date),
-//                            FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
+//                            FormatUtil.formatSecondDate(excDetailEntity.date),
+                            FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
                             style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -749,15 +746,15 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     _periodTabController = TabController(
       initialIndex: _periodCurrentIndex,
       vsync: this,
-      length: 6,
+      length: 5,
     );
 
     // todo: test_jison_0722
-    _initTradeData();
+    //_initTradeData();
 
     //_initDepthData();
 
-    _init24HourData();
+    //_init24HourData();
   }
 
   _initTradeData() {
@@ -1223,7 +1220,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                 padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  buyEntity?.depthEntity?.amount.toString(),
+                                  buyEntity?.depthEntity?.amount?.toString()??"--",
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w500,
@@ -1238,7 +1235,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                   padding: const EdgeInsets.only(right: 5),
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    buyEntity?.depthEntity?.price.toString(),
+                                    buyEntity?.depthEntity?.price?.toString()??"--",
                                     textAlign: TextAlign.end,
                                     style: TextStyle(
                                       fontSize: 10,
@@ -1286,7 +1283,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                   alignment: Alignment.centerLeft,
                                   padding: const EdgeInsets.only(left: 5),
                                   child: Text(
-                                    sailEntity?.depthEntity?.price.toString(),
+                                    sailEntity?.depthEntity?.price?.toString()??"--",
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
@@ -1299,7 +1296,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                 height: 25,
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  sailEntity?.depthEntity?.amount.toString(),
+                                  sailEntity?.depthEntity?.amount?.toString()??"--",
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                     fontSize: 10,
