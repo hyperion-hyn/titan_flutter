@@ -48,7 +48,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             isLoggingIn = false;
           });
           Navigator.of(context).pop();
-          Fluttertoast.showToast(msg: '登录成功');
+          Fluttertoast.showToast(msg: '登录成功!');
         } else if (state is LoginFailState) {
           setState(() {
             isLoggingIn = false;
