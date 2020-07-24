@@ -640,6 +640,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
+                              if(isBuy && currentPrice == 0){
+                                return;
+                              }
                               optionsController.add({contrOptionsTypeNumPercent:"0.25"});
                             },
                             child: Text(
@@ -652,6 +655,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
+                              if(isBuy && currentPrice == 0){
+                                return;
+                              }
                               optionsController.add({contrOptionsTypeNumPercent:"0.5"});
                             },
                             child: Text("50%", style: TextStyle(fontSize: 10, color: DefaultColors.color999))),
@@ -661,6 +667,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
+                              if(isBuy && currentPrice == 0){
+                                return;
+                              }
                               optionsController.add({contrOptionsTypeNumPercent:"1"});
                             },
                             child: Text(
