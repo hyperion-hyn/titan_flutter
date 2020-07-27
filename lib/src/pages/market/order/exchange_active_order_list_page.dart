@@ -92,13 +92,18 @@ class ExchangeActiveOrderListPageState
 
           if (temOrders.length > 0) {
             var temAddOrders = List<Order>();
+            var temCancelOrders = List<Order>();
             temOrders.forEach((temElement) {
               var isNewOrder = true;
               _activeOrders.forEach((actElement) {
                 if(temElement.orderId == actElement.orderId){
                   print("update order");
-                  isNewOrder = false;
-                  actElement = temElement;
+                  if(int.parse(temElement.status) > 2){
+                    temCancelOrders.add(actElement);
+                  }else{
+                    isNewOrder = false;
+                    actElement = temElement;
+                  }
                 }
               });
               if(isNewOrder){
@@ -108,6 +113,11 @@ class ExchangeActiveOrderListPageState
             if(temAddOrders.length > 0){
               print("insert order");
               _activeOrders.insertAll(0, temAddOrders);
+            }
+            if(temCancelOrders.length > 0){
+              temCancelOrders.forEach((element) {
+                _activeOrders.remove(element);
+              });
             }
             setState(() {
 
@@ -123,8 +133,11 @@ class ExchangeActiveOrderListPageState
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _activeOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(_activeOrders[index],revokeOrder: (orderEntity){
-
+        itemBuilder: (ctx, index) => OrderItem(_activeOrders[index],revokeOrder: (Order orderEntity) async {
+          await exchangeApi.orderCancel(orderEntity.orderId);
+//          var result = await exchangeApi.orderCancel(orderEntity.orderId);
+//          if(result is Map && result["errorCode"] == 0){
+//          }
         },market: widget.market,),
       ),
     );

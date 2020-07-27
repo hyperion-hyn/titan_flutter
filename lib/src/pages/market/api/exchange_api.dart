@@ -200,6 +200,17 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> orderCancel(
+      String orderId) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_ORDER_CANCEL,
+      null,
+      params: {
+        "order_id": orderId
+      },
+    );
+  }
+
   Future<dynamic> historyTrade(String symbol, {String limit = '100'}) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_HISTORY_TRADE,

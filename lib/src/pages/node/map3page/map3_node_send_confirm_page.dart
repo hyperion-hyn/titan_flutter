@@ -124,8 +124,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
     var ethQuotePrice = QuotesInheritedModel.of(context)
             .activatedQuoteVoAndSign('ETH')
             ?.quoteVo
-            ?.price ??
-        0; //
+            ?.price ?? 0; //
 
     var gasPriceEstimate =
         gasEstimate * Decimal.parse(ethQuotePrice.toString());
