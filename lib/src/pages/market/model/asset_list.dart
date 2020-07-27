@@ -44,9 +44,9 @@ class AssetList {
     }
   }
 
-  double getTotalByUSDT() {
+  double getTotal() {
     double total = 0;
-
+    
     return total;
   }
 }
