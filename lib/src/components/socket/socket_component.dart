@@ -62,7 +62,7 @@ class _SocketState extends State<SocketComponent> {
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
-    Timer.periodic(Duration(seconds : 60), (t) {
+    Timer.periodic(Duration(seconds : 30), (t) {
       _bloc.add(HeartEvent());
     });
   }

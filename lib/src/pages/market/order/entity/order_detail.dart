@@ -5,28 +5,32 @@ part 'order_detail.g.dart';
 @JsonSerializable()
 class OrderDetail extends Object {
   @JsonKey(name: 'side')
-  int side;
+  String side;
 
   @JsonKey(name: 'oid')
   String oid;
 
   @JsonKey(name: 'price')
-  double price;
+  String price;
 
   @JsonKey(name: 'amount')
-  double amount;
+  String amount;
+
+  @JsonKey(name: 'turnover')
+  String turnover;
 
   @JsonKey(name: 'time')
   String time;
 
   @JsonKey(name: 'fee')
-  double fee;
+  String fee;
 
   OrderDetail(
     this.side,
     this.oid,
     this.price,
     this.amount,
+    this.turnover,
     this.time,
     this.fee,
   );

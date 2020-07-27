@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -19,9 +21,9 @@ class KLineDetailPage extends StatefulWidget {
   }
 }
 
-class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderStateMixin {
+class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProviderStateMixin {
   final ExchangeApi api = ExchangeApi();
-
+  SocketBloc _socketBloc;
   List<KLineEntity> _kChartItemList = [];
   List<TradeInfoEntity> _tradeItemList = [];
   List<DepthInfoEntity> _buyDepthItemList = [];
@@ -30,6 +32,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   PeriodInfoEntity _periodParameter;
   String _symbol = 'hynusdt';
   KLineEntity _channel24HourKLineEntity;
+  KLineEntity _lastChannel24HourKLineEntity;
 
   bool _showLoadingKLine = true;
   bool _showLoadingTrade = true;
@@ -37,7 +40,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => _periodTabController.index == 4;
+  bool get _isDepth => _periodTabController.index == 5;
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
@@ -76,17 +79,27 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   void initState() {
     _initData();
 
-    _initChannel();
-
     _setupRequest();
 
     super.initState();
   }
 
   @override
+  void onCreated() {
+
+    _socketBloc = BlocProvider.of<SocketBloc>(context);
+
+    _initChannel();
+
+    super.onCreated();
+  }
+
+  @override
   void dispose() {
     _unSubChannels();
 
+    _socketBloc = null;
+    print("[KLine] dispose");
     super.dispose();
   }
 
@@ -154,10 +167,34 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     var _high = _channel24HourKLineEntity?.high?.toString() ?? "--";
     var _low = _channel24HourKLineEntity?.low?.toString() ?? "--";
     var _24Hour = _channel24HourKLineEntity?.amount?.toString() ?? "--";
+
     var _price = _channel24HourKLineEntity?.amount?.toString() ?? "-- ";
-//    _price = "≈￥23931 ";
+    //_price = "≈￥23931 ";
+    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    var open = _channel24HourKLineEntity?.open;
+    if (open != null) {
+      var _priceValue = symbolQuote.quoteVo.price * open;
+      _price = '≈￥' + _priceValue.toStringAsFixed(4);
+    } else {
+      _price = '-- ';
+    }
+
     var _percent = _channel24HourKLineEntity?.amount?.toString() ?? "--";
-//    _percent = "+1.9%";
+    if (_lastChannel24HourKLineEntity != null) {
+      var percentStringValue = "";
+      var percentValue = _channel24HourKLineEntity.open - _lastChannel24HourKLineEntity.open;
+      if (percentValue >= 0) {
+        percentStringValue = ' +'+FormatUtil.formatPercent(percentValue/_lastChannel24HourKLineEntity.open);
+      } else {
+        percentStringValue = ' -'+FormatUtil.formatPercent(percentValue/_lastChannel24HourKLineEntity.open);
+      }
+      if (percentStringValue.isEmpty) {
+        percentStringValue = '--';
+      }
+
+      //_percent = "+1.9%";
+      _percent = percentStringValue;
+    }
 
     return SliverToBoxAdapter(
       child: Column(
@@ -827,13 +864,32 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
     if (symbol.isNotEmpty) {
       if (symbol == _symbol && kLineDataList.isNotEmpty) {
+        print("[WS] --> _dealPeriodData, 24hour， kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
+
         _channel24HourKLineEntity = kLineDataList.last;
+
+        if (_lastChannel24HourKLineEntity == null) {
+          _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
+
+
+          if (mounted) {
+            setState(() {
+              _showLoadingKLine = false;
+            });
+          }
+        }
       }
     } else {
       if (isReplace) {
         if (kLineDataList.isNotEmpty) {
           _kChartItemList = kLineDataList;
           KLineUtil.calculate(_kChartItemList);
+
+          if (mounted) {
+            setState(() {
+              _showLoadingKLine = false;
+            });
+          }
         }
       } else {
         if (kLineDataList.isNotEmpty) {
@@ -842,9 +898,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       }
     }
 
-    setState(() {
-      _showLoadingKLine = false;
-    });
   }
 
   /*
@@ -982,27 +1035,41 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
     }
 
     // doing
-    List<ExcDetailEntity> buyEntityList = [];
-    List<ExcDetailEntity> sellEntityList = [];
 
-    for (int index = 0; index < min(10, min(_buyDepthItemList.length, _sellDepthItemList.length)); index++) {
-      var right = (index + 1);
-      var left = 10 - right;
+    // buy
+    List<ExcDetailEntity> buyEntityList = [];
+    var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+      if (current.amount>next.amount)  {
+        return current;
+      }
+      return next;
+    });
+    for (int index = 0; index < _buyDepthItemList.length; index++) {
       var buy = _buyDepthItemList[index];
+      var right = 10 * buy.amount ~/ maxBuyDepthEntity.amount;
+      var left = 10 - right;
       var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
       buyEntityList.add(entity);
-
-      left = index + 1;
-      right = 10 - left;
-      var sell = _sellDepthItemList[index];
-      entity = ExcDetailEntity(2, left, right, depthEntity: sell);
-      sellEntityList.add(entity);
     }
-
     if (buyEntityList.isNotEmpty) {
       _buyChartList = buyEntityList;
     }
 
+    // sell
+    List<ExcDetailEntity> sellEntityList = [];
+    var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+      if (current.amount>next.amount)  {
+        return current;
+      }
+      return next;
+    });
+    for (int index = 0; index < _sellDepthItemList.length; index++) {
+      var sell = _sellDepthItemList[index];
+      var left = 10 * sell.amount ~/ maxSellDepthEntity.amount;
+      var right = 10 - left;
+      var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
+      sellEntityList.add(entity);
+    }
     if (sellEntityList.isNotEmpty) {
       _sellChartList = sellEntityList;
     }
@@ -1073,16 +1140,16 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
   // sub
   void _subChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
+    _socketBloc.add(SubChannelEvent(channel: channel));
   }
 
   // unSub
   void _unSubChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(UnSubChannelEvent(channel: channel));
+    _socketBloc.add(UnSubChannelEvent(channel: channel));
   }
 
   void _initListenChannel() {
-    BlocProvider.of<SocketBloc>(context).listen((state) {
+    _socketBloc.listen((state) {
       if (state is SubChannelSuccessState) {
         var msg = '订阅 ${state.channel} 成功';
         print("[Bloc] msg:$msg");
@@ -1108,7 +1175,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sailChartList) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -1154,9 +1221,15 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.vertical,
             itemBuilder: (context, index) {
-              ExcDetailEntity buyEntity = buyChartList[index];
-              ExcDetailEntity sailEntity = sailChartList[index];
+              ExcDetailEntity buyEntity;
+              if (buyChartList.length > index) {
+                buyEntity = buyChartList[index];
+              }
 
+              ExcDetailEntity sellEntity;
+              if (sellChartList.length > index) {
+                sellEntity = sellChartList[index];
+              }
               return Row(
                 children: <Widget>[
                   Expanded(
@@ -1168,14 +1241,14 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Expanded(
-                                flex: buyEntity.leftPercent,
+                                flex: buyEntity?.leftPercent??0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#ffffff"),
                                 ),
                               ),
                               Expanded(
-                                flex: buyEntity.rightPercent,
+                                flex: buyEntity?.rightPercent??0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#EBF8F2"),
@@ -1242,14 +1315,14 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Expanded(
-                                flex: sailEntity.leftPercent,
+                                flex: sellEntity?.leftPercent??0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#F9EFEF"),
                                 ),
                               ),
                               Expanded(
-                                flex: sailEntity.rightPercent,
+                                flex: sellEntity?.rightPercent??0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#ffffff"),
@@ -1267,7 +1340,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                   alignment: Alignment.centerLeft,
                                   padding: const EdgeInsets.only(left: 5),
                                   child: Text(
-                                    sailEntity?.depthEntity?.price?.toString() ?? "--",
+                                    sellEntity?.depthEntity?.price?.toString() ?? "--",
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
@@ -1280,7 +1353,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                                 height: 25,
                                 alignment: Alignment.centerRight,
                                 child: Text(
-                                  sailEntity?.depthEntity?.amount?.toString() ?? "--",
+                                  sellEntity?.depthEntity?.amount?.toString() ?? "--",
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                     fontSize: 10,
@@ -1310,7 +1383,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                 ],
               );
             },
-            itemCount: buyChartList.length),
+            itemCount: max(buyChartList.length, sellChartList.length)),
       ],
     ),
   );

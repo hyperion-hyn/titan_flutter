@@ -239,25 +239,23 @@ class ExchangeApi {
     int size,
     String method,
   ) async {
-    return await ExchangeHttp.instance.postEntity(
-        ExchangeConst.PATH_ORDER_LIST,
+    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ORDER_LIST,
         EntityFactory<List<Order>>((response) {
-          var orderList = List<Order>();
-          if(response is Map && response.length == 0){
-            return orderList;
-          }
-          var dataList = response['data'];
-          (dataList as List).forEach((item) {
-            orderList.add(Order.fromJson(item));
-          });
-          return orderList;
-        }),
-        params: {
-          'market': market,
-          'page': page,
-          'size': size,
-          'method': method,
-        });
+      var orderList = List<Order>();
+      if (response is Map && response.length == 0) {
+        return orderList;
+      }
+      var dataList = response['data'];
+      (dataList as List).forEach((item) {
+        orderList.add(Order.fromJson(item));
+      });
+      return orderList;
+    }), params: {
+      'market': market,
+      'page': page,
+      'size': size,
+      'method': method,
+    });
   }
 
   Future<List<OrderDetail>> getOrderDetailList(
@@ -267,10 +265,17 @@ class ExchangeApi {
   ) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_LOG_LIST,
-      EntityFactory<List<OrderDetail>>(
-        (list) =>
-            (list as List).map((item) => OrderDetail.fromJson(item)).toList(),
-      ),
+      EntityFactory<List<OrderDetail>>((response) {
+        var orderDetailList = List<OrderDetail>();
+        if (response is Map && response.length == 0) {
+          return orderDetailList;
+        }
+        var dataList = response['data'];
+        (dataList as List).forEach((item) {
+          orderDetailList.add(OrderDetail.fromJson(item));
+        });
+        return orderDetailList;
+      }),
       params: {
         'market': market,
         'page': page,

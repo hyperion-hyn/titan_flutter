@@ -25,7 +25,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   List<Order> _orders = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RefreshController _refreshController = RefreshController(
-    initialRefresh: false,
+    initialRefresh: true,
   );
 
   int _currentPage = 1;
@@ -36,7 +36,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadMore();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override

@@ -37,7 +37,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        print("[SocketBloc] mapEventToState, dataMap:$dataMap}");
+        print("[SocketBloc] mapEventToState, dataMap:$dataMap");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -52,8 +52,22 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
               if (channel != null && channel is String) {
                 String channelValue = channel;
                 if (channelValue == SocketConfig.channelKLine24Hour) {
-                  var symbol = dataMap["symbol"];
-                  yield ChannelKLine24HourState(symbol:symbol,response: response);
+                  var responseMap = response as Map;
+                  var symbol = responseMap['symbol'];
+                  var data = responseMap['data'];
+                  /*{
+                    status: 0,
+                    channel: ws.market.allsymbol.kline.24hour,
+                    event: sub,
+                    data: {
+                      data: [[1595732880000, 0.2000000000, 0.2000000000, 0.2000000000, 0.2000000000, 0.0000000000, 0.0000000000]],
+                      symbol: hynusdt
+                    }
+                  }*/
+
+                  print("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+
+                  yield ChannelKLine24HourState(symbol:symbol,response: data);
                 } else if (channelValue.contains("depth")) {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
@@ -101,7 +115,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   }
 
   void _heartAction() {
-    //print('[WS] heart，发送心跳');
+    print('[WS] heart，发送心跳, date:${DateTime.now()}');
 
     var pong = "heart time fired!";
     socketChannel.sink.add(json.encode(pong));

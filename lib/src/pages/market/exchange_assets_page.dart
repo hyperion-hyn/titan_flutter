@@ -124,7 +124,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ExchangeInheritedModel.of(context)
                                 .exchangeModel
                                 .isShowBalances
-                            ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotalByUSDT()}'
+                            ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotal()}'
                             : '*****',
                         style: TextStyle(
                           fontSize: 20,

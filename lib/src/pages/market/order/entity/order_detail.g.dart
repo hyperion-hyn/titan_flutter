@@ -8,12 +8,13 @@ part of 'order_detail.dart';
 
 OrderDetail _$OrderDetailFromJson(Map<String, dynamic> json) {
   return OrderDetail(
-    json["side"] as int,
+    json["side"] as String,
     json['oid'] as String,
-    json['price'] as double,
-    json['amount'] as double,
+    json['price'] as String,
+    json['amount'] as String,
+    json['turnover'] as String,
     json['time'] as String,
-    json['fee'] as double,
+    json['fee'] as String,
   );
 }
 
@@ -23,6 +24,7 @@ Map<String, dynamic> _$OrderDetailToJson(OrderDetail instance) =>
       'oid': instance.oid,
       'price': instance.price,
       'amount': instance.amount,
+      'turnover': instance.turnover,
       'time': instance.time,
       'fee': instance.fee,
     };
