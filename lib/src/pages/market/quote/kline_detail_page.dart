@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -20,9 +21,9 @@ class KLineDetailPage extends StatefulWidget {
   }
 }
 
-class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderStateMixin {
+class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProviderStateMixin {
   final ExchangeApi api = ExchangeApi();
-
+  SocketBloc _socketBloc;
   List<KLineEntity> _kChartItemList = [];
   List<TradeInfoEntity> _tradeItemList = [];
   List<DepthInfoEntity> _buyDepthItemList = [];
@@ -78,17 +79,27 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   void initState() {
     _initData();
 
-    _initChannel();
-
     _setupRequest();
 
     super.initState();
   }
 
   @override
+  void onCreated() {
+
+    _socketBloc = BlocProvider.of<SocketBloc>(context);
+
+    _initChannel();
+
+    super.onCreated();
+  }
+
+  @override
   void dispose() {
     _unSubChannels();
 
+    _socketBloc = null;
+    print("[KLine] dispose");
     super.dispose();
   }
 
@@ -859,6 +870,13 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
         if (_lastChannel24HourKLineEntity == null) {
           _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
+
+
+          if (mounted) {
+            setState(() {
+              _showLoadingKLine = false;
+            });
+          }
         }
       }
     } else {
@@ -866,6 +884,12 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
         if (kLineDataList.isNotEmpty) {
           _kChartItemList = kLineDataList;
           KLineUtil.calculate(_kChartItemList);
+
+          if (mounted) {
+            setState(() {
+              _showLoadingKLine = false;
+            });
+          }
         }
       } else {
         if (kLineDataList.isNotEmpty) {
@@ -874,11 +898,6 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
       }
     }
 
-    if (mounted) {
-      setState(() {
-        _showLoadingKLine = false;
-      });
-    }
   }
 
   /*
@@ -1121,16 +1140,16 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
   // sub
   void _subChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
+    _socketBloc.add(SubChannelEvent(channel: channel));
   }
 
   // unSub
   void _unSubChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(UnSubChannelEvent(channel: channel));
+    _socketBloc.add(UnSubChannelEvent(channel: channel));
   }
 
   void _initListenChannel() {
-    BlocProvider.of<SocketBloc>(context).listen((state) {
+    _socketBloc.listen((state) {
       if (state is SubChannelSuccessState) {
         var msg = '订阅 ${state.channel} 成功';
         print("[Bloc] msg:$msg");
