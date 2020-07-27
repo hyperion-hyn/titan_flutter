@@ -115,7 +115,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   }
 
   void _heartAction() {
-    //print('[WS] heart，发送心跳');
+    print('[WS] heart，发送心跳, date:${DateTime.now()}');
 
     var pong = "heart time fired!";
     socketChannel.sink.add(json.encode(pong));
