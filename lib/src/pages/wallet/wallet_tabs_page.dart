@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
 import 'wallet_page/wallet_page.dart';
@@ -85,24 +87,35 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                   Positioned(
                     right: 16.0,
                     top: 16.0,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.contact_phone,
-                          color: Colors.black,
-                          size: 16,
-                        ),
-                        SizedBox(
-                          width: 8.0,
-                        ),
-                        Text(
-                          '资质',
-                          style: TextStyle(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WebViewContainer(
+                                  initUrl: Const.POI_POLICY,
+                                  title: S.of(context).poi_upload_protocol,
+                                )));
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.contact_phone,
                             color: Colors.black,
-                            fontSize: 14,
+                            size: 16,
                           ),
-                        )
-                      ],
+                          SizedBox(
+                            width: 8.0,
+                          ),
+                          Text(
+                            '资质',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   )
                 ],

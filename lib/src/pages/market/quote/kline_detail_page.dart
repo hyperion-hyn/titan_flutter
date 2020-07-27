@@ -827,6 +827,8 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
 
     if (symbol.isNotEmpty) {
       if (symbol == _symbol && kLineDataList.isNotEmpty) {
+        print("[WS] --> _dealPeriodData, 24hour， kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
+
         _channel24HourKLineEntity = kLineDataList.last;
       }
     } else {
