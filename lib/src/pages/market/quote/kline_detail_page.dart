@@ -37,7 +37,7 @@ class _KLineDetailPageState extends State<KLineDetailPage> with TickerProviderSt
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => _periodTabController.index == 4;
+  bool get _isDepth => _periodTabController.index == 5;
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
