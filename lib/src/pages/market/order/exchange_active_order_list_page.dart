@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -28,10 +29,9 @@ class ExchangeActiveOrderListPage extends StatefulWidget {
   }
 }
 
-class ExchangeActiveOrderListPageState
-    extends BaseState<ExchangeActiveOrderListPage>
-    with AutomaticKeepAliveClientMixin,RouteAware {
-  var exchangeApi = ExchangeApi(); 
+class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderListPage>
+    with AutomaticKeepAliveClientMixin, RouteAware {
+  var exchangeApi = ExchangeApi();
   List<Order> _activeOrders = List();
   ExchangeModel exchangeModel;
   String userTickChannel;
@@ -43,12 +43,11 @@ class ExchangeActiveOrderListPageState
 
   @override
   void onCreated() {
-    exchangeModel = ExchangeInheritedModel
-        .of(context)
-        .exchangeModel;
+    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
     if (exchangeModel.isActiveAccount()) {
       var symbolList = widget.market.split("/");
-      userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
+      userTickChannel = SocketConfig.channelUserTick(
+          exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
     _loadData();
@@ -84,61 +83,97 @@ class ExchangeActiveOrderListPageState
       bloc: BlocProvider.of<SocketBloc>(context),
       listener: (ctx, state) {
         if (state is ChannelUserTickState) {
-          var temOrders = List<Order>();
+          var netNewOrders = List<Order>();
+          var netCancelOrders = List<Order>();
+          var netCompOrders = List<Order>();
           state.response.forEach((entity) => {
-            if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
-              temOrders.add(Order.fromSocket(entity))}
-          });
-
-          if (temOrders.length > 0) {
-            var temAddOrders = List<Order>();
-            var temCancelOrders = List<Order>();
-            temOrders.forEach((temElement) {
-              var isNewOrder = true;
-              _activeOrders.forEach((actElement) {
-                if(temElement.orderId == actElement.orderId){
-                  print("update order");
-                  if(int.parse(temElement.status) > 2){
-                    temCancelOrders.add(actElement);
-                  }else{
-                    isNewOrder = false;
-                    actElement = temElement;
-                  }
+                if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
+                  netNewOrders.add(Order.fromSocket(entity))
+                } else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5)){
+                  netCancelOrders.add(Order.fromSocket(entity))
+                } else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2){
+                  netCompOrders.add(Order.fromSocket(entity))
                 }
               });
-              if(isNewOrder){
-                temAddOrders.add(temElement);
+
+          if (netNewOrders.length > 0) {
+            var temAddOrders = List<Order>();
+            netNewOrders.forEach((netElement) {
+              var isNewOrder = true;
+              _activeOrders.forEach((actElement) {
+                if (netElement.orderId == actElement.orderId) {
+                  isNewOrder = false;
+                  actElement = netElement;
+                }
+              });
+              if (isNewOrder) {
+                temAddOrders.add(netElement);
               }
             });
-            if(temAddOrders.length > 0){
+
+            if (temAddOrders.length > 0) {
               print("insert order");
               _activeOrders.insertAll(0, temAddOrders);
+              Fluttertoast.showToast(msg: "下单成功");
             }
-            if(temCancelOrders.length > 0){
+          }
+
+          if (netCancelOrders.length > 0) {
+            var temCancelOrders = List<Order>();
+
+            netCancelOrders.forEach((netElement) {
+              _activeOrders.forEach((actElement) {
+                if (netElement.orderId == actElement.orderId) {
+                  temCancelOrders.add(actElement);
+                }
+              });
+            });
+
+            if (temCancelOrders.length > 0) {
+              print("cancel order");
               temCancelOrders.forEach((element) {
                 _activeOrders.remove(element);
               });
+              Fluttertoast.showToast(msg: "订单撤销成功");
             }
-            setState(() {
-
-            });
-//            print("!!!!!!!order= ${state.response}");
-//            _currentOrders.clear();
-//            _currentOrders.addAll(temOrders);
-//            consignListController.add(contrConsignTypeRefresh);
           }
+
+          if (netCompOrders.length > 0) {
+            var temCompOrders = List<Order>();
+
+            netCompOrders.forEach((netElement) {
+              _activeOrders.forEach((actElement) {
+                if (netElement.orderId == actElement.orderId) {
+                  temCompOrders.add(actElement);
+                }
+              });
+            });
+
+            if (temCompOrders.length > 0) {
+              print("comp order");
+              temCompOrders.forEach((element) {
+                _activeOrders.remove(element);
+              });
+            }
+            Fluttertoast.showToast(msg: "订单已完成");
+          }
+          setState(() {});
         }
       },
       child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _activeOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(_activeOrders[index],revokeOrder: (Order orderEntity) async {
-          await exchangeApi.orderCancel(orderEntity.orderId);
+        itemBuilder: (ctx, index) => OrderItem(
+          _activeOrders[index],
+          revokeOrder: (Order orderEntity) async {
+            await exchangeApi.orderCancel(orderEntity.orderId);
 //          var result = await exchangeApi.orderCancel(orderEntity.orderId);
 //          if(result is Map && result["errorCode"] == 0){
 //          }
-        },market: widget.market,),
+          },
+          market: widget.market,
+        ),
       ),
     );
   }

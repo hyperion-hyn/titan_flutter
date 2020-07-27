@@ -26,6 +26,9 @@ import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
+import 'package:titan/src/widget/popup/bubble_widget.dart';
+import 'package:titan/src/widget/popup/pop_route.dart';
+import 'package:titan/src/widget/popup/pop_widget.dart';
 
 import 'bloc/exchange_detail_bloc.dart';
 
@@ -75,9 +78,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   final int contrConsignTypeRefresh = 11;
   StreamController<Map> optionsController = StreamController.broadcast();
   StreamController<int> consignListController = StreamController.broadcast();
-//  String userTickChannel = "";
+  String userTickChannel = "";
   String depthChannel;
-  List<Order> _currentOrders = List();
+//  List<Order> _currentOrders = List();
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
@@ -85,6 +88,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4, 5]);
   List<ExcDetailEntity> buyChartList = [];
   List<ExcDetailEntity> sailChartList = [];
+  int selectDepthNum = 1;
 
   @override
   void initState() {
@@ -137,9 +141,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void dispose() {
-//    if (exchangeModel.isActiveAccount()) {
-//      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
-//    }
+    if (exchangeModel.isActiveAccount()) {
+      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+    }
     Application.routeObserver.unsubscribe(this);
     BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
 
@@ -152,10 +156,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     exchangeModel = ExchangeInheritedModel
         .of(context)
         .exchangeModel;
-    /*if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccount()) {
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
-    }*/
+    }
   }
 
   @override
@@ -166,15 +170,27 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         listener: (ctx, state) {
           /*if (state is ChannelUserTickState) {
             var temOrders = List<Order>();
+            var delOrders = List<Order>();
+
             state.response.forEach((entity) => {
-            if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
-              temOrders.add(Order.fromSocket(entity))}
+              if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
+                temOrders.add(Order.fromSocket(entity))
+              } else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 || entity[2] <= 5)){
+                delOrders.add(Order.fromSocket(entity))
+              }
             });
 
             if (temOrders.length > 0) {
               print("!!!!!!!order= ${state.response}");
               _currentOrders.clear();
               _currentOrders.addAll(temOrders);
+              consignListController.add(contrConsignTypeRefresh);
+            }
+
+            if (delOrders.length > 0) {
+              temOrders.forEach((element) {
+                _currentOrders.remove(element);
+              });
               consignListController.add(contrConsignTypeRefresh);
             }
           }*/
@@ -268,9 +284,29 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               borderRadius: BorderRadius.circular(4.0)),
         ),
         Spacer(),
+        InkWell(
+          onTap: (){
+            showDepthView();
+          },
+          child: Container(
+            padding: EdgeInsets.only(top:2.0,bottom: 2,left: 10,right: 10),
+            decoration: BoxDecoration(
+            border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
+            borderRadius: BorderRadius.all(Radius.circular(2))),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom:2.0,right: 15),
+                  child: Text("深度$selectDepthNum位",style: TextStyle(fontSize: 10,color: DefaultColors.color999),),
+                ),
+                Image.asset("res/drawable/ic_exchange_down_triangle.png",width: 7,height: 5,)
+              ],
+            ),
+          ),
+        ),
         Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Icon(Icons.equalizer),
+          padding: EdgeInsets.only(top:8.0,bottom: 8,left: 20,right: 14),
+          child: Image.asset("res/drawable/ic_exchange_candle.png",width: 13,height: 16,),
         )
       ],
     );
@@ -296,6 +332,67 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     } else {
       return 0;
     }
+  }
+
+  showDepthView(){
+    return Navigator.push(context,PopRoute(child: Popup(
+      child: BubbleWidget(
+          100.0,
+          166.0,
+          Colors.white,
+          BubbleArrowDirection.top,
+          length: 55,
+          innerPadding:0.0,
+          child: Container(
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top:0),
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index){
+                if(index == 0){
+                  return Container(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top:8,bottom:6.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text("深度小数位",style: TextStyle(fontSize: 12,color: DefaultColors.color333),),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox(
+                  width: 100,
+                  height: 29.5,
+                  child: FlatButton(
+                    padding: EdgeInsets.all(0),
+                    onPressed: (){
+                      setState(() {
+                        selectDepthNum = index;
+                        optionsController.add({contrOptionsTypeRefresh:""});
+                        consignListController.add(contrOptionsTypeRefresh);
+                        changeDepthLevel(index);
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Divider(height: 0.5,color: DefaultColors.colorf2f2f2,indent: 13,endIndent: 13,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical:6.0),
+                          child: Text("$index位",style: TextStyle(fontSize: 12,color: DefaultColors.color999)),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },itemCount: 5,
+            ),
+          )),
+      left: 238,
+      top: 66,
+    ),),);
   }
 
   Widget _exchangeOptions() {
@@ -1153,7 +1250,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ],
               ),
             ),
-            ExchangeActiveOrderListPage(marketCoin)
+            if(exchangeModel.isActiveAccount())
+              ExchangeActiveOrderListPage(marketCoin)
           ],
         );
         /*return ListView.builder(
@@ -1230,9 +1328,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     );
   }
 
-  Future changeDepthLevel(int newLevel) {
+  changeDepthLevel(int newLevel) {
     BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
-    depthChannel = SocketConfig.channelExchangeDepth("symbo", newLevel);
+    depthChannel = SocketConfig.channelExchangeDepth(symbol, newLevel);
     BlocProvider.of(context).add(SubChannelEvent(channel: depthChannel));
   }
 
