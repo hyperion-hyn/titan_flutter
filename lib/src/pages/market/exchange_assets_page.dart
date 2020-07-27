@@ -11,13 +11,12 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/transfer/exchange_asset_history_page.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
-import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'deposit_page.dart';
-import 'withdraw_page.dart';
 
 class ExchangeAssetsPage extends StatefulWidget {
   @override
@@ -65,30 +64,24 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             '交易账户',
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
-      body: LoadDataContainer(
-        bloc: _loadDataBloc,
-        enablePullUp: false,
-        onRefresh: () {
-          BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-          _loadDataBloc.add(RefreshSuccessEvent());
-        },
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        color: Colors.white,
+        child: LoadDataContainer(
+          bloc: _loadDataBloc,
+          enablePullUp: false,
+          onRefresh: () {
+            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+            _loadDataBloc.add(RefreshSuccessEvent());
+          },
+          child: ListView(
             children: <Widget>[
-              SizedBox(
-                height: 16,
-              ),
               _totalBalances(),
               _divider(),
-              Expanded(
-                child: _exchangeAssetListView(
-                  ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .activeAccount
-                      .assetList,
-                ),
+              _exchangeAssetListView(
+                ExchangeInheritedModel.of(context)
+                    .exchangeModel
+                    .activeAccount
+                    .assetList,
               ),
             ],
           ),
@@ -98,132 +91,140 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _totalBalances() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Stack(
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    '总资产估值(USDT)',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        ExchangeInheritedModel.of(context)
-                                .exchangeModel
-                                .isShowBalances
-                            ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotal()}'
-                            : '*****',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 3,
-                      ),
-                      SizedBox(
-                        width: 8.0,
-                      ),
-                      Text(
-                        ExchangeInheritedModel.of(context)
-                                .exchangeModel
-                                .isShowBalances
-                            ? '≈${FormatUtil.formatPrice(10000.0 * (symbolQuote?.quoteVo?.price ?? 0))}'
-                            : '*****',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        maxLines: 3,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: 30,
-                      child: OutlineButton(
-                        child: Text(
-                          '划转',
-                          style: TextStyle(color: HexColor('#FF1095B0')),
-                        ),
-                        onPressed: () {
-                          Application.router.navigateTo(
-                              context, Routes.exchange_transfer_page);
-                        },
-                        borderSide: BorderSide(
-                          color: HexColor('#FF1095B0'),
-                          width: 1,
-                        ),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0)),
+    return Container(
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Stack(
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 16,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '总资产估值(USDT)',
+                      style: TextStyle(
+                        fontSize: 16.0,
                       ),
                     ),
-                  )
-                ],
-              )
-            ],
-          ),
-          Positioned(
-            right: 8,
-            top: 0,
-            child: InkWell(
-              onTap: () async {
-                BlocProvider.of<ExchangeCmpBloc>(context).add(
-                    SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
-                        .exchangeModel
-                        .isShowBalances));
-                setState(() {});
-              },
-              child: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
-                  ? Image.asset(
-                      'res/drawable/ic_wallet_show_balances.png',
-                      height: 20,
-                      width: 20,
-                      color: HexColor('#FF228BA1'),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          ExchangeInheritedModel.of(context)
+                                  .exchangeModel
+                                  .isShowBalances
+                              ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotal()}'
+                              : '*****',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 3,
+                        ),
+                        SizedBox(
+                          width: 8.0,
+                        ),
+                        Text(
+                          ExchangeInheritedModel.of(context)
+                                  .exchangeModel
+                                  .isShowBalances
+                              ? '≈${FormatUtil.formatPrice(10000.0 * (symbolQuote?.quoteVo?.price ?? 0))}'
+                              : '*****',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          maxLines: 3,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 30,
+                        child: OutlineButton(
+                          child: Text(
+                            '划转',
+                            style: TextStyle(color: HexColor('#FF1095B0')),
+                          ),
+                          onPressed: () {
+                            Application.router.navigateTo(
+                                context, Routes.exchange_transfer_page);
+                          },
+                          borderSide: BorderSide(
+                            color: HexColor('#FF1095B0'),
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0)),
+                        ),
+                      ),
                     )
-                  : Image.asset(
-                      'res/drawable/ic_wallet_hide_balances.png',
-                      height: 20,
-                      width: 20,
-                      color: HexColor('#FF228BA1'),
-                    ),
+                  ],
+                )
+              ],
             ),
-          )
-        ],
+            Positioned(
+              right: 8,
+              top: 0,
+              child: InkWell(
+                onTap: () async {
+                  BlocProvider.of<ExchangeCmpBloc>(context).add(
+                      SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
+                          .exchangeModel
+                          .isShowBalances));
+                  setState(() {});
+                },
+                child: ExchangeInheritedModel.of(context)
+                        .exchangeModel
+                        .isShowBalances
+                    ? Image.asset(
+                        'res/drawable/ic_wallet_show_balances.png',
+                        height: 20,
+                        width: 20,
+                        color: HexColor('#FF228BA1'),
+                      )
+                    : Image.asset(
+                        'res/drawable/ic_wallet_hide_balances.png',
+                        height: 20,
+                        width: 20,
+                        color: HexColor('#FF228BA1'),
+                      ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
   _exchangeAssetListView(AssetList _assetList) {
     if (_assetList != null) {
-      return ListView(
-        children: <Widget>[
-          AssetItem('exchange', 'HYN', _assetList.HYN),
-          AssetItem('exchange', 'USDT', _assetList.USDT),
-          AssetItem('exchange', 'ETH', _assetList.ETH),
-          AssetItem('exchange', 'BTC', _assetList.BTC),
-        ],
+      return Container(
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            AssetItem('HYN', _assetList.HYN),
+            AssetItem('USDT', _assetList.USDT),
+            AssetItem('ETH', _assetList.ETH),
+          ],
+        ),
       );
     } else {
       return Container(
@@ -243,12 +244,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 }
 
 class AssetItem extends StatefulWidget {
-  final String _accountType;
   final String _symbol;
   final AssetType _assetType;
 
   AssetItem(
-    this._accountType,
     this._symbol,
     this._assetType,
   );
@@ -262,142 +261,147 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 16.0,
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    widget._symbol,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: HexColor('#FF228BA1'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-              ),
-            )
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16.0,
-            vertical: 8.0,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ExchangeAssetHistoryPage(widget._symbol)));
+      },
+      child: Column(
+        children: <Widget>[
+          SizedBox(
+            height: 16.0,
           ),
-          child: Row(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '可用',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          Text(
-                            widget._accountType == 'exchange'
-                                ? widget._assetType.exchangeAvailable
-                                : widget._assetType.accountAvailable,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      Spacer()
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '冻结',
+                      widget._symbol,
                       style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF228BA1'),
                       ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      widget._accountType == 'exchange'
-                          ? widget._assetType.exchangeFreeze
-                          : widget._assetType.accountFreeze,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                     ),
                   ],
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Spacer(),
-                        Text(
-                          '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15,
                 ),
               )
             ],
           ),
-        ),
-        SizedBox(
-          height: 4.0,
-        ),
-        _divider()
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '可用',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8.0,
+                            ),
+                            Text(
+                              widget._assetType.exchangeAvailable,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Spacer()
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '冻结',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Text(
+                        widget._assetType.exchangeFreeze,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Spacer(),
+                          Text(
+                            '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 4.0,
+          ),
+          _divider()
+        ],
+      ),
     );
   }
 

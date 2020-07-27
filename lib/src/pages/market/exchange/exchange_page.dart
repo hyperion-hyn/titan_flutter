@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -9,6 +10,8 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -33,6 +36,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'usdt';
   var _exchangeType = ExchangeType.SELL;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
+  List<MarketItemEntity> _marketItemList = List();
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void dispose() {
@@ -55,6 +60,88 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _getAllSymbols();
+    _sub24HourChannel();
+  }
+
+  _getAllSymbols() async {
+    var response = await _exchangeApi.getMarketAllSymbol();
+
+    MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
+
+    if (marketSymbolList.hynusdt != null) {
+      _marketItemList.add(MarketItemEntity(
+        'hynusdt',
+        marketSymbolList.hynusdt,
+        symbolName: 'HYN/USDT',
+      ));
+    }
+    if (marketSymbolList.hyneth != null) {
+      _marketItemList.add(MarketItemEntity(
+        'hyneth',
+        marketSymbolList.hyneth,
+        symbolName: 'HYN/ETH',
+      ));
+    }
+    if (marketSymbolList.hynbtc != null) {
+      _marketItemList.add(MarketItemEntity(
+        'hynbtc',
+        marketSymbolList.hynbtc,
+        symbolName: 'HYN/BTC',
+      ));
+    }
+    setState(() {});
+  }
+
+  // 24hour
+  void _sub24HourChannel() {
+    var channel = SocketConfig.channelKLine24Hour;
+    _subChannel(channel);
+  }
+
+  // sub
+  void _subChannel(String channel) {
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
+  }
+
+  _updateMarketItemList(dynamic data,
+      {bool isReplace = true, String symbol = ''}) {
+    if (!(data is List)) {
+      return;
+    }
+
+    List dataList = data;
+    List kLineDataList = dataList.map((item) {
+      Map<String, dynamic> json = {};
+      if (item is List) {
+        List itemList = item;
+        if (itemList.length >= 7) {
+          json = {
+            'open': double.parse(itemList[1].toString()),
+            'high': double.parse(itemList[2].toString()),
+            'low': double.parse(itemList[3].toString()),
+            'close': double.parse(itemList[4].toString()),
+            'vol': double.parse(itemList[5].toString()),
+            'amount': 0,
+            'count': 0,
+            'id': int.parse(itemList[0].toString()) / 1000,
+          };
+        }
+      }
+      return KLineEntity.fromJson(json);
+    }).toList();
+    bool _isNewSymbol = true;
+    _marketItemList.forEach((element) {
+      if (element.symbol == symbol) {
+        _isNewSymbol = false;
+        element = MarketItemEntity(symbol, kLineDataList.last);
+      }
+    });
+    print('_updateQuoteItemList: isNewSymbol: $_isNewSymbol');
+    if (_isNewSymbol) {
+      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
+    }
+    setState(() {});
   }
 
   @override
@@ -71,6 +158,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               print('[ExchangePage] SubChannelState :${state.period}');
             } else if (state is ReceivedDataState) {
               print('[ExchangePage] ReceivedDataState: ${state.response}');
+            } else if (state is ChannelKLine24HourState) {
+              _updateMarketItemList(state.response, symbol: state.symbol);
             }
           },
         ),
@@ -204,7 +293,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 },
                 width: 88,
                 height: 38,
-                radius: 22,
+                radius: 6,
                 child: Icon(
                   Icons.arrow_forward,
                   size: 15,
@@ -441,13 +530,15 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _quotesItemList() {
     return Expanded(
-      child: ListView(
-        children: List.generate(3, (index) => _quotesItem()),
-      ),
+      child: ListView.builder(
+          itemCount: _marketItemList.length,
+          itemBuilder: (context, index) {
+            return _marketItem(_marketItemList[index]);
+          }),
     );
   }
 
-  _quotesItem() {
+  _marketItem(MarketItemEntity marketItemEntity) {
     return InkWell(
       onTap: () {
         Navigator.push(context,
@@ -463,7 +554,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               children: <Widget>[
                 Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: 'HYN',
+                      text: '${marketItemEntity.symbol}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
@@ -481,7 +572,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   height: 4,
                 ),
                 Text(
-                  '24H量 12313',
+                  '24H ${marketItemEntity.kLineEntity.amount}',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -494,7 +585,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  '0.1223',
+                  '${marketItemEntity.kLineEntity.close}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -568,4 +659,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       color: HexColor('#FFF5F5F5'),
     );
   }
+}
+
+///
+class MarketItemEntity {
+  String symbol;
+  String symbolName;
+  KLineEntity kLineEntity;
+
+  MarketItemEntity(
+    this.symbol,
+    this.kLineEntity, {
+    this.symbolName,
+  });
 }

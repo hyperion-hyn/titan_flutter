@@ -93,16 +93,16 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                             context,
                             MaterialPageRoute(
                                 builder: (context) => WebViewContainer(
-                                  initUrl: Const.POI_POLICY,
-                                  title: S.of(context).poi_upload_protocol,
-                                )));
+                                      initUrl: Const.POI_POLICY,
+                                      title: S.of(context).poi_upload_protocol,
+                                    )));
                       },
                       child: Row(
                         children: <Widget>[
-                          Icon(
-                            Icons.contact_phone,
-                            color: Colors.black,
-                            size: 16,
+                          Image.asset(
+                            'res/drawable/ic_wallet_qualification.png',
+                            height: 20,
+                            width: 20,
                           ),
                           SizedBox(
                             width: 8.0,

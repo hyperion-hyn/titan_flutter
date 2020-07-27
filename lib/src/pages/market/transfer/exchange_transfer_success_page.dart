@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/pages/market/exchange_transfer_oage.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class ExchangeTransferSuccessPage extends StatefulWidget {

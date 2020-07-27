@@ -18,12 +18,15 @@ class ExchangeConst {
   static const PATH_HISTORY_KLINE =
       "/api/v1-b/market/kline_history"; // 所有用户历史k线数据
 
+
+
   ///交易系统：
   static const PATH_ORDER_LIMIT = "/api/exchange/orderPutLimit"; // 下限价单
   static const PATH_ORDER_MARKET = "/api/exchange/orderPutMarket"; // 下市价单
   static const PATH_ORDER_CANCEL = "/api/exchange/orderCancel"; // 取消订单A
   static const PATH_ORDER_LIST = "/api/order/lists"; // 当前/历史 委托列表
   static const PATH_ORDER_LOG_LIST = "/api/order/dealDetailLists"; // 成交明细
+  static const PATH_MARKET_ALL = '/api/v1-b/market/all';
   static const PATH_MARKET_INFO =
       "/api/exchange/getMarketInfo"; // 市场信息，如市价，费率，精度
   static const PATH_USD_CNY = "/api/quotation/getUSDCNY"; // 美元兑换人民币汇率

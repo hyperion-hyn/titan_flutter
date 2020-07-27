@@ -70,7 +70,7 @@ class ExchangeOrderDetailListPageState
     );
   }
 
-  void _refresh() async {
+  _refresh() async {
     _currentPage = 1;
 
     ///clear list before refresh
