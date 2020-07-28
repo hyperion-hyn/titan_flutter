@@ -192,7 +192,8 @@ class FormatUtil {
     return timeStr;
   }
 
-  static String truncateDecimalNum(Decimal number, int decimal) {
+  static String truncateDecimalNum(Decimal decNum, int decimal) {
+    var number = decNum.toDouble();
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
       var result =
           number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();

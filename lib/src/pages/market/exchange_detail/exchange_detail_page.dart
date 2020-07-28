@@ -451,7 +451,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
-            currentNumStr = currentNum.toString();
+            currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if (exchangeModel.isActiveAccount()) {
               if (isBuy) {
