@@ -30,7 +30,7 @@ class ExchangeConst {
   static const PATH_MARKET_INFO =
       "/api/exchange/getMarketInfo"; // 市场信息，如市价，费率，精度
   static const PATH_USD_CNY = "/api/quotation/getUSDCNY"; // 美元兑换人民币汇率
-  static const PATH_TYPE_TO_CURRENCY = "api/quotation/getType2Currency";
+  static const PATH_TYPE_TO_CURRENCY = "/api/quotation/getType2Currency";
 
   ///资金操作
   static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表
