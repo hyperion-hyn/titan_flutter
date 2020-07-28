@@ -222,7 +222,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> historyDepth(String symbol, {String precision = '-1'}) async {
+  Future<dynamic> historyDepth(String symbol, {int precision = -1}) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_HISTORY_DEPTH,
       null,

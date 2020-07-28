@@ -26,8 +26,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   SocketBloc _socketBloc;
   List<KLineEntity> _kChartItemList = [];
   List<TradeInfoEntity> _tradeItemList = [];
-  List<DepthInfoEntity> _buyDepthItemList = [];
-  List<DepthInfoEntity> _sellDepthItemList = [];
 
   PeriodInfoEntity _periodParameter;
   String _symbol = 'hynusdt';
@@ -311,7 +309,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               width: double.infinity,
               height: kLineHeight,
               color: Colors.white,
-              child: DepthChart(_buyDepthItemList, _sellDepthItemList),
+//              child: DepthChart(_buyDepthItemList, _sellDepthItemList),
+              child: Text("修改数据源"),
             ),
           ),
           Visibility(
@@ -977,104 +976,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     var data = await api.historyDepth(_symbol);
     print("[WS] --> _getDepthData, data:$data");
 
-    _dealDepthData(data);
+    dealDepthData(_buyChartList,_sellChartList,data);
     print("[WS] --> _getDepthData, data:${data is List}");
-  }
-
-  _dealDepthData(dynamic data, {bool isReplace = true}) {
-    if (!(data is Map)) {
-      return;
-    }
-
-    Map dataMap = data;
-
-    List<DepthInfoEntity> deptList(dynamic cache, String actionType) {
-      if (cache is List) {
-        List dataList = cache;
-        var depthInfoEntityList = dataList.map((item) {
-          DepthInfoEntity entity = DepthInfoEntity();
-          if (item is List) {
-            List itemList = item;
-            if (itemList.length >= 2) {
-              entity.price = double.parse(itemList[0].toString());
-              entity.amount = double.parse(itemList[1].toString());
-              entity.actionType = actionType;
-            }
-          }
-          return entity;
-        }).toList();
-        print("[WS] --> _getDepthData, depthInfoEntityList.length:${depthInfoEntityList.length}");
-        return depthInfoEntityList;
-      }
-      return [];
-    }
-
-    var buy = dataMap["buy"];
-    var buyList = deptList(buy, "buy");
-
-    var sell = dataMap["sell"];
-    var sellList = deptList(sell, "sell");
-    print("[WS] --> _getDepthData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
-
-    if (isReplace) {
-      if (buyList.isNotEmpty) {
-        _buyDepthItemList = buyList;
-      }
-
-      if (sellList.isNotEmpty) {
-        _sellDepthItemList = sellList;
-      }
-    } else {
-      if (buyList.isNotEmpty) {
-        _buyDepthItemList.addAll(buyList);
-      }
-
-      if (sellList.isNotEmpty) {
-        _sellDepthItemList.addAll(sellList);
-      }
-    }
-
-    // doing
-
-    // buy
-    List<ExcDetailEntity> buyEntityList = [];
-    var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
-      if (current.amount>next.amount)  {
-        return current;
-      }
-      return next;
-    });
-    for (int index = 0; index < _buyDepthItemList.length; index++) {
-      var buy = _buyDepthItemList[index];
-      var right = 10 * buy.amount ~/ maxBuyDepthEntity.amount;
-      var left = 10 - right;
-      var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
-      buyEntityList.add(entity);
-    }
-    if (buyEntityList.isNotEmpty) {
-      _buyChartList = buyEntityList;
-    }
-
-    // sell
-    List<ExcDetailEntity> sellEntityList = [];
-    var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
-      if (current.amount>next.amount)  {
-        return current;
-      }
-      return next;
-    });
-    for (int index = 0; index < _sellDepthItemList.length; index++) {
-      var sell = _sellDepthItemList[index];
-      var left = 10 * sell.amount ~/ maxSellDepthEntity.amount;
-      var right = 10 - left;
-      var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
-      sellEntityList.add(entity);
-    }
-    if (sellEntityList.isNotEmpty) {
-      _sellChartList = sellEntityList;
-    }
-
-    setState(() {});
   }
 
   // channel
@@ -1167,7 +1070,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         }
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
-        _dealDepthData(state.response, isReplace: false);
+        dealDepthData(_buyChartList,_sellChartList,state.response, isReplace: false);
+
       } else if (state is ChannelTradeDetailState) {
         _dealTradeData(state.response, isReplace: false);
       }
@@ -1175,7 +1079,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,{limitNum = 20}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -1383,8 +1287,105 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                 ],
               );
             },
-            itemCount: max(buyChartList.length, sellChartList.length)),
+            itemCount: limitNum == 20 ? max(buyChartList.length, sellChartList.length) : limitNum),
       ],
     ),
   );
+}
+
+dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data, {bool isReplace = true}) {
+  if (!(data is Map)) {
+    return;
+  }
+
+  Map dataMap = data;
+
+  List<DepthInfoEntity> _buyDepthItemList = List();
+  List<DepthInfoEntity> _sellDepthItemList = List();
+  List<DepthInfoEntity> deptList(dynamic cache, String actionType) {
+    if (cache is List) {
+      List dataList = cache;
+      var depthInfoEntityList = dataList.map((item) {
+        DepthInfoEntity entity = DepthInfoEntity();
+        if (item is List) {
+          List itemList = item;
+          if (itemList.length >= 2) {
+            entity.price = double.parse(itemList[0].toString());
+            entity.amount = double.parse(itemList[1].toString());
+            entity.actionType = actionType;
+          }
+        }
+        return entity;
+      }).toList();
+      print("[WS] --> _getDepthData, depthInfoEntityList.length:${depthInfoEntityList.length}");
+      return depthInfoEntityList;
+    }
+    return [];
+  }
+
+  var buy = dataMap["buy"];
+  var buyList = deptList(buy, "buy");
+
+  var sell = dataMap["sell"];
+  var sellList = deptList(sell, "sell");
+  print("[WS] --> _getDepthData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
+
+  if (isReplace) {
+    if (buyList.isNotEmpty) {
+      _buyDepthItemList = buyList;
+    }
+
+    if (sellList.isNotEmpty) {
+      _sellDepthItemList = sellList;
+    }
+  } else {
+    if (buyList.isNotEmpty) {
+      _buyDepthItemList.addAll(buyList);
+    }
+
+    if (sellList.isNotEmpty) {
+      _sellDepthItemList.addAll(sellList);
+    }
+  }
+
+  // doing
+
+  // buy
+  List<ExcDetailEntity> buyEntityList = [];
+  var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+    if (current.amount>next.amount)  {
+      return current;
+    }
+    return next;
+  });
+  for (int index = 0; index < _buyDepthItemList.length; index++) {
+    var buy = _buyDepthItemList[index];
+    var right = 10 * buy.amount ~/ maxBuyDepthEntity.amount;
+    var left = 10 - right;
+    var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
+    buyEntityList.add(entity);
+  }
+  if (buyEntityList.isNotEmpty) {
+    buyChartList.addAll(buyEntityList);
+  }
+
+  // sell
+  List<ExcDetailEntity> sellEntityList = [];
+  var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+    if (current.amount>next.amount)  {
+      return current;
+    }
+    return next;
+  });
+  for (int index = 0; index < _sellDepthItemList.length; index++) {
+    var sell = _sellDepthItemList[index];
+    var left = 10 * sell.amount ~/ maxSellDepthEntity.amount;
+    var right = 10 - left;
+    var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
+    sellEntityList.add(entity);
+  }
+  if (sellEntityList.isNotEmpty) {
+    sellChartList.addAll(sellEntityList);
+  }
+
 }

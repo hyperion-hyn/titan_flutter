@@ -8,6 +8,12 @@ class MarketInfoEvent extends ExchangeDetailEvent{
   MarketInfoEvent(this.marketCoin);
 }
 
+class DepthInfoEvent extends ExchangeDetailEvent{
+  String symbol;
+  int precision;
+  DepthInfoEvent(this.symbol,this.precision);
+}
+
 class LimitExchangeEvent extends ExchangeDetailEvent{
   String marketCoin;
   int exchangeType;

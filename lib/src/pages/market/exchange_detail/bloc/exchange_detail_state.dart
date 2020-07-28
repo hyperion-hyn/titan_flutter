@@ -12,3 +12,8 @@ class ExchangeMarketInfoState extends ExchangeDetailState {
   final MarketInfoEntity marketInfoEntity;
   ExchangeMarketInfoState(this.marketInfoEntity);
 }
+
+class DepthInfoState extends ExchangeDetailState{
+  final dynamic depthData;
+  DepthInfoState(this.depthData);
+}

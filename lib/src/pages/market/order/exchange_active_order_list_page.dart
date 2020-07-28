@@ -56,7 +56,6 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
 
   @override
   void didPopNext() {
-    print("sub didPopNext");
     _loadData();
     super.didPopNext();
   }
