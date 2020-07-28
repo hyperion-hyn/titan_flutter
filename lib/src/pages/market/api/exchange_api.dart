@@ -7,6 +7,7 @@ import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
+import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -172,6 +173,14 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> getMarketAllSymbol() async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_MARKET_ALL,
+      null,
+      params: {},
+    );
+  }
+
   Future<dynamic> orderPutLimit(
       String market, exchangeType, String price, String amount) async {
     return await ExchangeHttp.instance.postEntity(
@@ -200,14 +209,11 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderCancel(
-      String orderId) async {
+  Future<dynamic> orderCancel(String orderId) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_CANCEL,
       null,
-      params: {
-        "order_id": orderId
-      },
+      params: {"order_id": orderId},
     );
   }
 
@@ -255,6 +261,32 @@ class ExchangeApi {
       'page': page,
       'size': size,
       'method': method,
+    });
+  }
+
+  Future<List<AssetHistory>> getAccountHistory(
+    String type,
+    int page,
+    int size,
+    String action,
+  ) async {
+    return await ExchangeHttp.instance
+        .postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
+            EntityFactory<List<AssetHistory>>((response) {
+      var assetHistoryList = List<AssetHistory>();
+      if (response is Map && response.length == 0) {
+        return assetHistoryList;
+      }
+      var dataList = response['data'];
+      (dataList as List).forEach((item) {
+        assetHistoryList.add(AssetHistory.fromJson(item));
+      });
+      return assetHistoryList;
+    }), params: {
+      'type': type,
+      'page': page,
+      'size': size,
+      'action': action,
     });
   }
 

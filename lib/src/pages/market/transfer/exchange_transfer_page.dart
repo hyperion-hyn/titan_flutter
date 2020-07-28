@@ -12,13 +12,14 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/exchange_transfer_success_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 
-import 'model/asset_list.dart';
+import '../model/asset_list.dart';
 
 class ExchangeTransferPage extends StatefulWidget {
   @override
@@ -50,45 +51,72 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        title: Text(
-          '划转',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: ListView(
-                  children: <Widget>[
-                    _transferTypeSelection(),
-                    _coinTypeSelection(),
-                    _amount(),
-                    _transferHint(),
-                  ],
+    return Stack(
+      children: <Widget>[
+        Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            iconTheme: IconThemeData(
+              color: Colors.black,
+            ),
+            title: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '划转',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
                 ),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ExchangeTransferHistoryListPage(
+                                  _selectedCoinType,
+                                )));
+                  },
+                  child: Image.asset(
+                    'res/drawable/ic_transfer_history.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                )
+              ],
+            ),
+          ),
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView(
+                      children: <Widget>[
+                        _transferTypeSelection(),
+                        _coinTypeSelection(),
+                        _amount(),
+                        _transferHint(),
+                      ],
+                    ),
+                  ),
+                  _confirm()
+                ],
               ),
-              _confirm()
-            ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -384,7 +412,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 child: TextFormField(
                   validator: (value) {
                     value = value.trim();
-                    if (value == "0" ) {
+                    if (value == "0") {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
@@ -481,6 +509,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   _transfer() async {
     if (_fromExchangeToWallet) {
     } else {}
-    Application.router.navigateTo(context, Routes.exchange_transfer_success_page);
+    Application.router
+        .navigateTo(context, Routes.exchange_transfer_success_page);
   }
 }
