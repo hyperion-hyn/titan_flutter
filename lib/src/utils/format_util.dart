@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
@@ -51,7 +52,7 @@ class FormatUtil {
   }
 
   static String formatSecondDate(int timestamp) {
-    var format = "HH:mm:ss" ;
+    var format = "HH:mm:ss";
 
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
     //print("[format]   timestamp:$timestamp, date:$date");
@@ -191,4 +192,14 @@ class FormatUtil {
     return timeStr;
   }
 
+  static String truncateDecimalNum(Decimal number, int decimal) {
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
+      var result =
+          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      return result;
+    } else {
+      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      return result;
+    }
+  }
 }

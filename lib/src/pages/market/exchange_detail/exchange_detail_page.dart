@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_order_mangement_page.dart';
 import 'package:titan/src/pages/market/quote/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
@@ -53,11 +55,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   bool isLoading = false;
   bool isBuy = true;
   bool isLimit = true;
-  double currentPrice = 0;
-  double currentNum = 0;
+  Decimal currentPrice = Decimal.fromInt(0);
+  Decimal currentNum = Decimal.fromInt(0);
   String currentPriceStr = "";
-  String totalPriceStr = "";
   String currentNumStr = "";
+  String totalPriceStr = "";
 
   TextEditingController priceEditController = new TextEditingController();
   TextEditingController numEditController = new TextEditingController();
@@ -70,20 +72,23 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   final int contrOptionsTypePrice = 4;
   final int contrOptionsTypePriceAdd = 5;
   final int contrOptionsTypePriceDecrease = 6;
-  final int contrOptionsTypePricePreError = 9;
-  final int contrOptionsTypeNum = 7;
-  final int contrOptionsTypeNumPercent = 11;
+  final int contrOptionsTypePricePreError = 7;
+  final int contrOptionsTypeNum = 8;
+  final int contrOptionsTypeNumPercent = 9;
   final int contrOptionsTypeNumPreError = 10;
-  final int contrOptionsTypeRefresh = 8;
+  final int contrOptionsTypeTotalPrice = 11;
+  final int contrOptionsTypeTotalPriceError = 12;
+  final int contrOptionsTypeRefresh = 13;
 
-  final int contrConsignTypeRefresh = 12;
+  final int contrConsignTypeRefresh = 14;
 
-  final int contrDepthTypeRefresh = 13;
+  final int contrDepthTypeRefresh = 15;
   StreamController<int> depthController = StreamController.broadcast();
   StreamController<Map> optionsController = StreamController.broadcast();
   StreamController<int> consignListController = StreamController.broadcast();
   String userTickChannel = "";
   String depthChannel;
+  String tradeChannel;
 
 //  List<Order> _currentOrders = List();
   ExchangeModel exchangeModel;
@@ -93,6 +98,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 1;
+  String _realTimePrice = "--";
 
   @override
   void initState() {
@@ -105,16 +111,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void onCreated() {
-    _getAccountData();
-
-    depthChannel = SocketConfig.channelExchangeDepth(symbol, 1);
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    _getChannelData();
     super.onCreated();
   }
 
   @override
   void didPopNext() {
-    _getAccountData();
+    _getChannelData();
     consignListController.add(contrConsignTypeRefresh);
     super.didPopNext();
   }
@@ -132,18 +136,23 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     }
     Application.routeObserver.unsubscribe(this);
     BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
+    BlocProvider.of(context).add(UnSubChannelEvent(channel: tradeChannel));
 
     optionsController.close();
     exchangeDetailBloc.close();
     super.dispose();
   }
 
-  void _getAccountData() {
-    exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+  void _getChannelData() {
     if (exchangeModel.isActiveAccount()) {
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
+    depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+
+    tradeChannel = SocketConfig.channelTradeDetail(symbol);
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: tradeChannel));
   }
 
   @override
@@ -163,6 +172,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             if (state is ExchangeMarketInfoState) {
               marketInfoEntity = state.marketInfoEntity;
             } else if (state is DepthInfoState) {
+              _buyChartList.clear();
+              _sailChartList.clear();
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
             }
@@ -292,29 +303,40 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         builder: (context, optionType) {
           return Column(
             children: <Widget>[
-
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  SizedBox(width: 14,),
+                  Text("9042.68"/*_realTimePrice*/,style:TextStyle(fontSize: 18,color: DefaultColors.color53ae86)),
+                  SizedBox(width: 6,),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom:3.0),
+                    child: Text("≈63027.47 CNY",style:TextStyle(fontSize: 10,color: DefaultColors.color777)),
+                  ),
+                ],
+              ),
               delegationListView(_buyChartList, _sailChartList, limitNum: 5),
             ],
           );
         });
   }
 
-  updateTotalView(double totalPrice) {
-    totalPriceStr = totalPrice.toStringAsFixed(marketInfoEntity.turnoverPrecision);
+  updateTotalView(Decimal totalPrice) {
+    totalPriceStr = FormatUtil.truncateDecimalNum(totalPrice,marketInfoEntity.turnoverPrecision);
     totalEditController.text = totalPriceStr;
     totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
   }
 
-  double getValidNum() {
+  Decimal getValidNum() {
     if (exchangeModel.isActiveAccount()) {
       if (isBuy) {
-        return double.parse(
+        return Decimal.parse(
             exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable);
       } else {
-        return double.parse(exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable);
+        return Decimal.parse(exchangeModel.activeAccount?.assetList?.getAsset("HYN")?.exchangeAvailable);
       }
     } else {
-      return 0;
+      return Decimal.fromInt(0);
     }
   }
 
@@ -354,7 +376,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         padding: EdgeInsets.all(0),
                         onPressed: () {
                           changeDepthLevel(index);
-                          depthController.add(contrDepthTypeRefresh);
                           Navigator.of(context).pop();
                         },
                         child: Column(
@@ -410,20 +431,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
           } else if (optionKey == contrOptionsTypePriceAdd) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
-            currentPrice += (1 / preNum);
+            currentPrice += Decimal.parse((1 / preNum).toString());
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
-            currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
+            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
           } else if (optionKey == contrOptionsTypePriceDecrease) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
-            currentPrice -= (1 / preNum);
+            currentPrice -= Decimal.parse((1 / preNum).toString());
             var totalPrice = currentPrice * currentNum;
             updateTotalView(totalPrice);
 
-            currentPriceStr = currentPrice.toStringAsFixed(marketInfoEntity.pricePrecision);
+            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionKey == contrOptionsTypeNum) {
@@ -434,20 +455,31 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if (exchangeModel.isActiveAccount()) {
               if (isBuy) {
-                currentNum = getValidNum() * double.parse(optionValue) / currentPrice;
+                currentNum = getValidNum() * Decimal.parse(optionValue) / currentPrice;
               } else {
-                currentNum = getValidNum() * double.parse(optionValue);
+                currentNum = getValidNum() * Decimal.parse(optionValue);
               }
               var totalPrice = currentPrice * currentNum;
               updateTotalView(totalPrice);
 
-              currentNumStr = currentNum.toStringAsFixed(marketInfoEntity.amountPrecision);
+              currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
               numEditController.text = currentNumStr;
               numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
             }
           } else if (optionKey == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
             numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
+          } else if(optionKey == contrOptionsTypeTotalPrice){
+            totalPriceStr = optionValue;
+            if(currentPrice != Decimal.fromInt(0)){
+              currentNum = Decimal.parse(optionValue) / currentPrice;
+              currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
+              numEditController.text = currentNumStr;
+              numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
+            }
+          } else if(optionKey == contrOptionsTypeTotalPriceError){
+            totalEditController.text = totalPriceStr;
+            totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
           } else if (optionKey == contrOptionsTypeRefresh) {}
           return Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 16, left: 14, right: 14),
@@ -572,16 +604,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               if (price.contains(".")) {
                                 var priceAfter = price.split(".")[1];
                                 if (priceAfter.length <= marketInfoEntity.pricePrecision) {
-                                  currentPrice = double.parse(price);
+                                  currentPrice = Decimal.parse(price);
                                   optionsController.add({contrOptionsTypePrice: ""});
                                 } else {
                                   optionsController.add({contrOptionsTypePricePreError: ""});
                                 }
                               } else {
                                 if (price.length == 0) {
-                                  currentPrice = 0;
+                                  currentPrice = Decimal.fromInt(0);
                                 } else {
-                                  currentPrice = double.parse(price);
+                                  currentPrice = Decimal.parse(price);
                                 }
                                 optionsController.add({contrOptionsTypePrice: ""});
                               }
@@ -618,57 +650,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
                       ],
                     )),
-                /*Row(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () {
-                        optionsController.add(contrOptionsTypePriceDecrease);
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 12, right: 12),
-                        child: Text(
-                          "-",
-                          style: TextStyle(fontSize: 21, color: DefaultColors.color999),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: priceEditController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                        decoration: new InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-                          border: InputBorder.none,
-                          hintStyle: TextStyles.textCaaaS14,
-                          hintText: "价格",
-                        ),
-                        onChanged: (price) {
-                          if (price.contains(".")) {
-                            var priceAfter = price.split(".")[1];
-                            if (priceAfter.length <= marketInfoEntity.pricePrecision) {
-                              currentPrice = double.parse(price);
-                              optionsController.add(contrOptionsTypePrice);
-                            } else {
-                              optionsController.add(contrOptionsTypePricePreError);
-                            }
-                          } else {
-                            currentPrice = double.parse(price);
-                            optionsController.add(contrOptionsTypePrice);
-                          }
-                        },
-                      ),
-                    ),
-                    Text("USDT"),
-                    InkWell(
-                        onTap: () {
-                          optionsController.add(contrOptionsTypePriceAdd);
-                        },
-                        child: Padding(
-                            padding: EdgeInsets.only(top: 5, bottom: 5, left: 12, right: 12),
-                            child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
-                  ],
-                ),*/
                 Container(
                   height: 36,
                   margin: EdgeInsets.only(top: 10, bottom: 2),
@@ -699,16 +680,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             if (number.contains(".")) {
                               var priceAfter = number.split(".")[1];
                               if (priceAfter.length <= marketInfoEntity.amountPrecision) {
-                                currentNum = double.parse(number);
+                                currentNum = Decimal.parse(number);
                                 optionsController.add({contrOptionsTypeNum: ""});
                               } else {
                                 optionsController.add({contrOptionsTypeNumPreError: ""});
                               }
                             } else {
                               if (number.length == 0) {
-                                currentNum = 0;
+                                currentNum = Decimal.fromInt(0);
                               } else {
-                                currentNum = double.parse(number);
+                                currentNum = Decimal.parse(number);
                               }
                               optionsController.add({contrOptionsTypeNum: ""});
                             }
@@ -789,23 +770,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             border: InputBorder.none,
                             hintStyle: TextStyles.textCaaaS14,
                           ),
-                          onChanged: (number) {
-                            if (number.contains(".")) {
-                              var priceAfter = number.split(".")[1];
-                              if (priceAfter.length <= marketInfoEntity.amountPrecision) {
-                                currentNum = double.parse(number);
-                                optionsController.add({contrOptionsTypeNum: ""});
+                          onChanged: (turnover) {
+                            if (turnover.contains(".")) {
+                              var priceAfter = turnover.split(".")[1];
+                              if (priceAfter.length <= marketInfoEntity.turnoverPrecision) {
+                                optionsController.add({contrOptionsTypeTotalPrice: turnover});
                               } else {
-                                optionsController.add({contrOptionsTypeNumPreError: ""});
+                                optionsController.add({contrOptionsTypeTotalPriceError: ""});
                               }
-                            } else {
-                              currentNum = double.parse(number);
-                              optionsController.add({contrOptionsTypeNum: ""});
                             }
                           },
                         ),
                       ),
-//                      Expanded(child: Text("$totalPriceStr")),
                       Text(
                         "${widget.selectedCoin.toUpperCase()}",
                         style: TextStyle(fontSize: 14, color: DefaultColors.color777),
@@ -857,317 +833,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         });
   }
 
-//  Widget _exchangeOptionsOld() {
-//    return StreamBuilder<int>(
-//        stream: optionsController.stream,
-//        builder: (context, optionType) {
-//          if (optionType.data == contrOptionsTypeBuy) {
-//            isBuy = true;
-//          } else if (optionType.data == contrOptionsTypeSell) {
-//            isBuy = false;
-//          } else if (optionType.data == contrOptionsTypeLimit) {
-//            isLimit = true;
-//          } else if (optionType.data == contrOptionsTypeMarket) {
-//            isLimit = false;
-//          } else if (optionType.data == contrOptionsTypePrice) {
-//            totalPrice = currentPrice * currentNum;
-//          } else if (optionType.data == contrOptionsTypePriceAdd) {
-//            currentPrice += 0.1;
-//            totalPrice = currentPrice * currentNum;
-//            totalPriceStr = totalPrice.toStringAsFixed(4);
-//
-//            currentPriceStr = currentPrice.toStringAsFixed(4);
-//            priceEditController.text = currentPriceStr;
-//            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
-//          } else if (optionType.data == contrOptionsTypePriceDecrease) {
-//            currentPrice -= 0.1;
-//            totalPrice = currentPrice * currentNum;
-//            totalPriceStr = totalPrice.toStringAsFixed(4);
-//
-//            currentPriceStr = currentPrice.toStringAsFixed(4);
-//            priceEditController.text = currentPriceStr;
-//            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
-//          } else if (optionType.data == contrOptionsTypeNum) {
-//            totalPrice = currentPrice * currentNum;
-//            totalPriceStr = totalPrice.toStringAsFixed(4);
-//
-//            currentPriceStr = currentPrice.toStringAsFixed(4);
-//          }
-//          return Container(
-//            padding: const EdgeInsets.only(left: 14.0, right: 14),
-//            width: double.infinity,
-//            child: Column(
-//              crossAxisAlignment: CrossAxisAlignment.start,
-//              children: <Widget>[
-//                Row(
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: <Widget>[
-//                    Expanded(
-//                      child: InkWell(
-//                        onTap: () {
-//                          optionsController.add(contrOptionsTypeBuy);
-//                        },
-//                        child: Container(
-//                          height: 30,
-//                          decoration: BoxDecoration(
-//                            color: Colors.white,
-//                            image: DecorationImage(
-//                                image: AssetImage(isBuy
-//                                    ? "res/drawable/ic_exchange_bg_left_buy_select.png"
-//                                    : "res/drawable/ic_exchange_bg_left_buy.png"),
-//                                fit: BoxFit.fitWidth),
-//                          ),
-//                          alignment: Alignment.center,
-//                          child: Text('买入'),
-//                        ),
-//                      ),
-//                    ),
-//                    Expanded(
-//                      child: InkWell(
-//                        onTap: () {
-//                          optionsController.add(contrOptionsTypeSell);
-//                        },
-//                        child: Container(
-//                          height: 30,
-//                          decoration: BoxDecoration(
-//                            color: Colors.white,
-//                            image: DecorationImage(
-//                                image: AssetImage(isBuy
-//                                    ? "res/drawable/ic_exchange_bg_right_sell.png"
-//                                    : "res/drawable/ic_exchange_bg_right_sell_select.png"),
-//                                fit: BoxFit.fitWidth),
-//                          ),
-//                          alignment: Alignment.center,
-//                          child: Text('卖出'),
-//                        ),
-//                      ),
-//                    )
-//                  ],
-//                ),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Container(
-//                    height: 28,
-//                    padding: const EdgeInsets.only(left: 10, right: 10),
-//                    decoration: BoxDecoration(
-//                        border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-//                        borderRadius: BorderRadius.all(Radius.circular(3))),
-//                    child: new DropdownButtonHideUnderline(
-//                        child: new DropdownButton(
-//                      icon: Image.asset(
-//                        "res/drawable/ic_exchange_down_triangle.png",
-//                        width: 10,
-//                      ),
-//                      items: [
-//                        new DropdownMenuItem(
-//                          child: new Text('限价委托'),
-//                          value: contrOptionsTypeLimit,
-//                        ),
-//                        new DropdownMenuItem(
-//                          child: new Text('市价委托'),
-//                          value: contrOptionsTypeMarket,
-//                        ),
-//                      ],
-//                      hint: new Text('请选择'),
-//                      onChanged: (value) {
-//                        optionsController.add(value);
-//                      },
-//                      isExpanded: true,
-//                      value: isLimit ? contrOptionsTypeLimit : contrOptionsTypeMarket,
-//                      style: new TextStyle(
-//                        color: DefaultColors.color333,
-//                        fontSize: 14,
-//                      ),
-//                    ))),
-//                Container(
-//                    height: 32,
-//                    margin: EdgeInsets.only(top: 10, bottom: 2),
-//                    padding: const EdgeInsets.only(left: 10),
-//                    decoration: BoxDecoration(
-//                        border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-//                        borderRadius: BorderRadius.all(Radius.circular(3))),
-//                    child: Row(
-//                      crossAxisAlignment: CrossAxisAlignment.center,
-//                      children: <Widget>[
-//                        Expanded(
-//                          child: TextField(
-//                            controller: priceEditController,
-//                            keyboardType: TextInputType.number,
-//                            inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-//                            decoration: new InputDecoration(
-//                              contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-//                              border: InputBorder.none,
-//                              hintStyle: TextStyles.textCaaaS14,
-//                              hintText: "价格",
-//                            ),
-//                            onChanged: (price) {
-//                              currentPrice = double.parse(price);
-//                              optionsController.add(contrOptionsTypePrice);
-//                            },
-//                          ),
-//                        ),
-//                        Container(
-//                          width: 1,
-//                          color: DefaultColors.colord0d0d0,
-//                        ),
-//                        InkWell(
-//                          onTap: () {
-//                            optionsController.add(contrOptionsTypePriceDecrease);
-//                          },
-//                          child: Padding(
-//                            padding: EdgeInsets.only(left: 12, right: 12),
-//                            child: Text(
-//                              "-",
-//                              style: TextStyle(fontSize: 21, color: DefaultColors.color999),
-//                            ),
-//                          ),
-//                        ),
-//                        Container(
-//                          width: 1,
-//                          height: 20,
-//                          color: DefaultColors.colord0d0d0,
-//                        ),
-//                        InkWell(
-//                            onTap: () {
-//                              optionsController.add(contrOptionsTypePriceAdd);
-//                            },
-//                            child: Padding(
-//                                padding: EdgeInsets.only(top: 5, bottom: 5, left: 12, right: 12),
-//                                child: Text("+", style: TextStyle(color: DefaultColors.color999)))),
-//                      ],
-//                    )),
-//                Text("≈324234 CNY"),
-//                Container(
-//                  height: 32,
-//                  margin: EdgeInsets.only(top: 12, bottom: 2),
-//                  padding: const EdgeInsets.only(left: 10, right: 10),
-//                  decoration: BoxDecoration(
-//                      border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
-//                      borderRadius: BorderRadius.all(Radius.circular(3))),
-//                  child: Row(
-//                    children: <Widget>[
-//                      Expanded(
-//                        child: TextField(
-//                          controller: numEditController,
-//                          keyboardType: TextInputType.number,
-//                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-//                          decoration: new InputDecoration(
-//                            contentPadding: EdgeInsets.symmetric(vertical: 10.0),
-//                            border: InputBorder.none,
-//                            hintStyle: TextStyles.textCaaaS14,
-//                            hintText: "数量",
-//                          ),
-//                          onChanged: (number) {
-//                            currentNum = double.parse(number);
-//                            optionsController.add(contrOptionsTypeNum);
-//                          },
-//                        ),
-//                      ),
-//                      Spacer(),
-//                      Text("ETH")
-//                    ],
-//                  ),
-//                ),
-//                Text("可用 0.323423424 USDT"),
-//                /*Container(
-//                    margin: EdgeInsets.only(top: 21),
-//                    height: 22,
-//                    width: double.infinity,
-//                    child: CustomSeekBar(
-//                      progresseight: 5,
-//                      value: 50,
-//                      sectionCount: 4,
-//                      sectionRadius: 5,
-//                      indicatorRadius: 10,
-//                      sectionColor: DefaultColors.color53ae86,
-//                      indicatorImg: "res/drawable/ic_exchange_num_progress_buy.png",
-//                    )),*/
-//                Text("交易额 ${totalPriceStr}USDT"),
-//                Container(
-//                  height: 30,
-//                  width: double.infinity,
-//                  decoration: BoxDecoration(
-//                    borderRadius: BorderRadius.all(Radius.circular(4)),
-//                    color: isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
-//                  ),
-//                  child: FlatButton(
-//                      shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.all(Radius.circular(22.0)),
-//                      ),
-//                      padding: const EdgeInsets.all(0.0),
-//                      child: Text(isLogin ? isBuy ? "买入HYN" : "卖出HYN" : "请登录",
-//                          style: TextStyle(
-//                            fontSize: 14,
-//                            color: isLoading ? DefaultColors.color999 : Colors.white,
-//                          )),
-//                      onPressed: isLoading
-//                          ? null
-//                          : () async {
-//                              setState(() {
-//                                isLoading = true;
-//                              });
-//                              await buyAction();
-//                              setState(() {
-//                                isLoading = false;
-//                              });
-//                            }),
-//                )
-//              ],
-//            ),
-//          );
-//        });
-//  }
-
-//  Widget _depthChart() {
-//    return ListView.builder(
-//        shrinkWrap: true,
-//        physics: NeverScrollableScrollPhysics(),
-//        scrollDirection: Axis.vertical,
-//        itemBuilder: (context, index) {
-//          ExcDetailEntity excDetailEntity = chartList[index];
-//          if (excDetailEntity.viewType == 2 || excDetailEntity.viewType == 4) {
-//            Color bgColor = excDetailEntity.viewType == 2 ? HexColor("#EBF8F2") : HexColor("#F9EFEF");
-//            return Stack(
-//              alignment: Alignment.center,
-//              children: <Widget>[
-//                Row(
-//                  children: <Widget>[
-//                    Expanded(
-//                      flex: excDetailEntity.leftPercent,
-//                      child: Container(
-//                        height: 23,
-//                        color: HexColor("#ffffff"),
-//                      ),
-//                    ),
-//                    Expanded(
-//                      flex: excDetailEntity.rightPercent,
-//                      child: Container(
-//                        height: 23,
-//                        color: bgColor,
-//                      ),
-//                    )
-//                  ],
-//                ),
-//                Row(
-//                  children: <Widget>[
-//                    Text(
-//                      "1111",
-//                    ),
-//                    Spacer(),
-//                    Text(
-//                      "1111",
-//                    )
-//                  ],
-//                ),
-//              ],
-//            );
-//          } else {
-//            return Text("");
-//          }
-//        },
-//        itemCount: chartList.length);
-//  }
 
   Widget _consignListWidget() {
     return StreamBuilder<int>(
@@ -1233,85 +898,17 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             if (exchangeModel.isActiveAccount()) ExchangeActiveOrderListPage(marketCoin)
           ],
         );
-        /*return ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: _currentOrders.length + 1,
-            itemBuilder: (ctx, index) {
-              if (index == 0) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                      top: 13.0, bottom: 11, left: 13, right: 13),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            "当前委托",
-                            style: TextStyle(
-                                fontSize: 16, color: DefaultColors.color333),
-                          ),
-                          Spacer(),
-                          Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.end,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 2.0),
-                                child: Image.asset(
-                                  "res/drawable/ic_exhange_all_consign.png",
-                                  width: 12,
-                                  height: 12,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 4,
-                              ),
-                              InkWell(
-                                child: Text("全部",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: DefaultColors.color999,
-                                    )),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ExchangeOrderManagementPage(
-                                                marketCoin,
-                                              )));
-                                },
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 11,
-                      ),
-                      Divider(
-                        height: 1,
-                      )
-                    ],
-                  ),
-                );
-              }
-
-              return OrderItem(
-                _currentOrders[index - 1],
-                market: marketCoin,
-              );
-            });*/
       },
     );
   }
 
   void changeDepthLevel(int newLevel) {
     selectDepthNum = newLevel;
+    exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
     BlocProvider.of<SocketBloc>(context).add(UnSubChannelEvent(channel: depthChannel));
     depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+    depthController.add(contrDepthTypeRefresh);
   }
 
   void buyAction() {
