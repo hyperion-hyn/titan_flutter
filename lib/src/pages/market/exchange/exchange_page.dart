@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
+import 'package:flutter_k_chart/utils/number_util.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -33,11 +34,13 @@ class ExchangePage extends StatefulWidget {
 }
 
 class _ExchangePageState extends BaseState<ExchangePage> {
-  var _selectedCoin = 'usdt';
+  var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.SELL;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   ExchangeApi _exchangeApi = ExchangeApi();
+  double usdtToCurrency;
+  double ethToCurrency;
 
   @override
   void dispose() {
@@ -54,6 +57,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(
       channel: SocketConfig.channelKLine24Hour,
     ));
+    _initCurrency();
   }
 
   @override
@@ -62,6 +66,25 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     super.initState();
     _getAllSymbols();
     _sub24HourChannel();
+  }
+
+  _initCurrency() async {
+    usdtToCurrency = await _getCurrencyFromType(
+      'USDT',
+      QuotesInheritedModel.of(context)
+          .activatedQuoteVoAndSign('USDT')
+          ?.sign
+          ?.quote,
+    );
+
+    ethToCurrency = await _getCurrencyFromType(
+      'ETH',
+      QuotesInheritedModel.of(context)
+          .activatedQuoteVoAndSign('USDT')
+          ?.sign
+          ?.quote,
+    );
+    setState(() {});
   }
 
   _getAllSymbols() async {
@@ -73,23 +96,23 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       _marketItemList.add(MarketItemEntity(
         'hynusdt',
         marketSymbolList.hynusdt,
-        symbolName: 'HYN/USDT',
+        symbolName: 'USDT',
       ));
     }
     if (marketSymbolList.hyneth != null) {
       _marketItemList.add(MarketItemEntity(
         'hyneth',
         marketSymbolList.hyneth,
-        symbolName: 'HYN/ETH',
+        symbolName: 'ETH',
       ));
     }
-    if (marketSymbolList.hynbtc != null) {
-      _marketItemList.add(MarketItemEntity(
-        'hynbtc',
-        marketSymbolList.hynbtc,
-        symbolName: 'HYN/BTC',
-      ));
-    }
+//    if (marketSymbolList.hynbtc != null) {
+//      _marketItemList.add(MarketItemEntity(
+//        'hynbtc',
+//        marketSymbolList.hynbtc,
+//        symbolName: 'HYN/BTC',
+//      ));
+//    }
     setState(() {});
   }
 
@@ -278,7 +301,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 ),
               ),
               Text(
-                '1HYN = 242.8880303 USDT',
+                _exchangeType == ExchangeType.SELL
+                    ? '1HYN = ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin'
+                    : '1$_selectedCoin = ${1 / (_getMarketItem(_selectedCoin)?.kLineEntity?.close) ?? '--'} HYN',
               ),
               Spacer(),
               ClickOvalIconButton(
@@ -306,6 +331,46 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: HexColor('#FFF2F2F2'),
+              borderRadius: BorderRadius.circular(3.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16.0,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'} ',
+                    style: TextStyle(
+                      color: HexColor('#FF999999'),
+                      fontSize: 14,
+                    ),
+                  ),
+                  Spacer(),
+                  Container(
+                    child: Text(
+                      '最新兑换1HYN — ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin',
+                      style: TextStyle(
+                        color: HexColor('#FF999999'),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        )
       ],
     );
   }
@@ -389,7 +454,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _exchangeItem(bool isHynCoin) {
     return isHynCoin
         ? Expanded(
-            flex: 2,
+            flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: _coinItem(
@@ -449,7 +514,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     List<DropdownMenuItem> availableCoinItemList = List();
     availableCoinItemList.add(
       DropdownMenuItem(
-        value: 'usdt',
+        value: 'USDT',
         child: _coinItem(
           'USDT',
           'res/drawable/usdt_logo.png',
@@ -459,7 +524,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     );
     availableCoinItemList.add(
       DropdownMenuItem(
-        value: 'eth',
+        value: 'ETH',
         child: _coinItem(
           'ETH',
           'res/drawable/eth_logo.png',
@@ -492,32 +557,36 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             ),
             child: Row(
               children: <Widget>[
-                Text(
-                  '名称',
-                  style: TextStyle(
-                    color: Colors.grey,
+                Expanded(
+                  child: Text(
+                    '名称',
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
-                Spacer(
-                  flex: 5,
-                ),
-                Text(
-                  '最新价',
-                  style: TextStyle(
-                    color: Colors.grey,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      '最新价',
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
+                    ),
                   ),
                 ),
-                Spacer(
-                  flex: 4,
-                ),
-                Text(
-                  '跌涨幅',
-                  style: TextStyle(
-                    color: Colors.grey,
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Spacer(),
+                      Text(
+                        '跌涨幅',
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  width: 8,
                 ),
               ],
             ),
@@ -539,6 +608,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _marketItem(MarketItemEntity marketItemEntity) {
+    var symbolQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+
     return InkWell(
       onTap: () {
         Navigator.push(context,
@@ -549,80 +621,122 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: '${marketItemEntity.symbol}',
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text.rich(TextSpan(children: [
+                    TextSpan(
+                        text: 'HYN',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                          fontSize: 20,
+                        )),
+                    TextSpan(
+                        text: '/${marketItemEntity.symbolName}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey,
+                          fontSize: 16,
+                        )),
+                  ])),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    '24H量 ${marketItemEntity.kLineEntity.amount}',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '${FormatUtil.formatPrice(marketItemEntity.kLineEntity.close)}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 20,
-                      )),
-                  TextSpan(
-                      text: '/ETH',
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      '${symbolQuote?.sign?.sign} ${_getCurrencyFromMarketItem(marketItemEntity)}',
                       style: TextStyle(
-                        fontWeight: FontWeight.w300,
+                        fontWeight: FontWeight.w400,
                         color: Colors.grey,
-                        fontSize: 16,
-                      )),
-                ])),
-                SizedBox(
-                  height: 4,
+                      ),
+                    )
+                  ],
                 ),
-                Text(
-                  '24H ${marketItemEntity.kLineEntity.amount}',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                )
-              ],
-            ),
-            Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  '${marketItemEntity.kLineEntity.close}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: 4,
-                ),
-                Text(
-                  '\$100',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.grey,
-                  ),
-                )
-              ],
-            ),
-            Spacer(),
-            Container(
-              width: 80,
-              height: 39,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.0),
-                color: HexColor('#FF53AE86'),
               ),
-              child: Center(
-                child: Text(
-                  '+99.99%',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
+            ),
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  Spacer(),
+                  Container(
+                    width: 80,
+                    height: 39,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      color: marketItemEntity.kLineEntity.close -
+                                  marketItemEntity.kLineEntity.open >
+                              0
+                          ? HexColor('#FF53AE86')
+                          : HexColor('#FFCC5858'),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) > 0 ? '+' : ''}${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) / marketItemEntity.kLineEntity.open * 100}%',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  MarketItemEntity _getMarketItem(String coinType) {
+    var result;
+    _marketItemList.forEach((element) {
+      if (element.symbolName == coinType) {
+        result = element;
+      }
+    });
+    return result;
+  }
+
+  Future<double> _getCurrencyFromType(String type, String currency) async {
+    var ret = await _exchangeApi.type2currency(type, currency);
+    return double.parse(ret.toString());
+  }
+
+  _getCurrencyFromMarketItem(MarketItemEntity marketItemEntity) {
+    return marketItemEntity.symbolName == 'USDT'
+        ? usdtToCurrency == null
+            ? '--'
+            : FormatUtil.formatPrice(
+                usdtToCurrency * marketItemEntity.kLineEntity.close)
+        : ethToCurrency == null
+            ? '--'
+            : FormatUtil.formatPrice(
+                ethToCurrency * marketItemEntity.kLineEntity.close);
   }
 
   Widget _authorizedView() {
