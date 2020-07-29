@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -99,6 +100,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 1;
   String _realTimePrice = "--";
+  double _realTimePricePercent = 0;
 
   @override
   void initState() {
@@ -112,6 +114,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   @override
   void onCreated() {
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    getRealTimePrice();
+
     _getChannelData();
     super.onCreated();
   }
@@ -153,6 +157,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
     tradeChannel = SocketConfig.channelTradeDetail(symbol);
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: tradeChannel));
+  }
+
+  void getRealTimePrice(){
+    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
+    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
   }
 
   @override
@@ -247,9 +256,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               Container(
                 padding: EdgeInsets.all(2.0),
                 child: Text(
-                  '+13.0%',
+                  _realTimePricePercent == 0 ? "--" : FormatUtil.truncateDoubleNum(_realTimePricePercent * 100,2) + "%",
                   style: TextStyle(
-                    color: isBuy ? HexColor("#53AE86") : HexColor("#CC5858"),
+                    color: _realTimePricePercent >= 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
                     fontSize: 13.0,
                   ),
                 ),
@@ -307,7 +316,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   SizedBox(width: 14,),
-                  Text("9042.68"/*_realTimePrice*/,style:TextStyle(fontSize: 18,color: DefaultColors.color53ae86)),
+                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: DefaultColors.color53ae86)),
                   SizedBox(width: 6,),
                   Padding(
                     padding: const EdgeInsets.only(bottom:3.0),

@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 
 @immutable
 abstract class SocketState {}
@@ -74,4 +75,9 @@ class ChannelTradeDetailState extends SocketState {
 class ChannelUserTickState extends SocketState {
   final List<dynamic> response;
   ChannelUserTickState({this.response});
+}
+
+class MarketSymbolState extends SocketState {
+  final List<MarketItemEntity> marketItemList;
+  MarketSymbolState(this.marketItemList);
 }

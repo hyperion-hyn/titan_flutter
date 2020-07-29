@@ -4,12 +4,27 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:web_socket_channel/io.dart';
 
-class SocketComponent extends StatefulWidget {
+class SocketComponent extends StatelessWidget {
   final Widget child;
 
   SocketComponent({@required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<SocketBloc>(
+      create: (ctx) => SocketBloc(),
+      child: _SocketManager(child: child),
+    );
+  }
+}
+
+class _SocketManager extends StatefulWidget {
+  final Widget child;
+
+  _SocketManager({@required this.child});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,7 +32,7 @@ class SocketComponent extends StatefulWidget {
   }
 }
 
-class _SocketState extends State<SocketComponent> {
+class _SocketState extends State<_SocketManager> {
   /*final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
     'wss://api.huobi.pro/ws',
   );*/
@@ -25,6 +40,7 @@ class _SocketState extends State<SocketComponent> {
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
+  List<MarketItemEntity> marketItemList;
 
   @override
   void initState() {
@@ -32,6 +48,7 @@ class _SocketState extends State<SocketComponent> {
 
     _initWS();
     _initBloc();
+    _initData();
   }
 
   @override
@@ -62,13 +79,18 @@ class _SocketState extends State<SocketComponent> {
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
-    Timer.periodic(Duration(seconds : 30), (t) {
+    Timer.periodic(Duration(seconds: 30), (t) {
       _bloc.add(HeartEvent());
     });
   }
 
   _initBloc() {
-    _bloc = SocketBloc(socketChannel: _socketChannel);
+    _bloc = BlocProvider.of<SocketBloc>(context);
+    _bloc.setSocketChannel(_socketChannel);
+  }
+
+  _initData() {
+    _bloc.add(MarketSymbolEvent());
   }
 
   _reconnectWS() {
@@ -81,6 +103,74 @@ class _SocketState extends State<SocketComponent> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (ctx) => _bloc, child: widget.child);
+    return BlocListener<SocketBloc, SocketState>(
+      listener: (context, state) async {
+        if (state is MarketSymbolState) {
+          marketItemList = state.marketItemList;
+        }
+      },
+      child: BlocBuilder<SocketBloc, SocketState>(
+        builder: (context, state) {
+          return MarketInheritedModel(
+            marketItemList: marketItemList,
+            child: widget.child,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class MarketInheritedModel extends InheritedModel<String> {
+  final List<MarketItemEntity> marketItemList;
+
+  const MarketInheritedModel({
+    Key key,
+    @required this.marketItemList,
+    @required Widget child,
+  }) : super(key: key, child: child);
+
+  @override
+  bool updateShouldNotify(MarketInheritedModel oldWidget) {
+    return true;
+  }
+
+  static MarketInheritedModel of(BuildContext context) {
+    return InheritedModel.inheritFrom<MarketInheritedModel>(
+      context,
+    );
+  }
+
+  MarketItemEntity getMarketItem(String symbol) {
+    if (marketItemList == null) {
+      return null;
+    }
+
+    MarketItemEntity marketItemEntity;
+    marketItemList.forEach((element) {
+      if (element.symbol == symbol) {
+        marketItemEntity = element;
+      }
+    });
+    return marketItemEntity;
+  }
+
+  String getRealTimePrice(String symbol){
+    var marketItem = getMarketItem(symbol);
+    return marketItem?.kLineEntity?.close?.toString() ?? "--";
+  }
+
+  double getRealTimePricePercent(String symbol){
+    var marketItem = getMarketItem(symbol);
+    var realPercent = marketItem == null ? 0 : ((marketItem.kLineEntity?.close ?? 0 - marketItem.kLineEntity?.open) / marketItem.kLineEntity?.open ?? 1);
+    return realPercent;
+  }
+
+  @override
+  bool updateShouldNotifyDependent(
+    MarketInheritedModel old,
+    Set<String> dependencies,
+  ) {
+    return marketItemList != old.marketItemList && dependencies.contains('ExchangeModel');
   }
 }

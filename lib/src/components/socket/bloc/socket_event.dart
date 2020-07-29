@@ -19,3 +19,5 @@ class ReceivedDataEvent extends SocketEvent {
 }
 
 class HeartEvent extends SocketEvent {}
+
+class MarketSymbolEvent extends SocketEvent {}

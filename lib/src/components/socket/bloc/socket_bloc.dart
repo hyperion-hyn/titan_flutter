@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
+import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:web_socket_channel/io.dart';
 import '../socket_config.dart';
 import './bloc.dart';
@@ -11,9 +14,14 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   @override
   SocketState get initialState => InitialSocketState();
 
-  final IOWebSocketChannel socketChannel;
+  IOWebSocketChannel socketChannel;
+  ExchangeApi _exchangeApi = ExchangeApi();
 
-  SocketBloc({this.socketChannel});
+  SocketBloc();
+
+  void setSocketChannel(IOWebSocketChannel socketChannel){
+    this.socketChannel = socketChannel;
+  }
 
   @override
   Stream<SocketState> mapEventToState(
@@ -111,6 +119,25 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         print("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
+    }else if(event is MarketSymbolEvent){
+      var response = await _exchangeApi.getMarketAllSymbol();
+      MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
+      var _marketItemList = List<MarketItemEntity>();
+      if (marketSymbolList.hynusdt != null) {
+        _marketItemList.add(MarketItemEntity(
+          'hynusdt',
+          marketSymbolList.hynusdt,
+          symbolName: 'USDT',
+        ));
+      }
+      if (marketSymbolList.hyneth != null) {
+        _marketItemList.add(MarketItemEntity(
+          'hyneth',
+          marketSymbolList.hyneth,
+          symbolName: 'ETH',
+        ));
+      }
+      yield MarketSymbolState(_marketItemList);
     }
   }
 
