@@ -15,6 +15,11 @@ import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class KLineDetailPage extends StatefulWidget {
+  final String symbol;
+  final String symbolName;
+
+  KLineDetailPage({this.symbol, this.symbolName});
+
   @override
   State<StatefulWidget> createState() {
     return _KLineDetailPageState();
@@ -28,7 +33,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   List<TradeInfoEntity> _tradeItemList = [];
 
   PeriodInfoEntity _periodParameter;
-  String _symbol = 'hynusdt';
   KLineEntity _channel24HourKLineEntity;
   KLineEntity _lastChannel24HourKLineEntity;
 
@@ -84,7 +88,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   @override
   void onCreated() {
-
     _socketBloc = BlocProvider.of<SocketBloc>(context);
 
     _initChannel();
@@ -143,8 +146,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
-//              'HYN/${widget.symbol}',
-                  'HYN/USDT',
+                  'HYN/${widget.symbolName}',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
@@ -182,9 +184,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       var percentStringValue = "";
       var percentValue = _channel24HourKLineEntity.open - _lastChannel24HourKLineEntity.open;
       if (percentValue >= 0) {
-        percentStringValue = ' +'+FormatUtil.formatPercent(percentValue/_lastChannel24HourKLineEntity.open);
+        percentStringValue = ' +' + FormatUtil.formatPercent(percentValue / _lastChannel24HourKLineEntity.open);
       } else {
-        percentStringValue = ' -'+FormatUtil.formatPercent(percentValue/_lastChannel24HourKLineEntity.open);
+        percentStringValue = ' -' + FormatUtil.formatPercent(percentValue / _lastChannel24HourKLineEntity.open);
       }
       if (percentStringValue.isEmpty) {
         percentStringValue = '--';
@@ -823,7 +825,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       _showLoadingKLine = true;
     });
 
-    var data = await api.historyKline(_symbol, period: _periodParameter.value);
+    var data = await api.historyKline(widget.symbol, period: _periodParameter.value);
     print("[WS] --> _getPeriodData, data:$data");
     _dealPeriodData(data);
   }
@@ -833,6 +835,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     if (!(data is List)) {
       return;
+    }
+
+    if (mounted) {
+      setState(() {
+        _showLoadingKLine = false;
+      });
     }
 
     List dataList = data;
@@ -862,20 +870,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
 
     if (symbol.isNotEmpty) {
-      if (symbol == _symbol && kLineDataList.isNotEmpty) {
+      if (symbol == widget.symbol && kLineDataList.isNotEmpty) {
         print("[WS] --> _dealPeriodData, 24hour， kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
 
         _channel24HourKLineEntity = kLineDataList.last;
 
         if (_lastChannel24HourKLineEntity == null) {
           _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
-
-
-          if (mounted) {
-            setState(() {
-              _showLoadingKLine = false;
-            });
-          }
         }
       }
     } else {
@@ -883,12 +884,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         if (kLineDataList.isNotEmpty) {
           _kChartItemList = kLineDataList;
           KLineUtil.calculate(_kChartItemList);
-
-          if (mounted) {
-            setState(() {
-              _showLoadingKLine = false;
-            });
-          }
         }
       } else {
         if (kLineDataList.isNotEmpty) {
@@ -896,7 +891,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         }
       }
     }
-
   }
 
   /*
@@ -917,7 +911,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     setState(() {
       _showLoadingTrade = true;
     });
-    var data = await api.historyTrade(_symbol);
+    var data = await api.historyTrade(widget.symbol);
     print("[WS] --> _getTradeData, data:$data");
 
     _dealTradeData(data);
@@ -973,10 +967,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ]
   */
   Future _getDepthData() async {
-    var data = await api.historyDepth(_symbol);
+    var data = await api.historyDepth(widget.symbol);
     print("[WS] --> _getDepthData, data:$data");
 
-    dealDepthData(_buyChartList,_sellChartList,data);
+    dealDepthData(_buyChartList, _sellChartList, data);
     print("[WS] --> _getDepthData, data:${data is List}");
   }
 
@@ -1010,34 +1004,34 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   // period
   void _subPeriodChannel() {
-    var channel = SocketConfig.channelKLinePeriod(_symbol, _periodParameter.value);
+    var channel = SocketConfig.channelKLinePeriod(widget.symbol, _periodParameter.value);
     _subChannel(channel);
   }
 
   void _unSubPeriodChannel({String period = ''}) {
-    var channel = SocketConfig.channelKLinePeriod(_symbol, period.isEmpty ? _periodParameter.value : period);
+    var channel = SocketConfig.channelKLinePeriod(widget.symbol, period.isEmpty ? _periodParameter.value : period);
     _unSubChannel(channel);
   }
 
   // trade
   void _subTradeChannel() {
-    var channel = SocketConfig.channelTradeDetail(_symbol);
+    var channel = SocketConfig.channelTradeDetail(widget.symbol);
     _subChannel(channel);
   }
 
   void _unSubTradeChannel() {
-    var channel = SocketConfig.channelTradeDetail(_symbol);
+    var channel = SocketConfig.channelTradeDetail(widget.symbol);
     _unSubChannel(channel);
   }
 
   // depth
   void _subDepthChannel() {
-    var channel = SocketConfig.channelExchangeDepth(_symbol, -1);
+    var channel = SocketConfig.channelExchangeDepth(widget.symbol, -1);
     _subChannel(channel);
   }
 
   void _unSubDepthChannel() {
-    var channel = SocketConfig.channelExchangeDepth(_symbol, -1);
+    var channel = SocketConfig.channelExchangeDepth(widget.symbol, -1);
     _unSubChannel(channel);
   }
 
@@ -1070,8 +1064,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         }
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
-        dealDepthData(_buyChartList,_sellChartList,state.response, isReplace: false);
-
+        dealDepthData(_buyChartList, _sellChartList, state.response, isReplace: false);
       } else if (state is ChannelTradeDetailState) {
         _dealTradeData(state.response, isReplace: false);
       }
@@ -1079,7 +1072,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,{limitNum = 20}) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, {limitNum = 20}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -1145,14 +1138,14 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Expanded(
-                                flex: buyEntity?.leftPercent??0,
+                                flex: buyEntity?.leftPercent ?? 0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#ffffff"),
                                 ),
                               ),
                               Expanded(
-                                flex: buyEntity?.rightPercent??0,
+                                flex: buyEntity?.rightPercent ?? 0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#EBF8F2"),
@@ -1219,14 +1212,14 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Expanded(
-                                flex: sellEntity?.leftPercent??0,
+                                flex: sellEntity?.leftPercent ?? 0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#F9EFEF"),
                                 ),
                               ),
                               Expanded(
-                                flex: sellEntity?.rightPercent??0,
+                                flex: sellEntity?.rightPercent ?? 0,
                                 child: Container(
                                   height: 25,
                                   color: HexColor("#ffffff"),
@@ -1293,7 +1286,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
   );
 }
 
-dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data, {bool isReplace = true}) {
+dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data,
+    {bool isReplace = true}) {
   if (!(data is Map)) {
     return;
   }
@@ -1352,40 +1346,44 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
 
   // buy
   List<ExcDetailEntity> buyEntityList = [];
-  var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
-    if (current.amount>next.amount)  {
-      return current;
+  if (_buyDepthItemList.isNotEmpty) {
+    var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+      if (current.amount > next.amount) {
+        return current;
+      }
+      return next;
+    });
+    for (int index = 0; index < _buyDepthItemList.length; index++) {
+      var buy = _buyDepthItemList[index];
+      var right = 10 * buy.amount ~/ maxBuyDepthEntity.amount;
+      var left = 10 - right;
+      var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
+      buyEntityList.add(entity);
     }
-    return next;
-  });
-  for (int index = 0; index < _buyDepthItemList.length; index++) {
-    var buy = _buyDepthItemList[index];
-    var right = 10 * buy.amount ~/ maxBuyDepthEntity.amount;
-    var left = 10 - right;
-    var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
-    buyEntityList.add(entity);
   }
+
   if (buyEntityList.isNotEmpty) {
     buyChartList.addAll(buyEntityList);
   }
 
   // sell
   List<ExcDetailEntity> sellEntityList = [];
-  var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
-    if (current.amount>next.amount)  {
-      return current;
+  if (_sellDepthItemList.isNotEmpty) {
+    var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
+      if (current.amount > next.amount) {
+        return current;
+      }
+      return next;
+    });
+    for (int index = 0; index < _sellDepthItemList.length; index++) {
+      var sell = _sellDepthItemList[index];
+      var left = 10 * sell.amount ~/ maxSellDepthEntity.amount;
+      var right = 10 - left;
+      var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
+      sellEntityList.add(entity);
     }
-    return next;
-  });
-  for (int index = 0; index < _sellDepthItemList.length; index++) {
-    var sell = _sellDepthItemList[index];
-    var left = 10 * sell.amount ~/ maxSellDepthEntity.amount;
-    var right = 10 - left;
-    var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
-    sellEntityList.add(entity);
   }
   if (sellEntityList.isNotEmpty) {
     sellChartList.addAll(sellEntityList);
   }
-
 }

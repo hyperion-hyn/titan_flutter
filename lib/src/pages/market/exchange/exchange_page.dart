@@ -614,7 +614,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     return InkWell(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => KLineDetailPage()));
+            MaterialPageRoute(builder: (context) => KLineDetailPage(symbol: marketItemEntity.symbol, symbolName: marketItemEntity.symbolName,)));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
