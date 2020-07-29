@@ -10,6 +10,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -100,6 +102,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 1;
   String _realTimePrice = "--";
+  String _realTimeQuotePrice = "--";
+  ActiveQuoteVoAndSign selectQuote;
   double _realTimePricePercent = 0;
 
   @override
@@ -160,9 +164,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   Widget build(BuildContext context) {
-    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
-    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
-
     return Scaffold(
       body: BlocListener<SocketBloc, SocketState>(
         bloc: BlocProvider.of<SocketBloc>(context),
@@ -207,6 +208,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget exchangePageView() {
+    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
+    selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
+    _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * selectQuote.quoteVo.price, 2);
+    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
+
     return SafeArea(
       child: Container(
         color: Colors.white,
@@ -325,7 +331,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   SizedBox(width: 6,),
                   Padding(
                     padding: const EdgeInsets.only(bottom:3.0),
-                    child: Text("≈63027.47 CNY",style:TextStyle(fontSize: 10,color: DefaultColors.color777)),
+                    child: Text("≈$_realTimeQuotePrice",style:TextStyle(fontSize: 10,color: DefaultColors.color777)),
                   ),
                 ],
               ),
