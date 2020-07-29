@@ -114,7 +114,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   @override
   void onCreated() {
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-    getRealTimePrice();
 
     _getChannelData();
     super.onCreated();
@@ -159,13 +158,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: tradeChannel));
   }
 
-  void getRealTimePrice(){
-    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
-    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
-  }
-
   @override
   Widget build(BuildContext context) {
+    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
+    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
+
     return Scaffold(
       body: BlocListener<SocketBloc, SocketState>(
         bloc: BlocProvider.of<SocketBloc>(context),

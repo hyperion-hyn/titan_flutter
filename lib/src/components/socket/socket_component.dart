@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
@@ -40,7 +41,7 @@ class _SocketState extends State<_SocketManager> {
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
-  List<MarketItemEntity> marketItemList;
+  List<MarketItemEntity> _marketItemList;
 
   @override
   void initState() {
@@ -106,19 +107,61 @@ class _SocketState extends State<_SocketManager> {
     return BlocListener<SocketBloc, SocketState>(
       listener: (context, state) async {
         if (state is MarketSymbolState) {
-          marketItemList = state.marketItemList;
+          _marketItemList = state.marketItemList;
+        }else if(state is ChannelKLine24HourState){
+          _updateMarketItemList(state.response, symbol: state.symbol);
         }
       },
       child: BlocBuilder<SocketBloc, SocketState>(
         builder: (context, state) {
           return MarketInheritedModel(
-            marketItemList: marketItemList,
+            marketItemList: _marketItemList,
             child: widget.child,
           );
         },
       ),
     );
   }
+
+  _updateMarketItemList(dynamic data,
+      {bool isReplace = true, String symbol = ''}) {
+    if (!(data is List)) {
+      return;
+    }
+
+    List dataList = data;
+    List kLineDataList = dataList.map((item) {
+      Map<String, dynamic> json = {};
+      if (item is List) {
+        List itemList = item;
+        if (itemList.length >= 7) {
+          json = {
+            'open': double.parse(itemList[1].toString()),
+            'high': double.parse(itemList[2].toString()),
+            'low': double.parse(itemList[3].toString()),
+            'close': double.parse(itemList[4].toString()),
+            'vol': double.parse(itemList[5].toString()),
+            'amount': 0,
+            'count': 0,
+            'id': int.parse(itemList[0].toString()) / 1000,
+          };
+        }
+      }
+      return KLineEntity.fromJson(json);
+    }).toList();
+    bool _isNewSymbol = true;
+    _marketItemList.forEach((element) {
+      if (element.symbol == symbol) {
+        _isNewSymbol = false;
+        element = MarketItemEntity(symbol, kLineDataList.last);
+      }
+    });
+    print('_updateQuoteItemList: isNewSymbol: $_isNewSymbol');
+    if (_isNewSymbol) {
+      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
+    }
+  }
+
 }
 
 class MarketInheritedModel extends InheritedModel<String> {
