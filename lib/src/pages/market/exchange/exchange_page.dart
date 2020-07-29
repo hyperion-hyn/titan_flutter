@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
@@ -39,8 +40,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   ExchangeApi _exchangeApi = ExchangeApi();
-  double usdtToCurrency;
-  double ethToCurrency;
+  Decimal usdtToCurrency;
+  Decimal ethToCurrency;
 
   @override
   void dispose() {
@@ -57,7 +58,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(
       channel: SocketConfig.channelKLine24Hour,
     ));
-    _initCurrency();
+    _updateTypeToCurrency();
   }
 
   @override
@@ -68,7 +69,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     _sub24HourChannel();
   }
 
-  _initCurrency() async {
+  _updateTypeToCurrency() async {
     usdtToCurrency = await _getCurrencyFromType(
       'USDT',
       QuotesInheritedModel.of(context)
@@ -183,6 +184,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               print('[ExchangePage] ReceivedDataState: ${state.response}');
             } else if (state is ChannelKLine24HourState) {
               _updateMarketItemList(state.response, symbol: state.symbol);
+
+              ///Update quotation too
+              _updateTypeToCurrency();
             }
           },
         ),
@@ -346,15 +350,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
               child: Row(
                 children: <Widget>[
-                  Text(
-                    '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'} ',
-                    style: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 14,
+                  Container(
+                    width: 150,
+                    child: Text(
+                      '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'}',
+                      style: TextStyle(
+                        color: HexColor('#FF999999'),
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                  Spacer(),
-                  Container(
+                  Expanded(
                     child: Text(
                       '最新兑换1HYN — ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin',
                       style: TextStyle(
@@ -562,15 +568,23 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     '名称',
                     style: TextStyle(
                       color: Colors.grey,
+                      fontSize: 14,
                     ),
                   ),
                 ),
                 Expanded(
                   child: Center(
-                    child: Text(
-                      '最新价',
-                      style: TextStyle(
-                        color: Colors.grey,
+                    child: Container(
+                      width: 80,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Text(
+                          '最新价',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -579,10 +593,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   child: Row(
                     children: <Widget>[
                       Spacer(),
-                      Text(
-                        '跌涨幅',
-                        style: TextStyle(
-                          color: Colors.grey,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Center(
+                          child: Text(
+                            '跌涨幅',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -617,95 +637,121 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             MaterialPageRoute(builder: (context) => KLineDetailPage()));
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16.0,
+        ),
+        child: Column(
           children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text.rich(TextSpan(children: [
-                    TextSpan(
-                        text: 'HYN',
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: 'HYN',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                              fontSize: 18,
+                            )),
+                        TextSpan(
+                            text: '/${marketItemEntity.symbolName}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                              fontSize: 14,
+                            )),
+                      ])),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        '24H量 ${marketItemEntity.kLineEntity.amount}',
                         style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                          fontSize: 20,
-                        )),
-                    TextSpan(
-                        text: '/${marketItemEntity.symbolName}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
                           color: Colors.grey,
-                          fontSize: 16,
-                        )),
-                  ])),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    '24H量 ${marketItemEntity.kLineEntity.amount}',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '${FormatUtil.formatPrice(marketItemEntity.kLineEntity.close)}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      '${symbolQuote?.sign?.sign} ${_getCurrencyFromMarketItem(marketItemEntity)}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Spacer(),
-                  Container(
-                    width: 80,
-                    height: 39,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.0),
-                      color: marketItemEntity.kLineEntity.close -
-                                  marketItemEntity.kLineEntity.open >
-                              0
-                          ? HexColor('#FF53AE86')
-                          : HexColor('#FFCC5858'),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) > 0 ? '+' : ''}${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) / marketItemEntity.kLineEntity.open * 100}%',
-                        style: TextStyle(
-                          color: Colors.white,
+                          fontSize: 14,
                         ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      width: 80,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '${FormatUtil.formatNumDecimal(marketItemEntity.kLineEntity.close)}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 18),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            '${symbolQuote?.sign?.sign} ${_getCurrencyFromMarketItem(marketItemEntity)}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.grey,
+                                fontSize: 14),
+                          )
+                        ],
                       ),
                     ),
-                  )
-                ],
-              ),
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Spacer(),
+                      Container(
+                        width: 80,
+                        height: 39,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.0),
+                          color: marketItemEntity.kLineEntity.close -
+                                      marketItemEntity.kLineEntity.open ==
+                                  0
+                              ? HexColor('#FF999999')
+                              : marketItemEntity.kLineEntity.close -
+                                          marketItemEntity.kLineEntity.open >
+                                      0
+                                  ? HexColor('#FF53AE86')
+                                  : HexColor('#FFCC5858'),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) > 0 ? '+' : ''}${FormatUtil.truncateDecimalNum(
+                              (Decimal.parse(marketItemEntity.kLineEntity.close
+                                          .toString()) -
+                                      Decimal.parse(marketItemEntity
+                                          .kLineEntity.open
+                                          .toString())) /
+                                  Decimal.parse(marketItemEntity
+                                      .kLineEntity.open
+                                      .toString()) *
+                                  Decimal.fromInt(100),
+                              2,
+                            )}%',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ],
             ),
+            Divider(
+              height: 24,
+            )
           ],
         ),
       ),
@@ -722,21 +768,29 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     return result;
   }
 
-  Future<double> _getCurrencyFromType(String type, String currency) async {
+  Future<Decimal> _getCurrencyFromType(String type, String currency) async {
     var ret = await _exchangeApi.type2currency(type, currency);
-    return double.parse(ret.toString());
+    return Decimal.parse(ret.toString());
   }
 
   _getCurrencyFromMarketItem(MarketItemEntity marketItemEntity) {
     return marketItemEntity.symbolName == 'USDT'
         ? usdtToCurrency == null
             ? '--'
-            : FormatUtil.formatPrice(
-                usdtToCurrency * marketItemEntity.kLineEntity.close)
+            : FormatUtil.truncateDecimalNum(
+                usdtToCurrency *
+                    Decimal.parse(
+                        marketItemEntity.kLineEntity.close.toString()),
+                4,
+              )
         : ethToCurrency == null
             ? '--'
-            : FormatUtil.formatPrice(
-                ethToCurrency * marketItemEntity.kLineEntity.close);
+            : FormatUtil.truncateDecimalNum(
+                ethToCurrency *
+                    Decimal.parse(
+                        marketItemEntity.kLineEntity.close.toString()),
+                4,
+              );
   }
 
   Widget _authorizedView() {
