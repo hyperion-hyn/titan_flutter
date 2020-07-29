@@ -18,7 +18,8 @@ class ExchangeConst {
   static const PATH_HISTORY_KLINE =
       "/api/v1-b/market/kline_history"; // 所有用户历史k线数据
 
-
+  ///Banner
+  static const PATH_BANNER_LIST = '/api/message/listBanner';
 
   ///交易系统：
   static const PATH_ORDER_LIMIT = "/api/exchange/orderPutLimit"; // 下限价单

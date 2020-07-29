@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 
 class AssetList {
@@ -44,9 +45,9 @@ class AssetList {
     }
   }
 
-  double getTotal() {
-    double total = 0;
-    
-    return total;
+  Decimal getTotalEth() {
+    Decimal usdtToEth = Decimal.parse(USDT.eth);
+    Decimal hynToEth = Decimal.parse(HYN.eth);
+    return usdtToEth + hynToEth + Decimal.parse(ETH.eth);
   }
 }

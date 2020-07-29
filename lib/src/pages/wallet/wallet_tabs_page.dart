@@ -101,8 +101,8 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                         children: <Widget>[
                           Image.asset(
                             'res/drawable/ic_wallet_qualification.png',
-                            height: 20,
-                            width: 20,
+                            height: 16,
+                            width: 16,
                           ),
                           SizedBox(
                             width: 8.0,

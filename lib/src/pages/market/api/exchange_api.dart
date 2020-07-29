@@ -54,7 +54,7 @@ class ExchangeApi {
   ///使用[address]钱包地址 和 访问路径[path]获取一个种子
   Future<String> _getAccessSeed(String address, String path) async {
     return await ExchangeHttp.instance.postEntity(
-      '/api/user/getAccessSeed',
+      ExchangeConst.PATH_GET_ACCESS_SEED,
       null,
       params: {
         'address': address,
@@ -81,10 +81,11 @@ class ExchangeApi {
     String password,
     String address,
   }) async {
-    var path = '/api/user/walletSignLogin';
-
     //get a seed
-    var seed = await _getAccessSeed(address, path);
+    var seed = await _getAccessSeed(
+      address,
+      ExchangeConst.PATH_LOGIN_REGISTER,
+    );
     var params = {
       'address': address,
       'seed': seed,
@@ -95,13 +96,13 @@ class ExchangeApi {
       password,
       'POST',
       Const.EXCHANGE_DOMAIN.split('//')[1],
-      path,
+      ExchangeConst.PATH_LOGIN_REGISTER,
       params,
     );
     params['sign'] = signed;
 
     return await ExchangeHttp.instance.postEntity(
-      path,
+      ExchangeConst.PATH_LOGIN_REGISTER,
       null,
       params: params,
     );

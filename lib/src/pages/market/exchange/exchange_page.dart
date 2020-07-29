@@ -20,6 +20,7 @@ import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/click_oval_icon_button.dart';
@@ -220,25 +221,29 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _banner() {
     return Container(
-      color: HexColor('#141FB9C7'),
+      color: HexColor('#0F1FB9C7'),
       child: Padding(
         padding: EdgeInsets.all(8.0),
         child: Row(
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Icons.hearing,
-                size: 20,
-              ),
+            SizedBox(
+              width: 8,
             ),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Image.asset(
+                  'res/drawable/ic_exchange_banner_msg.png',
+                  height: 16,
+                  width: 16,
+                )),
             Expanded(
               child: Text(
                 '由于网络拥堵，近期闪兑交易矿工费较高',
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey[600],
+                  color: HexColor('#FF333333'),
                 ),
+                overflow: TextOverflow.ellipsis,
                 maxLines: 2,
               ),
             )
@@ -441,11 +446,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
-                  ? "${FormatUtil.formatPrice(10000.0 * (symbolQuote?.quoteVo?.price ?? 0))}"
-                  : '******'),
+            text:
+                ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
+                    ? ethToCurrency == null
+                        ? '--'
+                        : '${FormatUtil.truncateDecimalNum(
+                            ethToCurrency *
+                                ExchangeInheritedModel.of(context)
+                                    .exchangeModel
+                                    .activeAccount
+                                    .assetList
+                                    .getTotalEth(),
+                            4,
+                          )}'
+                    : '*****',
+          ),
           TextSpan(
               text: ' (${symbolQuote?.sign?.quote ?? ''})',
               style: TextStyle(color: Colors.grey, fontSize: 13))
@@ -453,7 +468,12 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         textAlign: TextAlign.center,
       );
     } else {
-      return Text('未授权登录');
+      return Text(
+        '未登录',
+        style: TextStyle(
+          color: HexColor('#FF1F81FF'),
+        ),
+      );
     }
   }
 
@@ -465,7 +485,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               padding: const EdgeInsets.all(8.0),
               child: _coinItem(
                 'HYN',
-                'res/drawable/hyn_logo.png',
+                SupportedTokens.HYN.logo,
                 false,
               ),
             ),
@@ -523,7 +543,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         value: 'USDT',
         child: _coinItem(
           'USDT',
-          'res/drawable/usdt_logo.png',
+          SupportedTokens.USDT_ERC20.logo,
           false,
         ),
       ),
@@ -533,7 +553,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         value: 'ETH',
         child: _coinItem(
           'ETH',
-          'res/drawable/eth_logo.png',
+          SupportedTokens.ETHEREUM.logo,
           false,
         ),
       ),
