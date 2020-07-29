@@ -39,7 +39,7 @@ import 'bloc/exchange_detail_bloc.dart';
 class ExchangeDetailPage extends StatefulWidget {
 //  final String leftSymbol;
 //  final String rightSymbol;
-  var selectedCoin = 'usdt';
+  var selectedCoin = 'USDT';
   var exchangeType = ExchangeType.SELL;
 
   ExchangeDetailPage({this.selectedCoin, this.exchangeType});
@@ -168,6 +168,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         bloc: BlocProvider.of<SocketBloc>(context),
         listener: (ctx, state) {
           if (state is ChannelExchangeDepthState) {
+            _buyChartList.clear();
+            _sailChartList.clear();
             dealDepthData(_buyChartList, _sailChartList, state.response, isReplace: false);
             depthController.add(contrDepthTypeRefresh);
           }
@@ -253,7 +255,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               Container(
                 padding: EdgeInsets.all(2.0),
                 child: Text(
-                  _realTimePricePercent == 0 ? "--" : FormatUtil.truncateDoubleNum(_realTimePricePercent * 100,2) + "%",
+                  _realTimePricePercent == 0 ? "--" : (_realTimePricePercent >= 0 ? "+" : "-") + FormatUtil.truncateDoubleNum(_realTimePricePercent * 100,2) + "%",
                   style: TextStyle(
                     color: _realTimePricePercent >= 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
                     fontSize: 13.0,
@@ -290,12 +292,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 8.0, bottom: 8, left: 20, right: 14),
-                child: Image.asset(
-                  "res/drawable/ic_exchange_candle.png",
-                  width: 13,
-                  height: 16,
+              InkWell(
+                onTap: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => KLineDetailPage(symbol: symbol, symbolName: widget.selectedCoin,)));
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8, left: 20, right: 14),
+                  child: Image.asset(
+                    "res/drawable/ic_exchange_candle.png",
+                    width: 13,
+                    height: 16,
+                  ),
                 ),
               )
             ],
