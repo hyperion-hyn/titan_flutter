@@ -39,7 +39,8 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
+  static String formatDate(int timestamp,
+      {bool isSecond = false, bool isMillisecond = false}) {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
       timestamp = timestamp * 1000;
@@ -61,14 +62,19 @@ class FormatUtil {
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
-    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    return DateFormat("yyyy.MM.dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
-    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    return DateFormat("HH:mm MM/dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
   }
 
-  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+  static String amountToString(String amount) =>
+      FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
@@ -81,11 +87,15 @@ class FormatUtil {
   }
 
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toString();
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
@@ -199,7 +209,10 @@ class FormatUtil {
           number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       return result;
     } else {
-      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      var result = number
+          .toString()
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       return result;
     }
   }
