@@ -10,6 +10,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
@@ -59,6 +60,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(
       channel: SocketConfig.channelKLine24Hour,
     ));
+    if (MarketInheritedModel.of(context).marketItemList != null) {
+      _marketItemList = MarketInheritedModel.of(context).marketItemList;
+    }
     _updateTypeToCurrency();
   }
 
@@ -66,7 +70,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getAllSymbols();
     _sub24HourChannel();
   }
 
@@ -86,35 +89,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           ?.sign
           ?.quote,
     );
-    setState(() {});
-  }
-
-  _getAllSymbols() async {
-    var response = await _exchangeApi.getMarketAllSymbol();
-
-    MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
-
-    if (marketSymbolList.hynusdt != null) {
-      _marketItemList.add(MarketItemEntity(
-        'hynusdt',
-        marketSymbolList.hynusdt,
-        symbolName: 'USDT',
-      ));
-    }
-    if (marketSymbolList.hyneth != null) {
-      _marketItemList.add(MarketItemEntity(
-        'hyneth',
-        marketSymbolList.hyneth,
-        symbolName: 'ETH',
-      ));
-    }
-//    if (marketSymbolList.hynbtc != null) {
-//      _marketItemList.add(MarketItemEntity(
-//        'hynbtc',
-//        marketSymbolList.hynbtc,
-//        symbolName: 'HYN/BTC',
-//      ));
-//    }
     setState(() {});
   }
 
