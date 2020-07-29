@@ -135,6 +135,34 @@ class ExchangeApi {
     });
   }
 
+  Future<ResponseEntity> withdraw(
+    String type,
+    String outerAddress,
+    String balance,
+  ) async {
+    return await ExchangeHttp.instance.postResponseEntity(
+      ExchangeConst.PATH_WITHDRAW,
+      null,
+      params: {
+        'type': type,
+        'outer_address': outerAddress,
+        'balance': balance,
+      },
+    );
+  }
+
+  Future<ResponseEntity> getAddress(
+    String type,
+  ) async {
+    return await ExchangeHttp.instance.postResponseEntity(
+      ExchangeConst.PATH_GET_ADDRESS,
+      null,
+      params: {
+        'type': type,
+      },
+    );
+  }
+
   Future<ResponseEntity> transferAccountToExchange(
     String type,
     String balance,

@@ -5,14 +5,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
-import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
-import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/exchange/bloc/bloc.dart';
-import 'package:titan/src/pages/market/model/exchange_account.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
@@ -26,11 +23,15 @@ class ExchangeAuthPage extends StatefulWidget {
 
 class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   bool isLoggingIn = false;
+  Wallet _wallet;
 
   @override
   Future<void> onCreated() async {
     // TODO: implement onCreated
     super.onCreated();
+
+    _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    _checkIsAuthAlready();
   }
 
   @override
@@ -48,6 +49,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           setState(() {
             isLoggingIn = false;
           });
+          _setAuthAlready();
           Navigator.of(context).pop();
           Fluttertoast.showToast(msg: '登录成功!');
         } else if (state is LoginFailState) {
@@ -149,18 +151,35 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     );
   }
 
+  _checkIsAuthAlready() async {
+    if (_wallet != null) {
+      bool _isAuthAlready = await AppCache.getValue(
+        'exchange_auth_already_${_wallet.getEthAccount().address}',
+      );
+      if (_isAuthAlready) {
+        _startLogin();
+      }
+    }
+  }
+
+  _setAuthAlready() {
+    AppCache.saveValue(
+      'exchange_auth_already_${_wallet.getEthAccount().address}',
+      true,
+    );
+  }
+
   _startLogin() async {
-    var wallet = WalletInheritedModel.of(context).activatedWallet;
-    if (wallet != null) {
-      var address = wallet.wallet.getEthAccount().address;
+    if (_wallet != null) {
+      var address = _wallet.getEthAccount().address;
       var walletPassword = await UiUtil.showWalletPasswordDialogV2(
         context,
-        wallet.wallet,
+        _wallet,
         authType: AuthType.exchange,
       );
       if (walletPassword != null) {
         BlocProvider.of<ExchangeCmpBloc>(context)
-            .add(LoginEvent(wallet.wallet, walletPassword, address));
+            .add(LoginEvent(_wallet, walletPassword, address));
         setState(() {
           isLoggingIn = true;
         });

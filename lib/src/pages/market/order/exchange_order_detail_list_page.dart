@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -89,17 +91,23 @@ class ExchangeOrderDetailListPageState
   }
 
   _loadMore() async {
-    _currentPage++;
-    List<OrderDetail> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getOrderDetailList(
-              widget.market,
-              _currentPage,
-              _size,
-            );
-    _orderDetailList.addAll(resultList);
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
-    if (mounted) setState(() {});
-    _refreshController.loadComplete();
+    try {
+      List<OrderDetail> resultList = await ExchangeInheritedModel.of(context)
+          .exchangeApi
+          .getOrderDetailList(
+            widget.market,
+            _currentPage + 1,
+            _size,
+          );
+      if (resultList != null) {
+        _orderDetailList.addAll(resultList);
+        _currentPage++;
+      }
+
+      if (mounted) setState(() {});
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+      _refreshController.loadComplete();
+    } on HttpResponseCodeNotSuccess catch (e) {}
   }
 
   @override

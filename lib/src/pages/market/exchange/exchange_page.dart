@@ -410,11 +410,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 horizontal: 8.0,
                 vertical: 8.0,
               ),
-              child: Image.asset(
-                'res/drawable/ic_market_account.png',
-                width: 20,
-                height: 20,
-              ),
+              child: QuotesInheritedModel.of(context)
+                          .activatedQuoteVoAndSign('USDT')
+                          .sign
+                          .quote ==
+                      'CNY'
+                  ? Image.asset(
+                      'res/drawable/ic_exchange_account_cny.png',
+                      width: 20,
+                      height: 20,
+                    )
+                  : Image.asset(
+                      'res/drawable/ic_exchange_account_usd.png',
+                      width: 20,
+                      height: 20,
+                    ),
             ),
             Text(
               '交易账户',
@@ -439,8 +449,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    var symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
       return Text.rich(
@@ -462,7 +470,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     : '*****',
           ),
           TextSpan(
-              text: ' (${symbolQuote?.sign?.quote ?? ''})',
+              text:
+                  ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
               style: TextStyle(color: Colors.grey, fontSize: 13))
         ]),
         textAlign: TextAlign.center,
@@ -494,7 +503,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _coinList(),
+              child: _coinListDropdownBtn(),
             ),
           );
   }
@@ -536,7 +545,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     );
   }
 
-  _coinList() {
+  _coinListDropdownBtn() {
     List<DropdownMenuItem> availableCoinItemList = List();
     availableCoinItemList.add(
       DropdownMenuItem(
@@ -653,8 +662,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => KLineDetailPage(symbol: marketItemEntity.symbol, symbolName: marketItemEntity.symbolName,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => KLineDetailPage(
+                      symbol: marketItemEntity.symbol,
+                      symbolName: marketItemEntity.symbolName,
+                    )));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(

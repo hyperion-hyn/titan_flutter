@@ -14,11 +14,15 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 
+import '../../../global.dart';
 import '../model/asset_list.dart';
 
 class ExchangeTransferPage extends StatefulWidget {
@@ -39,7 +43,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
-
     _exchangeApi = ExchangeInheritedModel.of(context).exchangeApi;
   }
 
@@ -136,7 +139,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
         child: Text(
-          '海伯利安钱包',
+          '钱包',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -419,12 +422,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (Decimal.parse(value) >
-                        Decimal.parse(ExchangeInheritedModel.of(context)
-                            .exchangeModel
-                            .activeAccount
-                            .assetList
-                            .getAsset(_selectedCoinType)
-                            .accountAvailable)) {
+                        Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
                     return null;
@@ -452,7 +450,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             InkWell(
               child: Text('全部'),
               onTap: () {
-                _amountController.text = _availableAmount(_selectedCoinType);
+                _amountController.text = _availableAmount();
                 setState(() {});
               },
             )
@@ -460,7 +458,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         Divider(),
         Text(
-          '可用${_availableAmount(_selectedCoinType)} $_selectedCoinType',
+          '可用${_availableAmount()} $_selectedCoinType',
           style: TextStyle(color: HexColor('#FFAAAAAA'), fontSize: 14),
         )
       ],
@@ -483,14 +481,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 ? '从交易账户划转到钱包账户每笔需要收取50HYN手续费'
                 : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
             style: TextStyle(
-                color: HexColor('#FF777777'), fontSize: 14, height: 1.8),
+              color: HexColor('#FF777777'),
+              fontSize: 14,
+              height: 1.8,
+            ),
           ),
         ),
       ),
     );
   }
 
-  _availableAmount(String type) {
+  _availableAmount() {
     if (_fromExchangeToWallet) {
       return ExchangeInheritedModel.of(context)
           .exchangeModel
@@ -502,14 +503,59 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return FormatUtil.coinBalanceHumanRead(WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbol(type));
+      ).getCoinVoBySymbol(_selectedCoinType));
     }
   }
 
   _transfer() async {
     if (_fromExchangeToWallet) {
-    } else {}
-    Application.router
-        .navigateTo(context, Routes.exchange_transfer_success_page);
+      _withdraw();
+    } else {
+      _deposit();
+    }
+//    Application.router.navigateTo(
+//      context,
+//      Routes.exchange_transfer_success_page,
+//    );
+  }
+
+  _deposit() async {
+    try {
+      //var ret = await _exchangeApi.getAddress(_selectedCoinType);
+      //var address = ret.data['address'];
+
+      var coinVo = WalletInheritedModel.of(
+        context,
+        aspect: WalletAspect.activatedWallet,
+      ).getCoinVoBySymbol(
+        _selectedCoinType,
+      );
+
+      ///for now
+      var address = coinVo.address;
+      var voStr = FluroConvertUtils.object2string(coinVo.toJson());
+      Application.router.navigateTo(
+        context,
+        Routes.exchange_transfer_confirm_page +
+            "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=$address",
+      );
+    } catch (e) {}
+  }
+
+  _withdraw() async {
+    try {
+      var ret = await _exchangeApi.withdraw(
+        _selectedCoinType,
+        WalletInheritedModel.of(
+          context,
+          aspect: WalletAspect.activatedWallet,
+        ).activatedWallet.wallet.getEthAccount().address,
+        _amountController.text,
+      );
+      if (ret.code == 0) {
+      } else {
+        Fluttertoast.showToast(msg: ret.msg);
+      }
+    } catch (e) {}
   }
 }

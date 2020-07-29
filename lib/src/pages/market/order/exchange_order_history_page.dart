@@ -89,17 +89,16 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   }
 
   _loadMore() async {
-    _currentPage++;
     List<Order> resultList =
         await ExchangeInheritedModel.of(context).exchangeApi.getOrderList(
               widget.market,
-              _currentPage,
+              _currentPage + 1,
               _size,
               _method,
             );
-    print('[ExchangeOrderHistoryPage] _loadMore: resultList $resultList');
     if (resultList != null) {
       _orders.addAll(resultList);
+      _currentPage++;
     }
     if (mounted) setState(() {});
     _loadDataBloc.add(LoadingMoreSuccessEvent());

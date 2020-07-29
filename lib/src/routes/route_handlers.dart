@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_confirm_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
@@ -151,6 +152,13 @@ var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
 var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return ExchangeTransferPage();
+});
+
+var exchangeTransferConfirmHandler = Handler(handlerFunc: (context, params) {
+  return ExchangeTransferConfirmPage(
+      params['coinVo']?.first,
+      '${params['transferAmount']?.first ?? 0}',
+      params['receiverAddress']?.first);
 });
 
 var exchangeTransferSuccessHandler = Handler(handlerFunc: (context, params) {

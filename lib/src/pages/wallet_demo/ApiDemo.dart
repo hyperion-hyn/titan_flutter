@@ -5,6 +5,7 @@ import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
@@ -113,6 +114,17 @@ class _ApiDemoState extends State {
                   .add(ClearExchangeAccountEvent());
             },
             child: Text('清除当前交易账户'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              var wallet = WalletInheritedModel.of(context).activatedWallet;
+              if (wallet != null) {
+                AppCache.remove(
+                  'exchange_auth_already_${wallet.wallet.getEthAccount().address}',
+                );
+              }
+            },
+            child: Text('清除当前交易账户登录记录'),
           ),
         ],
       ),
