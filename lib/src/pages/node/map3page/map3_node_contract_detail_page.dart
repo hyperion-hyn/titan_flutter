@@ -142,7 +142,11 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           break;
 
         case ContractState.ACTIVE:
-          value = 1;
+          if (_is180DaysContract && _contractNodeItem.isHalfCompleteSecondsLeft) {
+            value = 2;
+          } else {
+            value = 1;
+          }
           break;
 
         case ContractState.DUE:

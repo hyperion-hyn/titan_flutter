@@ -179,6 +179,16 @@ class ContractNodeItem extends Object {
     return timeLeft > 0 ? timeLeft : 0;
   }
 
+  bool get isHalfCompleteSecondsLeft {
+    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
+    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
+    double halfTotalDue = totalDue / 2;
+    double overDue = (now - instanceActiveTime);
+    double timeLeft = halfTotalDue - overDue;
+    return timeLeft <= 0;
+  }
+
+
   double get expectHalfDueProgress {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int totalDue = (expectDueTime - instanceActiveTime);
