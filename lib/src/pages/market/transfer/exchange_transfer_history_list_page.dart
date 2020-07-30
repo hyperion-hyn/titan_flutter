@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -31,7 +32,7 @@ class ExchangeTransferHistoryListPageState
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
-
+  ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
   String _action = 'all';
@@ -94,7 +95,7 @@ class ExchangeTransferHistoryListPageState
     ///clear list before refresh
     _transferHistoryList.clear();
     List<AssetHistory> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getAccountHistory(
+        await _exchangeApi.getAccountHistory(
               widget.type,
               _currentPage,
               _size,
@@ -112,7 +113,7 @@ class ExchangeTransferHistoryListPageState
   _loadMore() async {
     _currentPage++;
     List<AssetHistory> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getAccountHistory(
+        await _exchangeApi.getAccountHistory(
               widget.type,
               _currentPage,
               _size,

@@ -95,7 +95,6 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           print('ExchangeComponent[builder]: ${state}');
           return ExchangeInheritedModel(
             exchangeModel: exchangeModel,
-            exchangeApi: _exchangeApi,
             child: widget.child,
           );
         },
@@ -106,12 +105,10 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
 
 class ExchangeInheritedModel extends InheritedModel<String> {
   final ExchangeModel exchangeModel;
-  final ExchangeApi exchangeApi;
 
   const ExchangeInheritedModel({
     Key key,
     @required this.exchangeModel,
-    @required this.exchangeApi,
     @required Widget child,
   }) : super(key: key, child: child);
 

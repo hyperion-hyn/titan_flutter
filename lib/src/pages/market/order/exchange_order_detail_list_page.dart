@@ -6,6 +6,7 @@ import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 
 import '../../../global.dart';
@@ -31,6 +32,7 @@ class ExchangeOrderDetailListPageState
     initialRefresh: false,
   );
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   int _currentPage = 1;
   int _size = 30;
@@ -78,12 +80,11 @@ class ExchangeOrderDetailListPageState
     ///clear list before refresh
     _orderDetailList.clear();
 
-    List<OrderDetail> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getOrderDetailList(
-              widget.market,
-              _currentPage,
-              _size,
-            );
+    List<OrderDetail> resultList = await _exchangeApi.getOrderDetailList(
+      widget.market,
+      _currentPage,
+      _size,
+    );
     _orderDetailList.addAll(resultList);
     _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
@@ -92,13 +93,11 @@ class ExchangeOrderDetailListPageState
 
   _loadMore() async {
     try {
-      List<OrderDetail> resultList = await ExchangeInheritedModel.of(context)
-          .exchangeApi
-          .getOrderDetailList(
-            widget.market,
-            _currentPage + 1,
-            _size,
-          );
+      List<OrderDetail> resultList = await _exchangeApi.getOrderDetailList(
+        widget.market,
+        _currentPage + 1,
+        _size,
+      );
       if (resultList != null) {
         _orderDetailList.addAll(resultList);
         _currentPage++;

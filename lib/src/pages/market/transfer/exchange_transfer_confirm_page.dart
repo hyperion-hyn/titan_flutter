@@ -26,7 +26,6 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:web3dart/json_rpc.dart';
 
 class ExchangeTransferConfirmPage extends StatefulWidget {
@@ -102,13 +101,15 @@ class _ExchangeTransferConfirmPageState
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceEstimateStr = "";
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .btcGasPriceRecommend;
+      gasPriceRecommend = QuotesInheritedModel.of(
+        context,
+        aspect: QuotesAspect.gasPrice,
+      ).btcGasPriceRecommend;
       var fees = ConvertTokenUnit.weiToDecimal(
-          BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
-              .toString()),
-          8);
+        BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
+            .toString()),
+        8,
+      );
       var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
@@ -455,7 +456,9 @@ class _ExchangeTransferConfirmPageState
                             ? S.of(context).please_waiting
                             : S.of(context).send,
                         style: TextStyle(
-                            fontWeight: FontWeight.normal, fontSize: 16),
+                          fontWeight: FontWeight.normal,
+                          fontSize: 16,
+                        ),
                       ),
                     ],
                   ),
@@ -494,11 +497,12 @@ class _ExchangeTransferConfirmPageState
       var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
       if (widget.coinVo.symbol == "ETH") {
         await _transferEth(
-            walletPassword,
-            ConvertTokenUnit.strToBigInt(
-                widget.transferAmount, widget.coinVo.decimals),
-            widget.receiverAddress,
-            activatedWallet.wallet);
+          walletPassword,
+          ConvertTokenUnit.strToBigInt(
+              widget.transferAmount, widget.coinVo.decimals),
+          widget.receiverAddress,
+          activatedWallet.wallet,
+        );
       } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
         var activatedWalletVo = activatedWallet.wallet;
         var transResult = await activatedWalletVo.sendBitcoinTransaction(
@@ -517,14 +521,20 @@ class _ExchangeTransferConfirmPageState
         }
       } else {
         await _transferErc20(
-            walletPassword,
-            ConvertTokenUnit.strToBigInt(
-                widget.transferAmount, widget.coinVo.decimals),
-            widget.receiverAddress,
-            activatedWallet.wallet);
+          walletPassword,
+          ConvertTokenUnit.strToBigInt(
+            widget.transferAmount,
+            widget.coinVo.decimals,
+          ),
+          widget.receiverAddress,
+          activatedWallet.wallet,
+        );
       }
 
-      Application.router.navigateTo(context, Routes.confirm_success_papge);
+      Application.router.navigateTo(
+        context,
+        Routes.exchange_transfer_success_page,
+      );
     } catch (_) {
       LogUtil.uploadException(_, "ETH or Bitcoin upload");
       setState(() {
@@ -547,7 +557,11 @@ class _ExchangeTransferConfirmPageState
   }
 
   Future _transferEth(
-      String password, BigInt amount, String toAddress, Wallet wallet) async {
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+  ) async {
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -559,7 +573,11 @@ class _ExchangeTransferConfirmPageState
   }
 
   Future _transferErc20(
-      String password, BigInt amount, String toAddress, Wallet wallet) async {
+    String password,
+    BigInt amount,
+    String toAddress,
+    Wallet wallet,
+  ) async {
     var contractAddress = widget.coinVo.contractAddress;
 
     final txHash = await wallet.sendErc20Transaction(

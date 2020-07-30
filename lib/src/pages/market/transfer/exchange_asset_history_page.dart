@@ -40,6 +40,7 @@ class _ExchangeAssetHistoryPageState
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   ActiveQuoteVoAndSign symbolQuote;
   List<AssetHistory> _assetHistoryList = List();
+  ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
   RefreshController _refreshController = RefreshController(
@@ -305,7 +306,7 @@ class _ExchangeAssetHistoryPageState
     _assetHistoryList.clear();
 
     List<AssetHistory> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getAccountHistory(
+        await _exchangeApi.getAccountHistory(
               widget._symbol,
               _currentPage,
               _size,
@@ -320,7 +321,7 @@ class _ExchangeAssetHistoryPageState
   _loadMore() async {
     _currentPage++;
     List<AssetHistory> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getAccountHistory(
+        await _exchangeApi.getAccountHistory(
               widget._symbol,
               _currentPage,
               _size,

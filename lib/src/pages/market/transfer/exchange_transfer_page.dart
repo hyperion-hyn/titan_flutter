@@ -37,13 +37,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   TextEditingController _amountController = TextEditingController();
   final _fromKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
-  ExchangeApi _exchangeApi;
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
-    _exchangeApi = ExchangeInheritedModel.of(context).exchangeApi;
   }
 
   @override

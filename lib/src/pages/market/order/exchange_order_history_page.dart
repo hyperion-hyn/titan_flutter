@@ -4,6 +4,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 
 import '../../../global.dart';
@@ -27,6 +28,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   int _currentPage = 1;
   int _size = 30;
@@ -72,7 +74,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     ///clear list before refresh
     _orders.clear();
     List<Order> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getOrderList(
+        await _exchangeApi.getOrderList(
               widget.market,
               _currentPage,
               _size,
@@ -90,7 +92,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
 
   _loadMore() async {
     List<Order> resultList =
-        await ExchangeInheritedModel.of(context).exchangeApi.getOrderList(
+        await _exchangeApi.getOrderList(
               widget.market,
               _currentPage + 1,
               _size,

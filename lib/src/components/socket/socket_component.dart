@@ -108,7 +108,7 @@ class _SocketState extends State<_SocketManager> {
       listener: (context, state) async {
         if (state is MarketSymbolState) {
           _marketItemList = state.marketItemList;
-        }else if(state is ChannelKLine24HourState){
+        } else if (state is ChannelKLine24HourState) {
           _updateMarketItemList(state.response, symbol: state.symbol);
         }
       },
@@ -161,7 +161,6 @@ class _SocketState extends State<_SocketManager> {
       _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
     }
   }
-
 }
 
 class MarketInheritedModel extends InheritedModel<String> {
@@ -198,15 +197,25 @@ class MarketInheritedModel extends InheritedModel<String> {
     return marketItemEntity;
   }
 
-  String getRealTimePrice(String symbol){
+  String getRealTimePrice(String symbol) {
     var marketItem = getMarketItem(symbol);
     return marketItem?.kLineEntity?.close?.toString() ?? "--";
   }
 
-  double getRealTimePricePercent(String symbol){
+  double getRealTimePricePercent(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var realPercent = marketItem == null ? 0 : ((marketItem.kLineEntity?.close ?? 0 - marketItem.kLineEntity?.open) / marketItem.kLineEntity?.open ?? 1);
+    var realPercent = marketItem == null
+        ? 0
+        : ((marketItem.kLineEntity?.close ?? 0 - marketItem.kLineEntity?.open) /
+                marketItem.kLineEntity?.open ??
+            1);
     return realPercent;
+  }
+
+  double get24HourAmount(String symbol) {
+    var marketItem = getMarketItem(symbol);
+    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    return amount;
   }
 
   @override
@@ -214,6 +223,7 @@ class MarketInheritedModel extends InheritedModel<String> {
     MarketInheritedModel old,
     Set<String> dependencies,
   ) {
-    return marketItemList != old.marketItemList && dependencies.contains('ExchangeModel');
+    return marketItemList != old.marketItemList &&
+        dependencies.contains('ExchangeModel');
   }
 }
