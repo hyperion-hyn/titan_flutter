@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:web_socket_channel/io.dart';

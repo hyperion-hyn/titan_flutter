@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -214,7 +215,8 @@ class MarketInheritedModel extends InheritedModel<String> {
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount =
+        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 

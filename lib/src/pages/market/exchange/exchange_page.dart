@@ -1,21 +1,16 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
-import 'package:flutter_k_chart/utils/number_util.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
-import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
-import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
-import 'package:titan/src/pages/market/exchange_assets_page.dart';
+import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
@@ -55,9 +50,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     // TODO: implement onCreated
     ///
     super.onCreated();
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(
-      channel: SocketConfig.channelKLine24Hour,
-    ));
+
     if (MarketInheritedModel.of(context).marketItemList != null) {
       _marketItemList = MarketInheritedModel.of(context).marketItemList;
     }
@@ -67,58 +60,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _sub24HourChannel();
-  }
-
-  // 24hour
-  void _sub24HourChannel() {
-    var channel = SocketConfig.channelKLine24Hour;
-    _subChannel(channel);
-  }
-
-  // sub
-  void _subChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
-  }
-
-  _updateMarketItemList(dynamic data,
-      {bool isReplace = true, String symbol = ''}) {
-    if (!(data is List)) {
-      return;
-    }
-
-    List dataList = data;
-    List kLineDataList = dataList.map((item) {
-      Map<String, dynamic> json = {};
-      if (item is List) {
-        List itemList = item;
-        if (itemList.length >= 7) {
-          json = {
-            'open': double.parse(itemList[1].toString()),
-            'high': double.parse(itemList[2].toString()),
-            'low': double.parse(itemList[3].toString()),
-            'close': double.parse(itemList[4].toString()),
-            'vol': double.parse(itemList[5].toString()),
-            'amount': 0,
-            'count': 0,
-            'id': int.parse(itemList[0].toString()) / 1000,
-          };
-        }
-      }
-      return KLineEntity.fromJson(json);
-    }).toList();
-    bool _isNewSymbol = true;
-    _marketItemList.forEach((element) {
-      if (element.symbol == symbol) {
-        _isNewSymbol = false;
-        element = MarketItemEntity(symbol, kLineDataList.last);
-      }
-    });
-    print('_updateQuoteItemList: isNewSymbol: $_isNewSymbol');
-    if (_isNewSymbol) {
-      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
-    }
-    setState(() {});
   }
 
   @override
@@ -130,15 +71,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           listener: (context, state) {},
         ),
         BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            if (state is SubChannelState) {
-              print('[ExchangePage] SubChannelState :${state.period}');
-            } else if (state is ReceivedDataState) {
-              print('[ExchangePage] ReceivedDataState: ${state.response}');
-            } else if (state is ChannelKLine24HourState) {
-              _updateMarketItemList(state.response, symbol: state.symbol);
-            }
-          },
+          listener: (context, state) {},
         ),
       ],
       child: BlocBuilder<ExchangeBloc, ExchangeState>(
@@ -413,7 +346,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       var _ethQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
         'ETH',
       );
-
       var _ethTotalQuotePrice = _ethQuote == null
           ? '--'
           : FormatUtil.truncateDecimalNum(
@@ -777,11 +709,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     return result;
   }
 
-  Future<Decimal> _getCurrencyFromType(String type, String currency) async {
-    var ret = await _exchangeApi.type2currency(type, currency);
-    return Decimal.parse(ret.toString());
-  }
-
   Widget _authorizedView() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -816,17 +743,4 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       color: HexColor('#FFF5F5F5'),
     );
   }
-}
-
-///
-class MarketItemEntity {
-  String symbol;
-  String symbolName;
-  KLineEntity kLineEntity;
-
-  MarketItemEntity(
-    this.symbol,
-    this.kLineEntity, {
-    this.symbolName,
-  });
 }

@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 
 @immutable
 abstract class SocketState {}
