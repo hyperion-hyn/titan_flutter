@@ -125,14 +125,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Image.asset(
                   'res/drawable/ic_exchange_banner_msg.png',
-                  height: 16,
-                  width: 16,
+                  height: 15,
+                  width: 14,
                 )),
             Expanded(
               child: Text(
                 '由于网络拥堵，近期闪兑交易矿工费较高',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   color: HexColor('#FF333333'),
                 ),
                 overflow: TextOverflow.ellipsis,
@@ -163,7 +163,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Material(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(
+              8.0,
+            ),
             elevation: 3.0,
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -178,8 +180,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     child: IconButton(
                       icon: Image.asset(
                         'res/drawable/market_exchange_btn_icon.png',
-                        width: 25,
-                        height: 25,
+                        width: 20,
+                        height: 18,
                       ),
                       onPressed: () {
                         setState(() {
@@ -208,15 +210,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   '汇率',
-                  style: TextStyle(
-                    color: Colors.grey,
-                  ),
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ),
               Text(
                 _exchangeType == ExchangeType.SELL
                     ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
                     : '1$_selectedCoin = $_selectedCoinToHYN HYN',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               Spacer(),
               ClickOvalIconButton(
@@ -232,10 +233,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 width: 88,
                 height: 38,
                 radius: 6,
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 15,
-                  color: Colors.white,
+                fontSize: 14,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 15,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               SizedBox(
@@ -265,7 +270,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'}',
                       style: TextStyle(
                         color: HexColor('#FF999999'),
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ),
@@ -274,7 +279,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       '最新兑换1HYN — ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin',
                       style: TextStyle(
                         color: HexColor('#FF999999'),
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ),
@@ -315,8 +320,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 8.0,
+                horizontal: 6.0,
+                vertical: 6.0,
               ),
               child: quote == null
                   ? Image.asset(
@@ -331,20 +336,20 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                           'CNY'
                       ? Image.asset(
                           'res/drawable/ic_exchange_account_cny.png',
-                          width: 20,
-                          height: 20,
+                          width: 18,
+                          height: 18,
                         )
                       : Image.asset(
                           'res/drawable/ic_exchange_account_usd.png',
-                          width: 20,
-                          height: 20,
+                          width: 18,
+                          height: 18,
                         ),
             ),
             Text(
               '交易账户',
               style: TextStyle(
                 color: Colors.grey,
-                fontSize: 17,
+                fontSize: 16,
               ),
             ),
             Spacer(),
@@ -382,15 +387,22 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-            text:
-                ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
-                    ? _ethTotalQuotePrice
-                    : '*****',
-          ),
+              text: ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances
+                  ? _ethTotalQuotePrice
+                  : '*****',
+              style: TextStyle(
+                fontSize: 14,
+              )),
           TextSpan(
-              text:
-                  ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
-              style: TextStyle(color: Colors.grey, fontSize: 13))
+            text:
+                ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 10,
+            ),
+          )
         ]),
         textAlign: TextAlign.center,
       );
@@ -410,10 +422,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: _coinItem(
-                'HYN',
-                SupportedTokens.HYN.logo,
-                false,
+              child: Row(
+                children: <Widget>[
+                  if (_exchangeType == ExchangeType.BUY) Spacer(),
+                  _coinItem(
+                    'HYN',
+                    SupportedTokens.HYN.logo,
+                    false,
+                  ),
+                  if (_exchangeType == ExchangeType.BUY) Spacer(),
+                ],
               ),
             ),
           )
@@ -435,8 +453,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       children: <Widget>[
         Container(
           alignment: Alignment.center,
-          width: 32,
-          height: 32,
+          width: 26,
+          height: 26,
           decoration: BoxDecoration(
             border: Border.all(color: Color(0xFF9B9B9B), width: 0),
             shape: BoxShape.circle,
@@ -455,8 +473,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         Text(
           name,
           style: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
           ),
         )
       ],
@@ -486,16 +504,22 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       ),
     );
 
-    return DropdownButtonHideUnderline(
-      child: DropdownButton(
-        onChanged: (value) {
-          setState(() {
-            _selectedCoin = value;
-          });
-        },
-        value: _selectedCoin,
-        items: availableCoinItemList,
-      ),
+    return Row(
+      children: <Widget>[
+        if (_exchangeType == ExchangeType.SELL) Spacer(),
+        DropdownButtonHideUnderline(
+          child: DropdownButton(
+            onChanged: (value) {
+              setState(() {
+                _selectedCoin = value;
+              });
+            },
+            value: _selectedCoin,
+            items: availableCoinItemList,
+          ),
+        ),
+        if (_exchangeType == ExchangeType.BUY) Spacer(),
+      ],
     );
   }
 
@@ -620,14 +644,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.black,
-                              fontSize: 18,
+                              fontSize: 16,
                             )),
                         TextSpan(
                             text: '/${marketItemEntity.symbolName}',
                             style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.grey,
-                              fontSize: 14,
+                              fontSize: 12,
                             )),
                       ])),
                       SizedBox(
@@ -637,7 +661,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                         '24H量 ${marketItemEntity.kLineEntity.amount}',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       )
                     ],
@@ -653,7 +677,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                           Text(
                             '${FormatUtil.formatNumDecimal(marketItemEntity.kLineEntity.close)}',
                             style: TextStyle(
-                                fontWeight: FontWeight.w500, fontSize: 18),
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                            ),
                           ),
                           SizedBox(
                             height: 4,
@@ -661,9 +687,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                           Text(
                             '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice',
                             style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey,
-                                fontSize: 14),
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
                           )
                         ],
                       ),
@@ -692,9 +719,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               2,
                             )}%',
                             style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12),
                           ),
                         ),
                       )
@@ -753,7 +780,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _divider() {
     return Container(
       height: 8,
-      color: HexColor('#FFF5F5F5'),
+      color: HexColor('#FFF2F2F2'),
     );
   }
 }
