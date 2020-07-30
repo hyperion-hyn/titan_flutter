@@ -154,7 +154,11 @@ class _SocketState extends State<_SocketManager> {
     _marketItemList.forEach((element) {
       if (element.symbol == symbol) {
         _isNewSymbol = false;
-        element = MarketItemEntity(symbol, kLineDataList.last);
+        element = MarketItemEntity(
+          symbol,
+          kLineDataList.last,
+          symbolName: element.symbolName,
+        );
       }
     });
     print('_updateQuoteItemList: isNewSymbol: $_isNewSymbol');

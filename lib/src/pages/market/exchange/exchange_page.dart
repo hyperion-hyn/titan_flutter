@@ -8,8 +8,8 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
+import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -36,7 +36,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   var _exchangeType = ExchangeType.SELL;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
-  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void dispose() {
@@ -50,7 +49,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     // TODO: implement onCreated
     ///
     super.onCreated();
-
+    _sub24HourChannel();
     if (MarketInheritedModel.of(context).marketItemList != null) {
       _marketItemList = MarketInheritedModel.of(context).marketItemList;
     }
@@ -60,6 +59,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  // 24hour
+  void _sub24HourChannel() {
+    var channel = SocketConfig.channelKLine24Hour;
+    _subChannel(channel);
+  }
+
+  // sub
+  void _subChannel(String channel) {
+    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
   }
 
   @override
@@ -136,6 +146,18 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _exchange() {
+    var _hynToSelectedCoin =
+        _getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--';
+    var _selectedCoinToHYN = _hynToSelectedCoin != null
+        ? FormatUtil.truncateDecimalNum(
+              Decimal.fromInt(1) /
+                  (Decimal.parse(
+                    _hynToSelectedCoin.toString(),
+                  )),
+              4,
+            ) ??
+            '--'
+        : '--';
     return Column(
       children: <Widget>[
         Padding(
@@ -193,8 +215,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
               Text(
                 _exchangeType == ExchangeType.SELL
-                    ? '1HYN = ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin'
-                    : '1$_selectedCoin = ${1 / (_getMarketItem(_selectedCoin)?.kLineEntity?.close) ?? '--'} HYN',
+                    ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
+                    : '1$_selectedCoin = $_selectedCoinToHYN HYN',
               ),
               Spacer(),
               ClickOvalIconButton(
@@ -566,6 +588,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
             4,
           );
+    double _latestPercent = MarketInheritedModel.of(context)
+        .getRealTimePricePercent(marketItemEntity.symbol);
 
     return InkWell(
       onTap: () {
@@ -655,32 +679,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                         height: 39,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
-                          color: marketItemEntity.kLineEntity.close -
-                                      marketItemEntity.kLineEntity.open ==
-                                  0
+                          color: _latestPercent == 0
                               ? HexColor('#FF999999')
-                              : marketItemEntity.kLineEntity.close -
-                                          marketItemEntity.kLineEntity.open >
-                                      0
+                              : _latestPercent > 0
                                   ? HexColor('#FF53AE86')
                                   : HexColor('#FFCC5858'),
                         ),
                         child: Center(
                           child: Text(
-                            '${(marketItemEntity.kLineEntity.close - marketItemEntity.kLineEntity.open) > 0 ? '+' : ''}${FormatUtil.truncateDecimalNum(
-                              (Decimal.parse(marketItemEntity.kLineEntity.close
-                                          .toString()) -
-                                      Decimal.parse(marketItemEntity
-                                          .kLineEntity.open
-                                          .toString())) /
-                                  Decimal.parse(marketItemEntity
-                                      .kLineEntity.open
-                                      .toString()) *
-                                  Decimal.fromInt(100),
+                            '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
+                              _latestPercent * 100.0,
                               2,
                             )}%',
                             style: TextStyle(
                               color: Colors.white,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
