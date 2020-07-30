@@ -414,7 +414,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 child: TextFormField(
                   validator: (value) {
                     value = value.trim();
-                    if (value == "0") {
+                    if (value == '0') {
                       return S.of(context).input_corrent_count_hint;
                     }
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {

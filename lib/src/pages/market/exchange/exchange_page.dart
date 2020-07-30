@@ -42,8 +42,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   ExchangeApi _exchangeApi = ExchangeApi();
-  Decimal usdtToCurrency;
-  Decimal ethToCurrency;
 
   @override
   void dispose() {
@@ -63,7 +61,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     if (MarketInheritedModel.of(context).marketItemList != null) {
       _marketItemList = MarketInheritedModel.of(context).marketItemList;
     }
-    _updateTypeToCurrency();
   }
 
   @override
@@ -71,25 +68,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     // TODO: implement initState
     super.initState();
     _sub24HourChannel();
-  }
-
-  _updateTypeToCurrency() async {
-    usdtToCurrency = await _getCurrencyFromType(
-      'USDT',
-      QuotesInheritedModel.of(context)
-          .activatedQuoteVoAndSign('USDT')
-          ?.sign
-          ?.quote,
-    );
-
-    ethToCurrency = await _getCurrencyFromType(
-      'ETH',
-      QuotesInheritedModel.of(context)
-          .activatedQuoteVoAndSign('USDT')
-          ?.sign
-          ?.quote,
-    );
-    setState(() {});
   }
 
   // 24hour
@@ -159,9 +137,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               print('[ExchangePage] ReceivedDataState: ${state.response}');
             } else if (state is ChannelKLine24HourState) {
               _updateMarketItemList(state.response, symbol: state.symbol);
-
-              ///Update quotation too
-              _updateTypeToCurrency();
             }
           },
         ),
@@ -361,6 +336,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _account() {
+    var quote = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('USDT')
+        ?.sign
+        ?.quote;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -384,21 +363,27 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 horizontal: 8.0,
                 vertical: 8.0,
               ),
-              child: QuotesInheritedModel.of(context)
-                          .activatedQuoteVoAndSign('USDT')
-                          .sign
-                          .quote ==
-                      'CNY'
+              child: quote == null
                   ? Image.asset(
                       'res/drawable/ic_exchange_account_cny.png',
                       width: 20,
                       height: 20,
                     )
-                  : Image.asset(
-                      'res/drawable/ic_exchange_account_usd.png',
-                      width: 20,
-                      height: 20,
-                    ),
+                  : QuotesInheritedModel.of(context)
+                              .activatedQuoteVoAndSign('USDT')
+                              .sign
+                              .quote ==
+                          'CNY'
+                      ? Image.asset(
+                          'res/drawable/ic_exchange_account_cny.png',
+                          width: 20,
+                          height: 20,
+                        )
+                      : Image.asset(
+                          'res/drawable/ic_exchange_account_usd.png',
+                          width: 20,
+                          height: 20,
+                        ),
             ),
             Text(
               '交易账户',
@@ -425,22 +410,27 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _assetView() {
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
+      var _ethQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+        'ETH',
+      );
+
+      var _ethTotalQuotePrice = _ethQuote == null
+          ? '--'
+          : FormatUtil.truncateDecimalNum(
+              ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .activeAccount
+                      .assetList
+                      .getTotalEth() *
+                  Decimal.parse(_ethQuote?.quoteVo?.price.toString()),
+              4,
+            );
       return Text.rich(
         TextSpan(children: [
           TextSpan(
             text:
                 ExchangeInheritedModel.of(context).exchangeModel.isShowBalances
-                    ? ethToCurrency == null
-                        ? '--'
-                        : '${FormatUtil.truncateDecimalNum(
-                            ethToCurrency *
-                                ExchangeInheritedModel.of(context)
-                                    .exchangeModel
-                                    .activeAccount
-                                    .assetList
-                                    .getTotalEth(),
-                            4,
-                          )}'
+                    ? _ethTotalQuotePrice
                     : '*****',
           ),
           TextSpan(
@@ -631,8 +621,19 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _marketItem(MarketItemEntity marketItemEntity) {
-    var symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+    var _selectedQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+      marketItemEntity.symbolName,
+    );
+    var _latestPrice = MarketInheritedModel.of(context).getRealTimePrice(
+      marketItemEntity.symbol,
+    );
+    var _latestQuotePrice = _selectedQuote == null
+        ? '--'
+        : FormatUtil.truncateDoubleNum(
+            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+            4,
+          );
 
     return InkWell(
       onTap: () {
@@ -702,7 +703,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                             height: 4,
                           ),
                           Text(
-                            '${symbolQuote?.sign?.sign} ${_getCurrencyFromMarketItem(marketItemEntity)}',
+                            '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice',
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 color: Colors.grey,
@@ -779,26 +780,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   Future<Decimal> _getCurrencyFromType(String type, String currency) async {
     var ret = await _exchangeApi.type2currency(type, currency);
     return Decimal.parse(ret.toString());
-  }
-
-  _getCurrencyFromMarketItem(MarketItemEntity marketItemEntity) {
-    return marketItemEntity.symbolName == 'USDT'
-        ? usdtToCurrency == null
-            ? '--'
-            : FormatUtil.truncateDecimalNum(
-                usdtToCurrency *
-                    Decimal.parse(
-                        marketItemEntity.kLineEntity.close.toString()),
-                4,
-              )
-        : ethToCurrency == null
-            ? '--'
-            : FormatUtil.truncateDecimalNum(
-                ethToCurrency *
-                    Decimal.parse(
-                        marketItemEntity.kLineEntity.close.toString()),
-                4,
-              );
   }
 
   Widget _authorizedView() {
