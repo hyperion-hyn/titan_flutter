@@ -281,10 +281,10 @@ class PositionApi {
 
     return json;
   }
+ 
 
   Future<dynamic> getConfirmV2Data(double lon, double lat, {String lang = "zh-Hans"}) async {
-    getEthAddress();
-
+    //print("[PositionApi] getConfirmDataV2, address = $userEthAddress");
     return await HttpCore.instance.get("map-collector/poi/v2/query",
         params: {'lon': lon, 'lat': lat, 'language': lang},
         options: RequestOptions(headers: {
