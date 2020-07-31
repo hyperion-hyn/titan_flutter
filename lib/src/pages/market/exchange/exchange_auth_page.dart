@@ -31,7 +31,12 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     super.onCreated();
 
     _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-    _checkIsAuthAlready();
+    Future.delayed(
+      Duration(milliseconds: 1000),
+      () {
+        _checkIsAuthAlready();
+      },
+    );
   }
 
   @override

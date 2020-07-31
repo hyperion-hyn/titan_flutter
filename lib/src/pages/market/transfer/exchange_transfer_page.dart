@@ -94,26 +94,33 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ],
             ),
           ),
-          body: Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: ListView(
-                      children: <Widget>[
-                        _transferTypeSelection(),
-                        _coinTypeSelection(),
-                        _amount(),
-                        _transferHint(),
-                      ],
+          body: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // hide keyboard when touch other widgets
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: ListView(
+                        children: <Widget>[
+                          _transferTypeSelection(),
+                          _coinTypeSelection(),
+                          _amount(),
+                          _transferHint(),
+                        ],
+                      ),
                     ),
-                  ),
-                  _confirm()
-                ],
+                    _confirm()
+                  ],
+                ),
               ),
             ),
           ),
@@ -359,6 +366,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             ),
           ),
           onPressed: () async {
+            FocusScope.of(context).requestFocus(FocusNode());
             if (_fromKey.currentState.validate()) {
               _transfer();
             }
@@ -512,10 +520,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     } else {
       _deposit();
     }
-//    Application.router.navigateTo(
-//      context,
-//      Routes.exchange_transfer_success_page,
-//    );
   }
 
   _deposit() async {
