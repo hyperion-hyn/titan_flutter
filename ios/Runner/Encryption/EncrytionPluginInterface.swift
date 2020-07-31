@@ -52,7 +52,7 @@ class EncrytionPluginInterface {
                     result(ciphertext)
                 }, onError: { error in
                     result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
-                }, onCompleted: nil, onDisposed: nil)
+                }, onCompleted: nil, onDisposed: nil)  
             return true
             
         case "decrypt":
@@ -71,6 +71,58 @@ class EncrytionPluginInterface {
                     result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
                 }, onCompleted: nil, onDisposed: nil)
             return true
+            
+        case "trustActiveEncrypt":
+            guard let params = methodCall.arguments as? [String: String] else {
+                result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
+                return true
+            }
+            guard let fileName = params["fileName"], let password = params["password"] else {
+                result(FlutterError.init(code: ErrorCode.PARAMETERS_WRONG, message: "params can not find message", details: nil))
+                return true
+            }
+            
+            self.encryptService.trustActiveEncrypt(password: password, fileName: fileName)
+                .subscribe(onNext: { (message) in
+                    result(message)
+                }, onError: { error in
+                    result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
+                }, onCompleted: nil, onDisposed: nil)
+            return true
+            
+            case "trustEncrypt":
+                guard let params = methodCall.arguments as? [String: String] else {
+                    result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
+                    return true
+                }
+                guard let pub = params["publicKey"], let message = params["message"] else {
+                    result(FlutterError.init(code: "-1", message: "params can not find message", details: nil))
+                    return true
+                }
+                self.encryptService.trustEncrypt(publicKeyStr: pub, message: message)
+                    .subscribe(onNext: { (ciphertext) in
+                        result(ciphertext)
+                    }, onError: { error in
+                        result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
+                    }, onCompleted: nil, onDisposed: nil)
+                return true
+                
+            case "trustDecrypt":
+                guard let params = methodCall.arguments as? [String: String] else {
+                    result(FlutterError.init(code: "-1", message: "params is not [String: String]", details: nil))
+                    return true
+                }
+                guard let fileName = params["fileName"], let password = params["password"], let cipherText = params["cipherText"] else {
+                    result(FlutterError.init(code: "-1", message: "params can not find message", details: nil))
+                    return true
+                }
+                self.encryptService.trustDecrypt(cipherText: cipherText, fileName: fileName, password: password)
+                    .subscribe(onNext: { (message) in
+                        result(message)
+                    }, onError: { error in
+                        result(FlutterError.init(code: "-1", message: error.localizedDescription, details: nil))
+                    }, onCompleted: nil, onDisposed: nil)
+                return true
             
         default:
             return false

@@ -153,7 +153,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return true;
+        return !_isSendConfirm;
       },
       child: Scaffold(
         appBar: AppBar(
