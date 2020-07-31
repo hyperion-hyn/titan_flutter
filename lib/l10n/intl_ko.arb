@@ -188,7 +188,7 @@
   "input_corrent_count_hint": "정확한 수량을 입력하세요",
   "input_count_over_balance": "수량을 초과하였습니다",
   "account_is_empty": "계정이 비어 있습니다",
-  "gas_fee": "네트워크 비용",
+  "gas_fee": "네트워크 비용(ETH)",
   "speed_slow": "느린 속도",
   "speed_normal": "보통 속도",
   "speed_fast": "빠른 속도",

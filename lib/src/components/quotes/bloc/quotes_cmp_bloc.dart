@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -49,37 +51,57 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
       yield UpdatedQuotesSignState(sign: event.sign);
     } else if (event is UpdateGasPriceEvent) {
       yield GasPriceState(status: Status.loading);
-
+      bool isGasSuccess = false;
+      bool isBTCGasSuccess = false;
       try {
         var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
         var gasPriceRecommend = GasPriceRecommend(
-            fast: parseGasPriceToBigIntWei(response['fastest']),
-            fastWait: response['fastestWait'],
+            parseGasPriceToBigIntWei(response['fastest']),
+            response['fastestWait'],
 //            average: parseGasPriceToBigIntWei(response['average']),
-            average: parseGasPriceToBigIntWei(response['fast']),
+            parseGasPriceToBigIntWei(response['fast']),
 //            avgWait: response['avgWait'],
-            avgWait: response['fastWait'],
+            response['fastWait'],
 //            safeLow: parseGasPriceToBigIntWei(response['safeLow']),
 //            safeLowWait: response['safeLowWait']);
-            safeLow: parseGasPriceToBigIntWei(response['average']),
-            safeLowWait: response['avgWait']);
+            parseGasPriceToBigIntWei(response['average']),
+            response['avgWait']);
+        await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY, json.encode(gasPriceRecommend.toJson()));
         yield GasPriceState(status: Status.success, gasPriceRecommend: gasPriceRecommend);
+        isGasSuccess = true;
 
         var btcResponse = await BitcoinApi.requestBtcFeeRecommend();
         if(btcResponse["code"] == 0){
           var btcResponseData = btcResponse["data"];
           var btcGasPriceRecommend = BTCGasPriceRecommend(
-              fast: Decimal.fromInt(btcResponseData['fastest']),
-              fastWait: double.parse(btcResponseData['fastestWait'].toString()),
-              average: Decimal.fromInt(btcResponseData['fast']),
-              avgWait: double.parse(btcResponseData['fastWait'].toString()),
-              safeLow: Decimal.fromInt(btcResponseData['average']),
-              safeLowWait: double.parse(btcResponseData['avgWait'].toString()));
+              Decimal.fromInt(btcResponseData['fastest']),
+              double.parse(btcResponseData['fastestWait'].toString()),
+              Decimal.fromInt(btcResponseData['fast']),
+              double.parse(btcResponseData['fastWait'].toString()),
+              Decimal.fromInt(btcResponseData['average']),
+              double.parse(btcResponseData['avgWait'].toString()));
+          await AppCache.saveValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY, json.encode(btcGasPriceRecommend.toJson()));
           yield GasPriceState(status: Status.success, btcGasPriceRecommend: btcGasPriceRecommend);
+          isBTCGasSuccess = true;
         }
       } catch (e) {
         logger.e(e);
-        yield GasPriceState(status: Status.failed);
+        if(!isGasSuccess) {
+          var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
+          if(gasPriceEntityStr != null){
+            yield GasPriceState(status: Status.success, gasPriceRecommend: json.decode(gasPriceEntityStr));
+          }else{
+            yield GasPriceState(status: Status.failed);
+          }
+        }
+        if(!isBTCGasSuccess) {
+          var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
+          if(btcGasPriceEntityStr != null){
+            yield GasPriceState(status: Status.success, btcGasPriceRecommend: json.decode(btcGasPriceEntityStr));
+          }else{
+            yield GasPriceState(status: Status.failed);
+          }
+        }
       }
     }
   }

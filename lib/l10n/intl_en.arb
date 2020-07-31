@@ -189,7 +189,7 @@
   "input_corrent_count_hint": "Please enter the correct amount",
   "input_count_over_balance": "Exceed balance limit",
   "account_is_empty": "Account is empty",
-  "gas_fee": "Transaction Fee",
+  "gas_fee": "Transaction Fee(ETH)",
   "speed_slow": "Slow",
   "speed_normal": "Normal",
   "speed_fast": "Fast",
