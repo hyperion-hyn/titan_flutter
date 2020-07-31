@@ -8,6 +8,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/utils/future_util.dart';
 import '../coin_market_api.dart';
 import '../model.dart';
 import './bloc.dart';
@@ -54,7 +55,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
       bool isGasSuccess = false;
       bool isBTCGasSuccess = false;
       try {
-        var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
+        var response = await futureRetry(3, requestGasPrice);
         var gasPriceRecommend = GasPriceRecommend(
             parseGasPriceToBigIntWei(response['fastest']),
             response['fastestWait'],
@@ -104,6 +105,11 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
         }
       }
     }
+  }
+
+  Future requestGasPrice() async {
+    var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
+    return response;
   }
 
   Decimal parseGasPriceToBigIntWei(double num) {
