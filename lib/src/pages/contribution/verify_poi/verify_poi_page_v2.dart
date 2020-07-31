@@ -596,7 +596,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
       context,
       MaterialPageRoute(
         builder: (context) => VerifyPositionPage(
-          initLocation: widget.userPosition,
+          initLocation: _confirmPoiItem.latLng,
           addressName: _confirmPoiItem.name,
         ),
       ),
