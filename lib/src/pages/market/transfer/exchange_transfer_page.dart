@@ -14,6 +14,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -405,6 +406,19 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
+  _validateAmount(String value) {
+    if (value == '0') {
+      return S.of(context).input_corrent_count_hint;
+    }
+    if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
+      return S.of(context).input_corrent_count_hint;
+    }
+    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
+      return S.of(context).input_count_over_balance;
+    }
+    return null;
+  }
+
   _amount() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,6 +434,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               child: Form(
                 key: _fromKey,
                 child: TextFormField(
+                  controller: _amountController,
                   validator: (value) {
                     value = value.trim();
                     if (value == '0') {
@@ -434,39 +449,106 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     }
                     return null;
                   },
-                  controller: _amountController,
-                  decoration: InputDecoration.collapsed(
-                    hintText: '请输入划转数量',
-                    hintStyle: TextStyle(
-                      color: HexColor('#FF999999'),
-                      fontSize: 13,
-                    ),
-                  ),
+                  onChanged: (data) {
+                    _fromKey.currentState.validate();
+                    _validateAmount(data);
+                  },
+                  decoration: InputDecoration(
+                      border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                        color: HexColor('#FFD7D7D7'),
+                      )),
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                        color: HexColor('#FFD7D7D7'),
+                      )),
+//                      focusedBorder: InputBorder.none,
+//                      enabledBorder: InputBorder.none,
+//                      errorBorder: InputBorder.none,
+//                      disabledBorder: InputBorder.none,
+                      hintText: '请输入划转数量',
+                      hintStyle: TextStyle(
+                        color: HexColor('#FF999999'),
+                        fontSize: 12,
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Container(
+                          width: 100,
+                          child: Row(
+                            children: <Widget>[
+                              Spacer(),
+                              Text(
+                                _selectedCoinType,
+                                style: TextStyle(
+                                  color: HexColor('#FF777777'),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                '  |  ',
+                                style: TextStyle(color: HexColor('#FFD8D8D8')),
+                              ),
+                              InkWell(
+                                child: Text(
+                                  '全部',
+                                  style: TextStyle(
+                                      color: HexColor('#FF333333'),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onTap: () {
+                                  _amountController.text = _availableAmount();
+                                  setState(() {});
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      )),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
               ),
             ),
-            Text(
-              _selectedCoinType,
-              style: TextStyle(
-                color: HexColor('#FF777777'),
-                fontSize: 13,
-              ),
-            ),
-            Text('  |  '),
-            InkWell(
-              child: Text('全部'),
-              onTap: () {
-                _amountController.text = _availableAmount();
-                setState(() {});
-              },
-            )
           ],
         ),
-        Divider(),
-        Text(
-          '可用${_availableAmount()} $_selectedCoinType',
-          style: TextStyle(color: HexColor('#FFAAAAAA'), fontSize: 14),
+        SizedBox(
+          height: 16,
+        ),
+        Row(
+          children: <Widget>[
+            Text(
+              '最小划转数 50 HYN',
+              style: TextStyle(
+                color: HexColor('#FFAAAAAA'),
+                fontSize: 12,
+              ),
+            ),
+            Spacer(),
+            Text.rich(TextSpan(children: [
+              TextSpan(
+                text: '账户余额 ',
+                style: TextStyle(
+                  color: HexColor('#FFAAAAAA'),
+                  fontSize: 12,
+                ),
+              ),
+              TextSpan(
+                text: _availableAmount(),
+                style: TextStyle(
+                  color: HexColor('#FF333333'),
+                  fontSize: 12,
+                ),
+              ),
+              TextSpan(
+                text: ' ${_selectedCoinType}',
+                style: TextStyle(
+                  color: HexColor('#FFAAAAAA'),
+                  fontSize: 12,
+                ),
+              ),
+            ])),
+          ],
         )
       ],
     );
@@ -539,26 +621,41 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       var voStr = FluroConvertUtils.object2string(coinVo.toJson());
       Application.router.navigateTo(
         context,
-        Routes.exchange_transfer_confirm_page +
+        Routes.exchange_deposit_confirm_page +
             "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=$address",
       );
     } catch (e) {}
   }
 
   _withdraw() async {
-    try {
-      var ret = await _exchangeApi.withdraw(
-        _selectedCoinType,
-        WalletInheritedModel.of(
-          context,
-          aspect: WalletAspect.activatedWallet,
-        ).activatedWallet.wallet.getEthAccount().address,
-        _amountController.text,
-      );
-      if (ret.code == 0) {
-      } else {
-        Fluttertoast.showToast(msg: ret.msg);
-      }
-    } catch (e) {}
+//    try {
+//      var ret = await _exchangeApi.withdraw(
+//        _selectedCoinType,
+//        WalletInheritedModel.of(
+//          context,
+//          aspect: WalletAspect.activatedWallet,
+//        ).activatedWallet.wallet.getEthAccount().address,
+//        _amountController.text,
+//      );
+//      if (ret.code == 0) {
+//      } else {
+//        Fluttertoast.showToast(msg: ret.msg);
+//      }
+//    } catch (e) {}
+
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbol(
+      _selectedCoinType,
+    );
+
+    var voStr = FluroConvertUtils.object2string(coinVo.toJson());
+
+    Application.router.navigateTo(
+      context,
+      Routes.exchange_withdraw_confirm_page +
+          "?coinVo=$voStr&transferAmount=${_amountController.text}",
+    );
   }
 }

@@ -37,8 +37,10 @@ class Routes {
   ///Exchange
   static const String exchange_assets_page = '/exchange/assets';
   static const String exchange_transfer_page = '/exchange/transfer';
-  static const String exchange_transfer_confirm_page =
-      '/exchange/transfer_confirm';
+  static const String exchange_deposit_confirm_page =
+      '/exchange/deposit_confirm';
+  static const String exchange_withdraw_confirm_page =
+      '/exchange/withdraw_confirm';
   static const String exchange_transfer_success_page =
       '/exchange/transfer_success';
 
@@ -163,9 +165,14 @@ class Routes {
       handler: exchangeTransferHandler,
       transitionType: pushNewPageTransitionType,
     );
-    router.define(exchange_transfer_confirm_page,
-        handler: exchangeTransferConfirmHandler,
+    router.define(exchange_deposit_confirm_page,
+        handler: exchangeDepositConfirmHandler,
         transitionType: pushNewPageTransitionType);
+
+    router.define(exchange_withdraw_confirm_page,
+        handler: exchangeWithdrawConfirmHandler,
+        transitionType: pushNewPageTransitionType);
+
     router.define(
       exchange_transfer_success_page,
       handler: exchangeTransferSuccessHandler,

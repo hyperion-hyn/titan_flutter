@@ -104,8 +104,9 @@ class _WalletBackupNoticeState extends State<WalletBackupNoticePage> {
                                 Text(
                                   S.of(context).backup_wallet_mnemonic_title,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ],
                             ),

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -26,14 +27,15 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:web3dart/json_rpc.dart';
 
-class ExchangeTransferConfirmPage extends StatefulWidget {
+class ExchangeDepositConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
   final String receiverAddress;
 
-  ExchangeTransferConfirmPage(
+  ExchangeDepositConfirmPage(
     String coinVo,
     this.transferAmount,
     this.receiverAddress,
@@ -41,12 +43,12 @@ class ExchangeTransferConfirmPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ExchangeTransferConfirmPageState();
+    return _ExchangeDepositConfirmPageState();
   }
 }
 
-class _ExchangeTransferConfirmPageState
-    extends BaseState<ExchangeTransferConfirmPage> {
+class _ExchangeDepositConfirmPageState
+    extends BaseState<ExchangeDepositConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
   var isTransferring = false;
@@ -147,7 +149,10 @@ class _ExchangeTransferConfirmPageState
         centerTitle: true,
         title: Text(
           '划转确认',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -190,7 +195,7 @@ class _ExchangeTransferConfirmPageState
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
                   Column(
@@ -201,9 +206,9 @@ class _ExchangeTransferConfirmPageState
                         child: Text(
                           "From",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF333333),
+                            color: HexColor('#FF999999'),
                           ),
                         ),
                       ),
@@ -212,24 +217,38 @@ class _ExchangeTransferConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '钱包',
+                                "${activatedWallet.wallet.keystore.name}",
                                 style: TextStyle(
-                                    fontSize: 16, color: Color(0xFF999999)),
+                                    fontSize: 14,
+                                    color: Color(0xFF333333),
+                                    fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                                softWrap: true,
+                              ),
+                              Text(
+                                "(${shortBlockChainAddress(widget.coinVo.address)})",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF999999),
+                                    fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               )
                             ],
-                          )),
+                          ))
                     ],
                   )
                 ],
               ),
             ),
-            Divider(
-              height: 2,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(
+                height: 2,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
                   Column(
@@ -240,29 +259,34 @@ class _ExchangeTransferConfirmPageState
                         child: Text(
                           "To",
                           style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF333333)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: HexColor('#FF999999'),
+                          ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          '交易账户',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF999999),
-                          ),
-                        ),
-                      )
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            '交易账户',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )),
                     ],
                   )
                 ],
               ),
             ),
-            Container(
-              color: Color(0xFFF2F2F2),
-              height: 8.0,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(
+                height: 2,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -274,9 +298,10 @@ class _ExchangeTransferConfirmPageState
                     child: Text(
                       S.of(context).gas_fee,
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color: Color(0xFF9B9B9B)),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
                     ),
                   ),
                   Padding(
@@ -290,7 +315,10 @@ class _ExchangeTransferConfirmPageState
                           child: Text(
                             gasPriceEstimateStr,
                             style: TextStyle(
-                                fontSize: 16, color: Color(0xFF252525)),
+                              fontSize: 14,
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         if (isLoadingGasFee)

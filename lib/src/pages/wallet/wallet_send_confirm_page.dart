@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/model.dart';
@@ -216,7 +217,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
                   Column(
@@ -227,9 +228,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                         child: Text(
                           "From",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF333333),
+                            color: HexColor('#FF999999'),
                           ),
                         ),
                       ),
@@ -240,29 +241,36 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                               Text(
                                 "${activatedWallet.wallet.keystore.name}",
                                 style: TextStyle(
-                                    fontSize: 16, color: Color(0xFF333333)),
+                                    fontSize: 14,
+                                    color: Color(0xFF333333),
+                                    fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               ),
                               Text(
                                 "(${shortBlockChainAddress(widget.coinVo.address)})",
                                 style: TextStyle(
-                                    fontSize: 16, color: Color(0xFF999999)),
+                                    fontSize: 14,
+                                    color: Color(0xFF999999),
+                                    fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               )
                             ],
-                          )),
+                          ))
                     ],
                   )
                 ],
               ),
             ),
-            Divider(
-              height: 2,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(
+                height: 2,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: <Widget>[
                   Column(
@@ -273,38 +281,35 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                         child: Text(
                           "To",
                           style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFF333333)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: HexColor('#FF999999'),
+                          ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          shortBlockChainAddress(widget.receiverAddress),
-                          style:
-                              TextStyle(fontSize: 16, color: Color(0xFF999999)),
-                        ),
-                      )
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            '${shortBlockChainAddress(widget.receiverAddress)}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          )),
                     ],
                   )
                 ],
               ),
             ),
-            Container(
-              color: Color(0xFFF2F2F2),
-              height: 8.0,
-            ),
-            /*Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GasInputWidget(
-                currentEthPrice: ethQuotePrice,
-                callback: (double gasPrice, double gasPriceLimit) {
-                  print(
-                      "[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                },
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(
+                height: 2,
               ),
-            ),*/
+            ),
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -315,9 +320,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                     child: Text(
                       S.of(context).gas_fee,
                       style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                          color: Color(0xFF9B9B9B)),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
                     ),
                   ),
                   Padding(
@@ -331,7 +337,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                           child: Text(
                             gasPriceEstimateStr,
                             style: TextStyle(
-                                fontSize: 16, color: Color(0xFF252525)),
+                              fontSize: 14,
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         if (isLoadingGasFee)
