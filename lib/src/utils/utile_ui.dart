@@ -489,6 +489,7 @@ class UiUtil {
             return EnterWalletPasswordWidget(
               isShowBioAuthIcon: isShowBioAuthIcon,
               wallet: wallet,
+              onPwdSubmitted: onCheckPwdValid,
             );
           });
       var result = await onCheckPwdValid(pwd);

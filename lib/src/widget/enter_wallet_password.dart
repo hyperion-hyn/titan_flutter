@@ -23,12 +23,7 @@ class EnterWalletPasswordWidget extends StatefulWidget {
   final bool isShowBioAuthIcon;
   final Wallet wallet;
 
-  EnterWalletPasswordWidget({
-    this.useDigits = false,
-    this.onPwdSubmitted,
-    this.isShowBioAuthIcon = true,
-    this.wallet
-  });
+  EnterWalletPasswordWidget({this.useDigits = false, this.onPwdSubmitted, this.isShowBioAuthIcon = true, this.wallet});
 
   @override
   State<StatefulWidget> createState() {
@@ -72,10 +67,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                     key: _formKey,
                     child: Container(
                         padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            top: 16,
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                            left: 16, right: 16, top: 16, bottom: MediaQuery.of(context).viewInsets.bottom),
                         child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,19 +75,14 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                               Center(
                                 child: Text(
                                   S.of(context).safety_verification,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16.0),
+                                padding: const EdgeInsets.symmetric(vertical: 16.0),
                                 child: Text(
                                   S.of(context).wallet_password_label,
-                                  style: TextStyle(
-                                      color: HexColor("#093956"),
-                                      fontWeight: FontWeight.w500),
+                                  style: TextStyle(color: HexColor("#093956"), fontWeight: FontWeight.w500),
                                 ),
                               ),
                               TextFormField(
@@ -105,9 +92,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                 ],
                                 validator: (value) {
                                   if (!ValidatorUtil.validatePassword(value)) {
-                                    return S
-                                        .of(context)
-                                        .input_confirm_wallet_password_hint;
+                                    return S.of(context).wallet_password_error;
                                   } else {
                                     return null;
                                   }
@@ -119,16 +104,11 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                 keyboardType: TextInputType.emailAddress,
                                 obscureText: true,
                                 decoration: InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 16),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
                                   filled: true,
                                   fillColor: HexColor('#FFF2F2F2'),
-                                  hintText: S
-                                      .of(context)
-                                      .please_input_wallet_password_hint,
-                                  errorText: walletEditErrorMsg != null
-                                      ? walletEditErrorMsg
-                                      : null,
+                                  hintText: S.of(context).please_input_wallet_password_hint,
+                                  errorText: walletEditErrorMsg != null ? walletEditErrorMsg : null,
                                   hintStyle: TextStyle(
                                     color: HexColor('#FF999999'),
                                     fontSize: 14,
@@ -171,16 +151,14 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                                       padding: const EdgeInsets.only(top: 16.0),
                                       child: Text(
                                         S.of(context).forgot_password,
-                                        style: TextStyle(
-                                            color: HexColor('#FF1F81FF')),
+                                        style: TextStyle(color: HexColor('#FF1F81FF')),
                                       ),
                                     ),
                                     onTap: () {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                ForgotWalletPasswordPage(),
+                                            builder: (context) => ForgotWalletPasswordPage(),
                                           ));
                                     },
                                   )
@@ -188,21 +166,17 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
                               ),
                               Center(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 32),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
                                   child: ClickOvalButton(
                                     S.of(context).confirm,
-                                    () {
-                                      if (ValidatorUtil.validatePassword(
-                                          passwordEditingController.text)) {
-                                        String password =
-                                            passwordEditingController.text;
-                                        Navigator.pop(context, password);
+                                    () async {
+                                      var inputText = passwordEditingController.text;
+                                      var result = await widget.onPwdSubmitted(inputText);
+                                      if (result) {
+                                        Navigator.of(context).pop(inputText);
                                       } else {
                                         setState(() {
-                                          walletEditErrorMsg = S
-                                              .of(context)
-                                              .input_confirm_wallet_password_hint;
+                                          walletEditErrorMsg = S.of(context).wallet_password_error;
                                         });
                                       }
                                     },
@@ -278,8 +252,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
   }
 
   _goToBioAuthSettingPage() async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SetBioAuthPage(widget.wallet)));
+    await Navigator.push(context, MaterialPageRoute(builder: (context) => SetBioAuthPage(widget.wallet)));
     setState(() {
       _isHideLayout = true;
     });
