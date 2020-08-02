@@ -76,7 +76,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
     _activeWallet = WalletInheritedModel.of(context).activatedWallet;
     if (_activeWallet != null) {
       walletSecurePubKey =
-          '${SecurePrefsKey.WALLET_P2P_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
+          '${SecurePrefsKey.WALLET_P2P_DECOMP_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
       var walletPubKey = await AppCache.secureGetValue(walletSecurePubKey);
       print("!!!!$walletPubKey");
       if (walletPubKey != null) {

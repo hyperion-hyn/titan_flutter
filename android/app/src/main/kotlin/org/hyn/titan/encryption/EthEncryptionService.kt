@@ -82,21 +82,21 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
                 throw Exception("password error")
             }
             var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
-            var comPublicKey = publicKeyEntity?.compressed()?.description() ?: ""
-            if(comPublicKey.isNotEmpty()){
+            var deComPublicKey = publicKeyEntity?.description() ?: ""
+            /*if(comPublicKey.isNotEmpty()){
                 comPublicKey = "0x$comPublicKey"
-            }
-            return@fromCallable comPublicKey
+            }*/
+            return@fromCallable deComPublicKey
         }
     }
 
     override fun trustEncrypt(publicKeyStr: String?, message: String): Flowable<String> {
         return Flowable.fromCallable {
-            var tempPublicKey = cipher.deCompressPubkey(publicKeyStr)
+            /*var tempPublicKey = cipher.deCompressPubkey(publicKeyStr)
             if (tempPublicKey.isEmpty()) {
                 throw Exception("encrypt error")
-            }
-            var cipherText = cipher.encrypt(tempPublicKey, message)
+            }*/
+            var cipherText = cipher.encrypt(publicKeyStr, message)
             if (cipherText.isEmpty()) {
                 throw Exception("encrypt error")
             }

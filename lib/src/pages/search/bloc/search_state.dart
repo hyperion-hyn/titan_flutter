@@ -3,8 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../../store.dart';
 
-@immutable
-abstract class SearchState extends Equatable {
+abstract class SearchState {
   SearchState();
 
   Map<String, dynamic> get store => getStoreOfGlobal('searchState');
