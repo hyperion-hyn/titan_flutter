@@ -9,7 +9,6 @@ import 'package:titan/src/pages/market/order/exchange_order_history_page.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
 
-
 class ExchangeOrderManagementPage extends StatefulWidget {
   final String market;
 
@@ -21,9 +20,7 @@ class ExchangeOrderManagementPage extends StatefulWidget {
   }
 }
 
-class _ExchangeOrderManagementPageState
-    extends State<ExchangeOrderManagementPage>
-    with SingleTickerProviderStateMixin {
+class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -58,20 +55,18 @@ class _ExchangeOrderManagementPageState
                 height: 50.0,
                 child: Row(
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: InkWell(
+                    InkWell(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
                         child: Icon(
                           Icons.arrow_back_ios,
                           size: 20,
                         ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
                       ),
+                      onTap: () => Navigator.of(context).pop(),
                     ),
                     Expanded(
-                      flex: 4,
+                      flex: 10,
                       child: TabBar(
                         labelColor: HexColor('#FF228BA1'),
                         labelStyle: TextStyle(

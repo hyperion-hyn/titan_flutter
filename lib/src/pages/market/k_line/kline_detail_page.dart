@@ -745,8 +745,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       Expanded(
                         flex: 2,
                         child: Text(
-//                            FormatUtil.formatSecondDate(excDetailEntity.date),
-                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
+                            FormatUtil.formatSecondDate(excDetailEntity.date),
+//                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
                           style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -937,17 +937,26 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       }
       return entity;
     }).toList();
-    print("[WS] --> _dealTradeData, tradeInfoEntityList.length:${tradeInfoEntityList.length}");
+    print("[WS] --> _dealTradeData, 1,tradeInfoEntityList.length:${tradeInfoEntityList.length}");
 
+    var kMaxTradeCount = 20;
     if (isReplace) {
       if (tradeInfoEntityList.isNotEmpty) {
-        _tradeItemList = tradeInfoEntityList;
+        if (tradeInfoEntityList.length > kMaxTradeCount) {
+          _tradeItemList = tradeInfoEntityList.sublist(0, kMaxTradeCount);
+        } else {
+          _tradeItemList = tradeInfoEntityList;
+        }
       }
     } else {
       if (tradeInfoEntityList.isNotEmpty) {
-        _tradeItemList.addAll(tradeInfoEntityList);
+        _tradeItemList.insertAll(0, tradeInfoEntityList);
+        if (_tradeItemList.length > kMaxTradeCount) {
+          _tradeItemList = _tradeItemList.sublist(0, kMaxTradeCount);
+        }
       }
     }
+    print("[WS] --> _dealTradeData, 2,_tradeItemList.length:${_tradeItemList.length}");
 
     setState(() {
       _showLoadingTrade = false;

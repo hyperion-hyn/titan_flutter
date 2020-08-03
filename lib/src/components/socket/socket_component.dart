@@ -204,7 +204,7 @@ class MarketInheritedModel extends InheritedModel<String> {
 
   String getRealTimePrice(String symbol) {
     var marketItem = getMarketItem(symbol);
-    return marketItem?.kLineEntity?.close?.toString() ?? "--";
+    return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 
   double getRealTimePricePercent(String symbol) {
