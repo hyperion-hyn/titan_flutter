@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -35,6 +36,7 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
   List<Order> _activeOrders = List();
   ExchangeModel exchangeModel;
   String userTickChannel;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -159,21 +161,7 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
           setState(() {});
         }
       },
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: _activeOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(
-          _activeOrders[index],
-          revokeOrder: (Order orderEntity) async {
-            await exchangeApi.orderCancel(orderEntity.orderId);
-//          var result = await exchangeApi.orderCancel(orderEntity.orderId);
-//          if(result is Map && result["errorCode"] == 0){
-//          }
-          },
-          market: widget.market,
-        ),
-      ),
+      child: orderListWidget(),
     );
   }
 
@@ -181,10 +169,50 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
     List<Order> orderList = await exchangeApi.getOrderList(widget.market, 1, 100, "active");
     _activeOrders.clear();
     _activeOrders.addAll(orderList);
-    if (mounted) setState(() {});
+    if (mounted) setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  Widget orderListWidget() {
+    if(isLoading){
+      return Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+          ),
+        ),
+      );
+    }
+
+    if(_activeOrders.length == 0){
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: 13,),
+          Image.asset("res/drawable/ic_consign_empty.png",width: 59,height: 64),
+          SizedBox(height: 10,),
+          Text(exchangeModel.isActiveAccount() ? "暂无委托单" : "登录后查看委托单",style: TextStyle(fontSize: 14,color: HexColor("#999999")),)
+        ],
+      );
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: _activeOrders.length,
+      itemBuilder: (ctx, index) => OrderItem(
+        _activeOrders[index],
+        revokeOrder: (Order orderEntity) async {
+          await exchangeApi.orderCancel(orderEntity.orderId);
+        },
+        market: widget.market,
+      ),
+    );
+  }
 }
