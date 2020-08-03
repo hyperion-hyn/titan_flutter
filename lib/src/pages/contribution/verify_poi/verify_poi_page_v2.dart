@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -94,6 +95,8 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
 
     _positionBloc.listen((state) {
       if (state is PostConfirmPoiDataV2ResultSuccessState) {
+        _saveData();
+
         Application.router.navigateTo(
             context,
             Routes.contribute_position_finish +
@@ -109,6 +112,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () {
+                        _saveData();
                         Navigator.of(context)..pop()..pop();
                       },
                       child: Text(S.of(context).confirm))
@@ -180,6 +184,10 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
   }
 
   // UI
+  void _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(PrefsKey.VERIFY_DATE, DateTime.now().millisecondsSinceEpoch);
+  }
   void _setupData() {}
 
   Widget _buildView() {
