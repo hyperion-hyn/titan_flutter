@@ -30,13 +30,13 @@ class ExchangeActiveOrderListPage extends StatefulWidget {
   }
 }
 
-class ExchangeActiveOrderListPageState
-    extends BaseState<ExchangeActiveOrderListPage>
+class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderListPage>
     with AutomaticKeepAliveClientMixin, RouteAware {
   var exchangeApi = ExchangeApi();
   List<Order> _activeOrders = List();
   ExchangeModel exchangeModel;
   String userTickChannel;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -49,10 +49,8 @@ class ExchangeActiveOrderListPageState
     if (exchangeModel.isActiveAccount()) {
       var symbolList = widget.market.split("/");
       userTickChannel = SocketConfig.channelUserTick(
-          exchangeModel.activeAccount.id,
-          "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
-      BlocProvider.of<SocketBloc>(context)
-          .add(SubChannelEvent(channel: userTickChannel));
+          exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
+      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
     }
     _loadData();
     super.onCreated();
@@ -90,14 +88,11 @@ class ExchangeActiveOrderListPageState
           var netCancelOrders = List<Order>();
           var netCompOrders = List<Order>();
           state.response.forEach((entity) => {
-                if ((entity as List<dynamic>).length >= 7 &&
-                    (entity[2] == 0 || entity[2] == 1))
+                if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1))
                   {netNewOrders.add(Order.fromSocket(entity))}
-                else if ((entity as List<dynamic>).length >= 7 &&
-                    (entity[2] >= 3 && entity[2] <= 5))
+                else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5))
                   {netCancelOrders.add(Order.fromSocket(entity))}
-                else if ((entity as List<dynamic>).length >= 7 &&
-                    entity[2] == 2)
+                else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2)
                   {netCompOrders.add(Order.fromSocket(entity))}
               });
 
@@ -165,67 +160,66 @@ class ExchangeActiveOrderListPageState
           setState(() {});
         }
       },
-      child: _content(),
+      child: orderListWidget(),
     );
   }
 
-  _content() {
-    if (_activeOrders.isEmpty) {
-      return Center(
-        child: Container(
-          height: 200,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(
-                height: 16,
-              ),
-              Image.asset(
-                'res/drawable/ic_empty_list.png',
-                height: 80,
-                width: 80,
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                '暂无委托单',
-                style: TextStyle(
-                  color: HexColor('#FF999999'),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    } else {
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: _activeOrders.length,
-        itemBuilder: (ctx, index) => OrderItem(
-          _activeOrders[index],
-          revokeOrder: (Order orderEntity) async {
-            await exchangeApi.orderCancel(orderEntity.orderId);
-//          var result = await exchangeApi.orderCancel(orderEntity.orderId);
-//          if(result is Map && result["errorCode"] == 0){
-//          }
-          },
-          market: widget.market,
-        ),
-      );
-    }
-  }
-
   _loadData() async {
-    List<Order> orderList =
-        await exchangeApi.getOrderList(widget.market, 1, 100, "active");
+    List<Order> orderList = await exchangeApi.getOrderList(widget.market, 1, 100, "active");
     _activeOrders.clear();
     _activeOrders.addAll(orderList);
-    if (mounted) setState(() {});
+    if (mounted)
+      setState(() {
+        isLoading = false;
+      });
   }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  Widget orderListWidget() {
+    if (isLoading) {
+      return Center(
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: CircularProgressIndicator(
+            strokeWidth: 3,
+          ),
+        ),
+      );
+    }
+
+    if (_activeOrders.length == 0) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 13,
+          ),
+          Image.asset("res/drawable/ic_consign_empty.png", width: 59, height: 64),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            exchangeModel.isActiveAccount() ? "暂无委托单" : "登录后查看委托单",
+            style: TextStyle(fontSize: 14, color: HexColor("#999999")),
+          )
+        ],
+      );
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: _activeOrders.length,
+      itemBuilder: (ctx, index) => OrderItem(
+        _activeOrders[index],
+        revokeOrder: (Order orderEntity) async {
+          await exchangeApi.orderCancel(orderEntity.orderId);
+        },
+        market: widget.market,
+      ),
+    );
+  }
 }

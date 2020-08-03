@@ -72,11 +72,12 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   Future<void> onCreated() async {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context)
-        .add(UpdateQuotesEvent(isForceUpdate: true));
+//    BlocProvider.of<QuotesCmpBloc>(context)
+//        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+//    BlocProvider.of<WalletCmpBloc>(context)
+//        .add(UpdateActivatedWalletBalanceEvent());
+    listLoadingData();
   }
 
   @override

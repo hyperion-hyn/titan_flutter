@@ -209,9 +209,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   Widget exchangePageView() {
     _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
     selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
-    print("_realTimePrice:$_realTimePrice, selectQuote:${selectQuote.quoteVo.price}");
-
-    _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * selectQuote.quoteVo.price, 2);
+    _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
 
     return SafeArea(
@@ -916,7 +914,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ],
               ),
             ),
-            if (exchangeModel.isActiveAccount()) ExchangeActiveOrderListPage(marketCoin)
+            ExchangeActiveOrderListPage(marketCoin)
           ],
         );
       },
