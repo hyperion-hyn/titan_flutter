@@ -22,7 +22,7 @@ import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_order_mangement_page.dart';
-import 'package:titan/src/pages/market/quote/kline_detail_page.dart';
+import 'package:titan/src/pages/market/k_line/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -34,7 +34,6 @@ import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dar
 import 'package:titan/src/widget/popup/bubble_widget.dart';
 import 'package:titan/src/widget/popup/pop_route.dart';
 import 'package:titan/src/widget/popup/pop_widget.dart';
-import 'package:titan/src/pages/market/quote/kline_detail_page.dart';
 
 import 'bloc/exchange_detail_bloc.dart';
 
