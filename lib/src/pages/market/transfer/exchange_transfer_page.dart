@@ -39,11 +39,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   final _fromKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi = ExchangeApi();
+  WalletVo activatedWallet;
 
   @override
   void onCreated() {
     // TODO: implement onCreated
     super.onCreated();
+    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
@@ -137,7 +139,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Text(
           '交易账户',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -145,12 +147,23 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     } else {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
-        child: Text(
-          '钱包',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+          children: <Widget>[
+            Text(
+              '钱包',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              ' (${activatedWallet?.wallet?.keystore?.name ?? ''})',
+              style: TextStyle(
+                fontSize: 14,
+                color: HexColor('#FF999999'),
+              ),
+            )
+          ],
         ),
       );
     }
@@ -420,6 +433,25 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _amount() {
+    var _minTransferAmount = _fromExchangeToWallet
+        ? ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .getAsset(_selectedCoinType)
+            .withdrawMin
+        : ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .getAsset(_selectedCoinType)
+            .rechargeMin;
+    var _withdrawFee = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        .getAsset(_selectedCoinType)
+        .withdrawFee;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -518,7 +550,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         Row(
           children: <Widget>[
             Text(
-              '最小划转数 50 HYN',
+              '最小划转数 $_minTransferAmount $_selectedCoinType',
               style: TextStyle(
                 color: HexColor('#FFAAAAAA'),
                 fontSize: 12,
@@ -541,7 +573,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 ),
               ),
               TextSpan(
-                text: ' ${_selectedCoinType}',
+                text: ' $_selectedCoinType',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -549,12 +581,29 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
             ])),
           ],
-        )
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        if (_fromExchangeToWallet)
+          Text(
+            '手续费 $_withdrawFee HYN',
+            style: TextStyle(
+              color: HexColor('#FFAAAAAA'),
+              fontSize: 12,
+            ),
+          ),
       ],
     );
   }
 
   _transferHint() {
+    var _withdrawFee = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        .getAsset(_selectedCoinType)
+        .withdrawFee;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0),
       child: Container(
@@ -567,7 +616,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             _fromExchangeToWallet
-                ? '从交易账户划转到钱包账户每笔需要收取50HYN手续费'
+                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee HYN手续费'
                 : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
             style: TextStyle(
               color: HexColor('#FF777777'),
@@ -606,9 +655,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _deposit() async {
     try {
-      //var ret = await _exchangeApi.getAddress(_selectedCoinType);
-      //var address = ret.data['address'];
-
       var coinVo = WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
@@ -616,7 +662,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         _selectedCoinType,
       );
 
-      ///for now
       var address = coinVo.address;
       var voStr = FluroConvertUtils.object2string(coinVo.toJson());
       Application.router.navigateTo(
@@ -628,30 +673,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _withdraw() async {
-//    try {
-//      var ret = await _exchangeApi.withdraw(
-//        _selectedCoinType,
-//        WalletInheritedModel.of(
-//          context,
-//          aspect: WalletAspect.activatedWallet,
-//        ).activatedWallet.wallet.getEthAccount().address,
-//        _amountController.text,
-//      );
-//      if (ret.code == 0) {
-//      } else {
-//        Fluttertoast.showToast(msg: ret.msg);
-//      }
-//    } catch (e) {}
-
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbol(
       _selectedCoinType,
     );
-
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
-
     Application.router.navigateTo(
       context,
       Routes.exchange_withdraw_confirm_page +

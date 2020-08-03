@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -64,14 +65,45 @@ class ExchangeOrderDetailListPageState
       onLoadingMore: () {
         _loadMore();
       },
-      child: ListView.builder(
+      child: _content(),
+    );
+  }
+
+  _content() {
+    if (_orderDetailList.isEmpty) {
+      return Center(
+        child: Container(
+          height: 150,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'res/drawable/ic_empty_list.png',
+                height: 80,
+                width: 80,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                '暂无记录',
+                style: TextStyle(
+                  color: HexColor('#FF999999'),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return ListView.builder(
         itemCount: _orderDetailList.length,
         itemBuilder: (ctx, index) => OrderDetailItem(
           _orderDetailList[index],
           widget.market,
         ),
-      ),
-    );
+      );
+    }
   }
 
   _refresh() async {

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -29,7 +30,8 @@ class ExchangeActiveOrderListPage extends StatefulWidget {
   }
 }
 
-class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderListPage>
+class ExchangeActiveOrderListPageState
+    extends BaseState<ExchangeActiveOrderListPage>
     with AutomaticKeepAliveClientMixin, RouteAware {
   var exchangeApi = ExchangeApi();
   List<Order> _activeOrders = List();
@@ -47,8 +49,10 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
     if (exchangeModel.isActiveAccount()) {
       var symbolList = widget.market.split("/");
       userTickChannel = SocketConfig.channelUserTick(
-          exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
-      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
+          exchangeModel.activeAccount.id,
+          "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
+      BlocProvider.of<SocketBloc>(context)
+          .add(SubChannelEvent(channel: userTickChannel));
     }
     _loadData();
     super.onCreated();
@@ -86,13 +90,15 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
           var netCancelOrders = List<Order>();
           var netCompOrders = List<Order>();
           state.response.forEach((entity) => {
-                if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
-                  netNewOrders.add(Order.fromSocket(entity))
-                } else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5)){
-                  netCancelOrders.add(Order.fromSocket(entity))
-                } else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2){
-                  netCompOrders.add(Order.fromSocket(entity))
-                }
+                if ((entity as List<dynamic>).length >= 7 &&
+                    (entity[2] == 0 || entity[2] == 1))
+                  {netNewOrders.add(Order.fromSocket(entity))}
+                else if ((entity as List<dynamic>).length >= 7 &&
+                    (entity[2] >= 3 && entity[2] <= 5))
+                  {netCancelOrders.add(Order.fromSocket(entity))}
+                else if ((entity as List<dynamic>).length >= 7 &&
+                    entity[2] == 2)
+                  {netCompOrders.add(Order.fromSocket(entity))}
               });
 
           if (netNewOrders.length > 0) {
@@ -159,7 +165,41 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
           setState(() {});
         }
       },
-      child: ListView.builder(
+      child: _content(),
+    );
+  }
+
+  _content() {
+    if (_activeOrders.isEmpty) {
+      return Center(
+        child: Container(
+          height: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 16,
+              ),
+              Image.asset(
+                'res/drawable/ic_empty_list.png',
+                height: 80,
+                width: 80,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                '暂无委托单',
+                style: TextStyle(
+                  color: HexColor('#FF999999'),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         itemCount: _activeOrders.length,
@@ -173,12 +213,13 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
           },
           market: widget.market,
         ),
-      ),
-    );
+      );
+    }
   }
 
   _loadData() async {
-    List<Order> orderList = await exchangeApi.getOrderList(widget.market, 1, 100, "active");
+    List<Order> orderList =
+        await exchangeApi.getOrderList(widget.market, 1, 100, "active");
     _activeOrders.clear();
     _activeOrders.addAll(orderList);
     if (mounted) setState(() {});

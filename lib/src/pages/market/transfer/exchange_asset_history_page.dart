@@ -99,18 +99,56 @@ class _ExchangeAssetHistoryPageState
             _refresh();
             _loadDataBloc.add(RefreshSuccessEvent());
           },
-          child: ListView.builder(
-              itemCount: _assetHistoryList.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return _assetLayout();
-                } else {
-                  return _assetHistoryItem(_assetHistoryList[index]);
-                }
-              }),
+          child: _content(),
         ),
       ),
     );
+  }
+
+  _content() {
+    if (_assetHistoryList.isEmpty) {
+      return Column(
+        children: <Widget>[
+          _assetLayout(),
+          Expanded(
+            child: Center(
+              child: Container(
+                height: 150,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      'res/drawable/ic_empty_list.png',
+                      height: 80,
+                      width: 80,
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      '暂无记录',
+                      style: TextStyle(
+                        color: HexColor('#FF999999'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      );
+    } else {
+      return ListView.builder(
+          itemCount: _assetHistoryList.length + 1,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return _assetLayout();
+            } else {
+              return _assetHistoryItem(_assetHistoryList[index]);
+            }
+          });
+    }
   }
 
   _assetLayout() {
@@ -305,13 +343,12 @@ class _ExchangeAssetHistoryPageState
     ///clear list before refresh
     _assetHistoryList.clear();
 
-    List<AssetHistory> resultList =
-        await _exchangeApi.getAccountHistory(
-              widget._symbol,
-              _currentPage,
-              _size,
-              'all',
-            );
+    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+      widget._symbol,
+      _currentPage,
+      _size,
+      'all',
+    );
     _assetHistoryList.addAll(resultList);
     _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
@@ -320,13 +357,12 @@ class _ExchangeAssetHistoryPageState
 
   _loadMore() async {
     _currentPage++;
-    List<AssetHistory> resultList =
-        await _exchangeApi.getAccountHistory(
-              widget._symbol,
-              _currentPage,
-              _size,
-              'all',
-            );
+    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+      widget._symbol,
+      _currentPage,
+      _size,
+      'all',
+    );
     _assetHistoryList.addAll(resultList);
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
