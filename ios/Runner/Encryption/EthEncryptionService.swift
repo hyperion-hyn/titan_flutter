@@ -99,11 +99,13 @@ class EthEncryptionService: EncryptionService {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
                         let privateKey = try w.privateKey(password: password, coin: CoinType.ethereum)
-                        var comPublicKey = privateKey.getPublicKeySecp256k1(compressed: true).description
+                        let comPublicKey = privateKey.getPublicKeySecp256k1(compressed: false).description
                         if !comPublicKey.isEmpty {
-                            comPublicKey = "0x\(comPublicKey)"
+                            //comPublicKey = "0x\(comPublicKey)"
                             //print("[EthEncryption] -->trustActiveEncrypt, comPublicKey:\(comPublicKey)")
                             observer.onNext(comPublicKey)
+                        } else {
+                            observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
                         }
                     } catch {
                         observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
@@ -118,7 +120,8 @@ class EthEncryptionService: EncryptionService {
     
     func trustEncrypt(publicKeyStr: String?, message: String) -> Observable<String> {
         return Observable<String>.create { observer in
-            guard let tempPublicKey = self.cipher?.deCompressPubkey(publicKeyStr) else {
+            //guard let tempPublicKey = self.cipher?.deCompressPubkey(publicKeyStr) else {
+            guard let tempPublicKey = publicKeyStr else {
                 observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
                 return Disposables.create()
             }

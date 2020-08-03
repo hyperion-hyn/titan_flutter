@@ -287,7 +287,7 @@ class _VerifyPoiPageV2State extends BaseState<VerifyPoiPageV2> {
                 child: MapboxMap(
                   compassEnabled: false,
                   initialCameraPosition: CameraPosition(
-                    target: Application.recentlyLocation,
+                    target: _confirmPoiItem.latLng,
                     zoom: 16,
                   ),
                   styleString: style,
