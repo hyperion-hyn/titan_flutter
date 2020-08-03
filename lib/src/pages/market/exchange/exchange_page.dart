@@ -147,7 +147,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _exchange() {
     var _selectedCoinToHYN = "--";
-    var _hynToSelectedCoin = _getMarketItem(_selectedCoin)?.kLineEntity?.close;
+    var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
+      _getMarketItem(_selectedCoin)?.kLineEntity?.close,
+      4,
+    );
     if (_hynToSelectedCoin != null) {
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
             Decimal.fromInt(1) /
@@ -269,6 +272,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 1,
                     child: Text(
                       '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'}',
                       style: TextStyle(
@@ -278,10 +282,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     ),
                   ),
                   Expanded(
+                    flex: 2,
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '最新兑换1HYN  — ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin',
+                        '最新兑换1HYN  — $_hynToSelectedCoin $_selectedCoin',
                         style: TextStyle(
                           color: HexColor('#FF999999'),
                           fontSize: 12,
@@ -609,8 +614,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
-    var _latestPrice = MarketInheritedModel.of(context).getRealTimePrice(
-      marketItemEntity.symbol,
+    var _latestPrice = FormatUtil.truncateDecimalNum(
+      Decimal.parse(MarketInheritedModel.of(context).getRealTimePrice(
+        marketItemEntity.symbol,
+      )),
+      4,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
@@ -684,7 +692,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '${FormatUtil.formatNumDecimal(marketItemEntity.kLineEntity.close)}',
+                                  '$_latestPrice',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
