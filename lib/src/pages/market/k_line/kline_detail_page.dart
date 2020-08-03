@@ -77,6 +77,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sellChartList = [];
 
+  var _kMaxTradeCount = 20;
+
   @override
   void initState() {
     _initData();
@@ -180,7 +182,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     var _percent = _channel24HourKLineEntity?.amount?.toString() ?? "--";
-    if (_lastChannel24HourKLineEntity != null) {
+      if (_lastChannel24HourKLineEntity != null) {
       var percentStringValue = "";
       var percentValue = _channel24HourKLineEntity.open - _lastChannel24HourKLineEntity.open;
       if (percentValue >= 0) {
@@ -834,14 +836,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     print("[WS] --> _dealPeriodData, data:${data is List}");
 
     if (!(data is List)) {
+      if (mounted) {
+        setState(() {
+          _showLoadingKLine = false;
+        });
+      }
+
       return;
     }
 
-    if (mounted) {
-      setState(() {
-        _showLoadingKLine = false;
-      });
-    }
 
     List dataList = data;
     List kLineDataList = dataList.map((item) {
@@ -864,26 +867,23 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-//        .reversed
-//        .toList()
-//        .cast<KLineEntity>();
     print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
 
     if (symbol.isNotEmpty) {
       if (symbol == widget.symbol && kLineDataList.isNotEmpty) {
         print("[WS] --> _dealPeriodData, 24hour， kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
 
-        _channel24HourKLineEntity = kLineDataList.last;
-
-        if (_lastChannel24HourKLineEntity == null) {
-          _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
-        }
+        _set24HourKLineEntity(kLineDataList);
       }
     } else {
       if (isReplace) {
         if (kLineDataList.isNotEmpty) {
           _kChartItemList = kLineDataList;
           KLineUtil.calculate(_kChartItemList);
+          
+          if (_channel24HourKLineEntity == null) {
+            _set24HourKLineEntity(kLineDataList);
+          }
         }
       } else {
         if (kLineDataList.isNotEmpty) {
@@ -891,6 +891,22 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         }
       }
     }
+
+    if (mounted) {
+      setState(() {
+        _showLoadingKLine = false;
+      });
+    }
+  }
+
+  _set24HourKLineEntity(List kLineDataList) {
+    if (_lastChannel24HourKLineEntity == null) {
+      _lastChannel24HourKLineEntity = kLineDataList.last;
+    } else {
+      _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
+    }
+
+    _channel24HourKLineEntity = kLineDataList.last;
   }
 
   /*
@@ -911,7 +927,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     setState(() {
       _showLoadingTrade = true;
     });
-    var data = await api.historyTrade(widget.symbol);
+    var data = await api.historyTrade(widget.symbol, limit: (_kMaxTradeCount*2).toString());
+
     print("[WS] --> _getTradeData, data:$data");
 
     _dealTradeData(data);
@@ -939,11 +956,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }).toList();
     print("[WS] --> _dealTradeData, 1,tradeInfoEntityList.length:${tradeInfoEntityList.length}");
 
-    var kMaxTradeCount = 20;
     if (isReplace) {
       if (tradeInfoEntityList.isNotEmpty) {
-        if (tradeInfoEntityList.length > kMaxTradeCount) {
-          _tradeItemList = tradeInfoEntityList.sublist(0, kMaxTradeCount);
+        if (tradeInfoEntityList.length > _kMaxTradeCount) {
+          _tradeItemList = tradeInfoEntityList.sublist(0, _kMaxTradeCount);
         } else {
           _tradeItemList = tradeInfoEntityList;
         }
@@ -951,8 +967,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     } else {
       if (tradeInfoEntityList.isNotEmpty) {
         _tradeItemList.insertAll(0, tradeInfoEntityList);
-        if (_tradeItemList.length > kMaxTradeCount) {
-          _tradeItemList = _tradeItemList.sublist(0, kMaxTradeCount);
+        if (_tradeItemList.length > _kMaxTradeCount) {
+          _tradeItemList = _tradeItemList.sublist(0, _kMaxTradeCount);
         }
       }
     }
