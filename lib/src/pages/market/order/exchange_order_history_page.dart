@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -61,11 +62,42 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
       onLoadingMore: () {
         _loadMore();
       },
-      child: ListView.builder(
+      child: _content(),
+    );
+  }
+
+  _content() {
+    if (_orders.isEmpty) {
+      return Center(
+        child: Container(
+          height: 150,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'res/drawable/ic_empty_list.png',
+                height: 80,
+                width: 80,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                '暂无记录',
+                style: TextStyle(
+                  color: HexColor('#FF999999'),
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return ListView.builder(
         itemCount: _orders.length,
         itemBuilder: (ctx, index) => OrderItem(_orders[index]),
-      ),
-    );
+      );
+    }
   }
 
   _refresh() async {
@@ -73,13 +105,12 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
 
     ///clear list before refresh
     _orders.clear();
-    List<Order> resultList =
-        await _exchangeApi.getOrderList(
-              widget.market,
-              _currentPage,
-              _size,
-              _method,
-            );
+    List<Order> resultList = await _exchangeApi.getOrderList(
+      widget.market,
+      _currentPage,
+      _size,
+      _method,
+    );
     print('[ExchangeOrderHistoryPage] _refresh: resultList $resultList');
     if (resultList != null) {
       _orders.addAll(resultList);
@@ -91,13 +122,12 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   }
 
   _loadMore() async {
-    List<Order> resultList =
-        await _exchangeApi.getOrderList(
-              widget.market,
-              _currentPage + 1,
-              _size,
-              _method,
-            );
+    List<Order> resultList = await _exchangeApi.getOrderList(
+      widget.market,
+      _currentPage + 1,
+      _size,
+      _method,
+    );
     if (resultList != null) {
       _orders.addAll(resultList);
       _currentPage++;
