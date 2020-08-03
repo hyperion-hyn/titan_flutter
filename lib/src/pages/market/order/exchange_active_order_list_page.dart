@@ -88,13 +88,12 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
           var netCancelOrders = List<Order>();
           var netCompOrders = List<Order>();
           state.response.forEach((entity) => {
-                if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1)){
-                  netNewOrders.add(Order.fromSocket(entity))
-                } else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5)){
-                  netCancelOrders.add(Order.fromSocket(entity))
-                } else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2){
-                  netCompOrders.add(Order.fromSocket(entity))
-                }
+                if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0 || entity[2] == 1))
+                  {netNewOrders.add(Order.fromSocket(entity))}
+                else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5))
+                  {netCancelOrders.add(Order.fromSocket(entity))}
+                else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2)
+                  {netCompOrders.add(Order.fromSocket(entity))}
               });
 
           if (netNewOrders.length > 0) {
@@ -169,9 +168,10 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
     List<Order> orderList = await exchangeApi.getOrderList(widget.market, 1, 100, "active");
     _activeOrders.clear();
     _activeOrders.addAll(orderList);
-    if (mounted) setState(() {
-      isLoading = false;
-    });
+    if (mounted)
+      setState(() {
+        isLoading = false;
+      });
   }
 
   @override
@@ -179,7 +179,7 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
   bool get wantKeepAlive => true;
 
   Widget orderListWidget() {
-    if(isLoading){
+    if (isLoading) {
       return Center(
         child: SizedBox(
           height: 40,
@@ -191,14 +191,21 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
       );
     }
 
-    if(_activeOrders.length == 0){
+    if (_activeOrders.length == 0) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(height: 13,),
-          Image.asset("res/drawable/ic_consign_empty.png",width: 59,height: 64),
-          SizedBox(height: 10,),
-          Text(exchangeModel.isActiveAccount() ? "暂无委托单" : "登录后查看委托单",style: TextStyle(fontSize: 14,color: HexColor("#999999")),)
+          SizedBox(
+            height: 13,
+          ),
+          Image.asset("res/drawable/ic_consign_empty.png", width: 59, height: 64),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            exchangeModel.isActiveAccount() ? "暂无委托单" : "登录后查看委托单",
+            style: TextStyle(fontSize: 14, color: HexColor("#999999")),
+          )
         ],
       );
     }

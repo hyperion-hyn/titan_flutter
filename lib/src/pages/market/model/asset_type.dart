@@ -19,6 +19,12 @@ class AssetType extends Object {
   @JsonKey(name: 'withdraw')
   bool withdraw;
 
+  @JsonKey(name: 'recharge_min')
+  String rechargeMin;
+
+  @JsonKey(name: 'withdraw_min')
+  String withdrawMin;
+
   @JsonKey(name: 'exchange_available')
   String exchangeAvailable;
 
@@ -43,6 +49,8 @@ class AssetType extends Object {
     this.withdrawFee,
     this.recharge,
     this.withdraw,
+    this.rechargeMin,
+    this.withdrawMin,
     this.exchangeAvailable,
     this.exchangeFreeze,
     this.btc,

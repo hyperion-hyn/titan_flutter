@@ -9,7 +9,6 @@ import 'package:titan/src/pages/market/order/exchange_order_history_page.dart';
 import 'package:titan/src/pages/market/order/item_order.dart';
 import 'package:titan/src/pages/market/order/exchange_active_order_list_page.dart';
 
-
 class ExchangeOrderManagementPage extends StatefulWidget {
   final String market;
 
@@ -73,16 +72,20 @@ class _ExchangeOrderManagementPageState
                     Expanded(
                       flex: 4,
                       child: TabBar(
-                        labelColor: HexColor('#FF228BA1'),
+                        labelColor: HexColor('#FF333333'),
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 15,
                         ),
                         indicatorSize: TabBarIndicatorSize.label,
-                        indicatorColor: HexColor('#FF228BA1'),
+                        indicatorColor: HexColor('#FF333333'),
                         indicatorWeight: 3,
-                        indicatorPadding: EdgeInsets.only(bottom: 2),
-                        unselectedLabelColor: HexColor("#FF333333"),
+                        indicatorPadding: EdgeInsets.only(
+                          bottom: 2,
+                          right: 12,
+                          left: 12,
+                        ),
+                        unselectedLabelColor: HexColor("#FF999999"),
                         tabs: [
                           Tab(
                             child: Text(
