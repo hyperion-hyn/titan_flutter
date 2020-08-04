@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -69,24 +70,64 @@ class ExchangeTransferHistoryListPageState
           ),
         ),
       ),
-      body: LoadDataContainer(
-        bloc: _loadDataBloc,
-        onLoadData: () async {
-          _refresh();
-        },
-        onRefresh: () async {
-          _refresh();
-        },
-        onLoadingMore: () {
-          _loadMore();
-        },
-        child: ListView.builder(
-          itemCount: _transferHistoryList.length,
-          itemBuilder: (ctx, index) =>
-              _transferHistoryItem(_transferHistoryList[index]),
+      body: Container(
+        color: Colors.white,
+        child: LoadDataContainer(
+          bloc: _loadDataBloc,
+          onLoadData: () async {
+            _refresh();
+          },
+          onRefresh: () async {
+            _refresh();
+          },
+          onLoadingMore: () {
+            _loadMore();
+          },
+          child: _content(),
         ),
       ),
     );
+  }
+
+  _content() {
+    if (_transferHistoryList.isEmpty) {
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: Center(
+              child: Container(
+                height: 150,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Image.asset(
+                      'res/drawable/ic_empty_list.png',
+                      height: 80,
+                      width: 80,
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      '暂无记录',
+                      style: TextStyle(
+                        color: HexColor('#FF999999'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      );
+    } else {
+      return ListView.builder(
+        itemCount: _transferHistoryList.length,
+        itemBuilder: (ctx, index) =>
+            _transferHistoryItem(_transferHistoryList[index]),
+      );
+    }
   }
 
   _refresh() async {
@@ -94,13 +135,13 @@ class ExchangeTransferHistoryListPageState
 
     ///clear list before refresh
     _transferHistoryList.clear();
-    List<AssetHistory> resultList =
-        await _exchangeApi.getAccountHistory(
-              widget.type,
-              _currentPage,
-              _size,
-              _action,
-            );
+    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+      widget.type,
+      _currentPage,
+      _size,
+      _action,
+    );
+
     if (resultList != null) {
       _transferHistoryList.addAll(resultList);
     }
@@ -112,13 +153,12 @@ class ExchangeTransferHistoryListPageState
 
   _loadMore() async {
     _currentPage++;
-    List<AssetHistory> resultList =
-        await _exchangeApi.getAccountHistory(
-              widget.type,
-              _currentPage,
-              _size,
-              _action,
-            );
+    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+      widget.type,
+      _currentPage,
+      _size,
+      _action,
+    );
     if (resultList != null) {
       _transferHistoryList.addAll(resultList);
     }
@@ -138,27 +178,63 @@ class ExchangeTransferHistoryListPageState
                     )));
       },
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '交易账户到钱包',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: Row(
-                    children: <Widget>[
-                      Column(
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '交易账户到钱包',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        child: Row(
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '数量(${assetHistory.type})',
+                                  style: TextStyle(
+                                    color: DefaultColors.color999,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                Text(
+                                  "${assetHistory.balance}",
+                                  style: TextStyle(
+                                      color: DefaultColors.color333,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            Spacer()
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '数量(${assetHistory.type})',
+                            '网络费用(${assetHistory.name == 'withdraw' ? 'HYN' : assetHistory.type})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -168,79 +244,65 @@ class ExchangeTransferHistoryListPageState
                             height: 4.0,
                           ),
                           Text(
-                            "${assetHistory.balance}",
+                            '${assetHistory.fee}',
                             style: TextStyle(
-                                color: DefaultColors.color333,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12),
+                              color: DefaultColors.color333,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
-                      Spacer()
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      '手续费',
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
-                      ),
                     ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    Text(
-                      '${assetHistory.fee})',
-                      style: TextStyle(
-                        color: DefaultColors.color333,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      '时间',
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 4.0,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Spacer(),
-                        Text(
-                          FormatUtil.formatMarketOrderDate(
-                            assetHistory.ctime,
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            '时间',
+                            style: TextStyle(
+                              color: DefaultColors.color999,
+                              fontSize: 12,
+                            ),
                           ),
-                          style: TextStyle(
-                            color: DefaultColors.color333,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
+                          SizedBox(
+                            height: 4.0,
                           ),
-                        ),
-                      ],
+                          Row(
+                            children: <Widget>[
+                              Spacer(),
+                              Text(
+                                FormatUtil.formatMarketOrderDate(
+                                  assetHistory.ctime,
+                                ),
+                                style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: DefaultColors.color999,
+                        size: 12,
+                      ),
+                    )
                   ],
-                ),
-              )
-            ],
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Divider(height: 1),
           )
         ],
       ),
