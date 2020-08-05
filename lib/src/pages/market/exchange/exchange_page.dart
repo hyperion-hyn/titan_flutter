@@ -100,7 +100,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _contentView() {
     return Column(
-      children: <Widget>[_banner(), _account(), _exchange(), _divider(), _quotesView(), _authorizedView()],
+      children: <Widget>[
+        _banner(),
+        _account(),
+        _exchange(),
+        _divider(),
+        _quotesView(),
+        _authorizedView()
+      ],
     );
   }
 
@@ -140,7 +147,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _exchange() {
     var _selectedCoinToHYN = "--";
-    var _hynToSelectedCoin = _getMarketItem(_selectedCoin)?.kLineEntity?.close;
+    var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
+      _getMarketItem(_selectedCoin)?.kLineEntity?.close,
+      4,
+    );
     if (_hynToSelectedCoin != null) {
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
             Decimal.fromInt(1) /
@@ -179,7 +189,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _exchangeType = _exchangeType == ExchangeType.BUY ? ExchangeType.SELL : ExchangeType.BUY;
+                          _exchangeType = _exchangeType == ExchangeType.BUY
+                              ? ExchangeType.SELL
+                              : ExchangeType.BUY;
                         });
                       },
                     ),
@@ -209,7 +221,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 _exchangeType == ExchangeType.SELL
                     ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
                     : '1$_selectedCoin = $_selectedCoinToHYN HYN',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
               ),
               Spacer(),
               ClickOvalIconButton(
@@ -218,8 +233,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ExchangeDetailPage(selectedCoin: _selectedCoin, exchangeType: _exchangeType)));
+                          builder: (context) => ExchangeDetailPage(
+                              selectedCoin: _selectedCoin,
+                              exchangeType: _exchangeType)));
                 },
                 width: 88,
                 height: 38,
@@ -255,8 +271,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
               child: Row(
                 children: <Widget>[
-                  Container(
-                    width: 150,
+                  Expanded(
+                    flex: 1,
                     child: Text(
                       '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'}',
                       style: TextStyle(
@@ -266,11 +282,15 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     ),
                   ),
                   Expanded(
-                    child: Text(
-                      '最新兑换1HYN — ${_getMarketItem(_selectedCoin)?.kLineEntity?.close ?? '--'} $_selectedCoin',
-                      style: TextStyle(
-                        color: HexColor('#FF999999'),
-                        fontSize: 12,
+                    flex: 2,
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '最新兑换1HYN  — $_hynToSelectedCoin $_selectedCoin',
+                        style: TextStyle(
+                          color: HexColor('#FF999999'),
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -287,16 +307,23 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _account() {
-    var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
+    var quote = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('USDT')
+        ?.sign
+        ?.quote;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
-            Application.router.navigateTo(context,
-                Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+              null) {
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           }
         },
         child: Row(
@@ -313,7 +340,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       width: 20,
                       height: 20,
                     )
-                  : QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
+                  : QuotesInheritedModel.of(context)
+                              .activatedQuoteVoAndSign('USDT')
+                              .sign
+                              .quote ==
+                          'CNY'
                       ? Image.asset(
                           'res/drawable/ic_exchange_account_cny.png',
                           width: 18,
@@ -348,26 +379,37 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+        null) {
       var _ethQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
         'ETH',
       );
       var _ethTotalQuotePrice = _ethQuote == null
           ? '--'
           : FormatUtil.truncateDecimalNum(
-              ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotalEth() *
+              // ignore: null_aware_before_operator
+              ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .activeAccount
+                      ?.assetList
+                      ?.getTotalEth() *
                   Decimal.parse(_ethQuote?.quoteVo?.price.toString()),
               4,
             );
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _ethTotalQuotePrice : '*****',
+              text: ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances
+                  ? _ethTotalQuotePrice
+                  : '*****',
               style: TextStyle(
                 fontSize: 14,
               )),
           TextSpan(
-            text: ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
+            text:
+                ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
@@ -569,11 +611,15 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _marketItem(MarketItemEntity marketItemEntity) {
-    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+    var _selectedQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
-    var _latestPrice = MarketInheritedModel.of(context).getRealTimePrice(
-      marketItemEntity.symbol,
+    var _latestPrice = FormatUtil.truncateDecimalNum(
+      Decimal.parse(MarketInheritedModel.of(context).getRealTimePrice(
+        marketItemEntity.symbol,
+      )),
+      4,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
@@ -581,124 +627,137 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
             4,
           );
-    double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(marketItemEntity.symbol);
+    double _latestPercent =
+        MarketInheritedModel.of(context).getRealTimePricePercent(
+      marketItemEntity.symbol,
+    );
 
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => KLineDetailPage(
-                      symbol: marketItemEntity.symbol,
-                      symbolName: marketItemEntity.symbolName,
-                    )));
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
-        ),
-        child: Column(
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: <Widget>[
+        InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => KLineDetailPage(
+                            symbol: marketItemEntity.symbol,
+                            symbolName: marketItemEntity.symbolName,
+                          )));
+            },
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: 'HYN',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
-                              fontSize: 16,
-                            )),
-                        TextSpan(
-                            text: '/${marketItemEntity.symbolName}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                              fontSize: 12,
-                            )),
-                      ])),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        '24H量 ${marketItemEntity.kLineEntity.amount}',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Container(
-                      width: 80,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${FormatUtil.formatNumDecimal(marketItemEntity.kLineEntity.close)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text.rich(TextSpan(children: [
+                              TextSpan(
+                                  text: 'HYN',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  )),
+                              TextSpan(
+                                  text: '/${marketItemEntity.symbolName}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  )),
+                            ])),
+                            SizedBox(
+                              height: 4,
                             ),
-                          ),
-                          SizedBox(
-                            height: 4,
-                          ),
-                          Text(
-                            '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Spacer(),
-                      Container(
-                        width: 80,
-                        height: 39,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.0),
-                          color: _latestPercent == 0
-                              ? HexColor('#FF999999')
-                              : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858'),
+                            Text(
+                              '24H量 ${marketItemEntity.kLineEntity.amount}',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
                         ),
+                      ),
+                      Expanded(
                         child: Center(
-                          child: Text(
-                            '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
-                              _latestPercent * 100.0,
-                              2,
-                            )}%',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
+                          child: Container(
+                            width: 80,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '$_latestPrice',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      )
+                      ),
+                      Expanded(
+                        child: Row(
+                          children: <Widget>[
+                            Spacer(),
+                            Container(
+                              width: 80,
+                              height: 39,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4.0),
+                                color: _latestPercent == 0
+                                    ? HexColor('#FF999999')
+                                    : _latestPercent > 0
+                                        ? HexColor('#FF53AE86')
+                                        : HexColor('#FFCC5858'),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
+                                    _latestPercent * 100.0,
+                                    2,
+                                  )}%',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-            Divider(
-              height: 24,
-            )
-          ],
-        ),
-      ),
+                ],
+              ),
+            )),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Divider(
+            height: 1,
+          ),
+        )
+      ],
     );
   }
 

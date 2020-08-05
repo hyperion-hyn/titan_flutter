@@ -12,6 +12,8 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/model/asset_history.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_history_detail_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_history_list_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
@@ -80,6 +82,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 ),
                 InkWell(
                   onTap: () {
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(

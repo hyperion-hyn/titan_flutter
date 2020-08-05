@@ -30,64 +30,43 @@ class OrderItemState extends State<OrderItem> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(
-                  left: 16.0, top: 8.0, bottom: 8.0, right: 8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    widget._order.side == ExchangeType.BUY.toString() ? "买入" : "卖出",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: widget._order.side == ExchangeType.BUY.toString()
-                          ? HexColor("#53AE86")
-                          : HexColor("#CC5858"),
-                    ),
+            SizedBox(
+              width: 16.0,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  widget._order.side == ExchangeType.BUY.toString()
+                      ? '买入'
+                      : '卖出',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: widget._order.side == ExchangeType.BUY.toString()
+                        ? HexColor("#53AE86")
+                        : HexColor("#CC5858"),
                   ),
-                  SizedBox(
-                    width: 8.0,
+                ),
+                SizedBox(
+                  width: 8.0,
+                ),
+                Text(
+                  "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime))}",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
                   ),
-                  Text(
-                    "${FormatUtil.formatMarketOrderDate(int.parse(widget._order.ctime))}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
             Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                width: 60,
-                height: 22,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(3.0)),
-                    color: HexColor('#F2F2F2')),
-                child: FlatButton(
-                  padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 2),
-                  textColor: HexColor('#FF1F81FF'),
-                  child: Text(
-                    '撤销',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                  onPressed: () {
-                    widget.revokeOrder(widget._order);
-                  },
-                ),
-              ),
-            )
+            _orderStatus()
           ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
-            vertical: 8.0,
+            vertical: 16.0,
           ),
           child: Row(
             children: <Widget>[
@@ -107,7 +86,7 @@ class OrderItemState extends State<OrderItem> {
                             ),
                           ),
                           SizedBox(
-                            height: 4.0,
+                            height: 8.0,
                           ),
                           Text(
                             "${widget._order.price}",
@@ -136,7 +115,7 @@ class OrderItemState extends State<OrderItem> {
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Text(
                       "${widget._order.amount}",
@@ -161,7 +140,7 @@ class OrderItemState extends State<OrderItem> {
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Row(
                       children: <Widget>[
@@ -188,6 +167,54 @@ class OrderItemState extends State<OrderItem> {
         _divider()
       ],
     );
+  }
+
+  _orderStatus() {
+    if (widget._order.status == '1') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Container(
+          width: 60,
+          height: 27,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(3.0)),
+              color: HexColor('#F2F2F2')),
+          child: FlatButton(
+            padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 2),
+            textColor: HexColor('#FF1F81FF'),
+            child: Text(
+              '撤销',
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            onPressed: () {
+              widget.revokeOrder(widget._order);
+            },
+          ),
+        ),
+      );
+    } else if (widget._order.status == '2') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          '已完成',
+          style: TextStyle(
+            color: DefaultColors.color999,
+          ),
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          '已撤单',
+          style: TextStyle(
+            color: DefaultColors.color999,
+          ),
+        ),
+      );
+    }
   }
 
   _divider() {
