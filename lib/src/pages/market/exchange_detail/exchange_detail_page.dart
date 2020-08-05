@@ -206,12 +206,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               depthController.add(contrDepthTypeRefresh);
             } else if(state is OrderPutLimitState){
               isOrderActionLoading = false;
-              if(state.respCode == 0){
+              if(state.respMsg == null){
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
                 currentPriceStr = "";
                 currentNumStr = "";
                 totalPriceStr = "";
+                priceEditController.text = "";
+                numEditController.text = "";
+                totalEditController.text = "";
               }else{
                 Fluttertoast.showToast(msg: state.respMsg);
               }
@@ -384,7 +387,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   ),
                 ],
               ),
-              delegationListView(_buyChartList, _sailChartList, limitNum: 5),
+              delegationListView(_buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice){
+                currentPrice = Decimal.parse(depthPrice);
+                currentPriceStr = depthPrice;
+                priceEditController.text= currentPriceStr;
+                optionsController.add({contrOptionsTypeRefresh: ""});
+              }),
             ],
           );
         });

@@ -1097,7 +1097,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, {limitNum = 20, enable = true}) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -1184,6 +1184,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                               //splashColor: Colors.greenAccent,
                               highlightColor: HexColor("#D8F3E7"),
                               onTap: enable?() {
+                                clickPrice(buyEntity?.depthEntity?.price.toString() ?? "0");
                                 print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                               }:null,
                               child: Row(
@@ -1268,6 +1269,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                               //splashColor: Colors.greenAccent,
                               highlightColor: HexColor("#FAE4E4"),
                               onTap: enable?() {
+                                clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
                                 print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
                               }:null,
                               child: Row(

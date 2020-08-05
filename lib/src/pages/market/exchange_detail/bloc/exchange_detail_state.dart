@@ -16,7 +16,7 @@ class ExchangeMarketInfoState extends ExchangeDetailState {
 class OrderPutLimitState extends ExchangeDetailState {
   final int respCode;
   final String respMsg;
-  OrderPutLimitState(this.respCode,this.respMsg);
+  OrderPutLimitState({this.respCode,this.respMsg});
 }
 
 class DepthInfoState extends ExchangeDetailState{

@@ -23,11 +23,11 @@ class ExchangeDetailBloc extends Bloc<ExchangeDetailEvent, ExchangeDetailState> 
   ) async* {
     if (event is LimitExchangeEvent) {
       try {
-        var response = await exchangeApi.orderPutLimit(event.marketCoin, event.exchangeType, event.price, event.amount);
-        yield OrderPutLimitState(response["errorCode"], response["errorMsg"]);
+        await exchangeApi.orderPutLimit(event.marketCoin, event.exchangeType, event.price, event.amount);
+        yield OrderPutLimitState();
       }catch(error){
         if(error is HttpResponseCodeNotSuccess){
-          yield OrderPutLimitState(error.code, error.message);
+          yield OrderPutLimitState(respCode: error.code, respMsg: error.message);
         }
       }
     } else if (event is MarketExchangeEvent) {
