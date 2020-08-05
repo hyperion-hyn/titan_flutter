@@ -170,7 +170,7 @@ class OrderItemState extends State<OrderItem> {
   }
 
   _orderStatus() {
-    if (widget._order.status == '1') {
+    if (widget._order.status == '0' || widget._order.status == '1') {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Container(
