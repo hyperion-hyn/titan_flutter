@@ -112,6 +112,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   int consignPageSize = 1;
   bool consignIsLoading = true;
   SocketBloc _socketBloc;
+  bool beforeJumpNoLogin = true;
 
   @override
   void initState() {
@@ -134,7 +135,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void didPopNext() {
-    _getExchangelData();
+    if(beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
+      _getExchangelData();
+      beforeJumpNoLogin = false;
+    }
     super.didPopNext();
   }
 
@@ -155,8 +159,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   void _getExchangelData() async {
     if (exchangeModel.isActiveAccount()) {
+      beforeJumpNoLogin = false;
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
+    }else{
+      beforeJumpNoLogin = true;
     }
     depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
     _socketBloc.add(SubChannelEvent(channel: depthChannel));
@@ -498,7 +505,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if (exchangeModel.isActiveAccount()) {
               if (isBuy) {
-                currentNum = getValidNum() * Decimal.parse(optionValue) / currentPrice;
+                currentNum = currentPrice.toString() == "0" ? currentNum : getValidNum() * Decimal.parse(optionValue) / currentPrice;
               } else {
                 currentNum = getValidNum() * Decimal.parse(optionValue);
               }
@@ -875,7 +882,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           );
         });
   }
-
 
   Widget _consignListWidget() {
     return StreamBuilder<int>(

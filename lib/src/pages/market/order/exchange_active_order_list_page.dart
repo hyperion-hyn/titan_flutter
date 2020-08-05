@@ -115,12 +115,20 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
               });
             }
           },
-          child: SingleChildScrollView(child: orderListWidget(context,widget.market,consignIsLoading,_activeOrders))),
+          child: currentPageList()),
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget currentPageList(){
+    if(_activeOrders.length == 0){
+      return orderListEmpty(context);
+    }
+    return SingleChildScrollView(child: orderListWidget(context,widget.market,consignIsLoading,_activeOrders));
+  }
+
 }
 
 Future loadConsignList(String marketCoin, int pageNum, List<Order> _activeOrders) async {
@@ -165,9 +173,6 @@ Widget orderListEmpty(BuildContext context){
 }
 
 Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, List<Order> _activeOrders) {
-  if(_activeOrders.length == 0){
-    orderListEmpty(context);
-  }
   return ListView.builder(
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
@@ -175,7 +180,8 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, 
     itemBuilder: (ctx, index) => OrderItem(
       _activeOrders[index],
       revokeOrder: (Order orderEntity) async {
-//        await exchangeApi.orderCancel(orderEntity.orderId);
+        ExchangeApi exchangeApi = ExchangeApi();
+        await exchangeApi.orderCancel(orderEntity.orderId);
       },
       market: marketCoin,
     ),
