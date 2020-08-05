@@ -82,7 +82,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 ),
                 InkWell(
                   onTap: () {
-
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -534,6 +533,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 ),
                                 onTap: () {
                                   _amountController.text = _availableAmount();
+                                  _fromKey.currentState.validate();
                                   setState(() {});
                                 },
                               )
