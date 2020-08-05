@@ -29,20 +29,19 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   Future<void> onCreated() async {
     // TODO: implement onCreated
     super.onCreated();
-
     _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-    Future.delayed(
-      Duration(milliseconds: 1000),
-      () {
-        _checkIsAuthAlready();
-      },
-    );
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    Future.delayed(
+      Duration(milliseconds: 300),
+      () {
+        //_checkIsAuthAlready();
+      },
+    );
   }
 
   @override
@@ -183,8 +182,11 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
         authType: AuthType.exchange,
       );
       if (walletPassword != null) {
-        BlocProvider.of<ExchangeCmpBloc>(context)
-            .add(LoginEvent(_wallet, walletPassword, address));
+        BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
+          _wallet,
+          walletPassword,
+          address,
+        ));
         setState(() {
           isLoggingIn = true;
         });
