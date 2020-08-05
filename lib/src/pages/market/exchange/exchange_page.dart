@@ -387,11 +387,12 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       var _ethTotalQuotePrice = _ethQuote == null
           ? '--'
           : FormatUtil.truncateDecimalNum(
+              // ignore: null_aware_before_operator
               ExchangeInheritedModel.of(context)
                       .exchangeModel
                       .activeAccount
-                      .assetList
-                      .getTotalEth() *
+                      ?.assetList
+                      ?.getTotalEth() *
                   Decimal.parse(_ethQuote?.quoteVo?.price.toString()),
               4,
             );
