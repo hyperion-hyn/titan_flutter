@@ -13,6 +13,12 @@ class ExchangeMarketInfoState extends ExchangeDetailState {
   ExchangeMarketInfoState(this.marketInfoEntity);
 }
 
+class OrderPutLimitState extends ExchangeDetailState {
+  final int respCode;
+  final String respMsg;
+  OrderPutLimitState(this.respCode,this.respMsg);
+}
+
 class DepthInfoState extends ExchangeDetailState{
   final dynamic depthData;
   DepthInfoState(this.depthData);

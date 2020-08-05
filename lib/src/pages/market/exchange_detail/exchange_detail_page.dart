@@ -57,7 +57,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
-  bool isLoading = false;
+  bool isOrderActionLoading = false;
   bool isBuy = true;
   bool isLimit = true;
   Decimal currentPrice = Decimal.fromInt(0);
@@ -135,6 +135,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void didPopNext() {
+    isOrderActionLoading = false;
+
     if(beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
       _getExchangelData();
       beforeJumpNoLogin = false;
@@ -202,6 +204,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               _sailChartList.clear();
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
+            } else if(state is OrderPutLimitState){
+              isOrderActionLoading = false;
+              if(state.respCode == 0){
+                currentPrice = Decimal.fromInt(0);
+                currentNum = Decimal.fromInt(0);
+                currentPriceStr = "";
+                currentNumStr = "";
+                totalPriceStr = "";
+              }else{
+                Fluttertoast.showToast(msg: state.respMsg);
+              }
+              optionsController.add({contrOptionsTypeRefresh: ""});
             }
           },
           child: BlocBuilder<ExchangeDetailBloc, AllPageState>(
@@ -231,36 +245,41 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
 
     return SafeArea(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            _appBar(),
-            Expanded(
-              child: LoadDataContainer(
-                bloc: _loadDataBloc,
-                enablePullDown: false,
-                onLoadData: (){
-                },
-                onLoadingMore: () async {
-                  if(exchangeModel.isActiveAccount())  {
-                    consignPageSize ++;
-                    await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
-                    consignListController.add(contrConsignTypeRefresh);
-                  }
-                },
-                child: SingleChildScrollView(
-                    child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    _depthWidget(),
-                    _exchangeOptionsWidget(),
-                    _consignListWidget()
-                  ],
-                )),
+      child: GestureDetector(
+        onTap: (){
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              _appBar(),
+              Expanded(
+                child: LoadDataContainer(
+                  bloc: _loadDataBloc,
+                  enablePullDown: false,
+                  onLoadData: (){
+                  },
+                  onLoadingMore: () async {
+                    if(exchangeModel.isActiveAccount())  {
+                      consignPageSize ++;
+                      await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
+                      consignListController.add(contrConsignTypeRefresh);
+                    }
+                  },
+                  child: SingleChildScrollView(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      _depthWidget(),
+                      _exchangeOptionsWidget(),
+                      _consignListWidget()
+                    ],
+                  )),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -556,7 +575,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('买入'),
+                          child: Text('买入',style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
                         ),
                       ),
                     ),
@@ -577,7 +596,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('卖出'),
+                          child: Text('卖出',style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
                         ),
                       ),
                     ),
@@ -651,6 +670,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               hintStyle: TextStyles.textCaaaS14,
                             ),
                             onChanged: (price) {
+                              if(price.contains("-")){
+                                return;
+                              }
                               if (price.contains(".")) {
                                 var priceAfter = price.split(".")[1];
                                 if (priceAfter.length <= marketInfoEntity.pricePrecision) {
@@ -676,6 +698,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         ),
                         InkWell(
                           onTap: () {
+                            if(currentPrice.toDouble() == 0){
+                              return;
+                            }
                             optionsController.add({contrOptionsTypePriceDecrease: ""});
                           },
                           child: Padding(
@@ -727,6 +752,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             hintStyle: TextStyles.textCaaaS14,
                           ),
                           onChanged: (number) {
+                            if(number.contains("-")){
+                              return;
+                            }
                             if (number.contains(".")) {
                               var priceAfter = number.split(".")[1];
                               if (priceAfter.length <= marketInfoEntity.amountPrecision) {
@@ -821,6 +849,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             hintStyle: TextStyles.textCaaaS14,
                           ),
                           onChanged: (turnover) {
+                            if(turnover.contains("-")){
+                              return;
+                            }
                             if (turnover.contains(".")) {
                               var priceAfter = turnover.split(".")[1];
                               if (priceAfter.length <= marketInfoEntity.turnoverPrecision) {
@@ -854,7 +885,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    color: isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
+                    color: isOrderActionLoading ? Color(0xffDEDEDE) : isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
                   ),
                   child: FlatButton(
                       shape: RoundedRectangleBorder(
@@ -864,17 +895,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       child: Text(exchangeModel.isActiveAccount() ? isBuy ? "买入" : "卖出" : "请登录",
                           style: TextStyle(
                             fontSize: 14,
-                            color: isLoading ? DefaultColors.color999 : Colors.white,
+                            color: isOrderActionLoading ? DefaultColors.color999 : Colors.white,
                           )),
-                      onPressed: isLoading
+                      onPressed: isOrderActionLoading
                           ? null
-                          : () async {
-                              isLoading = true;
+                          : () {
+                              isOrderActionLoading = true;
                               optionsController.add({contrOptionsTypeRefresh: ""});
 
-                              await buyAction();
-                              isLoading = false;
-                              optionsController.add({contrOptionsTypeRefresh: ""});
+                              buyAction();
                             }),
                 )
               ],

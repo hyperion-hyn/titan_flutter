@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -21,7 +22,14 @@ class ExchangeDetailBloc extends Bloc<ExchangeDetailEvent, ExchangeDetailState> 
       ExchangeDetailEvent event,
   ) async* {
     if (event is LimitExchangeEvent) {
-      await exchangeApi.orderPutLimit(event.marketCoin, event.exchangeType, event.price, event.amount);
+      try {
+        var response = await exchangeApi.orderPutLimit(event.marketCoin, event.exchangeType, event.price, event.amount);
+        yield OrderPutLimitState(response["errorCode"], response["errorMsg"]);
+      }catch(error){
+        if(error is HttpResponseCodeNotSuccess){
+          yield OrderPutLimitState(error.code, error.message);
+        }
+      }
     } else if (event is MarketExchangeEvent) {
       await exchangeApi.orderPutMarket(event.marketCoin, event.exchangeType, event.amount);
     } else if (event is MarketInfoEvent) {
