@@ -665,7 +665,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             visible: _detailCurrentIndex == 0,
             child: Stack(
               children: <Widget>[
-                Visibility(visible: !_showLoadingTrade, child: delegationListView(_buyChartList, _sellChartList)),
+                Visibility(visible: !_showLoadingTrade, child: delegationListView(_buyChartList, _sellChartList, enable: false)),
                 _loadingWidget(visible: _showLoadingTrade),
               ],
             ),
@@ -1097,7 +1097,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, {limitNum = 20}) {
+Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, {limitNum = 20, enable = true}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
     color: Colors.white,
@@ -1183,9 +1183,9 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             child: InkWell(
                               //splashColor: Colors.greenAccent,
                               highlightColor: HexColor("#D8F3E7"),
-                              onTap: () {
+                              onTap: enable?() {
                                 print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
-                              },
+                              }:null,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
@@ -1267,9 +1267,9 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             child: InkWell(
                               //splashColor: Colors.greenAccent,
                               highlightColor: HexColor("#FAE4E4"),
-                              onTap: () {
+                              onTap: enable?() {
                                 print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
-                              },
+                              }:null,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
