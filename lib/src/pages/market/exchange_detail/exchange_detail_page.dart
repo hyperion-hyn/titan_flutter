@@ -643,7 +643,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         Expanded(
                           child: TextField(
                             controller: priceEditController,
-                            keyboardType: TextInputType.number,
+                            keyboardType: TextInputType.numberWithOptions(decimal: true),
                             inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 12.0),
@@ -719,7 +719,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       Expanded(
                         child: TextField(
                           controller: numEditController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
                           decoration: new InputDecoration(
                             contentPadding: EdgeInsets.only(bottom: 12.0),
@@ -813,7 +813,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       Expanded(
                         child: TextField(
                           controller: totalEditController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.numberWithOptions(decimal: true),
                           inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
                           decoration: new InputDecoration(
                             contentPadding: EdgeInsets.only(bottom: 12.0),
