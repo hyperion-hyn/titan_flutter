@@ -220,7 +220,7 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
       if (temAddOrders.length > 0) {
         print("insert order");
         _activeOrders.insertAll(0, temAddOrders);
-        Fluttertoast.showToast(msg: "下单成功");
+        Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
       }
     }
 
@@ -240,7 +240,7 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
         temCancelOrders.forEach((element) {
           _activeOrders.remove(element);
         });
-        Fluttertoast.showToast(msg: "订单撤销成功");
+        Fluttertoast.showToast(msg: "订单撤销成功", gravity: ToastGravity.CENTER);
       }
     }
 
@@ -261,7 +261,7 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
           _activeOrders.remove(element);
         });
       }
-      Fluttertoast.showToast(msg: "订单已完成");
+      Fluttertoast.showToast(msg: "订单已完成", gravity: ToastGravity.CENTER);
     }
   }
 }
