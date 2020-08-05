@@ -210,10 +210,10 @@ class MarketInheritedModel extends InheritedModel<String> {
   double getRealTimePricePercent(String symbol) {
     var marketItem = getMarketItem(symbol);
     var realPercent = marketItem == null
-        ? 0
-        : ((marketItem.kLineEntity?.close ?? 0 - marketItem.kLineEntity?.open) /
+        ? 0.0
+        : ((marketItem.kLineEntity?.close ?? 0.0 - marketItem.kLineEntity?.open) /
                 marketItem.kLineEntity?.open ??
-            1);
+            1.0);
     return realPercent;
   }
 

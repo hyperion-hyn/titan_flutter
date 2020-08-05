@@ -8,6 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -53,6 +55,7 @@ class ExchangeDetailPage extends StatefulWidget {
 
 class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAware {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   bool isLoading = false;
   bool isBuy = true;
@@ -87,7 +90,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   final int contrDepthTypeRefresh = 15;
   StreamController<int> depthController = StreamController.broadcast();
   StreamController<Map> optionsController = StreamController.broadcast();
-  StreamController<int> consignListController = StreamController.broadcast();
   String userTickChannel = "";
   String depthChannel;
   String tradeChannel;
@@ -105,6 +107,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   ActiveQuoteVoAndSign selectQuote;
   double _realTimePricePercent = 0;
 
+  List<Order> _activeOrders = List();
+  StreamController<int> consignListController = StreamController.broadcast();
+  int consignPageSize = 1;
+  bool consignIsLoading = true;
+  SocketBloc _socketBloc;
+  bool beforeJumpNoLogin = true;
+
   @override
   void initState() {
     symbol = "hyn${widget.selectedCoin.toLowerCase()}";
@@ -116,57 +125,66 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   @override
   void onCreated() {
+    _socketBloc = BlocProvider.of<SocketBloc>(context);
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    _getChannelData();
+    _getExchangelData();
     super.onCreated();
   }
 
   @override
   void didPopNext() {
-    _getChannelData();
-    consignListController.add(contrConsignTypeRefresh);
+    if(beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
+      _getExchangelData();
+      beforeJumpNoLogin = false;
+    }
     super.didPopNext();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
   void dispose() {
     if (exchangeModel.isActiveAccount()) {
-      BlocProvider.of(context).add(UnSubChannelEvent(channel: userTickChannel));
+      _socketBloc.add(UnSubChannelEvent(channel: userTickChannel));
     }
     Application.routeObserver.unsubscribe(this);
-    BlocProvider.of(context).add(UnSubChannelEvent(channel: depthChannel));
-    BlocProvider.of(context).add(UnSubChannelEvent(channel: tradeChannel));
+    _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
+    _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));
 
     optionsController.close();
     exchangeDetailBloc.close();
+    _loadDataBloc.close();
     super.dispose();
   }
 
-  void _getChannelData() {
+  void _getExchangelData() async {
     if (exchangeModel.isActiveAccount()) {
+      beforeJumpNoLogin = false;
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
-      BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: userTickChannel));
+      _socketBloc.add(SubChannelEvent(channel: userTickChannel));
+    }else{
+      beforeJumpNoLogin = true;
     }
     depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+    _socketBloc.add(SubChannelEvent(channel: depthChannel));
 
     tradeChannel = SocketConfig.channelTradeDetail(symbol);
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: tradeChannel));
+    _socketBloc.add(SubChannelEvent(channel: tradeChannel));
+
+    _loadDataBloc.add(LoadingEvent());
+    consignPageSize = 1;
+    await loadConsignList(marketCoin, consignPageSize, _activeOrders);
+    consignListController.add(contrConsignTypeRefresh);
+    _loadDataBloc.add(RefreshSuccessEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<SocketBloc, SocketState>(
-        bloc: BlocProvider.of<SocketBloc>(context),
+        bloc: _socketBloc,
         listener: (ctx, state) {
+          consignListSocket(state, _activeOrders);
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();
             _sailChartList.clear();
@@ -219,15 +237,28 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           children: <Widget>[
             _appBar(),
             Expanded(
-              child: SingleChildScrollView(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _depthWidget(),
-                  _exchangeOptionsWidget(),
-                  _consignListWidget()
-                ],
-              )),
+              child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullDown: false,
+                onLoadData: (){
+                },
+                onLoadingMore: () async {
+                  if(exchangeModel.isActiveAccount())  {
+                    consignPageSize ++;
+                    await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
+                    consignListController.add(contrConsignTypeRefresh);
+                  }
+                },
+                child: SingleChildScrollView(
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _depthWidget(),
+                    _exchangeOptionsWidget(),
+                    _consignListWidget()
+                  ],
+                )),
+              ),
             ),
           ],
         ),
@@ -474,7 +505,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if (exchangeModel.isActiveAccount()) {
               if (isBuy) {
-                currentNum = getValidNum() * Decimal.parse(optionValue) / currentPrice;
+                currentNum = currentPrice.toString() == "0" ? currentNum : getValidNum() * Decimal.parse(optionValue) / currentPrice;
               } else {
                 currentNum = getValidNum() * Decimal.parse(optionValue);
               }
@@ -852,7 +883,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         });
   }
 
-
   Widget _consignListWidget() {
     return StreamBuilder<int>(
       stream: consignListController.stream,
@@ -914,7 +944,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ],
               ),
             ),
-            ExchangeActiveOrderListPage(marketCoin)
+            if(_activeOrders.length == 0)
+              orderListEmpty(context),
+            if(_activeOrders.length > 0)
+              orderListWidget(context,marketCoin,consignIsLoading,_activeOrders)
           ],
         );
       },
@@ -924,9 +957,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void changeDepthLevel(int newLevel) {
     selectDepthNum = newLevel;
     exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
-    BlocProvider.of<SocketBloc>(context).add(UnSubChannelEvent(channel: depthChannel));
+    _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
     depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: depthChannel));
+    _socketBloc.add(SubChannelEvent(channel: depthChannel));
     depthController.add(contrDepthTypeRefresh);
   }
 

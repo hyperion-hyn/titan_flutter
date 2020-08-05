@@ -28,3 +28,12 @@ class MarketExchangeEvent extends ExchangeDetailEvent{
   String amount;
   MarketExchangeEvent(this.marketCoin,this.exchangeType,this.amount);
 }
+
+class ConsignListEvent extends ExchangeDetailEvent{
+  String marketCoin;
+  int pageNum;
+  int pageSize;
+  String consignType;
+  bool isLoadMore;
+  ConsignListEvent(this.marketCoin,this.isLoadMore, {this.pageNum,this.pageSize = 2,this.consignType = "active"});
+}
