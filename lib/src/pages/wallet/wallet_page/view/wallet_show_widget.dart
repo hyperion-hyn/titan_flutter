@@ -23,6 +23,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -429,12 +430,9 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             },
           ),
           RaisedButton(
-            child: Text('password'),
+            child: Text('API测试'),
             onPressed: () async {
-              var password = await UiUtil.showWalletPasswordDialogV2(
-                context,
-                widget.walletVo.wallet,
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ApiDemo()));
             },
           ),
         ],
