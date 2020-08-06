@@ -1184,7 +1184,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                               //splashColor: Colors.greenAccent,
                               highlightColor: HexColor("#D8F3E7"),
                               onTap: enable?() {
-                                clickPrice(buyEntity?.depthEntity?.price.toString() ?? "0");
+                                var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
+                                clickPrice(depthPrice);
                                 print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                               }:null,
                               child: Row(
