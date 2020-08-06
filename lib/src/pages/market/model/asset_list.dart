@@ -46,8 +46,13 @@ class AssetList {
   }
 
   Decimal getTotalEth() {
-    Decimal usdtToEth = Decimal.parse(USDT.eth);
-    Decimal hynToEth = Decimal.parse(HYN.eth);
-    return usdtToEth + hynToEth + Decimal.parse(ETH.eth);
+    var total;
+    try {
+      Decimal usdtToEth = Decimal.parse(USDT.eth);
+      Decimal hynToEth = Decimal.parse(HYN.eth);
+      Decimal eth = Decimal.parse(ETH.eth);
+      total = usdtToEth + hynToEth + eth;
+    } catch (e) {}
+    return total;
   }
 }

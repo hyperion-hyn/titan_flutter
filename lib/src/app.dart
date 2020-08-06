@@ -41,9 +41,9 @@ class _AppState extends State<App> {
       child: QuotesComponent(
         child: AuthComponent(
           child: SettingComponent(
-              child: WalletComponent(
-            child: SocketComponent(
               child: ExchangeComponent(
+                child: WalletComponent(
+            child: SocketComponent(
                 child: MultiBlocProvider(
                   providers: [
                     BlocProvider<UpdateBloc>(
@@ -90,9 +90,9 @@ class _AppState extends State<App> {
                     },
                   ),
                 ),
-              ),
             ),
-          )),
+          ),
+              )),
         ),
       ),
     );
