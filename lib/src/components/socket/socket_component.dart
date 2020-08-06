@@ -37,7 +37,6 @@ class _SocketManager extends StatefulWidget {
 }
 
 class _SocketState extends State<_SocketManager> {
-
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
@@ -107,7 +106,6 @@ class _SocketState extends State<_SocketManager> {
     _bloc.add(MarketSymbolEvent());
   }
 
-
   _reconnectWS() {
     print('[WS] Reconnect!');
 
@@ -157,7 +155,7 @@ class _SocketState extends State<_SocketManager> {
             'low': double.parse(itemList[3].toString()),
             'close': double.parse(itemList[4].toString()),
             'vol': double.parse(itemList[5].toString()),
-            'amount': 0,
+            'amount': double.parse(itemList[6].toString()),
             'count': 0,
             'id': int.parse(itemList[0].toString()) / 1000,
           };
@@ -171,7 +169,7 @@ class _SocketState extends State<_SocketManager> {
     }
 
     bool _isNewSymbol = true;
-    _marketItemList.forEach((element) {
+    /*_marketItemList.forEach((element) {
       // replace
       if (element.symbol == symbol) {
         _isNewSymbol = false;
@@ -181,12 +179,32 @@ class _SocketState extends State<_SocketManager> {
           symbolName: element.symbolName,
         );
       }
-    });
-    print('[SocketComponent] _updateQuoteItemList, symbol:$symbol, _marketItemList.last:${_marketItemList.last.symbol}, isNewSymbol: $_isNewSymbol');
+    });*/
+
+    int index;
+    for (var i=0; i<_marketItemList.length; i++) {
+      var element = _marketItemList[i];
+      // replace
+      if (element.symbol == symbol) {
+        index = i;
+        break;
+      }
+    }
+
+    _isNewSymbol = index == null;
+
 
     // add
     if (_isNewSymbol) {
-      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
+      _marketItemList.add(MarketItemEntity(symbol, kLineDataList.first));
+    } else {
+      var lastElement = _marketItemList[index];
+      var element = MarketItemEntity(
+        lastElement.symbol,
+        kLineDataList.first,
+        symbolName: lastElement.symbolName,
+      );
+      _marketItemList[index] = element;
     }
   }
 }
@@ -201,17 +219,6 @@ class MarketInheritedModel extends InheritedModel<String> {
     @required this.tradeDetailList,
     @required Widget child,
   }) : super(key: key, child: child);
-
-  @override
-  bool updateShouldNotify(MarketInheritedModel oldWidget) {
-    return true;
-  }
-
-  static MarketInheritedModel of(BuildContext context) {
-    return InheritedModel.inheritFrom<MarketInheritedModel>(
-      context,
-    );
-  }
 
   MarketItemEntity getMarketItem(String symbol) {
     if (marketItemList == null) {
@@ -263,6 +270,17 @@ class MarketInheritedModel extends InheritedModel<String> {
     var marketItem = getMarketItem(symbol);
     var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
+  }
+
+  static MarketInheritedModel of(BuildContext context) {
+    return InheritedModel.inheritFrom<MarketInheritedModel>(
+      context,
+    );
+  }
+
+  @override
+  bool updateShouldNotify(MarketInheritedModel old) {
+    return marketItemList != old.marketItemList || tradeDetailList != old.tradeDetailList;
   }
 
   @override
