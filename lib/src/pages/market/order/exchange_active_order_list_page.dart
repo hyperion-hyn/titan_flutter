@@ -110,10 +110,11 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
             if(exchangeModel.isActiveAccount())  {
               consignPageSize ++;
               await loadMoreConsignList(_loadDataBloc, widget.market, consignPageSize, _activeOrders);
-              setState(() {
-
-              });
+            }else{
+              _loadDataBloc.add(LoadingMoreSuccessEvent());
             }
+            setState(() {
+            });
           },
           child: currentPageList()),
     );

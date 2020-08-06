@@ -1177,7 +1177,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
 
                               onTap: enable
                                   ? () {
-                                      clickPrice(buyEntity?.depthEntity?.price.toString() ?? "0");
+                                      var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
+                                      clickPrice(depthPrice);
                                       print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
