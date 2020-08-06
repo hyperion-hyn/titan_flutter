@@ -58,78 +58,100 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            iconTheme: IconThemeData(
-              color: Colors.black,
-            ),
-            title: Row(
+    return Scaffold(
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: Container(
+            color: Colors.white,
+            child: Column(
               children: <Widget>[
+                _appBar(),
                 Expanded(
-                  child: Center(
-                    child: Text(
-                      '划转',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      // hide keyboard when touch other widgets
+                      FocusScope.of(context).requestFocus(FocusNode());
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: ListView(
+                                children: <Widget>[
+                                  _transferTypeSelection(),
+                                  _coinTypeSelection(),
+                                  _amount(),
+                                  _transferHint(),
+                                ],
+                              ),
+                            ),
+                            _confirm()
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ExchangeTransferHistoryListPage(
-                                  _selectedCoinType,
-                                )));
-                  },
-                  child: Image.asset(
-                    'res/drawable/ic_transfer_history.png',
-                    width: 20,
-                    height: 20,
                   ),
                 )
               ],
             ),
           ),
-          body: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          _transferTypeSelection(),
-                          _coinTypeSelection(),
-                          _amount(),
-                          _transferHint(),
-                        ],
-                      ),
-                    ),
-                    _confirm()
-                  ],
-                ),
-              ),
+        ),
+      ),
+    );
+  }
+
+  Widget _appBar() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
             ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
         ),
+        Expanded(
+          child: Text(
+            '划转',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ExchangeTransferHistoryListPage(
+                          _selectedCoinType,
+                        )));
+          },
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Image.asset(
+              'res/drawable/ic_transfer_history.png',
+              width: 20,
+              height: 20,
+            ),
+          ),
+        )
       ],
     );
   }
@@ -562,7 +584,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: '账户余额 ',
+                text: _fromExchangeToWallet ? '账户余额 ' : '钱包余额',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -634,12 +656,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _availableAmount() {
     if (_fromExchangeToWallet) {
-      return ExchangeInheritedModel.of(context)
+      var _exchangeAvailable = ExchangeInheritedModel.of(context)
           .exchangeModel
           .activeAccount
           .assetList
           .getAsset(_selectedCoinType)
-          .exchangeAvailable;
+          ?.exchangeAvailable;
+      if (_exchangeAvailable != null) {
+        return FormatUtil.truncateDecimalNum(
+            Decimal.parse(_exchangeAvailable), 6);
+      } else {
+        return '0';
+      }
     } else {
       return FormatUtil.coinBalanceHumanRead(WalletInheritedModel.of(
         context,

@@ -43,6 +43,8 @@ class _SocketState extends State<_SocketManager> {
   List<MarketItemEntity> _marketItemList;
   List<List<String>> _tradeDetailList;
   Timer _timer;
+  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
+  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
 
   @override
   void initState() {
@@ -56,6 +58,9 @@ class _SocketState extends State<_SocketManager> {
   @override
   void dispose() {
     print('[WS]  closed');
+
+//    _bloc.add(UnSubChannelEvent(channel: hynusdtTradeChannel));
+//    _bloc.add(UnSubChannelEvent(channel: hynethTradeChannel));
 
     _socketChannel.sink.close();
     _bloc.close();
@@ -104,6 +109,8 @@ class _SocketState extends State<_SocketManager> {
 
     // Market
     _bloc.add(MarketSymbolEvent());
+//    _bloc.add(SubChannelEvent(channel: hynusdtTradeChannel));
+//    _bloc.add(SubChannelEvent(channel: hynethTradeChannel));
   }
 
   _reconnectWS() {

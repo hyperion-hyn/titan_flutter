@@ -56,7 +56,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
         title: Text(
           widget._authType == AuthType.pay
               ? S.of(context).secret_free_payment
-              : '授权',
+              : '交易授权',
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
