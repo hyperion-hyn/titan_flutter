@@ -103,7 +103,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 4;
   String _realTimePrice = "--";
-  bool _realTimeIsBuy = true;
   String _realTimeQuotePrice = "--";
   ActiveQuoteVoAndSign selectQuote;
   double _realTimePricePercent = 0;
@@ -245,8 +244,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget exchangePageView() {
-    _realTimePrice = MarketInheritedModel.of(context).getCurrentSymbolRealTimePrice();
-    _realTimeIsBuy = MarketInheritedModel.of(context).isBuyCurrentSymbolRealTimeDirection();
+    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
     selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
     _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
@@ -320,7 +318,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   _realTimePricePercent == 0 ? "--" : (_realTimePricePercent >= 0 ? "+" : "-") + FormatUtil.truncateDoubleNum(_realTimePricePercent * 100,2) + "%",
                   style: TextStyle(
                     color: _realTimePricePercent >= 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
-                    fontSize: 13.0,
+                    fontSize: 10.0,
                   ),
                 ),
                 decoration: BoxDecoration(
@@ -383,7 +381,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   SizedBox(width: 14,),
-                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: _realTimeIsBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
+                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: _realTimePricePercent >= 0 ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
                   SizedBox(width: 6,),
                   Padding(
                     padding: const EdgeInsets.only(bottom:3.0),
