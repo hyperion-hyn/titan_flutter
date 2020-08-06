@@ -100,6 +100,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         .activeAccount
         ?.assetList
         ?.getTotalEth();
+
+    var _isShowBalances =
+        ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
     return Container(
       color: Colors.white,
       child: Padding(
@@ -128,9 +131,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: <Widget>[
                         Text(
-                          ExchangeInheritedModel.of(context)
-                                  .exchangeModel
-                                  .isShowBalances
+                          _isShowBalances
                               ? _totalByEth != null ? '$_totalByEth' : '-'
                               : '*****',
                           style: TextStyle(
@@ -143,9 +144,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           width: 8.0,
                         ),
                         Text(
-                          ExchangeInheritedModel.of(context)
-                                  .exchangeModel
-                                  .isShowBalances
+                          _isShowBalances
                               ? ethToCurrency == null || _totalByEth == null
                                   ? '--'
                                   : '≈ ${FormatUtil.truncateDecimalNum(
@@ -199,15 +198,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
               top: 0,
               child: InkWell(
                 onTap: () async {
-                  BlocProvider.of<ExchangeCmpBloc>(context).add(
-                      SetShowBalancesEvent(!ExchangeInheritedModel.of(context)
-                          .exchangeModel
-                          .isShowBalances));
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(SetShowBalancesEvent(!_isShowBalances));
                   setState(() {});
                 },
-                child: ExchangeInheritedModel.of(context)
-                        .exchangeModel
-                        .isShowBalances
+                child: _isShowBalances
                     ? Image.asset(
                         'res/drawable/ic_wallet_show_balances.png',
                         height: 20,
@@ -229,14 +224,31 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _exchangeAssetListView(AssetList _assetList) {
+    var _isShowBalances =
+        ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
     if (_assetList != null) {
       return Container(
         color: Colors.white,
         child: Column(
           children: <Widget>[
-            AssetItem('HYN', _assetList.HYN),
-            AssetItem('USDT', _assetList.USDT),
-            AssetItem('ETH', _assetList.ETH),
+            AssetItem(
+              'HYN',
+              _assetList.HYN,
+              ethToCurrency,
+              _isShowBalances,
+            ),
+            AssetItem(
+              'USDT',
+              _assetList.USDT,
+              ethToCurrency,
+              _isShowBalances,
+            ),
+            AssetItem(
+              'ETH',
+              _assetList.ETH,
+              ethToCurrency,
+              _isShowBalances,
+            ),
           ],
         ),
       );
@@ -251,13 +263,19 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _updateTypeToCurrency() async {
-    var ret = await _exchangeApi.type2currency(
-      'ETH',
-      symbolQuote?.sign?.quote,
-    );
-    ethToCurrency = Decimal.parse(ret.toString());
+    try {
+      var ethRet = await _exchangeApi.type2currency(
+        'ETH',
+        symbolQuote?.sign?.quote,
+      );
+      ethToCurrency = Decimal.parse(ethRet.toString());
+      var hynRet = await _exchangeApi.type2currency(
+        'HYN',
+        symbolQuote?.sign?.quote,
+      );
 
-    setState(() {});
+      setState(() {});
+    } catch (e) {}
   }
 
   _divider() {
@@ -271,10 +289,14 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 class AssetItem extends StatefulWidget {
   final String _symbol;
   final AssetType _assetType;
+  final bool _isShowBalances;
+  final Decimal _toCurrency;
 
   AssetItem(
     this._symbol,
     this._assetType,
+    this._toCurrency,
+    this._isShowBalances,
   );
 
   @override
@@ -334,6 +356,7 @@ class AssetItemState extends State<AssetItem> {
               vertical: 8.0,
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   flex: 1,
@@ -354,9 +377,7 @@ class AssetItemState extends State<AssetItem> {
                               height: 8.0,
                             ),
                             Text(
-                              ExchangeInheritedModel.of(context)
-                                      .exchangeModel
-                                      .isShowBalances
+                              widget._isShowBalances
                                   ? widget._assetType.exchangeAvailable
                                   : '*****',
                               style: TextStyle(
@@ -385,9 +406,7 @@ class AssetItemState extends State<AssetItem> {
                         height: 8.0,
                       ),
                       Text(
-                        ExchangeInheritedModel.of(context)
-                                .exchangeModel
-                                .isShowBalances
+                        widget._isShowBalances
                             ? widget._assetType.exchangeFreeze
                             : '*****',
                         style: TextStyle(
@@ -413,13 +432,19 @@ class AssetItemState extends State<AssetItem> {
                       ),
                       Row(
                         children: <Widget>[
-                          SizedBox(width: 5,),
                           Expanded(
                             child: Text(
                               ExchangeInheritedModel.of(context)
                                       .exchangeModel
                                       .isShowBalances
-                                  ? '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}'
+                                  ? widget._assetType.eth != null &&
+                                          widget._toCurrency != null
+                                      ? '${FormatUtil.truncateDecimalNum(
+                                          Decimal.parse(widget._assetType.eth) *
+                                              widget._toCurrency,
+                                          4,
+                                        )}'
+                                      : '-'
                                   : '*****',
                               textAlign: TextAlign.end,
                               style: TextStyle(
