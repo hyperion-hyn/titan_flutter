@@ -101,7 +101,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4]);
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sailChartList = [];
-  int selectDepthNum = 1;
+  int selectDepthNum = 4;
   String _realTimePrice = "--";
   bool _realTimeIsBuy = true;
   String _realTimeQuotePrice = "--";
@@ -121,7 +121,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     marketCoin = "HYN/${widget.selectedCoin.toUpperCase()}";
     isBuy = (widget.exchangeType == ExchangeType.BUY);
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
-    exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
     super.initState();
   }
 
@@ -169,8 +168,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     }else{
       beforeJumpNoLogin = true;
     }
-    depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
-    _socketBloc.add(SubChannelEvent(channel: depthChannel));
 
     tradeChannel = SocketConfig.channelTradeDetail(symbol);
     _socketBloc.add(SubChannelEvent(channel: tradeChannel));
@@ -201,6 +198,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           listener: (ctx, state) {
             if (state is ExchangeMarketInfoState) {
               marketInfoEntity = state.marketInfoEntity;
+              selectDepthNum = marketInfoEntity.depthPrecision[marketInfoEntity.depthPrecision.length - 1];
+              exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
+              depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+              _socketBloc.add(SubChannelEvent(channel: depthChannel));
             } else if (state is DepthInfoState) {
               _buyChartList.clear();
               _sailChartList.clear();
@@ -449,13 +450,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         ),
                       );
                     }
+                    var depthIndex = marketInfoEntity.depthPrecision[index - 1];
                     return SizedBox(
                       width: 100,
                       height: 29.5,
                       child: FlatButton(
                         padding: EdgeInsets.all(0),
                         onPressed: () {
-                          changeDepthLevel(index);
+                          changeDepthLevel(depthIndex);
                           Navigator.of(context).pop();
                         },
                         child: Column(
@@ -469,7 +471,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Text("$index位", style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                              child: Text("$depthIndex位", style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
                             ),
                           ],
                         ),
