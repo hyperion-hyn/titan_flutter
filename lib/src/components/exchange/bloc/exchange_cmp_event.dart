@@ -21,7 +21,9 @@ class LoginEvent extends ExchangeCmpEvent {
 
 class LoginSuccessEvent extends ExchangeCmpEvent{}
 
-class LoginFailEvent extends ExchangeCmpEvent{}
+class LoginFailEvent extends ExchangeCmpEvent{
+
+}
 
 class UpdateExchangeAccountEvent extends ExchangeCmpEvent {
   final ExchangeAccount account;

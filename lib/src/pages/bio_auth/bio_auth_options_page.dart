@@ -49,7 +49,7 @@ class _BioAuthOptionsPage extends State<BioAuthOptionsPage> {
             Divider(
               height: 1,
             ),
-            _buildMenuBar('授权', '', () {
+            _buildMenuBar('交易授权', '', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(

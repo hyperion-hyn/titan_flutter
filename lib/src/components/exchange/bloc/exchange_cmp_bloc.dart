@@ -19,7 +19,7 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
       yield LoginState(event.wallet, event.password, event.address);
     } else if (event is LoginSuccessEvent) {
       yield LoginSuccessState();
-    } else if (event is LoginSuccessEvent) {
+    } else if (event is LoginFailEvent) {
       yield LoginFailState();
     } else if (event is SetShowBalancesEvent) {
       yield SetShowBalancesState(event.isShow);
