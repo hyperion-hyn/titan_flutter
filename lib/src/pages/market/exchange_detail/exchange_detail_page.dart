@@ -402,7 +402,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         });
   }
 
-  updateTotalView(Decimal totalPrice) {
+  updateTotalView() {
+    if(currentPrice.toDouble() == 0 || currentNum.toDouble() == 0){
+      return;
+    }
+    var totalPrice = currentPrice * currentNum;
     totalPriceStr = FormatUtil.truncateDecimalNum(totalPrice,marketInfoEntity.turnoverPrecision);
     totalEditController.text = totalPriceStr;
     totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
@@ -507,8 +511,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypeMarket) {
             isLimit = false;
           } else if (optionKey == contrOptionsTypePrice) {
-            var totalPrice = currentPrice * currentNum;
-            updateTotalView(totalPrice);
+            updateTotalView();
 
             currentPriceStr = currentPrice.toString();
           } else if (optionKey == contrOptionsTypePricePreError) {
@@ -517,8 +520,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypePriceAdd) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice += Decimal.parse((1 / preNum).toString());
-            var totalPrice = currentPrice * currentNum;
-            updateTotalView(totalPrice);
+            updateTotalView();
 
             currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
@@ -526,15 +528,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           } else if (optionKey == contrOptionsTypePriceDecrease) {
             var preNum = math.pow(10, marketInfoEntity.pricePrecision);
             currentPrice -= Decimal.parse((1 / preNum).toString());
-            var totalPrice = currentPrice * currentNum;
-            updateTotalView(totalPrice);
+            updateTotalView();
 
             currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionKey == contrOptionsTypeNum) {
-            var totalPrice = currentPrice * currentNum;
-            updateTotalView(totalPrice);
+            updateTotalView();
 
             currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
           } else if (optionKey == contrOptionsTypeNumPercent) {
@@ -544,8 +544,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               } else {
                 currentNum = getValidNum() * Decimal.parse(optionValue);
               }
-              var totalPrice = currentPrice * currentNum;
-              updateTotalView(totalPrice);
+              updateTotalView();
 
               currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
               numEditController.text = currentNumStr;
