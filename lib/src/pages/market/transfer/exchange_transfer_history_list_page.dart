@@ -135,16 +135,18 @@ class ExchangeTransferHistoryListPageState
 
     ///clear list before refresh
     _transferHistoryList.clear();
-    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
-      widget.type,
-      _currentPage,
-      _size,
-      _action,
-    );
+    try {
+      List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+        widget.type,
+        _currentPage,
+        _size,
+        _action,
+      );
 
-    if (resultList != null) {
-      _transferHistoryList.addAll(resultList);
-    }
+      if (resultList != null) {
+        _transferHistoryList.addAll(resultList);
+      }
+    } catch (e) {}
 
     if (mounted) setState(() {});
     _loadDataBloc.add(RefreshSuccessEvent());
@@ -153,15 +155,17 @@ class ExchangeTransferHistoryListPageState
 
   _loadMore() async {
     _currentPage++;
-    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
-      widget.type,
-      _currentPage,
-      _size,
-      _action,
-    );
-    if (resultList != null) {
-      _transferHistoryList.addAll(resultList);
-    }
+    try {
+      List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+        widget.type,
+        _currentPage,
+        _size,
+        _action,
+      );
+      if (resultList != null) {
+        _transferHistoryList.addAll(resultList);
+      }
+    } catch (e) {}
     if (mounted) setState(() {});
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     _refreshController.loadComplete();
