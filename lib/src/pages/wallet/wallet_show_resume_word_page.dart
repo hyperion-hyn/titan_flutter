@@ -98,27 +98,39 @@ class _ShowResumeWordState extends State<ShowResumeWordPage> {
                         }),
                   ),
                 ),
-                SizedBox(height: 16.0,),
+                SizedBox(
+                  height: 16.0,
+                ),
                 Container(
-                  padding: EdgeInsets.all(8),
+                  width: double.infinity,
+                  padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(color: HexColor("#FFFAEAEC")),
                   child: Row(
                     children: <Widget>[
-                     Spacer(),
-                      Icon(
-                        Icons.warning,
-                        color: Color(0xFFD0021B),
+                      SizedBox(
+                        width: 16.0,
                       ),
-                      SizedBox(width: 4,),
-                      Text(
-                        S.of(context).save_mnemonic_safe_notice,
-                        style: TextStyle(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.warning,
                           color: Color(0xFFD0021B),
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold
                         ),
                       ),
-                      Spacer(),
+                      Expanded(
+                        child: Text(
+                          S.of(context).save_mnemonic_safe_notice,
+                          style: TextStyle(
+                            color: Color(0xFFD0021B),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 16.0,
+                      )
                     ],
                   ),
                 ),
