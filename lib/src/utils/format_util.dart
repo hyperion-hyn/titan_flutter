@@ -218,6 +218,9 @@ class FormatUtil {
   }
 
   static String truncateDoubleNum(double number, int decimal) {
+    if(number == null){
+      return null;
+    }
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
       var result =
       number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();

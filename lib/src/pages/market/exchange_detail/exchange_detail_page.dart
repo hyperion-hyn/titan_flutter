@@ -119,6 +119,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void initState() {
     symbol = "hyn${widget.selectedCoin.toLowerCase()}";
     marketCoin = "HYN/${widget.selectedCoin.toUpperCase()}";
+    isBuy = (widget.exchangeType == ExchangeType.BUY);
     exchangeDetailBloc.add(MarketInfoEvent(marketCoin));
     exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
     super.initState();
