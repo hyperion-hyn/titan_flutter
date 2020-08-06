@@ -32,7 +32,7 @@ class ExchangePage extends StatefulWidget {
 
 class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'USDT';
-  var _exchangeType = ExchangeType.SELL;
+  var _exchangeType = ExchangeType.BUY;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
 
@@ -169,7 +169,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
               child: Row(
                 children: <Widget>[
-                  _exchangeItem(_exchangeType == ExchangeType.SELL),
+                  _exchangeItem(_exchangeType == ExchangeType.BUY),
                   Expanded(
                     flex: 1,
                     child: IconButton(
@@ -180,14 +180,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _exchangeType = _exchangeType == ExchangeType.BUY
+                          _exchangeType = (_exchangeType == ExchangeType.BUY
                               ? ExchangeType.SELL
-                              : ExchangeType.BUY;
+                              : ExchangeType.BUY);
                         });
                       },
                     ),
                   ),
-                  _exchangeItem(_exchangeType == ExchangeType.BUY),
+                  _exchangeItem(_exchangeType == ExchangeType.SELL),
                 ],
               ),
             ),
@@ -209,7 +209,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 ),
               ),
               Text(
-                _exchangeType == ExchangeType.SELL
+                _exchangeType == ExchangeType.BUY
                     ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
                     : '1$_selectedCoin = $_selectedCoinToHYN HYN',
                 style: TextStyle(
