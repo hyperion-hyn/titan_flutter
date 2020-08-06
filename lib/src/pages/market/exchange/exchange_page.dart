@@ -69,7 +69,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           listener: (context, state) {},
         ),
         BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {},
+          listener: (context, state) {
+
+          },
         ),
       ],
       child: BlocBuilder<ExchangeBloc, ExchangeState>(
@@ -570,7 +572,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Center(
                           child: Text(
-                            '跌涨幅',
+                            '涨跌幅',
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
