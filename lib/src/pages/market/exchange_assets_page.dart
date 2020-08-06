@@ -412,16 +412,19 @@ class AssetItemState extends State<AssetItem> {
                       ),
                       Row(
                         children: <Widget>[
-                          Spacer(),
-                          Text(
-                            ExchangeInheritedModel.of(context)
-                                    .exchangeModel
-                                    .isShowBalances
-                                ? '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}'
-                                : '*****',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
+                          SizedBox(width: 5,),
+                          Expanded(
+                            child: Text(
+                              ExchangeInheritedModel.of(context)
+                                      .exchangeModel
+                                      .isShowBalances
+                                  ? '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}'
+                                  : '*****',
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ],

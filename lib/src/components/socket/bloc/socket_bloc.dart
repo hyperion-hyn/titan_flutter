@@ -46,7 +46,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        print("[SocketBloc] mapEventToState, dataMap:$dataMap");
+        //print("[SocketBloc] mapEventToState, dataMap:$dataMap");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];

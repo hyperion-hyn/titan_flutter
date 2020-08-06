@@ -150,6 +150,10 @@ class _SocketState extends State<_SocketManager> {
       }
       return KLineEntity.fromJson(json);
     }).toList();
+
+    if (_marketItemList == null || _marketItemList.isEmpty) {
+      return;
+    }
     bool _isNewSymbol = true;
     _marketItemList.forEach((element) {
       if (element.symbol == symbol) {
