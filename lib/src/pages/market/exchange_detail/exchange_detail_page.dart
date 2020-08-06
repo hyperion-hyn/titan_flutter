@@ -322,7 +322,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   ),
                 ),
                 decoration: BoxDecoration(
-                    color: isBuy ? HexColor("#EBF8F2") : HexColor("#F9EFEF"), borderRadius: BorderRadius.circular(4.0)),
+                    color: _realTimePricePercent >= 0 ? HexColor("#EBF8F2") : HexColor("#F9EFEF"), borderRadius: BorderRadius.circular(4.0)),
               ),
               Spacer(),
               InkWell(
@@ -492,6 +492,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           Map optionData = optionType.data;
           var optionKey = optionData?.keys?.elementAt(0) ?? -1;
           var optionValue = optionData?.values?.elementAt(0) ?? "";
+          if(optionKey != contrOptionsTypeRefresh){
+            optionsController.add({contrOptionsTypeRefresh: ""});
+          }
           if (optionKey == contrOptionsTypeBuy) {
             isBuy = true;
           } else if (optionKey == contrOptionsTypeSell) {
@@ -1004,12 +1007,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   void buyAction() {
     if (exchangeModel.isActiveAccount()) {
-      if (isLimit && currentPriceStr.isEmpty) {
-        Fluttertoast.showToast(msg: "价格不能为0");
+      if (currentPriceStr.isEmpty || double.parse(currentPriceStr) == 0) {
+        Fluttertoast.showToast(msg: "请输入价格");
+        isOrderActionLoading = false;
+        optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
-      if (currentNumStr.isEmpty) {
-        Fluttertoast.showToast(msg: "数量不能为0");
+      if (currentNumStr.isEmpty || double.parse(currentNumStr) == 0) {
+        Fluttertoast.showToast(msg: "请输入数量");
+        isOrderActionLoading = false;
+        optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
       var exchangeType = isBuy ? ExchangeType.BUY : ExchangeType.SELL;
