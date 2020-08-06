@@ -37,15 +37,13 @@ class _SocketManager extends StatefulWidget {
 }
 
 class _SocketState extends State<_SocketManager> {
-  /*final IOWebSocketChannel socketChannel = IOWebSocketChannel.connect(
-    'wss://api.huobi.pro/ws',
-  );*/
 
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
   List<MarketItemEntity> _marketItemList;
   List<List<String>> _tradeDetailList;
+  Timer _timer;
 
   @override
   void initState() {
@@ -77,6 +75,11 @@ class _SocketState extends State<_SocketManager> {
     }, onDone: () {
       print('[WS] Done!');
 
+      if (_timer != null && _timer.isActive) {
+        _timer.cancel();
+        _timer = null;
+      }
+
       _reconnectWS();
     }, onError: (e) {
       // e is :WebSocketChannelException
@@ -84,9 +87,11 @@ class _SocketState extends State<_SocketManager> {
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
-    Timer.periodic(Duration(seconds: 30), (t) {
-      _bloc.add(HeartEvent());
-    });
+    if (_timer == null) {
+      _timer = Timer.periodic(Duration(seconds: 30), (t) {
+        _bloc.add(HeartEvent());
+      });
+    }
   }
 
   _initBloc() {
@@ -95,8 +100,13 @@ class _SocketState extends State<_SocketManager> {
   }
 
   _initData() {
+    // 24hour
+    _bloc.add(SubChannelEvent(channel: SocketConfig.channelKLine24Hour));
+
+    // Market
     _bloc.add(MarketSymbolEvent());
   }
+
 
   _reconnectWS() {
     print('[WS] Reconnect!');
@@ -114,7 +124,7 @@ class _SocketState extends State<_SocketManager> {
           _marketItemList = state.marketItemList;
         } else if (state is ChannelKLine24HourState) {
           _updateMarketItemList(state.response, symbol: state.symbol);
-        }else if(state is ChannelTradeDetailState){
+        } else if (state is ChannelTradeDetailState) {
           _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
         }
       },
@@ -130,8 +140,7 @@ class _SocketState extends State<_SocketManager> {
     );
   }
 
-  _updateMarketItemList(dynamic data,
-      {bool isReplace = true, String symbol = ''}) {
+  _updateMarketItemList(dynamic data, {String symbol = ''}) {
     if (!(data is List)) {
       return;
     }
@@ -160,8 +169,10 @@ class _SocketState extends State<_SocketManager> {
     if (_marketItemList == null || _marketItemList.isEmpty) {
       return;
     }
+
     bool _isNewSymbol = true;
     _marketItemList.forEach((element) {
+      // replace
       if (element.symbol == symbol) {
         _isNewSymbol = false;
         element = MarketItemEntity(
@@ -171,7 +182,9 @@ class _SocketState extends State<_SocketManager> {
         );
       }
     });
-    print('_updateQuoteItemList: isNewSymbol: $_isNewSymbol');
+    print('[SocketComponent] _updateQuoteItemList, symbol:$symbol, _marketItemList.last:${_marketItemList.last.symbol}, isNewSymbol: $_isNewSymbol');
+
+    // add
     if (_isNewSymbol) {
       _marketItemList.add(MarketItemEntity(symbol, kLineDataList.last));
     }
@@ -220,7 +233,7 @@ class MarketInheritedModel extends InheritedModel<String> {
   }
 
   String getCurrentSymbolRealTimePrice() {
-    if(tradeDetailList != null && tradeDetailList.length > 0){
+    if (tradeDetailList != null && tradeDetailList.length > 0) {
       var tradeDetail = tradeDetailList[0];
       Decimal tradeDecimal = Decimal.parse(tradeDetail[1]);
       return FormatUtil.truncateDecimalNum(tradeDecimal, 4);
@@ -230,7 +243,7 @@ class MarketInheritedModel extends InheritedModel<String> {
 
   //buy 为 true , sell 为 false
   bool isBuyCurrentSymbolRealTimeDirection() {
-    if(tradeDetailList != null && tradeDetailList.length > 0){
+    if (tradeDetailList != null && tradeDetailList.length > 0) {
       var tradeDetail = tradeDetailList[0];
       var direction = tradeDetail[3];
       return direction == "buy";
@@ -242,16 +255,13 @@ class MarketInheritedModel extends InheritedModel<String> {
     var marketItem = getMarketItem(symbol);
     var realPercent = marketItem == null
         ? 0.0
-        : ((marketItem.kLineEntity?.close ?? 0.0 - marketItem.kLineEntity?.open) /
-                marketItem.kLineEntity?.open ??
-            1.0);
+        : ((marketItem.kLineEntity?.close ?? 0.0 - marketItem.kLineEntity?.open) / marketItem.kLineEntity?.open ?? 1.0);
     return realPercent;
   }
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount =
-        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 

@@ -77,8 +77,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sellChartList = [];
 
-  List<DepthEntity> _bids = [];
-  List<DepthEntity> _asks = [];
+  List<DepthEntity> _bids = []; // 出价， 竞标
+  List<DepthEntity> _asks = []; // 询价
 
   var _kMaxTradeCount = 20;
 
@@ -789,7 +789,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   _initData() {
     _periodParameter = _normalPeriodList[0];
-//    _periodParameter = _normalPeriodList[1];
 
     _detailTabController = TabController(
       initialIndex: 0,
@@ -998,7 +997,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   // channel
   _initChannel() {
-    _sub24HourChannel();
     _subPeriodChannel();
     _subDepthChannel();
     _subTradeChannel();
@@ -1007,21 +1005,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   _unSubChannels() {
-    _unSub24HourChannel();
     _unSubPeriodChannel();
     _unSubDepthChannel();
     _unSubTradeChannel();
-  }
-
-  // 24hour
-  void _sub24HourChannel() {
-    var channel = SocketConfig.channelKLine24Hour;
-    _subChannel(channel);
-  }
-
-  void _unSub24HourChannel() {
-    var channel = SocketConfig.channelKLine24Hour;
-    _unSubChannel(channel);
   }
 
   // period
@@ -1083,8 +1069,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         var msg = '取阅 ${state.channel} 成功';
         print("[Bloc] msg:$msg");
         Fluttertoast.showToast(msg: msg);
-      } else if (state is ChannelKLine24HourState) {
-        _dealPeriodData(state.response, symbol: state.symbol);
       } else if (state is ChannelKLinePeriodState) {
         if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
           _unSubPeriodChannel(period: state.channel.split(".").last);
@@ -1092,7 +1076,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         }
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
-        dealDepthData(_buyChartList, _sellChartList, state.response, isReplace: true);
+        dealDepthData(_buyChartList, _sellChartList, state.response, isReplace: false);
         if (mounted) {
           setState(() {});
         }

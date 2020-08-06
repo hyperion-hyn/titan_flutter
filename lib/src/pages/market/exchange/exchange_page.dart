@@ -8,7 +8,6 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
-import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
@@ -39,17 +38,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+
     super.dispose();
     _exchangeBloc.close();
   }
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
-    ///
+
     super.onCreated();
-    _sub24HourChannel();
+
     if (MarketInheritedModel.of(context).marketItemList != null) {
       _marketItemList = MarketInheritedModel.of(context).marketItemList;
     }
@@ -57,20 +55,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
+
     super.initState();
   }
 
-  // 24hour
-  void _sub24HourChannel() {
-    var channel = SocketConfig.channelKLine24Hour;
-    _subChannel(channel);
-  }
-
-  // sub
-  void _subChannel(String channel) {
-    BlocProvider.of<SocketBloc>(context).add(SubChannelEvent(channel: channel));
-  }
 
   @override
   Widget build(BuildContext context) {

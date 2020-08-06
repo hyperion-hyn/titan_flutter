@@ -20,7 +20,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
   SocketBloc();
 
-  void setSocketChannel(IOWebSocketChannel socketChannel){
+  void setSocketChannel(IOWebSocketChannel socketChannel) {
     this.socketChannel = socketChannel;
   }
 
@@ -74,19 +74,17 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     }
                   }*/
 
-                  print("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+                  //print("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
-                  yield ChannelKLine24HourState(symbol:symbol,response: data);
+                  yield ChannelKLine24HourState(symbol: symbol, response: data);
                 } else if (channelValue.contains("depth")) {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelTradeDetailState(response: response);
-                } else if (channelValue.startsWith("user") &&
-                    channelValue.contains("tick")) {
+                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
                 } else {
-                  yield ChannelKLinePeriodState(
-                      channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
                 }
               }
               yield ReceivedDataSuccessState(response: dataMap);
@@ -107,8 +105,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             yield HeartSuccessState();
           }
         } else {
-          print(
-              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
@@ -120,7 +117,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         print("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
-    }else if(event is MarketSymbolEvent){
+    } else if (event is MarketSymbolEvent) {
       var response = await _exchangeApi.getMarketAllSymbol();
       MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
       var _marketItemList = List<MarketItemEntity>();
