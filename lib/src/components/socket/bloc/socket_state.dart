@@ -68,7 +68,7 @@ class ChannelExchangeDepthState extends SocketState {
 }
 
 class ChannelTradeDetailState extends SocketState {
-  final List response;
+  final List<dynamic> response;
   ChannelTradeDetailState({this.response});
 }
 

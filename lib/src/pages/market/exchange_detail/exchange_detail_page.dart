@@ -103,6 +103,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 1;
   String _realTimePrice = "--";
+  bool _realTimeIsBuy = true;
   String _realTimeQuotePrice = "--";
   ActiveQuoteVoAndSign selectQuote;
   double _realTimePricePercent = 0;
@@ -242,7 +243,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget exchangePageView() {
-    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
+    _realTimePrice = MarketInheritedModel.of(context).getCurrentSymbolRealTimePrice();
+    _realTimeIsBuy = MarketInheritedModel.of(context).isBuyCurrentSymbolRealTimeDirection();
     selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
     _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
@@ -379,7 +381,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   SizedBox(width: 14,),
-                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: DefaultColors.color53ae86)),
+                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: _realTimeIsBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
                   SizedBox(width: 6,),
                   Padding(
                     padding: const EdgeInsets.only(bottom:3.0),
@@ -390,8 +392,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               delegationListView(_buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice){
                 currentPrice = Decimal.parse(depthPrice);
                 currentPriceStr = depthPrice;
-                priceEditController.text= currentPriceStr;
-                optionsController.add({contrOptionsTypeRefresh: ""});
+                priceEditController.text = currentPriceStr;
+                optionsController.add({contrOptionsTypePrice: ""});
               }),
             ],
           );

@@ -80,7 +80,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                 } else if (channelValue.contains("depth")) {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
-                  yield ChannelExchangeDepthState(response: response);
+                  yield ChannelTradeDetailState(response: response);
                 } else if (channelValue.startsWith("user") &&
                     channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
