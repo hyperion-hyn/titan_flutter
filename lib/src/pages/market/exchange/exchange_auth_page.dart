@@ -36,12 +36,10 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(
-      Duration(milliseconds: 300),
-      () {
-        //_checkIsAuthAlready();
-      },
-    );
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      ///
+      _checkIsAuthAlready();
+    });
   }
 
   @override
@@ -60,7 +58,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           setState(() {
             isLoggingIn = false;
           });
-          Fluttertoast.showToast(msg: '登录失败');
+          Fluttertoast.showToast(msg: '登录失败, 请重试');
         }
       },
       child: Scaffold(

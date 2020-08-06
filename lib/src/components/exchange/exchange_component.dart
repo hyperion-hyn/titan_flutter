@@ -65,7 +65,6 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
 
             if (account != null) {
               exchangeModel.activeAccount = account;
-
               var ret = await _exchangeApi.getAssetsList();
               exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
               BlocProvider.of<ExchangeCmpBloc>(context)

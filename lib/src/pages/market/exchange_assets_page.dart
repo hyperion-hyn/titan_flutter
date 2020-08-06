@@ -95,6 +95,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _totalBalances() {
+    var _totalByEth = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList
+        ?.getTotalEth();
     return Container(
       color: Colors.white,
       child: Padding(
@@ -126,7 +131,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           ExchangeInheritedModel.of(context)
                                   .exchangeModel
                                   .isShowBalances
-                              ? '${ExchangeInheritedModel.of(context).exchangeModel.activeAccount.assetList.getTotalEth()}'
+                              ? _totalByEth != null ? '$_totalByEth' : '-'
                               : '*****',
                           style: TextStyle(
                             fontSize: 20,
@@ -141,15 +146,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           ExchangeInheritedModel.of(context)
                                   .exchangeModel
                                   .isShowBalances
-                              ? ethToCurrency == null
+                              ? ethToCurrency == null || _totalByEth == null
                                   ? '--'
                                   : '≈ ${FormatUtil.truncateDecimalNum(
-                                      ethToCurrency *
-                                          ExchangeInheritedModel.of(context)
-                                              .exchangeModel
-                                              .activeAccount
-                                              .assetList
-                                              .getTotalEth(),
+                                      ethToCurrency * _totalByEth,
                                       4,
                                     )} ${symbolQuote?.sign?.quote}'
                               : '≈ ***** ${symbolQuote?.sign?.quote}',
@@ -242,8 +242,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
       );
     } else {
       return Container(
+        height: 200,
         child: Center(
-          child: Text('加载中'),
+          child: Text('暂无记录'),
         ),
       );
     }

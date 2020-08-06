@@ -380,23 +380,24 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
+    var _totalByEth = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList
+        ?.getTotalEth();
+    var _ethQuotePrice = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('ETH')
+        ?.quoteVo
+        ?.price;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _ethQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
-        'ETH',
-      );
-      var _ethTotalQuotePrice = _ethQuote == null
-          ? '--'
-          : FormatUtil.truncateDecimalNum(
+      var _ethTotalQuotePrice = _ethQuotePrice != null && _totalByEth != null
+          ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
-              ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .activeAccount
-                      ?.assetList
-                      ?.getTotalEth() *
-                  Decimal.parse(_ethQuote?.quoteVo?.price.toString()),
+              _totalByEth * Decimal.parse(_ethQuotePrice?.toString()),
               4,
-            );
+            )
+          : '--';
       return Text.rich(
         TextSpan(children: [
           TextSpan(

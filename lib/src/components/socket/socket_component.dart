@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
@@ -7,6 +8,7 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:web_socket_channel/io.dart';
 
 class SocketComponent extends StatelessWidget {
@@ -43,6 +45,7 @@ class _SocketState extends State<_SocketManager> {
 
   SocketBloc _bloc;
   List<MarketItemEntity> _marketItemList;
+  List<List<String>> _tradeDetailList;
 
   @override
   void initState() {
@@ -111,12 +114,15 @@ class _SocketState extends State<_SocketManager> {
           _marketItemList = state.marketItemList;
         } else if (state is ChannelKLine24HourState) {
           _updateMarketItemList(state.response, symbol: state.symbol);
+        }else if(state is ChannelTradeDetailState){
+          _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
         }
       },
       child: BlocBuilder<SocketBloc, SocketState>(
         builder: (context, state) {
           return MarketInheritedModel(
             marketItemList: _marketItemList,
+            tradeDetailList: _tradeDetailList,
             child: widget.child,
           );
         },
@@ -174,10 +180,12 @@ class _SocketState extends State<_SocketManager> {
 
 class MarketInheritedModel extends InheritedModel<String> {
   final List<MarketItemEntity> marketItemList;
+  final List<List<String>> tradeDetailList;
 
   const MarketInheritedModel({
     Key key,
     @required this.marketItemList,
+    @required this.tradeDetailList,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -211,6 +219,25 @@ class MarketInheritedModel extends InheritedModel<String> {
     return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 
+  String getCurrentSymbolRealTimePrice() {
+    if(tradeDetailList != null && tradeDetailList.length > 0){
+      var tradeDetail = tradeDetailList[0];
+      Decimal tradeDecimal = Decimal.parse(tradeDetail[1]);
+      return FormatUtil.truncateDecimalNum(tradeDecimal, 4);
+    }
+    return "0";
+  }
+
+  //buy 为 true , sell 为 false
+  bool isBuyCurrentSymbolRealTimeDirection() {
+    if(tradeDetailList != null && tradeDetailList.length > 0){
+      var tradeDetail = tradeDetailList[0];
+      var direction = tradeDetail[3];
+      return direction == "buy";
+    }
+    return true;
+  }
+
   double getRealTimePricePercent(String symbol) {
     var marketItem = getMarketItem(symbol);
     var realPercent = marketItem == null
@@ -233,7 +260,6 @@ class MarketInheritedModel extends InheritedModel<String> {
     MarketInheritedModel old,
     Set<String> dependencies,
   ) {
-    return marketItemList != old.marketItemList &&
-        dependencies.contains('ExchangeModel');
+    return marketItemList != old.marketItemList || tradeDetailList != old.tradeDetailList;
   }
 }
