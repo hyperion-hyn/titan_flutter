@@ -33,7 +33,7 @@ class MarketSymbolList {
       'low': double.parse(itemList[3].toString()),
       'close': double.parse(itemList[4].toString()),
       'vol': double.parse(itemList[5].toString()),
-      'amount': double.parse(itemList[5].toString()),
+      'amount': double.parse(itemList[6].toString()),
       'count': 0,
       'id': 0,
     };

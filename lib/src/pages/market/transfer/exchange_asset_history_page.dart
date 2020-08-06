@@ -343,13 +343,15 @@ class _ExchangeAssetHistoryPageState
     ///clear list before refresh
     _assetHistoryList.clear();
 
-    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
-      widget._symbol,
-      _currentPage,
-      _size,
-      'all',
-    );
-    _assetHistoryList.addAll(resultList);
+    try {
+      List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+        widget._symbol,
+        _currentPage,
+        _size,
+        'all',
+      );
+      _assetHistoryList.addAll(resultList);
+    } catch (e) {}
     _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
     _refreshController.refreshCompleted();
@@ -357,13 +359,15 @@ class _ExchangeAssetHistoryPageState
 
   _loadMore() async {
     _currentPage++;
-    List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
-      widget._symbol,
-      _currentPage,
-      _size,
-      'all',
-    );
-    _assetHistoryList.addAll(resultList);
+    try {
+      List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
+        widget._symbol,
+        _currentPage,
+        _size,
+        'all',
+      );
+      _assetHistoryList.addAll(resultList);
+    } catch (e) {}
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
     _refreshController.loadComplete();

@@ -69,7 +69,14 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     channel: ws.market.allsymbol.kline.24hour,
                     event: sub,
                     data: {
-                      data: [[1595732880000, 0.2000000000, 0.2000000000, 0.2000000000, 0.2000000000, 0.0000000000, 0.0000000000]],
+                      data: [[
+                      1595732880000,
+                      0.2000000000,
+                      0.2000000000,
+                      0.2000000000,
+                      0.2000000000,
+                      0.0000000000,
+                      0.0000000000]],
                       symbol: hynusdt
                     }
                   }*/
