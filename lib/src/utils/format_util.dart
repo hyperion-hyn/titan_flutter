@@ -207,12 +207,14 @@ class FormatUtil {
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
       var result =
           number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      result = FormatUtil.strClearZero(result);
       return result;
     } else {
       var result = number
           .toString()
           .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
           .toString();
+      result = FormatUtil.strClearZero(result);
       return result;
     }
   }
@@ -233,4 +235,9 @@ class FormatUtil {
       return result;
     }
   }
+
+  static String strClearZero(String value) {
+    return Decimal.parse(value).toString();
+  }
+
 }

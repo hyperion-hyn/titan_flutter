@@ -137,7 +137,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void didPopNext() {
     isOrderActionLoading = false;
 
-    if(beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
+    if (beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
       _getExchangelData();
       beforeJumpNoLogin = false;
     }
@@ -164,7 +164,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       beforeJumpNoLogin = false;
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
-    }else{
+    } else {
       beforeJumpNoLogin = true;
     }
 
@@ -206,9 +206,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               _sailChartList.clear();
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
-            } else if(state is OrderPutLimitState){
+            } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
-              if(state.respMsg == null){
+              if (state.respMsg == null) {
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
                 currentPriceStr = "";
@@ -217,7 +217,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 priceEditController.text = "";
                 numEditController.text = "";
                 totalEditController.text = "";
-              }else{
+              } else {
                 Fluttertoast.showToast(msg: state.respMsg);
               }
               optionsController.add({contrOptionsTypeRefresh: ""});
@@ -246,12 +246,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   Widget exchangePageView() {
     _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
     selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
-    _realTimeQuotePrice = FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
+    _realTimeQuotePrice =
+        FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
 
     return SafeArea(
       child: GestureDetector(
-        onTap: (){
+        onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: Container(
@@ -263,23 +264,21 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 child: LoadDataContainer(
                   bloc: _loadDataBloc,
                   enablePullDown: false,
-                  onLoadData: (){
-                  },
+                  enablePullUp: exchangeModel.isActiveAccount(),
+                  onLoadData: () {},
                   onLoadingMore: () async {
-                    if(exchangeModel.isActiveAccount())  {
-                      consignPageSize ++;
+                    if (exchangeModel.isActiveAccount()) {
+                      consignPageSize++;
                       await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
                       consignListController.add(contrConsignTypeRefresh);
+                    } else {
+                      _loadDataBloc.add(LoadingMoreSuccessEvent());
                     }
                   },
                   child: SingleChildScrollView(
                       child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      _depthWidget(),
-                      _exchangeOptionsWidget(),
-                      _consignListWidget()
-                    ],
+                    children: <Widget>[_depthWidget(), _exchangeOptionsWidget(), _consignListWidget()],
                   )),
                 ),
               ),
@@ -313,16 +312,21 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ),
               ),
               Container(
-                padding: EdgeInsets.all(2.0),
+                padding: EdgeInsets.only(top: 3.0, bottom: 2, left: 2, right: 2),
                 child: Text(
-                  _realTimePricePercent == 0 ? "--" : (_realTimePricePercent >= 0 ? "+" : "-") + FormatUtil.truncateDoubleNum(_realTimePricePercent * 100,2) + "%",
+                  _realTimePricePercent == 0
+                      ? "--"
+                      : (_realTimePricePercent >= 0 ? "+" : "-") +
+                          FormatUtil.truncateDoubleNum(_realTimePricePercent * 100, 2) +
+                          "%",
                   style: TextStyle(
                     color: _realTimePricePercent >= 0 ? HexColor("#53AE86") : HexColor("#CC5858"),
                     fontSize: 10.0,
                   ),
                 ),
                 decoration: BoxDecoration(
-                    color: _realTimePricePercent >= 0 ? HexColor("#EBF8F2") : HexColor("#F9EFEF"), borderRadius: BorderRadius.circular(4.0)),
+                    color: _realTimePricePercent >= 0 ? HexColor("#EBF8F2") : HexColor("#F9EFEF"),
+                    borderRadius: BorderRadius.circular(4.0)),
               ),
               Spacer(),
               InkWell(
@@ -353,9 +357,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ),
               ),
               InkWell(
-                onTap: (){
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => KLineDetailPage(symbol: symbol, symbolName: widget.selectedCoin,)));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => KLineDetailPage(
+                                symbol: symbol,
+                                symbolName: widget.selectedCoin,
+                              )));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(top: 8.0, bottom: 8, left: 20, right: 14),
@@ -371,7 +380,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         });
   }
 
-  Widget _depthWidget(){
+  Widget _depthWidget() {
     return StreamBuilder(
         stream: depthController.stream,
         builder: (context, optionType) {
@@ -380,16 +389,24 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  SizedBox(width: 14,),
-                  Text(_realTimePrice,style:TextStyle(fontSize: 18,color: _realTimePricePercent >= 0 ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
-                  SizedBox(width: 6,),
+                  SizedBox(
+                    width: 14,
+                  ),
+                  Text(_realTimePrice,
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: _realTimePricePercent >= 0 ? DefaultColors.color53ae86 : DefaultColors.colorcc5858)),
+                  SizedBox(
+                    width: 6,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom:3.0),
-                    child: Text("≈$_realTimeQuotePrice",style:TextStyle(fontSize: 10,color: DefaultColors.color777)),
+                    padding: const EdgeInsets.only(bottom: 3.0),
+                    child: Text("≈$_realTimeQuotePrice CNY",
+                        style: TextStyle(fontSize: 10, color: DefaultColors.color777)),
                   ),
                 ],
               ),
-              delegationListView(_buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice){
+              delegationListView(_buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice) {
                 currentPrice = Decimal.parse(depthPrice);
                 currentPriceStr = depthPrice;
                 priceEditController.text = currentPriceStr;
@@ -401,11 +418,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   updateTotalView() {
-    if(currentPrice.toDouble() == 0 || currentNum.toDouble() == 0){
+    if (currentPrice.toDouble() == 0 || currentNum.toDouble() == 0) {
       return;
     }
     var totalPrice = currentPrice * currentNum;
-    totalPriceStr = FormatUtil.truncateDecimalNum(totalPrice,marketInfoEntity.turnoverPrecision);
+    totalPriceStr = FormatUtil.truncateDecimalNum(totalPrice, marketInfoEntity.turnoverPrecision);
     totalEditController.text = totalPriceStr;
     totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
   }
@@ -473,7 +490,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child: Text("$depthIndex位", style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                              child:
+                                  Text("$depthIndex位", style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
                             ),
                           ],
                         ),
@@ -497,7 +515,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           Map optionData = optionType.data;
           var optionKey = optionData?.keys?.elementAt(0) ?? -1;
           var optionValue = optionData?.values?.elementAt(0) ?? "";
-          if(optionKey != contrOptionsTypeRefresh){
+          if (optionKey != contrOptionsTypeRefresh) {
             optionsController.add({contrOptionsTypeRefresh: ""});
           }
           if (optionKey == contrOptionsTypeBuy) {
@@ -520,7 +538,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             currentPrice += Decimal.parse((1 / preNum).toString());
             updateTotalView();
 
-            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
+            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
           } else if (optionKey == contrOptionsTypePriceDecrease) {
@@ -528,38 +546,40 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             currentPrice -= Decimal.parse((1 / preNum).toString());
             updateTotalView();
 
-            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice,marketInfoEntity.pricePrecision);
+            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
           } else if (optionKey == contrOptionsTypeNum) {
             updateTotalView();
 
-            currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
+            currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
           } else if (optionKey == contrOptionsTypeNumPercent) {
             if (exchangeModel.isActiveAccount()) {
               if (isBuy) {
-                currentNum = currentPrice.toString() == "0" ? currentNum : getValidNum() * Decimal.parse(optionValue) / currentPrice;
+                currentNum = currentPrice.toString() == "0"
+                    ? currentNum
+                    : getValidNum() * Decimal.parse(optionValue) / currentPrice;
               } else {
                 currentNum = getValidNum() * Decimal.parse(optionValue);
               }
               updateTotalView();
 
-              currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
+              currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
               numEditController.text = currentNumStr;
               numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
             }
           } else if (optionKey == contrOptionsTypeNumPreError) {
             numEditController.text = currentNumStr;
             numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
-          } else if(optionKey == contrOptionsTypeTotalPrice){
+          } else if (optionKey == contrOptionsTypeTotalPrice) {
             totalPriceStr = optionValue;
-            if(currentPrice != Decimal.fromInt(0)){
+            if (currentPrice != Decimal.fromInt(0) && optionValue != "") {
               currentNum = Decimal.parse(optionValue) / currentPrice;
-              currentNumStr = FormatUtil.truncateDecimalNum(currentNum,marketInfoEntity.amountPrecision);
+              currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
               numEditController.text = currentNumStr;
               numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
             }
-          } else if(optionKey == contrOptionsTypeTotalPriceError){
+          } else if (optionKey == contrOptionsTypeTotalPriceError) {
             totalEditController.text = totalPriceStr;
             totalEditController.selection = TextSelection.fromPosition(TextPosition(offset: totalPriceStr.length));
           } else if (optionKey == contrOptionsTypeRefresh) {}
@@ -588,7 +608,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('买入',style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
+                          child: Text('买入',
+                              style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
                         ),
                       ),
                     ),
@@ -609,7 +630,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('卖出',style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                          child: Text('卖出',
+                              style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
                         ),
                       ),
                     ),
@@ -683,7 +705,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               hintStyle: TextStyles.textCaaaS14,
                             ),
                             onChanged: (price) {
-                              if(price.contains("-")){
+                              if (price.contains("-")) {
                                 return;
                               }
                               if (price.contains(".")) {
@@ -711,7 +733,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         ),
                         InkWell(
                           onTap: () {
-                            if(currentPrice.toDouble() == 0){
+                            if (currentPrice.toDouble() == 0) {
                               return;
                             }
                             optionsController.add({contrOptionsTypePriceDecrease: ""});
@@ -765,7 +787,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             hintStyle: TextStyles.textCaaaS14,
                           ),
                           onChanged: (number) {
-                            if(number.contains("-")){
+                            if (number.contains("-")) {
                               return;
                             }
                             if (number.contains(".")) {
@@ -792,7 +814,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
-                              if (isBuy && currentPrice == 0) {
+                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
                                 return;
                               }
                               optionsController.add({contrOptionsTypeNumPercent: "0.25"});
@@ -807,7 +829,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
-                              if (isBuy && currentPrice == 0) {
+                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
                                 return;
                               }
                               optionsController.add({contrOptionsTypeNumPercent: "0.5"});
@@ -819,7 +841,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: FlatButton(
                             padding: const EdgeInsets.all(0),
                             onPressed: () {
-                              if (isBuy && currentPrice == 0) {
+                              if (isBuy && currentPrice == Decimal.fromInt(0)) {
                                 return;
                               }
                               optionsController.add({contrOptionsTypeNumPercent: "1"});
@@ -862,7 +884,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             hintStyle: TextStyles.textCaaaS14,
                           ),
                           onChanged: (turnover) {
-                            if(turnover.contains("-")){
+                            if (turnover.contains("-")) {
                               return;
                             }
                             if (turnover.contains(".")) {
@@ -872,6 +894,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               } else {
                                 optionsController.add({contrOptionsTypeTotalPriceError: ""});
                               }
+                            } else {
+                              optionsController.add({contrOptionsTypeTotalPrice: turnover});
                             }
                           },
                         ),
@@ -898,7 +922,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
-                    color: isOrderActionLoading ? Color(0xffDEDEDE) : isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
+                    color: isOrderActionLoading
+                        ? Color(0xffDEDEDE)
+                        : isBuy ? DefaultColors.color53ae86 : DefaultColors.colorcc5858,
                   ),
                   child: FlatButton(
                       shape: RoundedRectangleBorder(
@@ -941,7 +967,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                     children: <Widget>[
                       Text(
                         "当前委托",
-                        style: TextStyle(fontSize: 16, color: DefaultColors.color333),
+                        style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
                       Wrap(
@@ -986,10 +1012,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 ],
               ),
             ),
-            if(_activeOrders.length == 0)
-              orderListEmpty(context),
-            if(_activeOrders.length > 0)
-              orderListWidget(context,marketCoin,consignIsLoading,_activeOrders)
+            if (_activeOrders.length == 0) orderListEmpty(context),
+            if (_activeOrders.length > 0) orderListWidget(context, marketCoin, consignIsLoading, _activeOrders)
           ],
         );
       },
@@ -1015,6 +1039,13 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       }
       if (currentNumStr.isEmpty || double.parse(currentNumStr) == 0) {
         Fluttertoast.showToast(msg: "请输入数量");
+        isOrderActionLoading = false;
+        optionsController.add({contrOptionsTypeRefresh: ""});
+        return;
+      }
+      if ((isBuy && Decimal.parse(totalPriceStr) > getValidNum()) ||
+          (!isBuy && Decimal.parse(currentNumStr) > getValidNum())) {
+        Fluttertoast.showToast(msg: "余额不足");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;

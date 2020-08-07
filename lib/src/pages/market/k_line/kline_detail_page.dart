@@ -43,6 +43,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   bool _isShowSetting = false;
 
   bool get _isDepth => _periodTabController.index == 5;
+
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
@@ -62,9 +63,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ];
 
   MainState _mainState = MainState.MA;
+
   bool get _isOpenMainState => _mainState != MainState.NONE;
 
   SecondaryState _secondaryState = SecondaryState.MACD;
+
   bool get _isOpenSecondaryState => _secondaryState != SecondaryState.NONE;
 
   TabController _detailTabController;
@@ -1096,38 +1099,113 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
       children: <Widget>[
         Container(
           padding: const EdgeInsets.only(bottom: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                "买盘 数量(HYN)",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.normal,
-                  color: HexColor("#777777"),
+          child: enable
+              ? Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "买",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              color: HexColor("#777777"),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              "数量",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.normal,
+                                color: HexColor("#777777"),
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            "买价",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              color: HexColor("#777777"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 3,),
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            "卖价",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              color: HexColor("#777777"),
+                            ),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              "数量",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.normal,
+                                color: HexColor("#777777"),
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Text(
+                            "卖",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.normal,
+                              color: HexColor("#777777"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "买盘 数量(HYN)",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: HexColor("#777777"),
+                      ),
+                    ),
+                    Text(
+                      "价格(USDT)",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: HexColor("#777777"),
+                      ),
+                    ),
+                    Text(
+                      "数量(HYN)卖盘",
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.normal,
+                        color: HexColor("#777777"),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                "价格(USDT)",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.normal,
-                  color: HexColor("#777777"),
-                ),
-              ),
-              Text(
-                "数量(HYN)卖盘",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.normal,
-                  color: HexColor("#777777"),
-                ),
-              ),
-            ],
-          ),
         ),
         ListView.builder(
             shrinkWrap: true,
@@ -1235,6 +1313,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                           ),
                         ],
                       )),
+                  SizedBox(width: 3,),
                   Expanded(
                       flex: 1,
                       child: Stack(

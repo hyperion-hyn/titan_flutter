@@ -104,6 +104,7 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
       child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullDown: false,
+          enablePullUp: exchangeModel.isActiveAccount(),
           onLoadData: (){
           },
           onLoadingMore: () async {
@@ -167,7 +168,10 @@ Widget orderListEmpty(BuildContext context){
         Text(
           exchangeModel.isActiveAccount() ? "暂无委托单" : "登录后查看委托单",
           style: TextStyle(fontSize: 14, color: HexColor("#999999")),
-        )
+        ),
+        SizedBox(
+          height: 13,
+        ),
       ],
     ),
   );
