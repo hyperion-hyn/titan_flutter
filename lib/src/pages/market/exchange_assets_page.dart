@@ -17,6 +17,7 @@ import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class ExchangeAssetsPage extends StatefulWidget {
@@ -106,7 +107,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
         child: Stack(
           children: <Widget>[
             Column(
@@ -119,10 +120,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '总资产估值(ETH)',
+                      '交易账户总资产估值',
                       style: TextStyle(
-                        fontSize: 16.0,
-                      ),
+                          fontSize: 12.0, color: HexColor('FF999999')),
                     ),
                     SizedBox(
                       height: 8,
@@ -132,8 +132,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       children: <Widget>[
                         Text(
                           _isShowBalances
-                              ? _totalByEth != null ? '$_totalByEth' : '-'
-                              : '*****',
+                              ? _totalByEth != null
+                                  ? '$_totalByEth ETH'
+                                  : '- ETH'
+                              : '***** ETH',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -153,9 +155,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                     )} ${symbolQuote?.sign?.quote}'
                               : '≈ ***** ${symbolQuote?.sign?.quote}',
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                          ),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: HexColor('#FF999999')),
                           maxLines: 3,
                         )
                       ],
@@ -163,14 +165,15 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                   ],
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 24,
                 ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
                         height: 30,
+                        width: 120,
                         child: OutlineButton(
                           child: Text(
                             '划转',
@@ -187,15 +190,15 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4.0)),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 )
               ],
             ),
             Positioned(
               right: 8,
-              top: 0,
+              top: 16,
               child: InkWell(
                 onTap: () async {
                   BlocProvider.of<ExchangeCmpBloc>(context)
@@ -269,10 +272,6 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         symbolQuote?.sign?.quote,
       );
       ethToCurrency = Decimal.parse(ethRet.toString());
-      var hynRet = await _exchangeApi.type2currency(
-        'HYN',
-        symbolQuote?.sign?.quote,
-      );
 
       setState(() {});
     } catch (e) {}
@@ -290,12 +289,12 @@ class AssetItem extends StatefulWidget {
   final String _symbol;
   final AssetType _assetType;
   final bool _isShowBalances;
-  final Decimal _toCurrency;
+  final Decimal _ethToCurrency;
 
   AssetItem(
     this._symbol,
     this._assetType,
-    this._toCurrency,
+    this._ethToCurrency,
     this._isShowBalances,
   );
 
@@ -346,6 +345,7 @@ class AssetItemState extends State<AssetItem> {
                 child: Icon(
                   Icons.arrow_forward_ios,
                   size: 15,
+                  color: DefaultColors.color999,
                 ),
               )
             ],
@@ -423,7 +423,7 @@ class AssetItemState extends State<AssetItem> {
                       Text(
                         '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: DefaultColors.color999,
                           fontSize: 12,
                         ),
                       ),
@@ -438,10 +438,10 @@ class AssetItemState extends State<AssetItem> {
                                       .exchangeModel
                                       .isShowBalances
                                   ? widget._assetType.eth != null &&
-                                          widget._toCurrency != null
+                                          widget._ethToCurrency != null
                                       ? '${FormatUtil.truncateDecimalNum(
                                           Decimal.parse(widget._assetType.eth) *
-                                              widget._toCurrency,
+                                              widget._ethToCurrency,
                                           4,
                                         )}'
                                       : '-'
@@ -450,6 +450,7 @@ class AssetItemState extends State<AssetItem> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
+                                color: DefaultColors.color999,
                               ),
                             ),
                           ),

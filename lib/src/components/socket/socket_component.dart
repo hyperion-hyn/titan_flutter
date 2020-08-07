@@ -246,6 +246,7 @@ class MarketInheritedModel extends InheritedModel<String> {
     return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 
+  @deprecated
   String getCurrentSymbolRealTimePrice() {
     if (tradeDetailList != null && tradeDetailList.length > 0) {
       var tradeDetail = tradeDetailList[0];
@@ -256,6 +257,7 @@ class MarketInheritedModel extends InheritedModel<String> {
   }
 
   //buy 为 true , sell 为 false
+  @deprecated
   bool isBuyCurrentSymbolRealTimeDirection() {
     if (tradeDetailList != null && tradeDetailList.length > 0) {
       var tradeDetail = tradeDetailList[0];

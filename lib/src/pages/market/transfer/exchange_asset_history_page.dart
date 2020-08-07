@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -46,6 +47,7 @@ class _ExchangeAssetHistoryPageState
   RefreshController _refreshController = RefreshController(
     initialRefresh: false,
   );
+  Decimal ethToCurrency;
 
   @override
   void initState() {
@@ -60,6 +62,7 @@ class _ExchangeAssetHistoryPageState
     super.onCreated();
     symbolQuote =
         QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+    _updateTypeToCurrency();
   }
 
   @override
@@ -67,6 +70,18 @@ class _ExchangeAssetHistoryPageState
     // TODO: implement dispose
     super.dispose();
     _loadDataBloc.close();
+  }
+
+  _updateTypeToCurrency() async {
+    try {
+      var ethRet = await _exchangeApi.type2currency(
+        'ETH',
+        symbolQuote?.sign?.quote,
+      );
+      ethToCurrency = Decimal.parse(ethRet.toString());
+
+      setState(() {});
+    } catch (e) {}
   }
 
   @override
@@ -198,23 +213,32 @@ class _ExchangeAssetHistoryPageState
 
   _assetItem() {
     if (widget._symbol == 'HYN') {
-      return AssetItem(ExchangeInheritedModel.of(context)
-          .exchangeModel
-          .activeAccount
-          .assetList
-          .HYN);
+      return AssetItem(
+        ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .HYN,
+        ethToCurrency,
+      );
     } else if (widget._symbol == 'USDT') {
-      return AssetItem(ExchangeInheritedModel.of(context)
-          .exchangeModel
-          .activeAccount
-          .assetList
-          .USDT);
+      return AssetItem(
+        ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .USDT,
+        ethToCurrency,
+      );
     } else if (widget._symbol == 'ETH') {
-      return AssetItem(ExchangeInheritedModel.of(context)
-          .exchangeModel
-          .activeAccount
-          .assetList
-          .ETH);
+      return AssetItem(
+        ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .ETH,
+        ethToCurrency,
+      );
     } else {
       return SizedBox();
     }
@@ -376,9 +400,11 @@ class _ExchangeAssetHistoryPageState
 
 class AssetItem extends StatefulWidget {
   final AssetType _assetType;
+  final Decimal _ethToCurrency;
 
   AssetItem(
     this._assetType,
+    this._ethToCurrency,
   );
 
   @override
@@ -416,7 +442,14 @@ class AssetItemState extends State<AssetItem> {
                           height: 8.0,
                         ),
                         Text(
-                          '${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote == 'CNY' ? widget._assetType.cny : widget._assetType.usd}',
+                          widget._assetType.eth != null &&
+                                  widget._ethToCurrency != null
+                              ? '${FormatUtil.truncateDecimalNum(
+                                  Decimal.parse(widget._assetType.eth) *
+                                      widget._ethToCurrency,
+                                  4,
+                                )}'
+                              : '-',
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 12),
                         ),
