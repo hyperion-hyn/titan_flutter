@@ -193,7 +193,7 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, 
   );
 }
 
-consignListSocket(SocketState state, List<Order> _activeOrders) {
+bool consignListSocket(SocketState state, List<Order> _activeOrders) {
   if (state is ChannelUserTickState) {
     var netNewOrders = List<Order>();
     var netCancelOrders = List<Order>();
@@ -226,6 +226,7 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
         print("insert order");
         _activeOrders.insertAll(0, temAddOrders);
         Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
+        return true;
       }
     }
 
@@ -246,6 +247,7 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
           _activeOrders.remove(element);
         });
         Fluttertoast.showToast(msg: "订单撤销成功", gravity: ToastGravity.CENTER);
+        return true;
       }
     }
 
@@ -267,6 +269,8 @@ consignListSocket(SocketState state, List<Order> _activeOrders) {
         });
       }
       Fluttertoast.showToast(msg: "订单已完成", gravity: ToastGravity.CENTER);
+      return true;
     }
   }
+  return false;
 }

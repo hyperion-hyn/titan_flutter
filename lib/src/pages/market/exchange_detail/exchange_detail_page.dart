@@ -98,7 +98,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
-  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, [1, 2, 3, 4]);
+  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, 1000000, 10, [1, 2, 3, 4]);
   List<ExcDetailEntity> _buyChartList = [];
   List<ExcDetailEntity> _sailChartList = [];
   int selectDepthNum = 4;
@@ -184,7 +184,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       body: BlocListener<SocketBloc, SocketState>(
         bloc: _socketBloc,
         listener: (ctx, state) {
-          consignListSocket(state, _activeOrders);
+          bool isRefresh = consignListSocket(state, _activeOrders);
+          if(isRefresh){
+            consignListController.add(contrConsignTypeRefresh);
+          }
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();
             _sailChartList.clear();
@@ -196,7 +199,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           bloc: exchangeDetailBloc,
           listener: (ctx, state) {
             if (state is ExchangeMarketInfoState) {
-              marketInfoEntity = state.marketInfoEntity;
+              if(state.marketInfoEntity != null) {
+                marketInfoEntity = state.marketInfoEntity;
+              }
               selectDepthNum = marketInfoEntity.depthPrecision[marketInfoEntity.depthPrecision.length - 1];
               exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
               depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
@@ -1039,6 +1044,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
       }
       if (currentNumStr.isEmpty || double.parse(currentNumStr) == 0) {
         Fluttertoast.showToast(msg: "请输入数量");
+        isOrderActionLoading = false;
+        optionsController.add({contrOptionsTypeRefresh: ""});
+        return;
+      }
+      if(marketInfoEntity.amountMin > Decimal.parse(currentNumStr).toDouble()){
+        Fluttertoast.showToast(msg: "每次${isBuy?"买入":"卖出"}不可少于${marketInfoEntity.amountMin}HYN");
+        isOrderActionLoading = false;
+        optionsController.add({contrOptionsTypeRefresh: ""});
+        return;
+      }
+      if(marketInfoEntity.amountMax < Decimal.parse(currentNumStr).toDouble()){
+        Fluttertoast.showToast(msg: "每次${isBuy?"买入":"卖出"}不可多于${marketInfoEntity.amountMax}HYN");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;

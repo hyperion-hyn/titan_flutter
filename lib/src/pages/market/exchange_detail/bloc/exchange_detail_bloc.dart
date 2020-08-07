@@ -33,8 +33,12 @@ class ExchangeDetailBloc extends Bloc<ExchangeDetailEvent, ExchangeDetailState> 
     } else if (event is MarketExchangeEvent) {
       await exchangeApi.orderPutMarket(event.marketCoin, event.exchangeType, event.amount);
     } else if (event is MarketInfoEvent) {
-      MarketInfoEntity marketInfoEntity = await exchangeApi.getMarketInfo(event.marketCoin);
-      yield ExchangeMarketInfoState(marketInfoEntity);
+      try {
+        MarketInfoEntity marketInfoEntity = await exchangeApi.getMarketInfo(event.marketCoin);
+        yield ExchangeMarketInfoState(marketInfoEntity);
+      }catch(error){
+        yield ExchangeMarketInfoState(null);
+      }
     } else if (event is DepthInfoEvent) {
       var depthData = await exchangeApi.historyDepth(event.symbol,precision: event.precision);
       yield DepthInfoState(depthData);
