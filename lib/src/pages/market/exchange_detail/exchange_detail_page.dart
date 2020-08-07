@@ -188,7 +188,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();
             _sailChartList.clear();
-            dealDepthData(_buyChartList, _sailChartList, state.response, isReplace: false);
+            dealDepthData(_buyChartList, _sailChartList, state.response);
             depthController.add(contrDepthTypeRefresh);
           }
         },
