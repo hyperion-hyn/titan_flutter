@@ -847,5 +847,7 @@
   "verify_location_hint": "Zoom and move the selected location on the map",
   "please_edit_location_hint": "Please edit location map location",
   "support_format": "Support jpg, jpeg, png, gif, heic, webp formats",
-  "net_error_hint": "Network error"
- }
+  "net_error_hint": "Network error",
+  "dialog_title_delete_wallet_confirm": "Confirm delete wallet",
+  "dialog_content_delete_wallet_confirm": "All data of the wallet on the mobile phone will be deleted, please make sure that the wallet mnemonic phrase has been backed up, otherwise it cannot be retrieved!"
+}

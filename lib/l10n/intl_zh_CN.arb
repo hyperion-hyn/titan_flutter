@@ -843,5 +843,7 @@
   "verify_location_hint": "缩放、移动地图选定地点位置",
   "please_edit_location_hint": "请编辑所在地图位置",
   "support_format": "支持jpg、jpeg、png、gif、heic、webp格式",
-  "net_error_hint": "网络错误"
+  "net_error_hint": "网络错误",
+  "dialog_title_delete_wallet_confirm": "确认删除钱包",
+  "dialog_content_delete_wallet_confirm": "将删除该钱包在手机上的所有数据，请务必确保钱包助记词已备份，否则无法找回！"
 }

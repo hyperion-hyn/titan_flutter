@@ -378,7 +378,9 @@ class AssetItemState extends State<AssetItem> {
                             ),
                             Text(
                               widget._isShowBalances
-                                  ? widget._assetType.exchangeAvailable
+                                  ? Decimal.parse(
+                                          widget._assetType.exchangeAvailable)
+                                      .toString()
                                   : '*****',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 12),
@@ -407,7 +409,8 @@ class AssetItemState extends State<AssetItem> {
                       ),
                       Text(
                         widget._isShowBalances
-                            ? widget._assetType.exchangeFreeze
+                            ? Decimal.parse(widget._assetType.exchangeFreeze)
+                                .toString()
                             : '*****',
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 12),

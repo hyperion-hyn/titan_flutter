@@ -476,7 +476,8 @@ class AssetItemState extends State<AssetItem> {
                     height: 8.0,
                   ),
                   Text(
-                    widget._assetType.exchangeAvailable,
+                    Decimal.parse(widget._assetType.exchangeAvailable)
+                        .toString(),
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                   ),
                 ],
@@ -501,7 +502,8 @@ class AssetItemState extends State<AssetItem> {
                     children: <Widget>[
                       Spacer(),
                       Text(
-                        '${widget._assetType.exchangeFreeze}',
+                        Decimal.parse(widget._assetType.exchangeFreeze)
+                            .toString(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
