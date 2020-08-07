@@ -133,7 +133,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             _headerWidget(),
             _dividerWidget(),
             _periodTabWidget(),
-            _dividerWidget(height: 0.5),
+            _dividerWidget(height: 1.0),
             _kLineWidget(),
             _dividerWidget(),
             _detailTabWidget(),
@@ -1001,7 +1001,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     _buyChartList.clear();
     _sellChartList.clear();
-    dealDepthData(_buyChartList, _sellChartList, data);
+    dealDepthData(_buyChartList, _sellChartList, data, enable: false);
     _setupDepthWidget();
     print("[WS] --> _getDepthData, _buyChartList.length:${_buyChartList.length}");
 
@@ -1127,7 +1127,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       } else if (state is ChannelExchangeDepthState) {
         _buyChartList.clear();
         _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response);
+        dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
         _setupDepthWidget();
         _depthController.add(_depthRefresh);
       } else if (state is ChannelTradeDetailState) {
@@ -1464,7 +1464,7 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
   );
 }
 
-dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data) {
+dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data, {var enable = true}) {
   if (!(data is Map)) {
     return;
   }
@@ -1502,6 +1502,12 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
   // buy
   var buyList = deptList(data["buy"], "buy");
   if (buyList.isNotEmpty) {
+    var defaultLength = buyList.length;
+    if (enable && defaultLength > 5) {
+      defaultLength = 5;
+      buyList = buyList.sublist(0, defaultLength);
+    }
+
     var max = maxDepthEntity(buyList);
     for (int index = 0; index < buyList.length; index++) {
       var buy = buyList[index];
@@ -1515,6 +1521,11 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
   // sell
   var sellList = deptList(data["sell"], "sell");
   if (sellList.isNotEmpty) {
+    var defaultLength = sellList.length;
+    if (enable && defaultLength > 5) {
+      defaultLength = 5;
+      sellList = sellList.sublist(0, defaultLength);
+    }
     var max = maxDepthEntity(sellList);
     for (int index = 0; index < sellList.length; index++) {
       var sell = sellList[index];
