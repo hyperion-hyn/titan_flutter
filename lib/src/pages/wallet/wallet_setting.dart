@@ -107,7 +107,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
         ),
         actions: <Widget>[
           FlatButton(
-            onPressed: deleteWallet,
+            onPressed: _showDeleteDialog,
             child: Text(
               S.of(context).delete,
               style: TextStyle(color: HexColor('#FF999999')),
@@ -425,6 +425,25 @@ class _WalletSettingState extends State<WalletSettingPage> {
         }
       }
     }
+  }
+
+  _showDeleteDialog() {
+    UiUtil.showDialogWidget(context,
+        title: Text(S.of(context).dialog_title_delete_wallet_confirm),
+        content: Text(S.of(context).dialog_content_delete_wallet_confirm),
+        actions: [
+          FlatButton(
+              child: Text(S.of(context).cancel),
+              onPressed: () async {
+                Navigator.of(context).pop();
+              }),
+          FlatButton(
+              child: Text(S.of(context).confirm),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                deleteWallet();
+              })
+        ]);
   }
 
   Future<void> deleteWallet() async {

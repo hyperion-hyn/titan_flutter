@@ -12,6 +12,11 @@ import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'dart:convert';
+import 'package:encrypt/encrypt.dart' as rsa;
+import 'package:pointycastle/asymmetric/api.dart';
+
+import '../../../../config.dart';
 
 class ExchangeHttp extends BaseHttpCore {
   factory ExchangeHttp() => _getInstance();
@@ -354,5 +359,47 @@ class ExchangeApi {
         "period": period,
       },
     );
+  }
+
+  Future<dynamic> postAndVerifySign(
+    String url, {
+    //example: /api/index/testWalletSign
+    Map<String, dynamic> params,
+  }) async {
+    var data = await ExchangeHttp.instance.postEntity(
+      url,
+      null,
+      params: params,
+    );
+
+    if (verifySign(data)) {
+      return data;
+    } else {
+      throw FormatException('sign verify error: ' + data);
+    }
+  }
+
+  bool verifySign(Map data) {
+//    Map params = json.decode(data);
+    var paramsStr = '';
+    var sortedParams = data.keys.toList()..sort();
+    for (var k in sortedParams) {
+      if (k != 'sign') {
+        if (paramsStr != '') {
+          paramsStr += '&';
+        }
+        paramsStr += '$k=${Uri.encodeComponent(data[k].toString())}';
+      }
+    }
+
+    var parser = rsa.RSAKeyParser();
+    var k = utf8.decode(base64Decode(Config.EXCHANGE_API_SIGN_PUBLIC_KEY));
+    var publicKey = parser.parse(k) as RSAPublicKey;
+
+    var signer = rsa.Signer(
+      rsa.RSASigner(rsa.RSASignDigest.SHA256, publicKey: publicKey),
+    );
+
+    return signer.verify64(paramsStr, data['sign']);
   }
 }

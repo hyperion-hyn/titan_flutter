@@ -1,9 +1,13 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
@@ -35,11 +39,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   var _exchangeType = ExchangeType.BUY;
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  RefreshController _refreshController = RefreshController(
+    initialRefresh: true,
+  );
 
   @override
   void dispose() {
     super.dispose();
     _exchangeBloc.close();
+    _loadDataBloc.close();
   }
 
   @override
@@ -79,12 +88,24 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       child: BlocBuilder<ExchangeBloc, ExchangeState>(
         bloc: _exchangeBloc,
         builder: (context, state) {
-          if (state is SwitchToAuthState) {
-            return ExchangeAuthPage();
-          } else if (state is SwitchToContentState) {
-            return _contentView();
-          }
-          return _contentView();
+          return Container(
+            color: Colors.white,
+            child: LoadDataContainer(
+              bloc: _loadDataBloc,
+              enablePullUp: false,
+              onLoadData: () async {
+                _loadDataBloc.add(RefreshSuccessEvent());
+                _refreshController.refreshCompleted();
+              },
+              onRefresh: () async {
+                BlocProvider.of<ExchangeCmpBloc>(context)
+                    .add(UpdateAssetsEvent());
+                _loadDataBloc.add(RefreshSuccessEvent());
+                _refreshController.refreshCompleted();
+              },
+              child: _contentView(),
+            ),
+          );
         },
       ),
     );
@@ -92,7 +113,14 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _contentView() {
     return Column(
-      children: <Widget>[_banner(), _account(), _exchange(), _divider(), _quotesView(), _authorizedView()],
+      children: <Widget>[
+        _banner(),
+        _account(),
+        _exchange(),
+        _divider(),
+        _quotesView(),
+        _authorizedView(),
+      ],
     );
   }
 
@@ -219,8 +247,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              ExchangeDetailPage(selectedCoin: _selectedCoin, exchangeType: _exchangeType)));
+                          builder: (context) => ExchangeDetailPage(
+                              selectedCoin: _selectedCoin,
+                              exchangeType: _exchangeType)));
                 },
                 width: 88,
                 height: 38,
@@ -259,7 +288,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   Expanded(
                     flex: 1,
                     child: Text(
-                      '24H 量 ${_getMarketItem(_selectedCoin)?.kLineEntity?.amount ?? '--'}',
+                      '24H 量 ${FormatUtil.truncateDoubleNum(_getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ?? '--'}',
                       style: TextStyle(
                         color: HexColor('#FF999999'),
                         fontSize: 12,
@@ -292,16 +321,23 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _account() {
-    var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
+    var quote = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('USDT')
+        ?.sign
+        ?.quote;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
-            Application.router.navigateTo(context,
-                Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+              null) {
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           }
         },
         child: Row(
@@ -318,7 +354,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       width: 20,
                       height: 20,
                     )
-                  : QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
+                  : QuotesInheritedModel.of(context)
+                              .activatedQuoteVoAndSign('USDT')
+                              .sign
+                              .quote ==
+                          'CNY'
                       ? Image.asset(
                           'res/drawable/ic_exchange_account_cny.png',
                           width: 18,
@@ -353,9 +393,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    var _totalByEth = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalEth();
-    var _ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
+    var _totalByEth = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList
+        ?.getTotalEth();
+    var _ethQuotePrice = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('ETH')
+        ?.quoteVo
+        ?.price;
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+        null) {
       var _ethTotalQuotePrice = _ethQuotePrice != null && _totalByEth != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
@@ -366,12 +414,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _ethTotalQuotePrice : '*****',
+              text: ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances
+                  ? _ethTotalQuotePrice
+                  : '*****',
               style: TextStyle(
                 fontSize: 14,
               )),
           TextSpan(
-            text: ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
+            text:
+                ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
@@ -398,13 +451,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: <Widget>[
-                  if (_exchangeType == ExchangeType.BUY) Spacer(),
+                  if (_exchangeType == ExchangeType.SELL) Spacer(),
                   _coinItem(
                     'HYN',
                     SupportedTokens.HYN.logo,
                     false,
                   ),
-                  if (_exchangeType == ExchangeType.BUY) Spacer(),
+                  if (_exchangeType == ExchangeType.SELL) Spacer(),
                 ],
               ),
             ),
@@ -480,7 +533,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
     return Row(
       children: <Widget>[
-        if (_exchangeType == ExchangeType.SELL) Spacer(),
+        if (_exchangeType == ExchangeType.BUY) Spacer(),
         DropdownButtonHideUnderline(
           child: DropdownButton(
             onChanged: (value) {
@@ -565,6 +618,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _quotesItemList() {
     return Expanded(
       child: ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
           itemCount: _marketItemList.length,
           itemBuilder: (context, index) {
             return _marketItem(_marketItemList[index]);
@@ -577,7 +631,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour = '24H量 ${marketItemEntity.kLineEntity.amount}';
+    var _amount24Hour = '24H量 ${FormatUtil.truncateDoubleNum(
+      marketItemEntity.kLineEntity.amount,
+      2,
+    )}';
 
     // price
     var _latestPrice = FormatUtil.truncateDecimalNum(
@@ -586,7 +643,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     );
     var _latestPriceString = '$_latestPrice';
 
-    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+    var _selectedQuote =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
@@ -595,16 +653,19 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
             4,
           );
-    var _latestRmbPriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    var _latestRmbPriceString =
+        '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
 
     // _latestPercent
-    double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
+    double _latestPercent =
+        MarketInheritedModel.of(context).getRealTimePricePercent(
       marketItemEntity.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
         : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
-    var _latestPercentString = '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
+    var _latestPercentString =
+        '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
       _latestPercent * 100.0,
       2,
     )}%';
@@ -623,7 +684,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                           )));
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -706,7 +768,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               child: Center(
                                 child: Text(
                                   _latestPercentString,
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12),
                                 ),
                               ),
                             )
