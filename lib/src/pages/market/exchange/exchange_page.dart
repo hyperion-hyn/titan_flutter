@@ -46,7 +46,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void onCreated() {
     super.onCreated();
 
-   _setupMarketItemList();
+    _setupMarketItemList();
   }
 
   _setupMarketItemList() {
@@ -563,7 +563,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _quotesItemList() {
-
     return Expanded(
       child: ListView.builder(
           itemCount: _marketItemList.length,
@@ -574,18 +573,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _marketItem(MarketItemEntity marketItemEntity) {
-    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity.symbolName,
-    );
-    /*var _latestPrice = FormatUtil.truncateDecimalNum(
-      Decimal.parse(MarketInheritedModel.of(context).getRealTimePrice(
-        marketItemEntity.symbol,
-      )),
-      4,
-    );*/
+    // symbol
+    var _symbolName = '/${marketItemEntity.symbolName}';
+
+    // 24hour
+    var _amount24Hour = '24H量 ${marketItemEntity.kLineEntity.amount}';
+
+    // price
     var _latestPrice = FormatUtil.truncateDecimalNum(
       Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
       4,
+    );
+    var _latestPriceString = '$_latestPrice';
+
+    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+      marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
@@ -593,11 +595,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
             4,
           );
+    var _latestRmbPriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+
+    // _latestPercent
     double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
       marketItemEntity.symbol,
     );
+    var _latestPercentBgColor = _latestPercent == 0
+        ? HexColor('#FF999999')
+        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
+    var _latestPercentString = '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
+      _latestPercent * 100.0,
+      2,
+    )}%';
 
-    print("[marketItemEntity] symbol:${marketItemEntity.symbolName}, amount:${marketItemEntity.kLineEntity.amount}");
+    //print("[marketItemEntity] symbol:${marketItemEntity.symbolName}, amount:${marketItemEntity.kLineEntity.amount}");
     return Column(
       children: <Widget>[
         InkWell(
@@ -630,7 +642,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                                     fontSize: 16,
                                   )),
                               TextSpan(
-                                  text: '/${marketItemEntity.symbolName}',
+                                  text: _symbolName,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
@@ -641,7 +653,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               height: 4,
                             ),
                             Text(
-                              '24H量 ${marketItemEntity.kLineEntity.amount}',
+                              _amount24Hour,
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -658,7 +670,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '$_latestPrice',
+                                  _latestPriceString,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -668,7 +680,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                                   height: 4,
                                 ),
                                 Text(
-                                  '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice',
+                                  _latestRmbPriceString,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
@@ -689,16 +701,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                               height: 39,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4.0),
-                                color: _latestPercent == 0
-                                    ? HexColor('#FF999999')
-                                    : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858'),
+                                color: _latestPercentBgColor,
                               ),
                               child: Center(
                                 child: Text(
-                                  '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
-                                    _latestPercent * 100.0,
-                                    2,
-                                  )}%',
+                                  _latestPercentString,
                                   style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
                                 ),
                               ),

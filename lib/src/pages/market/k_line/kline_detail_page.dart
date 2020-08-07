@@ -1,13 +1,15 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
+import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
@@ -33,10 +35,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   List<TradeInfoEntity> _tradeItemList = [];
 
   PeriodInfoEntity _periodParameter;
-  KLineEntity _channel24HourKLineEntity;
-  KLineEntity _lastChannel24HourKLineEntity;
 
   bool _showLoadingKLine = true;
+  bool _showLoadingDepth = true;
   bool _showLoadingTrade = true;
 
   bool _isShowMore = false;
@@ -84,6 +85,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   List<DepthEntity> _asks = []; // 询价
 
   var _kMaxTradeCount = 20;
+
+  StreamController<int> _amount24HourController = StreamController.broadcast();
+  final int _amount24HourRefresh = 15;
+
+  StreamController<int> _depthController = StreamController.broadcast();
+  final int _depthRefresh = 16;
+
+  StreamController<int> _tradeController = StreamController.broadcast();
+  final int _tradeRefresh = 17;
 
   @override
   void initState() {
@@ -166,118 +176,129 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget _headerWidget() {
-    var _open = _channel24HourKLineEntity?.open?.toString() ?? "--";
-    var _high = _channel24HourKLineEntity?.high?.toString() ?? "--";
-    var _low = _channel24HourKLineEntity?.low?.toString() ?? "--";
-    var _24Hour = _channel24HourKLineEntity?.amount?.toString() ?? "--";
+    var marketItemEntity = MarketInheritedModel.of(context).getMarketItem(widget.symbol);
 
-    var _price = _channel24HourKLineEntity?.amount?.toString() ?? "-- ";
-    //_price = "≈￥23931 ";
-    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
-    var open = _channel24HourKLineEntity?.open;
-    if (open != null) {
-      var _priceValue = (symbolQuote?.quoteVo?.price ?? 0) * open;
-      _price = '≈￥' + _priceValue.toStringAsFixed(4);
-    } else {
-      _price = '-- ';
-    }
+    var _high = marketItemEntity.kLineEntity?.high?.toString() ?? "--";
+    var _low = marketItemEntity.kLineEntity?.low?.toString() ?? "--";
+    var _amount24Hour = marketItemEntity.kLineEntity?.amount?.toString() ?? "--";
 
-    var _percent = _channel24HourKLineEntity?.amount?.toString() ?? "--";
-    if (_lastChannel24HourKLineEntity != null) {
-      var percentStringValue = "";
-      var percentValue = _channel24HourKLineEntity.open - _lastChannel24HourKLineEntity.open;
-      if (percentValue >= 0) {
-        percentStringValue = ' +' + FormatUtil.formatPercent(percentValue / _lastChannel24HourKLineEntity.open);
-      } else {
-        percentStringValue = ' -' + FormatUtil.formatPercent(percentValue / _lastChannel24HourKLineEntity.open);
-      }
-      if (percentStringValue.isEmpty) {
-        percentStringValue = '--';
-      }
+    // price
+    var _latestPrice = FormatUtil.truncateDecimalNum(
+      Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
+      4,
+    );
+    var _latestPriceString = '${_latestPrice ?? '--'}';
 
-      //_percent = "+1.9%";
-      _percent = percentStringValue;
-    }
+    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+      marketItemEntity.symbolName,
+    );
+    var _latestQuotePrice = _selectedQuote == null
+        ? '--'
+        : FormatUtil.truncateDoubleNum(
+            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+            4,
+          );
+    var _latestRmbPriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+
+    // _latestPercent
+    double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
+      marketItemEntity.symbol,
+    );
+    var _latestPercentBgColor = _latestPercent == 0
+        ? HexColor('#FF999999')
+        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
+    var _latestPercentString = '${(_latestPercent) > 0 ? ' +' : ' '}${FormatUtil.truncateDoubleNum(
+      _latestPercent * 100.0,
+      2,
+    )}%';
 
     return SliverToBoxAdapter(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 0, 14, 7),
-            child: Row(
+      child: StreamBuilder(
+        stream: _amount24HourController.stream,
+        builder: (context, optionType) {
+          return Container(
+            child: Column(
               children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      _open,
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 28, color: HexColor("#53AE86")),
-                    ),
-                    SizedBox(
-                      height: 2,
-                    ),
-                    RichText(
-                      text: TextSpan(
-                          text: _price,
-                          style: TextStyle(
-                            color: HexColor("#777777"),
-                            fontSize: 14,
-                          ),
-                          children: [
-                            TextSpan(
-                                text: _percent,
-                                style: TextStyle(
-                                  color: HexColor("#259D25"),
-                                  fontSize: 14,
-                                ))
-                          ]),
-                    )
-                  ],
-                ),
-                Spacer(),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 14, 7),
+                  child: Row(
                     children: <Widget>[
-                      Text(
-                        '高',
-                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            _latestPriceString,
+                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 28, color: _latestPercentBgColor),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                                text: _latestRmbPriceString,
+                                style: TextStyle(
+                                  color: HexColor("#777777"),
+                                  fontSize: 14,
+                                ),
+                                children: [
+                                  TextSpan(
+                                      text: _latestPercentString,
+                                      style: TextStyle(
+                                        color: _latestPercentBgColor,
+                                        fontSize: 14,
+                                      ))
+                                ]),
+                          )
+                        ],
                       ),
+                      Spacer(),
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              '高',
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              '低',
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              '24H',
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                            ),
+                          ]),
                       SizedBox(
-                        height: 5,
+                        width: 16,
                       ),
-                      Text(
-                        '低',
-                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        '24H',
-                        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
-                      ),
-                    ]),
-                SizedBox(
-                  width: 16,
+                      Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [_high, '1', _low, '1', _amount24Hour]
+                              .map((text) => text == '1'
+                                  ? SizedBox(
+                                      height: 6,
+                                    )
+                                  : Text(
+                                      text,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
+                                    ))
+                              .toList()),
+                    ],
+                  ),
                 ),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [_high, '1', _low, '1', _24Hour]
-                        .map((text) => text == '1'
-                            ? SizedBox(
-                                height: 6,
-                              )
-                            : Text(
-                                text,
-                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
-                              ))
-                        .toList()),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -488,7 +509,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     return InkWell(
       onTap: () {
         _isShowMore = false;
-        _periodTabController.index = 3;
+        _periodTabController.index = 4;
 
         var index = _morePeriodList.indexOf(item);
         if (index != 0) {
@@ -535,7 +556,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             Text(
               _morePeriodList.contains(_periodParameter) ? _periodParameter.name : '更多',
               style: TextStyle(
-                  color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 3)
+                  color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 4)
                       ? HexColor("#228BA1")
                       : HexColor("#999999")),
             ),
@@ -584,8 +605,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           fontSize: 12,
         ),
         indicatorSize: TabBarIndicatorSize.label,
+        labelPadding: EdgeInsets.only(left: 16),
         indicatorColor: HexColor('#228BA1'),
-        indicatorPadding: EdgeInsets.only(bottom: 8, left: 4, right: 4),
+        indicatorPadding: EdgeInsets.only(bottom: 8, left: 20, right: 4),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
           _lastSelectedIndex = _periodTabController.previousIndex;
@@ -666,9 +688,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             child: Stack(
               children: <Widget>[
                 Visibility(
-                    visible: !_showLoadingTrade,
-                    child: delegationListView(_buyChartList, _sellChartList, enable: false)),
-                _loadingWidget(visible: _showLoadingTrade),
+                    visible: !_showLoadingDepth,
+                    child: StreamBuilder(
+                      stream: _depthController.stream,
+                      builder: (context, optionType) {
+                        return delegationListView(_buyChartList, _sellChartList, enable: false);
+                      },
+                    )),
+                _loadingWidget(visible: _showLoadingDepth),
               ],
             ),
           ),
@@ -695,99 +722,103 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget _transactionListView() {
-    return Container(
-      padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: Row(
+    return StreamBuilder(
+        stream: _tradeController.stream,
+        builder: (context, snapshot) {
+          return Container(
+            padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+            child: Column(
               children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "时间",
-                    style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    "方向",
-                    style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "价格(USDT)",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                  ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "数量(HYN)",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              itemBuilder: (context, index) {
-                var excDetailEntity = _tradeItemList[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
                     children: <Widget>[
                       Expanded(
                         flex: 2,
                         child: Text(
-                          FormatUtil.formatSecondDate(excDetailEntity.date),
-//                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          "时间",
+                          style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                       Expanded(
                         flex: 1,
                         child: Text(
-                          excDetailEntity.actionType == "sell" ? "卖出" : "买入",
-                          style: TextStyle(
-                              color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500),
+                          "方向",
+                          style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                       Expanded(
                         flex: 2,
                         child: Text(
-                          excDetailEntity.price,
+                          "价格(USDT)",
                           textAlign: TextAlign.end,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                       Expanded(
                         flex: 2,
                         child: Text(
-                          excDetailEntity.amount,
+                          "数量(HYN)",
                           textAlign: TextAlign.end,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                          style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                     ],
                   ),
-                );
-              },
-              itemCount: _tradeItemList.length),
-        ],
-      ),
-    );
+                ),
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    scrollDirection: Axis.vertical,
+                    itemBuilder: (context, index) {
+                      var excDetailEntity = _tradeItemList[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                FormatUtil.formatSecondDate(excDetailEntity.date),
+//                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
+                                style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                excDetailEntity.actionType == "sell" ? "卖出" : "买入",
+                                style: TextStyle(
+                                    color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                excDetailEntity.price,
+                                textAlign: TextAlign.end,
+                                style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                excDetailEntity.amount,
+                                textAlign: TextAlign.end,
+                                style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: _tradeItemList.length),
+              ],
+            ),
+          );
+        });
   }
 
   _initData() {
@@ -824,23 +855,25 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ]
   */
   Future _getPeriodData() async {
-    setState(() {
-      _showLoadingKLine = true;
-    });
+    if (mounted) {
+      setState(() {
+        _showLoadingKLine = true;
+      });
+    }
 
     var data = await api.historyKline(widget.symbol, period: _periodParameter.value);
     print("[WS] --> _getPeriodData, data:$data");
     _dealPeriodData(data);
+
+    if (mounted) {
+      setState(() {
+        _showLoadingKLine = false;
+      });
+    }
   }
 
-  _dealPeriodData(dynamic data, {bool isReplace = true, String symbol = ''}) {
+  _dealPeriodData(dynamic data, {bool isReplace = true}) {
     if (!(data is List)) {
-      if (mounted) {
-        setState(() {
-          _showLoadingKLine = false;
-        });
-      }
-
       return;
     }
 
@@ -865,47 +898,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-    print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
+    print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
 
-    if (symbol.isNotEmpty) {
-      if (symbol == widget.symbol && kLineDataList.isNotEmpty) {
-        print("[WS] --> _dealPeriodData, 24hour， kLineDataList.length:${kLineDataList?.length}, symbol:$symbol");
-
-        _set24HourKLineEntity(kLineDataList);
+    if (isReplace) {
+      if (kLineDataList.isNotEmpty) {
+        _kChartItemList = kLineDataList;
+        DataUtil.calculate(_kChartItemList);
       }
     } else {
-      if (isReplace) {
-        if (kLineDataList.isNotEmpty) {
-          _kChartItemList = kLineDataList;
-
-          DataUtil.calculate(_kChartItemList);
-
-          if (_channel24HourKLineEntity == null) {
-            _set24HourKLineEntity(kLineDataList);
-          }
-        }
-      } else {
-        if (kLineDataList.isNotEmpty) {
-          DataUtil.addLastData(_kChartItemList, kLineDataList.last);
-        }
+      if (kLineDataList.isNotEmpty) {
+        DataUtil.addLastData(_kChartItemList, kLineDataList.last);
       }
     }
-
-    if (mounted) {
-      setState(() {
-        _showLoadingKLine = false;
-      });
-    }
-  }
-
-  _set24HourKLineEntity(List kLineDataList) {
-    if (_lastChannel24HourKLineEntity == null) {
-      _lastChannel24HourKLineEntity = kLineDataList.last;
-    } else {
-      _lastChannel24HourKLineEntity = _channel24HourKLineEntity;
-    }
-
-    _channel24HourKLineEntity = kLineDataList.last;
   }
 
   /*
@@ -923,15 +927,18 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ]
   * */
   Future _getTradeData() async {
-    setState(() {
-      _showLoadingTrade = true;
-    });
     var data = await api.historyTrade(widget.symbol, limit: (_kMaxTradeCount * 2).toString());
 
     print("[WS] --> _getTradeData, data:$data");
 
     _dealTradeData(data);
     print("[WS] --> _getTradeData, data:${data is List}");
+
+    if (mounted) {
+      setState(() {
+        _showLoadingTrade = false;
+      });
+    }
   }
 
   _dealTradeData(dynamic data, {bool isReplace = true}) {
@@ -953,7 +960,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       }
       return entity;
     }).toList();
-    print("[WS] --> _dealTradeData, 1,tradeInfoEntityList.length:${tradeInfoEntityList.length}");
+
+    //print("[WS] --> _dealTradeData, 1,tradeInfoEntityList.length:${tradeInfoEntityList.length}");
 
     if (isReplace) {
       if (tradeInfoEntityList.isNotEmpty) {
@@ -965,17 +973,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       }
     } else {
       if (tradeInfoEntityList.isNotEmpty) {
+        tradeInfoEntityList = tradeInfoEntityList.reversed.toList();
         _tradeItemList.insertAll(0, tradeInfoEntityList);
         if (_tradeItemList.length > _kMaxTradeCount) {
           _tradeItemList = _tradeItemList.sublist(0, _kMaxTradeCount);
         }
       }
     }
-    print("[WS] --> _dealTradeData, 2,_tradeItemList.length:${_tradeItemList.length}");
-
-    setState(() {
-      _showLoadingTrade = false;
-    });
+    //print("[WS] --> _dealTradeData, 2,_tradeItemList.length:${_tradeItemList.length}");
   }
 
 /*
@@ -996,6 +1001,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     dealDepthData(_buyChartList, _sellChartList, data);
     print("[WS] --> _getDepthData, data:${data is List}");
+
+    if (mounted) {
+      setState(() {
+        _showLoadingDepth = false;
+      });
+    }
   }
 
   // channel
@@ -1067,11 +1078,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       if (state is SubChannelSuccessState) {
         var msg = '订阅 ${state.channel} 成功';
         print("[Bloc] msg:$msg");
-        Fluttertoast.showToast(msg: msg);
+        //Fluttertoast.showToast(msg: msg);
       } else if (state is UnSubChannelSuccessState) {
         var msg = '取阅 ${state.channel} 成功';
         print("[Bloc] msg:$msg");
-        Fluttertoast.showToast(msg: msg);
+        //Fluttertoast.showToast(msg: msg);
+      } else if (state is ChannelKLine24HourState) {
+        _amount24HourController.add(_amount24HourRefresh);
       } else if (state is ChannelKLinePeriodState) {
         if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
           _unSubPeriodChannel(period: state.channel.split(".").last);
@@ -1080,11 +1093,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
         dealDepthData(_buyChartList, _sellChartList, state.response, isReplace: false);
-        if (mounted) {
-          setState(() {});
-        }
+        _depthController.add(_depthRefresh);
       } else if (state is ChannelTradeDetailState) {
         _dealTradeData(state.response, isReplace: false);
+        _tradeController.add(_tradeRefresh);
       }
     });
   }
@@ -1437,40 +1449,24 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
         }
         return entity;
       }).toList();
-      print("[WS] --> _getDepthData, depthInfoEntityList.length:${depthInfoEntityList.length}");
+      //print("[WS] --> _getDepthData, depthInfoEntityList.length:${depthInfoEntityList.length}");
       return depthInfoEntityList;
     }
     return [];
   }
 
+  // buy
   var buy = dataMap["buy"];
   var buyList = deptList(buy, "buy");
-
-  var sell = dataMap["sell"];
-  var sellList = deptList(sell, "sell");
-  print("[WS] --> _getDepthData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
-
   if (isReplace) {
     if (buyList.isNotEmpty) {
       _buyDepthItemList = buyList;
-    }
-
-    if (sellList.isNotEmpty) {
-      _sellDepthItemList = sellList;
     }
   } else {
     if (buyList.isNotEmpty) {
       _buyDepthItemList.addAll(buyList);
     }
-
-    if (sellList.isNotEmpty) {
-      _sellDepthItemList.addAll(sellList);
-    }
   }
-
-  // doing
-
-  // buy
   List<ExcDetailEntity> buyEntityList = [];
   if (_buyDepthItemList.isNotEmpty) {
     var maxBuyDepthEntity = _buyDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
@@ -1493,6 +1489,19 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
   }
 
   // sell
+  var sell = dataMap["sell"];
+  var sellList = deptList(sell, "sell");
+  print("[WS] --> _getDepthData,buyList.length:${buyList.length}, sellList.length:${sellList.length}");
+
+  if (isReplace) {
+    if (sellList.isNotEmpty) {
+      _sellDepthItemList = sellList;
+    }
+  } else {
+    if (sellList.isNotEmpty) {
+      _sellDepthItemList.addAll(sellList);
+    }
+  }
   List<ExcDetailEntity> sellEntityList = [];
   if (_sellDepthItemList.isNotEmpty) {
     var maxSellDepthEntity = _sellDepthItemList.reduce((DepthInfoEntity current, DepthInfoEntity next) {
