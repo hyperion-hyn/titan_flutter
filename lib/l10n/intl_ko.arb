@@ -836,5 +836,7 @@
   "verify_location_hint": "지도에서 선택한 위치를 확대하고 이동합니다",
   "please_edit_location_hint": "위치 맵 위치를 편집하십시오",
   "support_format": "jpg, jpeg, png, gif, heic, webp 형식 지원",
-  "net_error_hint": "네트워크 오류"
+  "net_error_hint": "네트워크 오류",
+  "dialog_title_delete_wallet_confirm": "确认删除钱包",
+  "dialog_content_delete_wallet_confirm": "将删除该钱包在手机上的所有数据，请务必确保钱包助记词已备份，否则无法找回！"
 }
