@@ -1210,7 +1210,6 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                               ),
                             ),
                           ),
-                          Spacer(),
                           Text(
                             "卖",
                             style: TextStyle(

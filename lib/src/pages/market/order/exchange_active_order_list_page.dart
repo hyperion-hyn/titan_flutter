@@ -99,7 +99,11 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
     return BlocListener<SocketBloc, SocketState>(
       bloc: _socketBloc,
       listener: (ctx, state) {
-        consignListSocket(state, _activeOrders);
+        bool isRefresh = consignListSocket(state, _activeOrders, false);
+        if(isRefresh){
+          setState(() {
+          });
+        }
       },
       child: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -193,7 +197,7 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, 
   );
 }
 
-bool consignListSocket(SocketState state, List<Order> _activeOrders) {
+bool consignListSocket(SocketState state, List<Order> _activeOrders,bool showToast) {
   if (state is ChannelUserTickState) {
     var netNewOrders = List<Order>();
     var netCancelOrders = List<Order>();
@@ -225,7 +229,9 @@ bool consignListSocket(SocketState state, List<Order> _activeOrders) {
       if (temAddOrders.length > 0) {
         print("insert order");
         _activeOrders.insertAll(0, temAddOrders);
-        Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
+        if(showToast) {
+          Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
+        }
         return true;
       }
     }
@@ -246,7 +252,9 @@ bool consignListSocket(SocketState state, List<Order> _activeOrders) {
         temCancelOrders.forEach((element) {
           _activeOrders.remove(element);
         });
-        Fluttertoast.showToast(msg: "订单撤销成功", gravity: ToastGravity.CENTER);
+        if(showToast) {
+          Fluttertoast.showToast(msg: "订单撤销成功", gravity: ToastGravity.CENTER);
+        }
         return true;
       }
     }
@@ -268,7 +276,9 @@ bool consignListSocket(SocketState state, List<Order> _activeOrders) {
           _activeOrders.remove(element);
         });
       }
-      Fluttertoast.showToast(msg: "订单已完成", gravity: ToastGravity.CENTER);
+      if(showToast) {
+        Fluttertoast.showToast(msg: "订单已完成", gravity: ToastGravity.CENTER);
+      }
       return true;
     }
   }
