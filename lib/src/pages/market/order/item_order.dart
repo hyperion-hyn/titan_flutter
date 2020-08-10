@@ -6,6 +6,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/loading_button/click_loading_button.dart';
 
 class OrderItem extends StatefulWidget {
   final Order _order;
@@ -177,7 +178,10 @@ class OrderItemState extends State<OrderItem> {
     if (widget._order.status == '0' || widget._order.status == '1') {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Container(
+        child: ClickLoadingButton('撤销',() async {
+          await widget.revokeOrder(widget._order);
+        },height: 27,width: 60,fontSize: 12,fontColor: HexColor('#1F81FF'),btnColor: HexColor('#F2F2F2'),radius: 3,),
+        /*child: Container(
           width: 60,
           height: 27,
           decoration: BoxDecoration(
@@ -196,7 +200,7 @@ class OrderItemState extends State<OrderItem> {
               widget.revokeOrder(widget._order);
             },
           ),
-        ),
+        ),*/
       );
     } else if (widget._order.status == '2') {
       return Padding(
