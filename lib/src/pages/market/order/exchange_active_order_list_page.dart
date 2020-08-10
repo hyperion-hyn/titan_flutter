@@ -84,9 +84,6 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
 
   @override
   void dispose() {
-    if (exchangeModel.isActiveAccount()) {
-      _socketBloc.add(UnSubChannelEvent(channel: userTickChannel));
-    }
     Application.routeObserver.unsubscribe(this);
     exchangeDetailBloc.close();
     _loadDataBloc.close();
