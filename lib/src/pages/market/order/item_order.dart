@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -25,7 +26,7 @@ class OrderItemState extends State<OrderItem> {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 8.0,
+          height: 16.0,
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,7 +90,7 @@ class OrderItemState extends State<OrderItem> {
                             height: 8.0,
                           ),
                           Text(
-                            "${widget._order.price}",
+                            "${Decimal.parse(widget._order.price ?? '0')}",
                             style: TextStyle(
                                 color: DefaultColors.color333,
                                 fontWeight: FontWeight.w500,
@@ -104,27 +105,30 @@ class OrderItemState extends State<OrderItem> {
               ),
               Expanded(
                 flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      '数量(${widget.market.split('/')[0]})',
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '数量(${widget.market.split('/')[0]})',
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      "${widget._order.amount}",
-                      style: TextStyle(
-                          color: DefaultColors.color333,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12),
-                    ),
-                  ],
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Text(
+                        "${Decimal.parse(widget._order.amount ?? '0')}",
+                        style: TextStyle(
+                            color: DefaultColors.color333,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Expanded(
@@ -146,7 +150,7 @@ class OrderItemState extends State<OrderItem> {
                       children: <Widget>[
                         Spacer(),
                         Text(
-                          "${widget._order.amountDeal}",
+                          "${Decimal.parse(widget._order.amountDeal ?? '0')}",
                           style: TextStyle(
                             color: DefaultColors.color333,
                             fontSize: 12,

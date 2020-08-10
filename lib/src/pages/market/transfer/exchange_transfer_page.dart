@@ -507,7 +507,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   },
                   onChanged: (data) {
                     _fromKey.currentState.validate();
-                    _validateAmount(data);
                   },
                   decoration: InputDecoration(
                       border: UnderlineInputBorder(
@@ -518,10 +517,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                           borderSide: BorderSide(
                         color: HexColor('#FFD7D7D7'),
                       )),
-//                      focusedBorder: InputBorder.none,
-//                      enabledBorder: InputBorder.none,
-//                      errorBorder: InputBorder.none,
-//                      disabledBorder: InputBorder.none,
                       hintText: '请输入划转数量',
                       hintStyle: TextStyle(
                         color: HexColor('#FF999999'),
@@ -584,7 +579,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: _fromExchangeToWallet ? '账户余额 ' : '钱包余额',
+                text: _fromExchangeToWallet ? '账户余额 ' : '钱包余额 ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -689,16 +684,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       var coinVo = WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbol(
-        _selectedCoinType,
-      );
+      ).getCoinVoBySymbol(_selectedCoinType);
 
       var address = coinVo.address;
       var voStr = FluroConvertUtils.object2string(coinVo.toJson());
       Application.router.navigateTo(
         context,
-        Routes.exchange_deposit_confirm_page +
-            "?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=$address",
+        '${Routes.exchange_deposit_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=$address',
       );
     } catch (e) {}
   }
@@ -707,14 +699,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(
-      _selectedCoinType,
-    );
+    ).getCoinVoBySymbol(_selectedCoinType);
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
     Application.router.navigateTo(
       context,
-      Routes.exchange_withdraw_confirm_page +
-          "?coinVo=$voStr&transferAmount=${_amountController.text}",
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}',
     );
   }
 }

@@ -545,7 +545,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
             items: availableCoinItemList,
           ),
         ),
-        if (_exchangeType == ExchangeType.BUY) Spacer(),
+        if (_exchangeType == ExchangeType.SELL) Spacer(),
       ],
     );
   }

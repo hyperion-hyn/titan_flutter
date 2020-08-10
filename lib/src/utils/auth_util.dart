@@ -138,6 +138,17 @@ class AuthUtil {
     );
   }
 
+  static Future<bool> bioAuthEnabledByWallet(
+    Wallet _wallet,
+    AuthType _authType,
+  ) async {
+    var authConfigModel = await getAuthConfigByWallet(
+      _wallet,
+      authType: _authType,
+    );
+    return authConfigModel.useFace || authConfigModel.useFingerprint;
+  }
+
   static bool bioAuthEnabled(AuthConfigModel authConfigModel) {
     return authConfigModel.useFace || authConfigModel.useFingerprint;
   }

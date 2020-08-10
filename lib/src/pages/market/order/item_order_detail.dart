@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -29,7 +30,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         SizedBox(
-          height: 8.0,
+          height: 16.0,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -38,21 +39,24 @@ class OrderDetailItemState extends State<OrderDetailItem> {
               TextSpan(
                   text: widget._orderDetail.side == '1' ? "买入 " : "卖出 ",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: widget._orderDetail.side == '1'
                         ? HexColor("#53AE86")
                         : HexColor("#CC5858"),
                   )),
               TextSpan(
                   text: widget.market,
-                  style: TextStyle(fontSize: 14, color: Colors.black))
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ))
             ]),
           ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16.0,
-            vertical: 8.0,
+            vertical: 16.0,
           ),
           child: Column(
             children: <Widget>[
@@ -60,46 +64,11 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                 children: <Widget>[
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      child: Row(
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                '时间',
-                                style: TextStyle(
-                                  color: DefaultColors.color999,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                FormatUtil.formatMarketOrderDate(
-                                  int.parse(widget._orderDetail.time),
-                                ),
-                                style: TextStyle(
-                                  color: DefaultColors.color333,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '方式',
+                          '时间',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -109,7 +78,9 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           height: 4.0,
                         ),
                         Text(
-                          '限价',
+                          FormatUtil.formatMarketOrderDate(
+                            int.parse(widget._orderDetail.time),
+                          ),
                           style: TextStyle(
                             color: DefaultColors.color333,
                             fontWeight: FontWeight.w500,
@@ -117,6 +88,41 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Center(
+                      child: Row(
+                        children: <Widget>[
+                          SizedBox(
+                            width: 16,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '方式',
+                                style: TextStyle(
+                                  color: DefaultColors.color999,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                '限价',
+                                style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Expanded(
@@ -138,7 +144,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           children: <Widget>[
                             Spacer(),
                             Text(
-                              "${widget._orderDetail.price}",
+                              "${Decimal.parse(widget._orderDetail.price ?? '0')}",
                               style: TextStyle(
                                 color: DefaultColors.color333,
                                 fontSize: 12,
@@ -159,43 +165,11 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                 children: <Widget>[
                   Expanded(
                     flex: 1,
-                    child: Container(
-                      child: Row(
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                '成交量(${widget.market.split("/")[0]})',
-                                style: TextStyle(
-                                  color: DefaultColors.color999,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                "${widget._orderDetail.amount}",
-                                style: TextStyle(
-                                    color: DefaultColors.color333,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '成交额(${widget.market.split('/')[1]})',
+                          '成交量(${widget.market.split("/")[0]})',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -205,13 +179,45 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           height: 4.0,
                         ),
                         Text(
-                          widget._orderDetail.turnover,
+                          "${Decimal.parse(widget._orderDetail.amount ?? '0')}",
                           style: TextStyle(
-                            color: DefaultColors.color333,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
+                              color: DefaultColors.color333,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12),
                         ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '成交额(${widget.market.split('/')[1]})',
+                              style: TextStyle(
+                                color: DefaultColors.color999,
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 4.0,
+                            ),
+                            Text(
+                              '${Decimal.parse(widget._orderDetail.turnover ?? '0')}',
+                              style: TextStyle(
+                                color: DefaultColors.color333,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -234,7 +240,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           children: <Widget>[
                             Spacer(),
                             Text(
-                              "${widget._orderDetail.fee}",
+                              "${Decimal.parse(widget._orderDetail.fee ?? '0')}",
                               style: TextStyle(
                                 color: DefaultColors.color333,
                                 fontSize: 12,
