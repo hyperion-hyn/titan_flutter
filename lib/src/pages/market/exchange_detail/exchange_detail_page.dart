@@ -448,6 +448,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     }
   }
 
+  String getInputPriceQuote(){
+    if((selectQuote?.quoteVo?.price ?? 0) == 0 || currentPriceStr == ""
+    || Decimal.parse(currentPriceStr) == Decimal.fromInt(0)){
+      return "--";
+    }
+    var priceQuote = Decimal.parse(selectQuote.quoteVo.price.toString()) * Decimal.parse(currentPriceStr);
+    return FormatUtil.truncateDecimalNum(priceQuote, marketInfoEntity.pricePrecision);
+  }
+
   showDepthView() {
     return Navigator.push(
       context,
@@ -686,53 +695,68 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   height: 20,
                 ),
                 Container(
-                    height: 36,
                     margin: EdgeInsets.only(top: 10, bottom: 2),
                     padding: const EdgeInsets.only(left: 10),
                     decoration: BoxDecoration(
                         border: Border.all(width: 1, color: DefaultColors.colord0d0d0),
                         borderRadius: BorderRadius.all(Radius.circular(3))),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          "价格",
-                          style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                        Padding(
+                          padding: EdgeInsets.only(bottom:currentPriceStr != "0" ? 16.0 : 0),
+                          child: Text(
+                            "价格",
+                            style: TextStyle(fontSize: 14, color: DefaultColors.color999),
+                          ),
                         ),
                         SizedBox(
                           width: 20,
                         ),
                         Expanded(
-                          child: TextField(
-                            controller: priceEditController,
-                            keyboardType: TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
-                            decoration: new InputDecoration(
-                              contentPadding: EdgeInsets.only(bottom: 12.0),
-                              border: InputBorder.none,
-                              hintStyle: TextStyles.textCaaaS14,
-                            ),
-                            onChanged: (price) {
-                              if (price.contains("-")) {
-                                return;
-                              }
-                              if (price.contains(".")) {
-                                var priceAfter = price.split(".")[1];
-                                if (priceAfter.length <= marketInfoEntity.pricePrecision) {
-                                  currentPrice = Decimal.parse(price);
-                                  optionsController.add({contrOptionsTypePrice: ""});
-                                } else {
-                                  optionsController.add({contrOptionsTypePricePreError: ""});
-                                }
-                              } else {
-                                if (price.length == 0) {
-                                  currentPrice = Decimal.fromInt(0);
-                                } else {
-                                  currentPrice = Decimal.parse(price);
-                                }
-                                optionsController.add({contrOptionsTypePrice: ""});
-                              }
-                            },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                height: 36,
+                                child: TextField(
+                                  controller: priceEditController,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9.]"))],
+                                  decoration: new InputDecoration(
+                                    contentPadding: EdgeInsets.only(bottom: 12.0),
+                                    border: InputBorder.none,
+                                    hintStyle: TextStyles.textCaaaS14,
+                                  ),
+                                  onChanged: (price) {
+                                    if (price.contains("-")) {
+                                      return;
+                                    }
+                                    if (price.contains(".")) {
+                                      var priceAfter = price.split(".")[1];
+                                      if (priceAfter.length <= marketInfoEntity.pricePrecision) {
+                                        currentPrice = Decimal.parse(price);
+                                        optionsController.add({contrOptionsTypePrice: ""});
+                                      } else {
+                                        optionsController.add({contrOptionsTypePricePreError: ""});
+                                      }
+                                    } else {
+                                      if (price.length == 0) {
+                                        currentPrice = Decimal.fromInt(0);
+                                      } else {
+                                        currentPrice = Decimal.parse(price);
+                                      }
+                                      optionsController.add({contrOptionsTypePrice: ""});
+                                    }
+                                  },
+                                ),
+                              ),
+                              if(currentPriceStr != "0")
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom:4.0),
+                                  child: Text("≈${getInputPriceQuote()} CNY",style: TextStyle(fontSize: 10,color: DefaultColors.color999),),
+                                )
+                            ],
                           ),
                         ),
                         Container(
