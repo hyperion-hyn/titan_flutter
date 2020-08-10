@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -68,7 +70,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           iconTheme: IconThemeData(color: Colors.black),
           elevation: 0,
           title: Text(
-            '授权',
+            '交易授权',
             style: TextStyle(
               fontSize: 18,
               color: Colors.black,
@@ -158,7 +160,9 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       bool _isAuthAlready = await AppCache.getValue(
         'exchange_auth_already_${_wallet.getEthAccount().address}',
       );
-      if (_isAuthAlready) {
+      var _bioAuthEnabled =
+          await AuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
+      if (_isAuthAlready && _bioAuthEnabled) {
         _startLogin();
       }
     }

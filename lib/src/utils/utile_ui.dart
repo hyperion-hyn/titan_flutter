@@ -408,8 +408,12 @@ class UiUtil {
     if (AuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthUtil.bioAuthExpired(authConfig)) {
-        var pwd = await showPasswordDialog(context, wallet,
-            onCheckPwdValid: onCheckPwdValid, authType: authType);
+        var pwd = await showPasswordDialog(
+          context,
+          wallet,
+          onCheckPwdValid: onCheckPwdValid,
+          authType: authType,
+        );
 
         if (pwd != null) {
           ///Update last bio-auth time

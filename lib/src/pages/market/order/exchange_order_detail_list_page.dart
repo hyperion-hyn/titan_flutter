@@ -56,6 +56,7 @@ class ExchangeOrderDetailListPageState
   Widget build(BuildContext context) {
     return LoadDataContainer(
       bloc: _loadDataBloc,
+      enablePullUp: _orderDetailList.isNotEmpty,
       onLoadData: () async {
         _refresh();
       },

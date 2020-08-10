@@ -53,6 +53,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   Widget build(BuildContext context) {
     return LoadDataContainer(
       bloc: _loadDataBloc,
+      enablePullUp: _orders.isNotEmpty,
       onLoadData: () async {
         _refresh();
       },

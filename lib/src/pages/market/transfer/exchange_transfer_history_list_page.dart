@@ -74,6 +74,7 @@ class ExchangeTransferHistoryListPageState
         color: Colors.white,
         child: LoadDataContainer(
           bloc: _loadDataBloc,
+          enablePullUp: _transferHistoryList.isNotEmpty,
           onLoadData: () async {
             _refresh();
           },
@@ -150,6 +151,7 @@ class ExchangeTransferHistoryListPageState
 
     if (mounted) setState(() {});
     _loadDataBloc.add(RefreshSuccessEvent());
+
     _refreshController.refreshCompleted();
   }
 
