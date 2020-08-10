@@ -141,31 +141,47 @@ class ExchangeApi {
   }
 
   Future<ResponseEntity> withdraw(
+    Wallet wallet,
+    String password,
+    String address,
     String type,
     String outerAddress,
     String balance,
   ) async {
-    return await ExchangeHttp.instance.postResponseEntity(
+    //get a seed
+    var seed = await _getAccessSeed(
+      address,
+      ExchangeConst.PATH_WITHDRAW,
+    );
+    var params = {
+      'type': type,
+      'outer_address': outerAddress,
+      'balance': balance,
+      'address': address,
+      'seed': seed,
+    };
+    //sign request with seed
+    var signed = await Signer.signApi(
+      wallet,
+      password,
+      'POST',
+      Const.EXCHANGE_DOMAIN.split('//')[1],
+      ExchangeConst.PATH_WITHDRAW,
+      params,
+    );
+    params['sign'] = signed;
+
+    return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_WITHDRAW,
       null,
-      params: {
-        'type': type,
-        'outer_address': outerAddress,
-        'balance': balance,
-      },
+      params: params,
     );
   }
 
-  Future<ResponseEntity> getAddress(
-    String type,
-  ) async {
-    return await ExchangeHttp.instance.postResponseEntity(
-      ExchangeConst.PATH_GET_ADDRESS,
-      null,
-      params: {
-        'type': type,
-      },
-    );
+  Future<dynamic> getAddress(String type) async {
+    return postAndVerifySign(ExchangeConst.PATH_GET_ADDRESS, params: {
+      'type': type,
+    });
   }
 
   Future<ResponseEntity> transferAccountToExchange(
@@ -350,7 +366,10 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> historyKline(String symbol, {String period = '15min'}) async {
+  Future<dynamic> historyKline(
+    String symbol, {
+    String period = '15min',
+  }) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_HISTORY_KLINE,
       null,
@@ -363,7 +382,6 @@ class ExchangeApi {
 
   Future<dynamic> postAndVerifySign(
     String url, {
-    //example: /api/index/testWalletSign
     Map<String, dynamic> params,
   }) async {
     var data = await ExchangeHttp.instance.postEntity(

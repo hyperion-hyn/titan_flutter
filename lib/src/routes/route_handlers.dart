@@ -159,13 +159,14 @@ var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeDepositConfirmPage(
       params['coinVo']?.first,
       '${params['transferAmount']?.first ?? 0}',
-      params['receiverAddress']?.first);
+      params['exchangeAddress']?.first);
 });
 
 var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeWithdrawConfirmPage(
     params['coinVo']?.first,
     '${params['transferAmount']?.first ?? 0}',
+    params['exchangeAddress']?.first,
   );
 });
 

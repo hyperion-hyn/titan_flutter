@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -84,8 +85,12 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           exchangeModel.activeAccount = null;
         } else if (state is UpdateAssetsState) {
           if (exchangeModel.activeAccount != null) {
-            var ret = await _exchangeApi.getAssetsList();
-            exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            try {
+              var ret = await _exchangeApi.getAssetsList();
+              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            } catch (e) {
+              //Fluttertoast.showToast(msg: e.toString());
+            }
             setState(() {});
           }
         }

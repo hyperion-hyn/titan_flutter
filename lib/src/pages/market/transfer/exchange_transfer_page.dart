@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
@@ -443,19 +444,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _validateAmount(String value) {
-    if (value == '0') {
-      return S.of(context).input_corrent_count_hint;
-    }
-    if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
-      return S.of(context).input_corrent_count_hint;
-    }
-    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
-      return S.of(context).input_count_over_balance;
-    }
-    return null;
-  }
-
   _amount() {
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
@@ -499,10 +487,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                       return S.of(context).input_corrent_count_hint;
                     }
-                    if (Decimal.parse(value) >
+                    if (Decimal.parse(value) +
+                            Decimal.parse(
+                                _fromExchangeToWallet ? _withdrawFee : '0') >
                         Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
+
+                    if (Decimal.parse(value) <
+                        Decimal.parse(_minTransferAmount)) {
+                      return '少于最小划转数';
+                    }
+
                     return null;
                   },
                   onChanged: (data) {
@@ -672,38 +668,47 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _transfer() async {
-    if (_fromExchangeToWallet) {
-      _withdraw();
-    } else {
-      _deposit();
+    try {
+      var ret = await _exchangeApi.getAddress(_selectedCoinType);
+      var exchangeAddress = ret['address'];
+
+      if (_fromExchangeToWallet) {
+        _withdraw(exchangeAddress);
+      } else {
+        _deposit(exchangeAddress);
+      }
+    } catch (e) {
+      if (e is HttpResponseCodeNotSuccess) {
+        Fluttertoast.showToast(msg: e.message);
+      }
     }
   }
 
-  _deposit() async {
-    try {
-      var coinVo = WalletInheritedModel.of(
-        context,
-        aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbol(_selectedCoinType);
-
-      var address = coinVo.address;
-      var voStr = FluroConvertUtils.object2string(coinVo.toJson());
-      Application.router.navigateTo(
-        context,
-        '${Routes.exchange_deposit_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&receiverAddress=$address',
-      );
-    } catch (e) {}
-  }
-
-  _withdraw() async {
+  _deposit(String exchangeAddress) async {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbol(_selectedCoinType);
+
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}',
+      '${Routes.exchange_deposit_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&exchangeAddress=$exchangeAddress',
+    );
+  }
+
+  _withdraw(String address) async {
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbol(
+      _selectedCoinType,
+    );
+    var voStr = FluroConvertUtils.object2string(coinVo.toJson());
+
+    Application.router.navigateTo(
+      context,
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&exchangeAddress=$address',
     );
   }
 }

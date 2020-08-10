@@ -33,12 +33,12 @@ import 'package:web3dart/json_rpc.dart';
 class ExchangeDepositConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
-  final String receiverAddress;
+  final String exchangeAddress;
 
   ExchangeDepositConfirmPage(
     String coinVo,
     this.transferAmount,
-    this.receiverAddress,
+    this.exchangeAddress,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -528,7 +528,7 @@ class _ExchangeDepositConfirmPageState
           walletPassword,
           ConvertTokenUnit.strToBigInt(
               widget.transferAmount, widget.coinVo.decimals),
-          widget.receiverAddress,
+          widget.exchangeAddress,
           activatedWallet.wallet,
         );
       } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
@@ -536,7 +536,7 @@ class _ExchangeDepositConfirmPageState
         var transResult = await activatedWalletVo.sendBitcoinTransaction(
             walletPassword,
             activatedWalletVo.getBitcoinZPub(),
-            widget.receiverAddress,
+            widget.exchangeAddress,
             gasPrice.toInt(),
             ConvertTokenUnit.decimalToWei(
                     Decimal.parse(widget.transferAmount), 8)
@@ -554,7 +554,7 @@ class _ExchangeDepositConfirmPageState
             widget.transferAmount,
             widget.coinVo.decimals,
           ),
-          widget.receiverAddress,
+          widget.exchangeAddress,
           activatedWallet.wallet,
         );
       }

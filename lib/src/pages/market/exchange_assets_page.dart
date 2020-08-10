@@ -76,6 +76,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           enablePullUp: false,
           onRefresh: () {
             BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+            _updateTypeToCurrency();
             _loadDataBloc.add(RefreshSuccessEvent());
           },
           child: ListView(
