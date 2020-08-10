@@ -22,7 +22,7 @@ import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/widget/click_oval_icon_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_icon_button.dart';
 
 import '../k_line/kline_detail_page.dart';
 import 'bloc/bloc.dart';

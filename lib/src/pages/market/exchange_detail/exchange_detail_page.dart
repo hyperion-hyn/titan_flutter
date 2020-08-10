@@ -28,7 +28,6 @@ import 'package:titan/src/pages/market/k_line/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
@@ -56,6 +55,7 @@ class ExchangeDetailPage extends StatefulWidget {
 class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAware {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  SocketBloc _socketBloc;
 
   bool isOrderActionLoading = false;
   bool isBuy = true;
@@ -88,8 +88,18 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   final int contrConsignTypeRefresh = 14;
 
   final int contrDepthTypeRefresh = 15;
-  StreamController<int> depthController = StreamController.broadcast();
+  List<ExcDetailEntity> _buyChartList = [];
+  List<ExcDetailEntity> _sailChartList = [];
+  int selectDepthNum = 4;
+
+  List<Order> _activeOrders = List();
+  int consignPageSize = 1;
+  bool consignIsLoading = true;
+
   StreamController<Map> optionsController = StreamController.broadcast();
+  StreamController<int> depthController = StreamController.broadcast();
+  StreamController<int> consignListController = StreamController.broadcast();
+
   String userTickChannel = "";
   String depthChannel;
   String tradeChannel;
@@ -99,20 +109,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   String symbol;
   String marketCoin;
   MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, 1000000, 10, [1, 2, 3, 4]);
-  List<ExcDetailEntity> _buyChartList = [];
-  List<ExcDetailEntity> _sailChartList = [];
-  int selectDepthNum = 4;
+  bool beforeJumpNoLogin = true;
+
   String _realTimePrice = "--";
   String _realTimeQuotePrice = "--";
   ActiveQuoteVoAndSign selectQuote;
   double _realTimePricePercent = 0;
-
-  List<Order> _activeOrders = List();
-  StreamController<int> consignListController = StreamController.broadcast();
-  int consignPageSize = 1;
-  bool consignIsLoading = true;
-  SocketBloc _socketBloc;
-  bool beforeJumpNoLogin = true;
 
   @override
   void initState() {
@@ -703,7 +705,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                     child: Row(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(bottom:currentPriceStr != "0" ? 16.0 : 0),
+                          padding: EdgeInsets.only(bottom:currentPriceStr != "0" && currentPriceStr != "" ? 16.0 : 0),
                           child: Text(
                             "价格",
                             style: TextStyle(fontSize: 14, color: DefaultColors.color999),
@@ -751,7 +753,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                   },
                                 ),
                               ),
-                              if(currentPriceStr != "0")
+                              if(currentPriceStr != "0" && currentPriceStr != "")
                                 Padding(
                                   padding: const EdgeInsets.only(bottom:4.0),
                                   child: Text("≈${getInputPriceQuote()} CNY",style: TextStyle(fontSize: 10,color: DefaultColors.color999),),

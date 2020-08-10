@@ -21,9 +21,9 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/grouped_buttons/src/radio_button_group.dart';
 import 'package:titan/src/widget/load_data_widget.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import '../add_poi/position_finish_page.dart';
 import '../../../data/entity/poi/user_contribution_poi.dart';
 

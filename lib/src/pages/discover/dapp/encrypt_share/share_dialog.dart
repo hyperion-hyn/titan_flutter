@@ -8,7 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
-import 'package:titan/src/widget/custom_click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 
 import '../../../../global.dart';
 
