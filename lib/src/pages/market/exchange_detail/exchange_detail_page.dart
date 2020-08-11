@@ -170,9 +170,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     tradeChannel = SocketConfig.channelTradeDetail(symbol);
     _socketBloc.add(SubChannelEvent(channel: tradeChannel));
 
-    depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
-    _socketBloc.add(SubChannelEvent(channel: depthChannel));
-
     _loadDataBloc.add(LoadingEvent());
     consignPageSize = 1;
     await loadConsignList(marketCoin, consignPageSize, _activeOrders);
@@ -212,6 +209,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               _sailChartList.clear();
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
+
+              depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+              _socketBloc.add(SubChannelEvent(channel: depthChannel));
             } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
               if (state.respMsg == null) {
