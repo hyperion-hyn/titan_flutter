@@ -139,10 +139,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void didPopNext() {
     isOrderActionLoading = false;
 
-    if (beforeJumpNoLogin && exchangeModel.isActiveAccount()) {
-      _getExchangelData();
-      beforeJumpNoLogin = false;
-    }
+    _getExchangelData();
     super.didPopNext();
   }
 
@@ -207,13 +204,14 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               }
               selectDepthNum = marketInfoEntity.depthPrecision[marketInfoEntity.depthPrecision.length - 1];
               exchangeDetailBloc.add(DepthInfoEvent(symbol, selectDepthNum));
-              depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
-              _socketBloc.add(SubChannelEvent(channel: depthChannel));
             } else if (state is DepthInfoState) {
               _buyChartList.clear();
               _sailChartList.clear();
               dealDepthData(_buyChartList, _sailChartList, state.depthData);
               depthController.add(contrDepthTypeRefresh);
+
+              depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+              _socketBloc.add(SubChannelEvent(channel: depthChannel));
             } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
               if (state.respMsg == null) {
