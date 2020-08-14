@@ -1,20 +1,19 @@
-import 'dart:io';
-import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_precreate_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -24,6 +23,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/click_rectangle_button.dart';
 
 class Map3NodeCreateContractPage extends StatefulWidget {
@@ -71,6 +71,21 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        centerTitle: true,
+        title: Text(
+          '创建Map3节点',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
     );
@@ -187,6 +202,59 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: <Widget>[
+        CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Container(
+                child:  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      _headerWidget(),
+                      SizedBox(height: 8),
+                      getHoldInNum(context, contractItem, _joinCoinFormKey,
+                          _joinCoinController, endProfit, spendManager, false),
+
+                      SizedBox(height: 8),
+                      _managerSpendWidget(),
+                      SizedBox(height: 8),
+
+                    ]),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: ListView.separated(itemBuilder: (context, index){
+
+                return Container(
+                  color: Colors.white,
+                  child: Row(
+                    children: <Widget>[
+                      Text("图标"),
+                      Spacer(),
+                      Text("图标"),
+                    ],
+                  ),
+                );
+              }, separatorBuilder: (context, index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  height: 0.5,
+                  color: HexColor("#F2F2F2"),
+                );
+              }, itemCount: 30,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+              ),
+            ),
+          ],
+        ),
+        _confirmButtonWidget(),
+      ],
+    );
+    /*
     return Column(
       children: <Widget>[
         Expanded(
@@ -194,47 +262,96 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                getMap3NodeProductHeadItemSmall(context, contractItem),
-                _nodeIntroductionWidget(),
+                
+                _headerWidget(),
                 SizedBox(height: 8),
                 getHoldInNum(context, contractItem, _joinCoinFormKey,
                     _joinCoinController, endProfit, spendManager, false),
-                SizedBox(height: 8),
-                _autoRenewalWidget(),
+
                 SizedBox(height: 8),
                 _managerSpendWidget(),
                 SizedBox(height: 8),
-                _nodePronounceWidget(),
-                SizedBox(height: 18),
+
               ])),
         ),
         _confirmButtonWidget(),
       ],
-    );
+    );*/
   }
 
-  Widget _nodeIntroductionWidget() {
+  Widget _headerWidget() {
     return Container(
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(left: 15, top: 16),
+            padding: const EdgeInsets.all(12.0),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text(S.of(context).node_version,
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
-                Text("${contractItem.contract.nodeName}",
-                    style: TextStyles.textC333S14),
+                Image.asset(
+                  "res/drawable/ic_map3_node_item_2.png",
+                  width: 62,
+                  height: 62,
+                  fit: BoxFit.cover,
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
+                          InkWell(
+                            child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            onTap: () {
+                              String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                              String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+                              Application.router
+                                  .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                            },
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 6.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                                "启动所需" +
+                                    "启动所需100万  " ,
+                                style: TextStyles.textC99000000S13,
+                                maxLines: 1,
+                                softWrap: true),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(" (HYN) ",
+                                  style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                            ),
+                            Text(S.of(context).n_day("180"), style: TextStyles.textC99000000S13)
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
+
           Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 15),
+            padding: const EdgeInsets.only(top: 8.0, left: 15),
             child: Row(
               children: <Widget>[
                 Container(
@@ -260,7 +377,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 16.0, left: 15, bottom: 6),
+            padding: EdgeInsets.only(top: 8.0, left: 15, bottom: 16),
             child: Row(
               children: <Widget>[
                 Container(
@@ -291,41 +408,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   }
 
   bool _renew = true;
-
-  Widget _autoRenewalWidget() {
-    return Container(
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "期满自动续约",
-              style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Transform.scale(
-              scale: 0.8,
-              child: CupertinoSwitch(
-                value: _renew,
-                activeColor: Theme.of(context).primaryColor,
-                onChanged: (value) {
-                  setState(() {
-                    _renew = value;
-                  });
-                  print("[AutoRenewalWidget] --> value:$value");
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
   int _managerSpendCount = 20;
 
@@ -508,37 +590,49 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    return ClickRectangleButton(S.of(context).confirm_bug, () async {
-      setState(() {
-        if (!_joinCoinFormKey.currentState.validate()) {
-          return;
-        }
 
-        var providerModel = providerList[selectServerItemValue];
-        var regionsModel = providerModel.regions[selectNodeItemValue];
-        contractItem.nodeRegion = regionsModel.id;
-        contractItem.nodeProvider = providerModel.id;
-        contractItem.nodeRegionName = regionsModel.name;
-        contractItem.nodeProviderName = providerModel.name;
-        var transferAmount = _joinCoinController.text?.isNotEmpty == true
-            ? _joinCoinController.text
-            : "0";
-        contractItem.announcement = _pronounceTextController.text.isNotEmpty
-            ? _pronounceTextController.text
-            : "欢迎来到Titan";
-        contractItem.renew = _renew;
-        contractItem.commission = _managerSpendCount * 0.01;
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_send_confirm_page +
-                "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                "&actionEvent=${Map3NodeActionEvent.CREATE}" +
-                "&contractId=${widget.contractId}");
-      });
-    });
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
+      child: ClickOvalButton(
+        "创建提交",
+            () async{
+              setState(() {
+                if (!_joinCoinFormKey.currentState.validate()) {
+                  return;
+                }
+
+                var providerModel = providerList[selectServerItemValue];
+                var regionsModel = providerModel.regions[selectNodeItemValue];
+                contractItem.nodeRegion = regionsModel.id;
+                contractItem.nodeProvider = providerModel.id;
+                contractItem.nodeRegionName = regionsModel.name;
+                contractItem.nodeProviderName = providerModel.name;
+                var transferAmount = _joinCoinController.text?.isNotEmpty == true
+                    ? _joinCoinController.text
+                    : "0";
+                contractItem.announcement = _pronounceTextController.text.isNotEmpty
+                    ? _pronounceTextController.text
+                    : "欢迎来到Titan";
+                contractItem.renew = _renew;
+                contractItem.commission = _managerSpendCount * 0.01;
+                Application.router.navigateTo(
+                    context,
+                    Routes.map3node_send_confirm_page +
+                        "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                        "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+                        "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                        "&actionEvent=${Map3NodeActionEvent.CREATE}" +
+                        "&contractId=${widget.contractId}");
+              });
+        },
+        height: 46,
+        width: MediaQuery.of(context).size.width - 37 * 2,
+        fontSize: 18,
+      ),
+    );
   }
+
 }
 
 Widget getHoldInNum(
@@ -585,12 +679,12 @@ Widget getHoldInNum(
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
     color: Colors.white,
-    padding: EdgeInsets.only(top: 16, bottom: 16),
+    padding: EdgeInsets.only(top: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 16.0, bottom: 22, right: 8),
+          padding: const EdgeInsets.only(left: 16.0, bottom: 8, right: 8),
           child: Row(
             children: <Widget>[
               Padding(
@@ -755,35 +849,6 @@ Widget getHoldInNum(
                                               color: HexColor("#5C4304"))),
                                     )),
                               ],
-                            ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(top: 10.0, bottom: 10),
-                            child: RichText(
-                              text: TextSpan(
-                                  text: S.of(context).end_profit_hyn,
-                                  style: TextStyles.textC9b9b9bS12,
-                                  children: [
-                                    TextSpan(
-                                      text: "$endProfit",
-                                      style: TextStyles.textC333S14,
-                                    )
-                                  ]),
-                            ),
-                          ),
-                          if (!isMyself)
-                            RichText(
-                              text: TextSpan(
-                                  text: isJoin
-                                      ? S.of(context).spend_manager_hyn
-                                      : S.of(context).get_manager_hyn,
-                                  style: TextStyles.textC9b9b9bS12,
-                                  children: [
-                                    TextSpan(
-                                      text: "$spendManager",
-                                      style: TextStyles.textC333S14,
-                                    )
-                                  ]),
                             ),
                         ],
                       ),

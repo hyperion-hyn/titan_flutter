@@ -39,7 +39,8 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
-            color: Theme.of(context).primaryColor,
+            color: Colors.white,
+            //color: Color(0xfff4f4f4),
             child: SafeArea(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -49,17 +50,14 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
                     flex: 2,
                     child: TabBar(
                       controller: _tabController,
-                      labelColor: Colors.white,
-                      labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                      labelColor: Theme.of(context).primaryColor,
+                      labelStyle: TextStyle(color: HexColor("#333333"), fontWeight: FontWeight.w500, fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
-//                      labelPadding: EdgeInsets.only(left: 10, right: 20),
-                      indicatorColor: Colors.white,
+                      indicatorColor: Theme.of(context).primaryColor,
                       indicatorWeight: 3,
-                      indicatorPadding: EdgeInsets.only(bottom: 2),
-//                      indicatorColor: HexColor("#00000000"),
-                      unselectedLabelColor: HexColor("#aaffffff"),
+                      indicatorPadding: EdgeInsets.only(left: 8, right: 8, bottom: 2),
+                      unselectedLabelColor: HexColor("#333333"),
                       tabs: [
-
                         Tab(
                           text: S.of(context).map3_node_introduction,
                         ),

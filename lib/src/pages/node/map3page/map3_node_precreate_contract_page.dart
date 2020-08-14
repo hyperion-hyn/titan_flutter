@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -15,6 +14,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 
 class Map3NodePreCreateContractPage extends StatefulWidget {
   final String contractId;
@@ -41,7 +41,21 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("Map3节点介绍")),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        centerTitle: true,
+        title: Text(
+          'Map3节点介绍',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
     );
@@ -119,14 +133,34 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
       ),
     );
 
-    Widget _rowWidget(String title, {double top = 8}) {
+    Widget _rowWidget(String title, {double top = 8, String subTitle = ""}) {
       return Padding(
         padding: EdgeInsets.only(top: top),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             _nodeWidget,
-            Expanded(child: Text(title, style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12))),
+            Expanded(
+                child: InkWell(
+                  onTap: (){
+                    if (subTitle.isEmpty) {
+                      return;
+                    }
+                    print(title);
+                  },
+                  child: RichText(
+                      text:TextSpan(
+                        children: [
+                          TextSpan(
+                            text: subTitle,
+                            style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                          )
+                        ],
+                        text:title,
+                        style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                      ),
+                  ),
+                )),
           ],
         ),
       );
@@ -144,71 +178,29 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           _rowWidget("创建7天内不可撤销", top: 0),
-          _rowWidget("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押!者参加投入;你也可以一次性抵押100万即可启动节点"),
-          _rowWidget("创建时可设置自动续约，当期满后节点自动尝试重新启动以获得更多奖励;你也可以在任何时候关闭或开启自动续约开关"),
-        ],
-      ),
-    );
-  }
-
-  Widget _tipsWidget_old() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
-    return Container(
-      color: Colors.white,
-      //height: MediaQuery.of(context).size.height-50,
-      padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
-          ),
-          Text(S.of(context).create_contract_only_one_hint, style: TextStyles.textC999S12),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).create_no_enough_hyn_start_fail, style: TextStyles.textC999S12),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).contract_create_cant_destroy, style: TextStyles.textC999S12),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(S.of(context).please_confirm_eth_gas_enough(walletName), style: TextStyles.textC999S12),
-          ),
-//                  Padding(
-//                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-//                    child: Text(S.of(context).freeze_balance_reward_direct_push, style: TextStyles.textC999S12),
-//                  ),
+          _rowWidget("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押100万即可启动节点"),
+          _rowWidget("节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看", subTitle: "收益详细介绍"),
+          _rowWidget("如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看", subTitle: "扩容详细介绍"),
         ],
       ),
     );
   }
 
   Widget _confirmButtonWidget() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black38,
-            blurRadius: 4.0,
-          ),
-        ],
-      ),
-      constraints: BoxConstraints.expand(height: 50),
-      child: RaisedButton(
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
-          child: Text("立即创建", style: TextStyle(fontSize: 16, color: Colors.white)),
-          onPressed: () {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18.0),
+      child: Center(
+        child: ClickOvalButton(
+          "立即创建",
+          () {
             Application.router
                 .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${widget.contractId}");
-          }),
+          },
+          height: 46,
+          width: MediaQuery.of(context).size.width - 37 * 2,
+          fontSize: 18,
+        ),
+      ),
     );
   }
 
@@ -221,7 +213,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Divider(
-              height: 2,
+              height: 0.5,
             ),
           ),
           _delegateCountWidget(),
@@ -249,13 +241,13 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
 
               break;
 
-            case 2:
-              title = "年化奖励";
-              detail = FormatUtil.formatPercent(_nodeItem.annualizedYield);
-              color = HexColor("#FF4C3B");
+            case 3:
+              title = "合约周期";
+              detail = "180天";
+              //color = HexColor("#FF4C3B");
               break;
 
-            case 3:
+            case 2:
               title = "管理费";
               detail = "1%-20%";
               break;
@@ -263,13 +255,13 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
             default:
               return Container(
                 height: 20,
-                width: 1.0,
+                width: 0.5,
                 color: HexColor("#000000").withOpacity(0.2),
               );
               break;
           }
 
-          TextStyle style = TextStyle(fontSize: 19, color: color, fontWeight: FontWeight.w600);
+          TextStyle style = TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w400);
 
           return Expanded(
             child: Center(
@@ -279,7 +271,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                 Container(
                   height: 4,
                 ),
-                Text(title, style: TextStyles.textC333S11),
+                Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
               ],
             )),
           );
@@ -300,7 +292,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
           Image.asset(
             "res/drawable/ic_map3_node_item_2.png",
             width: 62,
-            height: 63,
+            height: 62,
             fit: BoxFit.cover,
           ),
           SizedBox(
@@ -315,18 +307,12 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                   children: <Widget>[
                     Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold))),
                     InkWell(
-                      child: Text("节点细则", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                      child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
-                        String webUrl =
-                        FluroConvertUtils.fluroCnParamsEncode(
-                            "http://baidu.com");
-                        String webTitle =
-                        FluroConvertUtils.fluroCnParamsEncode(
-                            "节点细则");
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                        String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                     ),
                   ],
@@ -334,6 +320,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                 Padding(
                   padding: const EdgeInsets.only(top: 6.0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                           "启动所需" +
@@ -342,8 +329,12 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                           style: TextStyles.textC99000000S13,
                           maxLines: 1,
                           softWrap: true),
-                      Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
-                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(" (HYN) ",
+                            style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
+                      ),
+//                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
                     ],
                   ),
                 ),
@@ -403,3 +394,4 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
     );
   }
 }
+

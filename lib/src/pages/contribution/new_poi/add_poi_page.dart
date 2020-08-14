@@ -543,6 +543,8 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
   }
 
   Widget _businessDayRadioBtn() {
+    return Container();
+    /*
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: CustomRadioButton(
@@ -555,7 +557,7 @@ class _AddPoiPageState extends State<AddPoiPage> with TickerProviderStateMixin {
         radioButtonValue: (value) => {},
         selectedColor: Theme.of(context).primaryColor,
       ),
-    );
+    );*/
   }
 
   Widget getBusinessTimeGap() {

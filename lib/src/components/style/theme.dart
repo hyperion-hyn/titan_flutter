@@ -4,3 +4,11 @@ ThemeData appTheme = ThemeData.light().copyWith(
   primaryColor: Color(0xff0f95b0),
   backgroundColor: Color(0xfff9f9f9),
 );
+
+
+/*
+
+ThemeData appTheme = ThemeData.light().copyWith(
+  primaryColor: Color(0xffffffff),
+  backgroundColor: Color(0xfff9f9f9),
+);*/

@@ -67,12 +67,18 @@ class NodeItem extends Object {
     this.suggestQuantity,
   );
 
+  NodeItem.onlyId(this.id);
+
   factory NodeItem.fromJson(Map<String, dynamic> srcJson) => _$NodeItemFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NodeItemToJson(this);
 
   get name {
-    return "${this.nodeName}（V${this.nodeVersion}）";
+    return "${this.nodeName??"Map3云节点（V1.0）"}";
   }
+
+//  get name {
+//    return "${this.nodeName}（V${this.nodeVersion}）";
+//  }
 
 }

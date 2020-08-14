@@ -21,8 +21,8 @@ import 'package:titan/src/utils/utile_ui.dart';
 
 class NodeActiveContractWidget extends StatefulWidget {
   final LoadDataBloc loadDataBloc;
-
-  NodeActiveContractWidget(this.loadDataBloc);
+  final String title;
+  NodeActiveContractWidget(this.loadDataBloc, {this.title=''});
 
   @override
   State<StatefulWidget> createState() {
@@ -48,6 +48,12 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
       });
     } else {
       getContractActiveList();
+    }
+
+    // todo: test_jison_0813
+    for (int i=0;i<3;i++) {
+      ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
+      contractList.add(item);
     }
   }
 
@@ -79,9 +85,6 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
           contractList = [];
         }
         contractList.addAll(tempMemberList);
-//        contractList.addAll(tempMemberList);
-//        contractList.addAll(tempMemberList);
-
       });
     }
   }
@@ -107,7 +110,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                      "最新启动节点",
+                      widget.title.isNotEmpty?widget.title:"最新启动节点",
                       style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
                     )),
                     Text(
@@ -187,15 +190,15 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   padding: const EdgeInsets.only(left: 5.0, right: 5),
                   child: Text(
                       //item.ownerName,
-                      "大道至简",
+                    // todo: test_jison_0813
+                  "大道至简",
                       style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
                 ),
                 SizedBox(
                   height: 4,
                 ),
-//                      Text(UiUtil.shortEthAddress(item.ownerName),
-//                          style: TextStyles.textC9b9b9bS12),
-                Text(S.of(context).number + " ${item.contractCode ?? ""}",
+                // todo: test_jison_0813
+                Text("节点号 ${item.id+1}",
                     style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
               ],
             ),
