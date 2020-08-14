@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 
 class Map3NodePronouncePage extends StatefulWidget {
+  final String title;
+  Map3NodePronouncePage({this.title});
+
   @override
   State<StatefulWidget> createState() {
     return _May3NodePronounceState();
   }
 }
 
-class _May3NodePronounceState extends State {
+class _May3NodePronounceState extends State<Map3NodePronouncePage> {
   TextEditingController _controller = TextEditingController();
   GlobalKey<FormState> formKey;
 
@@ -30,16 +33,22 @@ class _May3NodePronounceState extends State {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 4,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
         centerTitle: true,
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          "节点公告",
-          style: TextStyle(color: Colors.white),
+          "编辑"+widget.title??'创建Map3节点',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
         ),
         actions: <Widget>[
           FlatButton(
-            onPressed: (){
+            onPressed: () {
               print("[Pronounce] text:1111111");
 
               print("[Pronounce] text:${_controller.text}");
@@ -47,13 +56,15 @@ class _May3NodePronounceState extends State {
             },
             child: Text(
               "保存",
-              style: TextStyle(color: HexColor("#ccffffff")),
+              style: TextStyle(color: HexColor("#1F81FF")),
             ),
           ),
         ],
-      ),
 
+
+      ),
       body: Container(
+
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Form(
           key: formKey,
@@ -86,4 +97,30 @@ class _May3NodePronounceState extends State {
       ),
     );
   }
+}
+
+
+class AppbarWig {
+  static Widget appbar(String title, List<Widget> actions) => new Container(
+    child: new AppBar(
+      backgroundColor: Colors.white,
+      iconTheme: IconThemeData(
+        color: Colors.black,
+      ),
+      centerTitle: true,
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+        ),
+      ),
+      actions: actions,
+    ),
+    decoration: BoxDecoration(
+      boxShadow: <BoxShadow>[
+        BoxShadow(color: HexColor("#000000").withOpacity(0.01), blurRadius: 4.0)
+      ],
+    ),
+  );
 }

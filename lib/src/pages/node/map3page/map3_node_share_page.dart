@@ -133,9 +133,9 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                 S.of(context).contract_share_content(
                     wallet?.wallet?.keystore?.name ?? '',
                     S.of(context).app_name,
-                    widget.contractNodeItem.contract.nodeName,
-                    FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield),
-                    widget.contractNodeItem.contract.duration.toString()),
+                    widget.contractNodeItem?.contract?.nodeName??"",
+                    FormatUtil.formatPercent(widget.contractNodeItem?.contract?.annualizedYield??0),
+                    widget.contractNodeItem?.contract?.duration??0.toString()),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),

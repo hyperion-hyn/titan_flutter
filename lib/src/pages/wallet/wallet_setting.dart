@@ -1,3 +1,4 @@
+import 'package:floor/floor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,22 +115,44 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
-                    child: localImagePath != null ? ClipOval(child: Image.asset(localImagePath,width: 88,height: 88,fit: BoxFit.cover,)) : walletHeaderWidget(widget.wallet.keystore.name,
-                        size: 88, fontSize: 26, address: widget.wallet.getEthAccount()?.address),
+                    child: localImagePath != null
+                        ? ClipOval(
+                            child: Image.asset(
+                              localImagePath,
+                              width: 88,
+                              height: 88,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : walletHeaderWidget(widget.wallet.keystore.name,
+                            size: 88, fontSize: 26, address: widget.wallet.getEthAccount()?.address),
                   ),
                   InkWell(
-                    onTap: (){
-                      _openModalBottomSheet();
+                    onTap: () {
+                      EditIconSheet(context, (path) {
+                        setState(() {
+                          localImagePath = path;
+                        });
+                      });
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 29,top: 13),
+                      padding: const EdgeInsets.only(bottom: 29, top: 13),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Image.asset("res/drawable/ic_wallet_edit_head_img.png",width: 18,height: 18,),
-                          SizedBox(width: 4,),
-                          Text("修改头像",style: TextStyle(color: HexColor("#1F81FF"),fontSize: 16),)
+                          Image.asset(
+                            "res/drawable/ic_wallet_edit_head_img.png",
+                            width: 18,
+                            height: 18,
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "修改头像",
+                            style: TextStyle(color: HexColor("#1F81FF"), fontSize: 16),
+                          )
                         ],
                       ),
                     ),
@@ -223,7 +246,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                    constraints: BoxConstraints.expand(height: 46,width: 300),
+                    constraints: BoxConstraints.expand(height: 46, width: 300),
                     child: RaisedButton(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),
                       clipBehavior: Clip.hardEdge,
@@ -234,9 +257,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
                         decoration: BoxDecoration(
                           gradient: getGradient(),
                         ),
-                        child: Container(
-                            alignment: Alignment.center,
-                            child: Text('保存更新')),
+                        child: Container(alignment: Alignment.center, child: Text('保存更新')),
                       ),
                     ),
                   ),
@@ -249,20 +270,14 @@ class _WalletSettingState extends State<WalletSettingPage> {
     );
   }
 
-  LinearGradient getGradient(){
-    if(_hasChangeProperties){
+  LinearGradient getGradient() {
+    if (_hasChangeProperties) {
       return LinearGradient(
-        colors: <Color>[
-          Color(0xff15B2D2),
-          Color(0xff1097B4)
-        ],
+        colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
       );
-    }else{
+    } else {
       return LinearGradient(
-        colors: <Color>[
-          Color(0xffDEDEDE),
-          Color(0xffDEDEDE)
-        ],
+        colors: <Color>[Color(0xffDEDEDE), Color(0xffDEDEDE)],
       );
     }
   }
@@ -298,85 +313,6 @@ class _WalletSettingState extends State<WalletSettingPage> {
         }
       }
     }
-  }
-
-  Future _openModalBottomSheet() async {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-      ),
-      builder: (BuildContext dialogContext) {
-        return Container(
-          height: 199,
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 54,
-                child: ListTile(
-                  title: Text("拍照",textAlign: TextAlign.center,style: TextStyles.textC333S18,),
-                  onTap: () async {
-                    Future.delayed(Duration(milliseconds: 500),(){
-                      Navigator.pop(dialogContext);
-                    });
-
-                    var tempListImagePaths = await ImagePickers.openCamera(
-                      compressSize: 500,
-                    );
-                    if(tempListImagePaths != null){
-                      setState(() {
-                        localImagePath = tempListImagePaths.path;
-                      });
-                    }
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left:10.0,right: 10),
-                child: Divider(height:1,color: DefaultColors.colorf2f2f2),
-              ),
-              SizedBox(
-                height: 54,
-                child: ListTile(
-                  title: Text("从相册选择",textAlign: TextAlign.center,style: TextStyles.textC333S18),
-                  onTap: () async {
-                    Future.delayed(Duration(milliseconds: 500),(){
-                      Navigator.pop(dialogContext);
-                    });
-
-                    var tempListImagePaths = await ImagePickers.pickerPaths(
-                      galleryMode: GalleryMode.image,
-                      selectCount: 1,
-                      showCamera: true,
-                      cropConfig: null,
-                      compressSize: 500,
-                      uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
-                    );
-                    if(tempListImagePaths != null && tempListImagePaths.length == 1){
-                      setState(() {
-                        localImagePath = tempListImagePaths[0].path;
-                      });
-                    }
-                  },
-                ),
-              ),
-              Container(height: 10,color:DefaultColors.colorf4f4f4,),
-//                Divider(color:DefaultColors.colorf4f4f4,height: 10,),
-              ListTile(
-                title: Text(S.of(context).cancel,textAlign: TextAlign.center,style: TextStyles.textC333S18),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              Expanded(child: Container(color:DefaultColors.colorf4f4f4,)),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   void deleteWallet() {
@@ -426,4 +362,91 @@ class _WalletSettingState extends State<WalletSettingPage> {
       }
     });
   }
+}
+
+typedef EditIconCallback = void Function(String path);
+
+Future EditIconSheet(BuildContext context, EditIconCallback callback) async {
+  showModalBottomSheet(
+    context: context,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20.0),
+        topRight: Radius.circular(20.0),
+      ),
+    ),
+    builder: (BuildContext dialogContext) {
+      return Container(
+        height: 199,
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 54,
+              child: ListTile(
+                title: Text(
+                  "拍照",
+                  textAlign: TextAlign.center,
+                  style: TextStyles.textC333S18,
+                ),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.openCamera(
+                    compressSize: 500,
+                  );
+                  if (tempListImagePaths != null) {
+                    callback(tempListImagePaths.path);
+                  }
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10),
+              child: Divider(height: 1, color: DefaultColors.colorf2f2f2),
+            ),
+            SizedBox(
+              height: 54,
+              child: ListTile(
+                title: Text("从相册选择", textAlign: TextAlign.center, style: TextStyles.textC333S18),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    callback(tempListImagePaths[0].path);
+                  }
+                },
+              ),
+            ),
+            Container(
+              height: 10,
+              color: DefaultColors.colorf4f4f4,
+            ),
+//                Divider(color:DefaultColors.colorf4f4f4,height: 10,),
+            ListTile(
+              title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            Expanded(
+                child: Container(
+              color: DefaultColors.colorf4f4f4,
+            )),
+          ],
+        ),
+      );
+    },
+  );
 }
