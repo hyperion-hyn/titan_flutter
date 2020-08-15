@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Mobile
+import Mobile_lib
 import RxSwift
 import SwiftKeychainWrapper
 import TrustWalletCore
@@ -15,7 +15,7 @@ import TrustWalletCore
 class EthEncryptionService: EncryptionService {
     
     
-    private lazy var cipher = MobileNewCipher()
+    private lazy var cipher = Mobile_libNewCipher()
     
     private var _pubStr: String? = nil
     private var _expiredTime: Int64 = 0
