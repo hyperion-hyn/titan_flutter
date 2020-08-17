@@ -9,6 +9,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
@@ -23,7 +25,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 class NodeActiveContractWidget extends StatefulWidget {
   final LoadDataBloc loadDataBloc;
   final String title;
-  NodeActiveContractWidget(this.loadDataBloc, {this.title=''});
+  NodeActiveContractWidget(this.loadDataBloc, {this.title = ''});
 
   @override
   State<StatefulWidget> createState() {
@@ -52,7 +54,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     }
 
     // todo: test_jison_0813
-    for (int i=0;i<3;i++) {
+    for (int i = 0; i < 3; i++) {
       ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
       contractList.add(item);
     }
@@ -111,9 +113,9 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                          widget.title.isNotEmpty?widget.title:"最新启动节点",
-                          style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
-                        )),
+                      widget.title.isNotEmpty ? widget.title : "最新启动节点",
+                      style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                    )),
                     Text(
                       "查看更多",
                       style: TextStyles.textC999S12,
@@ -150,14 +152,20 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     );
   }
 
-  Widget _item(ContractNodeItem item,{int index = 0}) {
+  Widget _item(ContractNodeItem item, {int index = 0}) {
     var width = (MediaQuery.of(context).size.width - 3.0 * 8) / 3.0;
     return InkWell(
       onTap: () {
-        if (index != 0) {
-          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${item.id}");
-        } else {
+        if (index == 0) {
           Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+        } else if (index == 1) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
+        }
+        else if (index == 2) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
+        }
+        else {
+          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${item.id}");
         }
       },
       child: Padding(
@@ -194,8 +202,8 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 Padding(
                   padding: const EdgeInsets.only(left: 5.0, right: 5),
                   child: Text(
-                    //item.ownerName,
-                    // todo: test_jison_0813
+                      //item.ownerName,
+                      // todo: test_jison_0813
                       "大道至简",
                       style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
                 ),
@@ -203,8 +211,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   height: 4,
                 ),
                 // todo: test_jison_0813
-                Text("节点号 ${item.id+1}",
-                    style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
+                Text("节点号 ${item.id + 1}", style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
               ],
             ),
           ),
