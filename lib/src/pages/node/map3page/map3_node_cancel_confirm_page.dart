@@ -275,7 +275,6 @@ class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
                   text: TextSpan(
                     text: title,
                     style: TextStyle(fontSize: 14, color: HexColor("#92979A")),
-
                   ),
                 ),
               ),
@@ -283,19 +282,17 @@ class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
                 flex: 2,
                 child: RichText(
                   text: TextSpan(
-                      text: detail,
-                      style: TextStyle(fontSize: 14, color: HexColor("#333333")),
-                      children:
-                      [
-                        TextSpan(
-                          text: subDetail,
-                          style: TextStyle(fontSize: 12, color: HexColor("#999999")),
-                        )
-                      ],
+                    text: detail,
+                    style: TextStyle(fontSize: 14, color: HexColor("#333333")),
+                    children: [
+                      TextSpan(
+                        text: subDetail,
+                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                      )
+                    ],
                   ),
                 ),
               ),
-
             ],
           );
         }).toList(),
