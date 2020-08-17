@@ -22,6 +22,8 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -295,12 +297,32 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       child: Column(
         children: <Widget>[
           RaisedButton(
-            child: Text('atlas detail'),
+            child: Text('atlas stake'),
             onPressed: () async {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => AtlasStakeSelectPage(
+                      )));
+            },
+          ),
+          RaisedButton(
+            child: Text('atlas look over'),
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AtlasLookOverPage(
+                      )));
+            },
+          ),
+          RaisedButton(
+            child: Text('atlas stake list'),
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AtlasStakeListPage(
                       )));
             },
           ),
