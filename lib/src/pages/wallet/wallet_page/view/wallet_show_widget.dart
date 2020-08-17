@@ -22,6 +22,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -299,7 +300,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => AtlasDetailPage(
+                      builder: (context) => AtlasStakeSelectPage(
                       )));
             },
           ),
