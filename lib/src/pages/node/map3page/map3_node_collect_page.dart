@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 
@@ -36,8 +37,22 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
     var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
 
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("提币")),
-      //backgroundColor: Color(0xffF3F0F5),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        centerTitle: true,
+        title: Text(
+          '提币',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -191,23 +206,7 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 10,
-                child: Container(
-                  color: HexColor("#F4F4F4"),
-                ),
-              ),
-              Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: GasInputWidget(
-                      currentEthPrice: ethQuotePrice,
-                      callback: (double gasPrice, double gasPriceLimit) {
-                        print("[input] gasPrice:$gasPrice, gasPriceLimit:$gasPriceLimit");
-                      }),
-                ),
-              ),
+
             ])),
           ),
           _confirmButtonWidget(),
@@ -233,33 +232,32 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
 
   Widget _confirmButtonWidget() {
     return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black38,
-            blurRadius: 4.0,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 18.0, top: 10),
+        child: Center(
+          child: ClickOvalButton(
+            "确认提取",
+                () {
+                  showModalBottomSheet(
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return EnterWalletPasswordWidget();
+                      }).then((walletPassword) async {
+                    if (walletPassword == null) {
+                      return;
+                    }
+                  });
+            },
+            height: 46,
+            width: MediaQuery.of(context).size.width - 37 * 2,
+            fontSize: 18,
           ),
-        ],
+        ),
       ),
-      constraints: BoxConstraints.expand(height: 50),
-      child: RaisedButton(
-          textColor: Colors.white,
-          color: Theme.of(context).primaryColor,
-          shape: RoundedRectangleBorder(side: BorderSide(color: Theme.of(context).primaryColor)),
-          child: Text("提交", style: TextStyle(fontSize: 16, color: Colors.white)),
-          onPressed: () {
-            showModalBottomSheet(
-                isScrollControlled: true,
-                context: context,
-                builder: (BuildContext context) {
-                  return EnterWalletPasswordWidget();
-                }).then((walletPassword) async {
-              if (walletPassword == null) {
-                return;
-              }
-            });
-          }),
     );
   }
+
+
 }
