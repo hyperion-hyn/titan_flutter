@@ -7,15 +7,15 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
-import 'package:titan/src/pages/wallet/wallet_create_new_account_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/widget/click_oval_button.dart';
 
 import 'map3_node_create_wallet_page.dart';
 
@@ -69,8 +69,8 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
           slivers: <Widget>[
             SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-              return getMap3NodeProductItem(context, nodeList[index]);
-            }, childCount: nodeList.length))
+                  return getMap3NodeProductItem(context, nodeList[index]);
+                }, childCount: nodeList.length))
           ],
         ),
       ),
@@ -123,7 +123,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       child: Container(
         color: Colors.white,
         margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.only(left: 20.0, right: 19, top: 21, bottom: 10),
+        padding: const EdgeInsets.only(left: 16.0, right: 16, top: 21, bottom: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -131,13 +131,13 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Image.asset(
-                  "res/drawable/ic_map3_node_item_contract.png",
+                  "res/drawable/ic_map3_node_item_2.png",
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
                 ),
                 SizedBox(
-                  width: 6,
+                  width: 8,
                 ),
                 Flexible(
                   child: Column(
@@ -146,7 +146,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("${nodeItem.nodeName}", style: TextStyle(fontWeight: FontWeight.bold)))
+                          Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold)))
                         ],
                       ),
                       Padding(
@@ -154,13 +154,13 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                         child: Row(
                           children: <Widget>[
                             Text(
-                                S.of(context).highest +
+                                "首期抵押" +
                                     " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
                                     S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S13,
                                 maxLines: 1,
                                 softWrap: true),
-                            Text("  |  ", style: TextStyles.textC9b9b9bS12),
+                            Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -182,10 +182,13 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
             ),
             Row(
               children: <Widget>[
-                Expanded(child: Text("")),
-                SizedBox(
-                  height: 35,
-                  width: 96,
+                Expanded(child: Text(nodeItem.durationType == 2?"满90天释放50%奖励":"", style: TextStyle(fontSize: 12, color: HexColor("9A9A9A")),)),
+                ClickOvalButton(S.of(context).create_contract,(){
+                  _pushAction(nodeItem);
+                },height: 30,width: 92,),
+                /*SizedBox(
+                  height: 30,
+                  width: 92,
                   child: FlatButton(
                     //color: DefaultColors.colorffdb58,
                     color: HexColor("#FF15B2D2"),
@@ -194,7 +197,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
                     child: Text(S.of(context).create_contract,
                         style: TextStyle(fontSize: 13, color: Colors.white)),
                   ),
-                ),
+                ),*/
               ],
             )
           ],
@@ -202,16 +205,27 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
       ),
     );
   }
-  
+
   _pushAction(NodeItem nodeItem) async{
 
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {
       Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
+      // todo: test_jison_0605
+      if (nodeItem.durationType == 0) {
+        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+        Application.router.navigateTo(context,
+            Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${nodeItem.id}");
+        return;
+      } else if (nodeItem.durationType == 1) {
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+        return;
+      }
       await Application.router
-          .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");
+          .navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${nodeItem.id}");
     }
   }
-  
+
 }

@@ -21,7 +21,7 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['nodeRegion'] as String,
     json['nodeRegionName'] as String,
     json['expectDueTime'] as int,
-    json['expectCancelTime'] as int,
+    json['expectCancelTime'] as int ?? 0,
     json['instanceStartTime'] as int,
     json['instanceActiveTime'] as int,
     json['instanceDueTime'] as int,
@@ -30,9 +30,13 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['shareUrl'] as String,
     json['remoteNodeUrl'] as String,
     json['appSource'] as int,
+    json['renew'] as bool,
+    json['announcement'] as String,
+    json['commission'] as double,
     json['state'] as String,
   )..nodeProviderName = json['nodeProviderName'] as String;
 }
+
 
 Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
     <String, dynamic>{
@@ -57,5 +61,8 @@ Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
       'shareUrl': instance.shareUrl,
       'remoteNodeUrl': instance.remoteNodeUrl,
       'appSource': instance.appSource,
+      'renew': instance.renew,
+      'announcement': instance.announcement,
+      'commission': instance.commission,
       'state': instance.state,
     };

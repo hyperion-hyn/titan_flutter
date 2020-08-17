@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -21,8 +22,8 @@ import 'package:titan/src/utils/utile_ui.dart';
 
 class NodeActiveContractWidget extends StatefulWidget {
   final LoadDataBloc loadDataBloc;
-
-  NodeActiveContractWidget(this.loadDataBloc);
+  final String title;
+  NodeActiveContractWidget(this.loadDataBloc, {this.title=''});
 
   @override
   State<StatefulWidget> createState() {
@@ -49,6 +50,12 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     } else {
       getContractActiveList();
     }
+
+    // todo: test_jison_0813
+    for (int i=0;i<3;i++) {
+      ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
+      contractList.add(item);
+    }
   }
 
   @override
@@ -72,7 +79,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     _currentPage = 0;
     List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(_currentPage);
 
-    //print("[widget] --> build, length:${tempMemberList.length}");
+    print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
       setState(() {
         if (tempMemberList.length > 0) {
@@ -96,7 +103,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyMap3ContractPage(MyContractModel(S.of(context).latest_boot_node, MyContractType.active))));
+                        builder: (context) => MyMap3ContractPage(MyContractModel("最新启动节点", MyContractType.active))));
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 16.0, right: 0),
@@ -104,16 +111,16 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                   children: <Widget>[
                     Expanded(
                         child: Text(
-                          S.of(context).latest_boot_node,
-                      style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
-                    )),
+                          widget.title.isNotEmpty?widget.title:"最新启动节点",
+                          style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                        )),
                     Text(
-                      S.of(context).see_more,
-                      style: TextStyles.textC999S14,
+                      "查看更多",
+                      style: TextStyles.textC999S12,
                     ),
                     Icon(
                       Icons.chevron_right,
-                      color: Colors.black54,
+                      color: DefaultColors.color999,
                     ),
                     SizedBox(
                       width: 14,
@@ -131,7 +138,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
                 itemBuilder: (context, index) {
                   var i = index;
                   var delegatorItem = contractList[i];
-                  return _item(delegatorItem);
+                  return _item(delegatorItem, index: index);
                 },
                 itemCount: contractList.length > 3 ? 3 : contractList.length,
                 scrollDirection: Axis.horizontal,
@@ -143,11 +150,15 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     );
   }
 
-  Widget _item(ContractNodeItem item) {
+  Widget _item(ContractNodeItem item,{int index = 0}) {
     var width = (MediaQuery.of(context).size.width - 3.0 * 8) / 3.0;
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${item.id}");
+        if (index != 0) {
+          Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${item.id}");
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+        }
       },
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
@@ -166,40 +177,34 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
               ],
             ),
             margin: const EdgeInsets.only(right: 12),
-            child: Stack(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Image.asset(
-                        "res/drawable/ic_map3_node_item_contract.png",
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
-                      ),
-                      SizedBox(
-                        height: 12,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: S.of(context).number, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                          TextSpan(text: "${item.contractCode ?? ""}", style: TextStyles.textC333S14bold),
-                        ])),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(UiUtil.shortEthAddress(item.ownerName),
-                          style: TextStyles.textC9b9b9bS12),
-//                      Text(item.ownerName,
-//                          style: TextStyle(fontSize: 14, color: HexColor("#9B9B9B")))
-                    ],
-                  ),
+                Image.asset(
+                  "res/drawable/map3_node_default_avatar.png",
+                  //"res/drawable/ic_map3_node_item_contract.png",
+                  width: 42,
+                  height: 42,
+                  fit: BoxFit.cover,
                 ),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0, right: 5),
+                  child: Text(
+                    //item.ownerName,
+                    // todo: test_jison_0813
+                      "大道至简",
+                      style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                // todo: test_jison_0813
+                Text("节点号 ${item.id+1}",
+                    style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
               ],
             ),
           ),
