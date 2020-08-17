@@ -48,9 +48,11 @@ class TextStyles {
   static TextStyle textCff4c3bS18 = textStyle(fontSize: 18, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
   static TextStyle textCff4c3bS20 = textStyle(fontSize: 20, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
   static TextStyle textC7c5b00S12 = textStyle(fontSize: 12, color: DefaultColors.color7c5b00);//深土黄
+  static TextStyle textC333S18 = textStyle(fontSize: 18, color: DefaultColors.color333);//深土黄
 }
 
 class DefaultColors {
+  static Color color00000 = HexColor("#00000000");
   static Color color333 = HexColor("#333333");
   static Color color777 = HexColor("#777777");
   static Color color999 = HexColor("#999999");
@@ -59,6 +61,8 @@ class DefaultColors {
   static Color colorccfff = HexColor("#ccffffff");
   static Color color000 = HexColor("#000000");
   static Color colorf5f5f5 = HexColor("#f5f5f5");
+  static Color colorf4f4f4 = HexColor("#f4f4f4");
+  static Color colorf2f2f2 = HexColor("#f2f2f2");
   static Color color9b9b9b = HexColor("#9b9b9b");
   static Color color00ec00 = HexColor("#00ec00");
   static Color colorff2d2d = HexColor("#ff2d2d");

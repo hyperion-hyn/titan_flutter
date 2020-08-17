@@ -9,14 +9,16 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_broadcase_success_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_broadcast_success_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_precreate_contract_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_product_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/confirm_success_page.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_confirm_resume_word_page.dart';
@@ -193,16 +195,18 @@ var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-var map3NodeBroadcaseSuccessHandler = Handler(handlerFunc: (context, params) {
+var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   ContractNodeItem contractNodeItem;
   var item = params['contractNodeItem']?.first;
   if (item != null) {
-    contractNodeItem =
-        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
   }
-  return Map3NodeBroadcaseSuccessPage(
-    params['pageType']?.first,
+
+  var actionEvent = params['actionEvent']?.first;
+
+  return Map3NodeBroadcastSuccessPage(
+    actionEvent: enumActionEventFromString(actionEvent),
     contractNodeItem: contractNodeItem,
   );
 });
@@ -217,6 +221,12 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(
       FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSharePage(contractNodeItem);
+});
+
+
+var map3NodePreCreateContractHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return Map3NodePreCreateContractPage(params['contractId']?.first);
 });
 
 //var demoRouteHandler = Handler(

@@ -499,7 +499,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
       Application.router.navigateTo(
           context,
-          Routes.map3node_broadcase_success_page +
+          Routes.map3node_broadcast_success_page +
               "?pageType=${widget.pageType}" +
               "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
     } catch (_) {

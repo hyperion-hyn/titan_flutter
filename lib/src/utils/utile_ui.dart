@@ -50,17 +50,16 @@ class UiUtil {
         msg: message, backgroundColor: Colors.black, textColor: Colors.white);
   }
 
-  static String shortEthAddress(String address) {
+  static String shortEthAddress(String address, {int limitLength = 9}) {
     if (address == null || address == "") {
       return "";
     }
-    if (address.length < 9) {
+    if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, 9) +
-        "..." +
-        address.substring(address.length - 9, address.length);
+    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
   }
+
 
   static String shortString(String address, {int limitLength = 9}) {
     if (address == null || address == "") {
