@@ -16,11 +16,11 @@ import 'package:titan/src/widget/gas_input_widget.dart';
 class Map3NodeCollectPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeColletState();
+    return _Map3NodeCollectState();
   }
 }
 
-class _Map3NodeColletState extends State<Map3NodeCollectPage> {
+class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
   TextEditingController _textEditingController = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
   double minTotal = 0;
@@ -206,7 +206,6 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
                   ],
                 ),
               ),
-
             ])),
           ),
           _confirmButtonWidget(),
@@ -238,17 +237,17 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
         child: Center(
           child: ClickOvalButton(
             "确认提取",
-                () {
-                  showModalBottomSheet(
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return EnterWalletPasswordWidget();
-                      }).then((walletPassword) async {
-                    if (walletPassword == null) {
-                      return;
-                    }
-                  });
+            () {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return EnterWalletPasswordWidget();
+                  }).then((walletPassword) async {
+                if (walletPassword == null) {
+                  return;
+                }
+              });
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -258,6 +257,4 @@ class _Map3NodeColletState extends State<Map3NodeCollectPage> {
       ),
     );
   }
-
-
 }
