@@ -239,8 +239,27 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       balance: BigInt.from(0),
     );
     return InkWell(
-      onTap: () {
-        showModalBottomSheet(
+      onTap: () async {
+        var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+          context,
+          widget.walletVo.wallet,
+        );
+
+        if (walletPassword == null) {
+          return;
+        }
+        try {
+          await widget.walletVo.wallet.bitcoinActive(walletPassword);
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(LoadLocalDiskWalletAndActiveEvent());
+          Future.delayed(Duration(milliseconds: 500), () {
+            widget.loadDataBloc.add(LoadingEvent());
+          });
+        } catch (error) {
+          LogUtil.toastException(error);
+        }
+
+        /*showModalBottomSheet(
             isScrollControlled: true,
             context: context,
             builder: (BuildContext context) {
@@ -260,7 +279,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           } catch (error) {
             LogUtil.toastException(error);
           }
-        });
+        });*/
       },
       child: Column(
         children: <Widget>[
