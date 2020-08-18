@@ -196,8 +196,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                             child: Form(
                               key: _formKey,
                               child: RoundBorderTextField(
-                                textEditingController: _textEditingController,
-                                textInputType: TextInputType.number,
+                                controller: _textEditingController,
+                                keyboardType: TextInputType.number,
                                 //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                 hint: "请输入提币数量",
                                 validator: (textStr) {

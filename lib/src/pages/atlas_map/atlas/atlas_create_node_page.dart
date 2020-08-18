@@ -465,7 +465,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             height: 16,
           ),
           RoundBorderTextField(
-            textInputType: TextInputType.number,
+            keyboardType: TextInputType.number,
             suffixIcon: Container(
               width: 10,
               child: Align(
@@ -499,7 +499,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             height: 16,
           ),
           RoundBorderTextField(
-            textInputType: TextInputType.number,
+            keyboardType: TextInputType.number,
             suffixIcon: Container(
               width: 10,
               child: Align(
@@ -533,7 +533,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             height: 16,
           ),
           RoundBorderTextField(
-            textInputType: TextInputType.number,
+            keyboardType: TextInputType.number,
             suffixIcon: Container(
               width: 10,
               child: Align(

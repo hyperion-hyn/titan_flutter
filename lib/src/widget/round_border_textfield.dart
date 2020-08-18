@@ -8,18 +8,18 @@ import 'package:titan/src/pages/global_data/echarts/world.dart';
 typedef RoundBorderTextFieldOnChanged = void Function(String text);
 
 class RoundBorderTextField extends StatefulWidget {
-  final TextInputType textInputType;
+  final TextInputType keyboardType;
   final Function validator;
-  final TextEditingController textEditingController;
+  final TextEditingController controller;
   final String hint;
   final RoundBorderTextFieldOnChanged onChanged;
   final Widget suffixIcon;
   final FocusNode focusNode;
 
   RoundBorderTextField({
-    this.textInputType,
+    this.keyboardType,
     this.validator,
-    this.textEditingController,
+    this.controller,
     this.hint,
     this.onChanged,
     this.suffixIcon,
@@ -37,8 +37,8 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
   Widget build(BuildContext context) {
     return TextFormField(
       validator: widget.validator,
-      controller: widget.textEditingController,
-      keyboardType: widget.textInputType,
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
       focusNode: widget.focusNode,
       decoration: InputDecoration(
         suffixIcon: widget.suffixIcon,

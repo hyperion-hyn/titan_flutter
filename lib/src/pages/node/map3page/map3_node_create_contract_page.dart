@@ -839,8 +839,8 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                       flex: 1,
                       child: RoundBorderTextField(
                         focusNode: focusNode,
-                        textEditingController: textEditingController,
-                        textInputType: TextInputType.number,
+                        controller: textEditingController,
+                        keyboardType: TextInputType.number,
                         hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                         validator: (textStr) {
                           if (textStr.length == 0) {
