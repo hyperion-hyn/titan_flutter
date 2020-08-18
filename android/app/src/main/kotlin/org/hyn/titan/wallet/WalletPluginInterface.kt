@@ -402,12 +402,12 @@ class WalletPluginInterface(private val context: Context, private val binaryMess
             }
 
             //add hyn coin base info to local
-            val privateKey = hdWallet.getKey(HYNDerivationPath)
-            val pubKey = privateKey.getPublicKeySecp256k1(false)
-            val harmonyAddress = CoinType.HARMONY.deriveAddressFromPublicKey(pubKey)
-            val addressLib = Mobile_lib.newAddressLib()
-            val hynAddress = addressLib.publicKeyToHynAddress(pubKey.description(), true);
-            Timber.i("HYN address is : %s, harmony address %s", hynAddress, harmonyAddress)
+//            val privateKey = hdWallet.getKey(HYNDerivationPath)
+//            val pubKey = privateKey.getPublicKeySecp256k1(false)
+//            val harmonyAddress = CoinType.HARMONY.deriveAddressFromPublicKey(pubKey)
+//            val addressLib = Mobile_lib.newAddressLib()
+//            val hynAddress = addressLib.publicKeyToHynAddress(pubKey.description(), true);
+//            Timber.i("HYN address is : %s, harmony address %s", hynAddress, harmonyAddress)
         }
 
         return saveStoredKeyToLocal(storedKey)

@@ -100,7 +100,6 @@ dependencies:
   flutter_inappwebview: ^3.1.0
   #  characters: ^0.5.0
   characters: ^1.0.0
-  bech32: ^0.1.2
 
   #  flutter_inappwebview:
   #    git:
