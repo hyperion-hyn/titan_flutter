@@ -111,9 +111,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
         value: 'map3Node1',
         child: Text(
           'Lance的Map3节点-1',
-          style: TextStyle(
-            fontSize: 14,
-          ),
+          style: TextStyles.textC333S14,
         ),
       ),
     );
