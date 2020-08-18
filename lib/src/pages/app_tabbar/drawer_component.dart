@@ -16,6 +16,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
 import 'package:titan/src/pages/mine/about_me_page.dart';
+import 'package:titan/src/widget/widget_demo_page.dart';
 
 class DrawerComponent extends StatefulWidget {
   @override
@@ -197,6 +198,18 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('钱包测试'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WidgetDemoPage()));
+                  },
+                  leading: Icon(Icons.monetization_on),
+                  title: Text('widget demo'),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],
