@@ -14,6 +14,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 class Map3NodeCancelPage extends StatefulWidget {
   @override
@@ -179,7 +180,7 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 8, right: 18),
+                      padding: const EdgeInsets.only(left: 16.0, top: 16, right: 18),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
@@ -194,21 +195,11 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                             flex: 1,
                             child: Form(
                               key: _formKey,
-                              child: TextFormField(
-                                controller: _textEditingController,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                decoration: InputDecoration(
-                                  focusedErrorBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: HexColor("#FF4C3B")),
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  errorStyle: TextStyle(color: HexColor("#FF4C3B"), fontSize: 14),
-                                  hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
-                                  labelStyle: TextStyles.textC333S14,
-                                  hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                                  //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                                ),
+                              child: RoundBorderTextField(
+                                textEditingController: _textEditingController,
+                                textInputType: TextInputType.number,
+                                //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                hint: "请输入提币数量",
                                 validator: (textStr) {
                                   if (textStr.length == 0) {
                                     return S.of(context).please_input_hyn_count;

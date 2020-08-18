@@ -14,6 +14,7 @@ class RoundBorderTextField extends StatefulWidget {
   final String hint;
   final RoundBorderTextFieldOnChanged onChanged;
   final Widget suffixIcon;
+  final FocusNode focusNode;
 
   RoundBorderTextField({
     this.textInputType,
@@ -22,6 +23,7 @@ class RoundBorderTextField extends StatefulWidget {
     this.hint,
     this.onChanged,
     this.suffixIcon,
+    this.focusNode,
   });
 
   @override
@@ -37,6 +39,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
       validator: widget.validator,
       controller: widget.textEditingController,
       keyboardType: widget.textInputType,
+      focusNode: widget.focusNode,
       decoration: InputDecoration(
         suffixIcon: widget.suffixIcon,
         filled: true,
