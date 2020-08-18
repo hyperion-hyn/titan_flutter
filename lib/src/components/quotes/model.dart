@@ -86,11 +86,11 @@ class GasPriceRecommend extends Object {
   Map<String, dynamic> toJson() => _$GasPriceRecommendToJson(this);
 
   GasPriceRecommend.defaultValue() {
-    this.fast = Decimal.fromInt(EthereumConst.LOW_SPEED);
+    this.fast = Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED);
     this.fastWait = 30;
     this.average = Decimal.fromInt(EthereumConst.FAST_SPEED);
     this.avgWait = 3;
-    this.safeLow = Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED);
+    this.safeLow = Decimal.fromInt(EthereumConst.LOW_SPEED);
     this.safeLowWait = 0.5;
   }
 
