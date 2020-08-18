@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -234,7 +235,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
                     if (subTitle.isEmpty) {
                       return;
                     }
-                    print(title);
+                    // todo: test_jison_0604
+                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+                    Application.router
+                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                   },
                   child: RichText(
                     text:TextSpan(

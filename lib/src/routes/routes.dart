@@ -113,8 +113,6 @@ class Routes {
         handler: contributionPositionFinishHandler, transitionType: pushNewPageTransitionType);
 
     //map3node
-    router.define(map3node_product_list,
-        handler: map3NodeProductListHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_create_wallet,
         handler: map3NodeCreateWalletHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_create_contract_page,

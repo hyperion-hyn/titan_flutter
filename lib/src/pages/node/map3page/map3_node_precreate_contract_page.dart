@@ -146,7 +146,11 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                     if (subTitle.isEmpty) {
                       return;
                     }
-                    print(title);
+                    // todo: test_jison_0604
+                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+                    Application.router
+                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                   },
                   child: RichText(
                       text:TextSpan(
