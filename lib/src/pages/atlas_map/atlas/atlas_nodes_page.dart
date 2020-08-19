@@ -22,12 +22,14 @@ class AtlasNodesPage extends StatefulWidget {
 }
 
 class AtlasNodesPageState extends State<AtlasNodesPage>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   List<String> _atlasNodeList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   int _currentPage = 1;
   int _pageSize = 30;
+
+  AnimationController _animationController;
 
   @override
   bool get wantKeepAlive => true;
@@ -35,6 +37,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 10),
+    )..repeat();
 
     _loadDataBloc.add(LoadingEvent());
   }
@@ -145,6 +151,46 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   ],
                 ),
               ),
+              Positioned(
+                right: 16,
+                top: 8,
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '下个纪元',
+                      style:
+                          TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
+                    ),
+                    SizedBox(height: 4),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: <Widget>[
+                        AnimatedBuilder(
+                          animation: _animationController,
+                          builder: (_, child) {
+                            return Transform.rotate(
+                              angle: _animationController.value * 2 * 3.14,
+                              child: child,
+                            );
+                          },
+                          child: Image.asset(
+                            'res/drawable/ic_atlas_age.png',
+                            width: 50,
+                            height: 50,
+                          ),
+                        ),
+                        Text(
+                          '35',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),
