@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -34,7 +35,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           color: Colors.black,
         ),
         title: Text(
-          '确认创建Atlas节点',
+          '确认创建节点',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -239,7 +240,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
   _divider() {
     return Container(
       height: 8,
-      color: Colors.grey[200],
+      color: HexColor('#FFF2F2F2'),
     );
   }
 }
