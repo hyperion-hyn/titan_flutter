@@ -21,12 +21,16 @@ class AtlasNodesPage extends StatefulWidget {
   }
 }
 
-class AtlasNodesPageState extends State<AtlasNodesPage> {
+class AtlasNodesPageState extends State<AtlasNodesPage>
+    with AutomaticKeepAliveClientMixin {
   List<String> _atlasNodeList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   int _currentPage = 1;
   int _pageSize = 30;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
