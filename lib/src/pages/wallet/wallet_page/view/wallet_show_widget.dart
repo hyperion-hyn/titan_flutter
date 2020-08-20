@@ -297,6 +297,16 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       child: Column(
         children: <Widget>[
           RaisedButton(
+            child: Text('atlas detail'),
+            onPressed: () async {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AtlasDetailPage(
+                      )));
+            },
+          ),
+          RaisedButton(
             child: Text('atlas stake'),
             onPressed: () async {
               Navigator.push(
