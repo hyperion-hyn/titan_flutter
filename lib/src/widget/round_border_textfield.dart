@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/global_data/echarts/world.dart';
 
 typedef RoundBorderTextFieldOnChanged = void Function(String text);
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 
@@ -35,9 +36,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-
-      ),
+      backgroundColor: Colors.white,
+      appBar: BaseAppBar(baseTitle: "节点详情"),
       body: LoadDataContainer(
         bloc: _loadDataBloc,
         onLoadData: () async {

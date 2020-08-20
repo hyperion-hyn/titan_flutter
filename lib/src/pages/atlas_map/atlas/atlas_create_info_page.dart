@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -9,7 +11,11 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 typedef TextChangeCallback = void Function(String text);
 
 class AtlasCreateInfoPage extends StatefulWidget {
-  AtlasCreateInfoPage();
+  final AtlasNode _atlasNode;
+
+  AtlasCreateInfoPage(
+    this._atlasNode,
+  );
 
   @override
   State<StatefulWidget> createState() {
@@ -29,7 +35,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           color: Colors.black,
         ),
         title: Text(
-          '确认创建Atlas节点',
+          '确认创建节点',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -70,6 +76,11 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           ),
           SliverToBoxAdapter(
             child: _nodeOptions(),
+          ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 32,
+            ),
           ),
           SliverToBoxAdapter(
             child: _confirm(),
@@ -116,59 +127,60 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
                     ),
                   ),
                 ),
-                Container(
-                  width: 40,
-                  height: 40,
-                  color: Colors.greenAccent,
+                Image.asset(
+                  widget._atlasNode.logoPath,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
                 )
               ],
             ),
           ),
           _optionItem(
             '名称',
-            'Lance的Atlas节点',
+            widget._atlasNode.name,
           ),
           _optionItem(
             '节点号',
-            '123123123131',
+            widget._atlasNode.identifier,
           ),
           _optionItem(
             '最大抵押量',
-            '10000000000000',
+            widget._atlasNode.maxStakingAmount,
           ),
           _optionItem(
             '网址',
-            'http://hyn.space',
+            widget._atlasNode.website,
           ),
           _optionItem(
             '安全联系',
-            '1231314',
+            widget._atlasNode.contact,
           ),
           _optionItem(
             '描述',
-            '快来加入我的节点吧',
+            widget._atlasNode.description,
           ),
           _divider(),
           _optionItem(
             '费率',
-            '20%',
+            '${widget._atlasNode.fee} %',
           ),
           _optionItem(
             '最大费率',
-            '40%',
+            '${widget._atlasNode.maxFee} %',
           ),
           _optionItem(
             '费率幅度',
-            '5%',
+            '${widget._atlasNode.maxFee} %',
           ),
           _divider(),
           _optionItem(
             'bls key',
-            'afagangrgragjksarghsajrghsakjgsrk',
+            widget._atlasNode.blsKey,
           ),
           _optionItem(
             'bls 签名',
-            'skdajvaneruhcalrvanivawpeofjarvuasdfsdfsdfdsfsfsdfsfsfs',
+            widget._atlasNode.blsSign,
           ),
         ],
       ),
@@ -197,7 +209,9 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
             flex: 6,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(content),
+              child: Text(
+                content ?? '无',
+              ),
             ),
           ),
         ],
@@ -217,8 +231,8 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
                 builder: (context) => AtlasNodeCreateConfirmPage(),
               ));
         },
-        width: 100,
-        height: 40,
+        width: 300,
+        height: 46,
       ),
     );
   }
@@ -226,7 +240,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
   _divider() {
     return Container(
       height: 8,
-      color: Colors.grey[200],
+      color: HexColor('#FFF2F2F2'),
     );
   }
 }
