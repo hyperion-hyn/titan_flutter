@@ -12,6 +12,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 class Map3NodeCollectPage extends StatefulWidget {
   @override
@@ -127,11 +128,14 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0, bottom: 12, right: 8),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            "HYN",
-                            style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Text(
+                              "HYN",
+                              style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                            ),
                           ),
                           SizedBox(
                             width: 12,
@@ -140,21 +144,11 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
                             flex: 1,
                             child: Form(
                               key: _formKey,
-                              child: TextFormField(
+                              child: RoundBorderTextField(
                                 controller: _textEditingController,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                decoration: InputDecoration(
-                                  focusedErrorBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: HexColor("#FF4C3B")),
-                                    borderRadius: BorderRadius.circular(0),
-                                  ),
-                                  errorStyle: TextStyle(color: HexColor("#FF4C3B"), fontSize: 14),
-                                  hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
-                                  labelStyle: TextStyles.textC333S14,
-                                  hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                                  //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                                ),
+                                //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                hint: "请输入数量",
                                 validator: (textStr) {
                                   if (textStr.length == 0) {
                                     return S.of(context).please_input_hyn_count;
@@ -174,19 +168,8 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
                               ),
                             ),
                           ),
-                          /*Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: FlatButton(
-                              child: Text(
-                                "全部提取",
-                                style: TextStyle(fontSize: 12, color: Colors.white),
-                              ),
-                              color: Theme.of(context).primaryColor,
-                              onPressed: () {},
-                            ),
-                          ),*/
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             child: _flatButton(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

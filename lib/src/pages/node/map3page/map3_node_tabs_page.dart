@@ -4,6 +4,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 
 import 'map3_atlas_introduction.dart';
 
@@ -14,7 +16,8 @@ class Map3NodeTabsPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerProviderStateMixin {
+class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -50,7 +53,10 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
                     child: TabBar(
                       controller: _tabController,
                       labelColor: Colors.white,
-                      labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                      labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
 //                      labelPadding: EdgeInsets.only(left: 10, right: 20),
                       indicatorColor: Colors.white,
@@ -59,7 +65,6 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
 //                      indicatorColor: HexColor("#00000000"),
                       unselectedLabelColor: HexColor("#aaffffff"),
                       tabs: [
-
                         Tab(
                           text: S.of(context).map3_node_introduction,
                         ),
@@ -79,7 +84,7 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
           controller: _tabController,
           children: [
             Map3NodePage(),
-            Map3AtlasIntroductionPage(),
+            AtlasNodesPage(),
           ],
 //          physics: NeverScrollableScrollPhysics(),
         ),

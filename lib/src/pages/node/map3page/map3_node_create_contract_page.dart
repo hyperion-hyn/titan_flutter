@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +23,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
-
+import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
 
@@ -38,7 +40,7 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
 }
 
-class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
+class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -54,6 +56,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   List<NodeProviderEntity> providerList = [];
   String originInputStr = "";
 
+  // 输入框的焦点实例
+  FocusNode _focusNode;
+
+  // 当前键盘是否是激活状态
+  bool _isKeyboardActived = false;
+
   @override
   void initState() {
     _joinCoinController.addListener(textChangeListener);
@@ -63,7 +71,59 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
+
+    _setupNode();
+
     super.initState();
+  }
+
+  void _setupNode() {
+    _focusNode = FocusNode();
+
+    // 监听输入框焦点变化
+    _focusNode.addListener(_onFocus);
+
+    // 创建一个界面变化的观察者
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  // 焦点变化时触发的函数
+  _onFocus() {
+    if (_focusNode.hasFocus) {
+      // 聚焦时候的操作
+      return;
+    }
+
+    // 失去焦点时候的操作
+    setState(() {
+      _isKeyboardActived = false;
+    });
+
+    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActived");
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("[Keyboard] 2, isKeyboardActived:$_isKeyboardActived");
+
+      // 当前是安卓系统并且在焦点聚焦的情况下
+      if (Platform.isAndroid && _focusNode.hasFocus) {
+        if (_isKeyboardActived) {
+          setState(() {
+            _isKeyboardActived = false;
+          });
+          // 使输入框失去焦点
+          _focusNode.unfocus();
+          return;
+        }
+        setState(() {
+          _isKeyboardActived = true;
+        });
+      }
+    });
   }
 
   @override
@@ -92,7 +152,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   void getNetworkData() async {
     try {
       var requestList =
-      await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -131,7 +191,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
       DropdownMenuItem item =
-      new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -163,11 +223,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     if (mounted) {
       setState(() {
         _joinCoinController.value = TextEditingValue(
-          // 设置内容
+            // 设置内容
             text: inputText,
             // 保持光标在最后
             selection:
-            TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
@@ -175,13 +235,17 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   @override
   void dispose() {
     _filterSubject.close();
+
+    _focusNode.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+
     super.dispose();
   }
 
   int _currentIndex;
   var _editText = "";
   var _localImagePath = "";
-  List<String> _detailList =["","派大星","PB2020","www.hyn.space","12345678901","HYN加油"];
+  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
       return AllPageStateContainer(currentState, () {
@@ -195,7 +259,10 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
-    var divider = Container(color: HexColor("#F4F4F4"),height: 8,);
+    var divider = Container(
+      color: HexColor("#F4F4F4"),
+      height: 8,
+    );
     return Column(
       children: <Widget>[
         Expanded(
@@ -207,7 +274,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                     _headerWidget(),
                     divider,
                     getHoldInNum(
-                        context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
+                        context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+                        focusNode: _focusNode),
                     divider,
                     _managerSpendWidget(),
                     divider,
@@ -225,8 +293,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                       case 0:
                         title = "图标";
                         subTitle = "";
-                        detail = _localImagePath.isEmpty?"请编辑节点Icon":"";
-
+                        detail = _localImagePath.isEmpty ? "请编辑节点Icon" : "";
 
                         break;
 
@@ -263,13 +330,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
                     detail = _detailList[index];
 
-
                     return Material(
                       child: Ink(
                         child: InkWell(
                           splashColor: Colors.blue,
-                          onTap: () async{
-
+                          onTap: () async {
                             if (index == 0) {
                               EditIconSheet(context, (path) {
                                 setState(() {
@@ -281,8 +346,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
                             _currentIndex = index;
                             String text = await Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    Map3NodePronouncePage(title: title,)));
+                                builder: (BuildContext context) => Map3NodePronouncePage(
+                                      title: title,
+                                    )));
                             if (text.isNotEmpty) {
                               setState(() {
                                 _detailList[index] = text;
@@ -292,9 +358,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                           },
                           child: Container(
                             color: Colors.white,
-
                             child: Padding(
-                              padding:  EdgeInsets.symmetric(vertical: detail.isNotEmpty?18:14, horizontal: 14),
+                              padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
                               child: Row(
                                 children: <Widget>[
                                   Text(
@@ -311,15 +376,15 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                                   Spacer(),
                                   detail.isNotEmpty
                                       ? Text(
-                                    detail,
-                                    style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                                  )
+                                          detail,
+                                          style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                                        )
                                       : Image.asset(
-                                    _localImagePath??"res/drawable/ic_map3_node_item_2.png",
-                                    width: 36,
-                                    height: 36,
-                                    fit: BoxFit.cover,
-                                  ),
+                                          _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
+                                          width: 36,
+                                          height: 36,
+                                          fit: BoxFit.cover,
+                                        ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 6),
                                     child: Icon(
@@ -458,7 +523,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
                 Container(
                     width: 100,
                     child:
-                    Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -650,48 +715,49 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
-      child: ClickOvalButton(
-        "创建提交",
-            () async {
+    return Visibility(
+      visible: !_isKeyboardActived,
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
+        child: ClickOvalButton(
+          "创建提交",
+          () async {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (BuildContext context) => Map3NodeCreateConfirmPage(widget.contractId)));
+            /*
+            return;
 
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  Map3NodeCreateConfirmPage(widget.contractId)));
-          /*
-          return;
+            setState(() {
+              if (!_joinCoinFormKey.currentState.validate()) {
+                return;
+              }
 
-          setState(() {
-            if (!_joinCoinFormKey.currentState.validate()) {
-              return;
-            }
-
-            var providerModel = providerList[selectServerItemValue];
-            var regionsModel = providerModel.regions[selectNodeItemValue];
-            contractItem.nodeRegion = regionsModel.id;
-            contractItem.nodeProvider = providerModel.id;
-            contractItem.nodeRegionName = regionsModel.name;
-            contractItem.nodeProviderName = providerModel.name;
-            var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-            contractItem.announcement =
-            _pronounceTextController.text.isNotEmpty ? _pronounceTextController.text : "欢迎来到Titan";
-            contractItem.renew = _renew;
-            contractItem.commission = _managerSpendCount * 0.01;
-            Application.router.navigateTo(
-                context,
-                Routes.map3node_send_confirm_page +
-                    "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                    "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                    "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                    "&actionEvent=${Map3NodeActionEvent.CREATE}" +
-                    "&contractId=${widget.contractId}");
-          });*/
-        },
-        height: 46,
-        width: MediaQuery.of(context).size.width - 37 * 2,
-        fontSize: 18,
+              var providerModel = providerList[selectServerItemValue];
+              var regionsModel = providerModel.regions[selectNodeItemValue];
+              contractItem.nodeRegion = regionsModel.id;
+              contractItem.nodeProvider = providerModel.id;
+              contractItem.nodeRegionName = regionsModel.name;
+              contractItem.nodeProviderName = providerModel.name;
+              var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
+              contractItem.announcement =
+              _pronounceTextController.text.isNotEmpty ? _pronounceTextController.text : "欢迎来到Titan";
+              contractItem.renew = _renew;
+              contractItem.commission = _managerSpendCount * 0.01;
+              Application.router.navigateTo(
+                  context,
+                  Routes.map3node_send_confirm_page +
+                      "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
+                      "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
+                      "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
+                      "&actionEvent=${Map3NodeActionEvent.CREATE}" +
+                      "&contractId=${widget.contractId}");
+            });*/
+          },
+          height: 46,
+          width: MediaQuery.of(context).size.width - 37 * 2,
+          fontSize: 18,
+        ),
       ),
     );
   }
@@ -699,9 +765,9 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
 
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
-    {bool isMyself = false}) {
+    {bool isMyself = false, FocusNode focusNode}) {
   List<int> suggestList =
-  contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
+      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
   double minTotal = 0;
   double remainTotal = 0;
@@ -742,7 +808,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child:
-                Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
                 child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
@@ -756,6 +822,9 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                SizedBox(
+                  height: 12,
+                ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
@@ -768,6 +837,31 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                     ),
                     Flexible(
                       flex: 1,
+                      child: RoundBorderTextField(
+                        focusNode: focusNode,
+                        controller: textEditingController,
+                        keyboardType: TextInputType.number,
+                        hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                        validator: (textStr) {
+                          if (textStr.length == 0) {
+                            return S.of(context).please_input_hyn_count;
+                          } else if (minTotal == 0) {
+                            return "抵押已满";
+                          } else if (int.parse(textStr) < minTotal) {
+                            return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                          } else if (int.parse(textStr) > remainTotal) {
+                            return "不能超过剩余份额";
+                          } else if (Decimal.parse(textStr) > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                            return S.of(context).hyn_balance_no_enough;
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
+                    ),
+                    /*
+                    Flexible(
+                      flex: 1,
                       child: Form(
                         key: formKey,
                         child: TextFormField(
@@ -775,17 +869,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                           keyboardType: TextInputType.number,
                           inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                           decoration: InputDecoration(
-                            /*filled: true,
-                              fillColor: HexColor("#F2F2F2"),
-                              contentPadding: const EdgeInsets.only(left: 24.0),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: HexColor("#F2F2F2")),
-                                borderRadius: BorderRadius.circular(30),
-                              ),*/
+
                             hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
                             labelStyle: TextStyles.textC333S14,
                             hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
@@ -810,6 +894,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                         ),
                       ),
                     ),
+                    */
                   ],
                 ),
                 SizedBox(
@@ -1099,12 +1184,12 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
                     text: "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
                     style: TextStyles.textCfffS46,
                     children: <TextSpan>[
-                      TextSpan(
-                        text:
+                  TextSpan(
+                    text:
                         S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
-                        style: TextStyles.textCfffS24,
-                      )
-                    ])),
+                    style: TextStyles.textCfffS24,
+                  )
+                ])),
             Padding(
               padding: const EdgeInsets.only(top: 4.0, bottom: 24),
               child: Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
@@ -1115,20 +1200,20 @@ Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contrac
               children: <Widget>[
                 isJoin
                     ? Column(
-                  children: <Widget>[
-                    Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
-                    SizedBox(height: 4),
-                    Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
-                  ],
-                )
+                        children: <Widget>[
+                          Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
+                          SizedBox(height: 4),
+                          Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
+                        ],
+                      )
                     : Column(
-                  children: <Widget>[
-                    Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
-                    SizedBox(height: 4),
-                    Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
-                        style: TextStyles.textCfffS14)
-                  ],
-                ),
+                        children: <Widget>[
+                          Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
+                          SizedBox(height: 4),
+                          Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                              style: TextStyles.textCfffS14)
+                        ],
+                      ),
                 Container(
                   margin: const EdgeInsets.only(left: 10.0, right: 20),
                   width: 1,
