@@ -7,7 +7,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 
 @deprecated

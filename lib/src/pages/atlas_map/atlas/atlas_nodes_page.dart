@@ -8,7 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../../../widget/atlas_map_widget.dart';
 

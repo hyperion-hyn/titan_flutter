@@ -17,7 +17,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_create_contract_page.dart';
 
 class Map3NodeJoinContractPage extends StatefulWidget {

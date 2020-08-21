@@ -16,7 +16,7 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
 import 'package:titan/src/pages/news/model/focus_response.dart';
 import 'package:titan/src/pages/webview/webview.dart';
-import 'package:titan/src/widget/custom_click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 
 class DiscoverPage extends StatefulWidget {
   DiscoverPage({Key key}) : super(key: key);

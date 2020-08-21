@@ -13,7 +13,7 @@ import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/validator_util.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'keyboard/wallet_password_dialog.dart';
 

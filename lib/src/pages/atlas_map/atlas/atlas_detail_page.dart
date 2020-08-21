@@ -6,7 +6,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/widget/click_oval_button.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class AtlasDetailPage extends StatefulWidget {
   AtlasDetailPage();
@@ -44,29 +44,80 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: "节点详情"),
-      body: LoadDataContainer(
-          bloc: _loadDataBloc,
-          onLoadData: () async {
-            await _refreshData();
-          },
-          onRefresh: () async {
-            await _refreshData();
-          },
-          onLoadingMore: () {
-            _loadMoreData();
-            setState(() {});
-          },
-          child: CustomScrollView(
-            slivers: <Widget>[
-              _headerWidget(),
-              _moneyWidget(),
-              _nodeInfoWidget(),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                return _joinMap3Item(index);
-              }, childCount: _dataList.length + 1))
-            ],
-          )),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                onLoadData: () async {
+                  await _refreshData();
+                },
+                onRefresh: () async {
+                  await _refreshData();
+                },
+                onLoadingMore: () {
+                  _loadMoreData();
+                  setState(() {});
+                },
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    _headerWidget(),
+                    _moneyWidget(),
+                    _nodeInfoWidget(),
+                    SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                      return _joinMap3Item(index);
+                    }, childCount: _dataList.length + 1))
+                  ],
+                )),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black12,
+                      offset: Offset(0.0, 0.1), //阴影xy轴偏移量
+                      blurRadius: 1, //阴影模糊程度
+                  )
+                ]
+            ),
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                ClickOvalButton(
+                  "撤销抵押",
+                      () {},
+                  width: 90,
+                  height: 32,
+                  fontSize: 14,
+                  textColor: DefaultColors.color999,
+                  btnColor: Colors.transparent,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left:10.0,right: 14),
+                  child: ClickOvalButton(
+                    "提取奖励",
+                        () {},
+                    width: 90,
+                    height: 32,
+                    fontSize: 14,
+                  ),
+                ),
+                ClickOvalButton(
+                  "抵押",
+                      () {},
+                  width: 90,
+                  height: 32,
+                  fontSize: 14,
+                ),
+                SizedBox(width: 15,)
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
