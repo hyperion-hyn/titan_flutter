@@ -341,11 +341,8 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-            ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
             child: DropdownButtonFormField(
               decoration: InputDecoration(
                   filled: true,
@@ -416,7 +413,9 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '最大抵押量',
             '节点允许的最大抵押量',
-            '${_createAtlasPayLoad.maxPledge}',
+            _createAtlasPayLoad.maxPledge != null
+                ? '${_createAtlasPayLoad.maxPledge}'
+                : null,
             (text) {
               setState(() {
                 _createAtlasPayLoad.maxPledge = int.parse(text);
@@ -547,15 +546,15 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               Spacer(),
               isLogo
                   ? _createAtlasPayLoad.pic != null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Image.asset(
-                            content,
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Container(
                             width: 36,
                             height: 36,
-                            fit: BoxFit.cover,
+                            child: Image.asset(
+                              content,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         )
                       : Container(
