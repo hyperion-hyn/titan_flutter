@@ -5,10 +5,12 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 class AtlasOptionEditPage extends StatefulWidget {
   final String title;
   final String hint;
+  final TextInputType keyboardType;
 
   AtlasOptionEditPage({
     this.title,
     this.hint,
+    this.keyboardType,
   });
 
   @override
@@ -70,7 +72,7 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
           child: TextFormField(
             autofocus: true,
             controller: _controller,
-            keyboardType: TextInputType.text,
+            keyboardType: widget.keyboardType ?? TextInputType.text,
             maxLength: 200,
             maxLines: 7,
             style: TextStyle(color: HexColor("#333333"), fontSize: 14),

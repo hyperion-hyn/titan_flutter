@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/click_oval_button.dart';
@@ -11,10 +12,10 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 typedef TextChangeCallback = void Function(String text);
 
 class AtlasCreateInfoPage extends StatefulWidget {
-  final AtlasNode _atlasNode;
+  final CreateAtlasPayload _createAtlasPayload;
 
   AtlasCreateInfoPage(
-    this._atlasNode,
+    this._createAtlasPayload,
   );
 
   @override
@@ -128,7 +129,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
                   ),
                 ),
                 Image.asset(
-                  widget._atlasNode.logoPath,
+                  widget._createAtlasPayload.pic,
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
@@ -138,49 +139,49 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           ),
           _optionItem(
             '名称',
-            widget._atlasNode.name,
+            widget._createAtlasPayload.name,
           ),
           _optionItem(
             '节点号',
-            widget._atlasNode.identifier,
+            widget._createAtlasPayload.nodeId,
           ),
           _optionItem(
             '最大抵押量',
-            widget._atlasNode.maxStakingAmount,
+            '${widget._createAtlasPayload.maxPledge}',
           ),
           _optionItem(
             '网址',
-            widget._atlasNode.website,
+            widget._createAtlasPayload.home,
           ),
           _optionItem(
             '安全联系',
-            widget._atlasNode.contact,
+            widget._createAtlasPayload.connect,
           ),
           _optionItem(
             '描述',
-            widget._atlasNode.description,
+            widget._createAtlasPayload.describe,
           ),
           _divider(),
           _optionItem(
             '费率',
-            '${widget._atlasNode.fee} %',
+            '${widget._createAtlasPayload.feeRate} %',
           ),
           _optionItem(
             '最大费率',
-            '${widget._atlasNode.maxFee} %',
+            '${widget._createAtlasPayload.feeRateMax} %',
           ),
           _optionItem(
             '费率幅度',
-            '${widget._atlasNode.maxFee} %',
+            '${widget._createAtlasPayload.feeRateTrim} %',
           ),
           _divider(),
           _optionItem(
             'bls key',
-            widget._atlasNode.blsKey,
+            widget._createAtlasPayload.blsKey,
           ),
           _optionItem(
             'bls 签名',
-            widget._atlasNode.blsSign,
+            widget._createAtlasPayload.blsSign,
           ),
         ],
       ),
