@@ -55,7 +55,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
                   ),
                   stakeHeaderInfo(context),
                   Padding(
-                    padding: const EdgeInsets.only(top: 19.0, bottom: 9),
+                    padding: const EdgeInsets.only(top: 19.0, bottom: 7),
                     child: Divider(
                       color: DefaultColors.colorf2f2f2,
                       height: 0.5,
@@ -144,7 +144,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
             child: Padding(
               padding: const EdgeInsets.only(left: 13,right: 13),
               child: DropdownButtonFormField(
-                icon: Image.asset("res/drawable/ic_close.png",width: 14,height: 14,),
+                icon: Image.asset("res/drawable/ic_arrow_down.png",width: 14,height: 14,),
                 decoration: InputDecoration(
                     border: InputBorder.none),
                 onChanged: (value) {
@@ -227,6 +227,58 @@ Widget stakeHeaderInfo(BuildContext buildContext) {
 Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
   return Column(
     children: <Widget>[
+      Column(
+        children: List.generate(
+            isShowAll ? infoTitleList.length : 3,
+                (index) => Padding(
+                  padding: const EdgeInsets.only(top:9.0,bottom: 9),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 14),
+                          child: Text(
+                            infoTitleList[index],
+                            style: TextStyle(fontSize: 14, color: HexColor("#999999")),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 14),
+                          child: Text(infoContentList[index], style: TextStyle(fontSize: 14, color: HexColor("#333333")),),
+                        ),
+                      )
+                    ],
+                  ),
+                )).toList(),
+      ),
+      if (!isShowAll)
+        InkWell(
+            onTap: () {
+              showAllInfo();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(top:7.0),
+              child: Image.asset("res/drawable/ic_close.png"),
+            )),
+      SizedBox(
+        height: 15,
+      ),
+      Container(
+        height: 10,
+        color: HexColor("#F2F2F2"),
+      ),
+    ],
+  );
+}
+
+/*
+Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
+  return Column(
+    children: <Widget>[
       Row(
         children: <Widget>[
           Expanded(
@@ -277,4 +329,4 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
       ),
     ],
   );
-}
+}*/

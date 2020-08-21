@@ -16,7 +16,7 @@ class AtlasLookOverPage extends StatefulWidget {
 
 class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
   var infoTitleList = ["总抵押", "签名率", "最近回报率", "总抵押11", "签名率11", "最近回报率11"];
-  var infoContentList = ["12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
+  var infoContentList = ["总抵押", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
   bool isShowAll = false;
 
   @override
@@ -52,7 +52,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                 ),
                 stakeHeaderInfo(context),
                 Padding(
-                  padding: const EdgeInsets.only(top: 19.0, bottom: 9),
+                  padding: const EdgeInsets.only(top: 19.0, bottom: 7),
                   child: Divider(
                     color: DefaultColors.colorf2f2f2,
                     height: 0.5,
