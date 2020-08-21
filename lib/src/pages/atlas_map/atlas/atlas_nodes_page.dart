@@ -66,45 +66,43 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               _loadMoreData();
               setState(() {});
             },
-            child: Container(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: _header(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _chainInfo(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _createNode(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _myNodes(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            '节点列表',
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: _header(),
+                ),
+                SliverToBoxAdapter(
+                  child: _chainInfo(),
+                ),
+                SliverToBoxAdapter(
+                  child: _createNode(),
+                ),
+                SliverToBoxAdapter(
+                  child: _myNodes(),
+                ),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          '节点列表',
+                          style: TextStyle(
+                            fontSize: 16,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return _nodeDetailItem(index);
-                    },
-                    childCount: _atlasNodeList.length,
-                  ))
-                ],
-              ),
+                ),
+                SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return _nodeDetailItem(index);
+                  },
+                  childCount: _atlasNodeList.length,
+                ))
+              ],
             )),
       ),
     );
