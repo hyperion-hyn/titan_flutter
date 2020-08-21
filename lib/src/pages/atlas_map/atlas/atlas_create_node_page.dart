@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -24,7 +25,7 @@ class AtlasCreateNodePage extends StatefulWidget {
 class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   var _currentStep = Step.launch;
 
-  AtlasNode _atlasNode = AtlasNode();
+  CreateAtlasPayload _createAtlasPayLoad = CreateAtlasPayload.fromJson({});
 
   TextEditingController _feeTextController = TextEditingController();
   TextEditingController _maxFeeTextController = TextEditingController();
@@ -365,9 +366,9 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _basicInfo() {
-    var _isCanNextStep = _atlasNode.logoPath != null &&
-        _atlasNode.name != null &&
-        _atlasNode.identifier != null;
+    var _isCanNextStep = _createAtlasPayLoad.pic != null &&
+        _createAtlasPayLoad.name != null &&
+        _createAtlasPayLoad.nodeId != null;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -385,10 +386,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '图标',
             '',
-            _atlasNode.logoPath,
+            _createAtlasPayLoad.pic,
             (text) {
               setState(() {
-                _atlasNode.logoPath = text;
+                _createAtlasPayLoad.pic = text;
               });
             },
             isLogo: true,
@@ -396,17 +397,17 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           Divider(
             height: 1,
           ),
-          _basicInfoItem('名称', '请输入节点名称', _atlasNode.name, (text) {
+          _basicInfoItem('名称', '请输入节点名称', _createAtlasPayLoad.name, (text) {
             setState(() {
-              _atlasNode.name = text;
+              _createAtlasPayLoad.name = text;
             });
           }),
           Divider(
             height: 1,
           ),
-          _basicInfoItem('节点号', '请输入节点号', _atlasNode.identifier, (text) {
+          _basicInfoItem('节点号', '请输入节点号', _createAtlasPayLoad.nodeId, (text) {
             setState(() {
-              _atlasNode.identifier = text;
+              _createAtlasPayLoad.nodeId = text;
             });
           }),
           Divider(
@@ -415,14 +416,15 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '最大抵押量',
             '节点允许的最大抵押量',
-            _atlasNode.maxStakingAmount,
+            '${_createAtlasPayLoad.maxPledge}',
             (text) {
               setState(() {
-                _atlasNode.maxStakingAmount = text;
+                _createAtlasPayLoad.maxPledge = int.parse(text);
               });
             },
             isEssential: false,
             subTitle: ' (选填) ',
+            keyboardType: TextInputType.number,
           ),
           Divider(
             height: 1,
@@ -430,10 +432,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '网址',
             '请输入节点网址',
-            _atlasNode.website,
+            _createAtlasPayLoad.home,
             (text) {
               setState(() {
-                _atlasNode.website = text;
+                _createAtlasPayLoad.home = text;
               });
             },
             isEssential: false,
@@ -445,10 +447,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '安全联系',
             '请输入节点的联系方式',
-            _atlasNode.contact,
+            _createAtlasPayLoad.connect,
             (text) {
               setState(() {
-                _atlasNode.contact = text;
+                _createAtlasPayLoad.connect = text;
               });
             },
             isEssential: false,
@@ -460,10 +462,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '描述',
             '请输入节点描述',
-            _atlasNode.description,
+            _createAtlasPayLoad.describe,
             (text) {
               setState(() {
-                _atlasNode.description = text;
+                _createAtlasPayLoad.describe = text;
               });
             },
             isEssential: false,
@@ -489,6 +491,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     bool isEssential = true,
     bool isLogo = false,
     String subTitle = '',
+    TextInputType keyboardType = TextInputType.text,
   }) {
     return InkWell(
       splashColor: Colors.blue,
@@ -505,6 +508,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             builder: (BuildContext context) => AtlasOptionEditPage(
                   title: title,
                   hint: hint,
+                  keyboardType: keyboardType,
                 )));
         if (text.isNotEmpty) {
           setState(() {
@@ -542,7 +546,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               ),
               Spacer(),
               isLogo
-                  ? _atlasNode.logoPath != null
+                  ? _createAtlasPayLoad.pic != null
                       ? Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
@@ -633,7 +637,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _atlasNode.fee = text;
+                _createAtlasPayLoad.feeRate = int.parse(text);
               });
             },
             controller: _feeTextController,
@@ -673,7 +677,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _atlasNode.maxFee = text;
+                _createAtlasPayLoad.feeRateMax = int.parse(text);
               });
             },
             controller: _maxFeeTextController,
@@ -713,7 +717,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _atlasNode.feeExtent = text;
+                _createAtlasPayLoad.feeRateTrim = int.parse(text);
               });
             },
             controller: _feeExtentTextController,
@@ -755,7 +759,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           RoundBorderTextField(
             onChanged: (text) {
               setState(() {
-                _atlasNode.blsKey = text;
+                _createAtlasPayLoad.blsKey = text;
               });
             },
             controller: _blsKeyTextController,
@@ -784,7 +788,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           RoundBorderTextField(
             onChanged: (text) {
               setState(() {
-                _atlasNode.blsSign = text;
+                _createAtlasPayLoad.blsSign = text;
               });
             },
             controller: _blsSignTextController,
@@ -807,7 +811,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => AtlasCreateInfoPage(_atlasNode)),
+            builder: (context) => AtlasCreateInfoPage(_createAtlasPayLoad)),
       );
     }
     setState(() {});
