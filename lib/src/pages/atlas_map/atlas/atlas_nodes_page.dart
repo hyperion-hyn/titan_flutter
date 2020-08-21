@@ -2,15 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
-import '../../../widget/atlas_map_widget.dart';
 
 class AtlasNodesPage extends StatefulWidget {
   AtlasNodesPage();
@@ -68,51 +66,112 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               _loadMoreData();
               setState(() {});
             },
-            child: Container(
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: _nodesMap(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _chainInfo(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _createNode(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _myNodes(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Text(
-                            '节点列表',
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: _header(),
+                ),
+                SliverToBoxAdapter(
+                  child: _chainInfo(),
+                ),
+                SliverToBoxAdapter(
+                  child: _createNode(),
+                ),
+                SliverToBoxAdapter(
+                  child: _myNodes(),
+                ),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          '节点列表',
+                          style: TextStyle(
+                            fontSize: 16,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      return _nodeDetailItem(index);
-                    },
-                    childCount: _atlasNodeList.length,
-                  ))
-                ],
-              ),
+                ),
+                SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return _nodeDetailItem(index);
+                  },
+                  childCount: _atlasNodeList.length,
+                ))
+              ],
             )),
       ),
     );
   }
 
-  _nodesMap() {
+  _header() {
+    var _atlasNodes = [
+      {
+        "name": "Sydney",
+        "value": [151.2002, -33.8591, 4, 4]
+      },
+      {
+        "name": "Singapore",
+        "value": [103.819836, 1.352083, 8, 8]
+      },
+      {
+        "name": "Paris",
+        "value": [2.35222, 48.8566, 10, 10]
+      },
+      {
+        "name": "Jakarta",
+        "value": [106.865, -6.17511, 1, 1]
+      },
+      {
+        "name": "San Jose",
+        "value": [-121.895, 37.3394, 2, 2]
+      },
+      {
+        "name": "Ashburn",
+        "value": [-77.4874, 39.0438, 114, 114]
+      },
+      {
+        "name": "Mumbai",
+        "value": [72.8777, 19.076, 6, 6]
+      },
+      {
+        "name": "Seoul",
+        "value": [126.978, 37.5665, 1, 1]
+      },
+      {
+        "name": "Tokyo",
+        "value": [139.692, 35.6895, 6, 6]
+      },
+      {
+        "name": "Hong Kong",
+        "value": [114.109, 22.3964, 9, 9]
+      },
+    ];
+
+//    for (var i = 0; i < 77; i++) {
+//      _atlasNodes.add({
+//        "name": "node",
+//        "value": [
+//          Random().nextBool()
+//              ? 0 - Random().nextInt(150)
+//              : Random().nextInt(150),
+//          Random().nextBool()
+//              ? 0 - Random().nextInt(150)
+//              : Random().nextInt(150),
+//          Random().nextBool()
+//              ? 0 - Random().nextInt(150)
+//              : Random().nextInt(150),
+//          Random().nextBool()
+//              ? 0 - Random().nextInt(150)
+//              : Random().nextInt(150),
+//        ]
+//      });
+//    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Material(
@@ -130,7 +189,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           height: 162,
           child: Stack(
             children: <Widget>[
-              AtlasMapWidget(),
+              AtlasMapWidget(_atlasNodes),
               Positioned(
                 left: 16,
                 bottom: 32,

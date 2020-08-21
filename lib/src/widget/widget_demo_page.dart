@@ -42,11 +42,11 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> {
           SizedBox(
             height: 16,
           ),
-          Container(
-            child: AtlasMapWidget(),
-            width: double.infinity,
-            height: 250,
-          ),
+//          Container(
+//            child: AtlasMapWidget(),
+//            width: double.infinity,
+//            height: 250,
+//          ),
         ],
       ),
     );

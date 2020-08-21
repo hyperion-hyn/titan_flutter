@@ -7,7 +7,9 @@ import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:titan/src/pages/global_data/echarts/world.dart';
 
 class AtlasMapWidget extends StatefulWidget {
-  AtlasMapWidget();
+  final dynamic _atlasNodes;
+
+  AtlasMapWidget(this._atlasNodes);
 
   @override
   State<StatefulWidget> createState() {
@@ -18,20 +20,21 @@ class AtlasMapWidget extends StatefulWidget {
 class _AtlasMapWidgetState extends State<AtlasMapWidget> {
   var _eChartOption = '';
   Timer _timer;
+  var lines = [];
+  var _addCount = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _setUpEChartOption();
+    _updateEChartOption();
     _setUpTimer();
   }
 
   _setUpTimer() {
-//    _timer = Timer.periodic(Duration(milliseconds: 5000), (t) {
-//      //print('_AtlasMapWidgetState ---tik');
-//      //_getEChartOption();
-//    });
+    _timer = Timer.periodic(Duration(seconds: 15), (t) {
+      _updateEChartOption();
+    });
   }
 
   @override
@@ -48,67 +51,38 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
   @override
   Widget build(BuildContext context) {
     return Echarts(
+      onLoad: () {},
       option: _eChartOption,
       extensions: [worldScript],
       captureAllGestures: true,
     );
   }
 
-  var _atlasNodes = [
-    {
-      "name": "Sydney",
-      "value": [151.2002, -33.8591, 4, 4]
-    },
-    {
-      "name": "Singapore",
-      "value": [103.819836, 1.352083, 8, 8]
-    },
-    {
-      "name": "Paris",
-      "value": [2.35222, 48.8566, 10, 10]
-    },
-    {
-      "name": "Jakarta",
-      "value": [106.865, -6.17511, 1, 1]
-    },
-    {
-      "name": "San Jose",
-      "value": [-121.895, 37.3394, 2, 2]
-    },
-    {
-      "name": "Ashburn",
-      "value": [-77.4874, 39.0438, 114, 114]
-    },
-    {
-      "name": "Mumbai",
-      "value": [72.8777, 19.076, 6, 6]
-    },
-    {
-      "name": "Seoul",
-      "value": [126.978, 37.5665, 1, 1]
-    },
-    {
-      "name": "Tokyo",
-      "value": [139.692, 35.6895, 6, 6]
-    },
-    {
-      "name": "Hong Kong",
-      "value": [114.109, 22.3964, 9, 9]
-    },
-  ];
+  ///pick [two] random nodes to draw lines
+  ///
+  _updateEChartOption() {
+    var _randomIndex = widget._atlasNodes.length > 0
+        ? Random().nextInt(widget._atlasNodes.length - 1)
+        : 0;
 
-  _setUpEChartOption() {
-    var _nodes = _atlasNodes;
-
-    var lines = [];
-
-    for (var i = 0; i < _nodes.length; i++) {
-      for (var j = _nodes.length - 1 - i; j > 0; j--) {
+    for (var i = 0; i < widget._atlasNodes.length; i++) {
+      if (i != _randomIndex) {
         lines.add({
-          'coords': [_nodes[i]['value'], _nodes[j]['value']]
+          'coords': [
+            widget._atlasNodes[_randomIndex]['value'],
+            widget._atlasNodes[i]['value']
+          ]
         });
       }
     }
+
+    _addCount++;
+
+    ///Remove first group of lines
+    if (_addCount > 2) {
+      lines.removeRange(0, widget._atlasNodes.length - 1);
+    }
+
     _eChartOption = '''
 {
     backgroundColor: '#313947',
@@ -144,13 +118,13 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
         zlevel:2,
         rippleEffect: {
               period: 10,
-              scale: 6,
+              scale: 7,
               brushType: 'fill'
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${jsonEncode(_nodes)},
-        symbolSize: 6,
+        data: ${jsonEncode(widget._atlasNodes)},
+        symbolSize: 3,
         label: {
           normal: {
             show: false
@@ -173,17 +147,17 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
         zlevel: 3,
         effect: {
             show: true,
-            period: 8, 
+            period: 6, 
             trailLength: 0.1,
             color: '#cc1010',
-            symbolSize: 2,
+            symbolSize: 1,
         },
         lineStyle: {
             normal: {
                 color: '#00ffffff',
                 width: 0,
                 curveness: 0.2,
-                opacity: 0.1
+                opacity: 0
             }
         },
         coordinateSystem: 'geo',

@@ -106,13 +106,13 @@ var _eChartOption = '''
         zlevel:1,
         rippleEffect: {
               period: 10,
-              scale: 6,
+              scale: 4,
               brushType: 'fill'
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
         data: ${jsonEncode(nodes)},
-        symbolSize: 6,
+        symbolSize: 4,
         label: {
           normal: {
             show: false
