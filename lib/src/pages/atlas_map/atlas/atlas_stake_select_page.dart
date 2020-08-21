@@ -261,11 +261,11 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
               showAllInfo();
             },
             child: Padding(
-              padding: const EdgeInsets.only(top:7.0),
-              child: Image.asset("res/drawable/ic_close.png"),
+              padding: const EdgeInsets.all(7.0),
+              child: Image.asset("res/drawable/ic_down_triangle.png",width: 10,),
             )),
       SizedBox(
-        height: 15,
+        height: 8,
       ),
       Container(
         height: 10,

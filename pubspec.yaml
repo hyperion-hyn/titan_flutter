@@ -145,7 +145,7 @@ dependencies:
   flutter_recaptcha_v2:
     git:
       url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
-
+  shake_animation_widget: ^1.0.0
 
 dev_dependencies:
   flutter_driver:

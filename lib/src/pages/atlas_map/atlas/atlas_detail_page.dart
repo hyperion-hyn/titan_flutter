@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shake_animation_widget/shake_animation_widget.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -17,26 +18,55 @@ class AtlasDetailPage extends StatefulWidget {
   }
 }
 
-class AtlasDetailPageState extends State<AtlasDetailPage> {
+class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderStateMixin {
   List<String> _dataList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;
   int _pageSize = 30;
 
-  var infoTitleList = ["总抵押", "签名率", "最近回报率", "描述", "签名率11", "最近回报率11"];
-  var infoContentList = ["12930903", "98%", "11.23%1", "欢迎参加我的合约，前10名参与者返10%管理费。", "98%1", "11.23%1"];
+  var infoTitleList = ["最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度"];
+  var infoContentList = ["12930903", "98%", "11.23%1", "欢迎参加我的合约，前10名参与者返10%管理费。", "98%", "11.23%", "11.23%"];
+
+  AnimationController _textAnimController;
+  Animation<Offset> leftAnimation;
+  Animation<Offset> rightAnimation;
+  ShakeAnimationController _shakeAnimationController;
 
   @override
   void initState() {
     super.initState();
 
     _loadDataBloc.add(LoadingEvent());
+    _textAnimController = AnimationController(duration: Duration(milliseconds: 2000), vsync: this);
+    _textAnimController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _textAnimController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        _textAnimController.forward();
+      }
+    });
+    leftAnimation = Tween(begin: Offset(0, 0), end: Offset(0, 0.3)).animate(_textAnimController);
+    rightAnimation = Tween(begin: Offset(0, 0), end: Offset(0, -0.3)).animate(_textAnimController);
+    _textAnimController.forward();
+
+    _shakeAnimationController = new ShakeAnimationController();
+    _repeatShakeAnimation();
+  }
+
+  _repeatShakeAnimation()async{
+    await Future.delayed(Duration(milliseconds: 2000),(){
+      _shakeAnimationController.start(shakeCount: 1);
+      _repeatShakeAnimation();
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
+    _textAnimController.stop();
+    _textAnimController.dispose();
+    _shakeAnimationController.stop();
     _loadDataBloc.close();
+    super.dispose();
   }
 
   @override
@@ -72,23 +102,20 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 )),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black12,
-                      offset: Offset(0.0, 0.1), //阴影xy轴偏移量
-                      blurRadius: 1, //阴影模糊程度
-                  )
-                ]
-            ),
+            decoration: BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0.0, 0.1), //阴影xy轴偏移量
+                blurRadius: 1, //阴影模糊程度
+              )
+            ]),
             height: 50,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 ClickOvalButton(
                   "撤销抵押",
-                      () {},
+                  () {},
                   width: 90,
                   height: 32,
                   fontSize: 14,
@@ -96,10 +123,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   btnColor: Colors.transparent,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left:10.0,right: 14),
+                  padding: const EdgeInsets.only(left: 10.0, right: 14),
                   child: ClickOvalButton(
                     "提取奖励",
-                        () {},
+                    () {},
                     width: 90,
                     height: 32,
                     fontSize: 14,
@@ -107,12 +134,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 ),
                 ClickOvalButton(
                   "抵押",
-                      () {},
+                  () {},
                   width: 90,
                   height: 32,
                   fontSize: 14,
                 ),
-                SizedBox(width: 15,)
+                SizedBox(
+                  width: 15,
+                )
               ],
             ),
           )
@@ -227,16 +256,25 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top:20.0),
-                    child: Text(
-                      "点击领取",
-                      style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: SlideTransition(
+                      position: leftAnimation,
+                      child: Text(
+                        "点击领取",
+                        style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                      ),
                     ),
                   ),
-                  Image.asset("res/drawable/ic_atlas_get_money_wallet.png", width: 86, fit: BoxFit.contain),
+                  ShakeAnimationWidget(
+                      shakeAnimationController: _shakeAnimationController,
+                      shakeAnimationType: ShakeAnimationType.RoateShake,
+                      isForward: false,
+                      child: Image.asset("res/drawable/ic_atlas_get_money_wallet.png", width: 86, fit: BoxFit.contain)),
                   Padding(
-                    padding: const EdgeInsets.only(bottom:20.0),
-                    child: Text("+22,023", style: TextStyle(fontSize: 16, color: HexColor("#C68A16"))),
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: SlideTransition(
+                      position: rightAnimation,
+                        child: Text("+22,023", style: TextStyle(fontSize: 16, color: HexColor("#C68A16")))),
                   ),
                 ],
               ),
@@ -436,16 +474,19 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     );
   }
 
-  _joinMap3Item(int index){
+  _joinMap3Item(int index) {
     if (index == 0) {
       return Padding(
         padding: const EdgeInsets.only(left: 14, right: 14, top: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            Text("参与的Map3",style: TextStyles.textC333S16,),
+            Text(
+              "参与的Map3",
+              style: TextStyles.textC333S16,
+            ),
             Spacer(),
-            Text("共${_dataList.length}个节点",style: TextStyles.textC999S12)
+            Text("共${_dataList.length}个节点", style: TextStyles.textC999S12)
           ],
         ),
       );
@@ -455,7 +496,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     var statuTextColor = "#FFFFFF";
     return Column(
       children: <Widget>[
-        SizedBox(height: 17,),
+        SizedBox(
+          height: 17,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 26.0, right: 24),
           child: Row(
@@ -473,13 +516,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   children: <Widget>[
                     Row(
                       children: <Widget>[
-                        Text("Moo",style: TextStyles.textC000S14),
-                        Text("（创建者）",style: TextStyles.textC999S12)
+                        Text("Moo", style: TextStyles.textC000S14),
+                        Text("（创建者）", style: TextStyles.textC999S12)
                       ],
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 5.0),
-                      child: Text("03fklsdflksm",style: TextStyles.textC999S12),
+                      child: Text("03fklsdflksm", style: TextStyles.textC999S12),
                     ),
                   ],
                 ),
@@ -488,30 +531,36 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 children: <Widget>[
                   Row(
                     children: <Widget>[
-                      Text("20,000",style: TextStyles.textC333S14),
+                      Text("20,000", style: TextStyles.textC333S14),
                       Container(
-                        padding: const EdgeInsets.only(top: 2.0,bottom: 2,left: 7,right: 7),
+                        padding: const EdgeInsets.only(top: 2.0, bottom: 2, left: 7, right: 7),
                         margin: EdgeInsets.only(left: 6),
                         decoration: BoxDecoration(
-                          color: HexColor(statuBgColor),
-                          borderRadius: BorderRadius.all(Radius.circular(10))
-                        ),
+                            color: HexColor(statuBgColor), borderRadius: BorderRadius.all(Radius.circular(10))),
                         child: Text(
                           "新抵押",
-                          style: TextStyle(fontSize: 6,color: HexColor(statuTextColor)),
+                          style: TextStyle(fontSize: 6, color: HexColor(statuTextColor)),
                         ),
                       )
                     ],
                   ),
-                  SizedBox(height: 5,),
-                  Text("2019-10-12 17:00",style: TextStyles.textC999S10)
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text("2019-10-12 17:00", style: TextStyles.textC999S10)
                 ],
               )
             ],
           ),
         ),
-        SizedBox(height: 15,),
-        Divider(color: DefaultColors.colorf2f2f2,indent: 26,endIndent: 24,)
+        SizedBox(
+          height: 15,
+        ),
+        Divider(
+          color: DefaultColors.colorf2f2f2,
+          indent: 26,
+          endIndent: 24,
+        )
       ],
     );
   }
