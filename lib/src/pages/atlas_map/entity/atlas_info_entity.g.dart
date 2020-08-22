@@ -21,7 +21,7 @@ AtlasInfoEntity _$AtlasInfoEntityFromJson(Map<String, dynamic> json) {
     json['fee_rate_trim'] as int,
     json['home'] as String,
     json['id'] as int,
-    AtlasJoinType.values[json['join'] as int],
+    NodeJoinType.values[json['join'] as int],
     json['max_staking'] as int,
     (json['my_map3'] as List)
         ?.map((e) => e == null
@@ -35,7 +35,7 @@ AtlasInfoEntity _$AtlasInfoEntityFromJson(Map<String, dynamic> json) {
     json['reward_rate'] as int,
     json['sign_rate'] as int,
     json['staking'] as int,
-    AtlasStatus.values[json['status'] as int],
+    NodeStatus.values[json['status'] as int],
     AtlasNodeType.values[json['type'] as int],
     json['updated_at'] as String,
   );

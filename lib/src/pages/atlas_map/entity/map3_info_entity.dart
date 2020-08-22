@@ -40,7 +40,7 @@ part 'map3_info_entity.g.dart';
   int id;
 
   @JsonKey(name: 'join')
-  AtlasJoinType join;
+  NodeJoinType join;
 
   @JsonKey(name: 'name')
   String name;
@@ -79,7 +79,7 @@ part 'map3_info_entity.g.dart';
   String startTime;
 
   @JsonKey(name: 'status')
-  AtlasStatus status;
+  NodeStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

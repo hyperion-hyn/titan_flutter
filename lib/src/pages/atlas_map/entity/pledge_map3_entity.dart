@@ -33,7 +33,7 @@ part 'pledge_map3_entity.g.dart';
   String to;
 
   @JsonKey(name: 'type')
-  AtlasType type;
+  AtlasActionType type;
 
   PledgeMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
 

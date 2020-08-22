@@ -50,7 +50,7 @@ part 'atlas_info_entity.g.dart';
 
   // 区别于node的地方： 0
   @JsonKey(name: 'join')
-  AtlasJoinType join;
+  NodeJoinType join;
 
   @JsonKey(name: 'max_staking')
   int maxStaking;
@@ -81,7 +81,7 @@ part 'atlas_info_entity.g.dart';
   int staking;
 
   @JsonKey(name: 'status')
-  AtlasStatus status;
+  NodeStatus status;
 
   // 区别于node的地方： 2
   @JsonKey(name: 'type')

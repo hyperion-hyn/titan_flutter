@@ -33,7 +33,7 @@ part 'create_atlas_entity.g.dart';
   String to;
 
   @JsonKey(name: 'type')
-  AtlasType type;
+  AtlasActionType type;
 
   CreateAtlasEntity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
 

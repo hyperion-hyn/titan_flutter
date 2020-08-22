@@ -27,7 +27,7 @@ Map3NodeEntity _$Map3NodeEntityFromJson(Map<String, dynamic> json) {
     json['reward_rate'] as int,
     json['staking'] as int,
     json['start_time'] as String,
-    AtlasStatus.values[json['status'] as int],
+    NodeStatus.values[json['status'] as int],
     json['updated_at'] as String,
   );
 }

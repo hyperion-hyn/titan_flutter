@@ -22,7 +22,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['fee_rate'] as int,
     json['home'] as String,
     json['id'] as int,
-    AtlasJoinType.values[json['join'] as int],
+    NodeJoinType.values[json['join'] as int],
     json['name'] as String,
     json['node_id'] as String,
     json['parent_node_id'] as String,
@@ -35,7 +35,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['staking'] as int,
     json['staking_mine'] as int,
     json['start_time'] as String,
-    AtlasStatus.values[json['status'] as int],
+    NodeStatus.values[json['status'] as int],
     json['updated_at'] as String,
   );
 }

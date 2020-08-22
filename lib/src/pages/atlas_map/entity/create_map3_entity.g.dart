@@ -18,7 +18,7 @@ CreateMap3Entity _$CreateMap3EntityFromJson(Map<String, dynamic> json) {
     json['price'] as int,
     json['raw_tx'] as String,
     json['to'] as String,
-    AtlasType.values[json['type'] as int],
+    AtlasActionType.values[json['type'] as int],
   );
 }
 

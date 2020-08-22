@@ -11,7 +11,7 @@
   8 撤销atlas节点抵押
    */
 
-enum AtlasType {
+enum AtlasActionType {
   TRANSFER,
   CREATE_MAP3_NODE,
   SPLIT_MAP3_NODE,
@@ -30,7 +30,7 @@ enum AtlasType {
  4创建成功，撤销节点提交中；
  5撤销节点成功
 */
-enum AtlasStatus {
+enum NodeStatus {
   CREATE_ING,
   CREATE_FAIL,
   CREATE_SUCCESS_UN_CANCEL,
@@ -46,7 +46,7 @@ enum AtlasNodeType {
 }
 
 //0无参与，1参与抵押，2创建者
-enum AtlasJoinType {
+enum NodeJoinType {
   NONE,
   JOINER,
   CREATOR
