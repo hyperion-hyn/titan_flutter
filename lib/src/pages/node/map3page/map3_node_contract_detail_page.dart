@@ -31,6 +31,7 @@ import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -1516,4 +1517,188 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
       }
     }
   }
+}
+
+Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
+    {isJoin = false, isDetail = true, hasShare = false}) {
+  double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
+  var title = !isDetail
+      ? S.of(context).node_contract_detail
+      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
+  var nodeItem = contractNodeItem.contract;
+  return Stack(
+    children: <Widget>[
+      Container(
+          height: isDetail ? (UiUtil.isIPhoneX(context) ? 280 : 250) : 250,
+          decoration: BoxDecoration(
+            color: Theme.of(context).primaryColor,
+//          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
+          )),
+      Positioned(
+        top: 60,
+        left: -20,
+        child: Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
+      Positioned(
+        top: 100,
+        right: -20,
+        child: Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
+      Positioned(
+        top: 50,
+        right: 120,
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+              HexColor("#22ffffff"),
+              HexColor("#00ffffff"),
+            ]),
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
+          ),
+        ),
+      ),
+      InkWell(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Padding(
+          padding: EdgeInsets.only(top: 44.0 + padding, left: 15),
+          child: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      if (hasShare)
+        Positioned(
+          top: 0,
+          right: 0,
+          child: InkWell(
+            onTap: () async {
+              Application.router.navigateTo(
+                  context,
+                  Routes.map3node_share_page +
+                      "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+            },
+            child: Padding(
+              padding: EdgeInsets.only(top: 44.0 + padding, right: 15),
+              child: Icon(
+                Icons.share,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      Align(
+        alignment: Alignment.topCenter,
+        child: Padding(
+          padding: EdgeInsets.only(top: 44.0 + padding),
+          child: Text(
+            title,
+            style: TextStyles.textCfffS17,
+          ),
+        ),
+      ),
+      Align(
+        alignment: Alignment.topCenter,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 90,
+            ),
+            RichText(
+                text: TextSpan(
+                    text: "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
+                    style: TextStyles.textCfffS46,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text:
+                        S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
+                        style: TextStyles.textCfffS24,
+                      )
+                    ])),
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0, bottom: 24),
+              child: Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                isJoin
+                    ? Column(
+                  children: <Widget>[
+                    Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
+                    Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
+                  ],
+                )
+                    : Column(
+                  children: <Widget>[
+                    Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
+                    Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
+                        style: TextStyles.textCfffS14)
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10.0, right: 20),
+                  width: 1,
+                  height: 32,
+                  color: Colors.white70,
+                ),
+                Column(
+                  children: <Widget>[
+                    Text(S.of(context).contract_deadline, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
+                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textCfffS14)
+                  ],
+                ),
+                Container(
+                  margin: const EdgeInsets.only(left: 20.0, right: 10),
+                  width: 1,
+                  height: 32,
+                  color: Colors.white70,
+                ),
+                Column(
+                  children: <Widget>[
+                    Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
+                    SizedBox(height: 4),
+                    Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textCfffS14)
+                  ],
+                ),
+              ],
+            ),
+//            if (isDetail) _getHeadItemCard(context,nodeItem),
+          ],
+        ),
+      )
+    ],
+  );
 }

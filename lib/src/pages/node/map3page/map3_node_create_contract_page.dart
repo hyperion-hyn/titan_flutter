@@ -242,10 +242,13 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     super.dispose();
   }
 
-  int _currentIndex;
   var _editText = "";
   var _localImagePath = "";
-  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
+//  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
+  var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
+  List<String> _detailList = ["", "", "", "", "", ""];
+  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
       return AllPageStateContainer(currentState, () {
@@ -285,50 +288,23 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
               SliverToBoxAdapter(
                 child: ListView.separated(
                   itemBuilder: (context, index) {
-                    var title = "图标";
-                    var subTitle = "（选填）";
-                    var detail = "";
+                    var subTitle = index < 3 ? "" : "（选填）";
+                    var title = _titleList[index];
+                    var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+                    var keyboardType = TextInputType.text;
 
                     switch (index) {
-                      case 0:
-                        title = "图标";
-                        subTitle = "";
-                        detail = _localImagePath.isEmpty ? "请编辑节点Icon" : "";
-
-                        break;
-
-                      case 1:
-                        title = "名称";
-                        subTitle = "";
-                        detail = "派大星";
-                        break;
-
-                      case 2:
-                        title = "节点号";
-                        subTitle = "";
-                        detail = "PB2020";
-                        break;
-
                       case 3:
-                        title = "网址";
-                        subTitle = "（选填）";
-                        detail = "www.hyn.space";
+                        keyboardType = TextInputType.url;
                         break;
 
                       case 4:
-                        title = "安全联系";
-                        subTitle = "（选填）";
-                        detail = "17876894078";
+                        keyboardType = TextInputType.phone;
                         break;
 
                       case 5:
-                        title = "描述";
-                        subTitle = "";
-                        detail = "大家快来参与我的节点吧";
                         break;
                     }
-
-                    detail = _detailList[index];
 
                     return Material(
                       child: Ink(
@@ -344,10 +320,11 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                               return;
                             }
 
-                            _currentIndex = index;
                             String text = await Navigator.of(context).push(MaterialPageRoute(
                                 builder: (BuildContext context) => Map3NodePronouncePage(
                                       title: title,
+                                      hint: detail,
+                                      keyboardType: keyboardType,
                                     )));
                             if (text.isNotEmpty) {
                               setState(() {
@@ -368,13 +345,22 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(left: 4),
-                                    child: Text(
-                                      subTitle,
-                                      style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                                    ),
+                                    child: subTitle.isEmpty
+                                        ? Text(
+                                            ' * ',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: HexColor("#FFFF4C3B"),
+                                              fontSize: 16,
+                                            ),
+                                          )
+                                        : Text(
+                                            subTitle,
+                                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                                          ),
                                   ),
                                   Spacer(),
-                                  detail.isNotEmpty
+                                  _localImagePath.isEmpty
                                       ? Text(
                                           detail,
                                           style: TextStyle(color: HexColor("#999999"), fontSize: 14),
@@ -411,11 +397,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                   physics: NeverScrollableScrollPhysics(),
                 ),
               ),
-//            SliverToBoxAdapter(
-//              child: Container(
-//                height: 82,
-//              ),
-//            )
             ],
           ),
         ),
@@ -657,56 +638,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
               ],
             ),
           )
-        ],
-      ),
-    );
-  }
-
-  TextEditingController _pronounceTextController = TextEditingController();
-
-  Widget _nodePronounceWidget() {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  "节点公告",
-                  style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                ),
-              ),
-            ],
-          ),
-          TextFormField(
-            controller: _pronounceTextController,
-            keyboardType: TextInputType.text,
-            maxLength: 200,
-            maxLines: 6,
-            style: TextStyle(color: HexColor("#333333"), fontSize: 14),
-            decoration: InputDecoration(
-              hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
-              //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
-              hintText: "大家快来参与我的节点吧，收益高高！",
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            ),
-            validator: (textStr) {
-              if (textStr.length == 0) {
-                return "大家快来参与我的节点吧，收益高高！";
-              }
-              {
-                return null;
-              }
-            },
-            onChanged: (value) {
-              print("[NodePronounce] value:$value");
-            },
-          ),
         ],
       ),
     );
@@ -975,277 +906,5 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
             )),
       ],
     ),
-  );
-}
-
-Widget getMap3NodeProductHeadItemSmall(BuildContext context, ContractNodeItem contractNodeItem,
-    {isJoin = false, isDetail = true, hasShare = false}) {
-  var title = !isDetail
-      ? S.of(context).node_contract_detail
-      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
-  var nodeItem = contractNodeItem.contract;
-  return Material(
-    child: Container(
-      color: Theme.of(context).primaryColor,
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            height: 56,
-//            color: Colors.red,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Positioned(
-                    left: 0,
-                    child: IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )),
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(24.5),
-                  child: Image.asset(
-                    "res/drawable/ic_map3_node_item_contract_fit_bg.png",
-                    width: 62,
-                    height: 62,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(nodeItem.name, style: TextStyle(fontSize: 16, color: Colors.white)),
-                      SizedBox(height: 4),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                              "启动所需" +
-                                  '${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}${S.of(context).ten_thousand}',
-                              style: TextStyle(fontSize: 13, color: Colors.white)),
-                          SizedBox(width: 4),
-                          Container(width: 1, height: 10, color: Colors.white24),
-                          SizedBox(width: 4),
-                          Text(S.of(context).n_day(nodeItem.duration.toString()),
-                              style: TextStyle(fontSize: 13, color: Colors.white)),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(FormatUtil.formatPercent(nodeItem.annualizedYield),
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
-                    Text(S.of(context).annualized_rewards, style: TextStyle(fontSize: 13, color: Colors.white)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget getMap3NodeProductHeadItem(BuildContext context, ContractNodeItem contractNodeItem,
-    {isJoin = false, isDetail = true, hasShare = false}) {
-  double padding = UiUtil.isIPhoneX(context) ? 20 : 0;
-  var title = !isDetail
-      ? S.of(context).node_contract_detail
-      : isJoin ? S.of(context).join_map_node_mortgage : S.of(context).create_map_mortgage_contract;
-  var nodeItem = contractNodeItem.contract;
-  return Stack(
-    children: <Widget>[
-      Container(
-          height: isDetail ? (UiUtil.isIPhoneX(context) ? 280 : 250) : 250,
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-//          borderRadius: BorderRadius.only(bottomLeft:Radius.circular(15),bottomRight:Radius.circular(15),), // 也可控件一边圆角大小
-          )),
-      Positioned(
-        top: 60,
-        left: -20,
-        child: Container(
-          height: 120,
-          width: 120,
-          decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
-          ),
-        ),
-      ),
-      Positioned(
-        top: 100,
-        right: -20,
-        child: Container(
-          height: 120,
-          width: 120,
-          decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
-          ),
-        ),
-      ),
-      Positioned(
-        top: 50,
-        right: 120,
-        child: Container(
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            gradient: new LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-              HexColor("#22ffffff"),
-              HexColor("#00ffffff"),
-            ]),
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(60)), // 也可控件一边圆角大小
-          ),
-        ),
-      ),
-      InkWell(
-        onTap: () {
-          Navigator.of(context).pop();
-        },
-        child: Padding(
-          padding: EdgeInsets.only(top: 44.0 + padding, left: 15),
-          child: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      if (hasShare)
-        Positioned(
-          top: 0,
-          right: 0,
-          child: InkWell(
-            onTap: () async {
-              Application.router.navigateTo(
-                  context,
-                  Routes.map3node_share_page +
-                      "?contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-            },
-            child: Padding(
-              padding: EdgeInsets.only(top: 44.0 + padding, right: 15),
-              child: Icon(
-                Icons.share,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.only(top: 44.0 + padding),
-          child: Text(
-            title,
-            style: TextStyles.textCfffS17,
-          ),
-        ),
-      ),
-      Align(
-        alignment: Alignment.topCenter,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: 90,
-            ),
-            RichText(
-                text: TextSpan(
-                    text: "${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}",
-                    style: TextStyles.textCfffS46,
-                    children: <TextSpan>[
-                  TextSpan(
-                    text:
-                        S.of(context).ten_thousand_annualizedyield(FormatUtil.formatPercent(nodeItem.annualizedYield)),
-                    style: TextStyles.textCfffS24,
-                  )
-                ])),
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0, bottom: 24),
-              child: Text(S.of(context).all_join_end_reward, style: TextStyles.textCccfffS12),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                isJoin
-                    ? Column(
-                        children: <Widget>[
-                          Text(S.of(context).min_invest, style: TextStyles.textCccfffS12),
-                          SizedBox(height: 4),
-                          Text("${FormatUtil.formatPercent(nodeItem.minDelegationRate)}", style: TextStyles.textCfffS14)
-                        ],
-                      )
-                    : Column(
-                        children: <Widget>[
-                          Text(S.of(context).create_min_invest, style: TextStyles.textCccfffS12),
-                          SizedBox(height: 4),
-                          Text("${FormatUtil.formatPercent(nodeItem.ownerMinDelegationRate)}",
-                              style: TextStyles.textCfffS14)
-                        ],
-                      ),
-                Container(
-                  margin: const EdgeInsets.only(left: 10.0, right: 20),
-                  width: 1,
-                  height: 32,
-                  color: Colors.white70,
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(S.of(context).contract_deadline, style: TextStyles.textCccfffS12),
-                    SizedBox(height: 4),
-                    Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textCfffS14)
-                  ],
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20.0, right: 10),
-                  width: 1,
-                  height: 32,
-                  color: Colors.white70,
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(S.of(context).manage_fee, style: TextStyles.textCccfffS12),
-                    SizedBox(height: 4),
-                    Text("${FormatUtil.formatPercent(nodeItem.commission)}", style: TextStyles.textCfffS14)
-                  ],
-                ),
-              ],
-            ),
-//            if (isDetail) _getHeadItemCard(context,nodeItem),
-          ],
-        ),
-      )
-    ],
   );
 }

@@ -4,7 +4,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 
 class Map3NodePronouncePage extends StatefulWidget {
   final String title;
-  Map3NodePronouncePage({this.title});
+  final String hint;
+  final TextInputType keyboardType;
+
+  Map3NodePronouncePage({this.title, this.hint, this.keyboardType});
 
   @override
   State<StatefulWidget> createState() {
@@ -71,19 +74,18 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
           child: TextFormField(
             autofocus: true,
             controller: _controller,
-            keyboardType: TextInputType.text,
+            keyboardType: widget.keyboardType ?? TextInputType.text,
             maxLength: 200,
             maxLines: 7,
             style: TextStyle(color: HexColor("#333333"), fontSize: 14),
             decoration: InputDecoration(
               hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 14),
-              //labelStyle: TextStyle(color: HexColor("#333333"), fontSize: 12),
-              hintText: "大家快来参与我的节点吧，收益高高！",
+              hintText: widget.hint,
               border: InputBorder.none,
             ),
             validator: (textStr) {
               if (textStr.length == 0) {
-                return "大家快来参与我的节点吧，收益高高！";
+                return widget.hint;
               }
               {
                 return null;
