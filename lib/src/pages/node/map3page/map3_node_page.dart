@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
@@ -352,7 +353,10 @@ class _Map3NodeState extends State<Map3NodePage>
     );
     _api.postTest(entity);
     */
-    _api.postMap3Info("address", "nodeId");
+    //_api.postMap3Info("address", "nodeId");
+    var list = await _api.postMap3NodeList("address");
+    //CommitteeInfoEntity committeeInfoEntity = await _api.postAtlasOverviewData();
+    print("[Map3] --> push, length:${list.length}");
 
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {

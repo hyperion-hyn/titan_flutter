@@ -99,13 +99,12 @@ class AtlasApi {
   }
 
   // 查询atlas概览数据
-  Future<CommitteeInfoEntity> postAtlasOverviewData(CreateAtlasEntity entity) async {
+  Future<CommitteeInfoEntity> postAtlasOverviewData() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/outline",
         EntityFactory<CommitteeInfoEntity>(
               (json) => CommitteeInfoEntity.fromJson(json),
         ),
-        data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
 
   }
