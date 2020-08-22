@@ -9,7 +9,7 @@ part 'create_map3_entity.g.dart';
   class CreateMap3Entity extends Object {
 
   @JsonKey(name: 'amount')
-  int amount;
+  String amount;
 
   @JsonKey(name: 'from')
   String from;
@@ -43,7 +43,47 @@ part 'create_map3_entity.g.dart';
 
 }
 
-  
+
+  /*
+
+  {
+  connect	string
+  安全联系方式
+
+  describe	string
+  描述
+
+  fee_rate	number
+  费率
+
+  home	string
+  网址
+
+  name	string
+  名称
+
+  node_id	string
+  节点号
+
+  parent_node_id	string
+  节点分裂时才需要
+
+  pic	string
+  节点头像url
+
+  provider	string
+  服务商id
+
+  region	string
+  区域id
+
+  staking	number
+  抵押量
+
+  }
+  */
+
+
 @JsonSerializable()
   class CreateMap3Payload extends Object {
 

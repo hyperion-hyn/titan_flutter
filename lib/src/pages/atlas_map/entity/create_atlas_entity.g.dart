@@ -8,7 +8,7 @@ part of 'create_atlas_entity.dart';
 
 CreateAtlasEntity _$CreateAtlasEntityFromJson(Map<String, dynamic> json) {
   return CreateAtlasEntity(
-    json['amount'] as int,
+    json['amount'] as String,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,

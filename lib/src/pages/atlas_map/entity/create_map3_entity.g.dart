@@ -8,7 +8,7 @@ part of 'create_map3_entity.dart';
 
 CreateMap3Entity _$CreateMap3EntityFromJson(Map<String, dynamic> json) {
   return CreateMap3Entity(
-    json['amount'] as int,
+    json['amount'] as String,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
