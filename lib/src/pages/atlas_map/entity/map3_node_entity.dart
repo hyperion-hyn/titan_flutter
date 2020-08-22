@@ -53,13 +53,13 @@ part 'map3_node_entity.g.dart';
   String region;
 
   @JsonKey(name: 'reward')
-  int reward;
+  String reward;
 
   @JsonKey(name: 'reward_rate')
-  int rewardRate;
+  String rewardRate;
 
   @JsonKey(name: 'staking')
-  int staking;
+  String staking;
 
   @JsonKey(name: 'start_time')
   String startTime;

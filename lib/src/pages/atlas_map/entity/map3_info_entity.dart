@@ -31,7 +31,7 @@ part 'map3_info_entity.g.dart';
   String endTime;
 
   @JsonKey(name: 'fee_rate')
-  int feeRate;
+  String feeRate;
 
   @JsonKey(name: 'home')
   String home;
@@ -61,19 +61,19 @@ part 'map3_info_entity.g.dart';
   String region;
 
   @JsonKey(name: 'reward')
-  int reward;
+  String reward;
 
   @JsonKey(name: 'reward_mine')
-  int rewardMine;
+  String rewardMine;
 
   @JsonKey(name: 'reward_rate')
-  int rewardRate;
+  String rewardRate;
 
   @JsonKey(name: 'staking')
-  int staking;
+  String staking;
 
   @JsonKey(name: 'staking_mine')
-  int stakingMine;
+  String stakingMine;
 
   @JsonKey(name: 'start_time')
   String startTime;

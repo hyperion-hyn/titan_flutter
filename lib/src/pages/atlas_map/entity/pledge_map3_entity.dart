@@ -9,7 +9,7 @@ part 'pledge_map3_entity.g.dart';
   class PledgeMap3Entity extends Object {
 
   @JsonKey(name: 'amount')
-  int amount;
+  String amount;
 
   @JsonKey(name: 'from')
   String from;
@@ -24,7 +24,7 @@ part 'pledge_map3_entity.g.dart';
   PledgeMap3Payload payload;
 
   @JsonKey(name: 'price')
-  int price;
+  String price;
 
   @JsonKey(name: 'raw_tx')
   String rawTx;
@@ -50,8 +50,9 @@ part 'pledge_map3_entity.g.dart';
   @JsonKey(name: 'map3_node_id')
   String map3NodeId;
 
+//  取消节点时不用传。抵押量
   @JsonKey(name: 'staking')
-  int staking;
+  String staking;
 
   PledgeMap3Payload(this.map3NodeId,this.staking,);
 

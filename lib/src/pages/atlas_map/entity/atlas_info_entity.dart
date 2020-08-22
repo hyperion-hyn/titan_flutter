@@ -34,13 +34,13 @@ part 'atlas_info_entity.g.dart';
   String describe;
 
   @JsonKey(name: 'fee_rate')
-  int feeRate;
+  String feeRate;
 
   @JsonKey(name: 'fee_rate_max')
-  int feeRateMax;
+  String feeRateMax;
 
   @JsonKey(name: 'fee_rate_trim')
-  int feeRateTrim;
+  String feeRateTrim;
 
   @JsonKey(name: 'home')
   String home;
@@ -69,16 +69,16 @@ part 'atlas_info_entity.g.dart';
   String pic;
 
   @JsonKey(name: 'reward')
-  int reward;
+  String reward;
 
   @JsonKey(name: 'reward_rate')
-  int rewardRate;
+  String rewardRate;
 
   @JsonKey(name: 'sign_rate')
-  int signRate;
+  String signRate;
 
   @JsonKey(name: 'staking')
-  int staking;
+  String staking;
 
   @JsonKey(name: 'status')
   NodeStatus status;

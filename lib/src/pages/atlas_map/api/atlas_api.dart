@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
@@ -11,7 +14,33 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 
+import '../../../../config.dart';
+
 class AtlasApi {
+  Map<String, dynamic> getOptionHeader({hasLang = false, hasAddress = false, hasSign = false}) {
+    if (!hasLang && !hasAddress && !hasSign) {
+      return null;
+    }
+    Map<String, dynamic> headMap = Map();
+
+    headMap.putIfAbsent("appSource", () => Config.APP_SOURCE);
+
+    var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    if (hasAddress && activeWalletVo != null) {
+      headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
+    }
+
+    if (hasLang) {
+      var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+      headMap.putIfAbsent("Lang", () => language);
+    }
+
+    if (hasSign) {
+      headMap.putIfAbsent("Sign", () => "Sign");
+    }
+
+    return headMap;
+  }
 
   //测试post签名
   Future<TestPostEntity> postTest(TestPostEntity entity) async {
@@ -21,7 +50,7 @@ class AtlasApi {
               (json) => TestPostEntity.fromJson(json),
         ),
         data: entity.toJson(),
-        options: RequestOptions(contentType: "application/json"));
+        options: RequestOptions(headers: getOptionHeader(hasSign: true),contentType: "application/json",));
 
   }
 

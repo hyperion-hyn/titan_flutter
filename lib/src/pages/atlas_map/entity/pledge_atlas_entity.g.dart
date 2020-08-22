@@ -8,14 +8,14 @@ part of 'pledge_atlas_entity.dart';
 
 PledgeAtlasEntity _$PledgeAtlasEntityFromJson(Map<String, dynamic> json) {
   return PledgeAtlasEntity(
-    json['amount'] as int,
+    json['amount'] as String,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
     json['payload'] == null
         ? null
         : AtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as int,
+    json['price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
     AtlasActionType.values[json['type'] as int],

@@ -9,7 +9,7 @@ part 'pledge_atlas_entity.g.dart';
   class PledgeAtlasEntity extends Object {
 
   @JsonKey(name: 'amount')
-  int amount;
+  String amount;
 
   @JsonKey(name: 'from')
   String from;
@@ -24,7 +24,7 @@ part 'pledge_atlas_entity.g.dart';
   AtlasPayload payload;
 
   @JsonKey(name: 'price')
-  int price;
+  String price;
 
   @JsonKey(name: 'raw_tx')
   String rawTx;

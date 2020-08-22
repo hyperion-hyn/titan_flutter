@@ -15,7 +15,7 @@ CreateAtlasEntity _$CreateAtlasEntityFromJson(Map<String, dynamic> json) {
     json['payload'] == null
         ? null
         : CreateAtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as int,
+    json['price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
     AtlasActionType.values[json['type'] as int],
@@ -41,9 +41,9 @@ CreateAtlasPayload _$CreateAtlasPayloadFromJson(Map<String, dynamic> json) {
     json['bls_sign'] as String,
     json['connect'] as String,
     json['describe'] as String,
-    json['fee_rate'] as int,
-    json['fee_rate_max'] as int,
-    json['fee_rate_trim'] as int,
+    json['fee_rate'] as String,
+    json['fee_rate_max'] as String,
+    json['fee_rate_trim'] as String,
     json['home'] as String,
     json['map3_node_id'] as String,
     json['max_pledge'] as int,

@@ -33,13 +33,13 @@ class AtlasNodeEntity extends Object {
   String describe;
 
   @JsonKey(name: 'fee_rate')
-  int feeRate;
+  String feeRate;
 
   @JsonKey(name: 'fee_rate_max')
-  int feeRateMax;
+  String feeRateMax;
 
   @JsonKey(name: 'fee_rate_trim')
-  int feeRateTrim;
+  String feeRateTrim;
 
   @JsonKey(name: 'home')
   String home;

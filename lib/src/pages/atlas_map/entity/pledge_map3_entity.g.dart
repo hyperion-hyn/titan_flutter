@@ -8,14 +8,14 @@ part of 'pledge_map3_entity.dart';
 
 PledgeMap3Entity _$PledgeMap3EntityFromJson(Map<String, dynamic> json) {
   return PledgeMap3Entity(
-    json['amount'] as int,
+    json['amount'] as String,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
     json['payload'] == null
         ? null
         : PledgeMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as int,
+    json['price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
     AtlasActionType.values[json['type'] as int],
@@ -38,7 +38,7 @@ Map<String, dynamic> _$PledgeMap3EntityToJson(PledgeMap3Entity instance) =>
 PledgeMap3Payload _$PledgeMap3PayloadFromJson(Map<String, dynamic> json) {
   return PledgeMap3Payload(
     json['map3_node_id'] as String,
-    json['staking'] as int,
+    json['staking'] as String,
   );
 }
 

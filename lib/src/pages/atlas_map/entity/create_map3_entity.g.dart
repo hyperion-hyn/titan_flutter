@@ -15,7 +15,7 @@ CreateMap3Entity _$CreateMap3EntityFromJson(Map<String, dynamic> json) {
     json['payload'] == null
         ? null
         : CreateMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as int,
+    json['price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
     AtlasActionType.values[json['type'] as int],
@@ -39,7 +39,7 @@ CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
   return CreateMap3Payload(
     json['connect'] as String,
     json['describe'] as String,
-    json['fee_rate'] as int,
+    json['fee_rate'] as String,
     json['home'] as String,
     json['name'] as String,
     json['node_id'] as String,
@@ -48,6 +48,7 @@ CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
     json['pledge'] as int,
     json['provider'] as String,
     json['region'] as String,
+    json['staking'] as String,
   );
 }
 
@@ -64,4 +65,5 @@ Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) =>
       'pledge': instance.pledge,
       'provider': instance.provider,
       'region': instance.region,
+      'staking': instance.staking,
     };

@@ -7,6 +7,8 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -340,6 +342,18 @@ class _Map3NodeState extends State<Map3NodePage>
   }
 
   Future _pushContractListAction() async {
+
+    AtlasApi _api = AtlasApi();
+    /*TestPostEntity entity = TestPostEntity(
+      "address",
+      "pub",
+      1,
+      "v1"
+    );
+    _api.postTest(entity);
+    */
+    _api.postMap3Info("address", "nodeId");
+
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {
       Application.router.navigateTo(

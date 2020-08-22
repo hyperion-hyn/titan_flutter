@@ -21,14 +21,17 @@ class ResponseCode {
 class ResponseEntity<T> {
   final int code;
   final String msg;
+  final String subMsg;
   final T data;
 
-  ResponseEntity._({this.code, this.msg, this.data});
+  ResponseEntity._({this.code, this.msg, this.data, this.subMsg});
 
   factory ResponseEntity.fromJson(Map<String, dynamic> json, {EntityFactory<T> factory}) {
     return ResponseEntity._(
-        code: json['code'] ?? ResponseCode.FAILED,
-        msg: json['msg'] ?? '',
-        data: json['data'] != null ? factory?.constructor(json['data']) : null);
+      code: json['code'] ?? ResponseCode.FAILED,
+      msg: json['msg'] ?? '',
+      subMsg: json['subMsg'] ?? '',
+      data: json['data'] != null ? factory?.constructor(json['data']) : null,
+    );
   }
 }

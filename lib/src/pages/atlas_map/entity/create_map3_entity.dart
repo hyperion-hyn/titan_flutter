@@ -24,7 +24,7 @@ part 'create_map3_entity.g.dart';
   CreateMap3Payload payload;
 
   @JsonKey(name: 'price')
-  int price;
+  String price;
 
   @JsonKey(name: 'raw_tx')
   String rawTx;
@@ -54,7 +54,7 @@ part 'create_map3_entity.g.dart';
   String describe;
 
   @JsonKey(name: 'fee_rate')
-  int feeRate;
+  String feeRate;
 
   @JsonKey(name: 'home')
   String home;
@@ -80,7 +80,10 @@ part 'create_map3_entity.g.dart';
   @JsonKey(name: 'region')
   String region;
 
-  CreateMap3Payload(this.connect,this.describe,this.feeRate,this.home,this.name,this.nodeId,this.parentNodeId,this.pic,this.pledge,this.provider,this.region,);
+  @JsonKey(name: 'staking')
+  String staking;
+
+  CreateMap3Payload(this.connect,this.describe,this.feeRate,this.home,this.name,this.nodeId,this.parentNodeId,this.pic,this.pledge,this.provider,this.region,this.staking);
 
   factory CreateMap3Payload.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3PayloadFromJson(srcJson);
 

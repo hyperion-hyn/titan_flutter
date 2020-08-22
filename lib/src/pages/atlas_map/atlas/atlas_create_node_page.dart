@@ -636,7 +636,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _createAtlasPayLoad.feeRate = int.parse(text);
+                _createAtlasPayLoad.feeRate = text;
               });
             },
             controller: _feeTextController,
@@ -676,7 +676,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _createAtlasPayLoad.feeRateMax = int.parse(text);
+                _createAtlasPayLoad.feeRateMax = text;
               });
             },
             controller: _maxFeeTextController,
@@ -716,7 +716,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
             onChanged: (text) {
               setState(() {
-                _createAtlasPayLoad.feeRateTrim = int.parse(text);
+                _createAtlasPayLoad.feeRateTrim = text;
               });
             },
             controller: _feeExtentTextController,
