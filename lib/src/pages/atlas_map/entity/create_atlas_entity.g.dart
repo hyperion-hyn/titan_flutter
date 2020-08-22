@@ -18,7 +18,7 @@ CreateAtlasEntity _$CreateAtlasEntityFromJson(Map<String, dynamic> json) {
     json['price'] as int,
     json['raw_tx'] as String,
     json['to'] as String,
-    json['type'] as int,
+    AtlasType.values[json['type'] as int],
   );
 }
 

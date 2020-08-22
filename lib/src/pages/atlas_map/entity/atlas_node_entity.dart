@@ -1,6 +1,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+import 'enum_atlas_type.dart';
+
 part 'atlas_node_entity.g.dart';
 
 @JsonSerializable()
@@ -70,7 +72,7 @@ class AtlasNodeEntity extends Object {
   int staking;
 
   @JsonKey(name: 'status')
-  int status;
+  AtlasStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

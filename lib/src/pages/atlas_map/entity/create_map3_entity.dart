@@ -1,4 +1,6 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
+
+import 'enum_atlas_type.dart';
   
 part 'create_map3_entity.g.dart';
 
@@ -31,7 +33,7 @@ part 'create_map3_entity.g.dart';
   String to;
 
   @JsonKey(name: 'type')
-  int type;
+  AtlasType type;
 
   CreateMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
 

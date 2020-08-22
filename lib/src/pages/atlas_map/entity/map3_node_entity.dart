@@ -1,4 +1,5 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
   
 part 'map3_node_entity.g.dart';
 
@@ -64,7 +65,7 @@ part 'map3_node_entity.g.dart';
   String startTime;
 
   @JsonKey(name: 'status')
-  int status;
+  AtlasStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

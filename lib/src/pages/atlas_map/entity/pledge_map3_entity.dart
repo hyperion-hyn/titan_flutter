@@ -1,4 +1,6 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:json_annotation/json_annotation.dart';
+
+import 'enum_atlas_type.dart';
   
 part 'pledge_map3_entity.g.dart';
 
@@ -31,7 +33,7 @@ part 'pledge_map3_entity.g.dart';
   String to;
 
   @JsonKey(name: 'type')
-  int type;
+  AtlasType type;
 
   PledgeMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
 

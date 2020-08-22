@@ -19,6 +19,15 @@ class Const {
     }
   }
 
+  static String get ATLAS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.ATLAS_API_URL_TEST;
+    } else {
+      return Config.ATLAS_API_URL;
+    }
+  }
+
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';

@@ -1,20 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'pledge_map3_entity.dart';
+part of 'pledge_atlas_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PledgeMap3Entity _$PledgeMap3EntityFromJson(Map<String, dynamic> json) {
-  return PledgeMap3Entity(
+PledgeAtlasEntity _$PledgeAtlasEntityFromJson(Map<String, dynamic> json) {
+  return PledgeAtlasEntity(
     json['amount'] as int,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
     json['payload'] == null
         ? null
-        : PledgeMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
+        : AtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
     json['price'] as int,
     json['raw_tx'] as String,
     json['to'] as String,
@@ -22,7 +22,7 @@ PledgeMap3Entity _$PledgeMap3EntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$PledgeMap3EntityToJson(PledgeMap3Entity instance) =>
+Map<String, dynamic> _$PledgeAtlasEntityToJson(PledgeAtlasEntity instance) =>
     <String, dynamic>{
       'amount': instance.amount,
       'from': instance.from,
@@ -35,15 +35,15 @@ Map<String, dynamic> _$PledgeMap3EntityToJson(PledgeMap3Entity instance) =>
       'type': instance.type,
     };
 
-PledgeMap3Payload _$PledgeMap3PayloadFromJson(Map<String, dynamic> json) {
-  return PledgeMap3Payload(
+AtlasPayload _$AtlasPayloadFromJson(Map<String, dynamic> json) {
+  return AtlasPayload(
+    json['atlas_node_id'] as String,
     json['map3_node_id'] as String,
-    json['staking'] as int,
   );
 }
 
-Map<String, dynamic> _$PledgeMap3PayloadToJson(PledgeMap3Payload instance) =>
+Map<String, dynamic> _$AtlasPayloadToJson(AtlasPayload instance) =>
     <String, dynamic>{
+      'atlas_node_id': instance.atlasNodeId,
       'map3_node_id': instance.map3NodeId,
-      'staking': instance.staking,
     };

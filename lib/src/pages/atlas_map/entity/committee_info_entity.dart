@@ -2,7 +2,27 @@ import 'package:json_annotation/json_annotation.dart';
   
 part 'committee_info_entity.g.dart';
 
+/*
+{
+block_num	integer
+当前块高
 
+candidate	integer
+候选节点数量
+
+elected	integer
+当选节点数量
+
+end_time	string
+纪元结束日期
+
+epoch	integer
+当前纪元
+
+start_time	string
+纪元开始日期
+
+}*/
 @JsonSerializable()
   class CommitteeInfoEntity extends Object {
 

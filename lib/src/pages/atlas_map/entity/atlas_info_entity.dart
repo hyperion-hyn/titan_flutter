@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 
+import 'enum_atlas_type.dart';
+
 part 'atlas_info_entity.g.dart';
 
 
@@ -46,12 +48,14 @@ part 'atlas_info_entity.g.dart';
   @JsonKey(name: 'id')
   int id;
 
+  // 区别于node的地方： 0
   @JsonKey(name: 'join')
-  int join;
+  AtlasJoinType join;
 
   @JsonKey(name: 'max_staking')
   int maxStaking;
 
+  // 区别于node的地方： 1
   @JsonKey(name: 'my_map3')
   List<Map3NodeEntity> myMap3;
 
@@ -77,10 +81,11 @@ part 'atlas_info_entity.g.dart';
   int staking;
 
   @JsonKey(name: 'status')
-  int status;
+  AtlasStatus status;
 
+  // 区别于node的地方： 2
   @JsonKey(name: 'type')
-  int type;
+  AtlasNodeType type;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

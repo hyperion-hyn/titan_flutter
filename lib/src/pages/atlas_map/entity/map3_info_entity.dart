@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'atlas_node_entity.dart';
+import 'enum_atlas_type.dart';
 
 part 'map3_info_entity.g.dart';
 
@@ -39,7 +40,7 @@ part 'map3_info_entity.g.dart';
   int id;
 
   @JsonKey(name: 'join')
-  int join;
+  AtlasJoinType join;
 
   @JsonKey(name: 'name')
   String name;
@@ -78,7 +79,7 @@ part 'map3_info_entity.g.dart';
   String startTime;
 
   @JsonKey(name: 'status')
-  int status;
+  AtlasStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
