@@ -12,6 +12,7 @@ import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_recreate_contract_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -449,6 +450,11 @@ Widget getMap3NodeWaitItem(
 
   return InkWell(
     onTap: () async {
+
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> Map3NodeRecreateContractPage("1")));
+
+      return;
+
       var walletList = await WalletUtil.scanWallets();
       if (walletList.length == 0) {
         Application.router.navigateTo(

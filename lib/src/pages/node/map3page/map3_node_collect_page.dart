@@ -57,139 +57,146 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Image.asset(
-                            "res/drawable/map3_node_default_avatar.png",
-                            width: 42,
-                            height: 42,
-                            fit: BoxFit.cover,
-                          ),
-                          SizedBox(
-                            width: 6,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text.rich(TextSpan(children: [
-                                TextSpan(text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                TextSpan(text: "", style: TextStyles.textC333S14bold),
-                              ])),
-                              Container(
-                                height: 4,
-                              ),
-                              Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 6)}",
-                                  style: TextStyles.textC9b9b9bS12),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
-                      child: Container(
-                        color: HexColor("#F2F2F2"),
-                        height: 0.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 12, right: 8),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Text("提取数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                          ),
-                          Expanded(
-                            child: Text("（可用余额 20，000）", style: TextStyle(color: HexColor("#B8B8B8"))),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, bottom: 12, right: 8),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12),
-                            child: Text(
-                              "HYN",
-                              style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                // hide keyboard when touch other widgets
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                             ),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Form(
-                              key: _formKey,
-                              child: RoundBorderTextField(
-                                controller: _textEditingController,
-                                keyboardType: TextInputType.number,
-                                //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                hint: "请输入数量",
-                                validator: (textStr) {
-                                  if (textStr.length == 0) {
-                                    return S.of(context).please_input_hyn_count;
-                                  } else if (minTotal == 0) {
-                                    return "抵押已满";
-                                  } else if (int.parse(textStr) < minTotal) {
-                                    return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                                  } else if (int.parse(textStr) > remainTotal) {
-                                    return "不能超过剩余份额";
-                                  } else if (Decimal.parse(textStr) >
-                                      Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                                    return S.of(context).hyn_balance_no_enough;
-                                  } else {
-                                    return null;
-                                  }
-                                },
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Image.asset(
+                              "res/drawable/map3_node_default_avatar.png",
+                              width: 42,
+                              height: 42,
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text.rich(TextSpan(children: [
+                                  TextSpan(text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                  TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                ])),
+                                Container(
+                                  height: 4,
+                                ),
+                                Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 6)}",
+                                    style: TextStyles.textC9b9b9bS12),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
+                        child: Container(
+                          color: HexColor("#F2F2F2"),
+                          height: 0.5,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 12, right: 8),
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Text("提取数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            ),
+                            Expanded(
+                              child: Text("（可用余额 20，000）", style: TextStyle(color: HexColor("#B8B8B8"))),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, bottom: 12, right: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: Text(
+                                "HYN",
+                                style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                            child: _flatButton(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                child: Text(
-                                  "全部提取",
-                                  style: TextStyle(fontSize: 12, color: Colors.white),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Form(
+                                key: _formKey,
+                                child: RoundBorderTextField(
+                                  controller: _textEditingController,
+                                  keyboardType: TextInputType.number,
+                                  //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                  hint: "请输入数量",
+                                  validator: (textStr) {
+                                    if (textStr.length == 0) {
+                                      return S.of(context).please_input_hyn_count;
+                                    } else if (minTotal == 0) {
+                                      return "抵押已满";
+                                    } else if (int.parse(textStr) < minTotal) {
+                                      return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                                    } else if (int.parse(textStr) > remainTotal) {
+                                      return "不能超过剩余份额";
+                                    } else if (Decimal.parse(textStr) >
+                                        Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                                      return S.of(context).hyn_balance_no_enough;
+                                    } else {
+                                      return null;
+                                    }
+                                  },
                                 ),
                               ),
-                              onTap: () {
-                                _formKey.currentState?.validate();
-                              },
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              child: _flatButton(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  child: Text(
+                                    "全部提取",
+                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                  ),
+                                ),
+                                onTap: () {
+                                  _formKey.currentState?.validate();
+                                },
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ])),
+              ])),
+            ),
           ),
           _confirmButtonWidget(),
         ],

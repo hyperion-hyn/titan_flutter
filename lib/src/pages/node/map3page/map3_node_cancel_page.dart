@@ -59,199 +59,206 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                        ],
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                // hide keyboard when touch other widgets
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Image.asset(
-                            "res/drawable/map3_node_default_avatar.png",
-                            width: 42,
-                            height: 42,
-                            fit: BoxFit.cover,
-                          ),
-                          SizedBox(
-                            width: 6,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text.rich(TextSpan(children: [
-                                TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                TextSpan(text: "", style: TextStyles.textC333S14bold),
-                              ])),
-                              Container(
-                                height: 4,
-                              ),
-                              Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 9)}",
-                                  style: TextStyles.textC9b9b9bS12),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10,
-                child: Container(
-                  color: HexColor("#F4F4F4"),
-                ),
-              ),
-              Container(
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16),
-                      child: Row(
-                        children: <Widget>[
-                          Text("节点金额", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 12),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [1, 0.5, 2].map((value) {
-                          String title = "";
-                          String detail = "0";
-                          Color color = HexColor("#333333");
-
-                          switch (value) {
-                            case 1:
-                              title = "节点总抵押";
-                              detail = "900,000";
-                              color = HexColor("#BF8D2A");
-                              break;
-
-                            case 2:
-                              title = "我的抵押";
-                              detail = "300,000";
-                              break;
-
-                            default:
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 30),
-                                child: Container(
-                                  height: 15,
-                                  width: 0.5,
-                                  color: HexColor("#000000").withOpacity(0.2),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Image.asset(
+                              "res/drawable/map3_node_default_avatar.png",
+                              width: 42,
+                              height: 42,
+                              fit: BoxFit.cover,
+                            ),
+                            SizedBox(
+                              width: 6,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text.rich(TextSpan(children: [
+                                  TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                  TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                ])),
+                                Container(
+                                  height: 4,
                                 ),
-                              );
-                              break;
-                          }
-
-                          TextStyle style = TextStyle(fontSize: 18, color: color, fontWeight: FontWeight.w600);
-
-                          return Column(
-                            children: <Widget>[
-                              Text(detail, style: style),
-                              Container(
-                                height: 4,
-                              ),
-                              Text(title, style: TextStyles.textC333S11),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Text("撤销数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 16, right: 18),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "HYN",
-                            style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Form(
-                              key: _formKey,
-                              child: RoundBorderTextField(
-                                controller: _textEditingController,
-                                keyboardType: TextInputType.number,
-                                //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                hint: "请输入提币数量",
-                                validator: (textStr) {
-                                  if (textStr.length == 0) {
-                                    return S.of(context).please_input_hyn_count;
-                                  } else if (minTotal == 0) {
-                                    return "抵押已满";
-                                  } else if (int.parse(textStr) < minTotal) {
-                                    return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                                  } else if (int.parse(textStr) > remainTotal) {
-                                    return "不能超过剩余份额";
-                                  } else if (Decimal.parse(textStr) >
-                                      Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                                    return S.of(context).hyn_balance_no_enough;
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
+                                Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 9)}",
+                                    style: TextStyles.textC9b9b9bS12),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 18, right: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 48,
-                          ),
-                          /*Text(
-                            "*",
-                            style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),*/
-                          Expanded(
-                            child: Text(
-                              "撤销剩余量不能少于20,0000",
-                              //"撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
-                              style: TextStyle(fontSize: 12, color: HexColor("#999999"), height: 1.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ])),
+                SizedBox(
+                  height: 10,
+                  child: Container(
+                    color: HexColor("#F4F4F4"),
+                  ),
+                ),
+                Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16),
+                        child: Row(
+                          children: <Widget>[
+                            Text("节点金额", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [1, 0.5, 2].map((value) {
+                            String title = "";
+                            String detail = "0";
+                            Color color = HexColor("#333333");
+
+                            switch (value) {
+                              case 1:
+                                title = "节点总抵押";
+                                detail = "900,000";
+                                color = HexColor("#BF8D2A");
+                                break;
+
+                              case 2:
+                                title = "我的抵押";
+                                detail = "300,000";
+                                break;
+
+                              default:
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                                  child: Container(
+                                    height: 15,
+                                    width: 0.5,
+                                    color: HexColor("#000000").withOpacity(0.2),
+                                  ),
+                                );
+                                break;
+                            }
+
+                            TextStyle style = TextStyle(fontSize: 18, color: color, fontWeight: FontWeight.w600);
+
+                            return Column(
+                              children: <Widget>[
+                                Text(detail, style: style),
+                                Container(
+                                  height: 4,
+                                ),
+                                Text(title, style: TextStyles.textC333S11),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Text("撤销数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 18),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "HYN",
+                              style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                            ),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Flexible(
+                              flex: 1,
+                              child: Form(
+                                key: _formKey,
+                                child: RoundBorderTextField(
+                                  controller: _textEditingController,
+                                  keyboardType: TextInputType.number,
+                                  //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                  hint: "请输入提币数量",
+                                  validator: (textStr) {
+                                    if (textStr.length == 0) {
+                                      return S.of(context).please_input_hyn_count;
+                                    } else if (minTotal == 0) {
+                                      return "抵押已满";
+                                    } else if (int.parse(textStr) < minTotal) {
+                                      return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                                    } else if (int.parse(textStr) > remainTotal) {
+                                      return "不能超过剩余份额";
+                                    } else if (Decimal.parse(textStr) >
+                                        Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                                      return S.of(context).hyn_balance_no_enough;
+                                    } else {
+                                      return null;
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 18, right: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 48,
+                            ),
+                            /*Text(
+                              "*",
+                              style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
+                            ),
+                            SizedBox(
+                              width: 12,
+                            ),*/
+                            Expanded(
+                              child: Text(
+                                "撤销剩余量不能少于20,0000",
+                                //"撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
+                                style: TextStyle(fontSize: 12, color: HexColor("#999999"), height: 1.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ])),
+            ),
           ),
           _confirmButtonWidget(),
         ],
