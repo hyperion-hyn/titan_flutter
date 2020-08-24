@@ -1,25 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/routes/route_util.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/format_util.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
@@ -43,14 +33,13 @@ class _MyContractsState extends State<MyContractsPage> with TickerProviderStateM
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (_contractTypeModels?.isEmpty??true) {
+    if (_contractTypeModels?.isEmpty ?? true) {
       _contractTypeModels = [
         MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
         MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
       ];
       _tabController = TabController(length: _contractTypeModels.length, vsync: this);
     }
-
   }
 
   @override
@@ -94,11 +83,11 @@ class _MyContractsState extends State<MyContractsPage> with TickerProviderStateM
                             indicatorSize: TabBarIndicatorSize.label,
                             tabs: _contractTypeModels
                                 .map((MyContractModel model) => Tab(
-                              child: Text(
-                                model.name,
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ))
+                                      child: Text(
+                                        model.name,
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+                                    ))
                                 .toList(),
                           ),
                         ),
@@ -151,7 +140,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -208,7 +196,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
   @override
   Widget build(BuildContext context) {
-
     if (widget.model.type != MyContractType.active) {
       return _pageWidget(context);
     }
@@ -227,12 +214,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     );
   }
 
-
   _loadMoreData() async {
     List<ContractNodeItem> dataList = [];
     if (widget.model.type == MyContractType.create) {
       List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
-      dataList  = createContractList;
+      dataList = createContractList;
     } else {
       List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
       dataList = joinContractList;
@@ -250,7 +236,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     }
 
     print('[map3] _loadMoreData, list.length:${dataList.length}');
-
   }
 
   _loadData() async {
@@ -259,7 +244,6 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
       List<ContractNodeItem> dataList = [];
       switch (widget.model.type) {
-
         case MyContractType.join:
           List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
           dataList = joinContractList;
@@ -267,20 +251,19 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
 
         case MyContractType.create:
           List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
-          dataList  = createContractList;
+          dataList = createContractList;
           break;
 
         default:
           List<ContractNodeItem> createContractList = await api.getContractActiveList();
-          dataList  = createContractList;
+          dataList = createContractList;
           break;
       }
-
 
       if (dataList.length == 0) {
         loadDataBloc.add(LoadEmptyEvent());
       } else {
-        _currentPage ++;
+        _currentPage++;
         loadDataBloc.add(RefreshSuccessEvent());
 
         setState(() {
@@ -296,13 +279,11 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
         });
       });
     } catch (e) {
-
       setState(() {
         _currentState = all_page_state.LoadFailState();
       });
     }
   }
-
 }
 
 enum MyContractType {
@@ -310,7 +291,6 @@ enum MyContractType {
   create,
   active,
 }
-
 
 class MyContractModel {
   String name;
