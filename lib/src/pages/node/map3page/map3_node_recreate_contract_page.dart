@@ -52,6 +52,7 @@ class _Map3NodeRecreateContractState extends State<Map3NodeRecreateContractPage>
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
   String originInputStr = "";
+  int _managerSpendCount = 20;
 
   // 输入框的焦点实例
   FocusNode _focusNode;
@@ -834,10 +835,6 @@ class _Map3NodeRecreateContractState extends State<Map3NodeRecreateContractPage>
       ),
     );
   }
-
-  bool _renew = true;
-
-  int _managerSpendCount = 20;
 
   Widget _managerSpendWidget() {
     return Container(

@@ -17,7 +17,6 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
         body: Container(
           color: Colors.white,
           child: Center(
-//          color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[

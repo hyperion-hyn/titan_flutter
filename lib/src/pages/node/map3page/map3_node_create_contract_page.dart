@@ -42,6 +42,8 @@ class Map3NodeCreateContractPage extends StatefulWidget {
 
 class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
+  TextEditingController _inputCoinController = new TextEditingController();
+
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
@@ -55,6 +57,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
   String originInputStr = "";
+  int _managerSpendCount = 20;
 
   // 输入框的焦点实例
   FocusNode _focusNode;
@@ -65,6 +68,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
   @override
   void initState() {
     _joinCoinController.addListener(textChangeListener);
+
+    _inputCoinController.text = "$_managerSpendCount";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
@@ -527,10 +532,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     );
   }
 
-  bool _renew = true;
-
-  int _managerSpendCount = 20;
-
   Widget _managerSpendWidget() {
     return Container(
       color: Colors.white,
@@ -583,21 +584,18 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      child: Text(
-                        "$_managerSpendCount",
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: HexColor("#FFFFFF"),
-                      border: Border.all(color: HexColor("#DEDEDE"), width: 0.5),
-                      borderRadius: BorderRadius.circular(13.0),
-                    ),
+                SizedBox(
+                  width: 60,
+                  height: 30,
+                  child: RoundBorderTextField(
+                    controller: _inputCoinController,
+                    keyboardType: TextInputType.number,
+                    validator: (textStr) {
+                      if (textStr.length == 0) {
+                        return S.of(context).please_input_hyn_count;
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 Padding(
@@ -656,34 +654,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
           () async {
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (BuildContext context) => Map3NodeCreateConfirmPage(widget.contractId)));
-            /*
-            return;
-
-            setState(() {
-              if (!_joinCoinFormKey.currentState.validate()) {
-                return;
-              }
-
-              var providerModel = providerList[selectServerItemValue];
-              var regionsModel = providerModel.regions[selectNodeItemValue];
-              contractItem.nodeRegion = regionsModel.id;
-              contractItem.nodeProvider = providerModel.id;
-              contractItem.nodeRegionName = regionsModel.name;
-              contractItem.nodeProviderName = providerModel.name;
-              var transferAmount = _joinCoinController.text?.isNotEmpty == true ? _joinCoinController.text : "0";
-              contractItem.announcement =
-              _pronounceTextController.text.isNotEmpty ? _pronounceTextController.text : "欢迎来到Titan";
-              contractItem.renew = _renew;
-              contractItem.commission = _managerSpendCount * 0.01;
-              Application.router.navigateTo(
-                  context,
-                  Routes.map3node_send_confirm_page +
-                      "?coinVo=${FluroConvertUtils.object2string(activatedWallet.coins[1].toJson())}" +
-                      "&contractNodeItem=${FluroConvertUtils.object2string(contractItem.toJson())}" +
-                      "&transferAmount=${transferAmount.trim()}&receiverAddress=${WalletConfig.map3ContractAddress}" +
-                      "&actionEvent=${Map3NodeActionEvent.CREATE}" +
-                      "&contractId=${widget.contractId}");
-            });*/
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -790,42 +760,6 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                         },
                       ),
                     ),
-                    /*
-                    Flexible(
-                      flex: 1,
-                      child: Form(
-                        key: formKey,
-                        child: TextFormField(
-                          controller: textEditingController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                          decoration: InputDecoration(
-
-                            hintStyle: TextStyle(color: HexColor("#B8B8B8"), fontSize: 12),
-                            labelStyle: TextStyles.textC333S14,
-                            hintText: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
-                            //border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                          ),
-                          validator: (textStr) {
-                            if (textStr.length == 0) {
-                              return S.of(context).please_input_hyn_count;
-                            } else if (minTotal == 0) {
-                              return "抵押已满";
-                            } else if (int.parse(textStr) < minTotal) {
-                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                            } else if (int.parse(textStr) > remainTotal) {
-                              return "不能超过剩余份额";
-                            } else if (Decimal.parse(textStr) >
-                                Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                              return S.of(context).hyn_balance_no_enough;
-                            } else {
-                              return null;
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-                    */
                   ],
                 ),
                 SizedBox(
