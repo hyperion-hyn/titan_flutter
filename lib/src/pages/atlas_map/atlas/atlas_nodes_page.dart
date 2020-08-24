@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -7,8 +8,10 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/timer_text.dart';
 
 class AtlasNodesPage extends StatefulWidget {
   AtlasNodesPage();
@@ -39,7 +42,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       vsync: this,
       duration: Duration(seconds: 10),
     )..repeat();
-
     _loadDataBloc.add(LoadingEvent());
   }
 
@@ -237,17 +239,14 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           },
                           child: Image.asset(
                             'res/drawable/ic_atlas_age.png',
-                            width: 50,
-                            height: 50,
+                            width: 60,
+                            height: 60,
                           ),
                         ),
-                        Text(
-                          '35',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8,
-                          ),
-                        )
+                        TimerTextWidget(
+                          remainTime: 15,
+                          loopTime: 3600 * 24,
+                        ),
                       ],
                     )
                   ],
@@ -732,3 +731,4 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     if (mounted) setState(() {});
   }
 }
+
