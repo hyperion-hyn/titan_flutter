@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
@@ -23,8 +23,8 @@ class AtlasStakeSelectPage extends StatefulWidget {
 
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   AtlasApi _atlasApi = AtlasApi();
-  var infoTitleList = ["总抵押", "签名率", "最近回报率", "总抵押11", "签名率11", "最近回报率11"];
-  var infoContentList = ["12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
+  var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
+  var infoContentList = ["12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1","12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
   bool isShowAll = false;
   AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
@@ -44,19 +44,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.black),
-          title: Text(
-            "抵押Atlas节点",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 16,
-            ),
-          ),
-        ),
+        appBar: BaseAppBar(baseTitle: "抵押Atlas节点"),
         body: _pageWidget(context));
   }
 
@@ -207,7 +195,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
         padding: const EdgeInsets.only(left: 14.0, right: 8),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: Image.network("http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png",
+            child: Image.network(atlasInfoEntity.pic,
                 fit: BoxFit.cover, width: 44, height: 44)),
       ),
       Expanded(
@@ -223,15 +211,15 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 Container(
                     padding: EdgeInsets.only(left: 6.0, right: 6),
                     color: HexColor("#e3fafb"),
-                    child: Text("出块节点", style: TextStyles.textC333S12)),
+                    child: Text(atlasInfoEntity.getNodeType, style: TextStyles.textC333S12)),
               ],
             ),
             Row(
               children: <Widget>[
-                Text("节点地址 1231231231", style: TextStyles.textC999S11),
+                Text(atlasInfoEntity.address, style: TextStyles.textC999S11),
                 InkWell(
                   onTap: () {
-                    Clipboard.setData(ClipboardData(text: "abc"));
+                    Clipboard.setData(ClipboardData(text: atlasInfoEntity.address));
                     UiUtil.toast(S.of(buildContext).copyed);
                   },
                   child: Padding(
@@ -245,7 +233,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 ),
                 Spacer(),
                 Text(
-                  "节点号：111",
+                  "节点号：${atlasInfoEntity.nodeId}",
                   style: TextStyles.textC333S12,
                 ),
               ],
