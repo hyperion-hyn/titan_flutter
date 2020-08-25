@@ -522,11 +522,6 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
             msg: MemoryCache.contractErrorStr(_.message),
             toastLength: Toast.LENGTH_LONG);
 
-        /*if (_.errorCode == -32000) {
-            Fluttertoast.showToast(msg: _.message, toastLength: Toast.LENGTH_LONG);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }*/
       } else {
         Fluttertoast.showToast(msg: S.of(context).transfer_fail);
       }

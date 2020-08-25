@@ -82,10 +82,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
   void getNetworkData() async {
     try {
-      var requestList = await Future.wait([
-        _nodeApi.getContractItem(widget.contractId),
-        _nodeApi.getNodeProviderList()
-      ]);
+      var requestList =
+          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -123,9 +121,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item =
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -152,17 +149,16 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     }
     double inputValue = double.parse(inputText);
     endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager =
-        Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {
         _joinCoinController.value = TextEditingValue(
-          // 设置内容
+            // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection: TextSelection.fromPosition(TextPosition(
-                affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
@@ -192,17 +188,13 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       children: <Widget>[
         Expanded(
           child: SingleChildScrollView(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _nodeWidget(context, contractItem.contract),
-                    SizedBox(height: 8),
-                    getHoldInNum(context, contractItem, _joinCoinFormKey,
-                        _joinCoinController, endProfit, spendManager, false),
-
-                    SizedBox(height: 8),
-                    _tipsWidget(),
-                  ])),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            _nodeWidget(context, contractItem.contract),
+            SizedBox(height: 8),
+            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
+            SizedBox(height: 8),
+            _tipsWidget(),
+          ])),
         ),
         _confirmButtonWidget(),
       ],
@@ -231,29 +223,29 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             _nodeWidget,
             Expanded(
                 child: InkWell(
-                  onTap: (){
-                    if (subTitle.isEmpty) {
-                      return;
-                    }
-                    // todo: test_jison_0604
-                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                    Application.router
-                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                  },
-                  child: RichText(
-                    text:TextSpan(
-                      children: [
-                        TextSpan(
-                          text: subTitle,
-                          style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                        )
-                      ],
-                      text:title,
-                      style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                    ),
-                  ),
-                )),
+              onTap: () {
+                if (subTitle.isEmpty) {
+                  return;
+                }
+                // todo: test_jison_0604
+                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+                Application.router
+                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+              },
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: subTitle,
+                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                    )
+                  ],
+                  text: title,
+                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                ),
+              ),
+            )),
           ],
         ),
       );
@@ -311,15 +303,12 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               title = "总抵押";
               detail = "800,000";
 
-
               break;
-
 
             case 2:
               title = "管理费";
               detail = "20%";
               break;
-
 
             case 3:
               title = "1%";
@@ -341,14 +330,14 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           return Expanded(
             child: Center(
                 child: Column(
-                  children: <Widget>[
-                    Text(detail, style: style),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
-                  ],
-                )),
+              children: <Widget>[
+                Text(detail, style: style),
+                Container(
+                  height: 4,
+                ),
+                Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
+              ],
+            )),
           );
         }).toList(),
       ),
@@ -363,10 +352,11 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
         child: Center(
           child: ClickOvalButton(
             "确定",
-                () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          Map3NodeNormalConfirmPage(actionEvent: Map3NodeActionEvent.DELEGATE,)));
+            () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
+                        actionEvent: Map3NodeActionEvent.DELEGATE,
+                      )));
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -377,11 +367,9 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
     );
   }
 
-
   Widget _nodeOwnerWidget() {
     return Padding(
-      padding:
-      const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
+      padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
           Image.asset(
@@ -397,13 +385,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text.rich(TextSpan(children: [
-                TextSpan(
-                    text: "派大星",
-                    style:
-                    TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                TextSpan(
-                    text: "  编号 PB2020",
-                    style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                TextSpan(text: "派大星", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(text: "  编号 PB2020", style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
                 height: 4,
@@ -418,8 +401,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               Container(
                 color: HexColor("#1FB9C7").withOpacity(0.08),
                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text("第一期",
-                    style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                child: Text("第一期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
               ),
               Container(
                 height: 4,
@@ -430,5 +412,4 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
       ),
     );
   }
-
 }

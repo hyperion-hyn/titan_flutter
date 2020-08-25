@@ -48,10 +48,28 @@ class FormatUtil {
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
-    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    return DateFormat("yyyy.MM.dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
   }
 
-  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+  static String formatTimer(int seconds) {
+    int hour = seconds ~/ 3600;
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTime1(hour) +
+        ":" +
+        formatTime1(minute) +
+        ":" +
+        formatTime1(second);
+  }
+
+  static String formatTime1(int timeNum) {
+    return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
+  }
+
+  static String amountToString(String amount) =>
+      FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
@@ -64,11 +82,15 @@ class FormatUtil {
   }
 
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toString();
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
@@ -174,5 +196,4 @@ class FormatUtil {
     }
     return timeStr;
   }
-
 }

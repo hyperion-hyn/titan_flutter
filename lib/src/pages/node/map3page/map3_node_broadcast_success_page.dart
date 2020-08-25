@@ -41,10 +41,15 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "Map3取消节点";
         break;
 
+      case Map3NodeActionEvent.ADD:
+        action = "Map3节点分裂";
+        break;
+
       default:
         break;
     }
-    action = "已在区块链上网络广播 【${action}的消息】区块链网络需要5-30分钟开采验证";
+    action = "已在区块链上网络广播 【$action】的消息，区块链网络需要约6秒开采验证。";
+    //action = "已在区块链上网络广播 【${action}的消息】区块链网络需要5-30分钟开采验证";
 
     return WillPopScope(
       onWillPop: () async {

@@ -182,6 +182,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
           ),
           _rowWidget("创建7天内不可撤销", top: 0),
           _rowWidget("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押100万即可启动节点"),
+          _rowWidget("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
           _rowWidget("节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看", subTitle: "收益详细介绍"),
           _rowWidget("如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看", subTitle: "扩容详细介绍"),
         ],

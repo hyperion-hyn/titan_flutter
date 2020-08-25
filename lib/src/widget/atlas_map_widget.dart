@@ -25,7 +25,6 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _updateEChartOption();
     _setUpTimer();

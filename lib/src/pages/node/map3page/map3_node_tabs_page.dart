@@ -5,9 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 
-import 'map3_atlas_introduction.dart';
 
 class Map3NodeTabsPage extends StatefulWidget {
   @override

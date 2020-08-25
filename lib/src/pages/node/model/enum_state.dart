@@ -55,7 +55,7 @@ String transactionHistoryAction2String(TransactionHistoryAction action) {
 
 enum AppSource { DEFAULT, TITAN, STARRICH}
 
-enum Map3NodeActionEvent { CREATE, DELEGATE, COLLECT, CANCEL, CANCEL_CONFIRMED}
+enum Map3NodeActionEvent { CREATE, DELEGATE, COLLECT, CANCEL, CANCEL_CONFIRMED, ADD}
 Map3NodeActionEvent enumActionEventFromString(String fruit) {
   return Map3NodeActionEvent.values.firstWhere((f)=> f.toString() == fruit, orElse: () => null);
 }
