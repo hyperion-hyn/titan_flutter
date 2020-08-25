@@ -71,6 +71,12 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   @override
+  void dispose() {
+    widget.loadDataBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -299,11 +305,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           RaisedButton(
             child: Text('atlas detail'),
             onPressed: () async {
-              Navigator.push(
+              Application.router.navigateTo(
+                  context,
+                  Routes.atlas_detail_page);
+              /*Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => AtlasDetailPage(
-                      )));
+                      )));*/
             },
           ),
           RaisedButton(

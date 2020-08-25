@@ -4,6 +4,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
@@ -218,6 +219,12 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
 var map3NodePreCreateContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodePreCreateContractPage(params['contractId']?.first);
+});
+
+//atlas
+var atlasDetailHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return AtlasDetailPage();
 });
 
 //var demoRouteHandler = Handler(

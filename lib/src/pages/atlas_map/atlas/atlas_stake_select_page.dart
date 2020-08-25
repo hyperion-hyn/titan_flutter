@@ -5,7 +5,12 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasStakeSelectPage extends StatefulWidget {
   AtlasStakeSelectPage();
@@ -17,13 +22,22 @@ class AtlasStakeSelectPage extends StatefulWidget {
 }
 
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
+  AtlasApi _atlasApi = AtlasApi();
   var infoTitleList = ["总抵押", "签名率", "最近回报率", "总抵押11", "签名率11", "最近回报率11"];
   var infoContentList = ["12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
   bool isShowAll = false;
+  AtlasInfoEntity _atlasInfoEntity;
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   @override
   void initState() {
+    _refreshData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -43,64 +57,75 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
             ),
           ),
         ),
-        body: Column(
-          children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
+        body: _pageWidget(context));
+  }
+
+  Widget _pageWidget(BuildContext context) {
+    if (_currentState != null) {
+      return AllPageStateContainer(_currentState, () {
+        _refreshData();
+      });
+    }
+
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 18,
+                ),
+                stakeHeaderInfo(context,_atlasInfoEntity),
+                Padding(
+                  padding: const EdgeInsets.only(top: 19.0, bottom: 7),
+                  child: Divider(
+                    color: DefaultColors.colorf2f2f2,
+                    height: 0.5,
+                    indent: 14,
+                    endIndent: 14,
+                  ),
+                ),
+                stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
+                  setState(() {
+                    isShowAll = true;
+                  });
+                }),
+                _map3NodeSelection(),
+                Container(
+                  height: 10,
+                  color: HexColor("#F2F2F2"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 14.0, right: 14, top: 18),
                   child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 18,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text("注意事项", style: TextStyles.textC333S16),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: Text("· 抵押后下一个纪元当选才会产生收益"),
+                      ),
+                      Text("· 撤销抵押需要等下一个纪元才能生效，期间可以继续享受出块收益回报"),
+                    ],
                   ),
-                  stakeHeaderInfo(context),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 19.0, bottom: 7),
-                    child: Divider(
-                      color: DefaultColors.colorf2f2f2,
-                      height: 0.5,
-                      indent: 14,
-                      endIndent: 14,
-                    ),
-                  ),
-                  stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
-                    setState(() {
-                      isShowAll = true;
-                    });
-                  }),
-                  _map3NodeSelection(),
-                  Container(
-                    height: 10,
-                    color: HexColor("#F2F2F2"),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 14.0, right: 14, top: 18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text("注意事项", style: TextStyles.textC333S16),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10, bottom: 10),
-                          child: Text("· 抵押后下一个纪元当选才会产生收益"),
-                        ),
-                        Text("· 撤销抵押需要等下一个纪元才能生效，期间可以继续享受出块收益回报"),
-                      ],
-                    ),
-                  ),
-                ],
-              )),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 36.0, top: 22),
-              child: ClickOvalButton(
-                S.of(context).confirm,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+          child: ClickOvalButton(
+            S.of(context).confirm,
                 () {},
-                width: 300,
-                height: 46,
-              ),
-            )
-          ],
-        ));
+            width: 300,
+            height: 46,
+          ),
+        )
+      ],
+    );
   }
 
   _map3NodeSelection() {
@@ -162,9 +187,20 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
     );
   }
 
+  _refreshData() async {
+    _atlasInfoEntity = await _atlasApi.postAtlasInfo("","");
+    _atlasInfoEntity.creator = "派大星11";
+
+    Future.delayed(Duration(milliseconds: 2000),(){
+      if (mounted) setState(() {
+        _currentState = null;
+      });
+    });
+  }
+
 }
 
-Widget stakeHeaderInfo(BuildContext buildContext) {
+Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
   return Row(
     children: <Widget>[
       Padding(
@@ -180,7 +216,7 @@ Widget stakeHeaderInfo(BuildContext buildContext) {
             Row(
               children: <Widget>[
                 Text(
-                  "派大星",
+                  atlasInfoEntity.creator,
                   style: TextStyles.textC333S16,
                 ),
                 Spacer(),

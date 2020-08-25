@@ -48,6 +48,10 @@ class Routes {
   static const String map3node_share_page = '/map3node/share_page';
   static const String map3node_pre_create_contract_page = '/map3node/pre_create_contract_page';
 
+  //atlas
+  static const String atlas_detail_page = '/atlas/atlas_detail';
+
+
   static String cachedEntryRouteName;
 
   static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
@@ -128,6 +132,10 @@ class Routes {
     router.define(map3node_share_page, handler: map3NodeShareHandler, transitionType: pushNewPageTransitionType);
     router.define(map3node_pre_create_contract_page,
         handler: map3NodePreCreateContractHandler, transitionType: pushNewPageTransitionType);
+
+    //atlas
+    router.define(atlas_detail_page,
+        handler: atlasDetailHandler, transitionType: pushNewPageTransitionType);
   }
 
   static TransitionType get pushNewPageTransitionType {

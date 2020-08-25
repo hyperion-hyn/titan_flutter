@@ -58,7 +58,6 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -119,6 +118,7 @@ class _WalletPageState extends BaseState<WalletPage>
       return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
+          showLoadingWidget: false,
           onLoadData: () {
             listLoadingData();
           },

@@ -1,13 +1,20 @@
+import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shake_animation_widget/shake_animation_widget.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/animation/shake_animation_controller.dart';
+import 'package:titan/src/widget/animation/shake_animation_type.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasDetailPage extends StatefulWidget {
   AtlasDetailPage();
@@ -18,7 +25,8 @@ class AtlasDetailPage extends StatefulWidget {
   }
 }
 
-class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderStateMixin {
+class AtlasDetailPageState extends State<AtlasDetailPage> {
+  AtlasApi _atlasApi = AtlasApi();
   List<String> _dataList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;
@@ -27,44 +35,26 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
   var infoTitleList = ["最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度"];
   var infoContentList = ["12930903", "98%", "11.23%1", "欢迎参加我的合约，前10名参与者返10%管理费。", "98%", "11.23%", "11.23%"];
 
-  AnimationController _textAnimController;
-  Animation<Offset> leftAnimation;
-  Animation<Offset> rightAnimation;
   ShakeAnimationController _shakeAnimationController;
+  ShakeAnimationController _leftTextAnimationController;
+  ShakeAnimationController _rightTextAnimationController;
+  AtlasInfoEntity _atlasInfoEntity;
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   @override
   void initState() {
     super.initState();
-
-    _loadDataBloc.add(LoadingEvent());
-    _textAnimController = AnimationController(duration: Duration(milliseconds: 2000), vsync: this);
-    _textAnimController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        _textAnimController.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        _textAnimController.forward();
-      }
-    });
-    leftAnimation = Tween(begin: Offset(0, 0), end: Offset(0, 0.3)).animate(_textAnimController);
-    rightAnimation = Tween(begin: Offset(0, 0), end: Offset(0, -0.3)).animate(_textAnimController);
-    _textAnimController.forward();
-
+    _refreshData();
     _shakeAnimationController = new ShakeAnimationController();
-    _repeatShakeAnimation();
-  }
-
-  _repeatShakeAnimation()async{
-    await Future.delayed(Duration(milliseconds: 2000),(){
-      _shakeAnimationController.start(shakeCount: 1);
-      _repeatShakeAnimation();
-    });
+    _leftTextAnimationController = new ShakeAnimationController();
+    _rightTextAnimationController = new ShakeAnimationController();
   }
 
   @override
   void dispose() {
-    _textAnimController.stop();
-    _textAnimController.dispose();
     _shakeAnimationController.stop();
+    _leftTextAnimationController.stop();
+    _rightTextAnimationController.stop();
     _loadDataBloc.close();
     super.dispose();
   }
@@ -74,83 +64,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: "节点详情"),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: LoadDataContainer(
-                bloc: _loadDataBloc,
-                onLoadData: () async {
-                  await _refreshData();
-                },
-                onRefresh: () async {
-                  await _refreshData();
-                },
-                onLoadingMore: () {
-                  _loadMoreData();
-                  setState(() {});
-                },
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    _headerWidget(),
-                    _moneyWidget(),
-                    _nodeInfoWidget(),
-                    SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                      return _joinMap3Item(index);
-                    }, childCount: _dataList.length + 1))
-                  ],
-                )),
-          ),
-          Container(
-            decoration: BoxDecoration(color: Colors.white, boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                offset: Offset(0.0, 0.1), //阴影xy轴偏移量
-                blurRadius: 1, //阴影模糊程度
-              )
-            ]),
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                ClickOvalButton(
-                  "撤销抵押",
-                  () {},
-                  width: 90,
-                  height: 32,
-                  fontSize: 14,
-                  textColor: DefaultColors.color999,
-                  btnColor: Colors.transparent,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 14),
-                  child: ClickOvalButton(
-                    "提取奖励",
-                    () {},
-                    width: 90,
-                    height: 32,
-                    fontSize: 14,
-                  ),
-                ),
-                ClickOvalButton(
-                  "抵押",
-                  () {},
-                  width: 90,
-                  height: 32,
-                  fontSize: 14,
-                ),
-                SizedBox(
-                  width: 15,
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+      body: _pageWidget(context),
     );
   }
 
   Future _refreshData() async {
+    _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
+    _atlasInfoEntity.creator = "啦啦啦";
+
     _currentPage = 1;
     _dataList.clear();
 
@@ -165,8 +86,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
       _dataList.addAll(networkList);
     }
 
+    if (mounted) setState(() {
+      _currentState = null;
+    });
     _loadDataBloc.add(RefreshSuccessEvent());
-    if (mounted) setState(() {});
   }
 
   _loadMoreData() async {
@@ -184,6 +107,44 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
     }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
+  }
+
+  Widget _pageWidget(BuildContext context) {
+    if (_currentState != null) {
+      return AllPageStateContainer(_currentState, () {
+        _refreshData();
+      });
+    }
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: LoadDataContainer(
+              bloc: _loadDataBloc,
+              onLoadData: () async {
+                await _refreshData();
+              },
+              onRefresh: () async {
+                await _refreshData();
+              },
+              onLoadingMore: () {
+                _loadMoreData();
+                setState(() {});
+              },
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  _headerWidget(),
+                  _moneyWidget(),
+                  _nodeInfoWidget(),
+                  SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                    return _joinMap3Item(index);
+                  }, childCount: _dataList.length + 1))
+                ],
+              )),
+        ),
+        _bottomBtnBar()
+      ],
+    );
   }
 
   _headerWidget() {
@@ -212,7 +173,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
           ),
           Padding(
             padding: const EdgeInsets.only(top: 18, bottom: 20),
-            child: stakeHeaderInfo(context),
+            child: stakeHeaderInfo(context, _atlasInfoEntity),
           ),
         ],
       ),
@@ -257,24 +218,30 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(top: 20.0),
-                    child: SlideTransition(
-                      position: leftAnimation,
-                      child: Text(
-                        "点击领取",
-                        style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
-                      ),
-                    ),
+                    child: CustomShakeAnimationWidget(
+                        shakeAnimationController: _leftTextAnimationController,
+                        shakeAnimationType: ShakeAnimationType.TopBottomShake,
+                        shakeRange: 0.3,
+                        child: Text(
+                          "点击领取",
+                          style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                        )),
                   ),
-                  ShakeAnimationWidget(
+                  CustomShakeAnimationWidget(
                       shakeAnimationController: _shakeAnimationController,
                       shakeAnimationType: ShakeAnimationType.RoateShake,
-                      isForward: false,
                       child: Image.asset("res/drawable/ic_atlas_get_money_wallet.png", width: 86, fit: BoxFit.contain)),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 20.0),
-                    child: SlideTransition(
-                      position: rightAnimation,
-                        child: Text("+22,023", style: TextStyle(fontSize: 16, color: HexColor("#C68A16")))),
+                    child: CustomShakeAnimationWidget(
+                        shakeAnimationController: _rightTextAnimationController,
+                        shakeAnimationType: ShakeAnimationType.TopBottomShake,
+                        shakeRange: 0.3,
+                        delayForward: 1000,
+                        child: Text(
+                          "+22,023",
+                          style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                        )),
                   ),
                 ],
               ),
@@ -562,6 +529,53 @@ class AtlasDetailPageState extends State<AtlasDetailPage> with TickerProviderSta
           endIndent: 24,
         )
       ],
+    );
+  }
+
+  _bottomBtnBar() {
+    return Container(
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          offset: Offset(0.0, 0.1), //阴影xy轴偏移量
+          blurRadius: 1, //阴影模糊程度
+        )
+      ]),
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          ClickOvalButton(
+            "撤销抵押",
+            () {},
+            width: 90,
+            height: 32,
+            fontSize: 14,
+            textColor: DefaultColors.color999,
+            btnColor: Colors.transparent,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 10.0, right: 14),
+            child: ClickOvalButton(
+              "提取奖励",
+              () {},
+              width: 90,
+              height: 32,
+              fontSize: 14,
+            ),
+          ),
+          ClickOvalButton(
+            "抵押",
+            () {},
+            width: 90,
+            height: 32,
+            fontSize: 14,
+          ),
+          SizedBox(
+            width: 15,
+          )
+        ],
+      ),
     );
   }
 }

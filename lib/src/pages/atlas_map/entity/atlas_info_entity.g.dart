@@ -22,7 +22,7 @@ AtlasInfoEntity _$AtlasInfoEntityFromJson(Map<String, dynamic> json) {
     json['home'] as String,
     json['id'] as int,
     NodeJoinType.values[json['join'] as int],
-    json['max_staking'] as int,
+    json['max_staking'] as String,
     (json['my_map3'] as List)
         ?.map((e) => e == null
             ? null

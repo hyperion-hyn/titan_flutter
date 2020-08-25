@@ -53,7 +53,7 @@ part 'atlas_info_entity.g.dart';
   NodeJoinType join;
 
   @JsonKey(name: 'max_staking')
-  int maxStaking;
+  String maxStaking;
 
   // 区别于node的地方： 1
   @JsonKey(name: 'my_map3')
