@@ -44,8 +44,11 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
       child: Column(
         children: <Widget>[
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              separatorBuilder: (context, index) {
+                return SizedBox(width: 16,);
+              },
               itemBuilder: (context, index) {
                 var i = index;
                 var delegator = widget.contractList[i];
@@ -62,7 +65,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
 
   Widget _item(ContractNodeItem item, {int index = 0}) {
     // todo: test_jison_0813
-    var width = (MediaQuery.of(context).size.width - 3.0 * 18) / 3.0;
+    var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = "大道至简";
     var nodeId = "节点号 ${item.id + 1}";
 
@@ -73,7 +76,6 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
       child: Container(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         width: width,
-        margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
