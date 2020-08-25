@@ -96,6 +96,18 @@ part 'atlas_info_entity.g.dart';
 
   Map<String, dynamic> toJson() => _$AtlasInfoEntityToJson(this);
 
+  String get getNodeType{
+    switch(type){
+      case AtlasNodeType.CANDIDATE :
+        return "候选节点";
+      case AtlasNodeType.SETTLE :
+        return "清算节点";
+      case AtlasNodeType.BLOCK :
+        return "出块节点";
+    }
+    return "";
+  }
+
 }
 
 

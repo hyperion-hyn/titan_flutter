@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
@@ -40,6 +41,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   ShakeAnimationController _rightTextAnimationController;
   AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  var _selectedMap3NodeValue = 0;
 
   @override
   void initState() {
@@ -71,6 +73,23 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   Future _refreshData() async {
     _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
     _atlasInfoEntity.creator = "啦啦啦";
+    _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
+    _atlasInfoEntity.nodeId = "PB20202";
+    _atlasInfoEntity.address = "0xsfasdasgadgas";
+    _atlasInfoEntity.reward = "111111";
+    _atlasInfoEntity.staking = "20000000";
+    _atlasInfoEntity.signRate = "98%";
+    _atlasInfoEntity.rewardRate = "98%";
+    _atlasInfoEntity.myMap3 = [Map3NodeEntity.temp("fasdfa", "112222", "2100000"),Map3NodeEntity.temp("fasdfa2222", "1122221", "21000001")];
+
+    infoContentList.clear();
+    infoContentList.add("${_atlasInfoEntity.maxStaking}");
+    infoContentList.add("${_atlasInfoEntity.home}");
+    infoContentList.add("${_atlasInfoEntity.contact}");
+    infoContentList.add("${_atlasInfoEntity.describe}");
+    infoContentList.add("${_atlasInfoEntity.feeRate}");
+    infoContentList.add("${_atlasInfoEntity.feeRateMax}");
+    infoContentList.add("${_atlasInfoEntity.feeRateTrim}");
 
     _currentPage = 1;
     _dataList.clear();
@@ -181,29 +200,19 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   _moneyWidget() {
-    var _selectedMap3NodeValue = 'map3Node1';
     List<DropdownMenuItem> _map3NodeItems = List();
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 'map3Node1',
-        child: Text(
-          'Lance的Map3节点-1',
-          style: TextStyles.textC333S14,
-        ),
-      ),
-    );
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 'map3Node2',
-        child: Text(
-          'Lance的Map3节点-2',
-          style: TextStyle(
-            fontSize: 14,
+    if(_atlasInfoEntity.myMap3.length > 0) {
+      _map3NodeItems.addAll(List.generate(_atlasInfoEntity.myMap3.length, (index) {
+        Map3NodeEntity map3nodeEntity = _atlasInfoEntity.myMap3[index];
+        return DropdownMenuItem(
+          value: index,
+          child: Text(
+            '${map3nodeEntity.name}的Map3节点',
+            style: TextStyles.textC333S14,
           ),
-        ),
-      ),
-    );
-
+        );
+      }).toList());
+    }
     return SliverToBoxAdapter(
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -239,7 +248,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         shakeRange: 0.3,
                         delayForward: 1000,
                         child: Text(
-                          "+22,023",
+                          "+22065",
                           style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                         )),
                   ),
@@ -254,7 +263,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(text: "已产生奖励  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
-                        text: "20,230",
+                        text: "${_atlasInfoEntity.reward}",
                         style: TextStyles.textC333S12,
                       ),
                     ])),
@@ -274,7 +283,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("20,209,000", style: TextStyles.textC333S14),
+                                Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -306,7 +315,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("98%", style: TextStyles.textC333S14),
+                                Text("${_atlasInfoEntity.signRate}", style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -322,7 +331,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("11.2%", style: TextStyles.textC333S14),
+                                Text("${_atlasInfoEntity.rewardRate}", style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -382,11 +391,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("20,209,000", style: TextStyles.textC333S16),
+                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}", style: TextStyles.textC333S16),
                                 SizedBox(
                                   height: 5,
                                 ),
-                                Text("总抵押", style: TextStyles.textC999S12)
+                                Text("Map3已抵押", style: TextStyles.textC999S12)
                               ],
                             ),
                           ),
@@ -398,11 +407,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("20,209,000", style: TextStyles.textC333S16),
+                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].reward}", style: TextStyles.textC333S16),
                                 SizedBox(
                                   height: 5,
                                 ),
-                                Text("管理节点抵押", style: TextStyles.textC999S12)
+                                Text("奖励", style: TextStyles.textC999S12)
                               ],
                             ),
                           ),
