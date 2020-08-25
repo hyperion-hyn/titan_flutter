@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_recreate_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -34,14 +35,17 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends State<Map3NodePage>
-    with AutomaticKeepAliveClientMixin {
+class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   NodeApi _nodeApi = NodeApi();
   NodePageEntityVo _nodePageEntityVo = MemoryCache.nodePageData;
-  int currentPage = 0;
-  List<ContractNodeItem> activeContractList = [];
-  List<ContractNodeItem> contractList = [];
+  int _currentPage = 0;
+  List<ContractNodeItem> _lastActiveList = [];
+  List<ContractNodeItem> _myList = [];
+  List<ContractNodeItem> _pendingList = [];
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -56,18 +60,27 @@ class _Map3NodeState extends State<Map3NodePage>
     // todo: test_jison_0813
     for (int i = 0; i < 3; i++) {
       ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
-      contractList.add(item);
+      _myList.add(item);
+      _lastActiveList.add(item);
+      _pendingList.add(item);
     }
   }
 
   @override
+  void dispose() {
+    loadDataBloc.close();
+    super.dispose();
+  }
+
+  @override
+  // ignore: must_call_super
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xfff5f5f5),
+      //color: Colors.white,
+      //color: Color(0xfff5f5f5),
       //color: Color(0xffFDFAFF),
       child: LoadDataContainer(
-        enablePullUp: (_nodePageEntityVo.contractNodeList != null &&
-            _nodePageEntityVo.contractNodeList.length > 0),
+        //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
         onLoadData: () async {
           getNetworkData();
@@ -80,28 +93,13 @@ class _Map3NodeState extends State<Map3NodePage>
         },
         child: CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(child: _map3HeadItem()),
-            SliverToBoxAdapter(
-              child: NodeActiveContractWidget(
-                loadDataBloc,
-                title: "我的节点",
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: NodeActiveContractWidget(loadDataBloc),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.only(
-                      left: 15.0, right: 15, top: 17, bottom: 11),
-                  child: Text(S.of(context).wait_start_node_contract,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: HexColor("#000000")))),
-            ),
+            _map3HeadWidget(),
+            _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty),
+            _myNodeListWidget(),
+            _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
+            _lastActiveWidget(),
+            _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
-            _emptyListWidget(),
           ],
         ),
       ),
@@ -110,11 +108,11 @@ class _Map3NodeState extends State<Map3NodePage>
 
   void getNetworkData() async {
     try {
-      currentPage = 0;
+      _currentPage = 0;
       _nodePageEntityVo = MemoryCache.nodePageData;
 
       NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
-      activeContractList = await _nodeApi.getContractActiveList();
+      //_lastActiveList = await _nodeApi.getContractActiveList();
 
       NodePageEntityVo cloneData = netData.clone();
       cloneData.nodeHeadEntity?.lastRecordMessage = null;
@@ -137,11 +135,18 @@ class _Map3NodeState extends State<Map3NodePage>
     }
   }
 
+  void getContractActiveList() async {
+    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(0);
+
+    if (mounted) {
+      _lastActiveList = tempMemberList;
+    }
+  }
+
   void getMoreNetworkData() async {
     try {
-      currentPage = currentPage + 1;
-      List<ContractNodeItem> contractNodeList =
-          await _nodeApi.getContractPendingList(currentPage);
+      _currentPage = _currentPage + 1;
+      List<ContractNodeItem> contractNodeList = await _nodeApi.getContractPendingList(_currentPage);
       if (contractNodeList.length > 0) {
         _nodePageEntityVo.contractNodeList.addAll(contractNodeList);
         loadDataBloc.add(LoadingMoreSuccessEvent());
@@ -154,52 +159,112 @@ class _Map3NodeState extends State<Map3NodePage>
     }
   }
 
+  Widget _myNodeListWidget() {
+    if (_myList.isEmpty) {
+      return _emptyListWidget(title: "没有我的节点，您可以创建节点");
+    }
+
+    return SliverToBoxAdapter(
+      child: NodeActiveContractWidget(
+        contractList: _myList,
+      ),
+    );
+  }
+
+  Widget _lastActiveWidget() {
+    if (_lastActiveList.isEmpty) {
+      return _emptyListWidget(title: "没有最新启动的节点，您可以创建节点");
+    }
+
+    return SliverToBoxAdapter(
+      child: NodeActiveContractWidget(
+        contractList: _lastActiveList,
+      ),
+    );
+  }
+
   Widget _pendingListWidget() {
+    if (_pendingList.isEmpty) {
+      return _emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
+    }
+
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
           padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
-          child: getMap3NodeWaitItem(context, contractList[index]));
-    }, childCount: contractList.length));
+          child: getMap3NodeWaitItem(context, _pendingList[index]));
+    }, childCount: _pendingList.length));
   }
 
-  Widget _emptyListWidget() {
-    // empty
-    if (_nodePageEntityVo.contractNodeList.isEmpty) {
-      return SliverToBoxAdapter(
+  Widget _sectionTitleWidget({String title, bool hasMore = true}) {
+    return SliverToBoxAdapter(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyMap3ContractPage(MyContractModel(title, MyContractType.active))));
+        },
         child: Container(
-          padding: const EdgeInsets.only(top: 48.0),
+          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
           color: Colors.white,
-          child: Column(
+          child: Row(
             children: <Widget>[
-              Image.asset(
-                'res/drawable/ic_empty_contract.png',
-                width: 120,
-                height: 120,
-              ),
-              SizedBox(height: 8),
-              SizedBox(
+              Expanded(
+                  child: Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+              )),
+              Visibility(
+                visible: hasMore,
                 child: Text(
-                  S.of(context).no_pengding_node_contract_hint,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                  textAlign: TextAlign.center,
+                  "查看更多",
+                  style: TextStyles.textC999S12,
                 ),
-                width: 160,
               ),
-              SizedBox(height: 64),
+              Visibility(
+                visible: hasMore,
+                child: Icon(
+                  Icons.chevron_right,
+                  color: DefaultColors.color999,
+                ),
+              ),
             ],
           ),
         ),
-      );
-    }
-
-    return SliverToBoxAdapter(
-      child: Container(),
+      ),
     );
   }
 
-  _nodesMap() {
+  Widget _emptyListWidget({String title = ""}) {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            Image.asset(
+              'res/drawable/ic_empty_contract.png',
+              width: 120,
+              height: 120,
+            ),
+            SizedBox(height: 8),
+            SizedBox(
+              child: Text(
+                title,
+                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                textAlign: TextAlign.center,
+              ),
+              width: 160,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _nodesMapWidget() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Material(
@@ -225,8 +290,8 @@ class _Map3NodeState extends State<Map3NodePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      sprintf(S.of(context).earth_outpace_server_node,
-                          [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
+                      sprintf(
+                          S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -249,134 +314,109 @@ class _Map3NodeState extends State<Map3NodePage>
     );
   }
 
-  Widget _map3HeadItem() {
+  Widget _map3HeadWidget() {
     if (_nodePageEntityVo.nodeHeadEntity == null || _nodePageEntityVo == null) {
-      return Container();
+      return SliverToBoxAdapter(child: Container());
     }
-    return Container(
-      //color: Color(0xfff4f4f4),
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          _nodesMap(),
-          Container(
-            color: Colors.white24,
-            margin:
-                const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text("${_nodePageEntityVo.nodeHeadEntity.node.name}",
-//                          "${_nodePageEntityVo.nodeHeadEntity.node.name}（V${_nodePageEntityVo.nodeHeadEntity.node.version}）",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: DefaultColors.colorcc000000)),
-                      Spacer(),
-                      InkWell(
-                        onTap: () {
-                          // todo: test_jison_0604
-                          String webUrl = FluroConvertUtils.fluroCnParamsEncode(
-                              "http://baidu.com");
-                          String webTitle =
-                              FluroConvertUtils.fluroCnParamsEncode(
-                                  "如何新开Map3节点");
-                          Application.router.navigateTo(
-                              context,
-                              Routes.toolspage_webview_page +
-                                  '?initUrl=$webUrl&title=$webTitle');
-                        },
-                        child: Text("开通教程",
+
+    var title = "${_nodePageEntityVo.nodeHeadEntity.node.name}";
+    var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
+    var guideTitle = "开通教程";
+    return SliverToBoxAdapter(
+      child: Container(
+        //color: Color(0xfff4f4f4),
+        color: Colors.white,
+        child: Column(
+          children: <Widget>[
+            _nodesMapWidget(),
+            Container(
+              color: Colors.white24,
+              margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(title,
                             style: TextStyle(
-                              fontSize: 12,
-                              color: DefaultColors.color66000000,
-                              /*decoration:
-                                              TextDecoration.underline*/
-                            )),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 6),
-                        child: ClipRRect(
-                          child: Image.asset(
-                              "res/drawable/ic_map3_node_item_2.png",
-                              width: 80,
-                              height: 80,
-                              fit: BoxFit.cover),
-                          borderRadius: BorderRadius.circular(4.0),
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Flexible(
-                        child: Text(
-                            "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。",
-                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
+                        Spacer(),
+                        InkWell(
+                          onTap: _pushWebViewAction,
+                          child: Text(guideTitle,
+                              style: TextStyle(
                                 fontSize: 12,
-                                height: 1.7,
-                                color: DefaultColors.color99000000)),
-                      )
-                    ],
+                                color: DefaultColors.color66000000,
+                              )),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: ClickOvalButton(S.of(context).create_contract, () {
-                    _pushContractListAction();
-                  }),
-                ),
-              ],
-            ),
-          )
-        ],
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 6),
+                          child: ClipRRect(
+                            child: Image.asset("res/drawable/ic_map3_node_item_2.png",
+                                width: 80, height: 80, fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Flexible(
+                          child: Text(desc,
+                              style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: ClickOvalButton(S.of(context).create_contract, () {
+                      _pushCreateContractAction();
+                    }),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  Future _pushContractListAction() async {
+  void _pushWebViewAction() {
+    // todo: test_jison_0604
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
+    Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
 
-    AtlasApi _api = AtlasApi();
-    /*TestPostEntity entity = TestPostEntity(
-      "address",
-      "pub",
-      1,
-      "v1"
-    );
-    _api.postTest(entity);
-    */
-    //_api.postMap3Info("address", "nodeId");
-    var list = await _api.postMap3NodeList("address");
-    //CommitteeInfoEntity committeeInfoEntity = await _api.postAtlasOverviewData();
-    print("[Map3] --> push, length:${list.length}");
-
+  Future _pushCreateContractAction() async {
+    // 0.检查是否创建了HYN钱包
     var walletList = await WalletUtil.scanWallets();
+
     if (walletList.length == 0) {
-      Application.router.navigateTo(
-          context,
-          Routes.map3node_create_wallet +
-              "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(context,
+          Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
-      await Application.router.navigateTo(context,
-          Routes.map3node_pre_create_contract_page + "?contractId=${1}");
+      // 1.push预创建
+      await Application.router.navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${1}");
     }
 
-    //await Application.router.navigateTo(context, Routes.map3node_product_list + '?entryRouteName=$currentRouteName');
+    // 2.创建成功回调的处理
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
     // 记得清理
     if (result != null && result is Map) {
       var item = result["result"];
       if (item is ContractNodeItem) {
+        // 3.push合约详情
         _pushContractDetail(item);
       }
 
@@ -385,24 +425,11 @@ class _Map3NodeState extends State<Map3NodePage>
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-    Application.router.navigateTo(
-        context,
-        Routes.map3node_contract_detail_page +
-            "?contractId=${contractNodeItem.id}");
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
   }
-
-  @override
-  void dispose() {
-    loadDataBloc.close();
-    super.dispose();
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
-Widget getMap3NodeWaitItem(
-    BuildContext context, ContractNodeItem contractNodeItem) {
+Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
 
   var state = contractNodeItem.stateValue;
@@ -415,18 +442,14 @@ Widget getMap3NodeWaitItem(
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).left +
-          FormatUtil.timeStringSimple(
-              context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
       dateDesc = S.of(context).active + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left +
-          FormatUtil.timeStringSimple(
-              context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
       dateDesc = S.of(context).expired + dateDesc;
       break;
 
@@ -448,26 +471,42 @@ Widget getMap3NodeWaitItem(
       break;
   }
 
+  var nodeName = "天道酬勤唐唐";
+  var nodeAddress = "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 6)}";
+  var nodeIdPre = "节点号";
+  var nodeId = " ${contractNodeItem.contractCode ?? "PB2020"}";
+  var feeRatePre = "管理费：";
+  var feeRate = contractNodeItem.announcement ?? "10%";
+  var descPre = "描   述：";
+  var desc = contractNodeItem.announcement ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
+  var remainDelegation = "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation ?? "10000"))}";
+  var date = "2020/12/12 12:12";
+  var times = "第一期";
+
   return InkWell(
     onTap: () async {
 
-      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> Map3NodeRecreateContractPage("1")));
+//      if (index == 0) {
+//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+//      } else if (index == 1) {
+//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
+//      } else if (index == 2) {
+//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
+//      } else {
+//      }
 
-      return;
+//      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeRecreateContractPage("1")));
+//
+//      return;
 
       var walletList = await WalletUtil.scanWallets();
       if (walletList.length == 0) {
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_create_wallet +
-                "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+        Application.router.navigateTo(context,
+            Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
       } else {
-        var entryRouteName =
-            Uri.encodeComponent(Routes.map3node_contract_detail_page);
+        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
         Application.router.navigateTo(
-            context,
-            Routes.map3node_join_contract_page +
-                "?entryRouteName=$entryRouteName&contractId=${1}");
+            context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
       }
     },
     child: Container(
@@ -502,18 +541,13 @@ Widget getMap3NodeWaitItem(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text.rich(TextSpan(children: [
-                      TextSpan(
-                          text: "天道酬勤唐唐",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16)),
+                      TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                       TextSpan(text: "", style: TextStyles.textC333S14bold),
                     ])),
                     Container(
                       height: 4,
                     ),
-                    Text(
-                        "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 6)}",
-                        style: TextStyles.textC9b9b9bS12),
+                    Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
                   ],
                 ),
                 Spacer(),
@@ -522,17 +556,13 @@ Widget getMap3NodeWaitItem(
                   children: <Widget>[
                     RichText(
                       text: TextSpan(
-                          text: "节点号",
+                          text: nodeIdPre,
                           style: TextStyle(
                             color: HexColor("#999999"),
                             fontSize: 12,
                           ),
                           children: [
-                            TextSpan(
-                                text:
-                                    " ${contractNodeItem.contractCode ?? "PB2020"}",
-                                style: TextStyle(
-                                    fontSize: 13, color: HexColor("#333333")))
+                            TextSpan(text: nodeId, style: TextStyle(fontSize: 13, color: HexColor("#333333")))
                           ]),
                     ),
                     Container(
@@ -541,9 +571,7 @@ Widget getMap3NodeWaitItem(
                     Container(
                       color: HexColor("#1FB9C7").withOpacity(0.08),
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Text("第一期",
-                          style: TextStyle(
-                              fontSize: 12, color: HexColor("#5C4304"))),
+                      child: Text(times, style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                     ),
                   ],
                 )
@@ -555,11 +583,11 @@ Widget getMap3NodeWaitItem(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "管理费：",
+                    feeRatePre,
                     style: TextStyle(fontSize: 10, color: HexColor("#999999")),
                   ),
                   Text(
-                    contractNodeItem.announcement ?? "10%",
+                    feeRate,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 11, color: HexColor("#333333")),
@@ -573,17 +601,15 @@ Widget getMap3NodeWaitItem(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "描   述：",
+                    descPre,
                     style: TextStyle(fontSize: 10, color: HexColor("#999999")),
                   ),
                   Flexible(
                     child: Text(
-                      contractNodeItem.announcement ??
-                          "大家快来参与我的节点吧，收益高高，收益真的很高，",
+                      desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 11, color: HexColor("#333333")),
+                      style: TextStyle(fontSize: 11, color: HexColor("#333333")),
                     ),
                   ),
                 ],
@@ -597,49 +623,32 @@ Widget getMap3NodeWaitItem(
               children: <Widget>[
                 isNotFull
                     ? RichText(
-                        text: TextSpan(
-                            text: S.of(context).remain,
-                            style: TextStyles.textC9b9b9bS12,
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text:
-                                      "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation ?? "10000"))}",
-                                  style: TextStyles.textC7c5b00S12),
-                              TextSpan(
-                                  text: "HYN",
-                                  style: TextStyles.textC9b9b9bS12),
-                            ]),
+                        text:
+                            TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                          TextSpan(text: remainDelegation, style: TextStyles.textC7c5b00S12),
+                          TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
+                        ]),
                       )
                     : RichText(
-                        text: TextSpan(
-                            text: fullDesc,
-                            style: TextStyles.textC9b9b9bS12,
-                            children: <TextSpan>[]),
+                        text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
                       ),
                 Spacer(),
                 Text(
-                  "2020/12/12 12:12",
+                  date,
                   style: TextStyle(fontSize: 12, color: HexColor("#9B9B9B")),
                 ),
                 Visibility(
                   visible: false,
                   child: SizedBox(
                     height: 30,
-//                width: 80,
                     child: FlatButton(
                       color: HexColor("#FF15B2D2"),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       onPressed: () {
                         Application.router.navigateTo(
-                            context,
-                            Routes.map3node_contract_detail_page +
-                                "?contractId=${contractNodeItem.id}");
+                            context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                       },
-                      child: Text(
-                          isPending
-                              ? S.of(context).check_join
-                              : S.of(context).detail,
+                      child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
                           style: TextStyle(fontSize: 13, color: Colors.white)),
                       //style: TextStyles.textC906b00S13),
                     ),

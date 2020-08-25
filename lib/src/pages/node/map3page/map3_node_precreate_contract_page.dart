@@ -338,7 +338,6 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                         child: Text(" (HYN) ",
                             style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
                       ),
-//                      Text(S.of(context).n_day(nodeItem.duration.toString()), style: TextStyles.textC99000000S13)
                     ],
                   ),
                 ),
