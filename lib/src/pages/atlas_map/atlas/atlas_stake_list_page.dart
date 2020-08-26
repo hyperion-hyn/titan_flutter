@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
@@ -23,7 +24,7 @@ class AtlasStakeListPage extends StatefulWidget {
 }
 
 class AtlasStakeListPageState extends State<AtlasStakeListPage> {
-  List<String> _dataList = List();
+  List<Map3InfoEntity> _dataList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
@@ -115,6 +116,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
         ),
         SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
+              Map3InfoEntity map3InfoEntity =_dataList[index];
               return Column(
                 children: <Widget>[
                   SizedBox(height: 17,),
@@ -126,25 +128,25 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                         Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: ClipOval(
-                              child: Image.network("http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png",
+                              child: Image.network(map3InfoEntity.home,
                                   fit: BoxFit.cover, width: 44, height: 44)),
                         ),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text("Moo",style: TextStyles.textC000S14),
+                              Text(map3InfoEntity.name,style: TextStyles.textC000S14),
                               Padding(
                                 padding: const EdgeInsets.only(top: 2.0, bottom: 2),
-                                child: Text("03fklsdflksm",style: TextStyles.textC999S12),
+                                child: Text(map3InfoEntity.address,style: TextStyles.textC999S12),
                               ),
-                              Text("预期年化：10.0%",style: TextStyles.textC333S12),
+                              Text("预期年化：${map3InfoEntity.rewardRate}",style: TextStyles.textC333S12),
                             ],
                           ),
                         ),
                         Column(
                           children: <Widget>[
-                            Text("20,000",style: TextStyles.textC333S14),
+                            Text("${map3InfoEntity.staking}",style: TextStyles.textC333S14),
                             SizedBox(height: 13,),
                             ClickOvalButton(
                               "抵押",
@@ -171,7 +173,15 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
     _currentPage = 1;
     _dataList.clear();
 
-    var networkList;
+    _dataList = await _atlasApi.postAtlasMap3NodeList(widget._atlasInfoEntity.nodeId,page: _currentPage);
+    _dataList.forEach((element) {
+      element.name = "haha";
+      element.address = "121112121";
+      element.rewardRate = "11%";
+      element.staking = "2313123";
+      element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
+    });
+    /*var networkList;
     await Future.delayed(Duration(milliseconds: 1000), () {
       networkList = List.generate(10, (index) {
         return index.toString();
@@ -180,7 +190,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
 
     if (networkList != null) {
       _dataList.addAll(networkList);
-    }
+    }*/
 
     _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
@@ -189,17 +199,15 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
   _loadMoreData() async {
     _currentPage++;
 
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
+    var _netDataList = await _atlasApi.postAtlasMap3NodeList(widget._atlasInfoEntity.nodeId,page: _currentPage);
 
-    if (networkList != null) {
-      _dataList.addAll(networkList);
+
+    if (_netDataList != null) {
+      _dataList.addAll(_netDataList);
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+    }else{
+      _loadDataBloc.add(LoadMoreEmptyEvent());
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }
