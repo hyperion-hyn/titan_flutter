@@ -25,7 +25,8 @@ class NodeJoinMemberWidget extends StatefulWidget {
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl, {this.isShowInviteItem = true, this.loadDataBloc});
+  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl,
+      {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,16 +43,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   @override
   void initState() {
     super.initState();
-
-    if (widget.loadDataBloc != null) {
-      widget.loadDataBloc.listen((state){
-        if (state is RefreshSuccessState) {
-          getJoinMemberData();
-        }
-      });
-    } else {
-      getJoinMemberData();
-    }
   }
 
   @override
@@ -74,7 +65,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberData() async {
     _currentPage = 0;
     List<ContractDelegatorItem> tempMemberList =
-    await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+        await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -83,6 +74,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
           memberList = [];
         }
         memberList.addAll(tempMemberList);
+        loadDataBloc.add(RefreshSuccessEvent());
       });
     }
   }
@@ -91,7 +83,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     try {
       _currentPage++;
       List<ContractDelegatorItem> tempMemberList =
-      await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+          await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -119,7 +111,8 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               child: Row(
                 children: <Widget>[
                   Expanded(
-                      child: Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                      child:
+                          Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -142,7 +135,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   bloc: loadDataBloc,
                   enablePullDown: false,
                   hasFootView: false,
-                  //onLoadData: getJoinMemberData,
+                  onLoadData: getJoinMemberData,
                   onLoadingMore: () {
                     getJoinMemberMoreData();
                   },
@@ -150,10 +143,10 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     itemBuilder: (context, index) {
                       var i = index;
-                      var delegatorItem = memberList[i];
-                      return _item(delegatorItem, i == 0);
+                      var model = memberList[i];
+                      return _item(model, i == 0);
                     },
-                    itemCount: widget.isShowInviteItem ? memberList.length : memberList.length,
+                    itemCount: memberList.length,
                     scrollDirection: Axis.horizontal,
                   )),
             ),
@@ -168,8 +161,8 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     if (item.userName.isNotEmpty) {
       showName = item.userName.characters.first;
     }
-     return InkWell(
-      onTap: ()=> _pushTransactionDetailAction(item),
+    return InkWell(
+      onTap: () => _pushTransactionDetailAction(item),
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         child: SizedBox(
@@ -195,10 +188,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-//                      height: 50,
-//                      width: 50,
-                        child: walletHeaderWidget(showName, isShowShape: false, address: item.userAddress)
-                        ,
+                        child: walletHeaderWidget(showName, isShowShape: false, address: item.userAddress),
                       ),
                       SizedBox(
                         height: 8,
@@ -210,9 +200,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
-//                    SizedBox(
-//                      height: 4,
-//                    ),
                       Text("${FormatUtil.stringFormatNum(item.amountDelegation)}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
@@ -238,10 +225,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-
   void _pushTransactionDetailAction(ContractDelegatorItem item) {
-    var url = EtherscanApi.getAddressDetailUrl(item.userAddress,
-        SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+    var url = EtherscanApi.getAddressDetailUrl(
+        item.userAddress, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
     if (url != null) {
       /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
       String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
@@ -252,10 +238,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
-
 }

@@ -8,6 +8,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
@@ -226,6 +227,11 @@ var map3NodePreCreateContractHandler = Handler(handlerFunc: (context, params) {
 });
 
 //atlas
+var atlasMyNodeHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return AtlasMyNodePage();
+});
+
 var atlasCreateNodeHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return AtlasCreateNodePage();

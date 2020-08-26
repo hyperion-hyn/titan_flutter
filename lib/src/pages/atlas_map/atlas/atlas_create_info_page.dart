@@ -231,7 +231,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
         () {
           Application.router.navigateTo(
             context,
-            Routes.atlas_create_node_confirm +
+            Routes.atlas_create_node_confirm_page +
                 '?createAtlasPayload=${FluroConvertUtils.object2string(widget._createAtlasPayload)}',
           );
         },

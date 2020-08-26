@@ -266,7 +266,7 @@ class _AtlasNodeCreateConfirmPageState
   _broadcastSuccess() {
     Application.router.navigateTo(
         context,
-        Routes.atlas_broadcast_success +
+        Routes.atlas_broadcast_success_page +
             "?actionEvent=${AtlasNodeActionEvent.CREATE}");
   }
 }
