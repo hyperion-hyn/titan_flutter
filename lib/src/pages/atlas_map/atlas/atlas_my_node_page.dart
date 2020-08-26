@@ -47,7 +47,7 @@ class _AtlasMyNodePageState extends State<AtlasMyNodePage>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: BaseAppBar(baseTitle: '我的节点'),
+        appBar: BaseAppBar(baseTitle: '我的Atlas节点'),
         body: Scaffold(
           appBar: new PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
