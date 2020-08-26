@@ -750,7 +750,7 @@ class HomePanelState extends State<HomePanel> {
     bool isChinaMainland =
         SettingInheritedModel.of(context, aspect: SettingAspect.area)
             .areaModel
-            .isChinaMainland;
+            ?.isChinaMainland??true;
     List<String> typeOfNearBys = [
       "restaurant",
       "lodging",

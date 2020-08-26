@@ -331,7 +331,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                                       hint: detail,
                                       keyboardType: keyboardType,
                                     )));
-                            if (text.isNotEmpty) {
+                            if (text?.isNotEmpty??false) {
                               setState(() {
                                 _detailList[index] = text;
                               });
