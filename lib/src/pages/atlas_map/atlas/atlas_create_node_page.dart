@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -640,6 +643,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               });
             },
             controller: _feeTextController,
+            isDense: false,
           ),
           SizedBox(
             height: 16,
@@ -680,6 +684,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               });
             },
             controller: _maxFeeTextController,
+            isDense: false,
           ),
           SizedBox(
             height: 16,
@@ -720,6 +725,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               });
             },
             controller: _feeExtentTextController,
+            isDense: false,
           ),
           SizedBox(
             height: 36,
@@ -751,7 +757,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          Text('设置bls key'),
+          Text('bls key'),
           SizedBox(
             height: 16,
           ),
@@ -762,13 +768,14 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               });
             },
             controller: _blsKeyTextController,
+            isDense: false,
           ),
           SizedBox(
             height: 16,
           ),
           Row(
             children: <Widget>[
-              Text('设置bls签名'),
+              Text('bls签名'),
               SizedBox(
                 width: 4,
               ),
@@ -791,6 +798,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               });
             },
             controller: _blsSignTextController,
+            isDense: false,
           ),
           SizedBox(
             height: 36,
@@ -807,10 +815,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     } else if (_currentStep == Step.fee) {
       _currentStep = Step.bls;
     } else if (_currentStep == Step.bls) {
-      Navigator.push(
+      Application.router.navigateTo(
         context,
-        MaterialPageRoute(
-            builder: (context) => AtlasCreateInfoPage(_createAtlasPayLoad)),
+        Routes.atlas_create_node_info +
+            '?createAtlasPayload=${FluroConvertUtils.object2string(_createAtlasPayLoad)}',
       );
     }
     setState(() {});

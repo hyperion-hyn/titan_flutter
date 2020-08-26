@@ -80,6 +80,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       //color: Color(0xfff5f5f5),
       //color: Color(0xffFDFAFF),
       child: LoadDataContainer(
+        enablePullUp: _pendingList.isNotEmpty,
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
         onLoadData: () async {

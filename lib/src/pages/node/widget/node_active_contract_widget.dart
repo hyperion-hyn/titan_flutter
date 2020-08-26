@@ -47,12 +47,14 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               separatorBuilder: (context, index) {
-                return SizedBox(width: 16,);
+                return SizedBox(
+                  width: 16,
+                );
               },
               itemBuilder: (context, index) {
                 var i = index;
-                var delegator = widget.contractList[i];
-                return _item(delegator, index: index);
+                var item = widget.contractList[i];
+                return _item(item, index: index);
               },
               itemCount: widget.contractList.length > 3 ? 3 : widget.contractList.length,
               scrollDirection: Axis.horizontal,
