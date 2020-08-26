@@ -57,14 +57,14 @@ class FormatUtil {
     int hour = seconds ~/ 3600;
     int minute = seconds % 3600 ~/ 60;
     int second = seconds % 60;
-    return formatTime1(hour) +
+    return formatTimeNum(hour) +
         ":" +
-        formatTime1(minute) +
+        formatTimeNum(minute) +
         ":" +
-        formatTime1(second);
+        formatTimeNum(second);
   }
 
-  static String formatTime1(int timeNum) {
+  static String formatTimeNum(int timeNum) {
     return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
   }
 
