@@ -274,135 +274,142 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     return Column(
       children: <Widget>[
         Expanded(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: Container(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _headerWidget(),
-                    divider,
-                    getHoldInNum(
-                        context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-                        focusNode: _focusNode),
-                    divider,
-                    _managerSpendWidget(),
-                    divider,
-                  ]),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // hide keyboard when touch other widgets
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: Container(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      _headerWidget(),
+                      divider,
+                      getHoldInNum(
+                          context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+                          focusNode: _focusNode),
+                      divider,
+                      _managerSpendWidget(),
+                      divider,
+                    ]),
+                  ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    var subTitle = index < 3 ? "" : "（选填）";
-                    var title = _titleList[index];
-                    var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
-                    var keyboardType = TextInputType.text;
+                SliverToBoxAdapter(
+                  child: ListView.separated(
+                    itemBuilder: (context, index) {
+                      var subTitle = index < 3 ? "" : "（选填）";
+                      var title = _titleList[index];
+                      var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+                      var keyboardType = TextInputType.text;
 
-                    switch (index) {
-                      case 3:
-                        keyboardType = TextInputType.url;
-                        break;
+                      switch (index) {
+                        case 3:
+                          keyboardType = TextInputType.url;
+                          break;
 
-                      case 4:
-                        keyboardType = TextInputType.phone;
-                        break;
+                        case 4:
+                          keyboardType = TextInputType.phone;
+                          break;
 
-                      case 5:
-                        break;
-                    }
+                        case 5:
+                          break;
+                      }
 
-                    return Material(
-                      child: Ink(
-                        child: InkWell(
-                          splashColor: Colors.blue,
-                          onTap: () async {
-                            if (index == 0) {
-                              EditIconSheet(context, (path) {
-                                setState(() {
-                                  _localImagePath = path;
+                      return Material(
+                        child: Ink(
+                          child: InkWell(
+                            splashColor: Colors.blue,
+                            onTap: () async {
+                              if (index == 0) {
+                                EditIconSheet(context, (path) {
+                                  setState(() {
+                                    _localImagePath = path;
+                                  });
                                 });
-                              });
-                              return;
-                            }
+                                return;
+                              }
 
-                            String text = await Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) => Map3NodePronouncePage(
-                                      title: title,
-                                      hint: detail,
-                                      keyboardType: keyboardType,
-                                    )));
-                            if (text?.isNotEmpty??false) {
-                              setState(() {
-                                _detailList[index] = text;
-                              });
-                              print("[Pronounce] _editText:${_editText}");
-                            }
-                          },
-                          child: Container(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    title,
-                                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 4),
-                                    child: subTitle.isEmpty
-                                        ? Text(
-                                            ' * ',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: HexColor("#FFFF4C3B"),
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        : Text(
-                                            subTitle,
-                                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                                          ),
-                                  ),
-                                  Spacer(),
-                                  _localImagePath.isEmpty
-                                      ? Text(
-                                          detail,
-                                          style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                                        )
-                                      : Image.asset(
-                                          _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                                          width: 36,
-                                          height: 36,
-                                          fit: BoxFit.cover,
-                                        ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 6),
-                                    child: Icon(
-                                      Icons.chevron_right,
-                                      color: DefaultColors.color999,
+                              String text = await Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) => Map3NodePronouncePage(
+                                        title: title,
+                                        hint: detail,
+                                        keyboardType: keyboardType,
+                                      )));
+                              if (text?.isNotEmpty??false) {
+                                setState(() {
+                                  _detailList[index] = text;
+                                });
+                                print("[Pronounce] _editText:${_editText}");
+                              }
+                            },
+                            child: Container(
+                              color: Colors.white,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                      title,
+                                      style: TextStyle(color: HexColor("#333333"), fontSize: 16),
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 4),
+                                      child: subTitle.isEmpty
+                                          ? Text(
+                                              ' * ',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: HexColor("#FFFF4C3B"),
+                                                fontSize: 16,
+                                              ),
+                                            )
+                                          : Text(
+                                              subTitle,
+                                              style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                                            ),
+                                    ),
+                                    Spacer(),
+                                    _localImagePath.isEmpty
+                                        ? Text(
+                                            detail,
+                                            style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                                          )
+                                        : Image.asset(
+                                            _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
+                                            width: 36,
+                                            height: 36,
+                                            fit: BoxFit.cover,
+                                          ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 6),
+                                      child: Icon(
+                                        Icons.chevron_right,
+                                        color: DefaultColors.color999,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      height: 0.5,
-                      color: HexColor("#F2F2F2"),
-                    );
-                  },
-                  itemCount: _detailList.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Divider(
+                        height: 0.5,
+                        color: HexColor("#F2F2F2"),
+                      );
+                    },
+                    itemCount: _detailList.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         _confirmButtonWidget(),

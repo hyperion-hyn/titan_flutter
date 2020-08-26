@@ -192,7 +192,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
-          padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
           child: getMap3NodeWaitItem(context, _pendingList[index]));
     }, childCount: _pendingList.length));
@@ -208,7 +207,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
                   builder: (context) => MyMap3ContractPage(MyContractModel(title, MyContractType.active))));
         },
         child: Container(
-          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
+          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
           color: Colors.white,
           child: Row(
             children: <Widget>[
