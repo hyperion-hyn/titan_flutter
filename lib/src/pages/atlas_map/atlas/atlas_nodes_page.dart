@@ -3,11 +3,12 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -15,6 +16,8 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/timer_text.dart';
+
+import 'atlas_my_node_page.dart';
 
 class AtlasNodesPage extends StatefulWidget {
   AtlasNodesPage();
@@ -52,11 +55,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void initState() {
     super.initState();
+    _loadDataBloc.add(LoadingEvent());
     _ageIconAnimationController = new AnimationController(
       vsync: this,
       duration: Duration(seconds: 10),
     )..repeat();
-    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -133,11 +136,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         child: LoadDataContainer(
             bloc: _loadDataBloc,
             onLoadData: () async {
-              _getData();
+              await _getData();
               await _refreshData();
             },
             onRefresh: () async {
-              _getData();
+              await _getData();
               await _refreshData();
             },
             onLoadingMore: () {
@@ -169,13 +172,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     ],
                   ),
                 ),
-                SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _nodeDetailItem(_atlasNodeList[index]);
-                  },
-                  childCount: _atlasNodeList.length,
-                )),
+                _atlasNodeListView()
               ],
             )),
       ),
@@ -291,7 +288,13 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     var _remainTime = 15;
     var _loopTime = 3600 * 24;
 
-    //var date = DateTime.parse('2020-05-05T20:17:22Z');
+//    var date = DateTime.parse('2020-05-05T20:17:22Z');
+//    var _ageStartTime =
+//        DateTime.parse(_committeeInfo.startTime).millisecondsSinceEpoch;
+//    var _ageEndTime =
+//        DateTime.parse(_committeeInfo.endTime).millisecondsSinceEpoch;
+//
+//    var _remainTimeMilliseconds = _ageEndTime - _ageStartTime;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -445,11 +448,20 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ),
               ),
               Spacer(),
-              Text(
-                '查看更多',
-                style: TextStyle(
-                  color: DefaultColors.color999,
-                  fontSize: 12,
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AtlasMyNodePage(),
+                      ));
+                },
+                child: Text(
+                  '查看更多',
+                  style: TextStyle(
+                    color: DefaultColors.color999,
+                    fontSize: 12,
+                  ),
                 ),
               ),
               Icon(
@@ -460,6 +472,36 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             ],
           ),
         ),
+//        _myAtlasNodeList.isNotEmpty
+//            ? Container(
+//                height: 150,
+//                child: ListView.builder(
+//                    scrollDirection: Axis.horizontal,
+//                    itemCount: 5,
+//                    itemBuilder: (context, index) {
+//                      return _nodeInfoItem(index);
+//                    }),
+//              )
+//            : Container(
+//                height: 150,
+//                child: Center(
+//                  child: Column(
+//                    children: [
+//                      Container(
+//                        width: 50,
+//                        height: 50,
+//                        color: Colors.orange,
+//                      ),
+//                      Text(
+//                        '暂无节点',
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                ),
+//              )
         Container(
           height: 150,
           child: ListView.builder(
@@ -471,6 +513,24 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         )
       ],
     );
+  }
+
+  _atlasNodeListView() {
+    if (_atlasNodeList.isNotEmpty) {
+      return SliverList(
+          delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return _nodeDetailItem(_atlasNodeList[index]);
+        },
+        childCount: _atlasNodeList.length,
+      ));
+    } else {
+      return SliverToBoxAdapter(
+        child: Container(
+          height: 150,
+        ),
+      );
+    }
   }
 
   _nodeInfoItem(int index) {
@@ -745,17 +805,22 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _loadMoreData() async {
-    _currentPage++;
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
-//
-//    if (networkList != null) {
-//      _atlasNodeList.addAll(networkList);
-//    }
+    try {
+      var _nodeList = await _atlasApi.postAtlasNodeList(
+        'address',
+        page: _currentPage + 1,
+        size: _pageSize,
+      );
+
+      _atlasNodeList.addAll(_nodeList);
+
+      ///
+      _currentPage++;
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+    } catch (e) {
+      print('[atlas]: _nodeList: failed');
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+    }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }

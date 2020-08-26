@@ -70,7 +70,6 @@ class Routes {
       '/atlas/atlas_create_node_confirm';
   static const String atlas_broadcast_success =
       '/atlas/atlas_broadcast_success';
-
   static const String atlas_detail_page = '/atlas/atlas_detail';
 
   static String cachedEntryRouteName;

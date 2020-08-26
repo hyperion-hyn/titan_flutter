@@ -101,3 +101,4 @@ AtlasNodeActionEvent atlasActionEventFromString(String fruit) {
   return AtlasNodeActionEvent.values
       .firstWhere((f) => f.toString() == fruit, orElse: () => null);
 }
+
