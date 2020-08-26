@@ -77,7 +77,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
   Future _refreshData() async {
     _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
-    _atlasInfoEntity.creator = "啦啦啦";
+    _atlasInfoEntity.name = "啦啦啦";
     _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
     _atlasInfoEntity.nodeId = "PB20202";
     _atlasInfoEntity.address = "0xsfasdasgadgas";
@@ -86,8 +86,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.signRate = "98%";
     _atlasInfoEntity.rewardRate = "98%";
     _atlasInfoEntity.myMap3 = [
-      Map3NodeEntity("this.address","this.contact","this.createdAt","this.creator","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",),
-      Map3NodeEntity("this.address","this.contact","this.createdAt","this.creator","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",)];
+      Map3NodeEntity("this.address","this.contact","this.createdAt","this.name","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",),
+      Map3NodeEntity("this.address","this.contact","this.createdAt","this.name","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",)];
 
     infoContentList.clear();
     infoContentList.add("${_atlasInfoEntity.maxStaking}");

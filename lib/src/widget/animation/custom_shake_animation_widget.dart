@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/widget/animation/shake_animation_builder.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
 import 'package:titan/src/widget/animation/shake_animation_type.dart';
@@ -51,10 +52,11 @@ class CustomShakeAnimationWidget extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _ShakeAnimationState();
   }
+
 }
 
 class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin,RouteAware {
   ///动画控制器
   AnimationController _animationController;
 
@@ -114,6 +116,18 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
       ///参数二 shakeCount默认为1 执行一次抖动
       widget.shakeAnimationController.setShakeListener(shakeListener);
     }*/
+    /*if (widget.isForward) {
+      ///正向执行
+      _animationController.forward();
+      if (widget.shakeAnimationController != null) {
+        widget.shakeAnimationController.animationRunging = true;
+      }
+    }*/
+
+  }
+
+  @override
+  void didPush() {
     if (widget.isForward) {
       Future.delayed(Duration(milliseconds: widget.delayForward),(){
         ///正向执行
@@ -123,6 +137,28 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
         }
       });
     }
+    super.didPush();
+  }
+
+  @override
+  void didPopNext() {
+    if (widget.isForward) {
+      _animationController.reset();
+      Future.delayed(Duration(milliseconds: widget.delayForward),(){
+        ///正向执行
+        _animationController.forward();
+        if (widget.shakeAnimationController != null) {
+          widget.shakeAnimationController.animationRunging = true;
+        }
+      });
+    }
+    super.didPushNext();
+  }
+
+  @override
+  void didChangeDependencies() {
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+    super.didChangeDependencies();
   }
 
   /// lib/demo/shake/shake_animation_widget.dart
@@ -145,12 +181,21 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
   /// lib/demo/shake/shake_animation_widget.dart
   ///动画执行状态监听
   void statusListener(status) {
+    var first = 0;
     if (status == AnimationStatus.completed) {
       ///无次数限定执行
       if (_shakeTotalCount == 0) {
         ///反向执行完毕后立刻正向执行
         _animationController.reset();
         _animationController.forward();
+        /*if(first == 0) {
+          first++;
+          Future.delayed(Duration(milliseconds: widget.delayForward), () {
+            _animationController.forward();
+          });
+        }else{
+          _animationController.forward();
+        }*/
       } else {
         ///有次数限定执行
         if (_shakeCurrentCount < _shakeTotalCount) {
@@ -172,6 +217,7 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
   /// lib/demo/shake/shake_animation_widget.dart
   @override
   void dispose() {
+    Application.routeObserver.unsubscribe(this);
     ///销毁
     _animationController.dispose();
 

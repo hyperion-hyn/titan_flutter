@@ -28,7 +28,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
   List<String> infoContentList = [];
   bool isShowAll = false;
-  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+//  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  all_page_state.AllPageState _currentState;
   var _selectedMap3NodeValue = 0;
 
   @override
@@ -234,7 +235,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
             Row(
               children: <Widget>[
                 Text(
-                  atlasInfoEntity.creator,
+                  atlasInfoEntity.name,
                   style: TextStyles.textC333S16,
                 ),
                 Spacer(),
@@ -334,59 +335,3 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
     ],
   );
 }
-
-/*
-Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
-  return Column(
-    children: <Widget>[
-      Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                  isShowAll ? infoTitleList.length : 3,
-                      (index) => Container(
-                    height: 38,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 14),
-                    child: Text(
-                      infoTitleList[index],
-                      style: TextStyle(fontSize: 14, color: HexColor("#92979A")),
-                    ),
-                  )).toList(),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                  isShowAll ? infoContentList.length : 3,
-                      (index) => Container(
-                    height: 38,
-                    alignment: Alignment.centerLeft,
-                    child:
-                    Text(infoContentList[index], style: TextStyle(fontSize: 14, color: HexColor("#333333"))),
-                  )).toList(),
-            ),
-          )
-        ],
-      ),
-      if (!isShowAll)
-        InkWell(
-            onTap: () {
-              showAllInfo();
-            },
-            child: Image.asset("res/drawable/ic_close.png")),
-      SizedBox(
-        height: 15,
-      ),
-      Container(
-        height: 10,
-        color: HexColor("#F2F2F2"),
-      ),
-    ],
-  );
-}*/
