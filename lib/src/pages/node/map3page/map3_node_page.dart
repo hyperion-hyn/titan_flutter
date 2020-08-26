@@ -486,20 +486,6 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
 
   return InkWell(
     onTap: () async {
-
-//      if (index == 0) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
-//      } else if (index == 1) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
-//      } else if (index == 2) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
-//      } else {
-//      }
-
-//      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeRecreateContractPage("1")));
-//
-//      return;
-
       var walletList = await WalletUtil.scanWallets();
       if (walletList.length == 0) {
         Application.router.navigateTo(context,
@@ -521,7 +507,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
           ),
         ],
       ),
-      margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
+      margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9, top: 20),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

@@ -7,14 +7,14 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class Map3NodeCancelConfirmPage extends StatefulWidget {
+class Map3NodeExitPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeCancelConfirmState();
+    return _Map3NodeExitState();
   }
 }
 
-class _Map3NodeCancelConfirmState extends State<Map3NodeCancelConfirmPage> {
+class _Map3NodeExitState extends State<Map3NodeExitPage> {
   @override
   void initState() {
     super.initState();

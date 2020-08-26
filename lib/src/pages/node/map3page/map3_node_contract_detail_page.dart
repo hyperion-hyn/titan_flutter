@@ -17,6 +17,9 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_pronounce_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
@@ -30,6 +33,7 @@ import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -609,9 +613,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 15),
-                child: Icon(
-                  Icons.share,
-                  color: Colors.black,
+                child: Image.asset(
+                  "res/drawable/node_share.png",
+                  width: 15,
+                  height: 18,
                 ),
               ),
             )
@@ -705,7 +710,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     );
   }
 
-   Widget _bottomBtnBarWidget() {
+  Widget _bottomBtnBarWidget() {
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -720,7 +725,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         children: <Widget>[
           ClickOvalButton(
             "撤销抵押",
-                () {},
+            () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
+              //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
+            },
             width: 90,
             height: 32,
             fontSize: 14,
@@ -731,7 +739,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
             padding: const EdgeInsets.only(left: 10.0, right: 14),
             child: ClickOvalButton(
               "提取奖励",
-                  () {},
+              () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+              },
               width: 90,
               height: 32,
               fontSize: 14,
@@ -739,7 +749,17 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           ),
           ClickOvalButton(
             "抵押",
-                () {},
+            () async {
+              var walletList = await WalletUtil.scanWallets();
+              if (walletList.length == 0) {
+                Application.router.navigateTo(context,
+                    Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+              } else {
+                var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+                Application.router.navigateTo(
+                    context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
+              }
+            },
             width: 90,
             height: 32,
             fontSize: 14,
@@ -935,7 +955,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 12, right: 14),
+              padding: const EdgeInsets.only(top: 12, bottom: 12),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -946,12 +966,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                         style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                       ),
                       Flexible(
-                        child: Text(
-                          desc,
-                          maxLines: 3,
-                          textAlign: TextAlign.justify,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 16),
+                          child: Text(
+                            desc,
+                            maxLines: 3,
+                            textAlign: TextAlign.justify,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                          ),
                         ),
                       ),
                     ],
@@ -961,30 +984,15 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                     child: InkWell(
                       //color: HexColor("#FF15B2D2"),
                       //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      onTap: () async {
-                        String text = await Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) => Map3NodePronouncePage(
-                                  title: "公告",
-                                  hint: "请输入节点公告",
-                                  keyboardType: TextInputType.text,
-                                )));
-                        if (text.isNotEmpty) {
-                          _pronounceText = text;
-                          print("[Pronounce] _pronounceText:${_pronounceText}");
-                        }
+                      onTap: () {
+
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Image.asset(
-                            "res/drawable/map3_node_edit.png",
-                            width: 12,
-                            height: 12,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text("编辑", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                          Spacer(),
+
+                          Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                         ],
                       ),
                       //style: TextStyles.textC906b00S13),
@@ -1084,18 +1092,14 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
   }
 
   Widget _remortgageWidget() {
-    
-    Widget _item(String title , String detail) {
+    Widget _item(String title, String detail) {
       return Text.rich(TextSpan(children: [
         TextSpan(
-            text: title,
-            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
-        TextSpan(
-            text: detail,
-            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+            text: title, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
+        TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
       ]));
     }
-    
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -1148,14 +1152,16 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
-                              Text("2020/12/12 12:12", style: TextStyle(color:HexColor("#9B9B9B"), fontSize: 12)),
+                              Text("2020/12/12 12:12", style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 12)),
                               Container(
                                 height: 4,
                               ),
                               Container(
                                 color: HexColor("#E3FAFB"),
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                child: Text("出块节点", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 12, color: HexColor("#333333"))),
+                                child: Text("出块节点",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
                               ),
                             ],
                           )
@@ -1234,7 +1240,10 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                       ),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 20, 6),
-                        child: Image.asset("res/drawable/node_server_map.png", fit: BoxFit.cover,),
+                        child: Image.asset(
+                          "res/drawable/node_server_map.png",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),

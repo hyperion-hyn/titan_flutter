@@ -6,7 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_cancel_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/style/titan_sytle.dart';

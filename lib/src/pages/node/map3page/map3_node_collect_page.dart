@@ -46,7 +46,7 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
         ),
         centerTitle: true,
         title: Text(
-          '提币',
+          '提取奖励',
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,

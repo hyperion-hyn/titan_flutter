@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -48,72 +49,70 @@ class _MyContractsState extends State<MyContractsPage> with TickerProviderStateM
       backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
         centerTitle: true,
         title: Text(
           S.of(context).my_contract,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: Container(
-//                padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 8),
-                          width: 200,
-                          child: TabBar(
-                            isScrollable: true,
-                            indicatorColor: Theme.of(context).primaryColor,
-                            indicatorWeight: 5,
-                            controller: _tabController,
-                            labelColor: Theme.of(context).primaryColor,
-                            //labelColor: Color(0xFF252525),
-                            unselectedLabelColor: Colors.grey,
-                            indicatorSize: TabBarIndicatorSize.label,
-                            tabs: _contractTypeModels
-                                .map((MyContractModel model) => Tab(
-                                      child: Text(
-                                        model.name,
-                                        style: TextStyle(fontWeight: FontWeight.bold),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: RefreshConfiguration.copyAncestor(
-                      enableLoadingWhenFailed: true,
-                      context: context,
-                      headerBuilder: () => WaterDropMaterialHeader(
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                      footerTriggerDistance: 30.0,
-                      child: TabBarView(
-                        controller: _tabController,
-                        //physics: NeverScrollableScrollPhysics(),
-                        children: _contractTypeModels.map((model) => MyMap3ContractPage(model)).toList(),
-                      ),
+
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: TabBar(
+                      isScrollable: true,
+                      //indicatorColor: Theme.of(context).primaryColor,
+                      indicatorPadding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                      indicatorColor: HexColor("#228BA1"),
+                      indicatorWeight: 3,
+                      controller: _tabController,
+                      labelColor: Theme.of(context).primaryColor,
+                      unselectedLabelColor: HexColor("#333333"),
+                      indicatorSize: TabBarIndicatorSize.label,
+                      tabs: _contractTypeModels
+                          .map((MyContractModel model) => Tab(
+                                child: Text(
+                                  model.name,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ))
+                          .toList(),
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+            Expanded(
+              child: RefreshConfiguration.copyAncestor(
+                enableLoadingWhenFailed: true,
+                context: context,
+                headerBuilder: () => WaterDropMaterialHeader(
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                footerTriggerDistance: 30.0,
+                child: TabBarView(
+                  controller: _tabController,
+                  //physics: NeverScrollableScrollPhysics(),
+                  children: _contractTypeModels.map((model) => MyMap3ContractPage(model)).toList(),
+                ),
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -172,23 +171,18 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-      color: DefaultColors.colorf5f5f5,
+
+      color: Colors.white,
       child: LoadDataContainer(
         bloc: loadDataBloc,
         onLoadData: _loadData,
         onRefresh: _loadData,
         onLoadingMore: _loadMoreData,
-        child: ListView.separated(
+        child: ListView.builder(
             itemBuilder: (context, index) {
               return getMap3NodeWaitItem(context, _dataArray[index]);
             },
-            separatorBuilder: (context, index) {
-              return Container(
-                height: 8,
-                color: DefaultColors.colorf5f5f5,
-              );
-            },
+
             itemCount: _dataArray.length),
       ),
     );
@@ -203,13 +197,21 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
         centerTitle: true,
         title: Text(
           widget.model.name,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
         ),
       ),
+
+
       body: _pageWidget(context),
     );
   }
@@ -259,6 +261,16 @@ class _MyMap3ContractState extends State<MyMap3ContractPage> {
           dataList = createContractList;
           break;
       }
+      // todo: test_jison_0813
+      if (_dataArray.isEmpty) {
+        for (int i = 0; i < 3; i++) {
+          ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
+          dataList.add(item);
+          dataList.add(item);
+          dataList.add(item);
+        }
+      }
+
 
       if (dataList.length == 0) {
         loadDataBloc.add(LoadEmptyEvent());
