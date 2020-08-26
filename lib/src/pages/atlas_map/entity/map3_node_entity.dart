@@ -72,8 +72,6 @@ part 'map3_node_entity.g.dart';
 
   Map3NodeEntity(this.address,this.contact,this.createdAt,this.creator,this.describe,this.endTime,this.feeRate,this.home,this.id,this.name,this.nodeId,this.parentNodeId,this.pic,this.provider,this.region,this.reward,this.rewardRate,this.staking,this.startTime,this.status,this.updatedAt,);
 
-  Map3NodeEntity.temp(this.name,this.reward,this.staking);
-
   factory Map3NodeEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3NodeEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3NodeEntityToJson(this);

@@ -308,41 +308,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Application.router.navigateTo(
                   context,
                   Routes.atlas_detail_page);
-              /*Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AtlasDetailPage(
-                      )));*/
-            },
-          ),
-          RaisedButton(
-            child: Text('atlas stake'),
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AtlasStakeSelectPage(
-                      )));
-            },
-          ),
-          RaisedButton(
-            child: Text('atlas look over'),
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AtlasLookOverPage(
-                      )));
-            },
-          ),
-          RaisedButton(
-            child: Text('atlas stake list'),
-            onPressed: () async {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AtlasStakeListPage(
-                      )));
             },
           ),
           RaisedButton(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -10,7 +11,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasLookOverPage extends StatefulWidget {
-  AtlasLookOverPage();
+
+  final AtlasInfoEntity _atlasInfoEntity;
+  AtlasLookOverPage(this._atlasInfoEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -19,10 +22,9 @@ class AtlasLookOverPage extends StatefulWidget {
 }
 
 class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
-  var infoTitleList = ["总抵押", "签名率", "最近回报率", "总抵押11", "签名率11", "最近回报率11"];
-  var infoContentList = ["总抵押", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
+  var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
+  List<String> infoContentList = [];
   bool isShowAll = false;
-  AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
@@ -71,7 +73,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                   SizedBox(
                     height: 18,
                   ),
-                  stakeHeaderInfo(context,_atlasInfoEntity),
+                  stakeHeaderInfo(context,widget._atlasInfoEntity),
                   Padding(
                     padding: const EdgeInsets.only(top: 19.0, bottom: 7),
                     child: Divider(
@@ -101,7 +103,14 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                           padding: const EdgeInsets.only(top: 20, bottom: 10),
                           child: Text("2、抵押一个已经抵押到Atlas节点的Map3节点，这样也能享受到Atlas区块出块的奖励", style: TextStyles.textC333S12),
                         ),
-                        Text("查看当前Atlas的Map3抵押节点", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12)),
+                        InkWell(
+                            onTap: (){
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AtlasStakeListPage(widget._atlasInfoEntity)));
+                            },
+                            child: Text("查看当前Atlas的Map3抵押节点", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12))),
                       ],
                     ),
                   ),
@@ -124,8 +133,20 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
   }
 
   _refreshData() async {
-    _atlasInfoEntity = await _atlasApi.postAtlasInfo("","");
-    _atlasInfoEntity.creator = "派大星11";
+    var atlasInfo = widget._atlasInfoEntity;
+    infoContentList = [
+      "${atlasInfo.staking}",
+      "${atlasInfo.signRate}",
+      "${atlasInfo.rewardRate}",
+      "${atlasInfo.maxStaking}",
+      "${atlasInfo.home}",
+      "${atlasInfo.contact}",
+      "${atlasInfo.describe}",
+      "${atlasInfo.feeRate}",
+      "${atlasInfo.feeRateMax}",
+      "${atlasInfo.feeRateTrim}",
+      "${atlasInfo.blsKey}",
+      "${atlasInfo.blsSign}"];
 
     Future.delayed(Duration(milliseconds: 2000),(){
       if (mounted) setState(() {

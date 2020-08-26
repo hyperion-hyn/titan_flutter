@@ -12,7 +12,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasStakeListPage extends StatefulWidget {
-  AtlasStakeListPage();
+
+  final AtlasInfoEntity _atlasInfoEntity;
+  AtlasStakeListPage(this._atlasInfoEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -23,7 +25,6 @@ class AtlasStakeListPage extends StatefulWidget {
 class AtlasStakeListPageState extends State<AtlasStakeListPage> {
   List<String> _dataList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
@@ -76,7 +77,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
   }
 
   Widget _pageWidget(BuildContext context) {
-    if(_atlasInfoEntity == null){
+    if(widget._atlasInfoEntity == null){
       return Container();
     }
     return CustomScrollView(
@@ -86,7 +87,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 18.0, bottom: 20),
-                child: stakeHeaderInfo(context,_atlasInfoEntity),
+                child: stakeHeaderInfo(context,widget._atlasInfoEntity),
               ),
               Container(
                 height: 10,
@@ -167,9 +168,6 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
   }
 
   _refreshData() async {
-    _atlasInfoEntity = await _atlasApi.postAtlasInfo("","");
-    _atlasInfoEntity.creator = "派大星555";
-
     _currentPage = 1;
     _dataList.clear();
 
