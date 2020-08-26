@@ -105,7 +105,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                     ),
                     Spacer(),
                     Text(
-                      "共12个节点",
+                      "共${_dataList.length}个节点",
                       style: TextStyles.textC999S12,
                     )
                   ],
@@ -200,7 +200,6 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
     _currentPage++;
 
     var _netDataList = await _atlasApi.postAtlasMap3NodeList(widget._atlasInfoEntity.nodeId,page: _currentPage);
-
 
     if (_netDataList != null) {
       _dataList.addAll(_netDataList);

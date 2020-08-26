@@ -56,7 +56,7 @@ class CustomShakeAnimationWidget extends StatefulWidget {
 }
 
 class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
-    with SingleTickerProviderStateMixin,RouteAware {
+    with SingleTickerProviderStateMixin,RouteAware,WidgetsBindingObserver {
   ///动画控制器
   AnimationController _animationController;
 
@@ -76,6 +76,7 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     ///抖动的执行次数
     _shakeTotalCount = widget.shakeCount;
@@ -129,6 +130,7 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
   @override
   void didPush() {
     if (widget.isForward) {
+      _animationController.reset();
       Future.delayed(Duration(milliseconds: widget.delayForward),(){
         ///正向执行
         _animationController.forward();
@@ -138,6 +140,25 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
       });
     }
     super.didPush();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (widget.isForward) {
+          _animationController.reset();
+          Future.delayed(Duration(milliseconds: widget.delayForward),(){
+            ///正向执行
+            _animationController.forward();
+            if (widget.shakeAnimationController != null) {
+              widget.shakeAnimationController.animationRunging = true;
+            }
+          });
+        }
+        break;
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
@@ -217,6 +238,7 @@ class _ShakeAnimationState extends State<CustomShakeAnimationWidget>
   /// lib/demo/shake/shake_animation_widget.dart
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     Application.routeObserver.unsubscribe(this);
     ///销毁
     _animationController.dispose();

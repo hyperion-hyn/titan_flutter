@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -14,8 +16,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasStakeSelectPage extends StatefulWidget {
-
   final AtlasInfoEntity _atlasInfoEntity;
+
   AtlasStakeSelectPage(this._atlasInfoEntity);
 
   @override
@@ -28,9 +30,11 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
   List<String> infoContentList = [];
   bool isShowAll = false;
+
 //  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   all_page_state.AllPageState _currentState;
   var _selectedMap3NodeValue = 0;
+  AtlasApi _atlasApi = AtlasApi();
 
   @override
   void initState() {
@@ -86,63 +90,19 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
                   height: 10,
                   color: HexColor("#F2F2F2"),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 14.0, right: 14, top: 18),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("注意事项", style: TextStyles.textC333S16),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: Text("· 抵押后下一个纪元当选才会产生收益"),
-                      ),
-                      Text("· 撤销抵押需要等下一个纪元才能生效，期间可以继续享受出块收益回报"),
-                    ],
-                  ),
-                ),
+                _atlasStakeRemindInfo(),
               ],
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 36.0, top: 22),
-          child: ClickOvalButton(
-            S.of(context).confirm,
-            () {},
-            width: 300,
-            height: 46,
-          ),
-        )
+        _bottomBtn()
       ],
     );
   }
 
   _map3NodeSelection() {
-    /*var _selectedMap3NodeValue = 'map3Node1';
     List<DropdownMenuItem> _map3NodeItems = List();
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 'map3Node1',
-        child: Text(
-          'Lance的Map3节点-1',
-          style: TextStyles.textC333S14,
-        ),
-      ),
-    );
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 'map3Node2',
-        child: Text(
-          'Lance的Map3节点-2',
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );*/
-
-    List<DropdownMenuItem> _map3NodeItems = List();
-    if(widget._atlasInfoEntity.myMap3.length > 0) {
+    if (widget._atlasInfoEntity.myMap3.length > 0) {
       _map3NodeItems.addAll(List.generate(widget._atlasInfoEntity.myMap3.length, (index) {
         Map3NodeEntity map3nodeEntity = widget._atlasInfoEntity.myMap3[index];
         return DropdownMenuItem(
@@ -196,27 +156,70 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
     );
   }
 
+  _atlasStakeRemindInfo() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 14.0, right: 14, top: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text("注意事项", style: TextStyles.textC333S16),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            child: Text("· 抵押后下一个纪元当选才会产生收益"),
+          ),
+          Text("· 撤销抵押需要等下一个纪元才能生效，期间可以继续享受出块收益回报"),
+        ],
+      ),
+    );
+  }
+
   _refreshData() async {
     var atlasInfo = widget._atlasInfoEntity;
     infoContentList = [
-        "${atlasInfo.staking}",
-        "${atlasInfo.signRate}",
-        "${atlasInfo.rewardRate}",
-        "${atlasInfo.maxStaking}",
-        "${atlasInfo.home}",
-        "${atlasInfo.contact}",
-        "${atlasInfo.describe}",
-        "${atlasInfo.feeRate}",
-        "${atlasInfo.feeRateMax}",
-        "${atlasInfo.feeRateTrim}",
-        "${atlasInfo.blsKey}",
-        "${atlasInfo.blsSign}"];
+      "${atlasInfo.staking}",
+      "${atlasInfo.signRate}",
+      "${atlasInfo.rewardRate}",
+      "${atlasInfo.maxStaking}",
+      "${atlasInfo.home}",
+      "${atlasInfo.contact}",
+      "${atlasInfo.describe}",
+      "${atlasInfo.feeRate}",
+      "${atlasInfo.feeRateMax}",
+      "${atlasInfo.feeRateTrim}",
+      "${atlasInfo.blsKey}",
+      "${atlasInfo.blsSign}"
+    ];
     Future.delayed(Duration(milliseconds: 2000), () {
       if (mounted)
         setState(() {
           _currentState = null;
         });
     });
+  }
+
+  _bottomBtn() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 36.0, top: 22),
+      child: ClickOvalButton(
+        S.of(context).confirm,
+        () async {
+          var atlasEntity = widget._atlasInfoEntity;
+          var map3Entity = widget._atlasInfoEntity.myMap3[_selectedMap3NodeValue];
+          await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(
+              map3Entity.staking,
+              map3Entity.address,
+              111,
+              111,
+              AtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
+              "1111",
+              "11111",
+              atlasEntity.address,
+              AtlasActionType.JOIN_DELEGATE_ALAS));
+        },
+        width: 300,
+        height: 46,
+      ),
+    );
   }
 }
 
