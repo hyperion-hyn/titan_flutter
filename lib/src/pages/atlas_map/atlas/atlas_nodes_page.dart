@@ -396,7 +396,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 () {
                   Application.router.navigateTo(
                     context,
-                    Routes.atlas_create_node,
+                    Routes.atlas_create_node_page,
                   );
                 },
                 fontSize: 16,
@@ -450,11 +450,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               Spacer(),
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AtlasMyNodePage(),
-                      ));
+                  Application.router.navigateTo(
+                    context,
+                    Routes.atlas_my_node_page,
+                  );
                 },
                 child: Text(
                   '查看更多',

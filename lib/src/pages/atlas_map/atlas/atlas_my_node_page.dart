@@ -77,12 +77,12 @@ class _AtlasMyNodePageState extends State<AtlasMyNodePage>
                       tabs: [
                         Tab(
                           child: Text(
-                            '我参与的',
+                            '我发起的',
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '我发起的',
+                            '我参与的',
                           ),
                         ),
                       ],

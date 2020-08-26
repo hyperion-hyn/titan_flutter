@@ -817,7 +817,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     } else if (_currentStep == Step.bls) {
       Application.router.navigateTo(
         context,
-        Routes.atlas_create_node_info +
+        Routes.atlas_create_node_info_page +
             '?createAtlasPayload=${FluroConvertUtils.object2string(_createAtlasPayLoad)}',
       );
     }

@@ -52,37 +52,37 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: LoadDataContainer(
-        bloc: _loadDataBloc,
-        onLoadData: () {
-          _refreshData();
-        },
-        onRefresh: () {
-          _refreshData();
-        },
-        onLoadingMore: () {
-          _loadMoreData();
-        },
-        child: _pageWidget(context),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
+        child: LoadDataContainer(
+          bloc: _loadDataBloc,
+          onLoadData: () {
+            _refreshData();
+          },
+          onRefresh: () {
+            _refreshData();
+          },
+          onLoadingMore: () {
+            _loadMoreData();
+          },
+          child: _pageWidget(context),
+        ),
       ),
     );
   }
 
   Widget _pageWidget(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return _nodeDetailItem(_atlasNodeList[index]);
-              },
-              childCount: _atlasNodeList.length,
-            ),
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              return _nodeDetailItem(_atlasNodeList[index]);
+            },
+            childCount: _atlasNodeList.length,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
