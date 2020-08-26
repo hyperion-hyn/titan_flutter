@@ -134,47 +134,49 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       body: Container(
         color: Colors.white,
         child: LoadDataContainer(
-            bloc: _loadDataBloc,
-            onLoadData: () async {
-              await _getData();
-              await _refreshData();
-            },
-            onRefresh: () async {
-              await _getData();
-              await _refreshData();
-            },
-            onLoadingMore: () {
-              _loadMoreData();
-            },
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverToBoxAdapter(
-                  child: _atlasInfo(),
-                ),
-                SliverToBoxAdapter(
-                  child: _createNode(),
-                ),
-                SliverToBoxAdapter(
-                  child: _myNodes(),
-                ),
-                SliverToBoxAdapter(
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          '节点列表',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+          bloc: _loadDataBloc,
+          enablePullUp: _atlasNodeList.isNotEmpty,
+          onLoadData: () async {
+            await _getData();
+            await _refreshData();
+          },
+          onRefresh: () async {
+            await _getData();
+            await _refreshData();
+          },
+          onLoadingMore: () {
+            _loadMoreData();
+          },
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: _atlasInfo(),
+              ),
+              SliverToBoxAdapter(
+                child: _createNode(),
+              ),
+              SliverToBoxAdapter(
+                child: _myNodes(),
+              ),
+              SliverToBoxAdapter(
+                child: Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        '节点列表',
+                        style: TextStyle(
+                          fontSize: 16,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _atlasNodeListView()
-              ],
-            )),
+              ),
+              _atlasNodeListView()
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -471,45 +473,22 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             ],
           ),
         ),
-//        _myAtlasNodeList.isNotEmpty
-//            ? Container(
-//                height: 150,
-//                child: ListView.builder(
-//                    scrollDirection: Axis.horizontal,
-//                    itemCount: 5,
-//                    itemBuilder: (context, index) {
-//                      return _nodeInfoItem(index);
-//                    }),
-//              )
-//            : Container(
-//                height: 150,
-//                child: Center(
-//                  child: Column(
-//                    children: [
-//                      Container(
-//                        width: 50,
-//                        height: 50,
-//                        color: Colors.orange,
-//                      ),
-//                      Text(
-//                        '暂无节点',
-//                        style: TextStyle(
-//                          fontSize: 12,
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//              )
-        Container(
-          height: 150,
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return _nodeInfoItem(index);
-              }),
-        )
+        _myAtlasNodeList.isNotEmpty
+            ? Container(
+                height: 150,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return _nodeInfoItem(index);
+                    }),
+              )
+            : Container(
+                height: 150,
+                child: Center(
+                  child: Text('暂无记录'),
+                ),
+              ),
       ],
     );
   }
@@ -526,7 +505,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     } else {
       return SliverToBoxAdapter(
         child: Container(
-          height: 150,
+          height: 200,
+          color: Colors.red,
         ),
       );
     }
@@ -785,19 +765,20 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _refreshData() async {
     _currentPage = 1;
     _atlasNodeList.clear();
-    print('[atlas] _refreshData');
     try {
       var _nodeList = await _atlasApi.postAtlasNodeList(
         'address',
         page: _currentPage,
         size: _pageSize,
       );
-      print('[atlas]: _nodeList: $_nodeList');
       _atlasNodeList.addAll(_nodeList);
+
+      ///
+      _myAtlasNodeList.addAll(_nodeList);
+
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
-      print('[atlas]: _nodeList: failed');
-      _loadDataBloc.add(RefreshSuccessEvent());
+      _loadDataBloc.add(RefreshFailEvent());
     }
 
     if (mounted) setState(() {});
@@ -814,11 +795,15 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       _atlasNodeList.addAll(_nodeList);
 
       ///
+      _myAtlasNodeList.addAll(_nodeList);
+
+      ///
       _currentPage++;
+
+      ///
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
-      print('[atlas]: _nodeList: failed');
-      _loadDataBloc.add(LoadingMoreSuccessEvent());
+      _loadDataBloc.add(LoadMoreFailEvent());
     }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
