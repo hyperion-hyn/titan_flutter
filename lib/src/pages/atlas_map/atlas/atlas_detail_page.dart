@@ -5,10 +5,15 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
@@ -72,7 +77,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
   Future _refreshData() async {
     _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
-    _atlasInfoEntity.creator = "啦啦啦";
+    _atlasInfoEntity.name = "啦啦啦";
     _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
     _atlasInfoEntity.nodeId = "PB20202";
     _atlasInfoEntity.address = "0xsfasdasgadgas";
@@ -80,7 +85,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.staking = "20000000";
     _atlasInfoEntity.signRate = "98%";
     _atlasInfoEntity.rewardRate = "98%";
-    _atlasInfoEntity.myMap3 = [Map3NodeEntity.temp("fasdfa", "112222", "2100000"),Map3NodeEntity.temp("fasdfa2222", "1122221", "21000001")];
+    _atlasInfoEntity.myMap3 = [
+      Map3NodeEntity("this.address","this.contact","this.createdAt","this.name","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",),
+      Map3NodeEntity("this.address","this.contact","this.createdAt","this.name","this.describe","this.endTime",0,"this.home",0,"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region","this.reward","this.rewardRate","this.staking","this.startTime",NodeStatus.CREATE_ING,"this.updatedAt",)];
 
     infoContentList.clear();
     infoContentList.add("${_atlasInfoEntity.maxStaking}");
@@ -281,14 +288,22 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       child: Row(
                         children: <Widget>[
                           Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text("总抵押", style: TextStyles.textC999S10)
-                              ],
+                            child: InkWell(
+                              onTap: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
+                              },
+                              child: Column(
+                                children: <Widget>[
+                                  Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text("总抵押", style: TextStyles.textC999S10)
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -297,14 +312,22 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             color: DefaultColors.colorf2f2f2,
                           ),
                           Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("20,209,000", style: TextStyles.textC333S14),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text("管理节点抵押", style: TextStyles.textC999S10)
-                              ],
+                            child: InkWell(
+                              onTap: (){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
+                              },
+                              child: Column(
+                                children: <Widget>[
+                                  Text("20,209,000", style: TextStyles.textC333S14),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  Text("管理节点抵押", style: TextStyles.textC999S10)
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -575,7 +598,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ),
           ClickOvalButton(
             "抵押",
-            () {},
+            () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
+            },
             width: 90,
             height: 32,
             fontSize: 14,

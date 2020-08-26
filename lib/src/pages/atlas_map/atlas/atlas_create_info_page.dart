@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
@@ -226,11 +229,11 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
       child: ClickOvalButton(
         '提交',
         () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AtlasNodeCreateConfirmPage(),
-              ));
+          Application.router.navigateTo(
+            context,
+            Routes.atlas_create_node_confirm_page +
+                '?createAtlasPayload=${FluroConvertUtils.object2string(widget._createAtlasPayload)}',
+          );
         },
         width: 300,
         height: 46,

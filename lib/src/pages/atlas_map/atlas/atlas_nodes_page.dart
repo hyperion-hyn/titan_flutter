@@ -1,17 +1,23 @@
 import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_create_node_page.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/timer_text.dart';
+
+import 'atlas_my_node_page.dart';
 
 class AtlasNodesPage extends StatefulWidget {
   AtlasNodesPage();
@@ -24,13 +30,24 @@ class AtlasNodesPage extends StatefulWidget {
 
 class AtlasNodesPageState extends State<AtlasNodesPage>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  List<String> _atlasNodeList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
-  int _currentPage = 1;
-  int _pageSize = 30;
+  ///
+  AtlasApi _atlasApi = AtlasApi();
 
-  AnimationController _animationController;
+  AnimationController _ageIconAnimationController;
+
+  CommitteeInfoEntity _committeeInfo = CommitteeInfoEntity.fromJson({});
+
+  List<AtlasInfoEntity> _atlasNodeList = List();
+  List<AtlasInfoEntity> _myAtlasNodeList = List();
+
+  ///load more for [_atlasNodeList]
+  ///
+  int _currentPage = 1;
+  int _pageSize = 10;
+
+  var _atlasNodeCoordinates = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -38,11 +55,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void initState() {
     super.initState();
-    _animationController = new AnimationController(
+    _loadDataBloc.add(LoadingEvent());
+    _ageIconAnimationController = new AnimationController(
       vsync: this,
       duration: Duration(seconds: 10),
     )..repeat();
-    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -51,67 +68,22 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     _loadDataBloc.close();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
-        child: LoadDataContainer(
-            bloc: _loadDataBloc,
-            onLoadData: () async {
-              await _refreshData();
-            },
-            onRefresh: () async {
-              await _refreshData();
-            },
-            onLoadingMore: () {
-              _loadMoreData();
-              setState(() {});
-            },
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverToBoxAdapter(
-                  child: _header(),
-                ),
-                SliverToBoxAdapter(
-                  child: _chainInfo(),
-                ),
-                SliverToBoxAdapter(
-                  child: _createNode(),
-                ),
-                SliverToBoxAdapter(
-                  child: _myNodes(),
-                ),
-                SliverToBoxAdapter(
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          '节点列表',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _nodeDetailItem(index);
-                  },
-                  childCount: _atlasNodeList.length,
-                ))
-              ],
-            )),
-      ),
-    );
+  _getData() async {
+    _getAtlasNodesCoordinates();
+    _getCommitteeInfo();
   }
 
-  _header() {
-    var _atlasNodes = [
+  _getCommitteeInfo() async {
+    try {
+      _committeeInfo = await _atlasApi.postAtlasOverviewData();
+      print('[_getCommitteeInfo]: ${_committeeInfo.startTime}');
+    } catch (e) {
+      print('[_getCommitteeInfo]: $e');
+    }
+  }
+
+  _getAtlasNodesCoordinates() {
+    _atlasNodeCoordinates = [
       {
         "name": "Sydney",
         "value": [151.2002, -33.8591, 4, 4]
@@ -153,26 +125,176 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         "value": [114.109, 22.3964, 9, 9]
       },
     ];
+  }
 
-//    for (var i = 0; i < 77; i++) {
-//      _atlasNodes.add({
-//        "name": "node",
-//        "value": [
-//          Random().nextBool()
-//              ? 0 - Random().nextInt(150)
-//              : Random().nextInt(150),
-//          Random().nextBool()
-//              ? 0 - Random().nextInt(150)
-//              : Random().nextInt(150),
-//          Random().nextBool()
-//              ? 0 - Random().nextInt(150)
-//              : Random().nextInt(150),
-//          Random().nextBool()
-//              ? 0 - Random().nextInt(150)
-//              : Random().nextInt(150),
-//        ]
-//      });
-//    }
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            onLoadData: () async {
+              await _getData();
+              await _refreshData();
+            },
+            onRefresh: () async {
+              await _getData();
+              await _refreshData();
+            },
+            onLoadingMore: () {
+              _loadMoreData();
+            },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: _atlasInfo(),
+                ),
+                SliverToBoxAdapter(
+                  child: _createNode(),
+                ),
+                SliverToBoxAdapter(
+                  child: _myNodes(),
+                ),
+                SliverToBoxAdapter(
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          '节点列表',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                _atlasNodeListView()
+              ],
+            )),
+      ),
+    );
+  }
+
+  _atlasInfo() {
+    return Column(
+      children: <Widget>[
+        _atlasMap(),
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '当前纪元',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      '${_committeeInfo.epoch}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '区块高度',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    InkWell(
+                      child: Text(
+                        '#${_committeeInfo.blockNum}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '当选节点',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      '${_committeeInfo.elected}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '候选节点',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      '${_committeeInfo.candidate}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  _atlasMap() {
+    var _remainTime = 15;
+    var _loopTime = 3600 * 24;
+
+//    var date = DateTime.parse('2020-05-05T20:17:22Z');
+//    var _ageStartTime =
+//        DateTime.parse(_committeeInfo.startTime).millisecondsSinceEpoch;
+//    var _ageEndTime =
+//        DateTime.parse(_committeeInfo.endTime).millisecondsSinceEpoch;
+//
+//    var _remainTimeMilliseconds = _ageEndTime - _ageStartTime;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -191,7 +313,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           height: 162,
           child: Stack(
             children: <Widget>[
-              AtlasMapWidget(_atlasNodes),
+              AtlasMapWidget(_atlasNodeCoordinates),
               Positioned(
                 left: 16,
                 bottom: 32,
@@ -230,10 +352,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       alignment: Alignment.center,
                       children: <Widget>[
                         AnimatedBuilder(
-                          animation: _animationController,
+                          animation: _ageIconAnimationController,
                           builder: (_, child) {
                             return Transform.rotate(
-                              angle: _animationController.value * 2 * 3.14,
+                              angle:
+                                  _ageIconAnimationController.value * 2 * 3.14,
                               child: child,
                             );
                           },
@@ -244,8 +367,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           ),
                         ),
                         TimerTextWidget(
-                          remainTime: 15,
-                          loopTime: 3600 * 24,
+                          remainTime: _remainTime,
+                          loopTime: _loopTime,
                         ),
                       ],
                     )
@@ -255,106 +378,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  _chainInfo() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  '当前纪元',
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Text(
-                  '34',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  '区块高度',
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                InkWell(
-                  child: Text(
-                    '#3414',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                  onTap: () {},
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  '当选节点',
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Text(
-                  '88',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  '候选节点',
-                  style: TextStyle(fontSize: 12),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Text(
-                  '188',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
       ),
     );
   }
@@ -371,11 +394,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               child: ClickOvalButton(
                 '创建Atlas节点',
                 () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AtlasCreateNodePage(),
-                      ));
+                  Application.router.navigateTo(
+                    context,
+                    Routes.atlas_create_node_page,
+                  );
                 },
                 fontSize: 16,
               ),
@@ -426,11 +448,19 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ),
               ),
               Spacer(),
-              Text(
-                '查看更多',
-                style: TextStyle(
-                  color: DefaultColors.color999,
-                  fontSize: 12,
+              InkWell(
+                onTap: () {
+                  Application.router.navigateTo(
+                    context,
+                    Routes.atlas_my_node_page,
+                  );
+                },
+                child: Text(
+                  '查看更多',
+                  style: TextStyle(
+                    color: DefaultColors.color999,
+                    fontSize: 12,
+                  ),
                 ),
               ),
               Icon(
@@ -441,6 +471,36 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             ],
           ),
         ),
+//        _myAtlasNodeList.isNotEmpty
+//            ? Container(
+//                height: 150,
+//                child: ListView.builder(
+//                    scrollDirection: Axis.horizontal,
+//                    itemCount: 5,
+//                    itemBuilder: (context, index) {
+//                      return _nodeInfoItem(index);
+//                    }),
+//              )
+//            : Container(
+//                height: 150,
+//                child: Center(
+//                  child: Column(
+//                    children: [
+//                      Container(
+//                        width: 50,
+//                        height: 50,
+//                        color: Colors.orange,
+//                      ),
+//                      Text(
+//                        '暂无节点',
+//                        style: TextStyle(
+//                          fontSize: 12,
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                ),
+//              )
         Container(
           height: 150,
           child: ListView.builder(
@@ -454,84 +514,109 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     );
   }
 
+  _atlasNodeListView() {
+    if (_atlasNodeList.isNotEmpty) {
+      return SliverList(
+          delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return _nodeDetailItem(_atlasNodeList[index]);
+        },
+        childCount: _atlasNodeList.length,
+      ));
+    } else {
+      return SliverToBoxAdapter(
+        child: Container(
+          height: 150,
+        ),
+      );
+    }
+  }
+
   _nodeInfoItem(int index) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0, bottom: 8.0, left: 16.0),
-      child: Stack(
-        children: <Widget>[
-          Container(
-            width: 105,
-            height: 120,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[200],
-                  blurRadius: 20.0,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Image.asset(
-                  "res/drawable/map3_node_default_avatar.png",
-                  width: 42,
-                  height: 42,
-                  fit: BoxFit.cover,
-                ),
-                SizedBox(
-                  height: 12,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5.0, right: 5),
-                  child: Text("大道至简",
+    return InkWell(
+      onTap: () {
+        Application.router.navigateTo(context, Routes.atlas_detail_page);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 16.0, bottom: 8.0, left: 16.0),
+        child: Stack(
+          children: <Widget>[
+            Container(
+              width: 105,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey[200],
+                    blurRadius: 20.0,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "res/drawable/map3_node_default_avatar.png",
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5.0, right: 5),
+                    child: Text("大道至简",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor("#333333"),
+                          fontWeight: FontWeight.w600,
+                        )),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text('出块节点',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor("#333333"),
-                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                        color: HexColor("#9B9B9B"),
                       )),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text('出块节点',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: HexColor("#9B9B9B"),
-                    )),
-              ],
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            left: 8,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Image.asset(
-                  'res/drawable/ic_atlas_node_rank_bg.png',
-                  width: 20,
-                  height: 20,
-                ),
-                Text(
-                  '${index + 1}',
-                  style: TextStyle(color: Colors.white, fontSize: 11),
-                )
-              ],
-            ),
-          )
-        ],
+            Positioned(
+              left: 8,
+              child: Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    'res/drawable/ic_atlas_node_rank_bg.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                  Text(
+                    '${index + 1}',
+                    style: TextStyle(color: Colors.white, fontSize: 11),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 
-  _nodeDetailItem(int index) {
+  _nodeDetailItem(AtlasInfoEntity _atlasInfo) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: InkWell(
-        onTap: () async {},
+        onTap: () async {
+          Application.router.navigateTo(context, Routes.atlas_detail_page);
+        },
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -565,7 +650,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       children: <Widget>[
                         Text.rich(TextSpan(children: [
                           TextSpan(
-                              text: "天道酬勤唐唐",
+                              text: _atlasInfo.name ?? 'name',
                               style: TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 16)),
                           TextSpan(text: "", style: TextStyles.textC333S14bold),
@@ -580,7 +665,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                               style: TextStyles.textC9b9b9bS12,
                             ),
                             Text(
-                              '${index + 1}',
+                              '${1}',
                               style: TextStyles.textC333S11,
                             ),
                           ],
@@ -594,7 +679,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
-                            "2020/12/12 12:12",
+                            _atlasInfo.createdAt,
                             style: TextStyle(
                                 fontSize: 12, color: HexColor("#9B9B9B")),
                           ),
@@ -606,9 +691,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           color: HexColor("#1FB9C7").withOpacity(0.08),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text('清算节点',
+                          child: Text(_atlasInfo.getNodeType,
                               style: TextStyle(
-                                  fontSize: 12, color: HexColor("#5C4304"))),
+                                fontSize: 12,
+                                color: HexColor("#5C4304"),
+                              )),
                         ),
                       ],
                     )
@@ -629,7 +716,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: '10.84%',
+                                  text: _atlasInfo.rewardRate,
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
@@ -643,7 +730,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: '135,523,535',
+                                  text: _atlasInfo.staking,
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
@@ -663,7 +750,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),
                             TextSpan(
-                                text: '4.09%',
+                                text: _atlasInfo.feeRate,
                                 style: TextStyle(
                                   fontSize: 12,
                                 ))
@@ -677,7 +764,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),
                             TextSpan(
-                                text: '95%',
+                                text: _atlasInfo.signRate,
                                 style: TextStyle(
                                   fontSize: 12,
                                 ))
@@ -698,37 +785,42 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _refreshData() async {
     _currentPage = 1;
     _atlasNodeList.clear();
-
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
-
-    if (networkList != null) {
-      _atlasNodeList.addAll(networkList);
+    print('[atlas] _refreshData');
+    try {
+      var _nodeList = await _atlasApi.postAtlasNodeList(
+        'address',
+        page: _currentPage,
+        size: _pageSize,
+      );
+      print('[atlas]: _nodeList: $_nodeList');
+      _atlasNodeList.addAll(_nodeList);
+      _loadDataBloc.add(RefreshSuccessEvent());
+    } catch (e) {
+      print('[atlas]: _nodeList: failed');
+      _loadDataBloc.add(RefreshSuccessEvent());
     }
 
-    _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
   }
 
   _loadMoreData() async {
-    _currentPage++;
+    try {
+      var _nodeList = await _atlasApi.postAtlasNodeList(
+        'address',
+        page: _currentPage + 1,
+        size: _pageSize,
+      );
 
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
+      _atlasNodeList.addAll(_nodeList);
 
-    if (networkList != null) {
-      _atlasNodeList.addAll(networkList);
+      ///
+      _currentPage++;
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+    } catch (e) {
+      print('[atlas]: _nodeList: failed');
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
     }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }
-

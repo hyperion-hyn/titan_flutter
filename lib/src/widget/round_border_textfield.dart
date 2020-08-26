@@ -18,6 +18,7 @@ class RoundBorderTextField extends StatefulWidget {
   final FocusNode focusNode;
   final String suffixText;
   final TextStyle suffixStyle;
+  final bool isDense;
 
   RoundBorderTextField({
     this.keyboardType,
@@ -30,6 +31,7 @@ class RoundBorderTextField extends StatefulWidget {
     this.suffix,
     this.suffixText,
     this.suffixStyle,
+    this.isDense = true,
   });
 
   @override
@@ -47,7 +49,7 @@ class _RoundBorderTextFieldState extends State<RoundBorderTextField> {
       keyboardType: widget.keyboardType,
       focusNode: widget.focusNode,
       decoration: InputDecoration(
-        isDense: true,
+        isDense: widget.isDense,
         suffixIcon: widget.suffixIcon,
         suffix: widget.suffix,
         suffixText: widget.suffixText,

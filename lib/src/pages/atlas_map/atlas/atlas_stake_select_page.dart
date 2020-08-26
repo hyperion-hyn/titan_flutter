@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -13,7 +14,9 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasStakeSelectPage extends StatefulWidget {
-  AtlasStakeSelectPage();
+
+  final AtlasInfoEntity _atlasInfoEntity;
+  AtlasStakeSelectPage(this._atlasInfoEntity);
 
   @override
   State<StatefulWidget> createState() {
@@ -22,12 +25,12 @@ class AtlasStakeSelectPage extends StatefulWidget {
 }
 
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
-  AtlasApi _atlasApi = AtlasApi();
   var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
-  var infoContentList = ["12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1","12930903", "98%", "11.23%1", "129309031", "98%1", "11.23%1"];
+  List<String> infoContentList = [];
   bool isShowAll = false;
-  AtlasInfoEntity _atlasInfoEntity;
-  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+//  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  all_page_state.AllPageState _currentState;
+  var _selectedMap3NodeValue = 0;
 
   @override
   void initState() {
@@ -43,9 +46,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: BaseAppBar(baseTitle: "抵押Atlas节点"),
-        body: _pageWidget(context));
+        backgroundColor: Colors.white, appBar: BaseAppBar(baseTitle: "抵押Atlas节点"), body: _pageWidget(context));
   }
 
   Widget _pageWidget(BuildContext context) {
@@ -65,7 +66,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
                 SizedBox(
                   height: 18,
                 ),
-                stakeHeaderInfo(context,_atlasInfoEntity),
+                stakeHeaderInfo(context, widget._atlasInfoEntity),
                 Padding(
                   padding: const EdgeInsets.only(top: 19.0, bottom: 7),
                   child: Divider(
@@ -107,7 +108,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
           padding: const EdgeInsets.only(bottom: 36.0, top: 22),
           child: ClickOvalButton(
             S.of(context).confirm,
-                () {},
+            () {},
             width: 300,
             height: 46,
           ),
@@ -117,7 +118,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   }
 
   _map3NodeSelection() {
-    var _selectedMap3NodeValue = 'map3Node1';
+    /*var _selectedMap3NodeValue = 'map3Node1';
     List<DropdownMenuItem> _map3NodeItems = List();
     _map3NodeItems.add(
       DropdownMenuItem(
@@ -138,13 +139,30 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
           ),
         ),
       ),
-    );
+    );*/
+
+    List<DropdownMenuItem> _map3NodeItems = List();
+    if(widget._atlasInfoEntity.myMap3.length > 0) {
+      _map3NodeItems.addAll(List.generate(widget._atlasInfoEntity.myMap3.length, (index) {
+        Map3NodeEntity map3nodeEntity = widget._atlasInfoEntity.myMap3[index];
+        return DropdownMenuItem(
+          value: index,
+          child: Text(
+            '${map3nodeEntity.name}的Map3节点',
+            style: TextStyles.textC333S14,
+          ),
+        );
+      }).toList());
+    }
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('选择需要抵押的Map3节点',style: TextStyles.textC333S14,),
+          Text(
+            '选择需要抵押的Map3节点',
+            style: TextStyles.textC333S14,
+          ),
           SizedBox(
             height: 16,
           ),
@@ -155,11 +173,14 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Padding(
-              padding: const EdgeInsets.only(left: 13,right: 13),
+              padding: const EdgeInsets.only(left: 13, right: 13),
               child: DropdownButtonFormField(
-                icon: Image.asset("res/drawable/ic_arrow_down.png",width: 14,height: 14,),
-                decoration: InputDecoration(
-                    border: InputBorder.none),
+                icon: Image.asset(
+                  "res/drawable/ic_arrow_down.png",
+                  width: 14,
+                  height: 14,
+                ),
+                decoration: InputDecoration(border: InputBorder.none),
                 onChanged: (value) {
                   setState(() {
                     _selectedMap3NodeValue = value;
@@ -176,16 +197,27 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   }
 
   _refreshData() async {
-    _atlasInfoEntity = await _atlasApi.postAtlasInfo("","");
-    _atlasInfoEntity.creator = "派大星11";
-
-    Future.delayed(Duration(milliseconds: 2000),(){
-      if (mounted) setState(() {
-        _currentState = null;
-      });
+    var atlasInfo = widget._atlasInfoEntity;
+    infoContentList = [
+        "${atlasInfo.staking}",
+        "${atlasInfo.signRate}",
+        "${atlasInfo.rewardRate}",
+        "${atlasInfo.maxStaking}",
+        "${atlasInfo.home}",
+        "${atlasInfo.contact}",
+        "${atlasInfo.describe}",
+        "${atlasInfo.feeRate}",
+        "${atlasInfo.feeRateMax}",
+        "${atlasInfo.feeRateTrim}",
+        "${atlasInfo.blsKey}",
+        "${atlasInfo.blsSign}"];
+    Future.delayed(Duration(milliseconds: 2000), () {
+      if (mounted)
+        setState(() {
+          _currentState = null;
+        });
     });
   }
-
 }
 
 Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
@@ -195,8 +227,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
         padding: const EdgeInsets.only(left: 14.0, right: 8),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(4),
-            child: Image.network(atlasInfoEntity.pic,
-                fit: BoxFit.cover, width: 44, height: 44)),
+            child: Image.network(atlasInfoEntity.pic, fit: BoxFit.cover, width: 44, height: 44)),
       ),
       Expanded(
         child: Column(
@@ -204,7 +235,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
             Row(
               children: <Widget>[
                 Text(
-                  atlasInfoEntity.creator,
+                  atlasInfoEntity.name,
                   style: TextStyles.textC333S16,
                 ),
                 Spacer(),
@@ -254,8 +285,8 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
       Column(
         children: List.generate(
             isShowAll ? infoTitleList.length : 3,
-                (index) => Padding(
-                  padding: const EdgeInsets.only(top:9.0,bottom: 9),
+            (index) => Padding(
+                  padding: const EdgeInsets.only(top: 9.0, bottom: 9),
                   child: Row(
                     children: <Widget>[
                       Expanded(
@@ -272,7 +303,10 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
                         flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 14),
-                          child: Text(infoContentList[index], style: TextStyle(fontSize: 14, color: HexColor("#333333")),),
+                          child: Text(
+                            infoContentList[index],
+                            style: TextStyle(fontSize: 14, color: HexColor("#333333")),
+                          ),
                         ),
                       )
                     ],
@@ -286,7 +320,10 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
             },
             child: Padding(
               padding: const EdgeInsets.all(7.0),
-              child: Image.asset("res/drawable/ic_down_triangle.png",width: 10,),
+              child: Image.asset(
+                "res/drawable/ic_down_triangle.png",
+                width: 10,
+              ),
             )),
       SizedBox(
         height: 8,
@@ -298,59 +335,3 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
     ],
   );
 }
-
-/*
-Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
-  return Column(
-    children: <Widget>[
-      Row(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                  isShowAll ? infoTitleList.length : 3,
-                      (index) => Container(
-                    height: 38,
-                    alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 14),
-                    child: Text(
-                      infoTitleList[index],
-                      style: TextStyle(fontSize: 14, color: HexColor("#92979A")),
-                    ),
-                  )).toList(),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                  isShowAll ? infoContentList.length : 3,
-                      (index) => Container(
-                    height: 38,
-                    alignment: Alignment.centerLeft,
-                    child:
-                    Text(infoContentList[index], style: TextStyle(fontSize: 14, color: HexColor("#333333"))),
-                  )).toList(),
-            ),
-          )
-        ],
-      ),
-      if (!isShowAll)
-        InkWell(
-            onTap: () {
-              showAllInfo();
-            },
-            child: Image.asset("res/drawable/ic_close.png")),
-      SizedBox(
-        height: 15,
-      ),
-      Container(
-        height: 10,
-        color: HexColor("#F2F2F2"),
-      ),
-    ],
-  );
-}*/
