@@ -4,12 +4,14 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -39,7 +41,7 @@ class Map3NodeCreatePage extends StatefulWidget {
 
 class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
-  TextEditingController _inputCoinController = new TextEditingController();
+  TextEditingController _rateCoinController = new TextEditingController();
 
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -50,17 +52,19 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   String spendManager = "";
   var selectServerItemValue = 0;
   var selectNodeItemValue = 0;
+  NodeProviderEntity _selectProviderEntity;
   List<DropdownMenuItem> serverList;
   List<DropdownMenuItem> nodeList;
   List<NodeProviderEntity> providerList = [];
   String originInputStr = "";
   int _managerSpendCount = 20;
+  Map3InfoEntity _map3InfoEntity = Map3InfoEntity.onlyId(1);
 
   // 输入框的焦点实例
   FocusNode _focusNode;
 
   // 当前键盘是否是激活状态
-  bool _isKeyboardActived = false;
+  bool _isKeyboardActive = false;
 
   var _editText = "";
   var _localImagePath = "";
@@ -70,9 +74,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
   @override
   void initState() {
-    _joinCoinController.addListener(textChangeListener);
+    _joinCoinController.addListener(_joinTextFieldChangeListener);
+    _rateCoinController.addListener(_rateTextFieldChangeListener);
 
-    _inputCoinController.text = "$_managerSpendCount";
+    _rateCoinController.text = "$_managerSpendCount";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       getCurrentSpend(text);
@@ -104,10 +109,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
     // 失去焦点时候的操作
     setState(() {
-      _isKeyboardActived = false;
+      _isKeyboardActive = false;
     });
 
-    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActived");
+    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActive");
   }
 
   @override
@@ -115,20 +120,20 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     super.didChangeMetrics();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("[Keyboard] 2, isKeyboardActived:$_isKeyboardActived");
+      print("[Keyboard] 2, isKeyboardActived:$_isKeyboardActive");
 
       // 当前是安卓系统并且在焦点聚焦的情况下
       if (Platform.isAndroid && _focusNode.hasFocus) {
-        if (_isKeyboardActived) {
+        if (_isKeyboardActive) {
           setState(() {
-            _isKeyboardActived = false;
+            _isKeyboardActive = false;
           });
           // 使输入框失去焦点
           _focusNode.unfocus();
           return;
         }
         setState(() {
-          _isKeyboardActived = true;
+          _isKeyboardActive = true;
         });
       }
     });
@@ -344,6 +349,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                       if (_managerSpendCount < 1) {
                         _managerSpendCount = 1;
                       }
+
+                      _rateCoinController.text = "$_managerSpendCount";
                     });
                   },
                   child: Padding(
@@ -367,7 +374,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                   width: 60,
                   height: 30,
                   child: RoundBorderTextField(
-                    controller: _inputCoinController,
+                    controller: _rateCoinController,
                     keyboardType: TextInputType.number,
                     validator: (textStr) {
                       if (textStr.length == 0) {
@@ -393,6 +400,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                       if (_managerSpendCount > 20) {
                         _managerSpendCount = 20;
                       }
+                      _rateCoinController.text = "$_managerSpendCount";
                     });
                   },
                   child: Padding(
@@ -448,6 +456,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           var subTitle = index < 3 ? "" : "（选填）";
           var title = _titleList[index];
           var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+          var hint = _hintList[index];
           var keyboardType = TextInputType.text;
 
           switch (index) {
@@ -480,7 +489,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                   String text = await Navigator.of(context).push(MaterialPageRoute(
                       builder: (BuildContext context) => Map3NodePronouncePage(
                             title: title,
-                            hint: detail,
+                            hint: hint,
+                            text: _detailList[index],
                             keyboardType: keyboardType,
                           )));
                   if (text?.isNotEmpty ?? false) {
@@ -517,7 +527,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                                 ),
                         ),
                         Spacer(),
-                        _localImagePath.isEmpty
+                        title != "图标"
                             ? Text(
                                 detail,
                                 style: TextStyle(color: HexColor("#999999"), fontSize: 14),
@@ -557,18 +567,58 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   Widget _confirmButtonWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Visibility(
-      visible: !_isKeyboardActived,
+      visible: !_isKeyboardActive,
       child: Container(
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
         child: ClickOvalButton(
           "创建提交",
           () async {
-            Application.router
-                .navigateTo(context, Routes.map3node_create_confirm_page);
+            if (_localImagePath.isEmpty) {
+              Fluttertoast.showToast(msg: _hintList[0]);
+              return;
+            }
+
+            if (_detailList[1].isEmpty) {
+              Fluttertoast.showToast(msg: _hintList[1]);
+              return;
+            }
+
+            if (_detailList[2].isEmpty) {
+              Fluttertoast.showToast(msg: _hintList[2]);
+              return;
+            }
+
+            for (var index = 0; index < _titleList.length; index++) {
+              var title = _titleList[index];
+              if (title == "图标") {
+                _map3InfoEntity.pic = _localImagePath;
+              } else if (title == "名称") {
+                _map3InfoEntity.name = _detailList[1];
+              } else if (title == "节点号") {
+                _map3InfoEntity.nodeId = _detailList[2];
+              } else if (title == "网址") {
+                _map3InfoEntity.home = _detailList[3];
+              } else if (title == "安全联系") {
+                _map3InfoEntity.contact = _detailList[4];
+              } else if (title == "描述") {
+                _map3InfoEntity.describe = _detailList[5];
+              }
+
+              var feeRate = _rateCoinController.text ?? "0";
+              _map3InfoEntity.feeRate = feeRate;
+
+              var staking = _joinCoinController.text ?? "0";
+
+              _map3InfoEntity.staking = staking;
+
+              _selectProviderEntity = providerList[0];
+              _map3InfoEntity.region = _selectProviderEntity.regions[selectNodeItemValue].name;
+              _map3InfoEntity.provider = _selectProviderEntity.name;
+            }
+            var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+            Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -626,8 +676,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     selectNodeItemValue = nodeList[regionIndex].value;
   }
 
-  void textChangeListener() {
+  void _joinTextFieldChangeListener() {
     _filterSubject.sink.add(_joinCoinController.text);
+  }
+
+  void _rateTextFieldChangeListener() {
+    _managerSpendCount = int.parse(_rateCoinController.text ?? "0");
   }
 
   void getCurrentSpend(String inputText) {

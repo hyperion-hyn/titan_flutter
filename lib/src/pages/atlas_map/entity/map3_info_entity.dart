@@ -84,6 +84,8 @@ part 'map3_info_entity.g.dart';
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
+  Map3InfoEntity.onlyId(this.id);
+
   Map3InfoEntity(this.address,this.atlas,this.contact,this.createdAt,this.creator,this.describe,this.endTime,this.feeRate,this.home,this.id,this.join,this.name,this.nodeId,this.parentNodeId,this.pic,this.provider,this.region,this.reward,this.rewardMine,this.rewardRate,this.staking,this.stakingMine,this.startTime,this.status,this.updatedAt,);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);

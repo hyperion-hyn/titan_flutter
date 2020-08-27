@@ -5,10 +5,11 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 
 class Map3NodePronouncePage extends StatefulWidget {
   final String title;
+  final String text;
   final String hint;
   final TextInputType keyboardType;
 
-  Map3NodePronouncePage({this.title, this.hint, this.keyboardType});
+  Map3NodePronouncePage({this.title, this.text, this.hint, this.keyboardType});
 
   @override
   State<StatefulWidget> createState() {
@@ -22,6 +23,9 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
 
   @override
   void initState() {
+    if (widget.text.isNotEmpty) {
+      _controller.text = widget.text;
+    }
     super.initState();
   }
 

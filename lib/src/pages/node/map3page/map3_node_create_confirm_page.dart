@@ -1,23 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class Map3NodeCreateConfirmPage extends StatefulWidget {
-  Map3NodeCreateConfirmPage();
+  final Map3InfoEntity entity;
+  Map3NodeCreateConfirmPage({this.entity});
 
   @override
   _Map3NodeCreateConfirmState createState() => new _Map3NodeCreateConfirmState();
 }
 
 class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
-  var _localImagePath;
   List<String> _titleList = ["图标", "名称", "节点号", "首次抵押", "管理费", "网址", "安全联系", "描述", "云服务商", "节点地址"];
   List<String> _detailList = [
     "",
@@ -34,7 +35,64 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
   @override
   void initState() {
+    _setupData();
     super.initState();
+  }
+
+  _setupData() {
+    _titleList = [];
+    _detailList = [];
+
+    var entity = widget.entity;
+    if (entity.pic?.isNotEmpty ?? false) {
+      _titleList.add("图标");
+      _detailList.add(entity.pic);
+    }
+
+    if (entity.name?.isNotEmpty ?? false) {
+      _titleList.add("名称");
+      _detailList.add(entity.name);
+    }
+
+    if (entity.nodeId?.isNotEmpty ?? false) {
+      _titleList.add("节点号");
+      _detailList.add(entity.nodeId);
+    }
+
+    if (entity.staking?.isNotEmpty ?? false) {
+      _titleList.add("首次抵押");
+      _detailList.add(entity.staking);
+    }
+
+    if (entity.feeRate?.isNotEmpty ?? false) {
+      _titleList.add("管理费");
+      _detailList.add(entity.feeRate + "%");
+    }
+
+    if (entity.home?.isNotEmpty ?? false) {
+      _titleList.add("网址");
+      _detailList.add(entity.home);
+    }
+
+    if (entity.contact?.isNotEmpty ?? false) {
+      _titleList.add("安全联系");
+      _detailList.add(entity.contact);
+    }
+
+    if (entity.describe?.isNotEmpty ?? false) {
+      _titleList.add("描述");
+      _detailList.add(entity.describe);
+    }
+
+    if (entity.provider?.isNotEmpty ?? false) {
+      _titleList.add("云服务商");
+      _detailList.add(entity.provider);
+    }
+
+    if (entity.region?.isNotEmpty ?? false) {
+      _titleList.add("节点选址");
+      _detailList.add(entity.region);
+    }
   }
 
   @override
@@ -54,8 +112,6 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Column(
       children: <Widget>[
         _headerWidget(),
@@ -110,19 +166,19 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
                       style: TextStyle(color: HexColor("#999999"), fontSize: 14),
                     ),
                   ),
-                  detail.isNotEmpty
+                  title != "图标"
                       ? Expanded(
-                    child: Text(
-                      detail,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 14),
-                    ),
-                  )
+                          child: Text(
+                            detail,
+                            style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+                          ),
+                        )
                       : Image.asset(
-                    _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                    width: 36,
-                    height: 36,
-                    fit: BoxFit.cover,
-                  ),
+                          detail ?? "res/drawable/ic_map3_node_item_2.png",
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        ),
 
                   //Spacer(),
                 ],
@@ -144,16 +200,14 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   }
 
   Widget _confirmButtonWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
-        "提交",
+        S.of(context).submit,
         () async {
-          Application.router
-              .navigateTo(context, Routes.map3node_normal_confirm_page+ "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
+          Application.router.navigateTo(
+              context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

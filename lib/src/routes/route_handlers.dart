@@ -10,6 +10,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dar
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
@@ -171,7 +172,16 @@ var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeCreateConfirmHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeCreateConfirmPage();
+
+  var item = params['entity']?.first;
+  Map3InfoEntity entity;
+  if (item != null) {
+    entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(item));
+  }
+
+  return Map3NodeCreateConfirmPage(
+    entity: entity,
+  );
 });
 
 var map3NodeNormalConfirmHandler = Handler(handlerFunc: (context, params) {

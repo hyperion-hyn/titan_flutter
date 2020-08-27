@@ -227,7 +227,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
-        "提交",
+        S.of(context).submit,
         () async {
           var contractNodeItem = ContractNodeItem.onlyNodeId(1);
           Application.router.navigateTo(
