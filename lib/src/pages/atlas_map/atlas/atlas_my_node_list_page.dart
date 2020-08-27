@@ -290,6 +290,8 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
 
       ///
       _currentPage++;
+
+      ///
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       print('[atlas]: _nodeList: failed');
