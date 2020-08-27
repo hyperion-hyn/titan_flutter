@@ -7,20 +7,15 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_recreate_contract_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -191,10 +186,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-      return Container(
-          padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
-          color: Colors.white,
-          child: getMap3NodeWaitItem(context, _pendingList[index]));
+      return Container(color: Colors.white, child: getMap3NodeWaitItem(context, _pendingList[index]));
     }, childCount: _pendingList.length));
   }
 
@@ -202,13 +194,11 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MyMap3ContractPage(MyContractModel(title, MyContractType.active))));
+          Application.router.navigateTo(context,
+              Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
         },
         child: Container(
-          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 17, bottom: 11),
+          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
           color: Colors.white,
           child: Row(
             children: <Widget>[
@@ -407,7 +397,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${1}");
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${1}");
     }
 
     // 2.创建成功回调的处理
@@ -486,20 +476,6 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
 
   return InkWell(
     onTap: () async {
-
-//      if (index == 0) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
-//      } else if (index == 1) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
-//      } else if (index == 2) {
-//        Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
-//      } else {
-//      }
-
-//      Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeRecreateContractPage("1")));
-//
-//      return;
-
       var walletList = await WalletUtil.scanWallets();
       if (walletList.length == 0) {
         Application.router.navigateTo(context,
@@ -521,7 +497,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
           ),
         ],
       ),
-      margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
+      margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9, top: 20),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

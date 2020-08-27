@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,21 +26,16 @@ import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';
 import '../home/home_page.dart';
-import '../wallet/wallet_tabs_page.dart';
 import '../mine/my_page.dart';
 import 'announcement_dialog.dart';
 import 'bloc/app_tabbar_bloc.dart';

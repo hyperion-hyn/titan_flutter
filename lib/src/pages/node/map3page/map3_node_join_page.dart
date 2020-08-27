@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -18,18 +19,18 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_create_contract_page.dart';
+import 'map3_node_create_page.dart';
 
-class Map3NodeJoinContractPage extends StatefulWidget {
+class Map3NodeJoinPage extends StatefulWidget {
   final String contractId;
 
-  Map3NodeJoinContractPage(this.contractId);
+  Map3NodeJoinPage(this.contractId);
 
   @override
-  _Map3NodeJoinContractState createState() => new _Map3NodeJoinContractState();
+  _Map3NodeJoinState createState() => new _Map3NodeJoinState();
 }
 
-class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
+class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -61,20 +62,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffF3F0F5),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '抵押Map3节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: '抵押Map3节点',
       ),
       body: _pageView(context),
     );
@@ -353,10 +342,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                        actionEvent: Map3NodeActionEvent.DELEGATE,
-                      )));
+              Application.router.navigateTo(
+                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.DELEGATE.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

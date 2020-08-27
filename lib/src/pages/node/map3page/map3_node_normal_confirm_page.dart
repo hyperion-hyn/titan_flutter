@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -68,7 +69,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
   List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
-  var pageTitle;
 
   @override
   void onCreated() {
@@ -114,20 +114,8 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          centerTitle: true,
-          title: Text(
-            pageTitle,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
+        appBar: BaseAppBar(
+          baseTitle: pageTitle,
         ),
         body: _pageView(context),
       ),
@@ -177,6 +165,8 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
+                                SizedBox(height: 4,),
+
                                 Row(
                                   children: <Widget>[
                                     Text(
@@ -260,15 +250,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
     );
   }
 
-  Future _transferNew() async {
-    var contractNodeItem = ContractNodeItem.onlyNodeId(1);
-    Application.router.navigateTo(
-        context,
-        Routes.map3node_broadcast_success_page +
-            "?actionEvent=${widget.actionEvent}" +
-            "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-    return;
-  }
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -279,7 +260,13 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       child: ClickOvalButton(
         "提交",
         () async {
-          _transferNew();
+          var contractNodeItem = ContractNodeItem.onlyNodeId(1);
+          Application.router.navigateTo(
+              context,
+              Routes.map3node_broadcast_success_page +
+                  "?actionEvent=${widget.actionEvent}" +
+                  "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

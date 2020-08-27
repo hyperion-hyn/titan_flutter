@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -15,16 +17,16 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class Map3NodePreCreateContractPage extends StatefulWidget {
+class Map3NodeIntroductionPage extends StatefulWidget {
   final String contractId;
 
-  Map3NodePreCreateContractPage(this.contractId);
+  Map3NodeIntroductionPage(this.contractId);
 
   @override
-  _Map3NodePreCreateContractState createState() => new _Map3NodePreCreateContractState();
+  _Map3NodeIntroductionState createState() => new _Map3NodeIntroductionState();
 }
 
-class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPage> {
+class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem _contractItem;
@@ -40,20 +42,8 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          'Map3节点介绍',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: 'Map3节点介绍',
       ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
@@ -141,29 +131,29 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
             _nodeWidget,
             Expanded(
                 child: InkWell(
-                  onTap: (){
-                    if (subTitle.isEmpty) {
-                      return;
-                    }
-                    // todo: test_jison_0604
-                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                    Application.router
-                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                  },
-                  child: RichText(
-                      text:TextSpan(
-                        children: [
-                          TextSpan(
-                            text: subTitle,
-                            style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                          )
-                        ],
-                        text:title,
-                        style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                      ),
-                  ),
-                )),
+              onTap: () {
+                if (subTitle.isEmpty) {
+                  return;
+                }
+                // todo: test_jison_0604
+                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+                Application.router
+                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+              },
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: subTitle,
+                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                    )
+                  ],
+                  text: title,
+                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                ),
+              ),
+            )),
           ],
         ),
       );
@@ -234,7 +224,6 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
         children: [1, 0.5, 2, 0.5, 3].map((value) {
           String title = "";
           String detail = "0";
-          Color color = HexColor("#000000");
 
           switch (value) {
             case 1:
@@ -245,15 +234,14 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
 
               break;
 
-            case 3:
-              title = "合约周期";
-              detail = "180天";
-              //color = HexColor("#FF4C3B");
-              break;
-
             case 2:
               title = "管理费";
               detail = "1%-20%";
+              break;
+
+            case 3:
+              title = "合约周期";
+              detail = "180天";
               break;
 
             default:
@@ -265,17 +253,15 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
               break;
           }
 
-          TextStyle style = TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w400);
-
           return Expanded(
             child: Center(
                 child: Column(
               children: <Widget>[
-                Text(detail, style: style),
+                Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.w400)),
                 Container(
                   height: 4,
                 ),
-                Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
+                Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
               ],
             )),
           );
@@ -335,8 +321,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                           softWrap: true),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(" (HYN) ",
-                            style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
+                        child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                       ),
                     ],
                   ),
@@ -397,4 +382,3 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
     );
   }
 }
-

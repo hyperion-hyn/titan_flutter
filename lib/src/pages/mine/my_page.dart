@@ -8,7 +8,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_nodes_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -116,29 +116,6 @@ class _MyPageState extends State<MyPage> {
               color: Colors.white,
               child: Column(
                 children: <Widget>[
-                  Container(
-                    height: 10,
-                    color: HexColor('#F1EFF2'),
-                  ),
-                  _buildMenuBar('我的节点', Icons.menu, () {
-                    if (_wallet != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyNodesPage(),
-                        ),
-                      );
-                    } else {
-                      var tips = FluroConvertUtils.fluroCnParamsEncode(
-                          S.of(context).create_wallet_account_check_contract);
-                      Application.router.navigateTo(
-                          context, Routes.wallet_manager + '?tips=$tips');
-                    }
-                  },
-                      imageName: "ic_my_nodes",
-                      subText: _wallet == null
-                          ? S.of(context).create_or_import_wallet_first
-                          : null),
                   Container(
                     height: 10,
                     color: HexColor('#F1EFF2'),

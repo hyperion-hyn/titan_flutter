@@ -37,6 +37,7 @@ class TextStyles {
   static TextStyle textC000S16 = textStyle(fontSize: 16, color: DefaultColors.color000);
   static TextStyle textC000S14 = textStyle(color: DefaultColors.color000);
   static TextStyle textC9b9b9bS12 = textStyle(fontSize: 12, color: DefaultColors.color9b9b9b);//灰色
+  static TextStyle textC9b9b9bS10 = textStyle(fontSize: 10, color: DefaultColors.color9b9b9b);//灰色
   static TextStyle textC9b9b9bS14 = textStyle(color: DefaultColors.color9b9b9b);//灰色
   static TextStyle textC00ec00S12 = textStyle(fontSize: 12, color: DefaultColors.color00ec00);//绿色 上涨
   static TextStyle textCff2d2dS12 = textStyle(fontSize: 12, color: DefaultColors.colorff2d2d);//红色 下跌

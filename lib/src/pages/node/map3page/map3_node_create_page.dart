@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -27,20 +28,16 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
 
-class Map3NodeCreateContractPage extends StatefulWidget {
-  static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
-  static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
-  static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
-
+class Map3NodeCreatePage extends StatefulWidget {
   final String contractId;
 
-  Map3NodeCreateContractPage(this.contractId);
+  Map3NodeCreatePage(this.contractId);
 
   @override
-  _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
+  _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> with WidgetsBindingObserver {
+class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
   TextEditingController _inputCoinController = new TextEditingController();
 
@@ -64,6 +61,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
 
   // 当前键盘是否是激活状态
   bool _isKeyboardActived = false;
+
+  var _editText = "";
+  var _localImagePath = "";
+  var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
+  List<String> _detailList = ["", "", "", "", "", ""];
+  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   @override
   void initState() {
@@ -134,107 +137,12 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '创建Map3节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: '创建Map3节点',
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
     );
-  }
-
-  void getNetworkData() async {
-    try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
-      contractItem = requestList[0];
-      providerList = requestList[1];
-
-      selectNodeProvider(0, 0);
-
-      setState(() {
-        currentState = null;
-      });
-    } catch (e) {
-      setState(() {
-        currentState = LoadFailState();
-      });
-    }
-  }
-
-  void selectNodeProvider(int providerIndex, int regionIndex) {
-    if (providerList.length == 0) {
-      return;
-    }
-
-    serverList = new List();
-    for (int i = 0; i < providerList.length; i++) {
-      NodeProviderEntity nodeProviderEntity = providerList[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(
-            nodeProviderEntity.name,
-            style: TextStyles.textC333S14,
-          ));
-      serverList.add(item);
-    }
-    selectServerItemValue = serverList[providerIndex].value;
-
-    List<Regions> nodeListStr = providerList[providerIndex].regions;
-    nodeList = new List();
-    for (int i = 0; i < nodeListStr.length; i++) {
-      Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
-      nodeList.add(item);
-    }
-    selectNodeItemValue = nodeList[regionIndex].value;
-  }
-
-  void textChangeListener() {
-    _filterSubject.sink.add(_joinCoinController.text);
-  }
-
-  void getCurrentSpend(String inputText) {
-    if (contractItem == null || !mounted || originInputStr == inputText) {
-      return;
-    }
-
-    originInputStr = inputText;
-    _joinCoinFormKey.currentState?.validate();
-
-    if (inputText == null || inputText == "") {
-      setState(() {
-        endProfit = "";
-        spendManager = "";
-      });
-      return;
-    }
-    double inputValue = double.parse(inputText);
-    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
-
-    if (mounted) {
-      setState(() {
-        _joinCoinController.value = TextEditingValue(
-            // 设置内容
-            text: inputText,
-            // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
-      });
-    }
   }
 
   @override
@@ -246,13 +154,6 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
 
     super.dispose();
   }
-
-  var _editText = "";
-  var _localImagePath = "";
-//  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
-  var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
-  List<String> _detailList = ["", "", "", "", "", ""];
-  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
@@ -267,142 +168,21 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
-    var divider = Container(
-      color: HexColor("#F4F4F4"),
-      height: 8,
-    );
     return Column(
       children: <Widget>[
         Expanded(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: Container(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _headerWidget(),
-                    divider,
-                    getHoldInNum(
-                        context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-                        focusNode: _focusNode),
-                    divider,
-                    _managerSpendWidget(),
-                    divider,
-                  ]),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    var subTitle = index < 3 ? "" : "（选填）";
-                    var title = _titleList[index];
-                    var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
-                    var keyboardType = TextInputType.text;
-
-                    switch (index) {
-                      case 3:
-                        keyboardType = TextInputType.url;
-                        break;
-
-                      case 4:
-                        keyboardType = TextInputType.phone;
-                        break;
-
-                      case 5:
-                        break;
-                    }
-
-                    return Material(
-                      child: Ink(
-                        child: InkWell(
-                          splashColor: Colors.blue,
-                          onTap: () async {
-                            if (index == 0) {
-                              EditIconSheet(context, (path) {
-                                setState(() {
-                                  _localImagePath = path;
-                                });
-                              });
-                              return;
-                            }
-
-                            String text = await Navigator.of(context).push(MaterialPageRoute(
-                                builder: (BuildContext context) => Map3NodePronouncePage(
-                                      title: title,
-                                      hint: detail,
-                                      keyboardType: keyboardType,
-                                    )));
-                            if (text?.isNotEmpty??false) {
-                              setState(() {
-                                _detailList[index] = text;
-                              });
-                              print("[Pronounce] _editText:${_editText}");
-                            }
-                          },
-                          child: Container(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                    title,
-                                    style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 4),
-                                    child: subTitle.isEmpty
-                                        ? Text(
-                                            ' * ',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              color: HexColor("#FFFF4C3B"),
-                                              fontSize: 16,
-                                            ),
-                                          )
-                                        : Text(
-                                            subTitle,
-                                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                                          ),
-                                  ),
-                                  Spacer(),
-                                  _localImagePath.isEmpty
-                                      ? Text(
-                                          detail,
-                                          style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                                        )
-                                      : Image.asset(
-                                          _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                                          width: 36,
-                                          height: 36,
-                                          fit: BoxFit.cover,
-                                        ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 6),
-                                    child: Icon(
-                                      Icons.chevron_right,
-                                      color: DefaultColors.color999,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Divider(
-                      height: 0.5,
-                      color: HexColor("#F2F2F2"),
-                    );
-                  },
-                  itemCount: _detailList.length,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                ),
-              ),
-            ],
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // hide keyboard when touch other widgets
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: CustomScrollView(
+              slivers: <Widget>[
+                _headerWidget(),
+                _contentWidget(),
+              ],
+            ),
           ),
         ),
         _confirmButtonWidget(),
@@ -410,7 +190,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     );
   }
 
-  Widget _headerWidget() {
+  Widget _nodeServerWidget() {
     return Container(
       color: Colors.white,
       child: Column(
@@ -459,8 +239,7 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
                                 style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(" (HYN) ",
-                                  style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
+                              child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
@@ -641,6 +420,142 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
     );
   }
 
+  Widget _headerWidget() {
+    var divider = Container(
+      color: HexColor("#F4F4F4"),
+      height: 8,
+    );
+
+    return SliverToBoxAdapter(
+      child: Container(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          _nodeServerWidget(),
+          divider,
+          getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+              focusNode: _focusNode),
+          divider,
+          _managerSpendWidget(),
+          divider,
+        ]),
+      ),
+    );
+  }
+
+  Widget _contentWidget() {
+    return SliverToBoxAdapter(
+      child: ListView.separated(
+        itemBuilder: (context, index) {
+          var subTitle = index < 3 ? "" : "（选填）";
+          var title = _titleList[index];
+          var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+          var keyboardType = TextInputType.text;
+
+          switch (index) {
+            case 3:
+              keyboardType = TextInputType.url;
+              break;
+
+            case 4:
+              keyboardType = TextInputType.phone;
+              break;
+
+            case 5:
+              break;
+          }
+
+          return Material(
+            child: Ink(
+              child: InkWell(
+                splashColor: Colors.blue,
+                onTap: () async {
+                  if (index == 0) {
+                    EditIconSheet(context, (path) {
+                      setState(() {
+                        _localImagePath = path;
+                      });
+                    });
+                    return;
+                  }
+
+                  String text = await Navigator.of(context).push(MaterialPageRoute(
+                      builder: (BuildContext context) => Map3NodePronouncePage(
+                            title: title,
+                            hint: detail,
+                            keyboardType: keyboardType,
+                          )));
+                  if (text?.isNotEmpty ?? false) {
+                    setState(() {
+                      _detailList[index] = text;
+                    });
+                    print("[Pronounce] _editText:${_editText}");
+                  }
+                },
+                child: Container(
+                  color: Colors.white,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          title,
+                          style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: subTitle.isEmpty
+                              ? Text(
+                                  ' * ',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: HexColor("#FFFF4C3B"),
+                                    fontSize: 16,
+                                  ),
+                                )
+                              : Text(
+                                  subTitle,
+                                  style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                                ),
+                        ),
+                        Spacer(),
+                        _localImagePath.isEmpty
+                            ? Text(
+                                detail,
+                                style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                              )
+                            : Image.asset(
+                                _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6),
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: DefaultColors.color999,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+        separatorBuilder: (context, index) {
+          return Divider(
+            height: 0.5,
+            color: HexColor("#F2F2F2"),
+          );
+        },
+        itemCount: _detailList.length,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+    );
+  }
+
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -652,8 +567,8 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
         child: ClickOvalButton(
           "创建提交",
           () async {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (BuildContext context) => Map3NodeCreateConfirmPage(widget.contractId)));
+            Application.router
+                .navigateTo(context, Routes.map3node_create_confirm_page);
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -661,6 +576,89 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> wit
         ),
       ),
     );
+  }
+
+  void getNetworkData() async {
+    try {
+      var requestList =
+          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      contractItem = requestList[0];
+      providerList = requestList[1];
+
+      selectNodeProvider(0, 0);
+
+      setState(() {
+        currentState = null;
+      });
+    } catch (e) {
+      setState(() {
+        currentState = LoadFailState();
+      });
+    }
+  }
+
+  void selectNodeProvider(int providerIndex, int regionIndex) {
+    if (providerList.length == 0) {
+      return;
+    }
+
+    serverList = new List();
+    for (int i = 0; i < providerList.length; i++) {
+      NodeProviderEntity nodeProviderEntity = providerList[i];
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(
+            nodeProviderEntity.name,
+            style: TextStyles.textC333S14,
+          ));
+      serverList.add(item);
+    }
+    selectServerItemValue = serverList[providerIndex].value;
+
+    List<Regions> nodeListStr = providerList[providerIndex].regions;
+    nodeList = new List();
+    for (int i = 0; i < nodeListStr.length; i++) {
+      Regions regions = nodeListStr[i];
+      DropdownMenuItem item =
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      nodeList.add(item);
+    }
+    selectNodeItemValue = nodeList[regionIndex].value;
+  }
+
+  void textChangeListener() {
+    _filterSubject.sink.add(_joinCoinController.text);
+  }
+
+  void getCurrentSpend(String inputText) {
+    if (contractItem == null || !mounted || originInputStr == inputText) {
+      return;
+    }
+
+    originInputStr = inputText;
+    _joinCoinFormKey.currentState?.validate();
+
+    if (inputText == null || inputText == "") {
+      setState(() {
+        endProfit = "";
+        spendManager = "";
+      });
+      return;
+    }
+    double inputValue = double.parse(inputText);
+    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+
+    if (mounted) {
+      setState(() {
+        _joinCoinController.value = TextEditingValue(
+            // 设置内容
+            text: inputText,
+            // 保持光标在最后
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+      });
+    }
   }
 }
 

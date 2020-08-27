@@ -4,13 +4,17 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 
 class AtlasOptionEditPage extends StatefulWidget {
   final String title;
+  final String content;
   final String hint;
   final TextInputType keyboardType;
+  final int maxLength;
 
   AtlasOptionEditPage({
     this.title,
+    this.content,
     this.hint,
     this.keyboardType,
+    this.maxLength = 200,
   });
 
   @override
@@ -26,6 +30,9 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.content != null) {
+      _controller.text = widget.content;
+    }
   }
 
   @override
@@ -73,7 +80,7 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
             autofocus: true,
             controller: _controller,
             keyboardType: widget.keyboardType ?? TextInputType.text,
-            maxLength: 200,
+            maxLength: widget.maxLength,
             maxLines: 7,
             style: TextStyle(color: HexColor("#333333"), fontSize: 14),
             decoration: InputDecoration(
@@ -97,28 +104,3 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
   }
 }
 
-class AppbarWig {
-  static Widget appbar(String title, List<Widget> actions) => new Container(
-        child: new AppBar(
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          centerTitle: true,
-          title: Text(
-            title,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
-          actions: actions,
-        ),
-        decoration: BoxDecoration(
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: HexColor("#000000").withOpacity(0.01), blurRadius: 4.0)
-          ],
-        ),
-      );
-}

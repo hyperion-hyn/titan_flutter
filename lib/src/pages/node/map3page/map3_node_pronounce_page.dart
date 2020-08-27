@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 
 class Map3NodePronouncePage extends StatefulWidget {
   final String title;
@@ -35,20 +36,8 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 4,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          "编辑"+widget.title??'创建Map3节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: "编辑" + widget.title ?? '创建Map3节点',
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -63,11 +52,8 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
             ),
           ),
         ],
-
-
       ),
       body: Container(
-
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Form(
           key: formKey,
@@ -99,30 +85,4 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
       ),
     );
   }
-}
-
-
-class AppbarWig {
-  static Widget appbar(String title, List<Widget> actions) => new Container(
-    child: new AppBar(
-      backgroundColor: Colors.white,
-      iconTheme: IconThemeData(
-        color: Colors.black,
-      ),
-      centerTitle: true,
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-        ),
-      ),
-      actions: actions,
-    ),
-    decoration: BoxDecoration(
-      boxShadow: <BoxShadow>[
-        BoxShadow(color: HexColor("#000000").withOpacity(0.01), blurRadius: 4.0)
-      ],
-    ),
-  );
 }

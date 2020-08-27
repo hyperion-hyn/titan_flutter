@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class BaseAppBar extends AppBar {
   final String baseTitle;
+  //final List<Widget> baseActions;
+  final List<Widget> actions;
 
-  BaseAppBar({this.baseTitle})
+  BaseAppBar({this.baseTitle, this.actions})
       : super(
           title: Text(
             baseTitle,
@@ -17,5 +19,6 @@ class BaseAppBar extends AppBar {
           backgroundColor: Colors.white,
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.black),
+          actions: actions,
         );
 }
