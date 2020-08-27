@@ -7,21 +7,15 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_divide_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -201,7 +195,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       child: InkWell(
         onTap: () {
           Application.router
-              .navigateTo(context, Routes.map3node_list_page + "?title=$title&active=${MyContractType.active.index}");
+              .navigateTo(context, Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
         },
         child: Container(
           padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),

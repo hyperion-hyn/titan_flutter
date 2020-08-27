@@ -229,9 +229,13 @@ var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeListHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
+
+  print('params:$params');
   var title = params['title']?.first;
-  var active = MyContractType.values[int.parse(params['active']?.first)];
-  return Map3NodeListPage(MyContractModel(title, active));
+  var index = int.parse(params['active']?.first);
+  var active = MyContractType.values[index];
+  var model = MyContractModel(title, active);
+  return Map3NodeListPage(model);
 });
 
 var map3NodeExitHandler = Handler(handlerFunc: (context, params) {
