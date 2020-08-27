@@ -69,6 +69,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
   List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
+  String pageTitle;
 
   @override
   void onCreated() {
