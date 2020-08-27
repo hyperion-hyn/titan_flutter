@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_divide_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -95,13 +96,10 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-
             _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty),
             _myNodeListWidget(),
-
             _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
-
             _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],
@@ -194,9 +192,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-      return Container(
-          color: Colors.white,
-          child: getMap3NodeWaitItem(context, _pendingList[index]));
+      return Container(color: Colors.white, child: getMap3NodeWaitItem(context, _pendingList[index]));
     }, childCount: _pendingList.length));
   }
 
@@ -204,10 +200,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => MyMap3ContractPage(MyContractModel(title, MyContractType.active))));
+          Application.router
+              .navigateTo(context, Routes.map3node_list_page + "?title=$title&active=${MyContractType.active.index}");
         },
         child: Container(
           padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
@@ -409,7 +403,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_pre_create_contract_page + "?contractId=${1}");
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${1}");
     }
 
     // 2.创建成功回调的处理

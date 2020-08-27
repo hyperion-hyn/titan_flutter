@@ -104,28 +104,3 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
   }
 }
 
-class AppbarWig {
-  static Widget appbar(String title, List<Widget> actions) => new Container(
-        child: new AppBar(
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          centerTitle: true,
-          title: Text(
-            title,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
-          actions: actions,
-        ),
-        decoration: BoxDecoration(
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-                color: HexColor("#000000").withOpacity(0.01), blurRadius: 4.0)
-          ],
-        ),
-      );
-}

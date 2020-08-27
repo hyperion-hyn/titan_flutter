@@ -353,10 +353,8 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                        actionEvent: Map3NodeActionEvent.DELEGATE,
-                      )));
+              Application.router.navigateTo(
+                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.DELEGATE.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

@@ -24,7 +24,6 @@ class _MyNodesPageState extends State<MyNodesPage> {
         body: ListView(
           children: [
             SizedBox(
- 
               height: 16.0,
             ),
             Container(
@@ -32,12 +31,7 @@ class _MyNodesPageState extends State<MyNodesPage> {
               child: Column(
                 children: <Widget>[
                   _buildMenuBar('Map3节点', '', () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Map3NodeMyPage(),
-                      ),
-                    );
+                    Application.router.navigateTo(context, Routes.map3node_my_page);
                   }),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -47,8 +41,7 @@ class _MyNodesPageState extends State<MyNodesPage> {
                     ),
                   ),
                   _buildMenuBar('Atlas节点', '', () {
-                    Application.router
-                        .navigateTo(context, Routes.atlas_my_node_page);
+                    Application.router.navigateTo(context, Routes.atlas_my_node_page);
                   }),
                 ],
               ),
@@ -71,10 +64,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             padding: const EdgeInsets.only(left: 15),
             child: Text(
               title?.isNotEmpty ?? false ? title : "",
-              style: TextStyle(
-                  color: HexColor("#333333"),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400),
+              style: TextStyle(color: HexColor("#333333"), fontSize: 15, fontWeight: FontWeight.w400),
             ),
           ),
           Spacer(),

@@ -231,15 +231,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
     );
   }
 
-  Future _transferNew() async {
-    var contractNodeItem = ContractNodeItem.onlyNodeId(1);
-    Application.router.navigateTo(
-        context,
-        Routes.map3node_broadcast_success_page +
-            "?actionEvent=${widget.actionEvent}" +
-            "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-    return;
-  }
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -250,7 +241,12 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       child: ClickOvalButton(
         "提交",
         () async {
-          _transferNew();
+          var contractNodeItem = ContractNodeItem.onlyNodeId(1);
+          Application.router.navigateTo(
+              context,
+              Routes.map3node_broadcast_success_page +
+                  "?actionEvent=${widget.actionEvent}" +
+                  "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
 
         },
         height: 46,

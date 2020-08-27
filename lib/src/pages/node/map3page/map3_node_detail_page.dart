@@ -17,16 +17,13 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_pronounce_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
@@ -48,7 +45,6 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
-import 'map3_node_divide_page.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
   final int contractId;
@@ -597,7 +593,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeDividePage("1")));
+                Application.router.navigateTo(context, Routes.map3node_divide_page);
               },
               child: Text(
                 "裂变",
@@ -726,8 +722,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           ClickOvalButton(
             "撤销抵押",
             () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelPage()));
-              //Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCancelConfirmPage()));
+              Application.router.navigateTo(context, Routes.map3node_cancel_page);
             },
             width: 90,
             height: 32,
@@ -740,7 +735,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             child: ClickOvalButton(
               "提取奖励",
               () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Map3NodeCollectPage()));
+                Application.router.navigateTo(context, Routes.map3node_collect_page);
               },
               width: 90,
               height: 32,
@@ -752,8 +747,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             () async {
               var walletList = await WalletUtil.scanWallets();
               if (walletList.length == 0) {
-                Application.router.navigateTo(context,
-                    Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+                Application.router.navigateTo(
+                    context,
+                    Routes.map3node_create_wallet +
+                        "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
               } else {
                 var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
                 Application.router.navigateTo(
@@ -984,14 +981,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: InkWell(
                       //color: HexColor("#FF15B2D2"),
                       //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      onTap: () {
-
-                      },
+                      onTap: () {},
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Spacer(),
-
                           Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                         ],
                       ),

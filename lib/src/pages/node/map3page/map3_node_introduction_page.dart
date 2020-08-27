@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -40,20 +42,8 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          'Map3节点介绍',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: 'Map3节点介绍',
       ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
@@ -141,29 +131,29 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
             _nodeWidget,
             Expanded(
                 child: InkWell(
-                  onTap: (){
-                    if (subTitle.isEmpty) {
-                      return;
-                    }
-                    // todo: test_jison_0604
-                    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                    String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                    Application.router
-                        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                  },
-                  child: RichText(
-                      text:TextSpan(
-                        children: [
-                          TextSpan(
-                            text: subTitle,
-                            style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                          )
-                        ],
-                        text:title,
-                        style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                      ),
-                  ),
-                )),
+              onTap: () {
+                if (subTitle.isEmpty) {
+                  return;
+                }
+                // todo: test_jison_0604
+                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+                Application.router
+                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+              },
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: subTitle,
+                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                    )
+                  ],
+                  text: title,
+                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                ),
+              ),
+            )),
           ],
         ),
       );
@@ -263,7 +253,6 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
               break;
           }
 
-
           return Expanded(
             child: Center(
                 child: Column(
@@ -332,8 +321,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                           softWrap: true),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(" (HYN) ",
-                            style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                        child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                       ),
                     ],
                   ),
@@ -394,4 +382,3 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
     );
   }
 }
-

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -210,10 +211,8 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
           child: ClickOvalButton(
             "确认终止",
             () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                        actionEvent: Map3NodeActionEvent.CANCEL,
-                      )));
+              Application.router.navigateTo(
+                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

@@ -6,9 +6,11 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -275,10 +277,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
           child: ClickOvalButton(
             "确认撤销",
             () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                        actionEvent: Map3NodeActionEvent.CANCEL,
-                      )));
+              Application.router.navigateTo(
+                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

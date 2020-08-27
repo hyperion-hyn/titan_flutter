@@ -30,9 +30,9 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'map3_node_pronounce_page.dart';
 
 class Map3NodeDivideAddPage extends StatefulWidget {
-  final String contractId;
 
-  Map3NodeDivideAddPage(this.contractId);
+
+  Map3NodeDivideAddPage();
 
   @override
   _Map3NodeDivideAddState createState() => new _Map3NodeDivideAddState();
@@ -164,7 +164,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   void getNetworkData() async {
     try {
       var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+          await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -672,7 +672,8 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
                   child: RichText(
                     text: TextSpan(
                         text: "做为节点主，分裂后子节点您至少拥有20%的抵押量，如果不足20%，需要增加抵押来完成节点分裂",
-                        style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.w500, height: 1.5),
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.w500, height: 1.5),
                         children: [
                           TextSpan(
                             text: "",
@@ -780,11 +781,8 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
         child: ClickOvalButton(
           "马上分裂",
           () async {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    Map3NodeNormalConfirmPage(actionEvent: Map3NodeActionEvent.ADD,)));
-
-
+            Application.router.navigateTo(
+                context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ADD.index}");
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,

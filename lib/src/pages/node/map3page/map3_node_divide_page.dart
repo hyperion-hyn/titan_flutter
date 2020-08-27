@@ -29,9 +29,9 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'map3_node_pronounce_page.dart';
 
 class Map3NodeDividePage extends StatefulWidget {
-  final String contractId;
 
-  Map3NodeDividePage(this.contractId);
+
+  Map3NodeDividePage();
 
   @override
   _Map3NodeDivideState createState() => new _Map3NodeDivideState();
@@ -165,7 +165,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   void getNetworkData() async {
     try {
       var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+          await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -982,10 +982,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
         child: ClickOvalButton(
           "确定",
           () async {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (BuildContext context) => Map3NodeDivideAddPage(widget.contractId)));
-//            Navigator.of(context).push(
-//                MaterialPageRoute(builder: (BuildContext context) => Map3NodeCreateConfirmPage(widget.contractId)));
+            Application.router.navigateTo(context, Routes.map3node_divide_add_page);
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
