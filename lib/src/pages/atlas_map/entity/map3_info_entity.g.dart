@@ -35,7 +35,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['staking'] as String,
     json['staking_mine'] as String,
     json['start_time'] as String,
-    NodeStatus.values[json['status'] as int],
+    Map3NodeStatus.values[json['status'] as int],
     json['updated_at'] as String,
   );
 }

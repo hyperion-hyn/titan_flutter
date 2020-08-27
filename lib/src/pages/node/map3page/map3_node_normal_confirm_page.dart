@@ -32,18 +32,20 @@ class Map3NodeNormalConfirmPage extends StatefulWidget {
   final Map3NodeActionEvent actionEvent;
   final String contractId;
   final ContractNodeItem contractNodeItem;
+  final String atlasNodeId;
 
 //  Map3NodeSendConfirmPage(
 //      String coinVo, [this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId])
 //      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 //
   Map3NodeNormalConfirmPage(
-  {this.coinVo,
-  this.contractNodeItem,
-  this.transferAmount,
-  this.receiverAddress,
-  this.actionEvent,
-  this.contractId});
+      {this.coinVo,
+      this.contractNodeItem,
+      this.transferAmount,
+      this.receiverAddress,
+      this.actionEvent,
+      this.contractId,
+      this.atlasNodeId});
 
   @override
   State<StatefulWidget> createState() {
@@ -63,10 +65,38 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
 
+  List<String> _titleList = ["From", "To", ""];
+  List<String> _subList = ["钱包", "Map3节点", "矿工费"];
+  List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
+  var pageTitle;
+
   @override
   void onCreated() {
     activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo?.symbol ?? "btc");
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    switch (widget.actionEvent) {
+      case Map3NodeActionEvent.DELEGATE:
+        break;
+      case Map3NodeActionEvent.COLLECT:
+        break;
+      case Map3NodeActionEvent.CANCEL:
+        break;
+      case Map3NodeActionEvent.CANCEL_CONFIRMED:
+        break;
+      case Map3NodeActionEvent.ADD:
+        break;
+      case Map3NodeActionEvent.RECEIVE_AWARD:
+        pageTitle = "确认领取节点奖励";
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
+          "节点号: ${widget.atlasNodeId}",
+          "${widget.transferAmount} HYN"
+        ];
+        break;
+      default:
+        pageTitle = S.of(context).transfer_confirm;
+        break;
+    }
 
   }
 
@@ -92,7 +122,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
           ),
           centerTitle: true,
           title: Text(
-            S.of(context).transfer_confirm,
+            pageTitle,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -104,17 +134,12 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
     );
   }
 
-  List<String> _titleList = ["From", "To", ""];
-  List<String> _subList = ["钱包", "Map3节点", "矿工费"];
-  List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
-
   Widget _pageView(BuildContext context) {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
     return Column(
       children: <Widget>[
-
         Expanded(
           child: CustomScrollView(
             slivers: <Widget>[
@@ -140,23 +165,27 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                if (title.isNotEmpty)Row(
-                                  children: <Widget>[
-                                    Text(
-                                      title,
-                                      style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                                    ),
-                                  ],
+                                if (title.isNotEmpty)
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        title,
+                                        style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                                      ),
+                                    ],
+                                  ),
+                                SizedBox(
+                                  height: 4,
                                 ),
-                                SizedBox(height: 4,),
-
                                 Row(
                                   children: <Widget>[
                                     Text(
                                       subTitle,
                                       style: TextStyle(color: HexColor("#333333"), fontSize: 14),
                                     ),
-                                    SizedBox(width: 8,),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
                                     Text(
                                       detail,
                                       style: TextStyle(color: HexColor("#999999"), fontSize: 14),
@@ -251,7 +280,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
         "提交",
         () async {
           _transferNew();
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
@@ -259,5 +287,4 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       ),
     );
   }
-
 }

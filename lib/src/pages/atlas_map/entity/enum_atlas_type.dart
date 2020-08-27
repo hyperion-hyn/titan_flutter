@@ -24,18 +24,48 @@ enum AtlasActionType {
 }
 
 /*
- 1创建提交中；
- 2创建失败;
- 3创建成功，没有撤销中；
- 4创建成功，撤销节点提交中；
- 5撤销节点成功
+ 1 创建提交中；
+ 2 创建失败;
+ 3 创建成功，没有撤销中；
+ 4 创建成功，撤销节点提交中；
+ 5 撤销节点成功；撤销节点失败回到3状态
 */
-enum NodeStatus {
+enum AtlasNodeStatus {
   CREATE_ING,
   CREATE_FAIL,
   CREATE_SUCCESS_UN_CANCEL,
   CREATE_SUCCESS_CANCEL_NODE_ING,
   CREATE_SUCCESS_CANCEL_NODE_SUCCESS,
+}
+
+/*
+ 1 创建提交中；
+ 2 创建失败;
+ 3 募资中,没在撤销节点;
+*/
+enum Map3NodeInAtlasStatus {
+  JOIN_DELEGATE_ING,
+  JOIN_DELEGATE_FAIL,
+  DELEGATE_SUCCESS_NO_CANCEL,
+}
+
+/*
+ 1 创建提交中；
+ 2 创建失败;
+ 3 募资中,没在撤销节点;
+ 4 募资中，撤销节点提交中；撤销节点失败回到3状态
+ 5 撤销节点成功；
+ 6 合约已启动；
+ 7 合约期满终止；
+*/
+enum Map3NodeStatus {
+  CREATE_SUBMIT_ING,
+  CREATE_FAIL,
+  FUNDRAISING_NO_CANCEL,
+  FUNDRAISING_CANCEL_SUBMIT,
+  CANCEL_NODE_SUCCESS,
+  CONTRACT_HAS_STARTED,
+  CONTRACT_IS_END,
 }
 
 //节点选举情况，0候选节点，1清算节点，2出块节点

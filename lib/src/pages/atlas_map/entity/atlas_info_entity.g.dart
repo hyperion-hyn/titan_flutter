@@ -35,7 +35,7 @@ AtlasInfoEntity _$AtlasInfoEntityFromJson(Map<String, dynamic> json) {
     json['reward_rate'] as String,
     json['sign_rate'] as String,
     json['staking'] as String,
-    NodeStatus.values[json['status'] as int],
+    AtlasNodeStatus.values[json['status'] as int],
     AtlasNodeType.values[json['type'] as int],
     json['updated_at'] as String,
   );
