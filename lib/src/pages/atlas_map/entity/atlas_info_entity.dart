@@ -81,7 +81,7 @@ part 'atlas_info_entity.g.dart';
   String staking;
 
   @JsonKey(name: 'status')
-  NodeStatus status;
+  AtlasNodeStatus status;
 
   // 区别于node的地方： 2
   @JsonKey(name: 'type')

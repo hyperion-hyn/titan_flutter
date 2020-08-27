@@ -79,7 +79,7 @@ part 'map3_info_entity.g.dart';
   String startTime;
 
   @JsonKey(name: 'status')
-  NodeStatus status;
+  Map3NodeStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

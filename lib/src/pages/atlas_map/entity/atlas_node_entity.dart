@@ -72,7 +72,7 @@ class AtlasNodeEntity extends Object {
   int staking;
 
   @JsonKey(name: 'status')
-  NodeStatus status;
+  AtlasNodeStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

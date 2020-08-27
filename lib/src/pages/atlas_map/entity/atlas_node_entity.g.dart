@@ -29,7 +29,7 @@ AtlasNodeEntity _$AtlasNodeEntityFromJson(Map<String, dynamic> json) {
     json['reward_rate'] as int,
     json['sign_rate'] as int,
     json['staking'] as int,
-    NodeStatus.values[json['status'] as int],
+    AtlasNodeStatus.values[json['status'] as int],
     json['updated_at'] as String,
   );
 }
