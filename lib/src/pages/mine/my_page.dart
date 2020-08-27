@@ -120,29 +120,6 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar('我的节点', Icons.menu, () {
-                    if (_wallet != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyNodesPage(),
-                        ),
-                      );
-                    } else {
-                      var tips = FluroConvertUtils.fluroCnParamsEncode(
-                          S.of(context).create_wallet_account_check_contract);
-                      Application.router.navigateTo(
-                          context, Routes.wallet_manager + '?tips=$tips');
-                    }
-                  },
-                      imageName: "ic_my_nodes",
-                      subText: _wallet == null
-                          ? S.of(context).create_or_import_wallet_first
-                          : null),
-                  Container(
-                    height: 10,
-                    color: HexColor('#F1EFF2'),
-                  ),
                   _buildMenuBar(
                       S.of(context).share_app, Icons.share, () => shareApp()),
                   Padding(

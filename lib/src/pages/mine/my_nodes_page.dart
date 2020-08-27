@@ -24,7 +24,6 @@ class _MyNodesPageState extends State<MyNodesPage> {
         body: ListView(
           children: [
             SizedBox(
- 
               height: 16.0,
             ),
             Container(
