@@ -137,20 +137,12 @@ class AtlasBroadcastSuccessPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
                               _pop(context);
-
-                              //Routes.popUntilCachedEntryRouteName(context);
-
-//                              Application.router.navigateTo(
-//                                  context,
-//                                  Routes.wallet_import +
-//                                      '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
                             },
                             child: Container(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 40.0, vertical: 12.0),
                                 child: Text(
-//                                  S.of(context).finish,
                                   "查看节点",
                                   style: TextStyle(
                                       fontSize: 16,
