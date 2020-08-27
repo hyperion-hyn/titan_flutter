@@ -27,20 +27,20 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
 
-class Map3NodeCreateContractPage extends StatefulWidget {
+class Map3NodeCreatePage extends StatefulWidget {
   static const String CONTRACT_PAGE_TYPE_CREATE = "contract_page_type_create";
   static const String CONTRACT_PAGE_TYPE_JOIN = "contract_page_type_join";
   static const String CONTRACT_PAGE_TYPE_COLLECT = "contract_page_type_collect";
 
   final String contractId;
 
-  Map3NodeCreateContractPage(this.contractId);
+  Map3NodeCreatePage(this.contractId);
 
   @override
-  _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
+  _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> with WidgetsBindingObserver {
+class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
   TextEditingController _inputCoinController = new TextEditingController();
 

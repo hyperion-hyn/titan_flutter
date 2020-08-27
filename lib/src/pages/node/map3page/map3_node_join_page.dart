@@ -18,18 +18,18 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_create_contract_page.dart';
+import 'map3_node_create_page.dart';
 
-class Map3NodeJoinContractPage extends StatefulWidget {
+class Map3NodeJoinPage extends StatefulWidget {
   final String contractId;
 
-  Map3NodeJoinContractPage(this.contractId);
+  Map3NodeJoinPage(this.contractId);
 
   @override
-  _Map3NodeJoinContractState createState() => new _Map3NodeJoinContractState();
+  _Map3NodeJoinState createState() => new _Map3NodeJoinState();
 }
 
-class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
+class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();

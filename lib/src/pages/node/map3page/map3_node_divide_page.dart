@@ -10,7 +10,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_add_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_divide_add_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -28,16 +28,16 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
 
-class Map3NodeRecreateContractPage extends StatefulWidget {
+class Map3NodeDividePage extends StatefulWidget {
   final String contractId;
 
-  Map3NodeRecreateContractPage(this.contractId);
+  Map3NodeDividePage(this.contractId);
 
   @override
-  _Map3NodeRecreateContractState createState() => new _Map3NodeRecreateContractState();
+  _Map3NodeDivideState createState() => new _Map3NodeDivideState();
 }
 
-class _Map3NodeRecreateContractState extends State<Map3NodeRecreateContractPage> with WidgetsBindingObserver {
+class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -983,7 +983,7 @@ class _Map3NodeRecreateContractState extends State<Map3NodeRecreateContractPage>
           "确定",
           () async {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (BuildContext context) => Map3NodeAddContractPage(widget.contractId)));
+                .push(MaterialPageRoute(builder: (BuildContext context) => Map3NodeDivideAddPage(widget.contractId)));
 //            Navigator.of(context).push(
 //                MaterialPageRoute(builder: (BuildContext context) => Map3NodeCreateConfirmPage(widget.contractId)));
           },

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 
@@ -34,7 +34,7 @@ class _MyNodesPageState extends State<MyNodesPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyContractsPage(),
+                  builder: (context) => Map3NodeMyPage(),
                 ),
               );
             }),

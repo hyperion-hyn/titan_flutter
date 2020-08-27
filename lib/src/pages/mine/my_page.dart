@@ -8,7 +8,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_nodes_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';

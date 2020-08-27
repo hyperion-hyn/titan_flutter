@@ -15,16 +15,16 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class Map3NodePreCreateContractPage extends StatefulWidget {
+class Map3NodeIntroductionPage extends StatefulWidget {
   final String contractId;
 
-  Map3NodePreCreateContractPage(this.contractId);
+  Map3NodeIntroductionPage(this.contractId);
 
   @override
-  _Map3NodePreCreateContractState createState() => new _Map3NodePreCreateContractState();
+  _Map3NodeIntroductionState createState() => new _Map3NodeIntroductionState();
 }
 
-class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPage> {
+class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   AllPageState currentState = LoadingState();
   NodeApi _nodeApi = NodeApi();
   ContractNodeItem _contractItem;
@@ -234,7 +234,6 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
         children: [1, 0.5, 2, 0.5, 3].map((value) {
           String title = "";
           String detail = "0";
-          Color color = HexColor("#000000");
 
           switch (value) {
             case 1:
@@ -245,15 +244,14 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
 
               break;
 
-            case 3:
-              title = "合约周期";
-              detail = "180天";
-              //color = HexColor("#FF4C3B");
-              break;
-
             case 2:
               title = "管理费";
               detail = "1%-20%";
+              break;
+
+            case 3:
+              title = "合约周期";
+              detail = "180天";
               break;
 
             default:
@@ -265,17 +263,16 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
               break;
           }
 
-          TextStyle style = TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w400);
 
           return Expanded(
             child: Center(
                 child: Column(
               children: <Widget>[
-                Text(detail, style: style),
+                Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.w400)),
                 Container(
                   height: 4,
                 ),
-                Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
+                Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
               ],
             )),
           );
@@ -336,7 +333,7 @@ class _Map3NodePreCreateContractState extends State<Map3NodePreCreateContractPag
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(" (HYN) ",
-                            style: TextStyle(fontSize: 10, color: HexColor("#999999").withOpacity(0.2))),
+                            style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                       ),
                     ],
                   ),

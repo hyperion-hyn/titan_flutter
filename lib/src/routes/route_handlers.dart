@@ -12,13 +12,12 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_contract_detail_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_detail_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_broadcast_success_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_contract_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_create_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_join_contract_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_precreate_contract_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_send_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_join_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -167,30 +166,15 @@ var map3NodeCreateWalletHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeCreateContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeCreateContractPage(params['contractId']?.first);
+  return Map3NodeCreatePage(params['contractId']?.first);
 });
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeJoinContractPage(params['contractId']?.first);
+  return Map3NodeJoinPage(params['contractId']?.first);
 });
 
-var map3NodeSendConfirmHandler = Handler(handlerFunc: (context, params) {
-  ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(
-      FluroConvertUtils.string2map(params['contractNodeItem']?.first));
-  var transferAmount = params['transferAmount']?.first ?? '0';
 
-  return Map3NodeSendConfirmPage(
-    params['coinVo']?.first ?? '0',
-    contractNodeItem,
-    Decimal.parse(transferAmount),
-    params['receiverAddress']?.first ?? '0',
-    params['pageType']?.first,
-    params['contractId']?.first,
-    provider: params['provider']?.first ?? "",
-    region: params['region']?.first ?? "",
-  );
-});
 
 var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -212,7 +196,7 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  return Map3NodeContractDetailPage(int.parse(params['contractId']?.first));
+  return Map3NodeDetailPage(int.parse(params['contractId']?.first));
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
@@ -223,7 +207,7 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodePreCreateContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodePreCreateContractPage(params['contractId']?.first);
+  return Map3NodeIntroductionPage(params['contractId']?.first);
 });
 
 //atlas

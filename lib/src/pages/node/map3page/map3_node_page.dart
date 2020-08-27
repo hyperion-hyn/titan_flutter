@@ -12,8 +12,8 @@ import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_recreate_contract_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_divide_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
@@ -95,10 +95,13 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
+
             _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty),
             _myNodeListWidget(),
+
             _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
+
             _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],

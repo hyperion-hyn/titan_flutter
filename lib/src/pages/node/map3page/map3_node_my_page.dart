@@ -14,14 +14,14 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
-class MyContractsPage extends StatefulWidget {
+class Map3NodeMyPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _MyContractsState();
+    return _Map3NodeMyState();
   }
 }
 
-class _MyContractsState extends State<MyContractsPage> with TickerProviderStateMixin {
+class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMixin {
   TabController _tabController;
   List<MyContractModel> _contractTypeModels;
 

@@ -48,18 +48,18 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
-import 'map3_node_recreate_contract_page.dart';
+import 'map3_node_divide_page.dart';
 
-class Map3NodeContractDetailPage extends StatefulWidget {
+class Map3NodeDetailPage extends StatefulWidget {
   final int contractId;
 
-  Map3NodeContractDetailPage(this.contractId);
+  Map3NodeDetailPage(this.contractId);
 
   @override
-  _Map3NodeContractDetailState createState() => new _Map3NodeContractDetailState();
+  _Map3NodeDetailState createState() => new _Map3NodeDetailState();
 }
 
-class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage> {
+class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
 
@@ -597,7 +597,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeRecreateContractPage("1")));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Map3NodeDividePage("1")));
               },
               child: Text(
                 "裂变",
@@ -930,7 +930,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                       Container(
                         height: 4,
                       ),
-                      Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                      Text(nodeAddress, style: TextStyles.textC9b9b9bS10),
                     ],
                   ),
                 ),

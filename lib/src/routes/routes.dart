@@ -181,9 +181,6 @@ class Routes {
     router.define(map3node_join_contract_page,
         handler: map3NodeJoinContractHandler,
         transitionType: pushNewPageTransitionType);
-    router.define(map3node_send_confirm_page,
-        handler: map3NodeSendConfirmHandler,
-        transitionType: pushNewPageTransitionType);
     router.define(map3node_broadcast_success_page,
         handler: map3NodeBroadcastSuccessHandler,
         transitionType: pushNewPageTransitionType);
