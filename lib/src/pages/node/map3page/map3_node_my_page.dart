@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'map3_node_list_page.dart';
 
 class Map3NodeMyPage extends StatefulWidget {
@@ -38,22 +39,9 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          S.of(context).my_contract,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+       baseTitle:S.of(context).my_contract
       ),
-
       body: Container(
         color: Colors.white,
         child: Column(

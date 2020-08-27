@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -42,20 +43,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
     var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '撤销抵押',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle:'撤销抵押',
       ),
       backgroundColor: Colors.white,
       body: Column(

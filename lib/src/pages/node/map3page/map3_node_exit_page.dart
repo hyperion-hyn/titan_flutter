@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -24,20 +25,8 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '终止节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle:'终止节点',
       ),
 
       //backgroundColor: Color(0xffF3F0F5),

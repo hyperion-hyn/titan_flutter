@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -85,20 +86,8 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          widget.model.name,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle:widget.model.name,
       ),
       body: _pageWidget(context),
     );

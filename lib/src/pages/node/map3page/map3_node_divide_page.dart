@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -128,20 +129,8 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          'Map3节点分裂',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
+      appBar: BaseAppBar(
+        baseTitle:'Map3节点分裂',
         actions: <Widget>[
           FlatButton(
             onPressed: () {

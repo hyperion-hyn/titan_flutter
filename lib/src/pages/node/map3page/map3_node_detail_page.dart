@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/config.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
@@ -576,20 +577,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       onWillPop: () async => !_isTransferring,
       child: Scaffold(
         backgroundColor: DefaultColors.colorf5f5f5,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          centerTitle: true,
-          title: Text(
-            S.of(context).node_contract_detail,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
             FlatButton(
               onPressed: () {

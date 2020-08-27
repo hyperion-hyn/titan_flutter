@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -63,11 +64,14 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
 
+  List<String> _titleList = ["From", "To", ""];
+  List<String> _subList = ["钱包", "Map3节点", "矿工费"];
+  List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
+
   @override
   void onCreated() {
     activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo?.symbol ?? "btc");
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
   }
 
   @override
@@ -84,29 +88,13 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-          centerTitle: true,
-          title: Text(
-            S.of(context).transfer_confirm,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
+        appBar: BaseAppBar(
+          baseTitle: S.of(context).transfer_confirm,
         ),
         body: _pageView(context),
       ),
     );
   }
-
-  List<String> _titleList = ["From", "To", ""];
-  List<String> _subList = ["钱包", "Map3节点", "矿工费"];
-  List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
 
   Widget _pageView(BuildContext context) {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;

@@ -194,8 +194,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
-          Application.router
-              .navigateTo(context, Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
+          Application.router.navigateTo(context,
+              Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
         },
         child: Container(
           padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
