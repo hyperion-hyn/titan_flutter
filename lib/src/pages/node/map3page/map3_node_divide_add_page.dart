@@ -26,8 +26,6 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
 class Map3NodeDivideAddPage extends StatefulWidget {
-
-
   Map3NodeDivideAddPage();
 
   @override
@@ -38,23 +36,24 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
-  NodeApi _nodeApi = NodeApi();
+
   ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  var selectServerItemValue = 0;
-  var selectNodeItemValue = 0;
-  List<DropdownMenuItem> serverList;
-  List<DropdownMenuItem> nodeList;
-  List<NodeProviderEntity> providerList = [];
+
   String originInputStr = "";
 
   // 输入框的焦点实例
   FocusNode _focusNode;
 
   // 当前键盘是否是激活状态
-  bool _isKeyboardActived = false;
+  bool _isKeyboardActive = false;
+
+  TextEditingController _textEditingController = new TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  double minTotal = 0;
+  double remainTotal = 0;
 
   @override
   void initState() {
@@ -90,10 +89,10 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
 
     // 失去焦点时候的操作
     setState(() {
-      _isKeyboardActived = false;
+      _isKeyboardActive = false;
     });
 
-    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActived");
+    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActive");
   }
 
   @override
@@ -101,20 +100,20 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
     super.didChangeMetrics();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print("[Keyboard] 2, isKeyboardActived:$_isKeyboardActived");
+      print("[Keyboard] 2, isKeyboardActived:$_isKeyboardActive");
 
       // 当前是安卓系统并且在焦点聚焦的情况下
       if (Platform.isAndroid && _focusNode.hasFocus) {
-        if (_isKeyboardActived) {
+        if (_isKeyboardActive) {
           setState(() {
-            _isKeyboardActived = false;
+            _isKeyboardActive = false;
           });
           // 使输入框失去焦点
           _focusNode.unfocus();
           return;
         }
         setState(() {
-          _isKeyboardActived = true;
+          _isKeyboardActive = true;
         });
       }
     });
@@ -124,7 +123,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:'增加抵押',
+        baseTitle: '增加抵押',
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -146,51 +145,9 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   void getNetworkData() async {
-    try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
-      contractItem = requestList[0];
-      providerList = requestList[1];
-
-      selectNodeProvider(0, 0);
-
-      setState(() {
-        currentState = null;
-      });
-    } catch (e) {
-      setState(() {
-        currentState = LoadFailState();
-      });
-    }
-  }
-
-  void selectNodeProvider(int providerIndex, int regionIndex) {
-    if (providerList.length == 0) {
-      return;
-    }
-
-    serverList = new List();
-    for (int i = 0; i < providerList.length; i++) {
-      NodeProviderEntity nodeProviderEntity = providerList[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(
-            nodeProviderEntity.name,
-            style: TextStyles.textC333S14,
-          ));
-      serverList.add(item);
-    }
-    selectServerItemValue = serverList[providerIndex].value;
-
-    List<Regions> nodeListStr = providerList[providerIndex].regions;
-    nodeList = new List();
-    for (int i = 0; i < nodeListStr.length; i++) {
-      Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
-      nodeList.add(item);
-    }
-    selectNodeItemValue = nodeList[regionIndex].value;
+    setState(() {
+      currentState = null;
+    });
   }
 
   void textChangeListener() {
@@ -238,18 +195,6 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
     super.dispose();
   }
 
-  var _editText = "";
-  var _localImagePath = "";
-//  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
-  var _titleList = ["图标", "名称", "节点号", "最大抵押量", "网址", "安全联系", "描述"];
-  List<String> _detailList = ["", "", "", "", "", "", ""];
-  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入一个全网唯一的节点号", "节点允许的最大抵押量", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
-
-  TextEditingController _textEditingController = new TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  double minTotal = 0;
-  double remainTotal = 0;
-
   Widget _pageView(BuildContext context) {
     if (currentState != null || contractItem.contract == null) {
       return AllPageStateContainer(currentState, () {
@@ -291,144 +236,6 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
         ),
         _confirmButtonWidget(),
       ],
-    );
-  }
-
-  Widget divideChildWidget() {
-    return Container(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                      text: "分裂后子节点",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.w500),
-                      children: [
-                        TextSpan(
-                          text: "（保留45%总抵押）",
-                          style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-                        )
-                      ]),
-                ),
-                Spacer(),
-                Container(
-                  color: HexColor("#1FB9C7").withOpacity(0.08),
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Text("第一期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0, top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [1, 0.5, 2].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "总抵押";
-                    detail = "900,000";
-                    break;
-
-                  case 2:
-                    title = "我的抵押";
-                    detail = "300,000";
-                    break;
-
-                  default:
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Container(
-                        height: 15,
-                        width: 0.5,
-                        color: HexColor("#000000").withOpacity(0.2),
-                      ),
-                    );
-                    break;
-                }
-
-                return Column(
-                  children: <Widget>[
-                    Text(detail,
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
-                  ],
-                );
-              }).toList(),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 18, right: 16),
-            child: Container(
-              color: HexColor("#F2F2F2"),
-              height: 0.5,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 15),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child: Text(S.of(context).service_provider,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    height: 30,
-                    child: DropdownButton(
-                      value: selectServerItemValue,
-                      items: serverList,
-                      onChanged: (value) {
-                        setState(() {
-                          selectNodeProvider(value, 0);
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 8.0, left: 15, bottom: 16),
-            child: Row(
-              children: <Widget>[
-                Container(
-                    width: 100,
-                    child:
-                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
-                DropdownButtonHideUnderline(
-                  child: Container(
-                    height: 30,
-                    child: DropdownButton(
-                      value: selectNodeItemValue,
-                      items: nodeList,
-                      onChanged: (value) {
-                        setState(() {
-                          selectNodeProvider(selectServerItemValue, value);
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -751,10 +558,8 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   Widget _confirmButtonWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Visibility(
-      visible: !_isKeyboardActived,
+      visible: !_isKeyboardActive,
       child: Container(
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
