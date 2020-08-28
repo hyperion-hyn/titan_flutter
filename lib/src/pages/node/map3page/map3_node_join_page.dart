@@ -34,16 +34,12 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
-  NodeApi _nodeApi = NodeApi();
+
   ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  var selectServerItemValue = 0;
-  var selectNodeItemValue = 0;
-  List<DropdownMenuItem> serverList;
-  List<DropdownMenuItem> nodeList;
-  List<NodeProviderEntity> providerList = [];
+
   String originInputStr = "";
 
   @override
@@ -70,51 +66,9 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   }
 
   void getNetworkData() async {
-    try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
-      contractItem = requestList[0];
-      providerList = requestList[1];
-
-      selectNodeProvider(0, 0);
-
-      setState(() {
-        currentState = null;
-      });
-    } catch (e) {
-      setState(() {
-        currentState = LoadFailState();
-      });
-    }
-  }
-
-  void selectNodeProvider(int providerIndex, int regionIndex) {
-    if (providerList.length == 0) {
-      return;
-    }
-
-    serverList = new List();
-    for (int i = 0; i < providerList.length; i++) {
-      NodeProviderEntity nodeProviderEntity = providerList[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(
-            nodeProviderEntity.name,
-            style: TextStyles.textC333S14,
-          ));
-      serverList.add(item);
-    }
-    selectServerItemValue = serverList[providerIndex].value;
-
-    List<Regions> nodeListStr = providerList[providerIndex].regions;
-    nodeList = new List();
-    for (int i = 0; i < nodeListStr.length; i++) {
-      Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
-      nodeList.add(item);
-    }
-    selectNodeItemValue = nodeList[regionIndex].value;
+    setState(() {
+      currentState = null;
+    });
   }
 
   void textChangeListener() {
@@ -159,7 +113,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
+    /*if (currentState != null || contractItem?.contract == null) {
       return Scaffold(
         body: AllPageStateContainer(currentState, () {
           setState(() {
@@ -172,18 +126,22 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
-
+  */
     return Column(
       children: <Widget>[
         Expanded(
-          child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _nodeWidget(context, contractItem.contract),
-            SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 8),
-            _tipsWidget(),
-          ])),
+          child: BaseGestureDetector(
+            context: context,
+            child: SingleChildScrollView(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _nodeWidget(context, contractItem?.contract),
+              SizedBox(height: 8),
+              getHoldInNum(
+                  context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
+              SizedBox(height: 8),
+              _tipsWidget(),
+            ])),
+          ),
         ),
         _confirmButtonWidget(),
       ],

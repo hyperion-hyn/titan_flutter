@@ -16,7 +16,6 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/gas_input_widget.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
 class Map3NodeCancelPage extends StatefulWidget {
@@ -50,12 +49,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                // hide keyboard when touch other widgets
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
+            child: BaseGestureDetector(
+              context: context,
               child: SingleChildScrollView(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(

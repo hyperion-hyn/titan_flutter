@@ -46,12 +46,8 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                // hide keyboard when touch other widgets
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
+            child: BaseGestureDetector(
+              context: context,
               child: SingleChildScrollView(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Container(

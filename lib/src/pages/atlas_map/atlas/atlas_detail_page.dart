@@ -284,49 +284,79 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 onTap: () {
                   switch (_atlasInfoEntity.join) {
                     case NodeJoinType.CREATOR:
-                      UiUtil.showDialogWidget(context,
-                          title: Text("领取奖励"),
-                          content: Text("你将领取当前节点奖励，奖励会按抵押比例分配到参与抵押的每个map3节点，当然你会获得额外的管理费奖励。"),
-                          actions: [
-                            FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(S.of(context).cancel)),
-                            FlatButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (BuildContext context) => Map3NodeFormalConfirmPage(
-                                            actionEvent: Map3NodeActionEvent.RECEIVE_AWARD,
-                                          )));
-                                  Navigator.pop(context);
-                                },
-                                child: Text("领取"))
-                          ]);
+                      UiUtil.showAlertView(
+                        context,
+                        title: "领取奖励",
+                        actions: [
+                          ClickOvalButton(
+                            S.of(context).cancel,
+                            () {
+                              Navigator.pop(context);
+                            },
+                            width: 120,
+                            height: 32,
+                            fontSize: 14,
+                            textColor: DefaultColors.color999,
+                            btnColor: Colors.transparent,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          ClickOvalButton(
+                            "领取",
+                            () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
+                                        actionEvent: Map3NodeActionEvent.RECEIVE_AWARD,
+                                      )));
+                              Navigator.pop(context);
+                            },
+                            width: 120,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: "你将领取当前节点奖励，奖励会按抵押比例分配到参与抵押的每个map3节点，当然你会获得额外的管理费奖励。",
+                      );
+
                       break;
                     case NodeJoinType.JOINER:
-                      UiUtil.showDialogWidget(context,
-                          title: Text("领取奖励"),
-                          content: Text("你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。"),
-                          actions: [
-                            FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("好的")),
-                          ]);
+                      UiUtil.showAlertView(
+                        context,
+                        title: "领取奖励",
+                        actions: [
+                          ClickOvalButton(
+                            "好的",
+                            () {
+                              Navigator.pop(context);
+                            },
+                            width: 160,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: "你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。",
+                      );
+
                       break;
                     case NodeJoinType.NONE:
-                      UiUtil.showDialogWidget(context,
-                          title: Text("领取奖励"),
-                          content: Text("你还没有参与该Atlas节点抵押，不可以领取节点奖励。"),
-                          actions: [
-                            FlatButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("好的")),
-                          ]);
+                      UiUtil.showAlertView(
+                        context,
+                        title: "领取奖励",
+                        actions: [
+                          ClickOvalButton(
+                            "好的",
+                            () {
+                              Navigator.pop(context);
+                            },
+                            width: 160,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: "你还没有参与该Atlas节点抵押，不可以领取节点奖励。",
+                      );
+
                       break;
                   }
                 },

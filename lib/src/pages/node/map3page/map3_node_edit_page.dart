@@ -98,12 +98,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     return Column(
       children: <Widget>[
         Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
+          child: BaseGestureDetector(
+            context: context,
             child: CustomScrollView(
               slivers: <Widget>[
                 _headerWidget(),

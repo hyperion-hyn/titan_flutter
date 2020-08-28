@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
@@ -282,11 +283,8 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       child = _bls();
     }
     return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
+      child: BaseGestureDetector(
+        context: context,
         child: CustomScrollView(
           slivers: <Widget>[
             SliverToBoxAdapter(

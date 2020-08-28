@@ -19,8 +19,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
 import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -43,6 +41,9 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/popup/bubble_widget.dart';
+import 'package:titan/src/widget/popup/pop_route.dart';
+import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
@@ -581,34 +582,98 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Application.router.navigateTo(context, Routes.map3node_divide_page);
-              },
-              child: Text(
-                "裂变",
-                style: TextStyle(color: HexColor("#228BA1"), fontSize: 14),
-              ),
-            ),
             InkWell(
               onTap: () {
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_share_page +
-                        "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+                _showMoreAlertView();
               },
               child: Padding(
-                padding: EdgeInsets.only(right: 15),
+                padding: EdgeInsets.only(left: 15, right: 35),
                 child: Image.asset(
-                  "res/drawable/node_share.png",
+                  //"res/drawable/node_share.png",
+                  "res/drawable/add_position_add.png",
                   width: 15,
                   height: 18,
                 ),
               ),
-            )
+            ),
           ],
         ),
         body: _pageWidget(context),
+      ),
+    );
+  }
+
+  _showMoreAlertView() {
+    return Navigator.push(
+      context,
+      PopRoute(
+        child: Popup(
+          child: BubbleWidget(100.0, 120.0, Colors.white, BubbleArrowDirection.top,
+              length: 55,
+              innerPadding: 0.0,
+              child: Container(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 0),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (subContext, index) {
+                    var title = "";
+                    if (index == 0) {
+                      title = "裂变";
+                    } else if (index == 1) {
+                      title = "终止";
+                    } else if (index == 2) {
+                      title = "分享";
+                    }
+
+                    return SizedBox(
+                      width: 100,
+                      height: 36,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+
+                          if (index == 0) {
+                            Application.router.navigateTo(context, Routes.map3node_divide_page);
+                          } else if (index == 1) {
+                            Application.router.navigateTo(context, Routes.map3node_exit_page);
+                          } else if (index == 2) {
+                            Application.router.navigateTo(
+                                context,
+                                Routes.map3node_share_page +
+                                    "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+                          }
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Divider(
+                              height: 0.5,
+                              color: DefaultColors.colorf2f2f2,
+                              indent: 13,
+                              endIndent: 13,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: 3,
+                ),
+              )),
+          left: 246,
+          top: 76,
+        ),
       ),
     );
   }
@@ -696,6 +761,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  // todo: bar
   Widget _bottomBtnBarWidget() {
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -709,29 +775,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
+          Spacer(),
           ClickOvalButton(
             "撤销抵押",
             () {
               Application.router.navigateTo(context, Routes.map3node_cancel_page);
             },
-            width: 90,
+            width: 120,
             height: 32,
             fontSize: 14,
             textColor: DefaultColors.color999,
             btnColor: Colors.transparent,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 14),
-            child: ClickOvalButton(
-              "提取奖励",
-              () {
-                Application.router.navigateTo(context, Routes.map3node_collect_page);
-              },
-              width: 90,
-              height: 32,
-              fontSize: 14,
-            ),
-          ),
+          Spacer(),
           ClickOvalButton(
             "抵押",
             () async {
@@ -747,13 +803,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
               }
             },
-            width: 90,
+            width: 120,
             height: 32,
             fontSize: 14,
           ),
-          SizedBox(
-            width: 15,
-          )
+          Spacer(),
         ],
       ),
     );
@@ -786,6 +840,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+
+/*
 
   Widget _bottomSureButtonWidget() {
     return Visibility(
@@ -820,6 +876,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+*/
 
   Widget _getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeItem) {
     if (contractNodeItem == null) return Container();
@@ -987,8 +1044,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         _map3InfoEntity.describe = "大家快来参与我的节点吧…";
 
                         var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
-                        Application.router
-                            .navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                        Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

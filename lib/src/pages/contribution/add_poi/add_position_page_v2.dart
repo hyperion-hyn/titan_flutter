@@ -10,6 +10,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -268,10 +269,8 @@ class _AddPositionStateV2 extends BaseState<AddPositionPageV2> {
   Widget _buildBody() {
     return Stack(
       children: <Widget>[
-        GestureDetector(
-          // 触摸收起键盘
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        BaseGestureDetector(
+          context:context,
           child: SingleChildScrollView(
             controller: _scrollController,
             child: Form(

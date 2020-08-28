@@ -125,7 +125,11 @@ class Routes {
 
     //contribution
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: pushNewPageTransitionType);
-    router.define(contribute_done, handler: contributionDoneHandler, transitionType: pushNewPageTransitionType);
+    router.define(
+      contribute_done,
+      handler: contributionDoneHandler,
+      transitionType: pushNewPageTransitionType,
+    );
     router.define(contribute_scan_signal,
         handler: contributionScanSignalHandler, transitionType: pushNewPageTransitionType);
     router.define(contribute_position_finish,
