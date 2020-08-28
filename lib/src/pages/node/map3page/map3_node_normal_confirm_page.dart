@@ -69,15 +69,16 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
   List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
-  String pageTitle;
+  String _pageTitle = "";
 
   @override
   void onCreated() {
     activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo?.symbol ?? "btc");
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     switch (widget.actionEvent) {
-      case Map3NodeActionEvent.DELEGATE:
-        break;
+//      case Map3NodeActionEvent.DELEGATE:
+//        _pageTitle = S.of(context).transfer_confirm;
+//        break;
       case Map3NodeActionEvent.COLLECT:
         break;
       case Map3NodeActionEvent.CANCEL:
@@ -87,7 +88,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       case Map3NodeActionEvent.ADD:
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
-        pageTitle = "确认领取节点奖励";
+        _pageTitle = "确认领取节点奖励";
         _detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",
@@ -95,7 +96,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
         ];
         break;
       default:
-        pageTitle = S.of(context).transfer_confirm;
+        _pageTitle = S.of(context).transfer_confirm;
         break;
     }
 
@@ -116,7 +117,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: BaseAppBar(
-          baseTitle: pageTitle,
+          baseTitle: _pageTitle,
         ),
         body: _pageView(context),
       ),

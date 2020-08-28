@@ -57,16 +57,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       _detailList.add(entity.nodeId);
     }
 
-    if (entity.staking?.isNotEmpty ?? false) {
-      _titleList.add("首次抵押");
-      _detailList.add(entity.staking);
-    }
-
-    if (entity.feeRate?.isNotEmpty ?? false) {
-      _titleList.add("管理费");
-      _detailList.add(entity.feeRate + "%");
-    }
-
     if (entity.home?.isNotEmpty ?? false) {
       _titleList.add("网址");
       _detailList.add(entity.home);
@@ -153,15 +143,18 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
-                      /*InkWell(
-                        child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
-                        onTap: () {
-                          String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                          String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                          Application.router
-                              .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                        },
-                      ),*/
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: InkWell(
+                          child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                          onTap: () {
+                            String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                            String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+                            Application.router.navigateTo(
+                                context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                          },
+                        ),
+                      ),
                     ],
                   ),
                   Padding(

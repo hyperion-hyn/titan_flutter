@@ -366,7 +366,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
             fit: BoxFit.cover,
           ),
           SizedBox(
-            width: 6,
+            width: 10,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
