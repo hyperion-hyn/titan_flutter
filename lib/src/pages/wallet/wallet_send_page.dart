@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:barcode_scan/barcode_scan.dart';
@@ -9,13 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -118,12 +117,8 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       body: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
         child: SingleChildScrollView(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
+          child: BaseGestureDetector(
+            context: context,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

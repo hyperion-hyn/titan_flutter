@@ -1,4 +1,3 @@
-import 'package:decimal/decimal.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
-import 'package:titan/src/global.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/validator_util.dart';
-import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
+
 
 class CreateAccountPage extends StatefulWidget {
   @override
@@ -43,12 +41,8 @@ class _CreateAccountState extends State<CreateAccountPage> {
           ),
         ),
         body: SingleChildScrollView(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
+          child: BaseGestureDetector(
+            context: context,
             child: Form(
               key: _formKey,
               child: Container(

@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/data/entity/poi/poi_interface.dart';
 import 'package:titan/src/utils/encryption.dart';
@@ -100,12 +101,8 @@ class ShareDialogState extends State<ShareDialog> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
+          child: BaseGestureDetector(
+            context: context,
             child: Form(
               key: _formKey,
               child: Column(

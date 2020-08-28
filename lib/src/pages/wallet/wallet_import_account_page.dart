@@ -7,12 +7,11 @@ import 'package:image_pickers/image_pickers.dart';
 import 'package:r_scan/r_scan.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/validator_util.dart';
-import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
 
 import 'wallet_finish_import_page.dart';
 import 'package:bip39/bip39.dart' as bip39;
@@ -113,12 +112,8 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
             )*/
           ],
         ),
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () {
-            // hide keyboard when touch other widgets
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
+        body: BaseGestureDetector(
+          context: context,
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Form(

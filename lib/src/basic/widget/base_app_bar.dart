@@ -22,3 +22,16 @@ class BaseAppBar extends AppBar {
           actions: actions,
         );
 }
+
+class BaseGestureDetector extends GestureDetector {
+  BaseGestureDetector({BuildContext context, Widget child})
+      : super(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            // hide keyboard when touch other widgets
+            //print("[Gesture] hide keyboard when touch other widgets");
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: child,
+        );
+}

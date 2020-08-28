@@ -11,13 +11,10 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_confirm_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -27,8 +24,6 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
-
-import 'map3_node_pronounce_page.dart';
 
 class Map3NodeDivideAddPage extends StatefulWidget {
 
@@ -275,12 +270,8 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
     return Column(
       children: <Widget>[
         Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              // hide keyboard when touch other widgets
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
+          child: BaseGestureDetector(
+            context: context,
             child: CustomScrollView(
               slivers: <Widget>[
                 SliverToBoxAdapter(

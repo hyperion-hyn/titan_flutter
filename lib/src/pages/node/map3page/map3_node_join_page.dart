@@ -7,7 +7,6 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -176,14 +175,17 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
     return Column(
       children: <Widget>[
         Expanded(
-          child: SingleChildScrollView(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            _nodeWidget(context, contractItem.contract),
-            SizedBox(height: 8),
-            getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-            SizedBox(height: 8),
-            _tipsWidget(),
-          ])),
+          child: BaseGestureDetector(
+            context: context,
+            child: SingleChildScrollView(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              _nodeWidget(context, contractItem.contract),
+              SizedBox(height: 8),
+              getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
+              SizedBox(height: 8),
+              _tipsWidget(),
+            ])),
+          ),
         ),
         _confirmButtonWidget(),
       ],
