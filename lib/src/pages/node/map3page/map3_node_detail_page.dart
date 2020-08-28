@@ -551,6 +551,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _isShowLaunchDate =>
       _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
+  var _moreKey = GlobalKey(debugLabel: '__more_global__');
+  double _moreSizeHeight = 18;
+  double _moreSizeWidth = 100;
+  double _moreOffsetLeft = 246;
+  double _moreOffsetTop = 76;
+
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
@@ -563,8 +569,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+
     super.initState();
   }
+
+  void _afterLayout(_) {
+    _getMorePosition();
+  }
+
+  _getMorePosition() {
+    final RenderBox renderBox = _moreKey.currentContext.findRenderObject();
+    final positions = renderBox.localToGlobal(Offset(0, 0));
+    _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75 + 10;
+    _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
+    //print("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
+  }
+
+//  left: 246,
+//  top: 76,
 
   @override
   void dispose() {
@@ -591,8 +614,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 child: Image.asset(
                   //"res/drawable/node_share.png",
                   "res/drawable/add_position_add.png",
+                  key: _moreKey,
                   width: 15,
-                  height: 18,
+                  height: _moreSizeHeight,
                 ),
               ),
             ),
@@ -608,7 +632,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(100.0, 120.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(_moreSizeWidth, 120.0, Colors.white, BubbleArrowDirection.top,
               length: 55,
               innerPadding: 0.0,
               child: Container(
@@ -671,8 +695,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   itemCount: 3,
                 ),
               )),
-          left: 246,
-          top: 76,
+          left: _moreOffsetLeft,
+          top: _moreOffsetTop,
         ),
       ),
     );
