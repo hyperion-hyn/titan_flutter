@@ -581,7 +581,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   _getMorePosition() {
     final RenderBox renderBox = _moreKey.currentContext.findRenderObject();
     final positions = renderBox.localToGlobal(Offset(0, 0));
-    _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75 + 10;
+    _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
     _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
     //print("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
   }
@@ -610,14 +610,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 _showMoreAlertView();
               },
               child: Padding(
-                padding: EdgeInsets.only(left: 15, right: 35),
-                child: Image.asset(
+                padding: EdgeInsets.only(left: 20, right: 35),
+                child: Icon(
+                  Icons.add,
+                  color: Theme.of(context).primaryColor,
+                ),
+                /*child: Image.asset(
                   //"res/drawable/node_share.png",
                   "res/drawable/add_position_add.png",
                   key: _moreKey,
                   width: 15,
                   height: _moreSizeHeight,
-                ),
+                ),*/
               ),
             ),
           ],
@@ -633,7 +637,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       PopRoute(
         child: Popup(
           child: BubbleWidget(_moreSizeWidth, 120.0, Colors.white, BubbleArrowDirection.top,
-              length: 55,
+              length: 50,
               innerPadding: 0.0,
               child: Container(
                 child: ListView.builder(
