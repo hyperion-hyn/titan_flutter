@@ -721,11 +721,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
     {bool isMyself = false, FocusNode focusNode}) {
-  List<int> suggestList =
-      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
 
   double minTotal = 0;
   double remainTotal = 0;
+
+
+//  List<int> suggestList =
+//      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
+  List<int> suggestList = [40000, 60000, 80000];
+  /*
   if (isJoin) {
     //calculation
     remainTotal = double.parse(contractNodeItem.remainDelegation);
@@ -748,7 +752,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
 
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
   walletName = UiUtil.shortString(walletName, limitLength: 6);
-
+*/
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
     color: Colors.white,

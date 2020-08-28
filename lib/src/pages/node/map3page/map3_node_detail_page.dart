@@ -579,7 +579,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
-            FlatButton(
+            /*FlatButton(
               onPressed: () {
                 Application.router.navigateTo(context, Routes.map3node_divide_page);
               },
@@ -587,26 +587,91 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 "裂变",
                 style: TextStyle(color: HexColor("#228BA1"), fontSize: 14),
               ),
-            ),
+            ),*/
             InkWell(
               onTap: () {
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_share_page +
-                        "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+//                Application.router.navigateTo(
+//                    context,
+//                    Routes.map3node_share_page +
+//                        "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+
+
               },
               child: Padding(
-                padding: EdgeInsets.only(right: 15),
+                padding: EdgeInsets.only(left: 15, right: 15),
                 child: Image.asset(
-                  "res/drawable/node_share.png",
+                  //"res/drawable/node_share.png",
+                  "res/drawable/add_position_add.png",
                   width: 15,
                   height: 18,
                 ),
               ),
-            )
+            ),
           ],
         ),
         body: _pageWidget(context),
+      ),
+    );
+  }
+
+  showDepthView() {
+    return Navigator.push(
+      context,
+      PopRoute(
+        child: Popup(
+          child: BubbleWidget(100.0, 166.0, Colors.white, BubbleArrowDirection.top,
+              length: 55,
+              innerPadding: 0.0,
+              child: Container(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 0),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (subContext, index) {
+                    var title = "";
+                    if (index == 0) {
+                      title = "裂变";
+                    }
+                    else if (index == 1) {
+                      title = "终止";
+                    }
+                    else if (index == 2) {
+                      title = "分享";
+                    }
+
+                    return SizedBox(
+                      width: 100,
+                      height: 29.5,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+
+                          Navigator.of(context).pop();
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Divider(
+                              height: 0.5,
+                              color: DefaultColors.colorf2f2f2,
+                              indent: 13,
+                              endIndent: 13,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              child:
+                              Text(title, style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: 3,
+                ),
+              )),
+          left: 238,
+          top: 66,
+        ),
       ),
     );
   }
@@ -707,29 +772,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
+          Spacer(),
           ClickOvalButton(
             "撤销抵押",
             () {
               Application.router.navigateTo(context, Routes.map3node_cancel_page);
             },
-            width: 90,
+            width: 120,
             height: 32,
             fontSize: 14,
             textColor: DefaultColors.color999,
             btnColor: Colors.transparent,
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 14),
-            child: ClickOvalButton(
-              "提取奖励",
-              () {
-                Application.router.navigateTo(context, Routes.map3node_collect_page);
-              },
-              width: 90,
-              height: 32,
-              fontSize: 14,
-            ),
-          ),
+          Spacer(),
           ClickOvalButton(
             "抵押",
             () async {
@@ -745,13 +800,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
               }
             },
-            width: 90,
+            width: 120,
             height: 32,
             fontSize: 14,
           ),
-          SizedBox(
-            width: 15,
-          )
+          Spacer(),
         ],
       ),
     );
@@ -985,8 +1038,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         _map3InfoEntity.describe = "大家快来参与我的节点吧…";
 
                         var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
-                        Application.router
-                            .navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                        Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,

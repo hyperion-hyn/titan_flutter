@@ -90,7 +90,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty),
+            _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty, isMine: true),
             _myNodeListWidget(),
             _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
@@ -190,12 +190,17 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     }, childCount: _pendingList.length));
   }
 
-  Widget _sectionTitleWidget({String title, bool hasMore = true}) {
+  Widget _sectionTitleWidget({String title, bool hasMore = true, bool isMine = false}) {
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
-          Application.router.navigateTo(context,
-              Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
+          if (isMine) {
+            Application.router.navigateTo(context, Routes.map3node_my_page);
+          } else {
+            Application.router.navigateTo(context,
+                Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
+          }
+
         },
         child: Container(
           padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),

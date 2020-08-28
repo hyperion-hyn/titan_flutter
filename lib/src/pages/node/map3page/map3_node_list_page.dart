@@ -11,6 +11,8 @@ import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
+
+
 class Map3NodeListPage extends StatefulWidget {
   final MyContractModel model;
   Map3NodeListPage(this.model);
@@ -88,6 +90,7 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle:widget.model.name,
+
       ),
       body: _pageWidget(context),
     );

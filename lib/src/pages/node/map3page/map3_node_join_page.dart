@@ -112,7 +112,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
+    /*if (currentState != null || contractItem?.contract == null) {
       return Scaffold(
         body: AllPageStateContainer(currentState, () {
           setState(() {
@@ -125,7 +125,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
-
+  */
     return Column(
       children: <Widget>[
         Expanded(
@@ -133,7 +133,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
             context: context,
             child: SingleChildScrollView(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _nodeWidget(context, contractItem.contract),
+              _nodeWidget(context, contractItem?.contract),
               SizedBox(height: 8),
               getHoldInNum(
                   context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),

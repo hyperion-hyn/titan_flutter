@@ -4,7 +4,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/config/application.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'map3_node_list_page.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class Map3NodeMyPage extends StatefulWidget {
   @override
@@ -40,7 +44,39 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: BaseAppBar(
-       baseTitle:S.of(context).my_contract
+        baseTitle: S.of(context).my_contract,
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              UiUtil.showAlertView(context,
+                  title: "提取奖励",
+                  actions: [
+                    ClickOvalButton(
+                      "确认提取",
+                      () {
+                        Navigator.pop(context);
+                        Application.router.navigateTo(context, Routes.map3node_collect_page);
+                      },
+                      width: 200,
+                      height: 38,
+                      fontSize: 16,
+                    ),
+                  ],
+                  content: "您一共创建或参与了3个Map3节点，截止昨日可提奖励为: 3,043 HYN 确定全部提取到钱包",
+                  boldContent: "(Star01)",
+                  boldStyle: TextStyle(
+                    color: HexColor("#999999"),
+                    fontSize: 12,
+                    height: 1.8,
+                  ),
+                  suffixContent: " 吗？");
+            },
+            child: Text(
+              "提取奖励",
+              style: TextStyle(color: HexColor("#1F81FF")),
+            ),
+          ),
+        ],
       ),
       body: Container(
         color: Colors.white,
@@ -96,8 +132,3 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
     );
   }
 }
-
-
-
-
-
