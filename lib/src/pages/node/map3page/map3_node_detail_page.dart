@@ -41,6 +41,9 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/popup/bubble_widget.dart';
+import 'package:titan/src/widget/popup/pop_route.dart';
+import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
@@ -579,26 +582,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
-            /*FlatButton(
-              onPressed: () {
-                Application.router.navigateTo(context, Routes.map3node_divide_page);
-              },
-              child: Text(
-                "裂变",
-                style: TextStyle(color: HexColor("#228BA1"), fontSize: 14),
-              ),
-            ),*/
             InkWell(
               onTap: () {
-//                Application.router.navigateTo(
-//                    context,
-//                    Routes.map3node_share_page +
-//                        "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
-
-
+                _showMoreAlertView();
               },
               child: Padding(
-                padding: EdgeInsets.only(left: 15, right: 15),
+                padding: EdgeInsets.only(left: 15, right: 35),
                 child: Image.asset(
                   //"res/drawable/node_share.png",
                   "res/drawable/add_position_add.png",
@@ -614,12 +603,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  showDepthView() {
+  _showMoreAlertView() {
     return Navigator.push(
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(100.0, 166.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(100.0, 120.0, Colors.white, BubbleArrowDirection.top,
               length: 55,
               innerPadding: 0.0,
               child: Container(
@@ -630,22 +619,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     var title = "";
                     if (index == 0) {
                       title = "裂变";
-                    }
-                    else if (index == 1) {
+                    } else if (index == 1) {
                       title = "终止";
-                    }
-                    else if (index == 2) {
+                    } else if (index == 2) {
                       title = "分享";
                     }
 
                     return SizedBox(
                       width: 100,
-                      height: 29.5,
+                      height: 36,
                       child: FlatButton(
                         padding: EdgeInsets.all(0),
                         onPressed: () {
-
                           Navigator.of(context).pop();
+
+                          if (index == 0) {
+                            Application.router.navigateTo(context, Routes.map3node_divide_page);
+                          } else if (index == 1) {
+                            Application.router.navigateTo(context, Routes.map3node_exit_page);
+                          } else if (index == 2) {
+                            Application.router.navigateTo(
+                                context,
+                                Routes.map3node_share_page +
+                                    "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+                          }
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -657,9 +654,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 6.0),
-                              child:
-                              Text(title, style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -669,8 +671,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   itemCount: 3,
                 ),
               )),
-          left: 238,
-          top: 66,
+          left: 246,
+          top: 76,
         ),
       ),
     );
@@ -759,6 +761,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  // todo: bar
   Widget _bottomBtnBarWidget() {
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -838,6 +841,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+/*
+
   Widget _bottomSureButtonWidget() {
     return Visibility(
       visible: _visible,
@@ -871,6 +876,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+*/
 
   Widget _getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeItem) {
     if (contractNodeItem == null) return Container();
