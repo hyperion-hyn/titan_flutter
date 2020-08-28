@@ -316,118 +316,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     );
   }
 
-  Widget _managerSpendWidget() {
-    return Container(
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RichText(
-              text: TextSpan(
-                  text: "管理费设置",
-                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
-                  children: [
-                    TextSpan(
-                      text: "（1%-20%）",
-                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-                    )
-                  ]),
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _managerSpendCount--;
-                      if (_managerSpendCount < 1) {
-                        _managerSpendCount = 1;
-                      }
-
-                      _rateCoinController.text = "$_managerSpendCount";
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        child: Text(
-                          "-",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: HexColor("#F2F2F2"),
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 60,
-                  height: 30,
-                  child: RoundBorderTextField(
-                    controller: _rateCoinController,
-                    keyboardType: TextInputType.number,
-                    validator: (textStr) {
-                      if (textStr.length == 0) {
-                        return S.of(context).please_input_hyn_count;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Container(
-                    child: Text(
-                      "%",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _managerSpendCount++;
-                      if (_managerSpendCount > 20) {
-                        _managerSpendCount = 20;
-                      }
-                      _rateCoinController.text = "$_managerSpendCount";
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        child: Text(
-                          "+",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: HexColor("#F2F2F2"),
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   Widget _headerWidget() {
     var divider = Container(
       color: HexColor("#F4F4F4"),
@@ -442,7 +330,24 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
               focusNode: _focusNode),
           divider,
-          _managerSpendWidget(),
+          managerSpendWidget(context,_rateCoinController,(){
+            setState(() {
+              _managerSpendCount--;
+              if (_managerSpendCount < 1) {
+                _managerSpendCount = 1;
+              }
+
+              _rateCoinController.text = "$_managerSpendCount";
+            });
+          },(){
+            setState(() {
+              _managerSpendCount++;
+              if (_managerSpendCount > 20) {
+                _managerSpendCount = 20;
+              }
+              _rateCoinController.text = "$_managerSpendCount";
+            });
+          }),
           divider,
         ]),
       ),
@@ -890,6 +795,107 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                 ),
               ],
             )),
+      ],
+    ),
+  );
+}
+
+Widget managerSpendWidget(BuildContext buildContext,TextEditingController _rateCoinController,Function reduceFunc,Function addFunc) {
+  return Container(
+    color: Colors.white,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: RichText(
+            text: TextSpan(
+                text: "管理费设置",
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                children: [
+                  TextSpan(
+                    text: "（1%-20%）",
+                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                  )
+                ]),
+          ),
+        ),
+        Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  reduceFunc();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "-",
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#F2F2F2"),
+                      borderRadius: BorderRadius.circular(3.0),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: 60,
+                height: 34,
+                child: RoundBorderTextField(
+                  controller: _rateCoinController,
+                  keyboardType: TextInputType.number,
+                  bgColor: HexColor("#ffffff"),
+                  maxLength: 3,
+                  validator: (textStr) {
+                    if (textStr.length == 0) {
+                      return S.of(buildContext).please_input_hyn_count;
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left:4, right: 8.0),
+                child: Container(
+                  child: Text(
+                    "%",
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  addFunc();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Container(
+                    height: 22,
+                    width: 22,
+                    alignment: Alignment.center,
+                    child: Text(
+                      "+",
+                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor("#F2F2F2"),
+                      borderRadius: BorderRadius.circular(3.0),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     ),
   );

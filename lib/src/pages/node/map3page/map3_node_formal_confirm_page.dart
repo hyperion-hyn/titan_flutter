@@ -26,7 +26,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class Map3NodeNormalConfirmPage extends StatefulWidget {
+class Map3NodeFormalConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final Decimal transferAmount;
   final String receiverAddress;
@@ -39,7 +39,7 @@ class Map3NodeNormalConfirmPage extends StatefulWidget {
 //      String coinVo, [this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId])
 //      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 //
-  Map3NodeNormalConfirmPage(
+  Map3NodeFormalConfirmPage(
       {this.coinVo,
       this.contractNodeItem,
       this.transferAmount,
@@ -50,11 +50,11 @@ class Map3NodeNormalConfirmPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeNormalConfirmState();
+    return _Map3NodeFormalConfirmState();
   }
 }
 
-class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
+class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
@@ -89,6 +89,14 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
         _pageTitle = "确认领取节点奖励";
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
+          "节点号: ${widget.atlasNodeId}",
+          "${widget.transferAmount} HYN"
+        ];
+        break;
+      case Map3NodeActionEvent.EDIT_ATLAS:
+        _pageTitle = "确认编辑Atlas节点";
         _detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",

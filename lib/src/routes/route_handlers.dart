@@ -28,7 +28,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_join_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -199,12 +199,12 @@ var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-var map3NodeNormalConfirmHandler = Handler(handlerFunc: (context, params) {
+var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
   var index = int.parse(params['actionEvent']?.first);
   var actionEvent = Map3NodeActionEvent.values[index];
-  return Map3NodeNormalConfirmPage(
+  return Map3NodeFormalConfirmPage(
     actionEvent: actionEvent,
   );
 });
