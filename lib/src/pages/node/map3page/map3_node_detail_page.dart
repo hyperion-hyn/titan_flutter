@@ -17,6 +17,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
@@ -970,7 +971,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: InkWell(
                       //color: HexColor("#FF15B2D2"),
                       //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                      onTap: () {},
+                      onTap: () {
+                        var _map3InfoEntity = Map3InfoEntity.onlyId(1);
+
+                        _map3InfoEntity.pic = "_localImagePath";
+
+                        _map3InfoEntity.name = "派大星";
+
+                        _map3InfoEntity.nodeId = "PB2020";
+
+                        _map3InfoEntity.home = "www.hyn.space";
+
+                        _map3InfoEntity.contact = "17876894078";
+
+                        _map3InfoEntity.describe = "大家快来参与我的节点吧…";
+
+                        var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+                        Application.router
+                            .navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[

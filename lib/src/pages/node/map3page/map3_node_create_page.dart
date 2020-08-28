@@ -240,7 +240,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("启动所需" + "启动所需100万  ",
+                            Text("启动所需100万  ",
                                 style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),

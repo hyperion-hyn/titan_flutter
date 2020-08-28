@@ -22,6 +22,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_create_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_divide_add_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_divide_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_edit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_join_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_introduction_page.dart';
@@ -180,6 +181,20 @@ var map3NodeCreateConfirmHandler = Handler(handlerFunc: (context, params) {
   }
 
   return Map3NodeCreateConfirmPage(
+    entity: entity,
+  );
+});
+
+var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
+  var item = params['entity']?.first;
+  Map3InfoEntity entity;
+  if (item != null) {
+    entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(item));
+  }
+
+  return Map3NodeEditPage(
     entity: entity,
   );
 });
