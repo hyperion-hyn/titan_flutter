@@ -212,8 +212,7 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
             () {
               Navigator.pop(context);
               Application.router.navigateTo(
-                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.COLLECT.index}");
-              //Application.router.navigateTo(context, Routes.map3node_collect_page);
+                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.COLLECT.index}");
             },
             width: 200,
             height: 38,

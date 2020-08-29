@@ -88,7 +88,8 @@ enum Map3NodeActionEvent {
   CANCEL,
   CANCEL_CONFIRMED,
   ADD,
-  RECEIVE_AWARD
+  RECEIVE_AWARD,
+  EDIT_ATLAS,
 }
 
 Map3NodeActionEvent enumActionEventFromString(String fruit) {
