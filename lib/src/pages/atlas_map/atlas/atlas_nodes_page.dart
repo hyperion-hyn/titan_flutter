@@ -11,6 +11,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
@@ -417,7 +418,15 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         fontSize: 12,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => WebViewContainer(
+                                    initUrl: '',
+                                    title: 'Atlas Tutorial',
+                                  )));
+                    },
                   ),
                 ),
               ),
