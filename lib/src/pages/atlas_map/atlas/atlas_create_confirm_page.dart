@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -49,15 +50,8 @@ class _AtlasNodeCreateConfirmPageState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
-        centerTitle: true,
-        title: Text(
-          '确认创建Atlas节点',
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+      appBar: BaseAppBar(
+        baseTitle: '确认创建Atlas节点',
       ),
       body: Container(
         color: Colors.white,

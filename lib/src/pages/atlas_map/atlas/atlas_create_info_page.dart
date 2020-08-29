@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
@@ -31,21 +32,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        title: Text(
-          '确认创建节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-      ),
+      appBar: BaseAppBar(baseTitle: '确认创建节点',),
       body: _nodeSetupInfo(),
     );
   }
