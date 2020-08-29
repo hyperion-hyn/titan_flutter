@@ -10,7 +10,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utils.dart';
