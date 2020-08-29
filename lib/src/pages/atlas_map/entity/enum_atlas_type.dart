@@ -1,4 +1,24 @@
 // type
+
+/*
+ 1 创建提交中；
+ 2 创建失败;
+ 3 募资中,没在撤销节点;
+ 4 募资中，撤销节点提交中；撤销节点失败回到3状态
+ 5 撤销节点成功；
+ 6 合约已启动；
+ 7 合约期满终止；
+*/
+enum Map3InfoStatus {
+  CREATE_SUBMIT_ING,
+  CREATE_FAIL,
+  FUNDRAISING_NO_CANCEL,
+  FUNDRAISING_CANCEL_SUBMIT,
+  CANCEL_NODE_SUCCESS,
+  CONTRACT_HAS_STARTED,
+  CONTRACT_IS_END,
+}
+
 /*
   0 一般转账；
   1 创建map3节点；
@@ -23,51 +43,6 @@ enum AtlasActionType {
   CANCEL_DELEGATE_ALAS
 }
 
-/*
- 1 创建提交中；
- 2 创建失败;
- 3 创建成功，没有撤销中；
- 4 创建成功，撤销节点提交中,如果撤销失败将回到3状态；
- 5 撤销节点成功；
-*/
-enum AtlasNodeStatus {
-  CREATE_ING,
-  CREATE_FAIL,
-  CREATE_SUCCESS_UN_CANCEL,
-  CREATE_SUCCESS_CANCEL_NODE_ING,
-  CREATE_SUCCESS_CANCEL_NODE_SUCCESS,
-}
-
-/*
- 1 创建提交中；
- 2 创建失败;
- 3 募资中,没在撤销节点;
-*/
-enum Map3NodeInAtlasStatus {
-  JOIN_DELEGATE_ING,
-  JOIN_DELEGATE_FAIL,
-  DELEGATE_SUCCESS_NO_CANCEL,
-}
-
-/*
- 1 创建提交中；
- 2 创建失败;
- 3 募资中,没在撤销节点;
- 4 募资中，撤销节点提交中；撤销节点失败回到3状态
- 5 撤销节点成功；
- 6 合约已启动；
- 7 合约期满终止；
-*/
-enum Map3NodeStatus {
-  CREATE_SUBMIT_ING,
-  CREATE_FAIL,
-  FUNDRAISING_NO_CANCEL,
-  FUNDRAISING_CANCEL_SUBMIT,
-  CANCEL_NODE_SUCCESS,
-  CONTRACT_HAS_STARTED,
-  CONTRACT_IS_END,
-}
-
 //节点选举情况，0候选节点，1清算节点，2出块节点
 enum AtlasNodeType {
   CANDIDATE,
@@ -79,5 +54,44 @@ enum AtlasNodeType {
 enum NodeJoinType {
   NONE,
   JOINER,
+  CREATOR
+}
+
+/*
+ 1 创建提交中；
+ 2 创建失败;
+ 3 创建成功，没有撤销中；
+ 4 创建成功，撤销节点提交中,如果撤销失败将回到3状态；
+ 5 撤销节点成功；
+*/
+enum AtlasInfoStatus {
+  CREATE_ING,
+  CREATE_FAIL,
+  CREATE_SUCCESS_UN_CANCEL,
+  CREATE_SUCCESS_CANCEL_NODE_ING,
+  CREATE_SUCCESS_CANCEL_NODE_SUCCESS,
+}
+
+/*
+ 1 参与抵押提交中；
+ 2 参与抵押失败;
+ 3 抵押成功,没在撤销；
+ 4 抵押成功,撤销抵押提交中，撤销失败回到状态3；
+ 5 撤销抵押成功
+*/
+enum Map3AtlasStatus {
+  JOIN_DELEGATE_ING,
+  JOIN_DELEGATE_FAIL,
+  DELEGATE_SUCCESS_NO_CANCEL,
+  DELEGATE_SUCCESS_CANCEL_ING,
+  CANCEL_DELEGATE_SUCCESS,
+}
+
+/*
+ 1 一般参与者；
+ 2 创建者;
+*/
+enum UserCreator {
+  NORMAL_PARTNER,
   CREATOR
 }

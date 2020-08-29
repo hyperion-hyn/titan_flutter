@@ -1,19 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'atlas_node_entity.dart';
-import 'enum_atlas_type.dart';
+import 'atlas_info_entity.dart';
+import 'map3_atlas_entity.dart';
+import 'user_map3_entity.dart';
 
 part 'map3_info_entity.g.dart';
 
 
 @JsonSerializable()
-  class Map3InfoEntity extends Object {
+class Map3InfoEntity extends Object {
 
   @JsonKey(name: 'address')
   String address;
 
   @JsonKey(name: 'atlas')
-  List<AtlasNodeEntity> atlas;
+  AtlasInfoEntity atlas;
 
   @JsonKey(name: 'contact')
   String contact;
@@ -39,8 +40,8 @@ part 'map3_info_entity.g.dart';
   @JsonKey(name: 'id')
   int id;
 
-  @JsonKey(name: 'join')
-  NodeJoinType join;
+  @JsonKey(name: 'mine')
+  UserMap3Entity mine;
 
   @JsonKey(name: 'name')
   String name;
@@ -60,11 +61,11 @@ part 'map3_info_entity.g.dart';
   @JsonKey(name: 'region')
   String region;
 
-  @JsonKey(name: 'reward')
-  String reward;
+  @JsonKey(name: 'relative')
+  Map3AtlasEntity relative;
 
-  @JsonKey(name: 'reward_mine')
-  String rewardMine;
+  @JsonKey(name: 'reward_history')
+  String rewardHistory;
 
   @JsonKey(name: 'reward_rate')
   String rewardRate;
@@ -72,27 +73,21 @@ part 'map3_info_entity.g.dart';
   @JsonKey(name: 'staking')
   String staking;
 
-  @JsonKey(name: 'staking_mine')
-  String stakingMine;
-
   @JsonKey(name: 'start_time')
   String startTime;
 
   @JsonKey(name: 'status')
-  Map3NodeStatus status;
+  int status;//Map3InfoStatus
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
-  Map3InfoEntity.onlyId(this.id);
+  Map3InfoEntity(this.address,this.atlas,this.contact,this.createdAt,this.creator,this.describe,this.endTime,this.feeRate,this.home,this.id,this.mine,this.name,this.nodeId,this.parentNodeId,this.pic,this.provider,this.region,this.relative,this.rewardHistory,this.rewardRate,this.staking,this.startTime,this.status,this.updatedAt,);
 
-  Map3InfoEntity(this.address,this.atlas,this.contact,this.createdAt,this.creator,this.describe,this.endTime,this.feeRate,this.home,this.id,this.join,this.name,this.nodeId,this.parentNodeId,this.pic,this.provider,this.region,this.reward,this.rewardMine,this.rewardRate,this.staking,this.stakingMine,this.startTime,this.status,this.updatedAt,);
+  Map3InfoEntity.onlyId(this.id);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3InfoEntityToJson(this);
 
 }
-
-
-  

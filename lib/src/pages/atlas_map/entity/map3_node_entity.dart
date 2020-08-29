@@ -3,7 +3,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
   
 part 'map3_node_entity.g.dart';
 
-
+@deprecated
 @JsonSerializable()
   class Map3NodeEntity extends Object {
 
@@ -65,7 +65,7 @@ part 'map3_node_entity.g.dart';
   String startTime;
 
   @JsonKey(name: 'status')
-  Map3NodeStatus status;
+  Map3InfoStatus status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

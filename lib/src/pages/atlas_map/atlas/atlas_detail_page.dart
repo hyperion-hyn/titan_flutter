@@ -92,54 +92,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.staking = "20000000";
     _atlasInfoEntity.signRate = "98%";
     _atlasInfoEntity.rewardRate = "98%";
-    _atlasInfoEntity.join = NodeJoinType.CREATOR;
+    _atlasInfoEntity.join = NodeJoinType.CREATOR.index;
     _atlasInfoEntity.myMap3 = [
-      Map3NodeEntity(
-        "this.address",
-        "this.contact",
-        "this.createdAt",
-        "this.name",
-        "this.describe",
-        "this.endTime",
-        0,
-        "this.home",
-        0,
-        "this.name",
-        "this.nodeId",
-        "this.parentNodeId",
-        "this.pic",
-        "this.provider",
-        "this.region",
-        "this.reward",
-        "this.rewardRate",
-        "this.staking",
-        "this.startTime",
-        Map3NodeStatus.CANCEL_NODE_SUCCESS,
-        "this.updatedAt",
-      ),
-      Map3NodeEntity(
-        "this.address",
-        "this.contact",
-        "this.createdAt",
-        "this.name",
-        "this.describe",
-        "this.endTime",
-        0,
-        "this.home",
-        0,
-        "this.name",
-        "this.nodeId",
-        "this.parentNodeId",
-        "this.pic",
-        "this.provider",
-        "this.region",
-        "this.reward",
-        "this.rewardRate",
-        "this.staking",
-        "this.startTime",
-        Map3NodeStatus.CANCEL_NODE_SUCCESS,
-        "this.updatedAt",
-      )
     ];
 
     infoContentList.clear();
@@ -161,7 +115,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.status = Map3NodeStatus.CANCEL_NODE_SUCCESS;
+      element.status = Map3InfoStatus.CANCEL_NODE_SUCCESS.index;
     });
 
     if (mounted)
@@ -261,7 +215,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     List<DropdownMenuItem> _map3NodeItems = List();
     if (_atlasInfoEntity.myMap3.length > 0) {
       _map3NodeItems.addAll(List.generate(_atlasInfoEntity.myMap3.length, (index) {
-        Map3NodeEntity map3nodeEntity = _atlasInfoEntity.myMap3[index];
+        Map3InfoEntity map3nodeEntity = _atlasInfoEntity.myMap3[index];
         return DropdownMenuItem(
           value: index,
           child: Text(
@@ -282,7 +236,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  switch (_atlasInfoEntity.join) {
+                  switch (NodeJoinType.values[_atlasInfoEntity.join]) {
                     case NodeJoinType.CREATOR:
                       UiUtil.showAlertView(
                         context,
@@ -558,7 +512,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].reward}",
+                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
                                     style: TextStyles.textC333S16),
                                 SizedBox(
                                   height: 5,
@@ -665,7 +619,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     Row(
                       children: <Widget>[
                         Text("${map3InfoEntity.name}", style: TextStyles.textC000S14),
-                        if (map3InfoEntity.join == NodeJoinType.CREATOR) Text("（创建者）", style: TextStyles.textC999S12)
+                        if (NodeJoinType.values[map3InfoEntity.relative.status] == NodeJoinType.CREATOR) Text("（创建者）", style: TextStyles.textC999S12)//todo
                       ],
                     ),
                     Padding(
@@ -708,18 +662,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     var statusText = "";
     var statuBgColor = "#228BA1";
     var statuTextColor = "#FFFFFF";
-    switch (map3InfoEntity.status) {
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+    switch (Map3InfoStatus.values[map3InfoEntity.relative.status]) {
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "新抵押";
         statuBgColor = "#228BA1";
         statuTextColor = "#FFFFFF";
         break;
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "撤销中";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#CC2D1E";
         break;
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "已抵押";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#999999";
