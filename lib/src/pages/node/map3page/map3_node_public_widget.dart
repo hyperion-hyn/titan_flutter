@@ -726,6 +726,23 @@ Widget profitListLightWidget(List<Map> list) {
   return _profitListWidget(list, func: _buildColumn);
 }
 
+Widget profitListBigLightWidget(List<Map> list) {
+  Widget _buildColumn({String title, String detail}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(detail, style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+        Container(
+          height: 5,
+        ),
+        Text(title, style: TextStyle(fontSize: 11, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+      ],
+    );
+  }
+
+  return _profitListWidget(list, horizontal: 30, func: _buildColumn);
+}
+
 typedef ProfitBuildFunc = Widget Function({String title, String detail});
 
 Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFunc func}) {
