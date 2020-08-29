@@ -722,7 +722,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(_moreSizeWidth, 120.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(_moreSizeWidth, 128.0, Colors.white, BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -741,9 +741,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                     return SizedBox(
                       width: 100,
-                      height: 36,
+                      height: index == 0?44:36,
                       child: FlatButton(
-                        padding: EdgeInsets.all(0),
                         onPressed: () {
                           Navigator.of(context).pop();
 
@@ -768,7 +767,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding: EdgeInsets.fromLTRB(8, index==0?12:8,8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(

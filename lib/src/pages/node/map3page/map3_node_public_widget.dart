@@ -7,12 +7,15 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
+
+import 'map3_node_pronounce_page.dart';
 
 Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
   if (contractNodeItem == null) return Container();
@@ -515,6 +518,110 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
               ],
             )),
       ],
+    ),
+  );
+}
+
+typedef NodePublicCallback = void Function({String value});
+
+Widget editInfoItem(
+    BuildContext context, int index, String title, String hint, String detail, NodePublicCallback callback,
+    {String subtitle = "", bool hasSubtitle = true, TextInputType keyboardType = TextInputType.text}) {
+  return Material(
+    child: Ink(
+      child: InkWell(
+        splashColor: Colors.blue,
+        onTap: () async {
+          if (index == 0) {
+            EditIconSheet(context, (path) {
+              callback(value: path);
+            });
+            return;
+          }
+
+          String text = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => Map3NodePronouncePage(
+                    title: title,
+                    hint: hint,
+                    text: detail,
+                    keyboardType: keyboardType,
+                  )));
+          if (text?.isNotEmpty ?? false) {
+            callback(value: text);
+          }
+        },
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  title,
+                  style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                ),
+                if (hasSubtitle)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: subtitle.isEmpty
+                        ? Text(
+                            ' * ',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: HexColor("#FFFF4C3B"),
+                              fontSize: 16,
+                            ),
+                          )
+                        : Text(
+                            subtitle,
+                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                          ),
+                  ),
+                (index == 0)? Spacer():SizedBox(width: 12,),
+                index != 0
+                    ? Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          detail.isEmpty ? hint : detail,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: detail.isEmpty ?HexColor("#999999"):HexColor("#333333"), fontSize: 14),
+                        ),
+                      ),
+                    )
+                    : detail.isEmpty
+                        ? Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: HexColor('#FFDEDEDE'),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "+",
+                                style: TextStyle(color: Colors.white, fontSize: 26),
+                              ),
+                            ),
+                          )
+                        : Image.asset(
+                            detail ?? "res/drawable/ic_map3_node_item_2.png",
+                            width: 36,
+                            height: 36,
+                            fit: BoxFit.cover,
+                          ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: DefaultColors.color999,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     ),
   );
 }

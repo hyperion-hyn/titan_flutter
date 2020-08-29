@@ -24,10 +24,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
+import 'map3_node_public_widget.dart';
 
 class Map3NodeDividePage extends StatefulWidget {
-
-
   Map3NodeDividePage();
 
   @override
@@ -126,7 +125,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:'Map3节点分裂',
+        baseTitle: 'Map3节点分裂',
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -149,8 +148,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
 
   void getNetworkData() async {
     try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
+      var requestList = await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
@@ -240,7 +238,6 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
     super.dispose();
   }
 
-  var _editText = "";
   var _localImagePath = "";
 //  List<String> _detailList = ["", "派大星", "PB2020", "www.hyn.space", "12345678901", "HYN加油"];
   var _titleList = ["图标", "名称", "节点号", "最大抵押量", "网址", "安全联系", "描述"];
@@ -290,120 +287,31 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
                     itemBuilder: (context, index) {
                       var subTitle = index < 3 ? "" : "（选填）";
                       var title = _titleList[index];
-                      var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+                      var detail = _detailList[index];
+                      var hint = _hintList[index];
                       var keyboardType = TextInputType.text;
 
                       switch (index) {
-                        case 3:
+                        case 4:
                           keyboardType = TextInputType.url;
                           break;
 
-                        case 4:
-                          keyboardType = TextInputType.phone;
-                          break;
-
                         case 5:
+                          keyboardType = TextInputType.phone;
                           break;
                       }
 
-                      return Material(
-                        child: Ink(
-                          child: InkWell(
-                            splashColor: Colors.blue,
-                            onTap: () async {
-                              if (index == 0) {
-                                EditIconSheet(context, (path) {
-                                  setState(() {
-                                    _localImagePath = path;
-                                  });
-                                });
-                                return;
-                              }
-
-                              String text = await Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) => Map3NodePronouncePage(
-                                        title: title,
-                                        hint: detail,
-                                        keyboardType: keyboardType,
-                                      )));
-                              if (text ?? "".isNotEmpty) {
-                                setState(() {
-                                  _detailList[index] = text;
-                                });
-                                print("[Pronounce] _editText:${_editText}");
-                              }
-                            },
-                            child: Container(
-                              color: Colors.white,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      title,
-                                      style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 4),
-                                      child: subTitle.isEmpty
-                                          ? Text(
-                                              ' * ',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: HexColor("#FFFF4C3B"),
-                                                fontSize: 16,
-                                              ),
-                                            )
-                                          : Text(
-                                              subTitle,
-                                              style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                                            ),
-                                    ),
-                                    Spacer(),
-                                    index != 0
-                                        ? Text(
-                                            detail,
-                                            style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                                          )
-                                        : _localImagePath.isEmpty
-                                            ? Container(
-                                                width: 36,
-                                                height: 36,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(5),
-                                                  color: HexColor('#FFDEDEDE'),
-                                                ),
-                                                child: Center(
-                                                  child: Text(
-                                                    "+",
-                                                    style: TextStyle(color: Colors.white, fontSize: 26),
-                                                  ),
-                                                ),
-//                                              child: Icon(
-//                                                Icons.add,
-//                                                color: Colors.white,
-//                                              ),
-                                              )
-                                            : Image.asset(
-                                                _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                                                width: 36,
-                                                height: 36,
-                                                fit: BoxFit.cover,
-                                              ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 6),
-                                      child: Icon(
-                                        Icons.chevron_right,
-                                        color: DefaultColors.color999,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
+                      return editInfoItem(context, index, title, hint, detail, ({String value}) {
+                        if (index == 0) {
+                          setState(() {
+                            _localImagePath = value;
+                          });
+                        } else {
+                          setState(() {
+                            _detailList[index] = value;
+                          });
+                        }
+                      }, keyboardType: keyboardType, subtitle: subTitle);
                     },
                     separatorBuilder: (context, index) {
                       return Divider(
@@ -884,31 +792,6 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
                     },
                   ),
                 ),
-
-                /*Padding(
-                  padding: const EdgeInsets.only(right: 4.0),
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                      child: SizedBox(
-                        width: 30,
-                        height: 26,
-                        child: TextField(
-                          controller: _joinCoinController,
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                        ),
-                      ),
-
-                    ),
-                    decoration: BoxDecoration(
-                      color: HexColor("#FFFFFF"),
-                      border: Border.all(color: HexColor("#DEDEDE"), width: 0.5),
-                      borderRadius: BorderRadius.circular(13.0),
-                    ),
-                  ),
-                ),
-                */
-
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Container(

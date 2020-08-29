@@ -60,7 +60,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   // 当前键盘是否是激活状态
   bool _isKeyboardActive = false;
 
-  var _editText = "";
   var _localImagePath = "";
   var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
   List<String> _detailList = ["", "", "", "", "", ""];
@@ -326,7 +325,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
               focusNode: _focusNode),
           divider,
-          managerSpendWidget(context,_rateCoinController,(){
+          managerSpendWidget(context, _rateCoinController, () {
             setState(() {
               _managerSpendCount--;
               if (_managerSpendCount < 1) {
@@ -335,7 +334,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
               _rateCoinController.text = "$_managerSpendCount";
             });
-          },(){
+          }, () {
             setState(() {
               _managerSpendCount++;
               if (_managerSpendCount > 20) {
@@ -356,11 +355,16 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         itemBuilder: (context, index) {
           var subTitle = index < 3 ? "" : "（选填）";
           var title = _titleList[index];
-          var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+          var detail = _detailList[index];
+          //var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
           var hint = _hintList[index];
           var keyboardType = TextInputType.text;
 
           switch (index) {
+            case 0:
+              detail = _localImagePath;
+              break;
+
             case 3:
               keyboardType = TextInputType.url;
               break;
@@ -373,86 +377,17 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               break;
           }
 
-          return Material(
-            child: Ink(
-              child: InkWell(
-                splashColor: Colors.blue,
-                onTap: () async {
-                  if (index == 0) {
-                    EditIconSheet(context, (path) {
-                      setState(() {
-                        _localImagePath = path;
-                      });
-                    });
-                    return;
-                  }
-
-                  String text = await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => Map3NodePronouncePage(
-                            title: title,
-                            hint: hint,
-                            text: _detailList[index],
-                            keyboardType: keyboardType,
-                          )));
-                  if (text?.isNotEmpty ?? false) {
-                    setState(() {
-                      _detailList[index] = text;
-                    });
-                    print("[Pronounce] _editText:${_editText}");
-                  }
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          title,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 4),
-                          child: subTitle.isEmpty
-                              ? Text(
-                                  ' * ',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: HexColor("#FFFF4C3B"),
-                                    fontSize: 16,
-                                  ),
-                                )
-                              : Text(
-                                  subTitle,
-                                  style: TextStyle(color: HexColor("#999999"), fontSize: 12),
-                                ),
-                        ),
-                        Spacer(),
-                        title != "图标"
-                            ? Text(
-                                detail,
-                                style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                              )
-                            : Image.asset(
-                                _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                                width: 36,
-                                height: 36,
-                                fit: BoxFit.cover,
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: Icon(
-                            Icons.chevron_right,
-                            color: DefaultColors.color999,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+          return editInfoItem(context, index, title, hint, detail, ({String value}){
+            if (index == 0) {
+              setState(() {
+                _localImagePath = value;
+              });
+            } else {
+              setState(() {
+                _detailList[index] = value;
+              });
+            }
+          }, keyboardType: keyboardType, subtitle: subTitle);
         },
         separatorBuilder: (context, index) {
           return Divider(

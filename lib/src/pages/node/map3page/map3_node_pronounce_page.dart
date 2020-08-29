@@ -23,7 +23,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
 
   @override
   void initState() {
-    if (widget.text.isNotEmpty) {
+    if (widget?.text?.isNotEmpty??false) {
       _controller.text = widget.text;
     }
     super.initState();

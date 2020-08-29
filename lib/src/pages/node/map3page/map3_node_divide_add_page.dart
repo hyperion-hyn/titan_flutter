@@ -198,7 +198,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
+    if (currentState != null || contractItem?.contract == null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
           currentState = LoadingState();
