@@ -625,3 +625,44 @@ Widget editInfoItem(
     ),
   );
 }
+
+
+Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
+  var _nodeWidget = Padding(
+    padding: const EdgeInsets.only(right: 10, top: 10),
+    child: Container(
+      width: 3,
+      height: 3,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: DefaultColors.color999,
+          border: Border.all(color: DefaultColors.color999, width: 1.0)),
+    ),
+  );
+
+  return Padding(
+    padding: EdgeInsets.only(top: top),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _nodeWidget,
+        Expanded(
+            child: InkWell(
+              onTap: onTap,
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: subTitle,
+                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                    )
+                  ],
+                  text: title,
+                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                ),
+              ),
+            )),
+      ],
+    ),
+  );
+}

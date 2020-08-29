@@ -16,6 +16,8 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
+import 'map3_node_public_widget.dart';
+
 class Map3NodeIntroductionPage extends StatefulWidget {
   final String contractId;
 
@@ -109,54 +111,15 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _tipsWidget() {
-    var _nodeWidget = Padding(
-      padding: const EdgeInsets.only(right: 10, top: 10),
-      child: Container(
-        width: 3,
-        height: 3,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: DefaultColors.color999,
-            border: Border.all(color: DefaultColors.color999, width: 1.0)),
-      ),
-    );
-
-    Widget _rowWidget(String title, {double top = 8, String subTitle = ""}) {
-      return Padding(
-        padding: EdgeInsets.only(top: top),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _nodeWidget,
-            Expanded(
-                child: InkWell(
-              onTap: () {
-                if (subTitle.isEmpty) {
-                  return;
-                }
-                // todo: test_jison_0604
-                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                Application.router
-                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-              },
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: subTitle,
-                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                    )
-                  ],
-                  text: title,
-                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                ),
-              ),
-            )),
-          ],
-        ),
-      );
-    }
+    var onTap = (String subTitle) {
+      if (subTitle.isEmpty) {
+        return;
+      }
+      // todo: test_jison_0604
+      String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+      String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+      Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    };
 
     return Container(
       color: Colors.white,
@@ -169,11 +132,23 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          _rowWidget("创建7天内不可撤销", top: 0),
-          _rowWidget("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押100万即可启动节点"),
-          _rowWidget("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
-          _rowWidget("节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看", subTitle: "收益详细介绍"),
-          _rowWidget("如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看", subTitle: "扩容详细介绍"),
+          rowTipsItem("创建7天内不可撤销", top: 0),
+          rowTipsItem("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押100万即可启动节点"),
+          rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
+          rowTipsItem(
+            "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
+            subTitle: "收益详细介绍",
+            onTap: () {
+              onTap("收益详细介绍");
+            },
+          ),
+          rowTipsItem(
+            "如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看",
+            subTitle: "扩容详细介绍",
+            onTap: () {
+              onTap("扩容详细介绍");
+            },
+          ),
         ],
       ),
     );
