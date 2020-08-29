@@ -28,7 +28,7 @@ class Map3AtlasEntity extends Object {
   String staking;
 
   @JsonKey(name: 'status')
-  int status;
+  int status;//Map3AtlasStatus
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

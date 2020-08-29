@@ -115,7 +115,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.status = Map3NodeStatus.CANCEL_NODE_SUCCESS.index;
+      element.status = Map3InfoStatus.CANCEL_NODE_SUCCESS.index;
     });
 
     if (mounted)
@@ -662,18 +662,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     var statusText = "";
     var statuBgColor = "#228BA1";
     var statuTextColor = "#FFFFFF";
-    switch (Map3NodeStatus.values[map3InfoEntity.relative.status]) {
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+    switch (Map3InfoStatus.values[map3InfoEntity.relative.status]) {
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "新抵押";
         statuBgColor = "#228BA1";
         statuTextColor = "#FFFFFF";
         break;
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "撤销中";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#CC2D1E";
         break;
-      case Map3NodeStatus.CANCEL_NODE_SUCCESS:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         statusText = "已抵押";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#999999";

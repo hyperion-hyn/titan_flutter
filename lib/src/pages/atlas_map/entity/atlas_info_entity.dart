@@ -48,7 +48,7 @@ class AtlasInfoEntity extends Object {
   int id;
 
   @JsonKey(name: 'join')
-  int join;
+  int join;//NodeJoinType
 
   @JsonKey(name: 'max_staking')
   String maxStaking;
@@ -87,10 +87,10 @@ class AtlasInfoEntity extends Object {
   String stakingCreator;
 
   @JsonKey(name: 'status')
-  int status;
+  int status;//AtlasNodeStatus
 
   @JsonKey(name: 'type')
-  int type;
+  int type;//AtlasNodeType
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

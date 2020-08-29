@@ -77,7 +77,7 @@ class Map3InfoEntity extends Object {
   String startTime;
 
   @JsonKey(name: 'status')
-  int status;
+  int status;//Map3InfoStatus
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
