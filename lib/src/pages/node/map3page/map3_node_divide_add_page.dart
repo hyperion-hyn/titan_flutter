@@ -27,6 +27,8 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
+import 'map3_node_public_widget.dart';
+
 class Map3NodeDivideAddPage extends StatefulWidget {
   Map3NodeDivideAddPage();
 
@@ -198,6 +200,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   Widget _pageView(BuildContext context) {
+    /*
     if (currentState != null || contractItem?.contract == null) {
       return AllPageStateContainer(currentState, () {
         setState(() {
@@ -205,7 +208,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
         });
         getNetworkData();
       });
-    }
+    }*/
 
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
@@ -369,55 +372,6 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
   }
 
   Widget _tipsWidget() {
-    var _nodeWidget = Padding(
-      padding: const EdgeInsets.only(right: 10, top: 10),
-      child: Container(
-        width: 3,
-        height: 3,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: DefaultColors.color999,
-            border: Border.all(color: DefaultColors.color999, width: 1.0)),
-      ),
-    );
-
-    Widget _rowWidget(String title, {double top = 8, String subTitle = ""}) {
-      return Padding(
-        padding: EdgeInsets.only(top: top),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _nodeWidget,
-            Expanded(
-                child: InkWell(
-              onTap: () {
-                if (subTitle.isEmpty) {
-                  return;
-                }
-                // todo: test_jison_0604
-                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                Application.router
-                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-              },
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: subTitle,
-                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                    )
-                  ],
-                  text: title,
-                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                ),
-              ),
-            )),
-          ],
-        ),
-      );
-    }
-
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 24),
@@ -428,9 +382,9 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          _rowWidget("节点总抵押需满55万才能享受Map3工作服务奖励"),
-          _rowWidget("分裂后子节点马上进入运行状态，共享母节点节龄和运行时长", subTitle: ""),
-          _rowWidget("如果母节点已经抵押Atlas节点，则分裂后子节点也会自动抵押到相同的Atlas节点上", subTitle: ""),
+          rowTipsItem("节点总抵押需满55万才能享受Map3工作服务奖励"),
+          rowTipsItem("分裂后子节点马上进入运行状态，共享母节点节龄和运行时长"),
+          rowTipsItem("如果母节点已经抵押Atlas节点，则分裂后子节点也会自动抵押到相同的Atlas节点上"),
         ],
       ),
     );
