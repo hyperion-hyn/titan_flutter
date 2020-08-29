@@ -551,6 +551,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _isShowLaunchDate =>
       _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
+  var _moreKey = GlobalKey(debugLabel: '__more_global__');
+  double _moreSizeHeight = 18;
+  double _moreSizeWidth = 100;
+  double _moreOffsetLeft = 246;
+  double _moreOffsetTop = 76;
+
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
@@ -563,8 +569,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+
     super.initState();
   }
+
+  void _afterLayout(_) {
+    _getMorePosition();
+  }
+
+  _getMorePosition() {
+    final RenderBox renderBox = _moreKey.currentContext.findRenderObject();
+    final positions = renderBox.localToGlobal(Offset(0, 0));
+    _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
+    _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
+    //print("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
+  }
+
+//  left: 246,
+//  top: 76,
 
   @override
   void dispose() {
@@ -587,13 +610,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 _showMoreAlertView();
               },
               child: Padding(
-                padding: EdgeInsets.only(left: 15, right: 35),
-                child: Image.asset(
+                padding: EdgeInsets.only(left: 20, right: 35),
+                child: Icon(
+                  Icons.add,
+                  color: Theme.of(context).primaryColor,
+                ),
+                /*child: Image.asset(
                   //"res/drawable/node_share.png",
                   "res/drawable/add_position_add.png",
+                  key: _moreKey,
                   width: 15,
-                  height: 18,
-                ),
+                  height: _moreSizeHeight,
+                ),*/
               ),
             ),
           ],
@@ -603,80 +631,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  _showMoreAlertView() {
-    return Navigator.push(
-      context,
-      PopRoute(
-        child: Popup(
-          child: BubbleWidget(100.0, 120.0, Colors.white, BubbleArrowDirection.top,
-              length: 55,
-              innerPadding: 0.0,
-              child: Container(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(top: 0),
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (subContext, index) {
-                    var title = "";
-                    if (index == 0) {
-                      title = "裂变";
-                    } else if (index == 1) {
-                      title = "终止";
-                    } else if (index == 2) {
-                      title = "分享";
-                    }
 
-                    return SizedBox(
-                      width: 100,
-                      height: 36,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(0),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-
-                          if (index == 0) {
-                            Application.router.navigateTo(context, Routes.map3node_divide_page);
-                          } else if (index == 1) {
-                            Application.router.navigateTo(context, Routes.map3node_exit_page);
-                          } else if (index == 2) {
-                            Application.router.navigateTo(
-                                context,
-                                Routes.map3node_share_page +
-                                    "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
-                          }
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Divider(
-                              height: 0.5,
-                              color: DefaultColors.colorf2f2f2,
-                              indent: 13,
-                              endIndent: 13,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text(
-                                title,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: 3,
-                ),
-              )),
-          left: 246,
-          top: 76,
-        ),
-      ),
-    );
-  }
 
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
@@ -762,6 +717,81 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   // todo: bar
+  _showMoreAlertView() {
+    return Navigator.push(
+      context,
+      PopRoute(
+        child: Popup(
+          child: BubbleWidget(_moreSizeWidth, 120.0, Colors.white, BubbleArrowDirection.top,
+              length: 50,
+              innerPadding: 0.0,
+              child: Container(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 0),
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (subContext, index) {
+                    var title = "";
+                    if (index == 0) {
+                      title = "裂变";
+                    } else if (index == 1) {
+                      title = "终止";
+                    } else if (index == 2) {
+                      title = "分享";
+                    }
+
+                    return SizedBox(
+                      width: 100,
+                      height: 36,
+                      child: FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+
+                          if (index == 0) {
+                            Application.router.navigateTo(context, Routes.map3node_divide_page);
+                          } else if (index == 1) {
+                            Application.router.navigateTo(context, Routes.map3node_exit_page);
+                          } else if (index == 2) {
+                            Application.router.navigateTo(
+                                context,
+                                Routes.map3node_share_page +
+                                    "?contractNodeItem=${FluroConvertUtils.object2string(_contractNodeItem.toJson())}");
+                          }
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Divider(
+                              height: 0.5,
+                              color: DefaultColors.colorf2f2f2,
+                              indent: 13,
+                              endIndent: 13,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  itemCount: 3,
+                ),
+              )),
+          left: _moreOffsetLeft,
+          top: _moreOffsetTop,
+        ),
+      ),
+    );
+  }
+
   Widget _bottomBtnBarWidget() {
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -840,43 +870,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
-
-/*
-
-  Widget _bottomSureButtonWidget() {
-    return Visibility(
-      visible: _visible,
-      child: Positioned(
-        bottom: 0,
-        height: _visible ? 48 : 0.01,
-        width: MediaQuery.of(context).size.width,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black38,
-                blurRadius: 4.0,
-              ),
-            ],
-          ),
-          child: RaisedButton(
-            textColor: Colors.white,
-            disabledColor: Colors.grey[600],
-            disabledTextColor: Colors.white,
-            color: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-                side: BorderSide(color: _isTransferring ? Colors.grey[600] : Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(0)),
-            child: Text(_isTransferring ? _actingTitle : _lastActionTitle,
-                style: TextStyle(fontSize: 16, color: Colors.white70)),
-            onPressed: !_isTransferring ? onPressed : null,
-          ),
-        ),
-      ),
-    );
-  }
-*/
 
   Widget _getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeItem) {
     if (contractNodeItem == null) return Container();

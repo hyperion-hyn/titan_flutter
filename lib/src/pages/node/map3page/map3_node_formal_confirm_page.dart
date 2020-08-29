@@ -75,8 +75,8 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 //      case Map3NodeActionEvent.DELEGATE:
 //        _pageTitle = S.of(context).transfer_confirm;
 //        break;
-      case Map3NodeActionEvent.COLLECT:
-        break;
+//      case Map3NodeActionEvent.COLLECT:
+//        break;
       case Map3NodeActionEvent.CANCEL:
         break;
       case Map3NodeActionEvent.CANCEL_CONFIRMED:

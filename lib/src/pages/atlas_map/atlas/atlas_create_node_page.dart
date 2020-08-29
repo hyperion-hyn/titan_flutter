@@ -9,6 +9,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -243,6 +244,15 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                   color: Colors.blue,
                 ),
               ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => WebViewContainer(
+                              initUrl: '',
+                              title: 'Atlas Tutorial',
+                            )));
+              },
             ),
           ),
           Spacer(),
