@@ -75,8 +75,9 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
 //      case Map3NodeActionEvent.DELEGATE:
 //        _pageTitle = S.of(context).transfer_confirm;
 //        break;
-//      case Map3NodeActionEvent.COLLECT:
-//        break;
+      case Map3NodeActionEvent.COLLECT:
+        _pageTitle = "提取奖励";
+        break;
       case Map3NodeActionEvent.CANCEL:
         break;
       case Map3NodeActionEvent.CANCEL_CONFIRMED:
@@ -95,7 +96,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
         _pageTitle = S.of(context).transfer_confirm;
         break;
     }
-
   }
 
   @override
@@ -163,8 +163,9 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                SizedBox(height: 4,),
-
+                                SizedBox(
+                                  height: 4,
+                                ),
                                 Row(
                                   children: <Widget>[
                                     Text(
@@ -215,6 +216,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
 
     SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
 
+    var pre = widget.actionEvent != Map3NodeActionEvent.COLLECT ? "-" : "+";
     return Row(
       children: <Widget>[
         Expanded(
@@ -232,8 +234,8 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
-                    "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "btc"}",
-                    style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                    pre + "${widget.transferAmount} ${widget.coinVo?.symbol ?? "HYN"}",
+                    style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.w600, fontSize: 20),
                   ),
                 ),
                 Text(
@@ -247,7 +249,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       ],
     );
   }
-
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -264,7 +265,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
               Routes.map3node_broadcast_success_page +
                   "?actionEvent=${widget.actionEvent}" +
                   "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
