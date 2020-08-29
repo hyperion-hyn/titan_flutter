@@ -9,9 +9,9 @@ part of 'map3_info_entity.dart';
 Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
   return Map3InfoEntity(
     json['address'] as String,
-    (json['atlas'] as List)
-        ?.map((e) => e == null ? null : AtlasNodeEntity.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
+    json['atlas'] == null
+        ? null
+        : AtlasInfoEntity.fromJson(json['atlas'] as Map<String, dynamic>),
     json['contact'] as String,
     json['created_at'] as String,
     json['creator'] as String,
@@ -20,25 +20,29 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['fee_rate'] as String,
     json['home'] as String,
     json['id'] as int,
-    NodeJoinType.values[(json['join'] as int) ?? 0],
+    json['mine'] == null
+        ? null
+        : UserMap3Entity.fromJson(json['mine'] as Map<String, dynamic>),
     json['name'] as String,
     json['node_id'] as String,
     json['parent_node_id'] as String,
     json['pic'] as String,
     json['provider'] as String,
     json['region'] as String,
-    json['reward'] as String,
-    json['reward_mine'] as String,
+    json['relative'] == null
+        ? null
+        : Map3AtlasEntity.fromJson(json['relative'] as Map<String, dynamic>),
+    json['reward_history'] as String,
     json['reward_rate'] as String,
     json['staking'] as String,
-    json['staking_mine'] as String,
     json['start_time'] as String,
-    Map3NodeStatus.values[(json['status'] as int) ?? 0],
+    json['status'] as int,
     json['updated_at'] as String,
   );
 }
 
-Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String, dynamic>{
+Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) =>
+    <String, dynamic>{
       'address': instance.address,
       'atlas': instance.atlas,
       'contact': instance.contact,
@@ -49,18 +53,17 @@ Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String,
       'fee_rate': instance.feeRate,
       'home': instance.home,
       'id': instance.id,
-      'join': instance.join,
+      'mine': instance.mine,
       'name': instance.name,
       'node_id': instance.nodeId,
       'parent_node_id': instance.parentNodeId,
       'pic': instance.pic,
       'provider': instance.provider,
       'region': instance.region,
-      'reward': instance.reward,
-      'reward_mine': instance.rewardMine,
+      'relative': instance.relative,
+      'reward_history': instance.rewardHistory,
       'reward_rate': instance.rewardRate,
       'staking': instance.staking,
-      'staking_mine': instance.stakingMine,
       'start_time': instance.startTime,
       'status': instance.status,
       'updated_at': instance.updatedAt,

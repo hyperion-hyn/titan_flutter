@@ -167,7 +167,7 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
                           color: HexColor("#1FB9C7").withOpacity(0.08),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text(_atlasInfo.getNodeType,
+                          child: Text("_atlasInfo.getNodeType",//todo
                               style: TextStyle(
                                 fontSize: 12,
                                 color: HexColor("#5C4304"),

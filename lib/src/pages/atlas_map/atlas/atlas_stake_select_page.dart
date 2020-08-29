@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -104,7 +105,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
     List<DropdownMenuItem> _map3NodeItems = List();
     if (widget._atlasInfoEntity.myMap3.length > 0) {
       _map3NodeItems.addAll(List.generate(widget._atlasInfoEntity.myMap3.length, (index) {
-        Map3NodeEntity map3nodeEntity = widget._atlasInfoEntity.myMap3[index];
+        Map3InfoEntity map3nodeEntity = widget._atlasInfoEntity.myMap3[index];
         return DropdownMenuItem(
           value: index,
           child: Text(
@@ -245,7 +246,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 Container(
                     padding: EdgeInsets.only(left: 6.0, right: 6),
                     color: HexColor("#e3fafb"),
-                    child: Text(atlasInfoEntity.getNodeType, style: TextStyles.textC333S12)),
+                    child: Text("atlasInfoEntity.getNodeType", style: TextStyles.textC333S12)),//todo
               ],
             ),
             Row(
