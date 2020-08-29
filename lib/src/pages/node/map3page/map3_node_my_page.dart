@@ -45,15 +45,6 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
       backgroundColor: Theme.of(context).primaryColor,
       appBar: BaseAppBar(
         baseTitle: S.of(context).my_contract,
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () {},
-            child: Text(
-              "提取奖励",
-              style: TextStyle(color: HexColor("#1F81FF")),
-            ),
-          ),
-        ],
       ),
       body: Container(
         color: Colors.white,
