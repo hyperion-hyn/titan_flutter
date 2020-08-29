@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -197,7 +198,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '当前纪元',
+                      S.of(context).atlas_current_age,
                       style: TextStyle(fontSize: 12),
                     ),
                     SizedBox(
@@ -217,7 +218,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '区块高度',
+                      S.of(context).block_height,
                       style: TextStyle(
                         fontSize: 12,
                       ),
@@ -244,7 +245,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '当选节点',
+                      S.of(context).atlas_elected_nodes,
                       style: TextStyle(fontSize: 12),
                     ),
                     SizedBox(
@@ -264,7 +265,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '候选节点',
+                      S.of(context).atlas_candidate_nodes,
                       style: TextStyle(fontSize: 12),
                     ),
                     SizedBox(
@@ -346,7 +347,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Column(
                   children: <Widget>[
                     Text(
-                      '下个纪元',
+                      S.of(context).atlas_next_age,
                       style:
                           TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
                     ),
@@ -395,7 +396,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             Align(
               alignment: Alignment.center,
               child: ClickOvalButton(
-                '创建Atlas节点',
+                S.of(context).atlas_create_node,
                 () {
                   Application.router.navigateTo(
                     context,
@@ -412,7 +413,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   padding: const EdgeInsets.only(left: 280.0),
                   child: InkWell(
                     child: Text(
-                      '开通教程',
+                      S.of(context).atlas_launch_tutorial,
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -650,7 +651,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         Row(
                           children: <Widget>[
                             Text(
-                              '节点排名: ',
+                              S.of(context).atlas_node_rank,
                               style: TextStyles.textC9b9b9bS12,
                             ),
                             Text(
@@ -700,7 +701,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           Expanded(
                             child: Text.rich(TextSpan(children: [
                               TextSpan(
-                                  text: '预期收益: ',
+                                  text: '${S.of(context).atlas_reward_rate}: ',
                                   style: TextStyle(
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
@@ -714,7 +715,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           Expanded(
                             child: Text.rich(TextSpan(children: [
                               TextSpan(
-                                  text: '总抵押: ',
+                                  text: S.of(context).atlas_total_staking,
                                   style: TextStyle(
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
@@ -734,7 +735,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         Expanded(
                           child: Text.rich(TextSpan(children: [
                             TextSpan(
-                                text: '管理费: ',
+                                text: '${S.of(context).atlas_fee_rate}: ',
                                 style: TextStyle(
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),
@@ -748,7 +749,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         Expanded(
                           child: Text.rich(TextSpan(children: [
                             TextSpan(
-                                text: '签名率: ',
+                                text: '${S.of(context).atlas_sign_rate}: ',
                                 style: TextStyle(
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),

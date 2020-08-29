@@ -75,8 +75,9 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 //      case Map3NodeActionEvent.DELEGATE:
 //        _pageTitle = S.of(context).transfer_confirm;
 //        break;
-//      case Map3NodeActionEvent.COLLECT:
-//        break;
+      case Map3NodeActionEvent.COLLECT:
+        _pageTitle = "提取奖励";
+        break;
       case Map3NodeActionEvent.CANCEL:
         break;
       case Map3NodeActionEvent.CANCEL_CONFIRMED:
@@ -105,7 +106,6 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         _pageTitle = S.of(context).transfer_confirm;
         break;
     }
-
   }
 
   @override
@@ -173,8 +173,9 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                SizedBox(height: 4,),
-
+                                SizedBox(
+                                  height: 4,
+                                ),
                                 Row(
                                   children: <Widget>[
                                     Text(
@@ -225,6 +226,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 
     SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
 
+    var pre = widget.actionEvent != Map3NodeActionEvent.COLLECT ? "-" : "+";
     return Row(
       children: <Widget>[
         Expanded(
@@ -242,6 +244,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
+ 
                     "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "HYN"}",
                     style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
@@ -258,7 +261,6 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
     );
   }
 
-
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -274,7 +276,6 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
               Routes.map3node_broadcast_success_page +
                   "?actionEvent=${widget.actionEvent}" +
                   "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

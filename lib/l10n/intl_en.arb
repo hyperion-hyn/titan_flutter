@@ -847,5 +847,19 @@
   "verify_location_hint": "Zoom and move the selected location on the map",
   "please_edit_location_hint": "Please edit location map location",
   "support_format": "Support jpg, jpeg, png, gif, heic, webp formats",
-  "net_error_hint": "Network error"
- }
+  "net_error_hint": "Network error",
+  "atlas_current_age": "当前纪元",
+  "block_height": "区块高度",
+  "atlas_elected_nodes": "当选节点",
+  "atlas_candidate_nodes": "候选节点",
+  "atlas_next_age": "下个纪元",
+  "atlas_create_node": "创建Atlas节点",
+  "atlas_launch_tutorial": "开通教程",
+  "atlas_fee_rate": "管理费",
+  "atlas_sign_rate": "签名率",
+  "atlas_total_staking": "总抵押",
+  "atlas_reward_rate": "预期收益",
+  "atlas_node_rank": "节点排名",
+  "edit": "编辑",
+  "save": "保存"
+}

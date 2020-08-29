@@ -13,6 +13,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_pronounce_page.dart';
+import 'map3_node_public_widget.dart';
 
 class Map3NodeEditPage extends StatefulWidget {
   final Map3InfoEntity entity;
@@ -203,7 +204,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
         itemBuilder: (context, index) {
           var subTitle = index < 3 ? "" : "（选填）";
           var title = _titleList[index];
-          var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
+          var detail = _detailList[index];
           var hint = _hintList[index];
           var keyboardType = TextInputType.text;
 
@@ -220,70 +221,17 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
               break;
           }
 
-          return Material(
-            child: Ink(
-              child: InkWell(
-                splashColor: Colors.blue,
-                onTap: () async {
-                  if (index == 0) {
-                    EditIconSheet(context, (path) {
-                      setState(() {
-                        _localImagePath = path;
-                      });
-                    });
-                    return;
-                  }
-
-                  String text = await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (BuildContext context) => Map3NodePronouncePage(
-                            title: title,
-                            hint: hint,
-                            text: _detailList[index],
-                            keyboardType: keyboardType,
-                          )));
-                  if (text?.isNotEmpty ?? false) {
-                    setState(() {
-                      _detailList[index] = text;
-                    });
-                    print("[Pronounce] _editText:${_editText}");
-                  }
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          title,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 16),
-                        ),
-                        Spacer(),
-                        title != "图标"
-                            ? Text(
-                                detail,
-                                style: TextStyle(color: HexColor("#999999"), fontSize: 14),
-                              )
-                            : Image.asset(
-                                _localImagePath ?? "res/drawable/ic_map3_node_item_2.png",
-                                width: 36,
-                                height: 36,
-                                fit: BoxFit.cover,
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: Icon(
-                            Icons.chevron_right,
-                            color: DefaultColors.color999,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
+          return editInfoItem(context, index, title, hint, detail, ({String value}){
+            if (index == 0) {
+              setState(() {
+                _localImagePath = value;
+              });
+            } else {
+              setState(() {
+                _detailList[index] = value;
+              });
+            }
+          }, keyboardType: keyboardType, subtitle: subTitle, hasSubtitle: false);
         },
         separatorBuilder: (context, index) {
           return Divider(

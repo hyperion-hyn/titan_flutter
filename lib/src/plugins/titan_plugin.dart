@@ -1,20 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
-import 'package:titan/src/data/cache/memory_cache.dart';
-import 'package:titan/src/routes/routes.dart';
-import 'package:titan/src/utils/encryption.dart';
+
 
 typedef MessagePushCallBack = void Function(Map values);
 typedef UrlLauncherCallBack = void Function(Map values);

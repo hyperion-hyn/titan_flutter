@@ -43,7 +43,7 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:'撤销抵押',
+        baseTitle: '撤销抵押',
       ),
       backgroundColor: Colors.white,
       body: Column(

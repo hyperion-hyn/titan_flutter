@@ -4,22 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
-import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_create_page.dart';
+import 'map3_node_public_widget.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
   final String contractId;
@@ -149,55 +144,6 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
   }
 
   Widget _tipsWidget() {
-    var _nodeWidget = Padding(
-      padding: const EdgeInsets.only(right: 10, top: 10),
-      child: Container(
-        width: 3,
-        height: 3,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: DefaultColors.color999,
-            border: Border.all(color: DefaultColors.color999, width: 1.0)),
-      ),
-    );
-
-    Widget _rowWidget(String title, {double top = 8, String subTitle = ""}) {
-      return Padding(
-        padding: EdgeInsets.only(top: top),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _nodeWidget,
-            Expanded(
-                child: InkWell(
-              onTap: () {
-                if (subTitle.isEmpty) {
-                  return;
-                }
-                // todo: test_jison_0604
-                String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-                Application.router
-                    .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-              },
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: subTitle,
-                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                    )
-                  ],
-                  text: title,
-                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                ),
-              ),
-            )),
-          ],
-        ),
-      );
-    }
-
     return Container(
       color: Colors.white,
       //height: MediaQuery.of(context).size.height-50,
@@ -209,10 +155,15 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          _rowWidget("抵押7天内不可撤销", top: 0),
-          _rowWidget("需要总抵押满100万HYN才能正式启动，每次参与抵押数额不少于10000HYN"),
-          _rowWidget("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期", subTitle: ""),
-          _rowWidget("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容"),
+          rowTipsItem("抵押7天内不可撤销", top: 0),
+          rowTipsItem("需要总抵押满100万HYN才能正式启动，每次参与抵押数额不少于10000HYN"),
+          rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
+          rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
+            // todo: test_jison_0604
+            String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+            String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于扩容");
+            Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+          }),
         ],
       ),
     );
