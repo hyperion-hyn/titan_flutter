@@ -498,10 +498,10 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            //color: Colors.black12,
-            //blurRadius: 8.0,
-            color: HexColor("#000000").withOpacity(0.08),
-            blurRadius: 16.0,
+            color: Colors.black12,
+            blurRadius: 8.0,
+//            color: HexColor("#000000").withOpacity(0.08),
+//            blurRadius: 16.0,
           ),
         ],
       ),
