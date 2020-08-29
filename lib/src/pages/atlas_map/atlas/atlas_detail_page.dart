@@ -8,6 +8,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
@@ -15,7 +16,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_normal_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -304,11 +305,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           ClickOvalButton(
                             "领取",
                             () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                                        actionEvent: Map3NodeActionEvent.RECEIVE_AWARD,
-                                      )));
                               Navigator.pop(context);
+                              Application.router.navigateTo(
+                                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
                             },
                             width: 120,
                             height: 38,
@@ -591,10 +590,33 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 14, bottom: 11),
-            child: Text(
-              "节点信息",
-              style: TextStyles.textC333S16,
+            padding: const EdgeInsets.only(top: 20, left: 14, bottom: 11,right: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "节点信息",
+                  style: TextStyles.textC333S16,
+                ),
+                Spacer(),
+                InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => AtlasDetailEditPage(_atlasInfoEntity
+                        )));
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Image.asset("res/drawable/icon_atlas_map3_edit_detail.png",width: 12,height: 12,),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           stakeInfoView(infoTitleList, infoContentList, true, null),

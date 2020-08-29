@@ -201,7 +201,7 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
             "确认终止",
             () {
               Application.router.navigateTo(
-                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
+                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

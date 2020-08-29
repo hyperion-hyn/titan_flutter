@@ -197,10 +197,11 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           if (isMine) {
             Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
-            Application.router.navigateTo(context,
-                Routes.map3node_list_page + "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
+            Application.router.navigateTo(
+                context,
+                Routes.map3node_list_page +
+                    "?title=${Uri.encodeComponent(title)}&active=${MyContractType.active.index}");
           }
-
         },
         child: Container(
           padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
@@ -494,11 +495,13 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 8.0,
+//            color: HexColor("#000000").withOpacity(0.08),
+//            blurRadius: 16.0,
           ),
         ],
       ),

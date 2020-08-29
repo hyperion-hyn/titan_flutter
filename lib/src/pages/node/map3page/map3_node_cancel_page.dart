@@ -8,6 +8,8 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -260,7 +262,7 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
             "确认撤销",
             () {
               Application.router.navigateTo(
-                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
+                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

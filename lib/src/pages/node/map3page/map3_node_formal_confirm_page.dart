@@ -22,7 +22,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class Map3NodeNormalConfirmPage extends StatefulWidget {
+class Map3NodeFormalConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final Decimal transferAmount;
   final String receiverAddress;
@@ -35,7 +35,7 @@ class Map3NodeNormalConfirmPage extends StatefulWidget {
 //      String coinVo, [this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId])
 //      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 //
-  Map3NodeNormalConfirmPage(
+  Map3NodeFormalConfirmPage(
       {this.coinVo,
       this.contractNodeItem,
       this.transferAmount,
@@ -46,11 +46,11 @@ class Map3NodeNormalConfirmPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeNormalConfirmState();
+    return _Map3NodeFormalConfirmState();
   }
 }
 
-class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
+class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
@@ -76,6 +76,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
 //        _pageTitle = S.of(context).transfer_confirm;
 //        break;
       case Map3NodeActionEvent.COLLECT:
+        _pageTitle = "提取奖励";
         break;
       case Map3NodeActionEvent.CANCEL:
         break;
@@ -85,17 +86,26 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
         _pageTitle = "确认领取节点奖励";
-        _detailList = [
+        _subList[1] = "Atlas节点";
+        /*_detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
-        ];
+        ];*/
+        break;
+      case Map3NodeActionEvent.EDIT_ATLAS:
+        _pageTitle = "确认编辑Atlas节点";
+        _subList[1] = "Atlas节点";
+        /*_detailList = [
+          "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
+          "节点号: ${widget.atlasNodeId}",
+          "${widget.transferAmount} HYN"
+        ];*/
         break;
       default:
         _pageTitle = S.of(context).transfer_confirm;
         break;
     }
-
   }
 
   @override
@@ -163,8 +173,9 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                SizedBox(height: 4,),
-
+                                SizedBox(
+                                  height: 4,
+                                ),
                                 Row(
                                   children: <Widget>[
                                     Text(
@@ -215,6 +226,7 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
 
     SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
 
+    var pre = widget.actionEvent != Map3NodeActionEvent.COLLECT ? "-" : "+";
     return Row(
       children: <Widget>[
         Expanded(
@@ -232,7 +244,8 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
-                    "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "btc"}",
+ 
+                    "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "HYN"}",
                     style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
@@ -247,7 +260,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
       ],
     );
   }
-
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
@@ -264,7 +276,6 @@ class _Map3NodeNormalConfirmState extends BaseState<Map3NodeNormalConfirmPage> {
               Routes.map3node_broadcast_success_page +
                   "?actionEvent=${widget.actionEvent}" +
                   "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
