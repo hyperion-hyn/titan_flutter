@@ -4,22 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
-import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_create_page.dart';
+import 'map3_node_public_widget.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
   final String contractId;

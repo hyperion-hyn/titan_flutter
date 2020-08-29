@@ -26,7 +26,7 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:'终止节点',
+        baseTitle: '终止节点',
       ),
 
       //backgroundColor: Color(0xffF3F0F5),

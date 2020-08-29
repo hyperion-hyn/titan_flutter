@@ -1,14 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_pronounce_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
