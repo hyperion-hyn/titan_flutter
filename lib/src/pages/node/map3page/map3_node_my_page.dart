@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'map3_node_list_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -210,7 +211,9 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
             "确认提取",
             () {
               Navigator.pop(context);
-              Application.router.navigateTo(context, Routes.map3node_collect_page);
+              Application.router.navigateTo(
+                  context, Routes.map3node_normal_confirm_page + "?actionEvent=${Map3NodeActionEvent.COLLECT.index}");
+              //Application.router.navigateTo(context, Routes.map3node_collect_page);
             },
             width: 200,
             height: 38,
