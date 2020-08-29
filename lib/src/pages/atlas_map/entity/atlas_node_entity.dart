@@ -5,6 +5,7 @@ import 'enum_atlas_type.dart';
 
 part 'atlas_node_entity.g.dart';
 
+@deprecated
 @JsonSerializable()
 class AtlasNodeEntity extends Object {
 
