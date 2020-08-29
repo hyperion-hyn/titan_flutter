@@ -305,11 +305,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           ClickOvalButton(
                             "领取",
                             () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (BuildContext context) => Map3NodeNormalConfirmPage(
-                                        actionEvent: Map3NodeActionEvent.RECEIVE_AWARD,
-                                      )));
                               Navigator.pop(context);
+                              Application.router.navigateTo(
+                                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
                             },
                             width: 120,
                             height: 38,

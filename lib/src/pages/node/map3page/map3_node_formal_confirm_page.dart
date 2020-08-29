@@ -85,19 +85,21 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
         _pageTitle = "确认领取节点奖励";
-        _detailList = [
+        _subList[1] = "Atlas节点";
+        /*_detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
-        ];
+        ];*/
         break;
       case Map3NodeActionEvent.EDIT_ATLAS:
         _pageTitle = "确认编辑Atlas节点";
-        _detailList = [
+        _subList[1] = "Atlas节点";
+        /*_detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
-        ];
+        ];*/
         break;
       default:
         _pageTitle = S.of(context).transfer_confirm;
@@ -240,7 +242,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
-                    "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "btc"}",
+                    "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "HYN"}",
                     style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
