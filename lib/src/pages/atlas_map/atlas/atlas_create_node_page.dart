@@ -41,21 +41,9 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '创建Atlas节点',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-        actions: <Widget>[
+      appBar: BaseAppBar(
+        baseTitle: '创建Atlas节点',
+        actions: [
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(16.0),

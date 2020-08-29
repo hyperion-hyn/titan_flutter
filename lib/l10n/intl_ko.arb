@@ -848,5 +848,7 @@
   "atlas_sign_rate": "签名率",
   "atlas_total_staking": "总抵押",
   "atlas_reward_rate": "预期收益",
-  "atlas_node_rank": "节点排名"
+  "atlas_node_rank": "节点排名",
+  "edit": "编辑",
+  "save": "保存"
 }

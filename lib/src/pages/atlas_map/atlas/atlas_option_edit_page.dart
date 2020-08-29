@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 
 class AtlasOptionEditPage extends StatefulWidget {
   final String title;
@@ -46,30 +48,18 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 4,
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(
-          color: Colors.black,
-        ),
-        centerTitle: true,
-        title: Text(
-          '编辑' + widget.title ?? '编辑',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-          ),
-        ),
-        actions: <Widget>[
+      appBar: BaseAppBar(
+        baseTitle: S.of(context).edit + widget.title ?? S.of(context).edit,
+        actions: [
           FlatButton(
             onPressed: () {
               Navigator.of(context).pop(_controller.text);
             },
             child: Text(
-              "保存",
+              S.of(context).save,
               style: TextStyle(color: HexColor("#1F81FF")),
             ),
-          ),
+          )
         ],
       ),
       body: Container(
@@ -103,4 +93,3 @@ class _AtlasNodeOptionEditState extends State<AtlasOptionEditPage> {
     );
   }
 }
-
