@@ -192,54 +192,17 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _delegateCountWidget() {
+    double tempMinTotal = double.parse(_nodeItem.minTotalDelegation) * _nodeItem.ownerMinDelegationRate;
+    var detail = FormatUtil.amountToString(tempMinTotal.toString());
+
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
-      child: Row(
-        children: [1, 0.5, 2, 0.5, 3].map((value) {
-          String title = "";
-          String detail = "0";
-
-          switch (value) {
-            case 1:
-              title = "创建最低抵押";
-
-              double tempMinTotal = double.parse(_nodeItem.minTotalDelegation) * _nodeItem.ownerMinDelegationRate;
-              detail = FormatUtil.amountToString(tempMinTotal.toString());
-
-              break;
-
-            case 2:
-              title = "管理费";
-              detail = "1%-20%";
-              break;
-
-            case 3:
-              title = "合约周期";
-              detail = "180天";
-              break;
-
-            default:
-              return Container(
-                height: 20,
-                width: 0.5,
-                color: HexColor("#000000").withOpacity(0.2),
-              );
-              break;
-          }
-
-          return Expanded(
-            child: Center(
-                child: Column(
-              children: <Widget>[
-                Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.w400)),
-                Container(
-                  height: 4,
-                ),
-                Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-              ],
-            )),
-          );
-        }).toList(),
+      child: profitListLightWidget(
+        [
+          {"创建最低抵押": detail},
+          {"管理费": "1%-20%"},
+          {"合约周期": "180天"}
+        ],
       ),
     );
   }

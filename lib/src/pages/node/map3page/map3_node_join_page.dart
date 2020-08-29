@@ -189,55 +189,13 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
 
   Widget _delegateCountWidget() {
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
-      child: Row(
-        children: [1, 0.5, 2, 0.5, 3].map((value) {
-          String title = "";
-          String detail = "0";
-          Color color = HexColor("#000000");
-
-          switch (value) {
-            case 1:
-              title = "总抵押";
-              detail = "800,000";
-
-              break;
-
-            case 2:
-              title = "管理费";
-              detail = "20%";
-              break;
-
-            case 3:
-              title = "1%";
-              detail = "180天";
-              //color = HexColor("#FF4C3B");
-              break;
-
-            default:
-              return Container(
-                height: 20,
-                width: 0.5,
-                color: HexColor("#000000").withOpacity(0.2),
-              );
-              break;
-          }
-
-          TextStyle style = TextStyle(fontSize: 16, color: color, fontWeight: FontWeight.w400);
-
-          return Expanded(
-            child: Center(
-                child: Column(
-              children: <Widget>[
-                Text(detail, style: style),
-                Container(
-                  height: 4,
-                ),
-                Text(title, style: TextStyle(fontSize: 10, color: color, fontWeight: FontWeight.normal)),
-              ],
-            )),
-          );
-        }).toList(),
+      padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
+      child: profitListWidget(
+        [
+          {"总抵押": "800,000"},
+          {"管理费": "20%"},
+          {"最低抵押": "1%"}
+        ],
       ),
     );
   }
