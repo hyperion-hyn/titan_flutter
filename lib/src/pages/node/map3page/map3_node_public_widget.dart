@@ -240,7 +240,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
 }
 
 Widget managerSpendWidget(
-    BuildContext buildContext, TextEditingController _rateCoinController, Function reduceFunc, Function addFunc) {
+    BuildContext buildContext, TextEditingController _rateCoinController, {Function reduceFunc, Function addFunc}) {
   return Container(
     color: Colors.white,
     child: Row(

@@ -325,7 +325,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
               focusNode: _focusNode),
           divider,
-          managerSpendWidget(context, _rateCoinController, () {
+          managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
               _managerSpendCount--;
               if (_managerSpendCount < 1) {
@@ -334,7 +334,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
               _rateCoinController.text = "$_managerSpendCount";
             });
-          }, () {
+          }, addFunc: () {
             setState(() {
               _managerSpendCount++;
               if (_managerSpendCount > 20) {
@@ -377,7 +377,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, ({String value}){
+          return editInfoItem(context, index, title, hint, detail, ({String value}) {
             if (index == 0) {
               setState(() {
                 _localImagePath = value;

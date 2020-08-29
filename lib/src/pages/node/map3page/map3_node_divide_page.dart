@@ -726,113 +726,24 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
   }
 
   Widget _managerSpendWidget() {
-    return Container(
-      color: Colors.white,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: RichText(
-              text: TextSpan(
-                  text: "管理费设置",
-                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
-                  children: [
-                    TextSpan(
-                      text: "（1%-20%）",
-                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-                    )
-                  ]),
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _managerSpendCount--;
-                      if (_managerSpendCount < 1) {
-                        _managerSpendCount = 1;
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        child: Text(
-                          "-",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: HexColor("#F2F2F2"),
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 60,
-                  height: 30,
-                  child: RoundBorderTextField(
-                    controller: _joinCoinController,
-                    keyboardType: TextInputType.number,
-                    focusNode: _focusNode,
-                    validator: (textStr) {
-                      if (textStr.length == 0) {
-                        return S.of(context).please_input_hyn_count;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Container(
-                    child: Text(
-                      "%",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      _managerSpendCount++;
-                      if (_managerSpendCount > 20) {
-                        _managerSpendCount = 20;
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                        child: Text(
-                          "+",
-                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                        ),
-                      ),
-                      decoration: BoxDecoration(
-                        color: HexColor("#F2F2F2"),
-                        borderRadius: BorderRadius.circular(3.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
+    return managerSpendWidget(context, _joinCoinController, reduceFunc: () {
+      setState(() {
+        _managerSpendCount--;
+        if (_managerSpendCount < 1) {
+          _managerSpendCount = 1;
+        }
+
+        _joinCoinController.text = "$_managerSpendCount";
+      });
+    }, addFunc: () {
+      setState(() {
+        _managerSpendCount++;
+        if (_managerSpendCount > 20) {
+          _managerSpendCount = 20;
+        }
+        _joinCoinController.text = "$_managerSpendCount";
+      });
+    });
   }
 
   Widget _confirmButtonWidget() {

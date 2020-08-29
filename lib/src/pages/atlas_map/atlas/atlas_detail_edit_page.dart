@@ -267,7 +267,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
             height: 10,
             color: DefaultColors.colorf2f2f2,
           ),
-          managerSpendWidget(context, _rateCoinController, () {
+          managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
               _managerSpendCount--;
               if (_managerSpendCount < 1) {
@@ -276,7 +276,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
 
               _rateCoinController.text = "$_managerSpendCount";
             });
-          }, () {
+          }, addFunc: () {
             setState(() {
               _managerSpendCount++;
               if (_managerSpendCount > 20) {
