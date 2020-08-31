@@ -164,8 +164,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       _getMarketItem(_selectedCoin)?.kLineEntity?.close,
       4,
     );
-    if (_hynToSelectedCoin != null && _hynToSelectedCoin != "null" && double.parse(_hynToSelectedCoin) != 0) {
-      //print("_hynToSelectedCoin:$_hynToSelectedCoin, ${_hynToSelectedCoin == "null"}");
+    if (_hynToSelectedCoin != null && _hynToSelectedCoin != "null" && double.parse(_hynToSelectedCoin) > 0) {
+      print("_hynToSelectedCoin:$_hynToSelectedCoin, ${_hynToSelectedCoin == "null"}");
+
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
             Decimal.fromInt(1) /
                 (Decimal.parse(
