@@ -485,15 +485,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
         }
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
 
-        ///Clear current exchange account if already authorized by this wallet
+        ///log out exchange account
         BlocProvider.of<ExchangeCmpBloc>(context)
             .add(ClearExchangeAccountEvent());
-//        await UiUtil.showSetBioAuthDialog(
-//          context,
-//          S.of(context).delete_wallet_success,
-//          widget.wallet,
-//          walletPassword,
-//        );
       } else {
         Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
       }

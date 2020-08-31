@@ -45,7 +45,6 @@ class _ExchangeWithdrawConfirmPageState
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
-  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void onCreated() {
