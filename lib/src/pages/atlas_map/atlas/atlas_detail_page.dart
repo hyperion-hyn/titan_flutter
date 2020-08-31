@@ -96,7 +96,32 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.rewardRate = "98%";
     _atlasInfoEntity.join = NodeJoinType.CREATOR.index;
     _atlasInfoEntity.myMap3 = [
-      Map3InfoEntity("this.address",AtlasInfoEntity.onlyId(1),"this.contact","this.createdAt","this.creator","this.describe","this.endTime","this.feeRate","this.home",1,UserMap3Entity.onlyId(11),"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region",Map3AtlasEntity.onlyId(1),"this.rewardHistory","this.rewardRate","this.staking","this.startTime",1,"this.updatedAt",),
+      Map3InfoEntity(
+        "this.address",
+        AtlasInfoEntity.onlyId(1),
+        "this.contact",
+        "this.createdAt",
+        "this.creator",
+        "this.describe",
+        "this.endTime",
+        "this.feeRate",
+        "this.home",
+        1,
+        UserMap3Entity.onlyId(11),
+        "this.name",
+        "this.nodeId",
+        "this.parentNodeId",
+        "this.pic",
+        "this.provider",
+        "this.region",
+        Map3AtlasEntity.onlyId(1),
+        "this.rewardHistory",
+        "this.rewardRate",
+        "this.staking",
+        "this.startTime",
+        1,
+        "this.updatedAt",
+      ),
     ];
 
     infoContentList.clear();
@@ -235,24 +260,26 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             color: HexColor("#f4f4f4"),
           ),
           Padding(
-            padding: const EdgeInsets.only(top:19, bottom: 15,left: 20,right: 20),
+            padding: const EdgeInsets.only(top: 19, bottom: 15, left: 20, right: 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text("*",style: TextStyle(color: HexColor("#FF4C3B"),fontSize: 24),),
-                SizedBox(width: 8,),
+                Text(
+                  "*",
+                  style: TextStyle(color: HexColor("#FF4C3B"), fontSize: 24),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
                 Expanded(
                   child: Text.rich(
                     TextSpan(
                       text: "该Atlas节点处于非活跃状态",
                       style: TextStyles.textC333S14,
                       children: [
+                        TextSpan(text: '(可能的原因是设备运行障碍/设备出块签名率低/节点主已经退出抵押)', style: TextStyles.textC999S12),
                         TextSpan(
-                            text: '(可能的原因是设备运行障碍/设备出块签名率低/节点主已经退出抵押)',
-                            style: TextStyles.textC999S12),
-                        TextSpan(
-                          text:
-                          '，如果你的设备已经恢复正常运行，请重新激活该节点。',
+                          text: '，如果你的设备已经恢复正常运行，请重新激活该节点。',
                           style: TextStyles.textC333S14,
                         )
                       ],
@@ -264,8 +291,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ),
           ClickOvalButton(
             "重新激活",
-                () {
-              switch(NodeJoinType.values[_atlasInfoEntity.join]){
+            () {
+              switch (NodeJoinType.values[_atlasInfoEntity.join]) {
                 case NodeJoinType.NONE:
                 case NodeJoinType.JOINER:
                   UiUtil.showAlertView(
@@ -274,7 +301,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     actions: [
                       ClickOvalButton(
                         "好的",
-                            () {
+                        () {
                           Navigator.pop(context);
                         },
                         width: 160,
@@ -286,19 +313,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   );
                   break;
                 case NodeJoinType.CREATOR:
-                  Application.router.navigateTo(
-                      context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ACTIVE_NODE.index}");
+                  Application.router.navigateTo(context,
+                      Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ACTIVE_NODE.index}");
                   break;
               }
-
-
-
             },
             width: 160,
             height: 32,
             fontSize: 14,
           ),
-          SizedBox(height: 22,),
+          SizedBox(
+            height: 22,
+          ),
         ],
       ),
     );
@@ -356,7 +382,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             "领取",
                             () {
                               Application.router.navigateTo(
-                                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
+                                  context,
+                                  Routes.map3node_formal_confirm_page +
+                                      "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
                             },
                             width: 120,
                             height: 38,
@@ -583,42 +611,45 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         ),
                       ),
                     ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 26, bottom: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(_atlasInfoEntity.myMap3.isEmpty?"":"${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
-                                      style: TextStyles.textC333S16),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text("Map3已抵押", style: TextStyles.textC999S12)
-                                ],
-                              ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 26, bottom: 18),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                    _atlasInfoEntity.myMap3.isEmpty
+                                        ? ""
+                                        : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                    style: TextStyles.textC333S16),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text("Map3已抵押", style: TextStyles.textC999S12)
+                              ],
                             ),
-                            Container(
-                              height: 20,
-                              width: 0.5,
-                              color: HexColor("#33000000"),
+                          ),
+                          Container(
+                            height: 20,
+                            width: 0.5,
+                            color: HexColor("#33000000"),
+                          ),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
+                                    style: TextStyles.textC333S16),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text("奖励", style: TextStyles.textC999S12)
+                              ],
                             ),
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
-                                      style: TextStyles.textC333S16),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text("奖励", style: TextStyles.textC999S12)
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -639,7 +670,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 20, left: 14, bottom: 11,right: 14),
+            padding: const EdgeInsets.only(top: 20, left: 14, bottom: 11, right: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
@@ -649,15 +680,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 ),
                 Spacer(),
                 InkWell(
-                  onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (BuildContext context) => AtlasDetailEditPage(_atlasInfoEntity
-                        )));
+                  onTap: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (BuildContext context) => AtlasDetailEditPage(_atlasInfoEntity)));
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-                      Image.asset("res/drawable/icon_atlas_map3_edit_detail.png",width: 12,height: 12,),
+                      Image.asset(
+                        "res/drawable/icon_atlas_map3_edit_detail.png",
+                        width: 12,
+                        height: 12,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 6),
                         child: Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
@@ -714,7 +748,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     Row(
                       children: <Widget>[
                         Text("${map3InfoEntity.name}", style: TextStyles.textC000S14),
-                        if (NodeJoinType.values[map3InfoEntity.relative.status] == NodeJoinType.CREATOR) Text("（创建者）", style: TextStyles.textC999S12)//todo
+                        if (NodeJoinType.values[map3InfoEntity.relative.status] == NodeJoinType.CREATOR)
+                          Text("（创建者）", style: TextStyles.textC999S12) //todo
                       ],
                     ),
                     Padding(
@@ -840,5 +875,4 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       ),
     );
   }
-
 }
