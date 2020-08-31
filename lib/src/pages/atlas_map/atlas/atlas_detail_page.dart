@@ -13,9 +13,11 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -94,6 +96,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.rewardRate = "98%";
     _atlasInfoEntity.join = NodeJoinType.CREATOR.index;
     _atlasInfoEntity.myMap3 = [
+      Map3InfoEntity("this.address",AtlasInfoEntity.onlyId(1),"this.contact","this.createdAt","this.creator","this.describe","this.endTime","this.feeRate","this.home",1,UserMap3Entity.onlyId(11),"this.name","this.nodeId","this.parentNodeId","this.pic","this.provider","this.region",Map3AtlasEntity.onlyId(1),"this.rewardHistory","this.rewardRate","this.staking","this.startTime",1,"this.updatedAt",),
     ];
 
     infoContentList.clear();
@@ -115,7 +118,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.status = Map3InfoStatus.CANCEL_NODE_SUCCESS.index;
+      element.relative = Map3AtlasEntity.onlyId(11);
+      element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
     });
 
     if (mounted)
@@ -129,6 +133,16 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _currentPage++;
 
     var _netDataList = await _atlasApi.postAtlasMap3NodeList(_atlasInfoEntity.nodeId, page: _currentPage);
+
+    _netDataList.forEach((element) {
+      element.name = "haha";
+      element.address = "121112121";
+      element.rewardRate = "11%";
+      element.staking = "2313123";
+      element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
+      element.relative = Map3AtlasEntity.onlyId(11);
+      element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
+    });
 
     if (_netDataList != null) {
       _dataList.addAll(_netDataList);
@@ -164,6 +178,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               child: CustomScrollView(
                 slivers: <Widget>[
                   _headerWidget(),
+                  _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
                   SliverList(
@@ -206,6 +221,84 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             padding: const EdgeInsets.only(top: 18, bottom: 20),
             child: stakeHeaderInfo(context, _atlasInfoEntity),
           ),
+        ],
+      ),
+    );
+  }
+
+  _activeAtlasNode() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: <Widget>[
+          Container(
+            height: 10,
+            color: HexColor("#f4f4f4"),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top:19, bottom: 15,left: 20,right: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text("*",style: TextStyle(color: HexColor("#FF4C3B"),fontSize: 24),),
+                SizedBox(width: 8,),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: "该Atlas节点处于非活跃状态",
+                      style: TextStyles.textC333S14,
+                      children: [
+                        TextSpan(
+                            text: '(可能的原因是设备运行障碍/设备出块签名率低/节点主已经退出抵押)',
+                            style: TextStyles.textC999S12),
+                        TextSpan(
+                          text:
+                          '，如果你的设备已经恢复正常运行，请重新激活该节点。',
+                          style: TextStyles.textC333S14,
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          ClickOvalButton(
+            "重新激活",
+                () {
+              switch(NodeJoinType.values[_atlasInfoEntity.join]){
+                case NodeJoinType.NONE:
+                case NodeJoinType.JOINER:
+                  UiUtil.showAlertView(
+                    context,
+                    title: "激活节点",
+                    actions: [
+                      ClickOvalButton(
+                        "好的",
+                            () {
+                          Navigator.pop(context);
+                        },
+                        width: 160,
+                        height: 38,
+                        fontSize: 16,
+                      ),
+                    ],
+                    content: "只有节点主才能重新激活节点，请联系节点主激活",
+                  );
+                  break;
+                case NodeJoinType.CREATOR:
+                  Application.router.navigateTo(
+                      context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ACTIVE_NODE.index}");
+                  break;
+              }
+
+
+
+            },
+            width: 160,
+            height: 32,
+            fontSize: 14,
+          ),
+          SizedBox(height: 22,),
         ],
       ),
     );
@@ -259,7 +352,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           ClickOvalButton(
                             "领取",
                             () {
-                              Navigator.pop(context);
                               Application.router.navigateTo(
                                   context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
                             },
@@ -488,42 +580,42 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 26, bottom: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
-                                    style: TextStyles.textC333S16),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("Map3已抵押", style: TextStyles.textC999S12)
-                              ],
+                      Padding(
+                        padding: const EdgeInsets.only(top: 26, bottom: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                      style: TextStyles.textC333S16),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text("Map3已抵押", style: TextStyles.textC999S12)
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            height: 20,
-                            width: 0.5,
-                            color: HexColor("#33000000"),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
-                                    style: TextStyles.textC333S16),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("奖励", style: TextStyles.textC999S12)
-                              ],
+                            Container(
+                              height: 20,
+                              width: 0.5,
+                              color: HexColor("#33000000"),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
+                                      style: TextStyles.textC333S16),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text("奖励", style: TextStyles.textC999S12)
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -745,4 +837,5 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       ),
     );
   }
+
 }

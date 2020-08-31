@@ -4,10 +4,13 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -204,7 +207,9 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
-          var atlasEntity = widget._atlasInfoEntity;
+          Application.router.navigateTo(
+              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.STAKE_ATLAS.index}");
+          /*var atlasEntity = widget._atlasInfoEntity;
           var map3Entity = widget._atlasInfoEntity.myMap3[_selectedMap3NodeValue];
           await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(
               map3Entity.staking,
@@ -215,7 +220,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
               "1111",
               "11111",
               atlasEntity.address,
-              AtlasActionType.JOIN_DELEGATE_ALAS));
+              AtlasActionType.JOIN_DELEGATE_ALAS));*/
         },
         width: 300,
         height: 46,

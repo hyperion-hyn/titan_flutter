@@ -20,6 +20,7 @@ import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class Map3NodeFormalConfirmPage extends StatefulWidget {
@@ -85,13 +86,14 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
       case Map3NodeActionEvent.ADD:
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
-        _pageTitle = "确认领取节点奖励";
-        _subList[1] = "Atlas节点";
-        /*_detailList = [
-          "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
+        _pageTitle = "提取奖励";
+        _subList[0] = "Atlas节点";
+        _subList[1] = "钱包";
+        _detailList = [
           "节点号: ${widget.atlasNodeId}",
+          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
           "${widget.transferAmount} HYN"
-        ];*/
+        ];
         break;
       case Map3NodeActionEvent.EDIT_ATLAS:
         _pageTitle = "确认编辑Atlas节点";
@@ -101,6 +103,24 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
         ];*/
+        break;
+      case Map3NodeActionEvent.ACTIVE_NODE:
+        _pageTitle = "激活节点";
+        _subList[1] = "Atlas链";
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
+          "",
+          "${widget.transferAmount} HYN"
+        ];
+        break;
+      case Map3NodeActionEvent.STAKE_ATLAS:
+        _pageTitle = "激活节点";
+        _subList[1] = "Atlas链";
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
+          "",
+          "${widget.transferAmount} HYN"
+        ];
         break;
       default:
         _pageTitle = S.of(context).transfer_confirm;

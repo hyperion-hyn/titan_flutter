@@ -90,6 +90,8 @@ enum Map3NodeActionEvent {
   ADD,
   RECEIVE_AWARD,
   EDIT_ATLAS,
+  ACTIVE_NODE,
+  STAKE_ATLAS,
 }
 
 Map3NodeActionEvent enumActionEventFromString(String fruit) {

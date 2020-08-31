@@ -97,6 +97,8 @@ class AtlasInfoEntity extends Object {
 
   AtlasInfoEntity(this.address,this.blockNum,this.blsKey,this.blsSign,this.contact,this.createdAt,this.creator,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.id,this.join,this.maxStaking,this.myMap3,this.name,this.nodeId,this.pic,this.rank,this.reward,this.rewardHistory,this.rewardRate,this.signRate,this.staking,this.stakingCreator,this.status,this.type,this.updatedAt,);
 
+  AtlasInfoEntity.onlyId(this.id);
+
   factory AtlasInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$AtlasInfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AtlasInfoEntityToJson(this);

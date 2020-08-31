@@ -35,6 +35,8 @@ class Map3AtlasEntity extends Object {
 
   Map3AtlasEntity(this.atlasNodeId,this.createdAt,this.creator,this.id,this.map3NodeId,this.reward,this.staking,this.status,this.updatedAt,);
 
+  Map3AtlasEntity.onlyId(this.id);
+
   factory Map3AtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3AtlasEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3AtlasEntityToJson(this);

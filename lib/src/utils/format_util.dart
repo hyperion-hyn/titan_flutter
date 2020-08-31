@@ -47,6 +47,12 @@ class FormatUtil {
     return DateFormat(format).format(date) ?? "";
   }
 
+  static String formatDateStr(String utcStr, {bool isSecond = false}) {
+    var date = DateTime.parse(utcStr);
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+    return DateFormat(format).format(date) ?? "";
+  }
+
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
     return DateFormat("yyyy.MM.dd")
             .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
