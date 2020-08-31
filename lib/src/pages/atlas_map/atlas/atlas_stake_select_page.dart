@@ -242,16 +242,25 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
         child: Column(
           children: <Widget>[
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
                   atlasInfoEntity.name,
                   style: TextStyles.textC333S16,
                 ),
+                SizedBox(width: 6,),
+                Text(
+                  '${atlasInfoEntity.rank}',
+                  style: TextStyle(color: HexColor("#228BA1"),fontSize: 16),
+                ),
                 Spacer(),
-                Container(
-                    padding: EdgeInsets.only(left: 6.0, right: 6),
-                    color: HexColor("#e3fafb"),
-                    child: Text("atlasInfoEntity.getNodeType", style: TextStyles.textC333S12)),//todo
+                Padding(
+                  padding: const EdgeInsets.only(bottom:2.0),
+                  child: Text(
+                    "节点号：${atlasInfoEntity.nodeId}",
+                    style: TextStyles.textC333S12,
+                  ),
+                ),
               ],
             ),
             Row(
@@ -272,10 +281,10 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                   ),
                 ),
                 Spacer(),
-                Text(
-                  "节点号：${atlasInfoEntity.nodeId}",
-                  style: TextStyles.textC333S12,
-                ),
+                Container(
+                    padding: EdgeInsets.only(left: 6.0, right: 6),
+                    color: HexColor("#e3fafb"),
+                    child: Text("${getAtlasNodeType(atlasInfoEntity.type)}", style: TextStyles.textC333S12)),
               ],
             )
           ],

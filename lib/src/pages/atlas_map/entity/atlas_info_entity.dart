@@ -47,9 +47,6 @@ class AtlasInfoEntity extends Object {
   @JsonKey(name: 'id')
   int id;
 
-  @JsonKey(name: 'join')
-  int join;//NodeJoinType
-
   @JsonKey(name: 'max_staking')
   String maxStaking;
 
@@ -86,16 +83,18 @@ class AtlasInfoEntity extends Object {
   @JsonKey(name: 'staking_creator')
   String stakingCreator;
 
+  ///AtlasNodeStatus
   @JsonKey(name: 'status')
-  int status;//AtlasNodeStatus
+  int status;
 
+  ///AtlasNodeType
   @JsonKey(name: 'type')
-  int type;//AtlasNodeType
+  int type;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
-  AtlasInfoEntity(this.address,this.blockNum,this.blsKey,this.blsSign,this.contact,this.createdAt,this.creator,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.id,this.join,this.maxStaking,this.myMap3,this.name,this.nodeId,this.pic,this.rank,this.reward,this.rewardHistory,this.rewardRate,this.signRate,this.staking,this.stakingCreator,this.status,this.type,this.updatedAt,);
+  AtlasInfoEntity(this.address,this.blockNum,this.blsKey,this.blsSign,this.contact,this.createdAt,this.creator,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.id,this.maxStaking,this.myMap3,this.name,this.nodeId,this.pic,this.rank,this.reward,this.rewardHistory,this.rewardRate,this.signRate,this.staking,this.stakingCreator,this.status,this.type,this.updatedAt,);
 
   AtlasInfoEntity.onlyId(this.id);
 

@@ -12,8 +12,9 @@ class UserMap3Entity extends Object {
   @JsonKey(name: 'created_at')
   String createdAt;
 
+  ///NodeJoinType
   @JsonKey(name: 'creator')
-  int creator;//UserCreator
+  int creator;
 
   @JsonKey(name: 'id')
   int id;
@@ -30,8 +31,9 @@ class UserMap3Entity extends Object {
   @JsonKey(name: 'staking')
   String staking;
 
+  ///UserMap3Status
   @JsonKey(name: 'status')
-  int status;//Map3AtlasStatus
+  int status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;

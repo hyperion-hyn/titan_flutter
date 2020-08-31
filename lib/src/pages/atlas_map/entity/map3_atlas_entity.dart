@@ -12,6 +12,7 @@ class Map3AtlasEntity extends Object {
   @JsonKey(name: 'created_at')
   String createdAt;
 
+  ///NodeJoinType
   @JsonKey(name: 'creator')
   int creator;
 
@@ -27,15 +28,16 @@ class Map3AtlasEntity extends Object {
   @JsonKey(name: 'staking')
   String staking;
 
+  ///Map3AtlasStatus
   @JsonKey(name: 'status')
-  int status;//Map3AtlasStatus
+  int status;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
   Map3AtlasEntity(this.atlasNodeId,this.createdAt,this.creator,this.id,this.map3NodeId,this.reward,this.staking,this.status,this.updatedAt,);
 
-  Map3AtlasEntity.onlyId(this.id);
+  Map3AtlasEntity.onlyId(this.id,this.creator);
 
   factory Map3AtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3AtlasEntityFromJson(srcJson);
 

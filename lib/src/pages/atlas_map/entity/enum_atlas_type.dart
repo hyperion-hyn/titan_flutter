@@ -50,9 +50,22 @@ enum AtlasNodeType {
   BLOCK
 }
 
-//0无参与，1参与抵押，2创建者
+String getAtlasNodeType(int atlasNodeType){
+  AtlasNodeType nodeType = AtlasNodeType.values[atlasNodeType];
+  switch(nodeType){
+    case AtlasNodeType.CANDIDATE:
+      return "候选节点";
+    case AtlasNodeType.SETTLE:
+      return "清算节点";
+    case AtlasNodeType.BLOCK:
+      return "出块节点";
+    default:
+      return "";
+  }
+}
+
+//0参与抵押，1创建者
 enum NodeJoinType {
-  NONE,
   JOINER,
   CREATOR
 }
@@ -80,6 +93,21 @@ enum AtlasInfoStatus {
  5 撤销抵押成功
 */
 enum Map3AtlasStatus {
+  JOIN_DELEGATE_ING,
+  JOIN_DELEGATE_FAIL,
+  DELEGATE_SUCCESS_NO_CANCEL,
+  DELEGATE_SUCCESS_CANCEL_ING,
+  CANCEL_DELEGATE_SUCCESS,
+}
+
+/*
+ 1 参与抵押提交中
+ 2 参与抵押失败;
+ 3 抵押成功,没在撤销
+ 4 抵押成功,部分/全部撤销提交中；注：4部分撤销成功或撤销抵押失败的话回到3状态，staking改变但大于0;
+ 5 全部撤销抵押成功，抵押量为0。
+*/
+enum UserMap3Status {
   JOIN_DELEGATE_ING,
   JOIN_DELEGATE_FAIL,
   DELEGATE_SUCCESS_NO_CANCEL,

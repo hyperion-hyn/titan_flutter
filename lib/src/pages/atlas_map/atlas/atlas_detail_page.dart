@@ -87,6 +87,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   Future _refreshData() async {
     _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
     _atlasInfoEntity.name = "啦啦啦";
+    _atlasInfoEntity.rank = 23;
     _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
     _atlasInfoEntity.nodeId = "PB20202";
     _atlasInfoEntity.address = "0xsfasdasgadgas";
@@ -94,7 +95,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.staking = "20000000";
     _atlasInfoEntity.signRate = "98%";
     _atlasInfoEntity.rewardRate = "98%";
-    _atlasInfoEntity.join = NodeJoinType.CREATOR.index;
     _atlasInfoEntity.myMap3 = [
       Map3InfoEntity(
         "this.address",
@@ -114,7 +114,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         "this.pic",
         "this.provider",
         "this.region",
-        Map3AtlasEntity.onlyId(1),
+        Map3AtlasEntity.onlyId(1,1),
         "this.rewardHistory",
         "this.rewardRate",
         "this.staking",
@@ -143,7 +143,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11);
+      element.relative = Map3AtlasEntity.onlyId(11,1);
       element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
     });
 
@@ -165,7 +165,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11);
+      element.relative = Map3AtlasEntity.onlyId(11,1);
       element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
     });
 
@@ -292,8 +292,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "重新激活",
             () {
-              switch (NodeJoinType.values[_atlasInfoEntity.join]) {
-                case NodeJoinType.NONE:
+              var nodeJoinType;
+              if (_atlasInfoEntity.myMap3 == null) {
+                nodeJoinType = NodeJoinType.JOINER;
+              } else {
+                nodeJoinType = NodeJoinType.values[_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.creator];
+              }
+              switch (nodeJoinType) {
                 case NodeJoinType.JOINER:
                   UiUtil.showAlertView(
                     context,
@@ -358,81 +363,84 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             children: <Widget>[
               InkWell(
                 onTap: () {
-                  switch (NodeJoinType.values[_atlasInfoEntity.join]) {
-                    case NodeJoinType.CREATOR:
-                      UiUtil.showAlertView(
-                        context,
-                        title: "领取奖励",
-                        actions: [
-                          ClickOvalButton(
-                            S.of(context).cancel,
-                            () {
-                              Navigator.pop(context);
-                            },
-                            width: 120,
-                            height: 32,
-                            fontSize: 14,
-                            textColor: DefaultColors.color999,
-                            btnColor: Colors.transparent,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          ClickOvalButton(
-                            "领取",
-                            () {
-                              Application.router.navigateTo(
-                                  context,
-                                  Routes.map3node_formal_confirm_page +
-                                      "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
-                            },
-                            width: 120,
-                            height: 38,
-                            fontSize: 16,
-                          ),
-                        ],
-                        content: "你将领取当前节点奖励，奖励会按抵押比例分配到参与抵押的每个map3节点，当然你会获得额外的管理费奖励。",
-                      );
+                  var nodeJoinType;
+                  if (_atlasInfoEntity.myMap3 == null) {
+                    UiUtil.showAlertView(
+                      context,
+                      title: "领取奖励",
+                      actions: [
+                        ClickOvalButton(
+                          "好的",
+                          () {
+                            Navigator.pop(context);
+                          },
+                          width: 160,
+                          height: 38,
+                          fontSize: 16,
+                        ),
+                      ],
+                      content: "你还没有参与该Atlas节点抵押，不可以领取节点奖励。",
+                    );
+                  } else {
+                    nodeJoinType =
+                        NodeJoinType.values[_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.creator];
+                    switch (nodeJoinType) {
+                      case NodeJoinType.CREATOR:
+                        UiUtil.showAlertView(
+                          context,
+                          title: "领取奖励",
+                          actions: [
+                            ClickOvalButton(
+                              S.of(context).cancel,
+                              () {
+                                Navigator.pop(context);
+                              },
+                              width: 120,
+                              height: 32,
+                              fontSize: 14,
+                              textColor: DefaultColors.color999,
+                              btnColor: Colors.transparent,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            ClickOvalButton(
+                              "领取",
+                              () {
+                                Application.router.navigateTo(
+                                    context,
+                                    Routes.map3node_formal_confirm_page +
+                                        "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
+                              },
+                              width: 120,
+                              height: 38,
+                              fontSize: 16,
+                            ),
+                          ],
+                          content: "你将领取当前节点奖励，奖励会按抵押比例分配到参与抵押的每个map3节点，当然你会获得额外的管理费奖励。",
+                        );
 
-                      break;
-                    case NodeJoinType.JOINER:
-                      UiUtil.showAlertView(
-                        context,
-                        title: "领取奖励",
-                        actions: [
-                          ClickOvalButton(
-                            "好的",
-                            () {
-                              Navigator.pop(context);
-                            },
-                            width: 160,
-                            height: 38,
-                            fontSize: 16,
-                          ),
-                        ],
-                        content: "你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。",
-                      );
+                        break;
+                      case NodeJoinType.JOINER:
+                        UiUtil.showAlertView(
+                          context,
+                          title: "领取奖励",
+                          actions: [
+                            ClickOvalButton(
+                              "好的",
+                              () {
+                                Navigator.pop(context);
+                              },
+                              width: 160,
+                              height: 38,
+                              fontSize: 16,
+                            ),
+                          ],
+                          content: "你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。",
+                        );
 
-                      break;
-                    case NodeJoinType.NONE:
-                      UiUtil.showAlertView(
-                        context,
-                        title: "领取奖励",
-                        actions: [
-                          ClickOvalButton(
-                            "好的",
-                            () {
-                              Navigator.pop(context);
-                            },
-                            width: 160,
-                            height: 38,
-                            fontSize: 16,
-                          ),
-                        ],
-                        content: "你还没有参与该Atlas节点抵押，不可以领取节点奖励。",
-                      );
-
-                      break;
+                        break;
+                    }
                   }
                 },
                 child: Row(
@@ -462,7 +470,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           shakeRange: 0.3,
                           delayForward: 1000,
                           child: Text(
-                            "+22065",
+                            "${_atlasInfoEntity.reward}",
                             style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                           )),
                     ),
@@ -478,7 +486,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(text: "已产生奖励  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
-                        text: "${_atlasInfoEntity.reward}",
+                        text: "${_atlasInfoEntity.rewardHistory}",
                         style: TextStyles.textC333S12,
                       ),
                     ])),
@@ -496,20 +504,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       child: Row(
                         children: <Widget>[
                           Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
-                              },
-                              child: Column(
-                                children: <Widget>[
-                                  Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  Text("总抵押", style: TextStyles.textC999S10)
-                                ],
-                              ),
+                            child: Column(
+                              children: <Widget>[
+                                Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text("总抵押", style: TextStyles.textC999S10)
+                              ],
                             ),
                           ),
                           Container(
@@ -518,20 +520,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             color: DefaultColors.colorf2f2f2,
                           ),
                           Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
-                              },
-                              child: Column(
-                                children: <Widget>[
-                                  Text("20,209,000", style: TextStyles.textC333S14),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  Text("管理节点抵押", style: TextStyles.textC999S10)
-                                ],
-                              ),
+                            child: Column(
+                              children: <Widget>[
+                                Text("${_atlasInfoEntity.stakingCreator}", style: TextStyles.textC333S14),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                Text("管理节点抵押", style: TextStyles.textC999S10)
+                              ],
                             ),
                           ),
                           Container(
@@ -748,8 +744,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     Row(
                       children: <Widget>[
                         Text("${map3InfoEntity.name}", style: TextStyles.textC000S14),
-                        if (NodeJoinType.values[map3InfoEntity.relative.status] == NodeJoinType.CREATOR)
-                          Text("（创建者）", style: TextStyles.textC999S12) //todo
+                        if (NodeJoinType.values[map3InfoEntity.relative.creator] == NodeJoinType.CREATOR)
+                          Text("（创建者）", style: TextStyles.textC999S12)
                       ],
                     ),
                     Padding(
@@ -792,22 +788,24 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     var statusText = "";
     var statuBgColor = "#228BA1";
     var statuTextColor = "#FFFFFF";
-    switch (Map3InfoStatus.values[map3InfoEntity.relative.status]) {
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+    switch (Map3AtlasStatus.values[map3InfoEntity.relative.status]) {
+      case Map3AtlasStatus.JOIN_DELEGATE_ING:
         statusText = "新抵押";
         statuBgColor = "#228BA1";
         statuTextColor = "#FFFFFF";
         break;
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+      case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
         statusText = "撤销中";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#CC2D1E";
         break;
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL://todo 在已抵押中，如果大于起始块高则是新抵押
         statusText = "已抵押";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#999999";
         break;
+      default:
+        return null;
     }
 
     return Container(
@@ -862,7 +860,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "抵押",
             () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
+              if(_atlasInfoEntity.myMap3 == null){
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
+              }else{
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
+              }
             },
             width: 90,
             height: 32,
