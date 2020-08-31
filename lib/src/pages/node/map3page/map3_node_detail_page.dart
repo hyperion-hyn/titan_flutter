@@ -48,6 +48,7 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
+import 'map3_node_public_widget.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
   final int contractId;
@@ -631,8 +632,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-
-
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _contractNodeItem?.contract == null) {
       return Scaffold(
@@ -741,7 +740,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                     return SizedBox(
                       width: 100,
-                      height: index == 0?44:36,
+                      height: index == 0 ? 44 : 36,
                       child: FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -767,7 +766,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, index==0?12:8,8, 8),
+                              padding: EdgeInsets.fromLTRB(8, index == 0 ? 12 : 8, 8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(
@@ -1389,64 +1388,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 16, top: 32),
-            child: Row(
-              children: [1, 0.5, 2, 0.5, 3, 0.5, 4].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "管理费";
-                    detail = "20%";
-                    break;
-
-                  case 2:
-                    title = "预期年化";
-                    detail = "10.3%";
-                    break;
-
-                  case 3:
-                    title = "我的抵押";
-                    detail = "110，000";
-                    break;
-
-                  case 4:
-                    title = "奖励";
-                    detail = "1，000";
-                    break;
-
-                  default:
-                    return Container(
-                      height: 20,
-                      width: 0.5,
-                      color: HexColor("#F2F2F2"),
-                    );
-                    break;
-                }
-
-                var isPreCreate = (_userDelegateState == UserDelegateState.PRE_CREATE);
-                if (isPreCreate) {
-                  detail = "0";
-                }
-
-                return Expanded(
-                  child: Center(
-                      child: Column(
-                    children: <Widget>[
-                      Text(detail,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor("#333333"),
-                          )),
-                      Container(
-                        height: 4,
-                      ),
-                      Text(title, style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
-                    ],
-                  )),
-                );
-              }).toList(),
+            padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
+            child: profitListBigWidget(
+              [
+                {"管理费": "20%"},
+                {"预期年化": "10.3%"},
+                {"我的抵押": "110，000"},
+                {"奖励": "1，000"},
+              ],
             ),
           ),
         ],

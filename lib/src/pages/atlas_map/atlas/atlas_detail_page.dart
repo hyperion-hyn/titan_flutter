@@ -317,7 +317,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ),
         );
       }).toList());
+    } else {
+      return Container();
     }
+
     return SliverToBoxAdapter(
       child: Stack(
         alignment: Alignment.bottomCenter,
@@ -587,7 +590,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             Expanded(
                               child: Column(
                                 children: <Widget>[
-                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                  Text(_atlasInfoEntity.myMap3.isEmpty?"":"${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
                                       style: TextStyles.textC333S16),
                                   SizedBox(
                                     height: 5,

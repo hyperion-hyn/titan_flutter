@@ -18,6 +18,8 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
+import 'map3_node_public_widget.dart';
+
 class Map3NodeCancelPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -118,49 +120,11 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 16.0, top: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [1, 0.5, 2].map((value) {
-                            String title = "";
-                            String detail = "0";
-                            Color color = HexColor("#333333");
-
-                            switch (value) {
-                              case 1:
-                                title = "节点总抵押";
-                                detail = "900,000";
-                                color = HexColor("#BF8D2A");
-                                break;
-
-                              case 2:
-                                title = "我的抵押";
-                                detail = "300,000";
-                                break;
-
-                              default:
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 30),
-                                  child: Container(
-                                    height: 15,
-                                    width: 0.5,
-                                    color: HexColor("#000000").withOpacity(0.2),
-                                  ),
-                                );
-                                break;
-                            }
-
-                            TextStyle style = TextStyle(fontSize: 18, color: color, fontWeight: FontWeight.w600);
-
-                            return Column(
-                              children: <Widget>[
-                                Text(detail, style: style),
-                                Container(
-                                  height: 4,
-                                ),
-                                Text(title, style: TextStyles.textC333S11),
-                              ],
-                            );
-                          }).toList(),
+                        child: profitListBigLightWidget(
+                          [
+                            {"节点总抵押": "900,000"},
+                            {"我的抵押": "300,000"},
+                          ],
                         ),
                       ),
                       Padding(

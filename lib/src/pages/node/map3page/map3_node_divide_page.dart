@@ -366,47 +366,11 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [1, 0.5, 2].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "总抵押";
-                    detail = "900,000";
-                    break;
-
-                  case 2:
-                    title = "我的抵押";
-                    detail = "300,000";
-                    break;
-
-                  default:
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Container(
-                        height: 15,
-                        width: 0.5,
-                        color: HexColor("#000000").withOpacity(0.2),
-                      ),
-                    );
-                    break;
-                }
-
-                return Column(
-                  children: <Widget>[
-                    Text(detail,
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
-                  ],
-                );
-              }).toList(),
+            child: profitListWidget(
+              [
+                {"总抵押": "450,000"},
+                {"我的抵押": "90,000"},
+              ],
             ),
           ),
           Padding(
@@ -545,52 +509,12 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [1, 0.5, 2, 0.5, 3].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "总抵押";
-                    detail = "1,000,000";
-                    break;
-
-                  case 2:
-                    title = "我的抵押";
-                    detail = "200,000";
-                    break;
-
-                  case 3:
-                    title = "管理费";
-                    detail = "1%";
-                    break;
-
-                  default:
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Container(
-                        height: 15,
-                        width: 0.5,
-                        color: HexColor("#000000").withOpacity(0.2),
-                      ),
-                    );
-                    break;
-                }
-
-                return Column(
-                  children: <Widget>[
-                    Text(detail,
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
-                  ],
-                );
-              }).toList(),
+            child: profitListWidget(
+              [
+                {"总抵押": "1,000,000"},
+                {"我的抵押": "200,000"},
+                {"管理费": "1%"}
+              ],
             ),
           ),
         ],
@@ -672,52 +596,12 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16.0, top: 16, bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [1, 0.5, 2, 0.5, 3].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "总抵押";
-                    detail = "550,000";
-                    break;
-
-                  case 2:
-                    title = "我的抵押";
-                    detail = "110,000";
-                    break;
-
-                  case 3:
-                    title = "管理费";
-                    detail = "20%";
-                    break;
-
-                  default:
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Container(
-                        height: 15,
-                        width: 0.5,
-                        color: HexColor("#000000").withOpacity(0.2),
-                      ),
-                    );
-                    break;
-                }
-
-                return Column(
-                  children: <Widget>[
-                    Text(detail,
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
-                  ],
-                );
-              }).toList(),
+            child: profitListWidget(
+              [
+                {"总抵押": "550,000"},
+                {"我的抵押": "110,000"},
+                {"管理费": "20%"}
+              ],
             ),
           ),
         ],

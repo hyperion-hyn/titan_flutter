@@ -318,52 +318,12 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
           ),
           Padding(
             padding: const EdgeInsets.only(left: 30.0, right: 30, top: 16, bottom: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [1, 0.5, 2, 0.5, 3].map((value) {
-                String title = "";
-                String detail = "0";
-
-                switch (value) {
-                  case 1:
-                    title = "总抵押";
-                    detail = "450,000";
-                    break;
-
-                  case 2:
-                    title = "我的抵押";
-                    detail = "90,000";
-                    break;
-
-                  case 3:
-                    title = "管理费";
-                    detail = "20%";
-                    break;
-
-                  default:
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Container(
-                        height: 15,
-                        width: 0.5,
-                        color: HexColor("#000000").withOpacity(0.2),
-                      ),
-                    );
-                    break;
-                }
-
-                return Column(
-                  children: <Widget>[
-                    Text(detail,
-                        style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
-                    Container(
-                      height: 4,
-                    ),
-                    Text(title,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
-                  ],
-                );
-              }).toList(),
+            child: profitListWidget(
+              [
+                {"总抵押": "450,000"},
+                {"我的抵押": "90,000"},
+                {"管理费": "20%"}
+              ],
             ),
           ),
         ],

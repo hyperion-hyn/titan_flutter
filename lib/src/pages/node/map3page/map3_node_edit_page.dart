@@ -26,7 +26,6 @@ class Map3NodeEditPage extends StatefulWidget {
 class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
   Map3InfoEntity _map3InfoEntity = Map3InfoEntity.onlyId(1);
 
-  var _editText = "";
   var _localImagePath = "";
   var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
   List<String> _detailList = ["", "", "", "", "", ""];

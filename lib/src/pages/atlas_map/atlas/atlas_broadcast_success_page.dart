@@ -2,9 +2,9 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class AtlasBroadcastSuccessPage extends StatelessWidget {
   final AtlasNodeActionEvent actionEvent;
@@ -18,7 +18,7 @@ class AtlasBroadcastSuccessPage extends StatelessWidget {
     switch (actionEvent) {
       case AtlasNodeActionEvent.CREATE:
         action = "创建 Atlas节点";
-        detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
+        detail = '';
         break;
 
       default:
@@ -66,7 +66,10 @@ class AtlasBroadcastSuccessPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: Text(
                   action,
-                  style: TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1.8,
+                  ),
                 ),
               ),
               Padding(
@@ -87,72 +90,17 @@ class AtlasBroadcastSuccessPage extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    if (detail.isNotEmpty)
-                      Image.asset(
-                        "res/drawable/node_create_success.gif",
-                        fit: BoxFit.contain,
-                        width: 26,
-                      ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 48),
-                      constraints: BoxConstraints.expand(height: 48),
-                      child: FlatButton(
-                        color: Theme.of(context).primaryColor,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColor),
-                            borderRadius: BorderRadius.circular(36)),
-                        onPressed: () {
-                          if (detail.isNotEmpty) {
-                            Share.text(S.of(context).share, "http://baidu.com",
-                                'text/plain');
-                          } else {
-                            _pop(context);
-                          }
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40.0, vertical: 12.0),
-                            child: Text(
-                              detail.isEmpty ? "完成" : "分享邀请",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
+                    SizedBox(
+                      height: 32,
                     ),
-                    if (detail.isNotEmpty)
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 48),
-                        child: Container(
-                          constraints: BoxConstraints.expand(height: 48),
-                          child: FlatButton(
-                            //color: this.contractNodeItem == null?Theme.of(context).primaryColor:null,
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: Theme.of(context).primaryColor),
-                                borderRadius: BorderRadius.circular(36)),
-                            onPressed: () {
-                              _pop(context);
-                            },
-                            child: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40.0, vertical: 12.0),
-                                child: Text(
-                                  "查看节点",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Theme.of(context).primaryColor),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
+                    ClickOvalButton(
+                      '完成',
+                      () {
+                        _pop(context);
+                      },
+                      height: 46,
+                      width: 300,
+                    )
                   ],
                 ),
               ),

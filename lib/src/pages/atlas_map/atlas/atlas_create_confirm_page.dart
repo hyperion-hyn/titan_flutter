@@ -160,14 +160,14 @@ class _AtlasNodeCreateConfirmPageState
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text.rich(TextSpan(children: [
                             TextSpan(
-                                text: 'Atlas节点',
+                                text: widget._createAtlasPayload.name,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: DefaultColors.color333,
                                 )),
                             TextSpan(text: '  '),
                             TextSpan(
-                                text: '节点号： PB2020',
+                                text: widget._createAtlasPayload.nodeId,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: DefaultColors.color999,

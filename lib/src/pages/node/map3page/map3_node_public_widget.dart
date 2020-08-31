@@ -239,8 +239,8 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   );
 }
 
-Widget managerSpendWidget(
-    BuildContext buildContext, TextEditingController _rateCoinController, {Function reduceFunc, Function addFunc}) {
+Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
+    {Function reduceFunc, Function addFunc}) {
   return Container(
     color: Colors.white,
     child: Row(
@@ -577,18 +577,23 @@ Widget editInfoItem(
                             style: TextStyle(color: HexColor("#999999"), fontSize: 12),
                           ),
                   ),
-                (index == 0)? Spacer():SizedBox(width: 12,),
+                (index == 0)
+                    ? Spacer()
+                    : SizedBox(
+                        width: 12,
+                      ),
                 index != 0
                     ? Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          detail.isEmpty ? hint : detail,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(color: detail.isEmpty ?HexColor("#999999"):HexColor("#333333"), fontSize: 14),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            detail.isEmpty ? hint : detail,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                color: detail.isEmpty ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
+                          ),
                         ),
-                      ),
-                    )
+                      )
                     : detail.isEmpty
                         ? Container(
                             width: 36,
@@ -626,7 +631,6 @@ Widget editInfoItem(
   );
 }
 
-
 Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
   var _nodeWidget = Padding(
     padding: const EdgeInsets.only(right: 10, top: 10),
@@ -648,21 +652,127 @@ Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureT
         _nodeWidget,
         Expanded(
             child: InkWell(
-              onTap: onTap,
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: subTitle,
-                      style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
-                    )
-                  ],
-                  text: title,
-                  style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
-                ),
-              ),
-            )),
+          onTap: onTap,
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: subTitle,
+                  style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                )
+              ],
+              text: title,
+              style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+            ),
+          ),
+        )),
       ],
     ),
+  );
+}
+
+Widget profitListWidget(List<Map> list) {
+  Widget _buildColumn({String title, String detail}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+        Container(
+          height: 4,
+        ),
+        Text(title, style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
+      ],
+    );
+  }
+
+  return _profitListWidget(list, horizontal: 30, func: _buildColumn);
+}
+
+Widget profitListBigWidget(List<Map> list) {
+  Widget _buildColumn({String title, String detail}) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(detail, style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+          Container(
+            height: 4,
+          ),
+          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
+        ],
+      ),
+    );
+  }
+
+  return _profitListWidget(list, func: _buildColumn);
+}
+
+Widget profitListLightWidget(List<Map> list) {
+  Widget _buildColumn({String title, String detail}) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+          Container(
+            height: 4,
+          ),
+          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+        ],
+      ),
+    );
+  }
+
+  return _profitListWidget(list, func: _buildColumn);
+}
+
+Widget profitListBigLightWidget(List<Map> list) {
+  Widget _buildColumn({String title, String detail}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(detail, style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+        Container(
+          height: 5,
+        ),
+        Text(title, style: TextStyle(fontSize: 11, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+      ],
+    );
+  }
+
+  return _profitListWidget(list, horizontal: 30, func: _buildColumn);
+}
+
+typedef ProfitBuildFunc = Widget Function({String title, String detail});
+
+Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFunc func}) {
+  _buildLine() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontal),
+      child: Container(
+        height: 15,
+        width: 0.5,
+        color: HexColor("#000000").withOpacity(0.2),
+      ),
+    );
+  }
+
+  List<Widget> children = [];
+  for (int index = 0; index < list.length; index++) {
+    var map = list[index];
+    var title = map.keys.first;
+    var detail = map.values.first;
+    var column = func(title: title, detail: detail);
+    children.add(column);
+    if (index != (list.length - 1)) {
+      var line = _buildLine();
+      children.add(line);
+    }
+  }
+
+  MainAxisAlignment mainAxisAlignment = list.length == 2 ? MainAxisAlignment.start : MainAxisAlignment.center;
+  return Row(
+    mainAxisAlignment: mainAxisAlignment,
+    children: children,
   );
 }
