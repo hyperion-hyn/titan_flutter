@@ -154,16 +154,19 @@ class ExchangeApi {
     String balance,
   ) async {
     //get a seed
-    var seed = await _getAccessSeed(
+    /*var seed = await _getAccessSeed(
       address,
       ExchangeConst.PATH_WITHDRAW,
-    );
+    );*/
+    var seed = Random().nextInt(0xfffffffe).toString();
+    var ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
     var params = {
       'type': type,
       'outer_address': outerAddress,
       'balance': balance,
       'address': address,
       'seed': seed,
+      'ts': ts,
     };
     //sign request with seed
     var signed = await Signer.signApi(
