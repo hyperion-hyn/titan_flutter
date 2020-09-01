@@ -75,14 +75,14 @@ enum NodeJoinType {
  2 创建失败;
  3 创建成功，没有撤销中；
  4 创建成功，撤销节点提交中,如果撤销失败将回到3状态；
- 5 撤销节点成功；
+ 5 撤销节点成功/在闲置状态；
 */
 enum AtlasInfoStatus {
   CREATE_ING,
   CREATE_FAIL,
   CREATE_SUCCESS_UN_CANCEL,
   CREATE_SUCCESS_CANCEL_NODE_ING,
-  CREATE_SUCCESS_CANCEL_NODE_SUCCESS,
+  CANCEL_NODE_SUCCESS_IS_IDLE,
 }
 
 /*
@@ -98,6 +98,18 @@ enum Map3AtlasStatus {
   DELEGATE_SUCCESS_NO_CANCEL,
   DELEGATE_SUCCESS_CANCEL_ING,
   CANCEL_DELEGATE_SUCCESS,
+}
+
+String getMap3AtlasStatusRemind(int map3atlasStatus){
+  Map3AtlasStatus map3atlas = Map3AtlasStatus.values[map3atlasStatus];
+  switch(map3atlas){
+    case Map3AtlasStatus.JOIN_DELEGATE_ING:
+      return "你已经抵押该Atlas节点，将在下一纪元生效。";
+    case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
+      return "你已经撤销抵押该Atlas节点，将在下一纪元生效。";
+    default:
+      return "";
+  }
 }
 
 /*

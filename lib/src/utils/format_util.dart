@@ -47,7 +47,7 @@ class FormatUtil {
     return DateFormat(format).format(date) ?? "";
   }
 
-  static String formatDateStr(String utcStr, {bool isSecond = false}) {
+  static String formatDateStr(String utcStr, {bool isSecond = true}) {
     var date = DateTime.parse(utcStr);
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     return DateFormat(format).format(date) ?? "";

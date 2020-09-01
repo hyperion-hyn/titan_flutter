@@ -23,6 +23,7 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
@@ -95,6 +96,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.staking = "20000000";
     _atlasInfoEntity.signRate = "98%";
     _atlasInfoEntity.rewardRate = "98%";
+    _atlasInfoEntity.status = AtlasInfoStatus.CREATE_SUCCESS_CANCEL_NODE_ING.index;
     _atlasInfoEntity.myMap3 = [
       Map3InfoEntity(
         "this.address",
@@ -114,12 +116,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         "this.pic",
         "this.provider",
         "this.region",
-        Map3AtlasEntity.onlyId(1,1),
+        Map3AtlasEntity.onlyId(1, 1),
         "this.rewardHistory",
         "this.rewardRate",
         "this.staking",
         "this.startTime",
-        1,
+        Map3AtlasStatus.JOIN_DELEGATE_ING.index,
         "this.updatedAt",
       ),
     ];
@@ -143,7 +145,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11,1);
+      element.relative = Map3AtlasEntity.onlyId(11, 1);
       element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
     });
 
@@ -165,7 +167,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.rewardRate = "11%";
       element.staking = "2313123";
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11,1);
+      element.relative = Map3AtlasEntity.onlyId(11, 1);
       element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
     });
 
@@ -203,7 +205,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               child: CustomScrollView(
                 slivers: <Widget>[
                   _headerWidget(),
-                  _activeAtlasNode(),
+                  if (AtlasInfoStatus.CANCEL_NODE_SUCCESS_IS_IDLE == AtlasInfoStatus.values[_atlasInfoEntity.status])
+                    _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
                   SliverList(
@@ -219,29 +222,38 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   _headerWidget() {
+    bool showRemindBar = false;
+    if (_atlasInfoEntity.myMap3 != null) {
+      var status = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].status;
+      if (status == Map3AtlasStatus.JOIN_DELEGATE_ING.index ||
+          status == Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING.index) {
+        showRemindBar = true;
+      }
+    }
     return SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
-          Container(
-            height: 28,
-            color: DefaultColors.color141fb9c7,
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 23, right: 7.0, top: 2),
-                  child: Image.asset(
-                    "res/drawable/ic_broadcase_speaker.png",
-                    width: 14,
-                    height: 14,
+          if (showRemindBar)
+            Container(
+              height: 28,
+              color: DefaultColors.color141fb9c7,
+              child: Row(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 23, right: 7.0, top: 2),
+                    child: Image.asset(
+                      "res/drawable/ic_broadcase_speaker.png",
+                      width: 14,
+                      height: 14,
+                    ),
                   ),
-                ),
-                Text(
-                  "你已撤销抵押该Atlas节点，将在下一个纪元生效",
-                  style: TextStyles.textC333S12,
-                )
-              ],
+                  Text(
+                    "${getMap3AtlasStatusRemind(_atlasInfoEntity.myMap3[_selectedMap3NodeValue].status)}",
+                    style: TextStyles.textC333S12,
+                  )
+                ],
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 18, bottom: 20),
             child: stakeHeaderInfo(context, _atlasInfoEntity),
@@ -766,7 +778,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   SizedBox(
                     height: 5,
                   ),
-                  Text("${map3InfoEntity.updatedAt}", style: TextStyles.textC999S10)
+                  Text("${FormatUtil.formatDateStr(map3InfoEntity.updatedAt)}", style: TextStyles.textC999S10)
                 ],
               )
             ],
@@ -799,7 +811,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         statuBgColor = "#F2F2F2";
         statuTextColor = "#CC2D1E";
         break;
-      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL://todo 在已抵押中，如果大于起始块高则是新抵押
+      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL: //todo 在已抵押中，如果大于起始块高则是新抵押
         statusText = "已抵押";
         statuBgColor = "#F2F2F2";
         statuTextColor = "#999999";
@@ -860,11 +872,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "抵押",
             () {
-              if(_atlasInfoEntity.myMap3 == null){
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
-              }else{
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
+              if (_atlasInfoEntity.myMap3 == null) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
+              } else {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity)));
               }
             },
             width: 90,
