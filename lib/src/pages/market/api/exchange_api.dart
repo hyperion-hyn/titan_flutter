@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:titan/env.dart';
@@ -87,13 +89,16 @@ class ExchangeApi {
     String address,
   }) async {
     //get a seed
-    var seed = await _getAccessSeed(
+    /*var seed = await _getAccessSeed(
       address,
       ExchangeConst.PATH_LOGIN_REGISTER,
-    );
+    );*/
+    var seed = Random().nextInt(0xfffffffe).toString();
+    var ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
     var params = {
       'address': address,
       'seed': seed,
+      'ts': ts,
     };
     //sign request with seed
     var signed = await Signer.signApi(
