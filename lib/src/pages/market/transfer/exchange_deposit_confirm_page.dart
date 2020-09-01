@@ -597,7 +597,8 @@ class _ExchangeDepositConfirmPageState
       value: amount,
     );
 
-    logger.i('ETH transaction committed，txhash $txHash');
+    logger.i(
+        'ETH transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
   }
 
   Future _transferErc20(
@@ -616,6 +617,7 @@ class _ExchangeDepositConfirmPageState
       toAddress: toAddress,
     );
 
-    logger.i('HYN transaction committed，txhash $txHash ');
+    logger.i(
+        'HYN transaction committed，txhash $txHash exchangeAddress: $toAddress walletAddress: ${activatedWallet.wallet.getEthAccount().address}');
   }
 }

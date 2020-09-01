@@ -285,6 +285,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 horizontal: 16.0,
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
                     flex: 1,

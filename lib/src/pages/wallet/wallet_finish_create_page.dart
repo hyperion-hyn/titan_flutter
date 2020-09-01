@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -90,6 +91,10 @@ class FinishCreatePage extends StatelessWidget {
                         ///Use digits password now
                         WalletUtil.useDigitsPwd(wallet);
 
+                        ///Clear exchange account when switch wallet
+                        BlocProvider.of<ExchangeCmpBloc>(context)
+                            .add(ClearExchangeAccountEvent());
+
                         await Future.delayed(Duration(milliseconds: 300));
                         BlocProvider.of<WalletCmpBloc>(context)
                             .add(UpdateActivatedWalletBalanceEvent());
@@ -126,6 +131,10 @@ class FinishCreatePage extends StatelessWidget {
 
       ///Use digits password now
       WalletUtil.useDigitsPwd(wallet);
+
+      ///Clear exchange account when switch wallet
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(ClearExchangeAccountEvent());
 
       await Future.delayed(Duration(milliseconds: 300));
       BlocProvider.of<WalletCmpBloc>(context)

@@ -9,6 +9,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/auth/model.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -50,7 +51,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           isSameWallet = true;
         }
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
-
       }
 
       if (event.wallet != null && !isSameWallet) {
@@ -58,7 +58,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         walletRepository.saveActivatedWalletFileName(
             _activatedWalletVo?.wallet?.keystore?.fileName);
 
-        if(_activatedWalletVo != null) {
+        if (_activatedWalletVo != null) {
           _recoverBalanceFromDisk(_activatedWalletVo);
         }
 
