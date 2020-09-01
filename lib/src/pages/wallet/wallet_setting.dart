@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,6 @@ class WalletSettingPage extends StatefulWidget {
 
 class _WalletSettingState extends State<WalletSettingPage> {
   TextEditingController _walletNameController = TextEditingController();
-  final _walletNameKey = GlobalKey<FormState>();
 
   KeyStore _walletKeyStore;
 
@@ -90,199 +90,179 @@ class _WalletSettingState extends State<WalletSettingPage> {
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
-          S
-              .of(context)
-              .wallet_setting,
+          S.of(context).wallet_setting,
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           FlatButton(
             onPressed: deleteWallet,
             child: Text(
-              S
-                  .of(context)
-                  .delete,
+              S.of(context).delete,
               style: TextStyle(color: HexColor("#ccffffff")),
             ),
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Form(
-          key: _walletNameKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: localImagePath != null
-                      ? ClipOval(
-                    child: Image.asset(
-                      localImagePath,
-                      width: 88,
-                      height: 88,
-                      fit: BoxFit.cover,
-                    ),
-                  )
-                      : walletHeaderWidget(widget.wallet.keystore.name,
-                      size: 88, fontSize: 26, address: widget.wallet
-                          .getEthAccount()
-                          ?.address),
-                ),
-                InkWell(
-                  onTap: () {
-                    EditIconSheet(context, (path) {
-                      setState(() {
-                        localImagePath = path;
+      body: Column(
+        children: <Widget>[
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: localImagePath != null
+                        ? ClipOval(
+                      child: Image.asset(
+                        localImagePath,
+                        width: 88,
+                        height: 88,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                        : walletHeaderWidget(widget.wallet.keystore.name,
+                        size: 88, fontSize: 26, address: widget.wallet.getEthAccount()?.address),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      EditIconSheet(context, (path) {
+                        setState(() {
+                          localImagePath = path;
+                        });
                       });
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 29, top: 13),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top:2.0),
-                          child: Image.asset(
-                            "res/drawable/ic_edit.png",
-                            width: 16,
-                            height: 16,
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 29, top: 13),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Image.asset(
+                            "res/drawable/ic_wallet_edit_head_img.png",
+                            width: 18,
+                            height: 18,
                           ),
-                        ),
-                        SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          "修改头像",
-                          style: TextStyle(color: HexColor("#1F81FF"), fontSize: 16),
-                        )
-                      ],
+                          SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            "修改头像",
+                            style: TextStyle(color: HexColor("#1F81FF"), fontSize: 16),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S
-                          .of(context)
-                          .wallet_name,
-                      style: TextStyle(
-                        color: Color(0xFF6D6D6D),
-                        fontSize: 16,
-                      ),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                  child: TextFormField(
-                      enabled: true,
-                      focusNode: _focusNode,
-                      controller: _walletNameController,
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return S
-                              .of(context)
-                              .please_input_wallet_name;
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      ),
-                      keyboardType: TextInputType.text),
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      S
-                          .of(context)
-                          .backup_option,
-                      style: TextStyle(
-                        color: Color(0xFF6D6D6D),
-                        fontSize: 16,
-                      ),
-                    )
-                  ],
-                ),
-                Divider(),
-                InkWell(
-                  onTap: () {
-                    var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
-                    Application.router.navigateTo(
-                        context,
-                        Routes.wallet_setting_wallet_backup_notice +
-                            '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.of(context).wallet_name,
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: TextFormField(
+                        enabled: true,
+                        focusNode: _focusNode,
+                        controller: _walletNameController,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return S.of(context).please_input_wallet_name;
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
+                        keyboardType: TextInputType.text),
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.of(context).backup_option,
+                        style: TextStyle(
+                          color: Color(0xFF6D6D6D),
+                          fontSize: 16,
+                        ),
+                      )
+                    ],
+                  ),
+                  Divider(),
+                  InkWell(
+                    onTap: () {
+                      var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+                      Application.router.navigateTo(
+                          context,
+                          Routes.wallet_setting_wallet_backup_notice +
+                              '?entryRouteName=${Uri.encodeComponent(Routes.wallet_setting)}&walletStr=$walletStr');
 //                Navigator.push(
 //                    context, MaterialPageRoute(builder: (context) => WalletBackupNoticePage(widget.wallet)));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.event_note,
-                          color: Theme
-                              .of(context)
-                              .primaryColor,
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        Text(
-                          S
-                              .of(context)
-                              .show_mnemonic_label,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Spacer(),
-                        Icon(
-                          Icons.chevron_right,
-                          color: Color(0xFFD2D2D2),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                Divider(),
-                Text(
-                  S
-                      .of(context)
-                      .wallet_setting_backup_notice,
-                  style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
-                ),
-                SizedBox(
-                  height: 36,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  constraints: BoxConstraints.expand(height: 46, width: 300),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),
-                    clipBehavior: Clip.hardEdge,
-                    textColor: _hasChangeProperties ? Colors.white : DefaultColors.color999,
-                    onPressed: _hasChangeProperties ? updateWallet : null,
-                    padding: const EdgeInsets.all(0.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: getGradient(),
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.event_note,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(
+                            S.of(context).show_mnemonic_label,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Spacer(),
+                          Icon(
+                            Icons.chevron_right,
+                            color: Color(0xFFD2D2D2),
+                          )
+                        ],
                       ),
-                      child: Container(alignment: Alignment.center, child: Text('保存更新')),
                     ),
                   ),
-                ),
-              ],
+                  Divider(),
+                  Text(
+                    S.of(context).wallet_setting_backup_notice,
+                    style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 13),
+                  ),
+                  SizedBox(
+                    height: 36,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    constraints: BoxConstraints.expand(height: 46, width: 300),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),
+                      clipBehavior: Clip.hardEdge,
+                      textColor: _hasChangeProperties ? Colors.white : DefaultColors.color999,
+                      onPressed: _hasChangeProperties ? updateWallet : null,
+                      padding: const EdgeInsets.all(0.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: getGradient(),
+                        ),
+                        child: Container(alignment: Alignment.center, child: Text('保存更新')),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -300,38 +280,35 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   void updateWallet() async {
-    if (!_walletNameKey.currentState.validate()) {
-      return;
-    }
     var password = await showModalBottomSheet(
-    isScrollControlled: true,
-    context: context,
-    builder: (BuildContext context) {
-    return EnterWalletPasswordWidget();
-    });
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return EnterWalletPasswordWidget();
+        });
     if (password != null) {
-    try {
-    var newName = _walletNameController.text;
-    if (_focusNode.hasFocus) {
-    _focusNode.unfocus();
-    }
-    var success = await WalletUtil.updateWallet(wallet: widget.wallet, password: password, name: newName);
-    if (success == true) {
-    BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
-    UiUtil.toast('更新成功');
-    }
-    setState(() {
-    _originWalletName = newName;
-    _hasChangeProperties = false;
-    });
-    } catch (_) {
-    logger.e(_);
-    if (_.code == WalletError.PASSWORD_WRONG) {
-    UiUtil.toast(S.of(context).wallet_password_error);
-    } else {
-    UiUtil.toast('更新出错');
-    }
-    }
+      try {
+        var newName = _walletNameController.text;
+        if (_focusNode.hasFocus) {
+          _focusNode.unfocus();
+        }
+        var success = await WalletUtil.updateWallet(wallet: widget.wallet, password: password, name: newName);
+        if (success == true) {
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
+          UiUtil.toast('更新成功');
+        }
+        setState(() {
+          _originWalletName = newName;
+          _hasChangeProperties = false;
+        });
+      } catch (_) {
+        logger.e(_);
+        if (_.code == WalletError.PASSWORD_WRONG) {
+          UiUtil.toast(S.of(context).wallet_password_error);
+        } else {
+          UiUtil.toast('更新出错');
+        }
+      }
     }
   }
 
@@ -368,24 +345,16 @@ class _WalletSettingState extends State<WalletSettingPage> {
             BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
             Routes.popUntilCachedEntryRouteName(context);
           }
-          Fluttertoast.showToast(msg: S
-              .of(context)
-              .delete_wallet_success);
+          Fluttertoast.showToast(msg: S.of(context).delete_wallet_success);
         } else {
-          Fluttertoast.showToast(msg: S
-              .of(context)
-              .delete_wallet_fail);
+          Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
         }
       } catch (_) {
         logger.e(_);
         if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: S
-              .of(context)
-              .wallet_password_error);
+          Fluttertoast.showToast(msg: S.of(context).wallet_password_error);
         } else {
-          Fluttertoast.showToast(msg: S
-              .of(context)
-              .delete_wallet_fail);
+          Fluttertoast.showToast(msg: S.of(context).delete_wallet_fail);
         }
       }
     });
@@ -463,9 +432,7 @@ Future EditIconSheet(BuildContext context, EditIconCallback callback) async {
             ),
 //                Divider(color:DefaultColors.colorf4f4f4,height: 10,),
             ListTile(
-              title: Text(S
-                  .of(context)
-                  .cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
+              title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
               onTap: () {
                 Navigator.pop(context);
               },
