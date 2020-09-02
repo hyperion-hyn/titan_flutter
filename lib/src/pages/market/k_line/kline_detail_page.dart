@@ -898,7 +898,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-    print("[WS] --> _dealPeriodData, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
+    print("[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
 
     if (isReplace) {
       if (kLineDataList.isNotEmpty) {
@@ -907,11 +907,21 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       }
     } else {
       if (kLineDataList.isNotEmpty) {
-        DataUtil.addLastData(_kChartItemList, kLineDataList.last);
+
+        var lastItem = _kChartItemList.last;
+        var tempItem = kLineDataList.last;
+
+        if (lastItem.id != tempItem.id) {
+          DataUtil.addLastData(_kChartItemList, tempItem);
+        } else {
+          _kChartItemList.last = tempItem;
+          DataUtil.updateLastData(_kChartItemList);
+        }
       }
     }
   }
 
+  
   /*
     [
   "1592299815201", //时间
