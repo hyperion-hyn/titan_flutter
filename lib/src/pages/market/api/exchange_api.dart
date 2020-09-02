@@ -126,8 +126,6 @@ class ExchangeApi {
     );
   }
 
-  dynamic _signKeys(bool isLogin) {}
-
   Future<dynamic> getAssetsList() async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ACCOUNT_ASSETS,

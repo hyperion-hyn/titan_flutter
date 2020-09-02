@@ -675,13 +675,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _transfer() async {
     try {
-//      var ret = await _exchangeApi.getAddress(_selectedCoinType);
-//      var exchangeAddress = ret['address'];
-      var exchangeAddress = '';
-
       if (_fromExchangeToWallet) {
-        _withdraw(exchangeAddress);
+        _withdraw();
       } else {
+        var ret = await _exchangeApi.getAddress(_selectedCoinType);
+        var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
     } catch (e) {
@@ -704,18 +702,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _withdraw(String address) async {
+  _withdraw() async {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(
-      _selectedCoinType,
-    );
+    ).getCoinVoBySymbol(_selectedCoinType);
+
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&exchangeAddress=$address',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}',
     );
   }
 }

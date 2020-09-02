@@ -22,12 +22,10 @@ import 'package:titan/src/utils/utils.dart';
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
-  final String exchangeAddress;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
     this.transferAmount,
-    this.exchangeAddress,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override

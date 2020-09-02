@@ -307,7 +307,7 @@ class _ExchangeAssetHistoryPageState
                       height: 4.0,
                     ),
                     Text(
-                      '${assetHistory.status}',
+                      '${_getTransferStatus(assetHistory.name, assetHistory.status)}',
                       style: TextStyle(
                         color: DefaultColors.color333,
                         fontWeight: FontWeight.w500,
@@ -353,6 +353,42 @@ class _ExchangeAssetHistoryPageState
         ],
       ),
     );
+  }
+
+  _getTransferStatus(String type, String status) {
+    if (type == 'recharge') {
+      switch (status) {
+        case '0':
+          return '等待处理';
+        case '1':
+          return '等待确认';
+        case '2':
+          return '完成确认';
+        default:
+          return '等待处理';
+      }
+    } else {
+      switch (status) {
+        case '1':
+          return '已提交';
+        case '2':
+          return '机器驳回';
+        case '3':
+          return '人工驳回';
+        case '4':
+          return '同意';
+        case '5':
+          return '处理中';
+        case '6':
+          return '处理完成';
+        case '7':
+          return '处理失败';
+        case '8':
+          return '用户取消';
+        default:
+          return '已提交';
+      }
+    }
   }
 
   _divider() {
