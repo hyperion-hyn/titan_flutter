@@ -122,6 +122,30 @@ class AtlasApi {
 
   }
 
+  // 领取atlas奖励
+  Future<TxHashEntity> getAtlasReward(PledgeAtlasEntity entity) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/reward",
+        EntityFactory<TxHashEntity>(
+              (json) => TxHashEntity.fromJson(json),
+        ),
+        data: entity.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+
+  }
+
+  // 重新激活atlas节点
+  Future<TxHashEntity> activeAtlasNode(PledgeAtlasEntity entity) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/active",
+        EntityFactory<TxHashEntity>(
+              (json) => TxHashEntity.fromJson(json),
+        ),
+        data: entity.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+
+  }
+
   // 抵押atlas节点
   Future<TxHashEntity> postPledgeAtlas(PledgeAtlasEntity entity) async {
     return AtlasHttpCore.instance.postEntity(
@@ -180,6 +204,18 @@ class AtlasApi {
   Future<TxHashEntity> postPledgeMap3(PledgeMap3Entity entity) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/pledge",
+        EntityFactory<TxHashEntity>(
+              (json) => TxHashEntity.fromJson(json),
+        ),
+        data: entity.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+
+  }
+
+  // 领取map3节点奖励
+  Future<TxHashEntity> getMap3Reward(PledgeMap3Entity entity) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/reward",
         EntityFactory<TxHashEntity>(
               (json) => TxHashEntity.fromJson(json),
         ),

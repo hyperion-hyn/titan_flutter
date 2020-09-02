@@ -8,8 +8,8 @@ part 'pledge_atlas_entity.g.dart';
 @JsonSerializable()
   class PledgeAtlasEntity extends Object {
 
-  @JsonKey(name: 'amount')
-  String amount;
+  @JsonKey(name: 'value')
+  String value;
 
   @JsonKey(name: 'from')
   String from;
@@ -23,8 +23,8 @@ part 'pledge_atlas_entity.g.dart';
   @JsonKey(name: 'payload')
   AtlasPayload payload;
 
-  @JsonKey(name: 'price')
-  String price;
+  @JsonKey(name: 'gas_price')
+  String gasPrice;
 
   @JsonKey(name: 'raw_tx')
   String rawTx;
@@ -36,7 +36,7 @@ part 'pledge_atlas_entity.g.dart';
   @JsonKey(name: 'type')
   AtlasActionType type;
 
-  PledgeAtlasEntity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
+  PledgeAtlasEntity(this.value,this.from,this.gasLimit,this.nonce,this.payload,this.gasPrice,this.rawTx,this.to,this.type,);
 
   factory PledgeAtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$PledgeAtlasEntityFromJson(srcJson);
 

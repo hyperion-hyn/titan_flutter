@@ -8,14 +8,14 @@ part of 'pledge_atlas_entity.dart';
 
 PledgeAtlasEntity _$PledgeAtlasEntityFromJson(Map<String, dynamic> json) {
   return PledgeAtlasEntity(
-    json['amount'] as String,
+    json['value'] as String,
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
     json['payload'] == null
         ? null
         : AtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as String,
+    json['gas_price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
     AtlasActionType.values[json['type'] as int],
@@ -24,12 +24,12 @@ PledgeAtlasEntity _$PledgeAtlasEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$PledgeAtlasEntityToJson(PledgeAtlasEntity instance) =>
     <String, dynamic>{
-      'amount': instance.amount,
+      'value': instance.value,
       'from': instance.from,
       'gas_limit': instance.gasLimit,
       'nonce': instance.nonce,
       'payload': instance.payload,
-      'price': instance.price,
+      'gas_price': instance.gasPrice,
       'raw_tx': instance.rawTx,
       'to': instance.to,
       'type': instance.type,

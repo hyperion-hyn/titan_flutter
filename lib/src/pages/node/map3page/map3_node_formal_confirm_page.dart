@@ -14,12 +14,14 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -52,6 +54,7 @@ class Map3NodeFormalConfirmPage extends StatefulWidget {
 }
 
 class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
+  AtlasApi _atlasApi = AtlasApi();
   double ethFee = 0.0;
   double currencyFee = 0.0;
 
@@ -98,11 +101,11 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
       case Map3NodeActionEvent.EDIT_ATLAS:
         _pageTitle = "确认编辑Atlas节点";
         _subList[1] = "Atlas节点";
-        /*_detailList = [
+        _detailList = [
           "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
-        ];*/
+        ];
         break;
       case Map3NodeActionEvent.ACTIVE_NODE:
         _pageTitle = "激活节点";
@@ -290,12 +293,45 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
-          var contractNodeItem = ContractNodeItem.onlyNodeId(1);
-          Application.router.navigateTo(
-              context,
-              Routes.map3node_broadcast_success_page +
-                  "?actionEvent=${widget.actionEvent}" +
-                  "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+          try {
+            var password = await UiUtil.showWalletPasswordDialogV2(context, activatedWallet.wallet);
+            if (password == null) {
+              return;
+            }
+            //todo sign transfer
+            switch (widget.actionEvent) {
+              case Map3NodeActionEvent.CREATE:
+                break;
+              case Map3NodeActionEvent.DELEGATE:
+                break;
+              case Map3NodeActionEvent.COLLECT:
+                break;
+              case Map3NodeActionEvent.CANCEL:
+                break;
+              case Map3NodeActionEvent.CANCEL_CONFIRMED:
+                break;
+              case Map3NodeActionEvent.ADD:
+                break;
+              case Map3NodeActionEvent.RECEIVE_AWARD:
+                break;
+              case Map3NodeActionEvent.EDIT_ATLAS:
+                break;
+              case Map3NodeActionEvent.ACTIVE_NODE:
+//                await _atlasApi.activeAtlasNode(entity);
+                break;
+              case Map3NodeActionEvent.STAKE_ATLAS:
+                break;
+            }
+
+            var contractNodeItem = ContractNodeItem.onlyNodeId(1);
+            Application.router.navigateTo(
+                context,
+                Routes.map3node_broadcast_success_page +
+                    "?actionEvent=${widget.actionEvent}" +
+                    "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+          }catch(error){
+
+          }
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
