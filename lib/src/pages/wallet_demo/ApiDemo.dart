@@ -69,7 +69,7 @@ class _ApiDemoState extends State {
                 var walletPassword = await UiUtil.showWalletPasswordDialogV2(
                     context, wallet.wallet);
 
-                var ret = await _exchangeApi.walletSignLogin(
+                var ret = await _exchangeApi.walletLogin(
                   wallet: wallet.wallet,
                   password: walletPassword,
                   address: address,
@@ -126,7 +126,6 @@ class _ApiDemoState extends State {
             },
             child: Text('清除当前交易账户登录记录'),
           ),
-
         ],
       ),
     );

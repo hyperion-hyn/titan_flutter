@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -80,7 +81,7 @@ class _ExchangeTransferHistoryDetailPageState
                 '数量',
                 Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: widget._assetHistory.balance.toString(),
+                      text: '${Decimal.parse(widget._assetHistory.balance)}',
                       style: TextStyle(
                           color: DefaultColors.color333, fontSize: 14)),
                   TextSpan(
@@ -93,7 +94,7 @@ class _ExchangeTransferHistoryDetailPageState
                 '网络费用',
                 Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: widget._assetHistory.fee.toString(),
+                      text: '${Decimal.parse(widget._assetHistory.fee)}',
                       style: TextStyle(
                         fontSize: 14,
                       )),
@@ -109,9 +110,7 @@ class _ExchangeTransferHistoryDetailPageState
               _item(
                 '到账时间',
                 Text(
-                  '${FormatUtil.formatMarketOrderDate(
-                    widget._assetHistory.ctime,
-                  )}',
+                  widget._assetHistory.ctime,
                   style: TextStyle(fontSize: 14),
                 ),
               ),
@@ -121,13 +120,19 @@ class _ExchangeTransferHistoryDetailPageState
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '${widget._assetHistory.txid}',
-                      style: TextStyle(fontSize: 14),
+                      widget._assetHistory.txId,
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        fontSize: 13,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
                     ),
                     InkWell(
                       onTap: () {
                         Clipboard.setData(
-                          ClipboardData(text: widget._assetHistory.txid),
+                          ClipboardData(text: widget._assetHistory.txId),
                         );
                         UiUtil.toast(S.of(context).copyed);
                       },
@@ -167,6 +172,7 @@ class _ExchangeTransferHistoryDetailPageState
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 title,

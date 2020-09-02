@@ -109,7 +109,14 @@ class _ExchangeAssetHistoryPageState
             _refresh();
             _loadDataBloc.add(RefreshSuccessEvent());
           },
-          child: _content(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverToBoxAdapter(
+                child: _assetLayout(),
+              ),
+              _content(),
+            ],
+          ),
         ),
       ),
     );
@@ -117,47 +124,42 @@ class _ExchangeAssetHistoryPageState
 
   _content() {
     if (_assetHistoryList.isEmpty) {
-      return Column(
-        children: <Widget>[
-          _assetLayout(),
-          Expanded(
-            child: Center(
-              child: Container(
-                height: 150,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Image.asset(
-                      'res/drawable/ic_empty_list.png',
-                      height: 80,
-                      width: 80,
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      '暂无记录',
-                      style: TextStyle(
-                        color: HexColor('#FF999999'),
-                      ),
-                    )
-                  ],
-                ),
+      return SliverToBoxAdapter(
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                height: 64,
               ),
-            ),
-          )
-        ],
+              Image.asset(
+                'res/drawable/ic_empty_list.png',
+                height: 80,
+                width: 80,
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              Text(
+                '暂无记录',
+                style: TextStyle(
+                  color: HexColor('#FF999999'),
+                ),
+              )
+            ],
+          ),
+        ),
       );
     } else {
-      return ListView.builder(
-          itemCount: _assetHistoryList.length + 1,
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return _assetLayout();
-            } else {
-              return _assetHistoryItem(_assetHistoryList[index]);
-            }
-          });
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return _assetHistoryItem(_assetHistoryList[index]);
+          },
+          childCount: _assetHistoryList.length,
+        ),
+      );
     }
   }
 
@@ -240,112 +242,116 @@ class _ExchangeAssetHistoryPageState
   }
 
   _assetHistoryItem(AssetHistory assetHistory) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          assetHistory.name == 'recharge' ? '钱包到交易账户' : '交易账户到钱包',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            assetHistory.name == 'recharge' ? '钱包到交易账户' : '交易账户到钱包',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Container(
-                child: Row(
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          '数量(${assetHistory.type})',
-                          style: TextStyle(
-                            color: DefaultColors.color999,
-                            fontSize: 12,
+          SizedBox(
+            height: 16,
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            '数量(${assetHistory.type})',
+                            style: TextStyle(
+                              color: DefaultColors.color999,
+                              fontSize: 12,
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 4.0,
-                        ),
-                        Text(
-                          "${assetHistory.balance}",
-                          style: TextStyle(
-                              color: DefaultColors.color333,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 12),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 4.0,
+                          ),
+                          Text(
+                            "${Decimal.parse(assetHistory.balance)}",
+                            style: TextStyle(
+                                color: DefaultColors.color333,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12),
+                          ),
+                        ],
+                      ),
+                      Spacer()
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '状态',
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
+                      ),
                     ),
-                    Spacer()
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      '${assetHistory.status}',
+                      style: TextStyle(
+                        color: DefaultColors.color333,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '状态',
-                    style: TextStyle(
-                      color: DefaultColors.color999,
-                      fontSize: 12,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 4.0,
-                  ),
-                  Text(
-                    '${assetHistory.status}',
-                    style: TextStyle(
-                      color: DefaultColors.color333,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    '时间',
-                    style: TextStyle(
-                      color: DefaultColors.color999,
-                      fontSize: 12,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 4.0,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Spacer(),
-                      Text(
-                        FormatUtil.formatMarketOrderDate(
-                          assetHistory.ctime,
-                        ),
-                        style: TextStyle(
-                          color: DefaultColors.color333,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
+              Expanded(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Text(
+                      '时间',
+                      style: TextStyle(
+                        color: DefaultColors.color999,
+                        fontSize: 12,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        )
-      ],
+                    ),
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Spacer(),
+                        Text(
+                          assetHistory.ctime,
+                          style: TextStyle(
+                            color: DefaultColors.color333,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -377,14 +383,14 @@ class _ExchangeAssetHistoryPageState
   }
 
   _loadMore() async {
-    _currentPage++;
     try {
       List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
         widget._symbol,
-        _currentPage,
+        _currentPage + 1,
         _size,
         'all',
       );
+      _currentPage++;
       _assetHistoryList.addAll(resultList);
     } catch (e) {}
     _loadDataBloc.add(LoadingMoreSuccessEvent());

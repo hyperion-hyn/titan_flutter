@@ -39,6 +39,7 @@ class ExchangeTransferPage extends StatefulWidget {
 class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   String _selectedCoinType = 'HYN';
   TextEditingController _amountController = TextEditingController();
+
   final _fromKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi = ExchangeApi();
@@ -546,6 +547,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 ),
                                 onTap: () {
                                   _amountController.text = _availableAmount();
+                                  _amountController.selection =
+                                      TextSelection.fromPosition(TextPosition(
+                                    affinity: TextAffinity.downstream,
+                                    offset: _amountController.text.length,
+                                  ));
                                   _fromKey.currentState.validate();
                                   setState(() {});
                                 },
@@ -669,8 +675,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _transfer() async {
     try {
-      var ret = await _exchangeApi.getAddress(_selectedCoinType);
-      var exchangeAddress = ret['address'];
+//      var ret = await _exchangeApi.getAddress(_selectedCoinType);
+//      var exchangeAddress = ret['address'];
+      var exchangeAddress = '';
 
       if (_fromExchangeToWallet) {
         _withdraw(exchangeAddress);

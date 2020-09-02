@@ -55,4 +55,16 @@ class AssetList {
     } catch (e) {}
     return total;
   }
+
+  String getWithdrawFee(String type) {
+    if (type == 'HYN') {
+      return HYN.withdrawFee;
+    } else if (type == 'USDT') {
+      return USDT.withdrawFee;
+    } else if (type == 'ETH') {
+      return ETH.withdrawFee;
+    } else {
+      return '';
+    }
+  }
 }

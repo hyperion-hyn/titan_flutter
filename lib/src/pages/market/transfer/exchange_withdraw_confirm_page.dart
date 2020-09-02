@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
@@ -45,6 +46,7 @@ class _ExchangeWithdrawConfirmPageState
 
   WalletVo activatedWallet;
   ActiveQuoteVoAndSign activatedQuoteSign;
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void onCreated() {
@@ -61,9 +63,14 @@ class _ExchangeWithdrawConfirmPageState
 
   @override
   Widget build(BuildContext context) {
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
-
+    var _quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var _quoteSign = activatedQuoteSign?.sign?.sign;
+    var _withdrawFee = ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .getWithdrawFee(widget.coinVo.symbol) ??
+        '0';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -105,7 +112,7 @@ class _ExchangeWithdrawConfirmPageState
                           ),
                         ),
                         Text(
-                          "≈ $quoteSign${FormatUtil.formatPrice(double.parse(widget.transferAmount) * quotePrice)}",
+                          "≈ $_quoteSign${FormatUtil.formatPrice(double.parse(widget.transferAmount) * _quotePrice)}",
                           style:
                               TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
@@ -236,7 +243,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '1.5HYN',
+                                '$_withdrawFee HYN',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -281,7 +288,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '498.5HYN',
+                                '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} HYN',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -346,16 +353,14 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   _transferWithPwd(String walletPassword) async {
-
-
-
-//    await _exchangeApi.withdraw(
-//      activatedWallet.wallet,
-//      walletPassword,
-//      address,
-//      widget.coinVo.name,
-//      widget.coinVo.address,
-//      widget.transferAmount,
-//    );
+    var ret = await _exchangeApi.withdraw(
+      activatedWallet.wallet,
+      walletPassword,
+      activatedWallet.wallet.getEthAccount().address,
+      widget.coinVo.symbol,
+      widget.coinVo.address,
+      widget.transferAmount,
+    );
+    print('$ret');
   }
 }
