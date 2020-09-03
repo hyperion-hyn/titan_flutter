@@ -488,12 +488,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                       return S.of(context).input_corrent_count_hint;
                     }
-                    if (Decimal.parse(value) +
-                            Decimal.parse(
-                                _fromExchangeToWallet ? _withdrawFee : '0') >
-                        Decimal.parse(_availableAmount())) {
-                      return S.of(context).input_count_over_balance;
-                    }
+//                    if (Decimal.parse(value) +
+//                            Decimal.parse(
+//                                _fromExchangeToWallet ? _withdrawFee : '0') >
+//                        Decimal.parse(_availableAmount())) {
+//                      return S.of(context).input_count_over_balance;
+//                    }
 
                     if (Decimal.parse(value) <
                         Decimal.parse(_minTransferAmount)) {
@@ -609,7 +609,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         if (_fromExchangeToWallet)
           Text(
-            '手续费 $_withdrawFee HYN',
+            '手续费 $_withdrawFee $_selectedCoinType',
             style: TextStyle(
               color: HexColor('#FFAAAAAA'),
               fontSize: 12,
@@ -638,7 +638,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             _fromExchangeToWallet
-                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee HYN手续费'
+                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee $_selectedCoinType手续费'
                 : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
             style: TextStyle(
               color: HexColor('#FF777777'),

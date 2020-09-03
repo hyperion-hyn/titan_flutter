@@ -243,10 +243,13 @@ class _ExchangeAssetHistoryPageState
 
   _assetHistoryItem(AssetHistory assetHistory) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          SizedBox(
+            height: 16,
+          ),
           Text(
             assetHistory.name == 'recharge' ? '钱包到交易账户' : '交易账户到钱包',
             style: TextStyle(
@@ -275,7 +278,7 @@ class _ExchangeAssetHistoryPageState
                             ),
                           ),
                           SizedBox(
-                            height: 4.0,
+                            height: 8.0,
                           ),
                           Text(
                             "${Decimal.parse(assetHistory.balance)}",
@@ -304,7 +307,7 @@ class _ExchangeAssetHistoryPageState
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Text(
                       '${_getTransferStatus(assetHistory.name, assetHistory.status)}',
@@ -330,7 +333,7 @@ class _ExchangeAssetHistoryPageState
                       ),
                     ),
                     SizedBox(
-                      height: 4.0,
+                      height: 8.0,
                     ),
                     Row(
                       children: <Widget>[
@@ -349,6 +352,17 @@ class _ExchangeAssetHistoryPageState
                 ),
               )
             ],
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 0.0,
+            ),
+            child: Divider(
+              height: 1,
+            ),
           )
         ],
       ),

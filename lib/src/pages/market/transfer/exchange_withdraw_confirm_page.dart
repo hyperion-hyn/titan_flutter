@@ -241,7 +241,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '$_withdrawFee HYN',
+                                '$_withdrawFee ${widget.coinVo.symbol}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -286,7 +286,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} HYN',
+                                '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} ${widget.coinVo.symbol}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -351,14 +351,16 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   _transferWithPwd(String walletPassword) async {
-    var ret = await _exchangeApi.withdraw(
-      activatedWallet.wallet,
-      walletPassword,
-      activatedWallet.wallet.getEthAccount().address,
-      widget.coinVo.symbol,
-      widget.coinVo.address,
-      widget.transferAmount,
-    );
-    print('$ret');
+    try {
+      var ret = await _exchangeApi.withdraw(
+        activatedWallet.wallet,
+        walletPassword,
+        activatedWallet.wallet.getEthAccount().address,
+        widget.coinVo.symbol,
+        widget.coinVo.address,
+        widget.transferAmount,
+      );
+      print('$ret');
+    } catch (e) {}
   }
 }

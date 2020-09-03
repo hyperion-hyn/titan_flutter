@@ -82,6 +82,14 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> bannerList() async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_BANNER_LIST,
+      null,
+      params: {},
+    );
+  }
+
   ///使用钱包注册/登录
   Future<dynamic> walletLogin({
     Wallet wallet,
