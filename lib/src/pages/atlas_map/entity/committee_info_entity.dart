@@ -1,11 +1,17 @@
-import 'package:json_annotation/json_annotation.dart'; 
-  
+import 'package:json_annotation/json_annotation.dart';
+
 part 'committee_info_entity.g.dart';
 
 /*
-{
+*
+block_height	integer
+每个纪元包含多少个块
+
 block_num	integer
 当前块高
+
+block_num_start	integer
+当前纪元的起始块高
 
 candidate	integer
 候选节点数量
@@ -13,21 +19,24 @@ candidate	integer
 elected	integer
 当选节点数量
 
-end_time	string
-纪元结束日期
-
 epoch	integer
 当前纪元
 
-start_time	string
-纪元开始日期
+sec_per_block	integer
+每隔多少秒出一个块
+* 
+* */
 
-}*/
 @JsonSerializable()
-  class CommitteeInfoEntity extends Object {
+class CommitteeInfoEntity extends Object {
+  @JsonKey(name: 'block_height')
+  int blockHeight;
 
   @JsonKey(name: 'block_num')
   int blockNum;
+
+  @JsonKey(name: 'block_num_start')
+  int blockNumStart;
 
   @JsonKey(name: 'candidate')
   int candidate;
@@ -35,21 +44,24 @@ start_time	string
   @JsonKey(name: 'elected')
   int elected;
 
-  @JsonKey(name: 'end_time')
-  String endTime;
-
   @JsonKey(name: 'epoch')
   int epoch;
 
-  @JsonKey(name: 'start_time')
-  String startTime;
+  @JsonKey(name: 'sec_per_block')
+  int secPerBlock;
 
-  CommitteeInfoEntity(this.blockNum,this.candidate,this.elected,this.endTime,this.epoch,this.startTime,);
+  CommitteeInfoEntity(
+    this.blockHeight,
+    this.blockNum,
+    this.blockNumStart,
+    this.candidate,
+    this.elected,
+    this.epoch,
+    this.secPerBlock,
+  );
 
-  factory CommitteeInfoEntity.fromJson(Map<String, dynamic> srcJson) => _$CommitteeInfoEntityFromJson(srcJson);
+  factory CommitteeInfoEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$CommitteeInfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$CommitteeInfoEntityToJson(this);
-
 }
-
-  

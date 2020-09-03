@@ -78,7 +78,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _getCommitteeInfo() async {
     try {
       _committeeInfo = await _atlasApi.postAtlasOverviewData();
-      print('[_getCommitteeInfo]: ${_committeeInfo.startTime}');
     } catch (e) {
       print('[_getCommitteeInfo]: $e');
     }
