@@ -32,8 +32,8 @@ class OrderDetailItemState extends State<OrderDetailItem> {
     super.initState();
     _isBuy = widget._orderDetail.side == '1';
     if (widget._orderDetail.market.split('/').length == 2) {
-      _base = widget._orderDetail.market.split('/')[1];
-      _quote = widget._orderDetail.market.split('/')[0];
+      _base = widget._orderDetail.market.split('/')[0];
+      _quote = widget._orderDetail.market.split('/')[1];
     }
   }
 

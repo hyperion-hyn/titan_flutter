@@ -105,7 +105,7 @@ class OrderItemState extends State<OrderItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '价格($_quote)',
+                            S.of(context).price_market(_quote),
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -136,7 +136,7 @@ class OrderItemState extends State<OrderItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '数量($_base)',
+                        S.of(context).count_market(_base),
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -162,7 +162,7 @@ class OrderItemState extends State<OrderItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '实际成交($_base)',
+                      S.of(context).actual_transaction_market(_base),
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -201,12 +201,22 @@ class OrderItemState extends State<OrderItem> {
   _orderStatus() {
     if (widget._order.status == '0' || widget._order.status == '1') {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ClickLoadingButton(
-          '撤销',
-          () async {
-            await widget.revokeOrder(widget._order);
-          },
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ClickLoadingButton(
+            S.of(context).revoke,
+            () async {
+              await widget.revokeOrder(widget._order);
+              setState(() {});
+            },
+            height: 27,
+            width: 60,
+            fontSize: 12,
+            fontColor: HexColor('#1F81FF'),
+            btnColor: HexColor('#F2F2F2'),
+            radius: 3,
+          ));
+      /*child: Container(
+          width: 60,
           height: 27,
           width: 60,
           fontSize: 12,
@@ -214,12 +224,22 @@ class OrderItemState extends State<OrderItem> {
           btnColor: HexColor('#F2F2F2'),
           radius: 3,
         ),
+      );*/
+    } else if (widget._order.status == '-1') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          S.of(context).revoking,
+          style: TextStyle(
+            color: DefaultColors.color999,
+          ),
+        ),
       );
     } else if (widget._order.status == '2') {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          '已完成',
+          S.of(context).completed,
           style: TextStyle(
             color: DefaultColors.color999,
           ),
@@ -229,7 +249,7 @@ class OrderItemState extends State<OrderItem> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          '已撤单',
+          S.of(context).has_revoked,
           style: TextStyle(
             color: DefaultColors.color999,
           ),
