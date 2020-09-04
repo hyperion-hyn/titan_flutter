@@ -33,7 +33,7 @@ class OrderItemState extends State<OrderItem> {
     // TODO: implement initState
     super.initState();
     _isBuy = widget._order.side == '1';
-    if (widget._order.market.split('/').length == 2) {
+    if ((widget?._order?.market?.split('/')?.length ?? -1) == 2) {
       _base = widget._order.market.split('/')[0];
       _quote = widget._order.market.split('/')[1];
     }

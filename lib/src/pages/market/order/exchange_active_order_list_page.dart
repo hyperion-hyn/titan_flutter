@@ -54,12 +54,15 @@ class ExchangeActiveOrderListPageState
   void onCreated() {
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
     _socketBloc = BlocProvider.of<SocketBloc>(context);
-    if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccount() && widget.market.isNotEmpty) {
       var symbolList = widget.market.split("/");
       userTickChannel = SocketConfig.channelUserTick(
           exchangeModel.activeAccount.id,
           "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
+    }else if(exchangeModel.isActiveAccount()){
+      _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id,"hynusdt")));
+      _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id,"hyneth")));
     }
     _loadDataBloc.add(LoadingEvent());
     consignLoadData();
