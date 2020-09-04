@@ -361,6 +361,8 @@ class _ExchangeWithdrawConfirmPageState
         widget.transferAmount,
       );
       print('$ret');
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -26,9 +26,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     with AutomaticKeepAliveClientMixin {
   List<Order> _orders = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  RefreshController _refreshController = RefreshController(
-    initialRefresh: true,
-  );
+
   ExchangeApi _exchangeApi = ExchangeApi();
 
   int _currentPage = 1;
@@ -94,9 +92,17 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
         ),
       );
     } else {
-      return ListView.builder(
-        itemCount: _orders.length,
-        itemBuilder: (ctx, index) => OrderItem(_orders[index]),
+      return CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return OrderItem(_orders[index]);
+              },
+              childCount: _orders.length,
+            ),
+          ),
+        ],
       );
     }
   }
@@ -106,36 +112,43 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
 
     ///clear list before refresh
     _orders.clear();
-    List<Order> resultList = await _exchangeApi.getOrderList(
-      widget.market,
-      _currentPage,
-      _size,
-      _method,
-    );
-    print('[ExchangeOrderHistoryPage] _refresh: resultList $resultList');
-    if (resultList != null) {
-      _orders.addAll(resultList);
-    }
 
-    if (mounted) setState(() {});
-    _loadDataBloc.add(RefreshSuccessEvent());
-    _refreshController.refreshCompleted();
+    try {
+      List<Order> resultList = await _exchangeApi.getOrderList(
+        widget.market,
+        _currentPage,
+        _size,
+        _method,
+      );
+      print('[ExchangeOrderHistoryPage] _refresh: resultList $resultList');
+      if (resultList != null) {
+        _orders.addAll(resultList);
+      }
+
+      if (mounted) setState(() {});
+      _loadDataBloc.add(RefreshSuccessEvent());
+    } catch (e) {
+      _loadDataBloc.add(RefreshSuccessEvent());
+    }
   }
 
   _loadMore() async {
-    List<Order> resultList = await _exchangeApi.getOrderList(
-      widget.market,
-      _currentPage + 1,
-      _size,
-      _method,
-    );
-    if (resultList != null) {
-      _orders.addAll(resultList);
-      _currentPage++;
+    try {
+      List<Order> resultList = await _exchangeApi.getOrderList(
+        widget.market,
+        _currentPage + 1,
+        _size,
+        _method,
+      );
+      if (resultList != null) {
+        _orders.addAll(resultList);
+        _currentPage++;
+      }
+      if (mounted) setState(() {});
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
+    } catch (e) {
+      _loadDataBloc.add(LoadingMoreSuccessEvent());
     }
-    if (mounted) setState(() {});
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
-    _refreshController.loadComplete();
   }
 
   @override
