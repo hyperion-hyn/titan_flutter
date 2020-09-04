@@ -1088,7 +1088,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   _unSubChannels() {
     _unSubPeriodChannel();
     _unSubDepthChannel();
-    _unSubTradeChannel();
+//    _unSubTradeChannel();
   }
 
   // period

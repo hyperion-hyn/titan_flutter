@@ -141,17 +141,20 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     isOrderActionLoading = false;
 
     _getExchangelData();
+    depthChannel = SocketConfig.channelExchangeDepth(symbol, selectDepthNum);
+    _socketBloc.add(SubChannelEvent(channel: depthChannel));
+
     super.didPopNext();
   }
 
   @override
   void dispose() {
-    if (exchangeModel.isActiveAccount()) {
+    /*if (exchangeModel.isActiveAccount()) {
       _socketBloc.add(UnSubChannelEvent(channel: userTickChannel));
     }
-    Application.routeObserver.unsubscribe(this);
+    _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));*/
     _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
-    _socketBloc.add(UnSubChannelEvent(channel: tradeChannel));
+    Application.routeObserver.unsubscribe(this);
 
     optionsController.close();
     exchangeDetailBloc.close();
@@ -369,6 +372,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               ),
               InkWell(
                 onTap: () {
+                  _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
                   Navigator.push(
                       context,
                       MaterialPageRoute(
