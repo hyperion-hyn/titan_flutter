@@ -40,8 +40,8 @@ class OrderItemState extends State<OrderItem> {
               children: <Widget>[
                 Text(
                   widget._order.side == ExchangeType.BUY.toString()
-                      ? '买入'
-                      : '卖出',
+                      ? '${S.of(context).buy}'
+                      : '${S.of(context).sale}',
                   style: TextStyle(
                     fontSize: 16,
                     color: widget._order.side == ExchangeType.BUY.toString()
@@ -81,7 +81,7 @@ class OrderItemState extends State<OrderItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '价格(${widget.market.split("/")[1]})',
+                            S.of(context).price_market(widget.market.split("/")[1]),
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -112,7 +112,7 @@ class OrderItemState extends State<OrderItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '数量(${widget.market.split('/')[0]})',
+                        S.of(context).count_market(widget.market.split('/')[0]),
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -138,7 +138,7 @@ class OrderItemState extends State<OrderItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '实际成交(${widget.market.split('/')[0]})',
+                      S.of(context).actual_transaction_market(widget.market.split('/')[0]),
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -178,7 +178,7 @@ class OrderItemState extends State<OrderItem> {
     if (widget._order.status == '0' || widget._order.status == '1') {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ClickLoadingButton('撤销',() async {
+        child: ClickLoadingButton(S.of(context).revoke,() async {
           await widget.revokeOrder(widget._order);
           setState(() {
           });
@@ -208,7 +208,7 @@ class OrderItemState extends State<OrderItem> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          '撤销中',
+          S.of(context).revoking,
           style: TextStyle(
             color: DefaultColors.color999,
           ),
@@ -218,7 +218,7 @@ class OrderItemState extends State<OrderItem> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          '已完成',
+          S.of(context).completed,
           style: TextStyle(
             color: DefaultColors.color999,
           ),
@@ -228,7 +228,7 @@ class OrderItemState extends State<OrderItem> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Text(
-          '已撤单',
+          S.of(context).has_revoked,
           style: TextStyle(
             color: DefaultColors.color999,
           ),

@@ -862,5 +862,16 @@
   "no_less_than": "不可少于",
   "no_more_than": "不可多于",
   "insufficient_balance": "余额不足",
-  "count": "数量"
+  "count": "数量",
+  "no_orders": "暂无委托单",
+  "view_order_after_login": "登录后查看委托单",
+  "order_cancelled_success": "订单撤销成功",
+  "order_completed": "订单已完成",
+  "price_market": "价格({market})",
+  "count_market": "数量({market})",
+  "actual_transaction_market": "实际成交({market})",
+  "revoke": "撤销",
+  "revoking": "撤销中",
+  "completed": "已完成",
+  "has_revoked": "已撤单"
 }
