@@ -5,6 +5,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
@@ -110,7 +111,26 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     _initChannel();
 
+    _setupTranslate();
+
     super.onCreated();
+  }
+
+  _setupTranslate() {
+    _normalPeriodList = [
+      PeriodInfoEntity(name: S.of(context).kline_period_15min, value: "15min"),
+      PeriodInfoEntity(name: S.of(context).kline_period_60min, value: "60min"),
+      PeriodInfoEntity(name: S.of(context).kline_period_5min, value: "5min"),
+      PeriodInfoEntity(name: S.of(context).kline_period_1day, value: "1day")
+    ];
+
+    _morePeriodList = [
+      PeriodInfoEntity(name: S.of(context).kline_period_min, value: "分时"),
+      PeriodInfoEntity(name: S.of(context).kline_period_1min, value: "1min"),
+      PeriodInfoEntity(name: S.of(context).kline_period_30min, value: "30min"),
+      PeriodInfoEntity(name: S.of(context).kline_period_1week, value: "1week"),
+      PeriodInfoEntity(name: S.of(context).kline_period_1mon, value: "1mon"),
+    ];
   }
 
   @override
@@ -257,14 +277,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              '高',
+                              S.of(context).kline_24h_high,
                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
                             ),
                             SizedBox(
                               height: 5,
                             ),
                             Text(
-                              '低',
+                              S.of(context).kline_24h_low,
                               style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
                             ),
                             SizedBox(
@@ -375,7 +395,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       Padding(
                         padding: const EdgeInsets.only(left: 14),
                         child: Text(
-                          "主图",
+                          //"主图",
+                          S.of(context).kline_state_main,
                           style: TextStyle(color: HexColor("#333333"), fontSize: 12),
                         ),
                       ),
@@ -406,7 +427,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       Padding(
                         padding: const EdgeInsets.only(left: 14),
                         child: Text(
-                          "副图",
+                          S.of(context).kline_state_secondary,
                           style: TextStyle(color: HexColor("#333333"), fontSize: 12),
                         ),
                       ),
@@ -554,7 +575,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Text(
-              _morePeriodList.contains(_periodParameter) ? _periodParameter.name : '更多',
+              _morePeriodList.contains(_periodParameter) ? _periodParameter.name : S.of(context).kline_period_more,
               style: TextStyle(
                   color: _isShowMore || (_morePeriodList.contains(_periodParameter) && _periodCurrentIndex == 4)
                       ? HexColor("#228BA1")
@@ -573,7 +594,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       ),
       Tab(
         child: Text(
-          '深度图',
+          //'深度图',
+          S.of(context).kline_period_depth,
           style: TextStyle(),
         ),
       ),
@@ -664,13 +686,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         tabs: [
           Tab(
             child: Text(
-              "挂单委托",
+              //"挂单委托",
+              S.of(context).kline_tab_delegation,
               style: TextStyle(),
             ),
           ),
           Tab(
             child: Text(
-              '成交',
+              //'成交',
+              S.of(context).kline_tab_market,
               style: TextStyle(),
             ),
           ),
@@ -692,7 +716,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     child: StreamBuilder(
                       stream: _depthController.stream,
                       builder: (context, optionType) {
-                        return delegationListView(_buyChartList, _sellChartList, enable: false);
+                        return delegationListView(context,_buyChartList, _sellChartList, enable: false);
                       },
                     )),
                 _loadingWidget(visible: _showLoadingDepth),
@@ -736,21 +760,21 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "时间",
+                          S.of(context).kline_delegate_time,
                           style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                       Expanded(
                         flex: 1,
                         child: Text(
-                          "方向",
+                          S.of(context).kline_delegate_direction,
                           style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
                       ),
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "价格(USDT)",
+                          S.of(context).kline_delegate_price,
                           textAlign: TextAlign.end,
                           style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
@@ -758,7 +782,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "数量(HYN)",
+                          S.of(context).kline_delegate_amount,
                           textAlign: TextAlign.end,
                           style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                         ),
@@ -787,7 +811,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                             Expanded(
                               flex: 1,
                               child: Text(
-                                excDetailEntity.actionType == "sell" ? "卖出" : "买入",
+                                excDetailEntity.actionType == "sell" ? S.of(context).kline_direct_sell : S.of(context).kline_direct_buy,
                                 style: TextStyle(
                                     color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
                                     fontSize: 10,
@@ -1148,7 +1172,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
+Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
@@ -1164,7 +1188,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                       child: Row(
                         children: <Widget>[
                           Text(
-                            "买",
+                            //"买",
+                            S.of(context).kline_market_buy,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -1174,7 +1199,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: Text(
-                              "数量",
+                              //"数量",
+                              S.of(context).kline_market_amount,
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.normal,
@@ -1184,7 +1210,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                           ),
                           Spacer(),
                           Text(
-                            "买价",
+                            //"买价",
+                            S.of(context).kline_market_buy_price,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -1201,7 +1228,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                       child: Row(
                         children: <Widget>[
                           Text(
-                            "卖价",
+                            //"卖价",
+                            S.of(context).kline_market_sell_price,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -1212,7 +1240,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                           Padding(
                             padding: const EdgeInsets.only(right: 8.0),
                             child: Text(
-                              "数量",
+                              //"数量",
+                              S.of(context).kline_market_amount,
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.normal,
@@ -1221,7 +1250,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                             ),
                           ),
                           Text(
-                            "卖",
+                            //"卖",
+                            S.of(context).kline_market_sell,
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.normal,
@@ -1237,7 +1267,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "买盘 数量(HYN)",
+                      //"买盘 数量(HYN)",
+                      S.of(context).kline_delegate_buy + " " + S.of(context).kline_delegate_amount,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 10,
@@ -1246,7 +1277,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                       ),
                     ),
                     Text(
-                      "价格(USDT)",
+                      //"价格(USDT)",
+                      S.of(context).kline_delegate_price,
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 10,
@@ -1255,7 +1287,8 @@ Widget delegationListView(List<ExcDetailEntity> buyChartList, List<ExcDetailEnti
                       ),
                     ),
                     Text(
-                      "数量(HYN)卖盘",
+                      //"数量(HYN)卖盘",
+                      S.of(context).kline_delegate_amount +" "+ S.of(context).kline_delegate_sell,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 10,
