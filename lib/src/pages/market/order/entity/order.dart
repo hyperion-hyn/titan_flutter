@@ -23,7 +23,7 @@ class Order extends Object {
   String ctime;
 
   @JsonKey(name: 'status')
-  String status;
+  String status;//-1 撤销中
 
   @JsonKey(name: 'amount_deal')
   String amountDeal;

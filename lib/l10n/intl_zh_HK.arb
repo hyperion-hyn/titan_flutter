@@ -869,5 +869,22 @@
   "kline_market_buy_price": "買價",
   "kline_market_sell_price": "賣價",
   "kline_tab_delegation": "掛單委托",
-  "kline_tab_market": "成交"
+  "kline_tab_market": "成交",
+  "depth_bit": "深度{selectDepthNum}位",
+  "depth_decimal_places": "深度小数位",
+  "num_decimal_places": "{depthIndex}位",
+  "buy": "买入",
+  "sale": "卖出",
+  "price": "价格",
+  "amount": "金额",
+  "available": "可用",
+  "login_please": "请登录",
+  "current_commission": "当前委托",
+  "input_price_please": "请输入价格",
+  "input_num_please": "请输入数量",
+  "each": "每次",
+  "no_less_than": "不可少于",
+  "no_more_than": "不可多于",
+  "insufficient_balance": "余额不足",
+  "count": "数量"
 }
