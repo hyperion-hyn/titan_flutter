@@ -865,5 +865,6 @@
   "each": "每次",
   "no_less_than": "不可少于",
   "no_more_than": "不可多于",
-  "insufficient_balance": "余额不足"
+  "insufficient_balance": "余额不足",
+  "count": "数量"
 }

@@ -180,6 +180,8 @@ class OrderItemState extends State<OrderItem> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ClickLoadingButton('撤销',() async {
           await widget.revokeOrder(widget._order);
+          setState(() {
+          });
         },height: 27,width: 60,fontSize: 12,fontColor: HexColor('#1F81FF'),btnColor: HexColor('#F2F2F2'),radius: 3,),
         /*child: Container(
           width: 60,
@@ -201,6 +203,16 @@ class OrderItemState extends State<OrderItem> {
             },
           ),
         ),*/
+      );
+    } else if (widget._order.status == '-1') {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Text(
+          '撤销中',
+          style: TextStyle(
+            color: DefaultColors.color999,
+          ),
+        ),
       );
     } else if (widget._order.status == '2') {
       return Padding(

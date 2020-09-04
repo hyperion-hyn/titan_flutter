@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -187,7 +188,14 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, 
       _activeOrders[index],
       revokeOrder: (Order orderEntity) async {
         ExchangeApi exchangeApi = ExchangeApi();
-        await exchangeApi.orderCancel(orderEntity.orderId);
+        try {
+          orderEntity.status = "-1";
+          await exchangeApi.orderCancel(orderEntity.orderId);
+        }catch(error){
+          if(error is HttpResponseCodeNotSuccess){
+            Fluttertoast.showToast(msg: error.message);
+          }
+        }
       },
       market: marketCoin,
     ),
@@ -226,9 +234,9 @@ bool consignListSocket(SocketState state, List<Order> _activeOrders,bool showToa
       if (temAddOrders.length > 0) {
         print("insert order");
         _activeOrders.insertAll(0, temAddOrders);
-        if(showToast) {
+        /*if(showToast) {
           Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
-        }
+        }*/
         return true;
       }
     }

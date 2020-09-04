@@ -219,6 +219,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
               if (state.respMsg == null) {
+                Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
                 currentPriceStr = "";
@@ -804,7 +805,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   child: Row(
                     children: <Widget>[
                       Text(
-                        S.of(context).number,
+                        S.of(context).count,
                         style: TextStyle(fontSize: 14, color: DefaultColors.color999),
                       ),
                       SizedBox(
