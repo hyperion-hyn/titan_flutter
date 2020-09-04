@@ -31,9 +31,6 @@ class ExchangeTransferHistoryListPageState
     with AutomaticKeepAliveClientMixin {
   List<AssetHistory> _transferHistoryList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  RefreshController _refreshController = RefreshController(
-    initialRefresh: true,
-  );
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
@@ -43,7 +40,7 @@ class ExchangeTransferHistoryListPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadDataBloc.add(LoadingEvent());
+    _refresh();
   }
 
   @override
@@ -76,9 +73,7 @@ class ExchangeTransferHistoryListPageState
         child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullUp: _transferHistoryList.isNotEmpty,
-          onLoadData: () async {
-            _refresh();
-          },
+          onLoadData: () async {},
           onRefresh: () async {
             _refresh();
           },
@@ -145,33 +140,32 @@ class ExchangeTransferHistoryListPageState
         _action,
       );
 
-      if (resultList != null) {
+      if (resultList.length > 0) {
         _transferHistoryList.addAll(resultList);
       }
     } catch (e) {}
 
     if (mounted) setState(() {});
     _loadDataBloc.add(RefreshSuccessEvent());
-
-    _refreshController.refreshCompleted();
   }
 
   _loadMore() async {
-    _currentPage++;
     try {
       List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
         widget.type,
-        _currentPage,
+        _currentPage + 1,
         _size,
         _action,
       );
-      if (resultList != null) {
+      if (resultList.length > 0) {
+        _currentPage++;
         _transferHistoryList.addAll(resultList);
       }
+      _currentPage++;
     } catch (e) {}
     if (mounted) setState(() {});
+
     _loadDataBloc.add(LoadingMoreSuccessEvent());
-    _refreshController.loadComplete();
   }
 
   _transferHistoryItem(AssetHistory assetHistory) {
@@ -312,6 +306,6 @@ class ExchangeTransferHistoryListPageState
   }
 
   @override
-  // TODO: implement wantKeepAlive
+// TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }

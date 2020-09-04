@@ -39,16 +39,13 @@ class _ExchangeAssetHistoryPageState
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
-  RefreshController _refreshController = RefreshController(
-    initialRefresh: false,
-  );
   Decimal ethToCurrency;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadDataBloc.add(LoadingEvent());
+    _refresh();
   }
 
   @override
@@ -98,16 +95,13 @@ class _ExchangeAssetHistoryPageState
         child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullUp: _assetHistoryList.isNotEmpty,
-          onLoadData: () {
-            _refresh();
+          onLoadData: () async {},
+          onLoadingMore: () async {
+            await _loadMore();
           },
-          onLoadingMore: () {
-            _loadMore();
-          },
-          onRefresh: () {
+          onRefresh: () async {
             BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-            _refresh();
-            _loadDataBloc.add(RefreshSuccessEvent());
+            await _refresh();
           },
           child: CustomScrollView(
             slivers: <Widget>[
@@ -412,7 +406,7 @@ class _ExchangeAssetHistoryPageState
     );
   }
 
-  _refresh() async {
+  Future _refresh() async {
     _currentPage = 1;
 
     ///clear list before refresh
@@ -429,7 +423,6 @@ class _ExchangeAssetHistoryPageState
     } catch (e) {}
     _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
-    _refreshController.refreshCompleted();
   }
 
   _loadMore() async {
@@ -440,12 +433,13 @@ class _ExchangeAssetHistoryPageState
         _size,
         'all',
       );
-      _currentPage++;
-      _assetHistoryList.addAll(resultList);
+      if (resultList.length > 0) {
+        _currentPage++;
+        _assetHistoryList.addAll(resultList);
+      }
     } catch (e) {}
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
-    _refreshController.loadComplete();
   }
 }
 
