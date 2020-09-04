@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -172,8 +173,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
     _loadDataBloc.add(LoadingEvent());
     consignPageSize = 1;
-    await loadConsignList(marketCoin, consignPageSize, _activeOrders);
-    consignListController.add(contrConsignTypeRefresh);
+    try {
+      await loadConsignList(marketCoin, consignPageSize, _activeOrders);
+      consignListController.add(contrConsignTypeRefresh);
+    }catch(error){
+    }
     _loadDataBloc.add(RefreshSuccessEvent());
   }
 
@@ -349,7 +353,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2.0, right: 15),
                         child: Text(
-                          "深度$selectDepthNum位",
+                          S.of(context).depth_bit(selectDepthNum),
                           style: TextStyle(fontSize: 10, color: DefaultColors.color999),
                         ),
                       ),
@@ -476,7 +480,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                "深度小数位",
+                                S.of(context).depth_decimal_places,
                                 style: TextStyle(fontSize: 12, color: DefaultColors.color333),
                               ),
                             ],
@@ -506,7 +510,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6.0),
                               child:
-                                  Text("$depthIndex位", style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
+                                  Text(S.of(context).num_decimal_places(depthIndex), style: TextStyle(fontSize: 12, color: DefaultColors.color999)),
                             ),
                           ],
                         ),
@@ -623,7 +627,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('买入',
+                          child: Text(S.of(context).buy,
                               style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
                         ),
                       ),
@@ -645,7 +649,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text('卖出',
+                          child: Text(S.of(context).sale,
                               style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
                         ),
                       ),
@@ -703,7 +707,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         Padding(
                           padding: EdgeInsets.only(bottom:currentPriceStr != "0" && currentPriceStr != "" ? 16.0 : 0),
                           child: Text(
-                            "价格",
+                            S.of(context).price,
                             style: TextStyle(fontSize: 14, color: DefaultColors.color999),
                           ),
                         ),
@@ -800,7 +804,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "数量",
+                        S.of(context).number,
                         style: TextStyle(fontSize: 14, color: DefaultColors.color999),
                       ),
                       SizedBox(
@@ -897,7 +901,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   child: Row(
                     children: <Widget>[
                       Text(
-                        "金额",
+                        S.of(context).amount,
                         style: TextStyle(fontSize: 14, color: DefaultColors.color999),
                       ),
                       SizedBox(
@@ -943,7 +947,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: Text(
-                    "可用  ${getValidNum() == 0 ? "~" : getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
+                    "${S.of(context).available}  ${getValidNum() == 0 ? "~" : getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
                     style: TextStyle(color: DefaultColors.color999, fontSize: 10),
                   ),
                 ),
@@ -961,7 +965,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         borderRadius: BorderRadius.all(Radius.circular(22.0)),
                       ),
                       padding: const EdgeInsets.all(0.0),
-                      child: Text(exchangeModel.isActiveAccount() ? isBuy ? "买入" : "卖出" : "请登录",
+                      child: Text(exchangeModel.isActiveAccount() ? isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}" : S.of(context).login_please,
                           style: TextStyle(
                             fontSize: 14,
                             color: isOrderActionLoading ? DefaultColors.color999 : Colors.white,
@@ -996,7 +1000,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        "当前委托",
+                        S.of(context).current_commission,
                         style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
@@ -1015,7 +1019,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                             width: 4,
                           ),
                           InkWell(
-                            child: Text("全部",
+                            child: Text("${S.of(context).all}",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: DefaultColors.color999,
@@ -1062,32 +1066,32 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   void buyAction() {
     if (exchangeModel.isActiveAccount()) {
       if (currentPriceStr.isEmpty || double.parse(currentPriceStr) == 0) {
-        Fluttertoast.showToast(msg: "请输入价格");
+        Fluttertoast.showToast(msg: S.of(context).input_price_please);
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
       if (currentNumStr.isEmpty || double.parse(currentNumStr) == 0) {
-        Fluttertoast.showToast(msg: "请输入数量");
+        Fluttertoast.showToast(msg: S.of(context).input_num_please);
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
       if(marketInfoEntity.amountMin > Decimal.parse(currentNumStr).toDouble()){
-        Fluttertoast.showToast(msg: "每次${isBuy?"买入":"卖出"}不可少于${marketInfoEntity.amountMin}HYN");
+        Fluttertoast.showToast(msg: "${S.of(context).each}${isBuy?"${S.of(context).buy}":"${S.of(context).sale}"}${S.of(context).no_less_than}${marketInfoEntity.amountMin}HYN");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
       if(marketInfoEntity.amountMax < Decimal.parse(currentNumStr).toDouble()){
-        Fluttertoast.showToast(msg: "每次${isBuy?"买入":"卖出"}不可多于${marketInfoEntity.amountMax}HYN");
+        Fluttertoast.showToast(msg: "${S.of(context).each}${isBuy?"${S.of(context).buy}":"${S.of(context).sale}"}${S.of(context).no_more_than}${marketInfoEntity.amountMax}HYN");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
       }
       if ((isBuy && Decimal.parse(totalPriceStr) > getValidNum()) ||
           (!isBuy && Decimal.parse(currentNumStr) > getValidNum())) {
-        Fluttertoast.showToast(msg: "余额不足");
+        Fluttertoast.showToast(msg: S.of(context).insufficient_balance);
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
