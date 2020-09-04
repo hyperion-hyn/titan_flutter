@@ -8,6 +8,7 @@ part of 'order_detail.dart';
 
 OrderDetail _$OrderDetailFromJson(Map<String, dynamic> json) {
   return OrderDetail(
+    json['market'] as String,
     json["side"] as String,
     json['oid'] as String,
     json['price'] as String,
@@ -20,6 +21,7 @@ OrderDetail _$OrderDetailFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$OrderDetailToJson(OrderDetail instance) =>
     <String, dynamic>{
+      'market': instance.market,
       'side': instance.side,
       'oid': instance.oid,
       'price': instance.price,

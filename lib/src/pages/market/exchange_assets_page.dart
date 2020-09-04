@@ -20,6 +20,8 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
+import 'order/exchange_order_mangement_page.dart';
+
 class ExchangeAssetsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -59,16 +61,46 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.white,
-          centerTitle: true,
-          iconTheme: IconThemeData(
-            color: Colors.black,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        title: Text(
+          '交易账户',
+          style: TextStyle(color: Colors.black, fontSize: 18),
+        ),
+        actions: [
+          Image.asset(
+            "res/drawable/ic_exhange_all_consign.png",
+            width: 12,
+            height: 12,
           ),
-          title: Text(
-            '交易账户',
-            style: TextStyle(color: Colors.black, fontSize: 18),
-          )),
+
+          Padding(
+            padding: EdgeInsets.only(right: 16.0, left: 8.0),
+            child: Align(
+              alignment: Alignment.center,
+              child: InkWell(
+                child: Text(
+                  '交易记录',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: DefaultColors.color999
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ExchangeOrderManagementPage('')));
+                },
+              ),
+            ),
+          )
+        ],
+      ),
       body: Container(
         color: Colors.white,
         child: LoadDataContainer(

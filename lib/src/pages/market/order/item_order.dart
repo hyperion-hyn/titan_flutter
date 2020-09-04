@@ -10,10 +10,12 @@ import 'package:titan/src/widget/loading_button/click_loading_button.dart';
 
 class OrderItem extends StatefulWidget {
   final Order _order;
-  final String market;
   final Function revokeOrder;
 
-  OrderItem(this._order, {this.revokeOrder, this.market = 'HYN/USDT'});
+  OrderItem(
+    this._order, {
+    this.revokeOrder,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -22,6 +24,21 @@ class OrderItem extends StatefulWidget {
 }
 
 class OrderItemState extends State<OrderItem> {
+  bool _isBuy = true;
+  var _base = '';
+  var _quote = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isBuy = widget._order.side == '1';
+    if (widget._order.market.split('/').length == 2) {
+      _base = widget._order.market.split('/')[0];
+      _quote = widget._order.market.split('/')[1];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,18 +53,25 @@ class OrderItemState extends State<OrderItem> {
               width: 16.0,
             ),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text(
-                  widget._order.side == ExchangeType.BUY.toString()
-                      ? '${S.of(context).buy}'
-                      : '${S.of(context).sale}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: widget._order.side == ExchangeType.BUY.toString()
-                        ? HexColor("#53AE86")
-                        : HexColor("#CC5858"),
-                  ),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: _isBuy ? "买入 " : "卖出 ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: widget._order.side == '1'
+                              ? HexColor("#53AE86")
+                              : HexColor("#CC5858"),
+                        )),
+                    TextSpan(
+                        text: widget._order.market,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ))
+                  ]),
                 ),
                 SizedBox(
                   width: 8.0,
@@ -81,7 +105,7 @@ class OrderItemState extends State<OrderItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            S.of(context).price_market(widget.market.split("/")[1]),
+                            S.of(context).price_market(_quote),
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -112,7 +136,7 @@ class OrderItemState extends State<OrderItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        S.of(context).count_market(widget.market.split('/')[0]),
+                        S.of(context).count_market(_base),
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -138,7 +162,7 @@ class OrderItemState extends State<OrderItem> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      S.of(context).actual_transaction_market(widget.market.split('/')[0]),
+                      S.of(context).actual_transaction_market(_base),
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -177,33 +201,30 @@ class OrderItemState extends State<OrderItem> {
   _orderStatus() {
     if (widget._order.status == '0' || widget._order.status == '1') {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: ClickLoadingButton(S.of(context).revoke,() async {
-          await widget.revokeOrder(widget._order);
-          setState(() {
-          });
-        },height: 27,width: 60,fontSize: 12,fontColor: HexColor('#1F81FF'),btnColor: HexColor('#F2F2F2'),radius: 3,),
-        /*child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ClickLoadingButton(
+            S.of(context).revoke,
+            () async {
+              await widget.revokeOrder(widget._order);
+              setState(() {});
+            },
+            height: 27,
+            width: 60,
+            fontSize: 12,
+            fontColor: HexColor('#1F81FF'),
+            btnColor: HexColor('#F2F2F2'),
+            radius: 3,
+          ));
+      /*child: Container(
           width: 60,
           height: 27,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(3.0)),
-              color: HexColor('#F2F2F2')),
-          child: FlatButton(
-            padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 2),
-            textColor: HexColor('#FF1F81FF'),
-            child: Text(
-              '撤销',
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            onPressed: () {
-              widget.revokeOrder(widget._order);
-            },
-          ),
-        ),*/
-      );
+          width: 60,
+          fontSize: 12,
+          fontColor: HexColor('#1F81FF'),
+          btnColor: HexColor('#F2F2F2'),
+          radius: 3,
+        ),
+      );*/
     } else if (widget._order.status == '-1') {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),

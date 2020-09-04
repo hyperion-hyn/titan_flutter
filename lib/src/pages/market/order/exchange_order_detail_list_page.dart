@@ -101,7 +101,6 @@ class ExchangeOrderDetailListPageState
         itemCount: _orderDetailList.length,
         itemBuilder: (ctx, index) => OrderDetailItem(
           _orderDetailList[index],
-          widget.market,
         ),
       );
     }

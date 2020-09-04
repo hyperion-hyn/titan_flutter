@@ -10,11 +10,9 @@ import 'entity/order.dart';
 
 class OrderDetailItem extends StatefulWidget {
   final OrderDetail _orderDetail;
-  final String market;
 
   OrderDetailItem(
     this._orderDetail,
-    this.market,
   );
 
   @override
@@ -24,6 +22,21 @@ class OrderDetailItem extends StatefulWidget {
 }
 
 class OrderDetailItemState extends State<OrderDetailItem> {
+  var _isBuy = true;
+  var _base = '';
+  var _quote = '';
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isBuy = widget._orderDetail.side == '1';
+    if (widget._orderDetail.market.split('/').length == 2) {
+      _base = widget._orderDetail.market.split('/')[0];
+      _quote = widget._orderDetail.market.split('/')[1];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +50,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
           child: RichText(
             text: TextSpan(children: [
               TextSpan(
-                  text: widget._orderDetail.side == '1' ? "买入 " : "卖出 ",
+                  text: _isBuy ? "买入 " : "卖出 ",
                   style: TextStyle(
                     fontSize: 16,
                     color: widget._orderDetail.side == '1'
@@ -45,7 +58,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                         : HexColor("#CC5858"),
                   )),
               TextSpan(
-                  text: widget.market,
+                  text: widget._orderDetail.market,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -131,7 +144,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '成交价(${widget.market.split('/')[1]})',
+                          '成交价($_quote)',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -169,7 +182,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '成交量(${widget.market.split("/")[0]})',
+                          '成交量($_base)',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -199,7 +212,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '成交额(${widget.market.split('/')[1]})',
+                              '成交额($_quote)',
                               style: TextStyle(
                                 color: DefaultColors.color999,
                                 fontSize: 12,
@@ -227,7 +240,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '手续费(${widget._orderDetail.side == '1' ? widget.market.split('/')[0] : widget.market.split('/')[1]})',
+                          '手续费(${_isBuy ? _base : _quote})',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,

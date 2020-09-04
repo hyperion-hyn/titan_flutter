@@ -4,6 +4,9 @@ part 'order_detail.g.dart';
 
 @JsonSerializable()
 class OrderDetail extends Object {
+  @JsonKey(name: 'market')
+  String market;
+
   @JsonKey(name: 'side')
   String side;
 
@@ -26,6 +29,7 @@ class OrderDetail extends Object {
   String fee;
 
   OrderDetail(
+    this.market,
     this.side,
     this.oid,
     this.price,
