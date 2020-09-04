@@ -6,34 +6,34 @@ part 'asset_history.g.dart';
 @JsonSerializable()
 class AssetHistory extends Object {
 
-  @JsonKey(name: 'address')
-  String address;
-
-  @JsonKey(name: 'balance')
-  double balance;
-
-  @JsonKey(name: 'ctime')
-  int ctime;
-
-  @JsonKey(name: 'fee')
-  double fee;
-
-  @JsonKey(name: 'id')
-  int id;
-
   @JsonKey(name: 'name')
   String name;
 
-  @JsonKey(name: 'status')
-  int status;
-
-  @JsonKey(name: 'txid')
-  String txid;
+  @JsonKey(name: 'id')
+  String id;
 
   @JsonKey(name: 'type')
   String type;
 
-  AssetHistory(this.address,this.balance,this.ctime,this.fee,this.id,this.name,this.status,this.txid,this.type,);
+  @JsonKey(name: 'balance')
+  String balance;
+
+  @JsonKey(name: 'fee')
+  String fee;
+
+  @JsonKey(name: 'tx_id')
+  String txId;
+
+  @JsonKey(name: 'status')
+  String status;
+
+  @JsonKey(name: 'mtime')
+  String mtime;
+
+  @JsonKey(name: 'ctime')
+  String ctime;
+
+  AssetHistory(this.name,this.id,this.type,this.balance,this.fee,this.txId,this.status,this.mtime,this.ctime,);
 
   factory AssetHistory.fromJson(Map<String, dynamic> srcJson) => _$AssetHistoryFromJson(srcJson);
 

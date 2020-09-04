@@ -39,6 +39,7 @@ class ExchangeTransferPage extends StatefulWidget {
 class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   String _selectedCoinType = 'HYN';
   TextEditingController _amountController = TextEditingController();
+
   final _fromKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi = ExchangeApi();
@@ -487,12 +488,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     if (!RegExp(r"\d+(\.\d+)?$").hasMatch(value)) {
                       return S.of(context).input_corrent_count_hint;
                     }
-                    if (Decimal.parse(value) +
-                            Decimal.parse(
-                                _fromExchangeToWallet ? _withdrawFee : '0') >
-                        Decimal.parse(_availableAmount())) {
-                      return S.of(context).input_count_over_balance;
-                    }
+//                    if (Decimal.parse(value) +
+//                            Decimal.parse(
+//                                _fromExchangeToWallet ? _withdrawFee : '0') >
+//                        Decimal.parse(_availableAmount())) {
+//                      return S.of(context).input_count_over_balance;
+//                    }
 
                     if (Decimal.parse(value) <
                         Decimal.parse(_minTransferAmount)) {
@@ -546,6 +547,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 ),
                                 onTap: () {
                                   _amountController.text = _availableAmount();
+                                  _amountController.selection =
+                                      TextSelection.fromPosition(TextPosition(
+                                    affinity: TextAffinity.downstream,
+                                    offset: _amountController.text.length,
+                                  ));
                                   _fromKey.currentState.validate();
                                   setState(() {});
                                 },
@@ -603,7 +609,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         if (_fromExchangeToWallet)
           Text(
-            '手续费 $_withdrawFee HYN',
+            '手续费 $_withdrawFee $_selectedCoinType',
             style: TextStyle(
               color: HexColor('#FFAAAAAA'),
               fontSize: 12,
@@ -632,7 +638,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             _fromExchangeToWallet
-                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee HYN手续费'
+                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee $_selectedCoinType手续费'
                 : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
             style: TextStyle(
               color: HexColor('#FF777777'),
@@ -669,12 +675,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _transfer() async {
     try {
-      var ret = await _exchangeApi.getAddress(_selectedCoinType);
-      var exchangeAddress = ret['address'];
-
       if (_fromExchangeToWallet) {
-        _withdraw(exchangeAddress);
+        _withdraw();
       } else {
+        var ret = await _exchangeApi.getAddress(_selectedCoinType);
+        var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
     } catch (e) {
@@ -697,18 +702,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _withdraw(String address) async {
+  _withdraw() async {
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    ).getCoinVoBySymbol(
-      _selectedCoinType,
-    );
+    ).getCoinVoBySymbol(_selectedCoinType);
+
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}&exchangeAddress=$address',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}',
     );
   }
 }

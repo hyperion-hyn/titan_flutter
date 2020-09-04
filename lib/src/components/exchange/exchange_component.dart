@@ -56,7 +56,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
       listener: (context, state) async {
         if (state is LoginState) {
           try {
-            var ret = await _exchangeApi.walletSignLogin(
+            var ret = await _exchangeApi.walletLogin(
                 wallet: state.wallet,
                 password: state.password,
                 address: state.address);

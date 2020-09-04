@@ -166,7 +166,6 @@ var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeWithdrawConfirmPage(
     params['coinVo']?.first,
     '${params['transferAmount']?.first ?? 0}',
-    params['exchangeAddress']?.first,
   );
 });
 

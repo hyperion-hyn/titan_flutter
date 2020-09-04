@@ -13,6 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -40,6 +41,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  ExchangeApi _exchangeApi = ExchangeApi();
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
@@ -67,6 +69,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   @override
   void initState() {
     super.initState();
+
+    _getBannerList();
   }
 
   @override
@@ -164,8 +168,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       _getMarketItem(_selectedCoin)?.kLineEntity?.close,
       4,
     );
-    if (_hynToSelectedCoin != null && _hynToSelectedCoin != "null" && double.parse(_hynToSelectedCoin) > 0) {
-      print("_hynToSelectedCoin:$_hynToSelectedCoin, ${_hynToSelectedCoin == "null"}");
+    if (_hynToSelectedCoin != null &&
+        _hynToSelectedCoin != "null" &&
+        double.parse(_hynToSelectedCoin) > 0) {
+      print(
+          "_hynToSelectedCoin:$_hynToSelectedCoin, ${_hynToSelectedCoin == "null"}");
 
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
             Decimal.fromInt(1) /
@@ -831,6 +838,11 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         ],
       ),
     );
+  }
+
+  _getBannerList() async {
+    var ret = await _exchangeApi.bannerList();
+    print('[BannerList] $ret');
   }
 
   _divider() {

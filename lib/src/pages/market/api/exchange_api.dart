@@ -27,7 +27,7 @@ class ExchangeHttp extends BaseHttpCore {
       : super(
           Dio(
             BaseOptions(
-              baseUrl: Const.EXCHANGE_DOMAIN,
+              baseUrl: ExchangeConst.EXCHANGE_DOMAIN,
               contentType: 'application/x-www-form-urlencoded',
             ),
           )..interceptors.add(CookieManager(CookieJar())), //cookie 存在内存而已
@@ -82,39 +82,55 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> bannerList() async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_BANNER_LIST,
+      null,
+      params: {},
+    );
+  }
+
   ///使用钱包注册/登录
-  Future<dynamic> walletSignLogin({
+  Future<dynamic> walletLogin({
     Wallet wallet,
     String password,
     String address,
   }) async {
-    //get a seed
-    /*var seed = await _getAccessSeed(
-      address,
-      ExchangeConst.PATH_LOGIN_REGISTER,
-    );*/
-    var seed = Random().nextInt(0xfffffffe).toString();
-    var ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
-    var params = {
-      'address': address,
-      'seed': seed,
-      'ts': ts,
-    };
-    //sign request with seed
-    var signed = await Signer.signApi(
+    return await walletSignAndPost(
+      path: ExchangeConst.PATH_LOGIN_REGISTER,
+      wallet: wallet,
+      password: password,
+      address: address,
+    );
+  }
+
+  ///Post with Sign
+  Future<dynamic> walletSignAndPost({
+    String path,
+    Wallet wallet,
+    String password,
+    String address,
+    Map<String, dynamic> params,
+  }) async {
+    var _params = params ?? {};
+    _params['address'] = address;
+    _params['seed'] = Random().nextInt(0xfffffffe).toString();
+    _params['ts'] = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+
+    var signed = await Signer.signApiWithWallet(
       wallet,
       password,
       'POST',
       Const.EXCHANGE_DOMAIN.split('//')[1],
-      ExchangeConst.PATH_LOGIN_REGISTER,
-      params,
+      path,
+      _params,
     );
-    params['sign'] = signed;
+    _params['sign'] = signed;
 
     return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_LOGIN_REGISTER,
+      path,
       null,
-      params: params,
+      params: _params,
     );
   }
 
@@ -145,7 +161,7 @@ class ExchangeApi {
     });
   }
 
-  Future<ResponseEntity> withdraw(
+  Future<dynamic> withdraw(
     Wallet wallet,
     String password,
     String address,
@@ -153,37 +169,16 @@ class ExchangeApi {
     String outerAddress,
     String balance,
   ) async {
-    //get a seed
-    /*var seed = await _getAccessSeed(
-      address,
-      ExchangeConst.PATH_WITHDRAW,
-    );*/
-    var seed = Random().nextInt(0xfffffffe).toString();
-    var ts = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
-    var params = {
-      'type': type,
-      'outer_address': outerAddress,
-      'balance': balance,
-      'address': address,
-      'seed': seed,
-      'ts': ts,
-    };
-    //sign request with seed
-    var signed = await Signer.signApi(
-      wallet,
-      password,
-      'POST',
-      Const.EXCHANGE_DOMAIN.split('//')[1],
-      ExchangeConst.PATH_WITHDRAW,
-      params,
-    );
-    params['sign'] = signed;
-
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_WITHDRAW,
-      null,
-      params: params,
-    );
+    return await walletSignAndPost(
+        path: ExchangeConst.PATH_WITHDRAW,
+        wallet: wallet,
+        password: password,
+        address: address,
+        params: {
+          'type': type,
+          'outer_address': outerAddress,
+          'balance': balance,
+        });
   }
 
   Future<dynamic> getAddress(String type) async {

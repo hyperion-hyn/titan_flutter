@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -191,7 +192,7 @@ class ExchangeTransferHistoryListPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '交易账户到钱包',
+                  assetHistory.name == 'recharge' ? '交易账户到钱包' : '钱包到交易账户',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -221,7 +222,7 @@ class ExchangeTransferHistoryListPageState
                                   height: 4.0,
                                 ),
                                 Text(
-                                  "${assetHistory.balance}",
+                                  "${Decimal.parse(assetHistory.balance)}",
                                   style: TextStyle(
                                       color: DefaultColors.color333,
                                       fontWeight: FontWeight.w500,
@@ -250,7 +251,7 @@ class ExchangeTransferHistoryListPageState
                             height: 4.0,
                           ),
                           Text(
-                            '${assetHistory.fee}',
+                            '${Decimal.parse(assetHistory.fee)}',
                             style: TextStyle(
                               color: DefaultColors.color333,
                               fontWeight: FontWeight.w500,
@@ -275,20 +276,15 @@ class ExchangeTransferHistoryListPageState
                           SizedBox(
                             height: 4.0,
                           ),
-                          Row(
-                            children: <Widget>[
-                              Spacer(),
-                              Text(
-                                FormatUtil.formatMarketOrderDate(
-                                  assetHistory.ctime,
-                                ),
-                                style: TextStyle(
-                                  color: DefaultColors.color333,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            assetHistory.ctime,
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: DefaultColors.color333,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
