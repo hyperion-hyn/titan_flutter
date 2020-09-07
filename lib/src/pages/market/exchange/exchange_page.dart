@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,12 +15,15 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -38,6 +42,7 @@ class ExchangePage extends StatefulWidget {
 class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.BUY;
+
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -70,7 +75,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   void initState() {
     super.initState();
 
-    _getBannerList();
   }
 
   @override
@@ -118,47 +122,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _contentView() {
     return Column(
       children: <Widget>[
-        _banner(),
+        ExchangeBannerWidget(),
         _account(),
         _exchange(),
         _divider(),
         _quotesView(),
         _authorizedView(),
       ],
-    );
-  }
-
-  _banner() {
-    return Container(
-      color: HexColor('#0F1FB9C7'),
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            SizedBox(
-              width: 8,
-            ),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Image.asset(
-                  'res/drawable/ic_exchange_banner_msg.png',
-                  height: 15,
-                  width: 14,
-                )),
-            Expanded(
-              child: Text(
-                '由于网络拥堵，近期闪兑交易矿工费较高',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: HexColor('#FF333333'),
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 
@@ -640,7 +610,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour =
+        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity.amount,
       2,
     )}';
@@ -838,11 +809,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         ],
       ),
     );
-  }
-
-  _getBannerList() async {
-    var ret = await _exchangeApi.bannerList();
-    print('[BannerList] $ret');
   }
 
   _divider() {
