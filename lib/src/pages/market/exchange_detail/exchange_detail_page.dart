@@ -434,6 +434,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   updateTotalView() {
     if (currentPrice.toDouble() == 0 || currentNum.toDouble() == 0) {
+      totalPriceStr = "";
+      totalEditController.text = totalPriceStr;
       return;
     }
     var totalPrice = currentPrice * currentNum;
@@ -602,6 +604,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
               numEditController.text = currentNumStr;
               numEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentNumStr.length));
+            }else if(optionValue == ""){
+              currentNum = Decimal.fromInt(0);
+              currentNumStr = "";
+              numEditController.text = currentNumStr;
             }
           } else if (optionKey == contrOptionsTypeTotalPriceError) {
             totalEditController.text = totalPriceStr;
@@ -632,8 +638,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text(S.of(context).buy,
-                              style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(S.of(context).buy,
+                                  style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
+                              Text("HYN",
+                                  style: TextStyle(fontSize: 11, color: isBuy ? Colors.white : DefaultColors.color999)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -646,6 +660,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         child: Container(
                           height: 30,
                           decoration: BoxDecoration(
+
                             color: Colors.white,
                             image: DecorationImage(
                                 image: AssetImage(isBuy
@@ -654,8 +669,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 fit: BoxFit.fitWidth),
                           ),
                           alignment: Alignment.center,
-                          child: Text(S.of(context).sale,
-                              style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(S.of(context).sale,
+                                  style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                              Text("HYN",
+                                  style: TextStyle(fontSize: 11, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
