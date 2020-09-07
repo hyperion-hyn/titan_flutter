@@ -7,40 +7,44 @@
 //
 
 import Foundation
-import Mobile
+import Mobile_lib
 import RxSwift
 import SwiftKeychainWrapper
+import TrustWalletCore
 
 class EthEncryptionService: EncryptionService {
- 
-    private lazy var cipher = MobileNewCipher()
+    
+    
+    private lazy var cipher = Mobile_libNewCipher()
     
     private var _pubStr: String? = nil
     private var _expiredTime: Int64 = 0
     
-    /*
-    func generateKeyPairAndStore_old(expireAt: Int64) -> Observable<Bool> {
-        return Observable<Bool>.create { observer in
-            if let pairs = self.cipher?.genKeyPair() {
-                let ps = pairs.components(separatedBy: ",")
-                if ps.count == 2 {
-                    let extime = expireAt
-                    let isSaveSuccess: Bool = KeychainWrapper.standard.set("\(pairs),\(extime)", forKey: "savedKeyPair")
-                    if isSaveSuccess {
-                        self._pubStr = ps[1]
-                        self._expiredTime = extime
-                    }
-                    observer.onNext(isSaveSuccess)
-                    observer.onCompleted()
-                    return Disposables.create()
+    
+    var publicKey: String? {
+        get {
+            if _pubStr == nil, let savedKeyPair = KeychainWrapper.standard.string(forKey: "savedKeyPair") {
+                let ps = savedKeyPair.components(separatedBy: ",")
+                if ps.count == 3 {
+                    _pubStr = ps[1]
                 }
             }
-            observer.onNext(false)
-            observer.onCompleted()
-            return Disposables.create()
+            return _pubStr
         }
     }
-   */
+    
+    var expireTime: Int64 {
+        get {
+            if _expiredTime == 0, let savedKeyPair = KeychainWrapper.standard.string(forKey: "savedKeyPair") {
+                let ps = savedKeyPair.components(separatedBy: ",")
+                if ps.count == 3 {
+                    _expiredTime = Int64(ps[2]) ?? 0
+                }
+            }
+            return _expiredTime
+        }
+    }
+    
     
     func generateKeyPairAndStore(expireAt: Int64) -> Observable<[AnyHashable : Any]> {
         return Observable<[AnyHashable : Any]>.create { observer in
@@ -75,7 +79,7 @@ class EthEncryptionService: EncryptionService {
     
     func decrypt(privateKeyStr: String, ciphertext: String) -> Observable<String> {
         return Observable<String>.create { observer in
-           let priStr = privateKeyStr
+            let priStr = privateKeyStr
             if let message = self.cipher?.decrypt(priStr, cipherText: ciphertext) {
                 if !message.isEmpty {
                     observer.onNext(message)
@@ -88,28 +92,84 @@ class EthEncryptionService: EncryptionService {
         }
     }
     
-    
-    var publicKey: String? {
-        get {
-            if _pubStr == nil, let savedKeyPair = KeychainWrapper.standard.string(forKey: "savedKeyPair") {
-                let ps = savedKeyPair.components(separatedBy: ",")
-                if ps.count == 3 {
-                    _pubStr = ps[1]
+    func trustActiveEncrypt(password: String, fileName: String) -> Observable<String> {
+        return Observable<String>.create { observer in
+            
+            for w in WalletPluginInterface().keyStore.wallets {
+                if(w.keyURL.lastPathComponent == fileName) {
+                    do {
+                        let privateKey = try w.privateKey(password: password, coin: CoinType.ethereum)
+                        let comPublicKey = privateKey.getPublicKeySecp256k1(compressed: false).description
+                        if !comPublicKey.isEmpty {
+                            //comPublicKey = "0x\(comPublicKey)"
+                            //print("[EthEncryption] -->trustActiveEncrypt, comPublicKey:\(comPublicKey)")
+                            observer.onNext(comPublicKey)
+                        } else {
+                            observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
+                        }
+                    } catch {
+                        observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
+                    }
+                    return Disposables.create()
                 }
             }
-            return _pubStr
+            observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
+            return Disposables.create()
         }
     }
     
-    var expireTime: Int64 {
-        get {
-            if _expiredTime == 0, let savedKeyPair = KeychainWrapper.standard.string(forKey: "savedKeyPair") {
-                let ps = savedKeyPair.components(separatedBy: ",")
-                if ps.count == 3 {
-                    _expiredTime = Int64(ps[2]) ?? 0
+    func trustEncrypt(publicKeyStr: String?, message: String) -> Observable<String> {
+        return Observable<String>.create { observer in
+            //guard let tempPublicKey = self.cipher?.deCompressPubkey(publicKeyStr) else {
+            guard let tempPublicKey = publicKeyStr else {
+                observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
+                return Disposables.create()
+            }
+            
+            if let cipherText = self.cipher?.encrypt(tempPublicKey, message: message) {
+                if !cipherText.isEmpty {
+                    observer.onNext(cipherText)
+                    //print("[EthEncryption] --> trustEncrypt:\(cipherText)")
+                    observer.onCompleted()
+                    return Disposables.create()
+                }
+            } 
+            
+            observer.onError(NSError(domain: "encrypt error", code: -1, userInfo: nil))
+            return Disposables.create()
+        }
+    }
+    
+    func trustDecrypt(cipherText: String, fileName: String, password: String) -> Observable<String> {
+        return Observable<String>.create { observer in
+            
+            for w in WalletPluginInterface().keyStore.wallets {
+                if(w.keyURL.lastPathComponent == fileName) {
+                    do {
+                        let privateKey = try w.privateKey(password: password, coin: CoinType.ethereum)
+                        let priStr = privateKey.data.hexString
+                        guard let message = self.cipher?.decrypt(priStr, cipherText: cipherText) else {
+                            observer.onError(NSError(domain: "decrypt error", code: -1, userInfo: nil))
+                            return Disposables.create()
+                        }
+                        //print("[EthEncryption] --> trustDecrypt, message:\(message)")
+
+                        if !message.isEmpty {
+                            observer.onNext(message)
+                            observer.onCompleted()
+                            return Disposables.create()
+                        }
+                        observer.onError(NSError(domain: "decrypt error", code: -1, userInfo: nil))
+                    } catch {
+                        observer.onError(NSError(domain: "decrypt error", code: -1, userInfo: nil))
+                    }
+                    return Disposables.create()
                 }
             }
-            return _expiredTime
+            
+            
+            observer.onError(NSError(domain: "decrypt error", code: -1, userInfo: nil))
+            return Disposables.create()
         }
     }
     

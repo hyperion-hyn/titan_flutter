@@ -1,0 +1,8 @@
+framework module "Mobile_lib" {
+	header "ref.h"
+    header "Mobile_lib.objc.h"
+    header "Universe.objc.h"
+    header "Mobile_lib.h"
+
+    export *
+}

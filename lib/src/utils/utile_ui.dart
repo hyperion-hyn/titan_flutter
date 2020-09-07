@@ -494,6 +494,7 @@ class UiUtil {
               isShowBioAuthIcon: isShowBioAuthIcon,
               wallet: wallet,
               authType: authType,
+              onPwdSubmitted: onCheckPwdValid,
             );
           });
       var result = await onCheckPwdValid(pwd);

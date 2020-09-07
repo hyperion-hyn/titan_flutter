@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class QuotesComponent extends StatelessWidget {
@@ -35,14 +38,30 @@ class _QuotesManager extends StatefulWidget {
 class _QuotesManagerState extends State<_QuotesManager> {
   QuotesModel _quotesModel;
   QuotesSign _quotesSign;
-  GasPriceRecommend _gasPriceRecommend = GasPriceRecommend(
-      safeLow: Decimal.fromInt(EthereumConst.LOW_SPEED),
-      safeLowWait: 30,
-      average: Decimal.fromInt(EthereumConst.FAST_SPEED),
-      avgWait: 3,
-      fast: Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED),
-      fastWait: 0.5);
-  BTCGasPriceRecommend _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
+  GasPriceRecommend _gasPriceRecommend;
+  BTCGasPriceRecommend _btcGasPriceRecommend;
+
+  @override
+  void initState() {
+    initData();
+    super.initState();
+  }
+
+  void initData() async {
+    var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
+    if(gasPriceEntityStr != null){
+      _gasPriceRecommend = GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
+    }else{
+      _gasPriceRecommend = GasPriceRecommend.defaultValue();
+    }
+
+    var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
+    if(btcGasPriceEntityStr != null){
+      _btcGasPriceRecommend = BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
+    }else{
+      _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -126,11 +126,11 @@ class PositionBloc extends Bloc<PositionEvent, AllPageState> {
         var userPosition = event.userPosition;
         if (event.language.startsWith('zh')) event.language = "zh-Hans";
         var res =
-        await _positionApi.getConfirmV2Data(userPosition.longitude, userPosition.latitude, lang: event.language);
+            await _positionApi.getConfirmV2Data(userPosition.longitude, userPosition.latitude, lang: event.language);
 
         var responseEntity = ResponseEntity<UserContributionPois>.fromJson(res,
             factory: EntityFactory((json){
-              return UserContributionPois.fromJson(json);
+            return UserContributionPois.fromJson(json);
             }));
         if (responseEntity.data == null || responseEntity.code != 0) {
           yield GetConfirmDataV2ResultFailState(code: responseEntity.code, message: responseEntity.msg);

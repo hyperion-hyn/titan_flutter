@@ -32,9 +32,9 @@
 		B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 41DD00F668BA4794C96C93BA /* Pods_Runner.framework */; };
 		F5147211237EF6F500931008 /* ErrorCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5147210237EF6F500931008 /* ErrorCode.swift */; };
 		F53740FF22E83D8500ADF4FF /* EncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53740FE22E83D8500ADF4FF /* EncryptionService.swift */; };
-		F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F537410622E84F0000ADF4FF /* Mobile.framework */; };
 		F537410C22E867A000ADF4FF /* DateExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410B22E867A000ADF4FF /* DateExt.swift */; };
 		F537410E22E8683400ADF4FF /* EthEncryptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F537410D22E8683400ADF4FF /* EthEncryptionService.swift */; };
+		F5616D9524E796E40085D519 /* Mobile_lib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5616D9424E796E40085D519 /* Mobile_lib.framework */; };
 		F5B23E8F22EEE98C00745E35 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5B23E9122EEE98C00745E35 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -73,9 +73,9 @@
 		AD1B0CAE230E4F7F00C5395E /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		F5147210237EF6F500931008 /* ErrorCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorCode.swift; sourceTree = "<group>"; };
 		F53740FE22E83D8500ADF4FF /* EncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionService.swift; sourceTree = "<group>"; };
-		F537410622E84F0000ADF4FF /* Mobile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mobile.framework; sourceTree = "<group>"; };
 		F537410B22E867A000ADF4FF /* DateExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExt.swift; sourceTree = "<group>"; };
 		F537410D22E8683400ADF4FF /* EthEncryptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EthEncryptionService.swift; sourceTree = "<group>"; };
+		F5616D9424E796E40085D519 /* Mobile_lib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mobile_lib.framework; sourceTree = "<group>"; };
 		F5B23E8922EEE8C000745E35 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		F5B23E8A22EEE8C000745E35 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		F5B23E8D22EEE95E00745E35 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
@@ -90,13 +90,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F537410722E84F0000ADF4FF /* Mobile.framework in Frameworks */,
 				9AEF446523FC238200E5733F /* UMCommonLog.framework in Frameworks */,
 				9A0663F22416250D005A7C38 /* UMAnalytics.framework in Frameworks */,
 				9AEF446323FC237F00E5733F /* UMCommon.framework in Frameworks */,
 				9AEF445F23FC237400E5733F /* UserNotifications.framework in Frameworks */,
 				B754FA4F3E507D4176CE21C9 /* Pods_Runner.framework in Frameworks */,
 				9AEF446123FC237900E5733F /* UTDID.framework in Frameworks */,
+				F5616D9524E796E40085D519 /* Mobile_lib.framework in Frameworks */,
 				9AEF446723FC238400E5733F /* UMPush.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -117,8 +117,8 @@
 		60086BC032B41D70B03CA38B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F5616D9424E796E40085D519 /* Mobile_lib.framework */,
 				9AEF445D23FC22F900E5733F /* UserNotifications.framework */,
-				F537410622E84F0000ADF4FF /* Mobile.framework */,
 				41DD00F668BA4794C96C93BA /* Pods_Runner.framework */,
 			);
 			name = Frameworks;
@@ -489,7 +489,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 75NKVHX3FY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -504,7 +504,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				MARKETING_VERSION = 3.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.hyn.titan-map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -623,7 +623,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 75NKVHX3FY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -638,7 +638,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				MARKETING_VERSION = 3.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.hyn.titan-map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -657,7 +657,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				CURRENT_PROJECT_VERSION = 109;
 				DEVELOPMENT_TEAM = 75NKVHX3FY;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -672,7 +672,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				MARKETING_VERSION = 3.0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.hyn.titan-map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";

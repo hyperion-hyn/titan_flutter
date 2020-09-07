@@ -188,7 +188,7 @@
   "input_corrent_count_hint": "请输入正确的数量",
   "input_count_over_balance": "超过余额",
   "account_is_empty": "账户为空",
-  "gas_fee": "网络费用",
+  "gas_fee": "网络费用(ETH)",
   "speed_slow": "慢",
   "speed_normal": "平均值",
   "speed_fast": "快",
