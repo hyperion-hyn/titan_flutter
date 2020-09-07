@@ -21,6 +21,7 @@ import 'package:pointycastle/asymmetric/api.dart';
 import '../../../../config.dart';
 
 class ExchangeHttp extends BaseHttpCore {
+
   factory ExchangeHttp() => _getInstance();
 
   ExchangeHttp._internal()
@@ -185,34 +186,6 @@ class ExchangeApi {
     return postAndVerifySign(ExchangeConst.PATH_GET_ADDRESS, params: {
       'type': type,
     });
-  }
-
-  Future<ResponseEntity> transferAccountToExchange(
-    String type,
-    String balance,
-  ) async {
-    return await ExchangeHttp.instance.postResponseEntity(
-      ExchangeConst.PATH_TO_EXCHANGE,
-      null,
-      params: {
-        "type": type,
-        "balance": balance,
-      },
-    );
-  }
-
-  Future<ResponseEntity> transferExchangeToAccount(
-    String type,
-    String balance,
-  ) async {
-    return await ExchangeHttp.instance.postResponseEntity(
-      ExchangeConst.PATH_TO_ACCOUNT,
-      null,
-      params: {
-        "type": type,
-        "balance": balance,
-      },
-    );
   }
 
   Future<MarketInfoEntity> getMarketInfo(String market) async {

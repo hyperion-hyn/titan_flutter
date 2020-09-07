@@ -50,9 +50,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
   List<PeriodInfoEntity> _normalPeriodList = [
+    PeriodInfoEntity(name: "5分钟", value: "5min"),
     PeriodInfoEntity(name: "15分钟", value: "15min"),
     PeriodInfoEntity(name: "60分钟", value: "60min"),
-    PeriodInfoEntity(name: "5分钟", value: "5min"),
     PeriodInfoEntity(name: "1天", value: "1day")
   ];
 
@@ -64,12 +64,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     PeriodInfoEntity(name: "1月", value: "1mon"),
   ];
 
-  MainState _mainState = MainState.MA;
+//  MainState _mainState = MainState.MA;
+//  SecondaryState _secondaryState = SecondaryState.MACD;
+  MainState _mainState = MainState.NONE;
+  SecondaryState _secondaryState = SecondaryState.NONE;
 
   bool get _isOpenMainState => _mainState != MainState.NONE;
-
-  SecondaryState _secondaryState = SecondaryState.MACD;
-
   bool get _isOpenSecondaryState => _secondaryState != SecondaryState.NONE;
 
   TabController _detailTabController;
@@ -118,9 +118,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   _setupTranslate() {
     _normalPeriodList = [
+      PeriodInfoEntity(name: S.of(context).kline_period_5min, value: "5min"),
       PeriodInfoEntity(name: S.of(context).kline_period_15min, value: "15min"),
       PeriodInfoEntity(name: S.of(context).kline_period_60min, value: "60min"),
-      PeriodInfoEntity(name: S.of(context).kline_period_5min, value: "5min"),
       PeriodInfoEntity(name: S.of(context).kline_period_1day, value: "1day")
     ];
 
@@ -930,7 +930,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         DataUtil.calculate(_kChartItemList);
       }
     } else {
-      if (kLineDataList.isNotEmpty) {
+      if (kLineDataList.isNotEmpty && _kChartItemList.isNotEmpty) {
 
         var lastItem = _kChartItemList.last;
         var tempItem = kLineDataList.last;
