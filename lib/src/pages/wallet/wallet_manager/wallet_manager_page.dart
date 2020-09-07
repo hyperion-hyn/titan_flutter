@@ -204,7 +204,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                             Align(
                               alignment: Alignment.center,
                               child: walletHeaderWidget(
-                                walletKeyStore.name.characters.first,
+                                walletKeyStore.name.isEmpty?"Name is empty":walletKeyStore.name.characters.first,
                                 address: ethAccount.address,
                                 size: 52,
                                 fontSize: 20,

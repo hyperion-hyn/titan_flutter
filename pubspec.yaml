@@ -114,10 +114,11 @@ dependencies:
   app_settings: ^3.0.0
   fluro: ^1.5.1
   #https://pub:dev/packages/image_pickers#-readme-tab-
-  #  image_pickers: ^1.0.7+2
-  image_pickers:
-    git:
-      url: git@github.com:moyaying/image_pickers.git
+#  image_pickers:
+#    git:
+#      url: git@github.com:moyaying/image_pickers.git
+  image_pickers: ^1.0.7+6
+
   bordered_text: ^1.0.0
   #  video_player: ^0.10.8+1
   #  https://pub:dev/packages/flutter_echarts#-installing-tab-

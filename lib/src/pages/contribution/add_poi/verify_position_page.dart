@@ -109,7 +109,7 @@ class _VerifyPositionState extends State<VerifyPositionPage> {
         MapboxMap(
           compassEnabled: false,
           initialCameraPosition: CameraPosition(
-            target: Application.recentlyLocation,
+            target: userPosition,
             zoom: 16,
           ),
           styleString: style,

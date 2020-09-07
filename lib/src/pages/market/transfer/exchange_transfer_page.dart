@@ -138,14 +138,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         InkWell(
           onTap: () {
-            if (_fromKey.currentState.validate()) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ExchangeTransferHistoryListPage(
-                            _selectedCoinType,
-                          )));
-            }
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ExchangeTransferHistoryListPage(
+                          _selectedCoinType,
+                        )));
           },
           child: Padding(
             padding: EdgeInsets.all(16),
@@ -492,7 +490,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     }
 
                     if (!_fromExchangeToWallet) {
-                      if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
+                      if (Decimal.parse(value) >
+                          Decimal.parse(_availableAmount())) {
                         return S.of(context).input_count_over_balance;
                       }
                     }

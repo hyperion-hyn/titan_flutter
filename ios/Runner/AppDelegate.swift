@@ -1,6 +1,6 @@
 import UIKit
 import Flutter
-import Mobile
+import Mobile_lib
 import RxSwift
 import CoreBluetooth
 

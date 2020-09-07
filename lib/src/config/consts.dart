@@ -117,6 +117,9 @@ class PrefsKey {
 
   //contribution
   static const String VERIFY_DATE = 'verify_date';
+
+  static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
+  static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
 }
 
 class SecurePrefsKey {
@@ -128,6 +131,8 @@ class SecurePrefsKey {
 
   ///complete key:  WALLET_P2P_PUB_KEY_PREFIX + wallet.getEthAccount().address
   static final String WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
+  static final String WALLET_P2P_DECOMP_PUB_KEY_PREFIX = 'wallet_p2p_decomp_pub_key_';
+
 }
 
 enum Status { idle, loading, success, failed, cancelled }

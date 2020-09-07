@@ -58,51 +58,119 @@ class SupportedQuoteSigns {
   }
 }
 
-class GasPriceRecommend {
-  final Decimal fast;
-  final double fastWait;
+@JsonSerializable()
+class GasPriceRecommend extends Object {
 
-  final Decimal average;
-  final double avgWait;
-
-  final Decimal safeLow;
-  final double safeLowWait;
-
-  GasPriceRecommend({
-    this.average,
-    this.fast,
-    this.safeLow,
-    this.avgWait,
-    this.fastWait,
-    this.safeLowWait,
-  });
-}
-
-class BTCGasPriceRecommend {
+  @JsonKey(name: 'fast')
   Decimal fast;
+
+  @JsonKey(name: 'fastWait')
   double fastWait;
 
+  @JsonKey(name: 'average')
   Decimal average;
+
+  @JsonKey(name: 'avgWait')
   double avgWait;
 
+  @JsonKey(name: 'safeLow')
   Decimal safeLow;
+
+  @JsonKey(name: 'safeLowWait')
   double safeLowWait;
 
-  BTCGasPriceRecommend({
-    this.safeLow,
-    this.average,
-    this.fast,
-    this.safeLowWait,
-    this.avgWait,
-    this.fastWait,
-  });
+  GasPriceRecommend(this.fast,this.fastWait,this.average,this.avgWait,this.safeLow,this.safeLowWait,);
+
+  factory GasPriceRecommend.fromJson(Map<String, dynamic> srcJson) => _$GasPriceRecommendFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$GasPriceRecommendToJson(this);
+
+  GasPriceRecommend.defaultValue() {
+    this.fast = Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED);
+    this.average = Decimal.fromInt(EthereumConst.FAST_SPEED);
+    this.safeLow = Decimal.fromInt(EthereumConst.LOW_SPEED);
+    this.fastWait = 0.5;
+    this.avgWait = 3;
+    this.safeLowWait = 30;
+  }
+
+}
+
+GasPriceRecommend _$GasPriceRecommendFromJson(Map<String, dynamic> json) {
+  return GasPriceRecommend(
+    Decimal.parse(json['fast']),
+    (json['fastWait'] as num)?.toDouble(),
+    Decimal.parse(json['average']),
+    (json['avgWait'] as num)?.toDouble(),
+    Decimal.parse(json['safeLow']),
+    (json['safeLowWait'] as num)?.toDouble(),
+  );
+}
+
+Map<String, dynamic> _$GasPriceRecommendToJson(GasPriceRecommend instance) =>
+    <String, dynamic>{
+      'fast': instance.fast.toString(),
+      'fastWait': instance.fastWait,
+      'average': instance.average.toString(),
+      'avgWait': instance.avgWait,
+      'safeLow': instance.safeLow.toString(),
+      'safeLowWait': instance.safeLowWait,
+    };
+
+@JsonSerializable()
+class BTCGasPriceRecommend extends Object {
+
+  @JsonKey(name: 'fast')
+  Decimal fast;
+
+  @JsonKey(name: 'fastWait')
+  double fastWait;
+
+  @JsonKey(name: 'average')
+  Decimal average;
+
+  @JsonKey(name: 'avgWait')
+  double avgWait;
+
+  @JsonKey(name: 'safeLow')
+  Decimal safeLow;
+
+  @JsonKey(name: 'safeLowWait')
+  double safeLowWait;
+
+  BTCGasPriceRecommend(this.fast,this.fastWait,this.average,this.avgWait,this.safeLow,this.safeLowWait,);
+
+  factory BTCGasPriceRecommend.fromJson(Map<String, dynamic> srcJson) => _$BTCGasPriceRecommendFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$BTCGasPriceRecommendToJson(this);
 
   BTCGasPriceRecommend.defaultValue(){
-    this.safeLow = Decimal.fromInt(BitcoinConst.BTC_LOW_SPEED);
-    this.average = Decimal.fromInt(BitcoinConst.BTC_FAST_SPEED);
     this.fast = Decimal.fromInt(BitcoinConst.BTC_SUPER_FAST_SPEED);
-    this.safeLowWait = 70;
-    this.avgWait = 45;
+    this.average = Decimal.fromInt(BitcoinConst.BTC_FAST_SPEED);
+    this.safeLow = Decimal.fromInt(BitcoinConst.BTC_LOW_SPEED);
     this.fastWait = 15;
+    this.avgWait = 45;
+    this.safeLowWait = 70;
   }
 }
+
+BTCGasPriceRecommend _$BTCGasPriceRecommendFromJson(Map<String, dynamic> json) {
+  return BTCGasPriceRecommend(
+    Decimal.parse(json['fast']),
+    (json['fastWait'] as num)?.toDouble(),
+    Decimal.parse(json['average']),
+    (json['avgWait'] as num)?.toDouble(),
+    Decimal.parse(json['safeLow']),
+    (json['safeLowWait'] as num)?.toDouble(),
+  );
+}
+
+Map<String, dynamic> _$BTCGasPriceRecommendToJson(BTCGasPriceRecommend instance) =>
+    <String, dynamic>{
+      'fast': instance.fast.toString(),
+      'fastWait': instance.fastWait,
+      'average': instance.average.toString(),
+      'avgWait': instance.avgWait,
+      'safeLow': instance.safeLow.toString(),
+      'safeLowWait': instance.safeLowWait,
+    };

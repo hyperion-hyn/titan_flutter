@@ -14,7 +14,7 @@ class WalletPluginInterface {
     
     //    private lazy var keyStoreDir: URL = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("keystore")
     
-    private lazy var keyStoreDir: URL = {
+    lazy var keyStoreDir: URL = {
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let cachesDir = paths[0]
         let keyStore = NSString(string: cachesDir).appendingPathComponent("keystore")
@@ -37,7 +37,7 @@ class WalletPluginInterface {
         return URL(fileURLWithPath: keyStore)
     }()
     
-    private lazy var keyStore: KeyStore = try! KeyStore(keyDirectory: keyStoreDir)
+    lazy var keyStore: KeyStore = try! KeyStore(keyDirectory: keyStoreDir)
     
     func setMethodCallHandler(methodCall: FlutterMethodCall, result: FlutterResult) -> Bool {
         switch(methodCall.method) {
@@ -198,7 +198,7 @@ class WalletPluginInterface {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
                         try updateKeyStor(name: name ?? w.key.name, wallet: w, password: oldPassword, newPassword: newPassword)
-                        //                        try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
+//                      try keyStore.update(wallet: w, password: oldPassword, newPassword: newPassword)
                         let success = w.key.store(path: w.keyURL.path)
                         print("is store success \(success)")
                         result(w.keyURL.lastPathComponent)
@@ -229,7 +229,7 @@ class WalletPluginInterface {
                 if(w.keyURL.lastPathComponent == fileName) {
                     do {
                         let privateKey = try w.privateKey(password: password, coin: coin)
-                        //                        let prvData = try keyStore.exportPrivateKey(wallet: w, password: password)
+//                        let prvData = try keyStore.exportPrivateKey(wallet: w, password: password)
                         result(privateKey.data.hexString)
                     } catch {
                         print("export private key error: \(error)")

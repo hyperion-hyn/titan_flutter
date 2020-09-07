@@ -90,6 +90,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
     super.dispose();
   }
 
+  final _walletNameKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,17 +127,19 @@ class _WalletSettingState extends State<WalletSettingPage> {
           height: double.infinity,
           color: Colors.white,
           child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 36),
-                  child: Stack(
-                    children: <Widget>[
-                      walletHeaderWidget(
-                          widget.wallet.keystore.name.characters.first,
-                          size: 64,
-                          fontSize: 20,
-                          address: widget.wallet.getEthAccount()?.address),
+            child: Form(
+              key: _walletNameKey,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 36),
+                    child: Stack(
+                      children: <Widget>[
+                        walletHeaderWidget(
+                            widget.wallet.keystore.name.isEmpty ? "" : widget.wallet.keystore.name.characters.first,
+                            size: 64,
+                            fontSize: 20,
+                            address: widget.wallet.getEthAccount()?.address),
 //                      Positioned(
 //                          right: 6,
 //                          bottom: 6,
@@ -143,44 +147,43 @@ class _WalletSettingState extends State<WalletSettingPage> {
 //                            'res/drawable/ic_edit.png',
 //                            height: 12,
 //                          )),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                _divider(),
-                _walletInfo(),
-                _divider(),
-                _bioAuthOptions(),
-                _backUpOptions(),
-                SizedBox(
-                  height: 36,
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                  constraints: BoxConstraints.expand(height: 44),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30)),
-                    disabledColor: Colors.grey[600],
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                    disabledTextColor: Colors.white,
-                    onPressed: _hasChangeProperties ? updateWalletV2 : null,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            S.of(context).save_update,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 16),
-                          ),
-                        ],
+                  _divider(),
+                  _walletInfo(),
+                  _divider(),
+                  _bioAuthOptions(),
+                  _backUpOptions(),
+                  SizedBox(
+                    height: 36,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    constraints: BoxConstraints.expand(height: 44),
+                    child: RaisedButton(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      disabledColor: Colors.grey[600],
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      disabledTextColor: Colors.white,
+                      onPressed: _hasChangeProperties ? updateWalletV2 : null,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              S.of(context).save_update,
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -225,10 +228,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   LengthLimitingTextInputFormatter(6),
                 ],
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30)),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
                 keyboardType: TextInputType.text),
           ),
@@ -241,8 +242,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
               return GestureDetector(
                 onTap: () {
                   if (widget.wallet.getEthAccount().address.isNotEmpty) {
-                    Clipboard.setData(ClipboardData(
-                        text: widget.wallet.getEthAccount().address));
+                    Clipboard.setData(ClipboardData(text: widget.wallet.getEthAccount().address));
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
                       S.of(context).wallet_address_copied,
@@ -347,8 +347,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Divider(),
           InkWell(
             onTap: () {
-              var walletStr =
-                  FluroConvertUtils.object2string(widget.wallet.toJson());
+              var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -391,19 +390,28 @@ class _WalletSettingState extends State<WalletSettingPage> {
   }
 
   void updateWalletV2() async {
-    var password =
-        await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
+    if (!_walletNameKey.currentState.validate()) {
+      UiUtil.toast(S.of(context).please_input_wallet_name);
+      return;
+    }
+
+    var newName = _walletNameController.text;
+
+    /*if (newName.isEmpty || newName == "null" || newName == null) {
+      UiUtil.toast("钱包名称不能为空");
+      return;
+    }
+    */
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
     if (password != null) {
       try {
-        var newName = _walletNameController.text;
         if (_focusNode.hasFocus) {
           _focusNode.unfocus();
         }
-        var success = await WalletUtil.updateWallet(
-            wallet: widget.wallet, password: password, name: newName);
+        var success = await WalletUtil.updateWallet(wallet: widget.wallet, password: password, name: newName);
         if (success == true) {
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: widget.wallet));
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast(S.of(context).update_success);
 //          await UiUtil.showSetBioAuthDialog(
 //            context,
@@ -462,15 +470,12 @@ class _WalletSettingState extends State<WalletSettingPage> {
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
         List<Wallet> walletList = await WalletUtil.scanWallets();
-        var activatedWalletVo = WalletInheritedModel.of(context,
-            aspect: WalletAspect.activatedWallet);
+        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
 
-        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
-                widget.wallet.keystore.fileName &&
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName == widget.wallet.keystore.fileName &&
             walletList.length > 0) {
           //delete current wallet
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: walletList[0]));
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
@@ -478,8 +483,7 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(ActiveWalletEvent(wallet: null));
+          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
           Routes.cachedEntryRouteName = null;
           Routes.popUntilCachedEntryRouteName(context);
         }

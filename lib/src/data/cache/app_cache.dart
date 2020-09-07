@@ -17,7 +17,7 @@ class AppCache {
       case bool:
         return prefs.setBool(key, value as bool);
       case List:
-        return prefs.setStringList(key, value as List<String>);
+        return prefs.setStringList(key, List.generate((value as List).length, (index) => (value as List)[index].toString()).toList());
     }
     return false;
   }
