@@ -250,7 +250,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               ),
               Spacer(),
               ClickOvalIconButton(
-                '交易',
+                S.of(context).exchange_trade,
                 () {
                   Navigator.push(
                       context,
@@ -297,7 +297,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   Expanded(
                     flex: 1,
                     child: Text(
-                      '24H 量 ${FormatUtil.truncateDoubleNum(_getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ?? '--'}',
+                      '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(_getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ?? '--'}',
                       style: TextStyle(
                         color: HexColor('#FF999999'),
                         fontSize: 12,
@@ -309,7 +309,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '最新兑换1HYN  — $_hynToSelectedCoin $_selectedCoin',
+                        '${S.of(context).exchange_latest_quote}1HYN  — $_hynToSelectedCoin $_selectedCoin',
                         style: TextStyle(
                           color: HexColor('#FF999999'),
                           fontSize: 12,
@@ -380,7 +380,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                         ),
             ),
             Text(
-              '交易账户',
+              S.of(context).exchange_account,
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 16,
@@ -444,7 +444,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       );
     } else {
       return Text(
-        '未登录',
+        S.of(context).exchange_logged_out,
         style: TextStyle(
           color: HexColor('#FF1F81FF'),
         ),
@@ -572,7 +572,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    '名称',
+                    S.of(context).exchange_name,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
@@ -586,7 +586,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       child: InkWell(
                         onTap: () {},
                         child: Text(
-                          '最新价',
+                          S.of(context).exchange_latest_quote,
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
@@ -604,7 +604,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Center(
                           child: Text(
-                            '涨跌幅',
+                            S.of(context).exchange_change_percentage,
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -640,7 +640,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour = '24H量 ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity.amount,
       2,
     )}';

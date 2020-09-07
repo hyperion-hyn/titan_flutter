@@ -128,7 +128,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         Expanded(
           child: Text(
-            '划转',
+            S.of(context).exchange_transfer,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18,
@@ -163,7 +163,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
         child: Text(
-          '交易账户',
+          S.of(context).exchange_account,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Row(
           children: <Widget>[
             Text(
-              '钱包',
+              S.of(context).wallet,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -250,7 +250,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          '从',
+                          S.of(context).exchange_from,
                           style: TextStyle(
                             color: HexColor('#FF777777'),
                           ),
@@ -265,7 +265,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     Row(
                       children: <Widget>[
                         Text(
-                          '到',
+                          S.of(context).exchange_to,
                           style: TextStyle(
                             color: HexColor('#FF777777'),
                           ),
@@ -308,7 +308,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16),
           child: Text(
-            '币种',
+            S.of(context).coin_type,
             style: TextStyle(
               fontWeight: FontWeight.w500,
             ),
@@ -369,7 +369,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     padding: const EdgeInsets.all(16.0),
                     child: Center(
                       child: Text(
-                        '取消',
+                        S.of(context).cancel,
                         style: TextStyle(
                           color: HexColor('#FF777777'),
                         ),
@@ -399,7 +399,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            '划转',
+            S.of(context).exchange_transfer,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -498,7 +498,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
                     if (Decimal.parse(value) <
                         Decimal.parse(_minTransferAmount)) {
-                      return '少于最小划转数';
+                      return S.of(context).exchange_transfer_less_than_min;
                     }
 
                     return null;
@@ -515,7 +515,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                           borderSide: BorderSide(
                         color: HexColor('#FFD7D7D7'),
                       )),
-                      hintText: '请输入划转数量',
+                      hintText: S.of(context).exchange_transfer_input_amount,
                       hintStyle: TextStyle(
                         color: HexColor('#FF999999'),
                         fontSize: 12,
@@ -540,7 +540,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                               ),
                               InkWell(
                                 child: Text(
-                                  '全部',
+                                  S.of(context).all,
                                   style: TextStyle(
                                       color: HexColor('#FF333333'),
                                       fontSize: 12,
@@ -573,7 +573,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         Row(
           children: <Widget>[
             Text(
-              '最小划转数 $_minTransferAmount $_selectedCoinType',
+              '${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType',
               style: TextStyle(
                 color: HexColor('#FFAAAAAA'),
                 fontSize: 12,
@@ -582,7 +582,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: _fromExchangeToWallet ? '账户余额 ' : '钱包余额 ',
+                text: _fromExchangeToWallet
+                    ? S.of(context).exchange_account_balance
+                    : S.of(context).exchange_wallet_balance,
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -610,7 +612,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         if (_fromExchangeToWallet)
           Text(
-            '手续费 $_withdrawFee $_selectedCoinType',
+            '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType',
             style: TextStyle(
               color: HexColor('#FFAAAAAA'),
               fontSize: 12,
@@ -639,8 +641,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             _fromExchangeToWallet
-                ? '从交易账户划转到钱包账户每笔需要收取 $_withdrawFee $_selectedCoinType手续费'
-                : '从钱包账户划转到交易账户，需要等待整个网络的确认，大约需要15-30分钟。',
+                ? S.of(context).exchange_transfer_hint_account_to_wallet(
+                      _withdrawFee,
+                      _selectedCoinType,
+                    )
+                : S.of(context).exchange_transfer_hint_wallet_to_exchange,
             style: TextStyle(
               color: HexColor('#FF777777'),
               fontSize: 14,

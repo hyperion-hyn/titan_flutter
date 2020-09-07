@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -68,7 +69,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           color: Colors.black,
         ),
         title: Text(
-          '交易账户',
+          S.of(context).exchange_account,
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         actions: [
@@ -77,24 +78,21 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             width: 12,
             height: 12,
           ),
-
           Padding(
             padding: EdgeInsets.only(right: 16.0, left: 8.0),
             child: Align(
               alignment: Alignment.center,
               child: InkWell(
                 child: Text(
-                  '交易记录',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: DefaultColors.color999
-                  ),
+                  S.of(context).exchange_order_history,
+                  style: TextStyle(fontSize: 13, color: DefaultColors.color999),
                 ),
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ExchangeOrderManagementPage('')));
+                          builder: (context) =>
+                              ExchangeOrderManagementPage('')));
                 },
               ),
             ),
@@ -153,7 +151,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '交易账户总资产估值',
+                      S.of(context).exchange_total_balance,
                       style: TextStyle(
                           fontSize: 12.0, color: HexColor('FF999999')),
                     ),
@@ -209,19 +207,22 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         width: 120,
                         child: OutlineButton(
                           child: Text(
-                            '划转',
+                            S.of(context).exchange_transfer,
                             style: TextStyle(color: HexColor('#FF1095B0')),
                           ),
                           onPressed: () {
                             Application.router.navigateTo(
-                                context, Routes.exchange_transfer_page);
+                              context,
+                              Routes.exchange_transfer_page,
+                            );
                           },
                           borderSide: BorderSide(
                             color: HexColor('#FF1095B0'),
                             width: 1,
                           ),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0)),
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
                         ),
                       )
                     ],
@@ -292,7 +293,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
       return Container(
         height: 200,
         child: Center(
-          child: Text('暂无记录'),
+          child: Text(S.of(context).exchange_empty_list),
         ),
       );
     }
@@ -345,8 +346,8 @@ class AssetItemState extends State<AssetItem> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    ExchangeAssetHistoryPage(widget._symbol)));
+              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
+            ));
       },
       child: Column(
         children: <Widget>[
@@ -400,7 +401,7 @@ class AssetItemState extends State<AssetItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '可用',
+                              S.of(context).exchange_available,
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -431,7 +432,7 @@ class AssetItemState extends State<AssetItem> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        '冻结',
+                        S.of(context).exchange_frozen,
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
@@ -446,7 +447,9 @@ class AssetItemState extends State<AssetItem> {
                                 .toString()
                             : '*****',
                         style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 12),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),

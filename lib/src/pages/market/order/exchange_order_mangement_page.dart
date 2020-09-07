@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -85,17 +86,17 @@ class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPag
                         tabs: [
                           Tab(
                             child: Text(
-                              '全部委托',
+                              S.of(context).exchange_order_list_active,
                             ),
                           ),
                           Tab(
                             child: Text(
-                              '历史记录',
+                              S.of(context).exchange_order_list_history,
                             ),
                           ),
                           Tab(
                             child: Text(
-                              '成交明细',
+                              S.of(context).exchange_order_list_history,
                             ),
                           )
                         ],

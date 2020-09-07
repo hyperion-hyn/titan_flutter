@@ -21,7 +21,6 @@ import 'package:pointycastle/asymmetric/api.dart';
 import '../../../../config.dart';
 
 class ExchangeHttp extends BaseHttpCore {
-
   factory ExchangeHttp() => _getInstance();
 
   ExchangeHttp._internal()

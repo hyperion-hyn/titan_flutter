@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/market/order/entity/order_detail.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -81,7 +82,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '时间',
+                          S.of(context).exchange_order_time,
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -115,7 +116,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '方式',
+                                S.of(context).exchange_order_method,
                                 style: TextStyle(
                                   color: DefaultColors.color999,
                                   fontSize: 12,
@@ -144,7 +145,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '成交价($_quote)',
+                          '${S.of(context).exchange_deal_price}($_quote)',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -182,7 +183,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          '成交量($_base)',
+                          '${S.of(context).exchange_deal_amount}($_base)',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,
@@ -212,7 +213,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              '成交额($_quote)',
+                              '${S.of(context).exchange_deal_total}($_quote)',
                               style: TextStyle(
                                 color: DefaultColors.color999,
                                 fontSize: 12,
@@ -240,7 +241,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '手续费(${_isBuy ? _base : _quote})',
+                          '${S.of(context).exchange_fee}(${_isBuy ? _base : _quote})',
                           style: TextStyle(
                             color: DefaultColors.color999,
                             fontSize: 12,

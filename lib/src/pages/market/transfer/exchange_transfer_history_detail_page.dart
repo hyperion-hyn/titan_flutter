@@ -56,7 +56,7 @@ class _ExchangeTransferHistoryDetailPageState
             color: Colors.black,
           ),
           title: Text(
-            '详情',
+            S.of(context).exchange_detail,
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
       body: Container(
@@ -66,7 +66,7 @@ class _ExchangeTransferHistoryDetailPageState
           child: Column(
             children: <Widget>[
               _item(
-                '类型',
+                S.of(context).exchange_type,
                 Text(
                   widget._assetHistory.getTypeText(),
                   style: TextStyle(
@@ -75,7 +75,7 @@ class _ExchangeTransferHistoryDetailPageState
                 ),
               ),
               _item(
-                '数量',
+                S.of(context).exchange_amount,
                 Text.rich(TextSpan(children: [
                   TextSpan(
                       text: '${Decimal.parse(widget._assetHistory.balance)}',
@@ -88,7 +88,7 @@ class _ExchangeTransferHistoryDetailPageState
                 ])),
               ),
               _item(
-                '网络费用',
+                S.of(context).exchange_network_fee,
                 Text.rich(TextSpan(children: [
                   TextSpan(
                       text: '${Decimal.parse(widget._assetHistory.fee)}',
@@ -112,7 +112,7 @@ class _ExchangeTransferHistoryDetailPageState
                 ),
               ),
               _item(
-                '区块链交易ID',
+                '${'区块链交易'}ID',
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[

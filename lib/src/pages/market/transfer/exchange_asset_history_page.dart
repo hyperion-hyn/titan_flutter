@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -87,7 +88,7 @@ class _ExchangeAssetHistoryPageState
             color: Colors.black,
           ),
           title: Text(
-            '财务记录',
+            S.of(context).exchange_asset_history,
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
       body: Container(
@@ -136,7 +137,7 @@ class _ExchangeAssetHistoryPageState
                 height: 16,
               ),
               Text(
-                '暂无记录',
+                S.of(context).exchange_empty_list,
                 style: TextStyle(
                   color: HexColor('#FF999999'),
                 ),
@@ -245,7 +246,7 @@ class _ExchangeAssetHistoryPageState
             height: 16,
           ),
           Text(
-            assetHistory.name == 'recharge' ? '钱包到交易账户' : '交易账户到钱包',
+            assetHistory.getTypeText(),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,

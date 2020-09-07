@@ -148,7 +148,7 @@ class _ExchangeDepositConfirmPageState
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: Text(
-          '划转确认',
+          S.of(context).exchange_transfer_confirmation,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -268,7 +268,7 @@ class _ExchangeDepositConfirmPageState
                       Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
-                            '交易账户',
+                            S.of(context).exchange_account,
                             style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFF333333),
