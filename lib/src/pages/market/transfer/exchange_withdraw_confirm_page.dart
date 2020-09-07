@@ -79,7 +79,7 @@ class _ExchangeWithdrawConfirmPageState
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: Text(
-          '划转确认',
+          S.of(context).exchange_transfer_confirmation,
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -132,7 +132,7 @@ class _ExchangeWithdrawConfirmPageState
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          "From",
+                          S.of(context).exchange_from,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -145,7 +145,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '交易账户',
+                                S.of(context).exchange_account,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -177,7 +177,7 @@ class _ExchangeWithdrawConfirmPageState
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          "To",
+                          S.of(context).exchange_to,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -230,7 +230,7 @@ class _ExchangeWithdrawConfirmPageState
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          "手续费",
+                          S.of(context).exchange_fee,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,

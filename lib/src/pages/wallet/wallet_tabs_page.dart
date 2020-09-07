@@ -77,47 +77,47 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                         ),
                         Tab(
                           child: Text(
-                            '交易',
+                            S.of(context).exchange,
                             style: TextStyle(),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Positioned(
-                    right: 16.0,
-                    top: 16.0,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WebViewContainer(
-                                      initUrl: Const.POI_POLICY,
-                                      title: S.of(context).poi_upload_protocol,
-                                    )));
-                      },
-                      child: Row(
-                        children: <Widget>[
-                          Image.asset(
-                            'res/drawable/ic_wallet_qualification.png',
-                            height: 16,
-                            width: 16,
-                          ),
-                          SizedBox(
-                            width: 8.0,
-                          ),
-                          Text(
-                            '资质',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
+//                  Positioned(
+//                    right: 16.0,
+//                    top: 16.0,
+//                    child: InkWell(
+//                      onTap: () {
+//                        Navigator.push(
+//                            context,
+//                            MaterialPageRoute(
+//                                builder: (context) => WebViewContainer(
+//                                      initUrl: Const.POI_POLICY,
+//                                      title: S.of(context).poi_upload_protocol,
+//                                    )));
+//                      },
+//                      child: Row(
+//                        children: <Widget>[
+//                          Image.asset(
+//                            'res/drawable/ic_wallet_qualification.png',
+//                            height: 16,
+//                            width: 16,
+//                          ),
+//                          SizedBox(
+//                            width: 8.0,
+//                          ),
+//                          Text(
+//                            '资质',
+//                            style: TextStyle(
+//                              color: Colors.black,
+//                              fontSize: 14,
+//                            ),
+//                          )
+//                        ],
+//                      ),
+//                    ),
+//                  )
                 ],
               ),
             ),

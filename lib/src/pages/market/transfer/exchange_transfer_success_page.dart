@@ -44,7 +44,7 @@ class _ExchangeTransferSuccessPageState
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      '广播成功',
+                      S.of(context).broadcase_success,
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
@@ -53,7 +53,7 @@ class _ExchangeTransferSuccessPageState
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      '已在区块链上网络广播 【资金划转】的消息，区块链网络需要5-30分钟开采验证',
+                      S.of(context).transfer_broadcase_success_description,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF9B9B9B),

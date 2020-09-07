@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/config/consts.dart';
 
 part 'asset_history.g.dart';
 
@@ -34,11 +36,11 @@ class AssetHistory extends Object {
   String getTypeText() {
     switch (name ?? '') {
       case 'recharge':
-        return '钱包到交易账户';
+        return S.of(Keys.rootKey.currentContext).exchange_wallet_to_exchange;
       case 'withdraw':
-        return '交易账户到钱包';
+        return S.of(Keys.rootKey.currentContext).exchange_to_wallet;
       case 'running':
-        return '系统赠币';
+        return S.of(Keys.rootKey.currentContext).exchange_system_bonus;
       default:
         return '-';
     }

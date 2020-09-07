@@ -58,7 +58,9 @@ class OrderItemState extends State<OrderItem> {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: _isBuy ? "买入 " : "卖出 ",
+                        text: _isBuy
+                            ? "${S.of(context).exchange_buy} "
+                            : "${S.of(context).exchange_sell} ",
                         style: TextStyle(
                           fontSize: 16,
                           color: widget._order.side == '1'

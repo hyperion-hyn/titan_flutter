@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -80,7 +81,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
                 height: 16,
               ),
               Text(
-                '暂无记录',
+                S.of(context).exchange_empty_list,
                 style: TextStyle(
                   color: HexColor('#FF999999'),
                 ),
