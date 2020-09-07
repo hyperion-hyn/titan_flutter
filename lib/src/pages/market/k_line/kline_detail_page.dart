@@ -930,7 +930,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         DataUtil.calculate(_kChartItemList);
       }
     } else {
-      if (kLineDataList.isNotEmpty) {
+      if (kLineDataList.isNotEmpty && _kChartItemList.isNotEmpty) {
 
         var lastItem = _kChartItemList.last;
         var tempItem = kLineDataList.last;
