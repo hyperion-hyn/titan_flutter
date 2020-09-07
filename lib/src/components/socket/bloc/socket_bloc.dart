@@ -105,8 +105,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
               yield UnSubChannelSuccessState(channel: channel);
             }
           }
-        } else if (status == 200) {
-          if (errMsg != null) {
+        } else if (status == 200 || status == 500) {
+          if (errMsg != null && status == 500) {
             print("[SocketBloc] 接收心跳,正常");
 
             yield HeartSuccessState();
