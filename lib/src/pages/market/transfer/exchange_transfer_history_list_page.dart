@@ -186,7 +186,7 @@ class ExchangeTransferHistoryListPageState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  assetHistory.name == 'recharge' ? '交易账户到钱包' : '钱包到交易账户',
+                  assetHistory.getTypeText(),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -235,7 +235,7 @@ class ExchangeTransferHistoryListPageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '网络费用(${assetHistory.name == 'withdraw' ? 'HYN' : assetHistory.type})',
+                            '网络费用(${assetHistory.name == 'withdraw' ? assetHistory.type : 'HYN'})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,

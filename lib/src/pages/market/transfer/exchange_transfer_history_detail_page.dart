@@ -2,7 +2,6 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -69,9 +68,7 @@ class _ExchangeTransferHistoryDetailPageState
               _item(
                 '类型',
                 Text(
-                  widget._assetHistory.name == 'withdraw'
-                      ? '钱包到交易账户'
-                      : '交易账户到钱包',
+                  widget._assetHistory.getTypeText(),
                   style: TextStyle(
                     fontSize: 14,
                   ),
