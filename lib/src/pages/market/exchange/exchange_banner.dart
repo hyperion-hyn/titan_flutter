@@ -65,37 +65,39 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _activeBannerList.isNotEmpty
-        ? Container(
-            height: 40,
-            color: HexColor('#0F1FB9C7'),
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    width: 8,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Image.asset(
-                        'res/drawable/ic_exchange_banner_msg.png',
-                        height: 15,
-                        width: 14,
-                      )),
-                  Expanded(
-                    child: PageView(
-                      scrollDirection: Axis.vertical,
-                      controller: _pageController,
-                      children: _bannerWidgetList,
-                    ),
-                  )
-                ],
+    if (_activeBannerList.isNotEmpty) {
+      return Container(
+        height: 40,
+        color: HexColor('#0F1FB9C7'),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 8,
               ),
-            ),
-          )
-        : SizedBox();
+              Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Image.asset(
+                    'res/drawable/ic_exchange_banner_msg.png',
+                    height: 15,
+                    width: 14,
+                  )),
+              Expanded(
+                child: PageView(
+                  scrollDirection: Axis.vertical,
+                  controller: _pageController,
+                  children: _bannerWidgetList,
+                ),
+              )
+            ],
+          ),
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 
   _getActiveBannerList() async {
