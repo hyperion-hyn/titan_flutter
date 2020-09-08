@@ -7,7 +7,6 @@ import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -46,14 +45,14 @@ class _SocketState extends State<_SocketManager> {
 //  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
 //  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
   Set<String> _channelList = Set();
-  bool _connectSuccess = false;
- 
+  bool _connecting = false;
+
   @override
   void initState() {
     super.initState();
 
-    _initWS();
     _initBloc();
+    _initWS();
     _initData();
   }
 
@@ -68,14 +67,15 @@ class _SocketState extends State<_SocketManager> {
 
   _initWS() {
     print('[WS]  init');
-    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
 
-    print('[WS]  listen');
+    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
+    _bloc.setSocketChannel(_socketChannel);
+
     _socketChannel.stream.listen((data) {
       print('[WS]  listen..., data');
 
-      if (!_connectSuccess) {
-        _connectSuccess = true;
+      if (!_connecting) {
+        _connecting = true;
         print('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
@@ -88,6 +88,8 @@ class _SocketState extends State<_SocketManager> {
     }, onDone: () {
       print('[WS] Done!');
 
+      _connecting = false;
+
       if (_timer != null && _timer.isActive) {
         _timer.cancel();
         _timer = null;
@@ -96,10 +98,14 @@ class _SocketState extends State<_SocketManager> {
       _reconnectWS();
     }, onError: (e) {
       // e is :WebSocketChannelException
+      _socketChannel.sink.close();
+
       print('[WS] Error, e:$e');
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
+    _bloc.add(HeartEvent());
+
     if (_timer == null) {
       _timer = Timer.periodic(Duration(seconds: 30), (t) {
         _bloc.add(HeartEvent());
@@ -109,7 +115,6 @@ class _SocketState extends State<_SocketManager> {
 
   _initBloc() {
     _bloc = BlocProvider.of<SocketBloc>(context);
-    _bloc.setSocketChannel(_socketChannel);
   }
 
   _initData() {
@@ -127,9 +132,12 @@ class _SocketState extends State<_SocketManager> {
   _reconnectWS() {
     print('[WS] Reconnect!');
 
+    print('[WS] websocket断开了');
     Future.delayed(Duration(milliseconds: 1000)).then((_) {
       _initWS();
     });
+
+    print('[WS] websocket重连中。。。。');
   }
 
   @override
@@ -204,7 +212,7 @@ class _SocketState extends State<_SocketManager> {
     });*/
 
     int index;
-    for (var i=0; i<_marketItemList.length; i++) {
+    for (var i = 0; i < _marketItemList.length; i++) {
       var element = _marketItemList[i];
       // replace
       if (element.symbol == symbol) {
@@ -214,7 +222,6 @@ class _SocketState extends State<_SocketManager> {
     }
 
     _isNewSymbol = index == null;
-
 
     // add
     if (_isNewSymbol) {
