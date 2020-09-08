@@ -361,102 +361,126 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           ),
           Visibility(
             visible: _isShowMore,
-            child: Container(
-              //duration: Duration(milliseconds: 333),
-              margin: EdgeInsets.only(left: 14, top: 3, right: 14),
-              width: double.infinity,
-              //height: _isShowMore ? 32 : 0,
-              decoration: BoxDecoration(
-                color: HexColor("#F5F5F5"),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: _morePeriodList.map((item) => _periodTextWidget(item)).toList(),
-              ),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  //duration: Duration(milliseconds: 333),
+                  margin: EdgeInsets.only(left: 14, top: 3, right: 14),
+                  width: double.infinity,
+                  //height: _isShowMore ? 32 : 0,
+                  decoration: BoxDecoration(
+                    color: HexColor("#F5F5F5"),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: _morePeriodList.map((item) => _periodTextWidget(item)).toList(),
+                  ),
+                ),
+                /*InkWell(
+                  onTap: (){
+                    _clickMoreAction(4);
+                  },
+                  child: Container(
+                    height: 200,
+                  ),
+                ),*/
+              ],
             ),
           ),
           Visibility(
             visible: _isShowSetting,
-            child: Container(
-              //duration: Duration(milliseconds: 333),
-              margin: EdgeInsets.only(left: 14, top: 3, right: 14),
-              width: double.infinity,
-              //height: _isShowSetting ? 98 : 0,
-              decoration: BoxDecoration(
-                color: HexColor("#F5F5F5"),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
+            child: Column(
+              children: <Widget>[
+                Container(
+                  //duration: Duration(milliseconds: 333),
+                  margin: EdgeInsets.only(left: 14, top: 3, right: 14),
+                  width: double.infinity,
+                  //height: 100,
+                  //height: _isShowSetting ? 98 : 0,
+                  decoration: BoxDecoration(
+                    color: HexColor("#F5F5F5"),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 14),
+                            child: Text(
+                              //"主图",
+                              S.of(context).kline_state_main,
+                              style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                            ),
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "MA",
+                            true,
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "BOLL",
+                            true,
+                          ),
+                          Spacer(),
+                          _iconWidget(isMain: true),
+                        ],
+                      ),
                       Padding(
-                        padding: const EdgeInsets.only(left: 14),
-                        child: Text(
-                          //"主图",
-                          S.of(context).kline_state_main,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Divider(
+                          height: 0.5,
+                          color: HexColor("#DEDEDE"),
                         ),
                       ),
-                      _spacerWidget,
-                      _textWidget(
-                        "MA",
-                        true,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 14),
+                            child: Text(
+                              S.of(context).kline_state_secondary,
+                              style: TextStyle(color: HexColor("#333333"), fontSize: 12),
+                            ),
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "MACD",
+                            false,
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "KDJ",
+                            false,
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "RSI",
+                            false,
+                          ),
+                          _spacerWidget,
+                          _textWidget(
+                            "WR",
+                            false,
+                          ),
+                          Spacer(),
+                          _iconWidget(isMain: false),
+                        ],
                       ),
-                      _spacerWidget,
-                      _textWidget(
-                        "BOLL",
-                        true,
-                      ),
-                      Spacer(),
-                      _iconWidget(isMain: true),
+
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Divider(
-                      height: 0.5,
-                      color: HexColor("#DEDEDE"),
-                    ),
+                ),
+                InkWell(
+                  onTap: _clickSettingAction,
+                  child: Container(
+                    height: 200,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 14),
-                        child: Text(
-                          S.of(context).kline_state_secondary,
-                          style: TextStyle(color: HexColor("#333333"), fontSize: 12),
-                        ),
-                      ),
-                      _spacerWidget,
-                      _textWidget(
-                        "MACD",
-                        false,
-                      ),
-                      _spacerWidget,
-                      _textWidget(
-                        "KDJ",
-                        false,
-                      ),
-                      _spacerWidget,
-                      _textWidget(
-                        "RSI",
-                        false,
-                      ),
-                      _spacerWidget,
-                      _textWidget(
-                        "WR",
-                        false,
-                      ),
-                      Spacer(),
-                      _iconWidget(isMain: false),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           _loadingWidget(visible: _showLoadingKLine, height: kLineHeight),
@@ -607,11 +631,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             height: 13,
             color: _isShowSetting ? HexColor("#228BA1") : HexColor("#333333"),
           ),
-          onPressed: () {
-            _isShowMore = false;
-            _isShowSetting = !_isShowSetting;
-            setState(() {});
-          },
+          onPressed: _clickSettingAction,
         ),
       ),
     ];
@@ -632,35 +652,45 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         indicatorPadding: EdgeInsets.only(bottom: 8, left: 20, right: 4),
         unselectedLabelColor: HexColor("#999999"),
         onTap: (int index) {
-          _lastSelectedIndex = _periodTabController.previousIndex;
-
-          if (index == 4) {
-            _isShowMore = !_isShowMore;
-
-            if (!_morePeriodList.contains(_periodParameter)) {
-              _periodTabController.index = _lastSelectedIndex;
-            }
-          } else {
-            _isShowMore = false;
-          }
-          _isShowSetting = false;
-          _periodCurrentIndex = index;
-          print("_periodCurrentIndex:$_periodCurrentIndex");
-
-          if (index < _normalPeriodList.length) {
-            // old
-            _unSubPeriodChannel();
-            // new
-            _periodParameter = _normalPeriodList[index];
-            _getPeriodData();
-            _subPeriodChannel();
-          }
-
-          setState(() {});
+          _clickMoreAction(index);
         },
         tabs: tabs,
       ),
     );
+  }
+
+  _clickSettingAction() {
+    _isShowMore = false;
+    _isShowSetting = !_isShowSetting;
+    setState(() {});
+  }
+
+  _clickMoreAction(int index) {
+    _lastSelectedIndex = _periodTabController.previousIndex;
+
+    if (index == 4) {
+      _isShowMore = !_isShowMore;
+
+      if (!_morePeriodList.contains(_periodParameter)) {
+        _periodTabController.index = _lastSelectedIndex;
+      }
+    } else {
+      _isShowMore = false;
+    }
+    _isShowSetting = false;
+    _periodCurrentIndex = index;
+    print("_periodCurrentIndex:$_periodCurrentIndex");
+
+    if (index < _normalPeriodList.length) {
+      // old
+      _unSubPeriodChannel();
+      // new
+      _periodParameter = _normalPeriodList[index];
+      _getPeriodData();
+      _subPeriodChannel();
+    }
+
+    setState(() {});
   }
 
   Widget _detailTabWidget() {
