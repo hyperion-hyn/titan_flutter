@@ -595,9 +595,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: '${_fromExchangeToWallet
-                    ? S.of(context).exchange_account_balance
-                    : S.of(context).exchange_wallet_balance} ',
+                text:
+                    '${_fromExchangeToWallet ? S.of(context).exchange_account_balance : S.of(context).exchange_wallet_balance} ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -677,7 +676,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         return '0';
       }
     } else {
-      return FormatUtil.coinBalanceHumanRead(WalletInheritedModel.of(
+      return FormatUtil.coinBalanceHumanReadFormat(WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
       ).getCoinVoBySymbol(_selectedCoinType));
