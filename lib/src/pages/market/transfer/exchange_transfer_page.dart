@@ -353,13 +353,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 220,
+            height: 170,
             child: Column(
               children: <Widget>[
                 _coinItem('HYN'),
                 _divider(1.0),
-                _coinItem('ETH'),
-                _divider(1.0),
+//                _coinItem('ETH'),
+//                _divider(1.0),
                 _coinItem('USDT'),
                 _divider(5.0),
                 InkWell(
@@ -593,9 +593,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             // Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: '${_fromExchangeToWallet
-                    ? S.of(context).exchange_account_balance
-                    : S.of(context).exchange_wallet_balance} ',
+                text:
+                    '${_fromExchangeToWallet ? S.of(context).exchange_account_balance : S.of(context).exchange_wallet_balance} ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -711,7 +710,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         return '0';
       }
     } else {
-      return FormatUtil.coinBalanceHumanRead(WalletInheritedModel.of(
+      return FormatUtil.coinBalanceHumanReadFormat(WalletInheritedModel.of(
         context,
         aspect: WalletAspect.activatedWallet,
       ).getCoinVoBySymbol(_selectedCoinType));

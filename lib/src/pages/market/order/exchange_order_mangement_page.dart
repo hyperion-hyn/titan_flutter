@@ -96,7 +96,7 @@ class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPag
                           ),
                           Tab(
                             child: Text(
-                              S.of(context).exchange_order_list_history,
+                              S.of(context).exchange_order_list_detail,
                             ),
                           )
                         ],
