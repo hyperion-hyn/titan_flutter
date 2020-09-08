@@ -74,7 +74,7 @@ class _AboueMeState extends BaseState<AboutMePage> {
                     style: TextStyle(color: Colors.grey),
                   ),
                   if(env.buildType != BuildType.PROD)
-                    Text("(Test1.0)")
+                    Text("(Test1.1)")
                 ],
               ),
             ),
