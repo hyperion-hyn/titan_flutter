@@ -444,7 +444,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       );
     } else {
       return Text(
-        '未登录',
+        '请授权',
         style: TextStyle(
           color: HexColor('#FF1F81FF'),
         ),

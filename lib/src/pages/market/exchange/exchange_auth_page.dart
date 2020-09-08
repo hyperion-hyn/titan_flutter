@@ -55,12 +55,12 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           });
           _setAuthAlready();
           Navigator.of(context).pop();
-          Fluttertoast.showToast(msg: '登录成功!');
+          Fluttertoast.showToast(msg: '授权成功!');
         } else if (state is LoginFailState) {
           setState(() {
             isLoggingIn = false;
           });
-          Fluttertoast.showToast(msg: '登录失败, 请重试');
+          Fluttertoast.showToast(msg: '授权失败, 请重试');
         }
       },
       child: Scaffold(
@@ -107,7 +107,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                '你必须先拥有一个私密去中心化钱包，然后授权使用交易兑换功能。',
+                '你将使用钱包账户 ${WalletInheritedModel.of(context)?.activatedWallet?.wallet?.keystore?.name} 授权交易功能',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,
@@ -139,7 +139,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      isLoggingIn ? '登录中' : '使用钱包授权登录',
+                      isLoggingIn ? '授权中' : '使用钱包授权',
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 14,
