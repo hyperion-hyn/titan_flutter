@@ -40,7 +40,7 @@ class _ExchangeAssetHistoryPageState
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
-  Decimal ethToCurrency;
+  Decimal _hynToCurrency;
 
   @override
   void initState() {
@@ -71,7 +71,7 @@ class _ExchangeAssetHistoryPageState
         'ETH',
         symbolQuote?.sign?.quote,
       );
-      ethToCurrency = Decimal.parse(ethRet.toString());
+      _hynToCurrency = Decimal.parse(ethRet.toString());
 
       setState(() {});
     } catch (e) {}
@@ -211,7 +211,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .HYN,
-        ethToCurrency,
+        _hynToCurrency,
       );
     } else if (widget._symbol == 'USDT') {
       return AssetItem(
@@ -220,7 +220,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .USDT,
-        ethToCurrency,
+        _hynToCurrency,
       );
     } else if (widget._symbol == 'ETH') {
       return AssetItem(
@@ -229,7 +229,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .ETH,
-        ethToCurrency,
+        _hynToCurrency,
       );
     } else {
       return SizedBox();
@@ -331,9 +331,10 @@ class _ExchangeAssetHistoryPageState
                       height: 8.0,
                     ),
                     Text(
-                      assetHistory.ctime,
+                      '${assetHistory.ctime}',
                       textAlign: TextAlign.right,
                       maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: DefaultColors.color333,
                         fontSize: 12,
@@ -407,11 +408,11 @@ class _ExchangeAssetHistoryPageState
 
 class AssetItem extends StatefulWidget {
   final AssetType _assetType;
-  final Decimal _ethToCurrency;
+  final Decimal _hynToCurrency;
 
   AssetItem(
     this._assetType,
-    this._ethToCurrency,
+    this._hynToCurrency,
   );
 
   @override
@@ -423,6 +424,7 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: <Widget>[
         SizedBox(
@@ -449,11 +451,11 @@ class AssetItemState extends State<AssetItem> {
                           height: 8.0,
                         ),
                         Text(
-                          widget._assetType.eth != null &&
-                                  widget._ethToCurrency != null
+                          widget._assetType.hyn != null &&
+                                  widget._hynToCurrency != null
                               ? '${FormatUtil.truncateDecimalNum(
-                                  Decimal.parse(widget._assetType.eth) *
-                                      widget._ethToCurrency,
+                                  Decimal.parse(widget._assetType.hyn) *
+                                      widget._hynToCurrency,
                                   4,
                                 )}'
                               : '-',

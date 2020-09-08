@@ -37,6 +37,9 @@ class AssetType extends Object {
   @JsonKey(name: 'eth')
   String eth;
 
+  @JsonKey(name: 'hyn')
+  String hyn;
+
   @JsonKey(name: 'usd')
   String usd;
 
@@ -55,6 +58,7 @@ class AssetType extends Object {
     this.exchangeFreeze,
     this.btc,
     this.eth,
+    this.hyn,
     this.usd,
     this.cny,
   );

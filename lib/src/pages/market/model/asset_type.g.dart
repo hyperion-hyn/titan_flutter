@@ -19,6 +19,7 @@ AssetType _$AssetTypeFromJson(Map<String, dynamic> json) {
     json['exchange_freeze'] as String,
     json['btc'] as String,
     json['eth'] as String,
+    json['hyn'] as String,
     json['usd'] as String,
     json['cny'] as String,
   );
@@ -36,6 +37,7 @@ Map<String, dynamic> _$AssetTypeToJson(AssetType instance) => <String, dynamic>{
       'exchange_freeze': instance.exchangeFreeze,
       'btc': instance.btc,
       'eth': instance.eth,
+      'hyn': instance.hyn,
       'usd': instance.usd,
       'cny': instance.cny,
     };
