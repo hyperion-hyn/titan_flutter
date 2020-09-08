@@ -47,14 +47,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
     super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -459,28 +457,28 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             .assetList
             .getAsset(_selectedCoinType)
             .rechargeMin;
-    var _withdrawFee = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        .assetList
-        .getAsset(_selectedCoinType)
-        .withdrawFee;
+    // var _withdrawFee = ExchangeInheritedModel.of(context)
+    //     .exchangeModel
+    //     .activeAccount
+    //     .assetList
+    //     .getAsset(_selectedCoinType)
+    //     .withdrawFee;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.9),
+          padding: EdgeInsets.symmetric(vertical: 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text('数量'),
-              Text(
-                '（${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType）',
-                style: TextStyle(
-                  color: HexColor('#FFAAAAAA'),
-                  fontSize: 12,
-                ),
-              ),
+              // Text(
+              //   '（${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType）',
+              //   style: TextStyle(
+              //     color: HexColor('#FFAAAAAA'),
+              //     fontSize: 12,
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -584,15 +582,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         Row(
           children: <Widget>[
-            if (_fromExchangeToWallet)
-              Text(
-                '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType',
-                style: TextStyle(
-                  color: HexColor('#FFAAAAAA'),
-                  fontSize: 12,
-                ),
-              ),
-            Spacer(),
+            // if (_fromExchangeToWallet)
+            //   Text(
+            //     '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType',
+            //     style: TextStyle(
+            //       color: HexColor('#FFAAAAAA'),
+            //       fontSize: 12,
+            //     ),
+            //   ),
+            // Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
                 text: '${_fromExchangeToWallet
@@ -628,14 +626,33 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _transferHint() {
+    var _minTransferAmount = _fromExchangeToWallet
+        ? ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        .getAsset(_selectedCoinType)
+        .withdrawMin
+        : ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        .getAsset(_selectedCoinType)
+        .rechargeMin;
     var _withdrawFee = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         .assetList
         .getAsset(_selectedCoinType)
         .withdrawFee;
+
+    var actuallyGetAmount = double.parse(_amountController.text.isEmpty ? '0' : _amountController.text) - double.parse(_withdrawFee);
+    if(actuallyGetAmount < 0) {
+      actuallyGetAmount = 0;
+    }
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0),
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -644,13 +661,30 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_transfer_hint_account_to_wallet(
-                      _withdrawFee,
-                      _selectedCoinType,
-                    )
-                : S.of(context).exchange_transfer_hint_wallet_to_exchange,
+          child: _fromExchangeToWallet ? Column(children: <Widget>[
+            Row(children: <Widget>[
+              Text('最小划转量', style: TextStyle(fontSize: 12, color: Color(0xFFAAAAAA))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text('$_minTransferAmount $_selectedCoinType', style: TextStyle(fontSize: 12)),
+              ),
+            ],),
+            Row(children: <Widget>[
+              Text('手续费', style: TextStyle(fontSize: 12, color: Color(0xFFAAAAAA))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text('$_withdrawFee $_selectedCoinType', style: TextStyle(fontSize: 12)),
+              ),
+            ],),
+            Row(children: <Widget>[
+              Text('实际到账', style: TextStyle(fontSize: 12, color: Color(0xFFAAAAAA))),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text('$actuallyGetAmount $_selectedCoinType', style: TextStyle(fontSize: 12)),
+              ),
+            ],),
+          ],) : Text(
+            S.of(context).exchange_transfer_hint_wallet_to_exchange,
             style: TextStyle(
               color: HexColor('#FF777777'),
               fontSize: 14,
