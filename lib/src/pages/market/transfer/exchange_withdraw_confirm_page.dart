@@ -353,6 +353,9 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   _transferWithPwd(String walletPassword) async {
+    setState(() {
+      isTransferring = true;
+    });
     try {
       var ret = await _exchangeApi.withdraw(
         activatedWallet.wallet,
@@ -363,12 +366,17 @@ class _ExchangeWithdrawConfirmPageState
         widget.transferAmount,
       );
       print('$ret');
-
       Application.router.navigateTo(
         context,
         Routes.exchange_transfer_success_page,
       );
+      setState(() {
+        isTransferring = true;
+      });
     } catch (e) {
+      setState(() {
+        isTransferring = false;
+      });
       print(e);
     }
   }
