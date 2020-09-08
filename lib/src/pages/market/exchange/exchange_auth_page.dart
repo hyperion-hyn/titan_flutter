@@ -107,7 +107,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                S.of(context).exchange_auth_description,
+                '你将使用钱包身份 ${WalletInheritedModel.of(context)?.activatedWallet?.wallet?.keystore?.name} 授权交易功能',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,
