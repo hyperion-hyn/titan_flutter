@@ -109,7 +109,33 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
               },
-              child: _contentView(),
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: ExchangeBannerWidget(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _account(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _exchange(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _divider(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _quotesTabs(),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _marketItem(_marketItemList[index]);
+                      },
+                      childCount: _marketItemList.length,
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         },
@@ -120,11 +146,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _contentView() {
     return Column(
       children: <Widget>[
-        ExchangeBannerWidget(),
         _account(),
         _exchange(),
         _divider(),
-        _quotesView(),
+        _quotesTabs(),
       ],
     );
   }
@@ -268,7 +293,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '${S.of(context).exchange_latest_quote}1HYN  = $_hynToSelectedCoin $_selectedCoin',
+                        '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
                         style: TextStyle(
                           color: HexColor('#FF999999'),
                           fontSize: 12,
@@ -351,28 +376,35 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _assetView() {
  
-    var _totalByCoin = ExchangeInheritedModel.of(context)
+    var _totalByUsdt = ExchangeInheritedModel.of(context)
+
         .exchangeModel
         .activeAccount
         ?.assetList
-        ?.getTotalHyn();
+        ?.getTotalUsdt();
     var _coinQuotePrice = QuotesInheritedModel.of(context)
-        .activatedQuoteVoAndSign('HYN')
+        .activatedQuoteVoAndSign('USDT')
         ?.quoteVo
         ?.price;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _ethTotalQuotePrice = _coinQuotePrice != null && _totalByCoin != null
+      var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
-              _totalByCoin * Decimal.parse(_coinQuotePrice?.toString()),
+              _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
               4,
             )
           : '--';
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _ethTotalQuotePrice : '*****',
+ 
+              text: ExchangeInheritedModel.of(context)
+                      .exchangeModel
+                      .isShowBalances
+                  ? _usdtTotalQuotePrice
+                  : '*****',
+
               style: TextStyle(
                 fontSize: 12,
               )),
@@ -503,79 +535,61 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     );
   }
 
-  _quotesView() {
-    return Expanded(
-      child: Column(
+  _quotesTabs() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 16.0,
+      ),
+      child: Row(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
+          Expanded(
+            child: Text(
+              S.of(context).exchange_name,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
             ),
-            child: Row(
-              children: <Widget>[
-                Expanded(
+          ),
+          Expanded(
+            child: Center(
+              child: Container(
+                width: 80,
+                child: InkWell(
+                  onTap: () {},
                   child: Text(
-                    S.of(context).exchange_name,
+                    S.of(context).exchange_latest_quote,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
                     ),
                   ),
                 ),
-                Expanded(
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Center(
-                    child: Container(
-                      width: 80,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Text(
-                          S.of(context).exchange_latest_quote,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
+                    child: Text(
+                      S.of(context).exchange_change_percentage,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Center(
-                          child: Text(
-                            S.of(context).exchange_change_percentage,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],
             ),
           ),
-          _quotesItemList()
         ],
       ),
-    );
-  }
-
-  _quotesItemList() {
-    return Expanded(
-      child: ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: _marketItemList.length,
-          itemBuilder: (context, index) {
-            return _marketItem(_marketItemList[index]);
-          }),
     );
   }
 

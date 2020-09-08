@@ -11,6 +11,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -222,6 +223,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             } else if (state is OrderPutLimitState) {
               isOrderActionLoading = false;
               if (state.respMsg == null) {
+                BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
                 Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
@@ -762,6 +764,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                     if (price.contains("-")) {
                                       return;
                                     }
+                                    if(price.split(".").length > 2){
+                                      optionsController.add({contrOptionsTypePricePreError: ""});
+                                      return;
+                                    }
                                     if (price.contains(".")) {
                                       var priceAfter = price.split(".")[1];
                                       if (priceAfter.length <= marketInfoEntity.pricePrecision) {
@@ -850,6 +856,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                           ),
                           onChanged: (number) {
                             if (number.contains("-")) {
+                              return;
+                            }
+                            if(number.split(".").length > 2){
+                              optionsController.add({contrOptionsTypeNumPreError: ""});
                               return;
                             }
                             if (number.contains(".")) {
@@ -947,6 +957,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                           ),
                           onChanged: (turnover) {
                             if (turnover.contains("-")) {
+                              return;
+                            }
+                            if(turnover.split(".").length > 2){
+                              optionsController.add({contrOptionsTypeTotalPriceError: ""});
                               return;
                             }
                             if (turnover.contains(".")) {

@@ -46,7 +46,7 @@ class _ExchangeAssetHistoryPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -96,7 +96,9 @@ class _ExchangeAssetHistoryPageState
         child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullUp: _assetHistoryList.isNotEmpty,
-          onLoadData: () async {},
+          onLoadData: () async {
+            _refresh();
+          },
           onLoadingMore: () async {
             await _loadMore();
           },
@@ -424,7 +426,6 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: <Widget>[
         SizedBox(

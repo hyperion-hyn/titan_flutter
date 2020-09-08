@@ -51,7 +51,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
           child: RichText(
             text: TextSpan(children: [
               TextSpan(
-                  text: _isBuy ? "买入 " : "卖出 ",
+                  text: _isBuy ? "${S.of(context).buy} " : "${S.of(context).sale} ",
                   style: TextStyle(
                     fontSize: 16,
                     color: widget._orderDetail.side == '1'
@@ -126,7 +126,7 @@ class OrderDetailItemState extends State<OrderDetailItem> {
                                 height: 4.0,
                               ),
                               Text(
-                                '限价',
+                                S.of(context).limit_price,
                                 style: TextStyle(
                                   color: DefaultColors.color333,
                                   fontWeight: FontWeight.w500,

@@ -34,7 +34,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   ExchangeApi _exchangeApi = ExchangeApi();
   ActiveQuoteVoAndSign symbolQuote;
-  Decimal _hynToCurrency;
+  Decimal _usdtToCurrency;
 
   @override
   void initState() {
@@ -133,6 +133,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         ?.assetList
         ?.getTotalHyn();
 
+    var _totalByUsdt = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList
+        ?.getTotalUsdt();
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
     return Container(
@@ -178,10 +183,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ),
                         Text(
                           _isShowBalances
-                              ? _hynToCurrency == null || _totalByHyn == null
+                              ? _usdtToCurrency == null || _totalByHyn == null
                                   ? '--'
                                   : '≈ ${FormatUtil.truncateDecimalNum(
-                                      _hynToCurrency * _totalByHyn,
+                                      _usdtToCurrency * _totalByUsdt,
                                       4,
                                     )} ${symbolQuote?.sign?.quote}'
                               : '≈ ***** ${symbolQuote?.sign?.quote}',
@@ -271,13 +276,13 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             AssetItem(
               'HYN',
               _assetList.HYN,
-              _hynToCurrency,
+              _usdtToCurrency,
               _isShowBalances,
             ),
             AssetItem(
               'USDT',
               _assetList.USDT,
-              _hynToCurrency,
+              _usdtToCurrency,
               _isShowBalances,
             ),
 //            AssetItem(
@@ -302,10 +307,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   _updateTypeToCurrency() async {
     try {
       var ret = await _exchangeApi.type2currency(
-        'HYN',
+        'USDT',
         symbolQuote?.sign?.quote,
       );
-      _hynToCurrency = Decimal.parse(ret.toString());
+      _usdtToCurrency = Decimal.parse(ret.toString());
 
       setState(() {});
     } catch (e) {}

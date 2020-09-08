@@ -98,6 +98,14 @@ class FormatUtil {
         .toString();
   }
 
+  static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
+    return truncateDecimalNum(
+      ConvertTokenUnit.weiToDecimal(
+          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      decimal,
+    );
+  }
+
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
     var value = double.parse(coinBalanceHumanRead(coinVo));
     if (isFloor) {
@@ -204,9 +212,12 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
-      var result =
-          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       result = FormatUtil.strClearZero(result);
       return result;
     } else {
@@ -220,12 +231,15 @@ class FormatUtil {
   }
 
   static String truncateDoubleNum(double number, int decimal) {
-    if(number == null){
+    if (number == null) {
       return null;
     }
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
-      var result =
-      number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       return result;
     } else {
       var result = number
@@ -241,10 +255,9 @@ class FormatUtil {
   }
 
   static String clearScientificCounting(double value) {
-    if(value == null){
+    if (value == null) {
       return "";
     }
     return Decimal.parse(value.toString()).toString();
   }
-
 }

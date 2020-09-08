@@ -38,7 +38,7 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -53,7 +53,9 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
     return LoadDataContainer(
       bloc: _loadDataBloc,
       enablePullUp: _orders.isNotEmpty,
-      onLoadData: () async {},
+      onLoadData: () async {
+        _refresh();
+      },
       onRefresh: () async {
         _refresh();
       },
