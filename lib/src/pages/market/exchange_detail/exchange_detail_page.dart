@@ -764,6 +764,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                     if (price.contains("-")) {
                                       return;
                                     }
+                                    if(price.split(".").length > 2){
+                                      optionsController.add({contrOptionsTypePricePreError: ""});
+                                      return;
+                                    }
                                     if (price.contains(".")) {
                                       var priceAfter = price.split(".")[1];
                                       if (priceAfter.length <= marketInfoEntity.pricePrecision) {
@@ -852,6 +856,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                           ),
                           onChanged: (number) {
                             if (number.contains("-")) {
+                              return;
+                            }
+                            if(number.split(".").length > 2){
+                              optionsController.add({contrOptionsTypeNumPreError: ""});
                               return;
                             }
                             if (number.contains(".")) {
@@ -949,6 +957,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                           ),
                           onChanged: (turnover) {
                             if (turnover.contains("-")) {
+                              return;
+                            }
+                            if(turnover.split(".").length > 2){
+                              optionsController.add({contrOptionsTypeTotalPriceError: ""});
                               return;
                             }
                             if (turnover.contains(".")) {
