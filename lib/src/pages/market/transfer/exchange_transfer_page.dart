@@ -355,13 +355,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: 220,
+            height: 170,
             child: Column(
               children: <Widget>[
                 _coinItem('HYN'),
                 _divider(1.0),
-                _coinItem('ETH'),
-                _divider(1.0),
+//                _coinItem('ETH'),
+//                _divider(1.0),
                 _coinItem('USDT'),
                 _divider(5.0),
                 InkWell(
@@ -470,7 +470,19 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16.9),
-          child: Text('数量'),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('数量'),
+              Text(
+                '（${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType）',
+                style: TextStyle(
+                  color: HexColor('#FFAAAAAA'),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -572,19 +584,20 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         Row(
           children: <Widget>[
-            Text(
-              '${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType',
-              style: TextStyle(
-                color: HexColor('#FFAAAAAA'),
-                fontSize: 12,
+            if (_fromExchangeToWallet)
+              Text(
+                '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType',
+                style: TextStyle(
+                  color: HexColor('#FFAAAAAA'),
+                  fontSize: 12,
+                ),
               ),
-            ),
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
-                text: _fromExchangeToWallet
+                text: '${_fromExchangeToWallet
                     ? S.of(context).exchange_account_balance
-                    : S.of(context).exchange_wallet_balance,
+                    : S.of(context).exchange_wallet_balance} ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -610,14 +623,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         SizedBox(
           height: 16,
         ),
-        if (_fromExchangeToWallet)
-          Text(
-            '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType',
-            style: TextStyle(
-              color: HexColor('#FFAAAAAA'),
-              fontSize: 12,
-            ),
-          ),
       ],
     );
   }

@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,12 +15,15 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -38,6 +42,7 @@ class ExchangePage extends StatefulWidget {
 class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.BUY;
+
   ExchangeBloc _exchangeBloc = ExchangeBloc();
   List<MarketItemEntity> _marketItemList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -69,8 +74,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   @override
   void initState() {
     super.initState();
-
-    _getBannerList();
   }
 
   @override
@@ -117,47 +120,12 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _contentView() {
     return Column(
       children: <Widget>[
-        _banner(),
+        ExchangeBannerWidget(),
         _account(),
         _exchange(),
         _divider(),
         _quotesView(),
-        _authorizedView(),
       ],
-    );
-  }
-
-  _banner() {
-    return Container(
-      color: HexColor('#0F1FB9C7'),
-      child: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Row(
-          children: <Widget>[
-            SizedBox(
-              width: 8,
-            ),
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Image.asset(
-                  'res/drawable/ic_exchange_banner_msg.png',
-                  height: 15,
-                  width: 14,
-                )),
-            Expanded(
-              child: Text(
-                '由于网络拥堵，近期闪兑交易矿工费较高',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: HexColor('#FF333333'),
-                ),
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2,
-              ),
-            )
-          ],
-        ),
-      ),
     );
   }
 
@@ -224,22 +192,22 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '汇率',
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-              ),
-              Text(
-                _exchangeType == ExchangeType.BUY
-                    ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
-                    : '1$_selectedCoin = $_selectedCoinToHYN HYN',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Text(
+              //     '汇率',
+              //     style: TextStyle(color: Colors.grey, fontSize: 14),
+              //   ),
+              // ),
+              // Text(
+              //   _exchangeType == ExchangeType.BUY
+              //       ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
+              //       : '1$_selectedCoin = $_selectedCoinToHYN HYN',
+              //   style: TextStyle(
+              //     fontWeight: FontWeight.bold,
+              //     fontSize: 14,
+              //   ),
+              // ),
               Spacer(),
               ClickOvalIconButton(
                 S.of(context).exchange_trade,
@@ -300,7 +268,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '${S.of(context).exchange_latest_quote}1HYN  — $_hynToSelectedCoin $_selectedCoin',
+                        '${S.of(context).exchange_latest_quote}1HYN  = $_hynToSelectedCoin $_selectedCoin',
                         style: TextStyle(
                           color: HexColor('#FF999999'),
                           fontSize: 12,
@@ -382,13 +350,22 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    var _totalByEth = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalEth();
-    var _ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
-      var _ethTotalQuotePrice = _ethQuotePrice != null && _totalByEth != null
+ 
+    var _totalByCoin = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        ?.assetList
+        ?.getTotalHyn();
+    var _coinQuotePrice = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('HYN')
+        ?.quoteVo
+        ?.price;
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
+        null) {
+      var _ethTotalQuotePrice = _coinQuotePrice != null && _totalByCoin != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
-              _totalByEth * Decimal.parse(_ethQuotePrice?.toString()),
+              _totalByCoin * Decimal.parse(_coinQuotePrice?.toString()),
               4,
             )
           : '--';
@@ -397,7 +374,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           TextSpan(
               text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _ethTotalQuotePrice : '*****',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
               )),
           TextSpan(
             text: ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
@@ -496,16 +473,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         ),
       ),
     );
-    availableCoinItemList.add(
-      DropdownMenuItem(
-        value: 'ETH',
-        child: _coinItem(
-          'ETH',
-          SupportedTokens.ETHEREUM.logo,
-          false,
-        ),
-      ),
-    );
+//    availableCoinItemList.add(
+//      DropdownMenuItem(
+//        value: 'ETH',
+//        child: _coinItem(
+//          'ETH',
+//          SupportedTokens.ETHEREUM.logo,
+//          false,
+//        ),
+//      ),
+//    );
 
     return Row(
       children: <Widget>[
@@ -607,7 +584,8 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour =
+        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity.amount,
       2,
     )}';
@@ -769,39 +747,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       }
     });
     return result;
-  }
-
-  Widget _authorizedView() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          Spacer(),
-          Image.asset(
-            'res/drawable/logo_manwu.png',
-            width: 23,
-            height: 23,
-            color: Colors.grey[500],
-          ),
-          SizedBox(
-            width: 4.0,
-          ),
-          Text(
-            S.of(context).safety_certification_by_organizations,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12.0,
-            ),
-          ),
-          Spacer()
-        ],
-      ),
-    );
-  }
-
-  _getBannerList() async {
-    var ret = await _exchangeApi.bannerList();
-    print('[BannerList] $ret');
   }
 
   _divider() {
