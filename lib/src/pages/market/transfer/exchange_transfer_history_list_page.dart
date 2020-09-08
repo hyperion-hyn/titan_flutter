@@ -41,7 +41,7 @@ class ExchangeTransferHistoryListPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -74,7 +74,9 @@ class ExchangeTransferHistoryListPageState
         child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullUp: _transferHistoryList.isNotEmpty,
-          onLoadData: () async {},
+          onLoadData: () async {
+            _refresh();
+          },
           onRefresh: () async {
             _refresh();
           },

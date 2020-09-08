@@ -43,7 +43,7 @@ class ExchangeOrderDetailListPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -58,7 +58,9 @@ class ExchangeOrderDetailListPageState
     return LoadDataContainer(
       bloc: _loadDataBloc,
       enablePullUp: _orderDetailList.isNotEmpty,
-      onLoadData: () async {},
+      onLoadData: () async {
+        _refresh();
+      },
       onRefresh: () async {
         _refresh();
       },
