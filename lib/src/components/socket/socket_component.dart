@@ -7,7 +7,6 @@ import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -43,24 +42,23 @@ class _SocketState extends State<_SocketManager> {
   List<MarketItemEntity> _marketItemList;
   List<List<String>> _tradeDetailList;
   Timer _timer;
-  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
-  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
+//  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
+//  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
+  Set<String> _channelList = Set();
+  bool _connecting = false;
 
   @override
   void initState() {
     super.initState();
 
-    _initWS();
     _initBloc();
+    _initWS();
     _initData();
   }
 
   @override
   void dispose() {
     print('[WS]  closed');
-
-//    _bloc.add(UnSubChannelEvent(channel: hynusdtTradeChannel));
-//    _bloc.add(UnSubChannelEvent(channel: hynethTradeChannel));
 
     _socketChannel.sink.close();
     _bloc.close();
@@ -69,15 +67,28 @@ class _SocketState extends State<_SocketManager> {
 
   _initWS() {
     print('[WS]  init');
-    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
 
-    print('[WS]  listen');
+    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
+    _bloc.setSocketChannel(_socketChannel);
+
     _socketChannel.stream.listen((data) {
       print('[WS]  listen..., data');
 
+      if (!_connecting) {
+        _connecting = true;
+        print('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
+
+        for (var channel in _channelList) {
+          print('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+
+          _bloc.add(SubChannelEvent(channel: channel));
+        }
+      }
       _bloc.add(ReceivedDataEvent(data: data));
     }, onDone: () {
       print('[WS] Done!');
+
+      _connecting = false;
 
       if (_timer != null && _timer.isActive) {
         _timer.cancel();
@@ -87,10 +98,14 @@ class _SocketState extends State<_SocketManager> {
       _reconnectWS();
     }, onError: (e) {
       // e is :WebSocketChannelException
+      _socketChannel.sink.close();
+
       print('[WS] Error, e:$e');
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
+    _bloc.add(HeartEvent());
+
     if (_timer == null) {
       _timer = Timer.periodic(Duration(seconds: 30), (t) {
         _bloc.add(HeartEvent());
@@ -100,7 +115,6 @@ class _SocketState extends State<_SocketManager> {
 
   _initBloc() {
     _bloc = BlocProvider.of<SocketBloc>(context);
-    _bloc.setSocketChannel(_socketChannel);
   }
 
   _initData() {
@@ -109,6 +123,8 @@ class _SocketState extends State<_SocketManager> {
 
     // Market
     _bloc.add(MarketSymbolEvent());
+
+    // trade
 //    _bloc.add(SubChannelEvent(channel: hynusdtTradeChannel));
 //    _bloc.add(SubChannelEvent(channel: hynethTradeChannel));
   }
@@ -116,9 +132,12 @@ class _SocketState extends State<_SocketManager> {
   _reconnectWS() {
     print('[WS] Reconnect!');
 
+    print('[WS] websocket断开了');
     Future.delayed(Duration(milliseconds: 1000)).then((_) {
       _initWS();
     });
+
+    print('[WS] websocket重连中。。。。');
   }
 
   @override
@@ -131,6 +150,10 @@ class _SocketState extends State<_SocketManager> {
           _updateMarketItemList(state.response, symbol: state.symbol);
         } else if (state is ChannelTradeDetailState) {
           _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
+        } else if (state is SubChannelState) {
+          _channelList.add(state.channel);
+        } else if (state is UnSubChannelState) {
+          _channelList.remove(state.channel);
         }
       },
       child: BlocBuilder<SocketBloc, SocketState>(
@@ -189,7 +212,7 @@ class _SocketState extends State<_SocketManager> {
     });*/
 
     int index;
-    for (var i=0; i<_marketItemList.length; i++) {
+    for (var i = 0; i < _marketItemList.length; i++) {
       var element = _marketItemList[i];
       // replace
       if (element.symbol == symbol) {
@@ -199,7 +222,6 @@ class _SocketState extends State<_SocketManager> {
     }
 
     _isNewSymbol = index == null;
-
 
     // add
     if (_isNewSymbol) {

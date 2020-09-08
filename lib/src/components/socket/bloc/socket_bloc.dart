@@ -35,11 +35,11 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       print("channel = ${event.channel}");
       _subChannelRequestAction(event.channel);
 
-      yield SubChannelState(period: event.channel);
+      yield SubChannelState(channel: event.channel);
     } else if (event is UnSubChannelEvent) {
       _unSubChannelRequestAction(event.channel);
 
-      yield UnSubChannelState(period: event.channel);
+      yield UnSubChannelState(channel: event.channel);
     } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
       print("[SocketBloc] mapEventToState, receivedData:$receivedData");

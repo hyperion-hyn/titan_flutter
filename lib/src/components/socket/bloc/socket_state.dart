@@ -8,8 +8,8 @@ class InitialSocketState extends SocketState {}
 
 // SubChannel
 class SubChannelState extends SocketState {
-  final String period;
-  SubChannelState({this.period});
+  final String channel;
+  SubChannelState({this.channel});
 }
 
 class SubChannelSuccessState extends SocketState {
@@ -21,8 +21,8 @@ class SubChannelFailState extends SocketState {}
 
 // UnSubChannel
 class UnSubChannelState extends SocketState {
-  final String period;
-  UnSubChannelState({this.period});
+  final String channel;
+  UnSubChannelState({this.channel});
 }
 
 class UnSubChannelSuccessState extends SocketState {
