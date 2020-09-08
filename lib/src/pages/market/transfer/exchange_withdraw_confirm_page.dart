@@ -2,7 +2,9 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -353,6 +355,17 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   _transferWithPwd(String walletPassword) async {
+    var _withdrawFee = ExchangeInheritedModel.of(context)
+            .exchangeModel
+            .activeAccount
+            .assetList
+            .getWithdrawFee(widget.coinVo.symbol) ??
+        '0';
+    var _actualAmount =
+        '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} ${widget.coinVo.symbol}';
+    setState(() {
+      isTransferring = true;
+    });
     try {
       var ret = await _exchangeApi.withdraw(
         activatedWallet.wallet,
@@ -360,16 +373,23 @@ class _ExchangeWithdrawConfirmPageState
         activatedWallet.wallet.getEthAccount().address,
         widget.coinVo.symbol,
         widget.coinVo.address,
-        widget.transferAmount,
+        _actualAmount,
       );
       print('$ret');
-
       Application.router.navigateTo(
         context,
         Routes.exchange_transfer_success_page,
       );
+      setState(() {
+        isTransferring = true;
+      });
     } catch (e) {
-      print(e);
+      setState(() {
+        isTransferring = false;
+      });
+      if (e is HttpResponseCodeNotSuccess) {
+        Fluttertoast.showToast(msg: e.message);
+      }
     }
   }
 }
