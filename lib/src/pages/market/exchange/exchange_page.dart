@@ -74,7 +74,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -127,7 +126,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         _exchange(),
         _divider(),
         _quotesView(),
-        _authorizedView(),
       ],
     );
   }
@@ -399,7 +397,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                   ? _ethTotalQuotePrice
                   : '*****',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
               )),
           TextSpan(
             text:
@@ -781,34 +779,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       }
     });
     return result;
-  }
-
-  Widget _authorizedView() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: <Widget>[
-          Spacer(),
-          Image.asset(
-            'res/drawable/logo_manwu.png',
-            width: 23,
-            height: 23,
-            color: Colors.grey[500],
-          ),
-          SizedBox(
-            width: 4.0,
-          ),
-          Text(
-            S.of(context).safety_certification_by_organizations,
-            style: TextStyle(
-              color: Colors.grey[500],
-              fontSize: 12.0,
-            ),
-          ),
-          Spacer()
-        ],
-      ),
-    );
   }
 
   _divider() {

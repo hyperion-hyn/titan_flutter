@@ -67,8 +67,8 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
   Widget build(BuildContext context) {
     return _activeBannerList.isNotEmpty
         ? Container(
-            color: HexColor('#0F1FB9C7'),
             height: 40,
+            color: HexColor('#0F1FB9C7'),
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Row(

@@ -197,6 +197,7 @@ class ExchangeTransferHistoryListPageState
                   height: 16,
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(
                       flex: 1,
@@ -275,6 +276,7 @@ class ExchangeTransferHistoryListPageState
                             assetHistory.ctime,
                             textAlign: TextAlign.right,
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
                             style: TextStyle(
                               color: DefaultColors.color333,
                               fontSize: 12,
@@ -285,7 +287,7 @@ class ExchangeTransferHistoryListPageState
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
+                      padding: const EdgeInsets.only(left: 16.0, top: 16.0),
                       child: Icon(
                         Icons.arrow_forward_ios,
                         color: DefaultColors.color999,

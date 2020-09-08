@@ -331,9 +331,10 @@ class _ExchangeAssetHistoryPageState
                       height: 8.0,
                     ),
                     Text(
-                      assetHistory.ctime,
+                      '${assetHistory.ctime}',
                       textAlign: TextAlign.right,
                       maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: DefaultColors.color333,
                         fontSize: 12,
