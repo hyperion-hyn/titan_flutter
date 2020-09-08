@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
@@ -61,7 +62,7 @@ class ExchangeTransferHistoryListPageState
           color: Colors.black,
         ),
         title: Text(
-          '划转记录',
+          S.of(context).exchange_transfer_history,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
@@ -106,7 +107,7 @@ class ExchangeTransferHistoryListPageState
                       height: 16,
                     ),
                     Text(
-                      '暂无记录',
+                      S.of(context).exchange_empty_list,
                       style: TextStyle(
                         color: HexColor('#FF999999'),
                       ),
@@ -206,7 +207,7 @@ class ExchangeTransferHistoryListPageState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '数量(${assetHistory.type})',
+                                  '${S.of(context).exchange_amount}(${assetHistory.type})',
                                   style: TextStyle(
                                     color: DefaultColors.color999,
                                     fontSize: 12,
@@ -235,7 +236,7 @@ class ExchangeTransferHistoryListPageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '网络费用(${assetHistory.name == 'withdraw' ? assetHistory.type : 'HYN'})',
+                            '${S.of(context).exchange_network_fee}(${assetHistory.name == 'withdraw' ? assetHistory.type : 'HYN'})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -261,7 +262,7 @@ class ExchangeTransferHistoryListPageState
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            '时间',
+                            S.of(context).exchange_order_time,
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,

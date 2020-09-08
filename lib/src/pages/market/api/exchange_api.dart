@@ -8,6 +8,7 @@ import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -21,7 +22,6 @@ import 'package:pointycastle/asymmetric/api.dart';
 import '../../../../config.dart';
 
 class ExchangeHttp extends BaseHttpCore {
-
   factory ExchangeHttp() => _getInstance();
 
   ExchangeHttp._internal()
@@ -89,6 +89,19 @@ class ExchangeApi {
       null,
       params: {},
     );
+  }
+
+  Future<List<ExchangeBanner>> getBannerList() async {
+    return await ExchangeHttp.instance
+        .postEntity(ExchangeConst.PATH_BANNER_LIST,
+            EntityFactory<List<ExchangeBanner>>((data) {
+      var bannerList = List<ExchangeBanner>();
+
+      (data as List).forEach((item) {
+        bannerList.add(ExchangeBanner.fromJson(item));
+      });
+      return bannerList;
+    }), params: {});
   }
 
   ///使用钱包注册/登录

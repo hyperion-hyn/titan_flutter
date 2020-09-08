@@ -55,12 +55,12 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           });
           _setAuthAlready();
           Navigator.of(context).pop();
-          Fluttertoast.showToast(msg: '授权成功!');
+          Fluttertoast.showToast(msg: S.of(context).exchange_login_success);
         } else if (state is LoginFailState) {
           setState(() {
             isLoggingIn = false;
           });
-          Fluttertoast.showToast(msg: '授权失败, 请重试');
+          Fluttertoast.showToast(msg: S.of(context).exchange_login_failed);
         }
       },
       child: Scaffold(
@@ -70,7 +70,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           iconTheme: IconThemeData(color: Colors.black),
           elevation: 0,
           title: Text(
-            '交易授权',
+            S.of(context).exchange_auth,
             style: TextStyle(
               fontSize: 18,
               color: Colors.black,
@@ -107,7 +107,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                '你将使用钱包账户 ${WalletInheritedModel.of(context)?.activatedWallet?.wallet?.keystore?.name} 授权交易功能',
+                S.of(context).exchange_auth_description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,
@@ -139,7 +139,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      isLoggingIn ? '授权中' : '使用钱包授权',
+                      isLoggingIn ? S.of(context).exchange_loggin_in : S.of(context).exchange_auth_by_wallet,
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 14,
@@ -219,7 +219,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                '你必须先拥有一个私密去中心化钱包，然后授权使用交易兑换功能。',
+                S.of(context).exchange_auth_description,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,

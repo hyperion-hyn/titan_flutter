@@ -1389,7 +1389,7 @@ Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartLis
                                       padding: const EdgeInsets.only(right: 5),
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        buyEntity?.depthEntity?.price?.toString() ?? "--",
+                                        FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
                                           fontSize: 10,
@@ -1455,7 +1455,7 @@ Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartLis
                                       alignment: Alignment.centerLeft,
                                       padding: const EdgeInsets.only(left: 5),
                                       child: Text(
-                                        sellEntity?.depthEntity?.price?.toString() ?? "--",
+                                        FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,

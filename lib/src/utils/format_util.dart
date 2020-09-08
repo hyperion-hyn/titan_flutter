@@ -240,4 +240,11 @@ class FormatUtil {
     return Decimal.parse(value).toString();
   }
 
+  static String clearScientificCounting(double value) {
+    if(value == null){
+      return "";
+    }
+    return Decimal.parse(value.toString()).toString();
+  }
+
 }
