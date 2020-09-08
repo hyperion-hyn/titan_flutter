@@ -43,9 +43,11 @@ class _SocketState extends State<_SocketManager> {
   List<MarketItemEntity> _marketItemList;
   List<List<String>> _tradeDetailList;
   Timer _timer;
-  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
-  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
-
+//  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
+//  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
+  Set<String> _channelList = Set();
+  bool _connectSuccess = false;
+ 
   @override
   void initState() {
     super.initState();
@@ -58,9 +60,6 @@ class _SocketState extends State<_SocketManager> {
   @override
   void dispose() {
     print('[WS]  closed');
-
-//    _bloc.add(UnSubChannelEvent(channel: hynusdtTradeChannel));
-//    _bloc.add(UnSubChannelEvent(channel: hynethTradeChannel));
 
     _socketChannel.sink.close();
     _bloc.close();
@@ -75,6 +74,16 @@ class _SocketState extends State<_SocketManager> {
     _socketChannel.stream.listen((data) {
       print('[WS]  listen..., data');
 
+      if (!_connectSuccess) {
+        _connectSuccess = true;
+        print('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
+
+        for (var channel in _channelList) {
+          print('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+
+          _bloc.add(SubChannelEvent(channel: channel));
+        }
+      }
       _bloc.add(ReceivedDataEvent(data: data));
     }, onDone: () {
       print('[WS] Done!');
@@ -109,6 +118,8 @@ class _SocketState extends State<_SocketManager> {
 
     // Market
     _bloc.add(MarketSymbolEvent());
+
+    // trade
 //    _bloc.add(SubChannelEvent(channel: hynusdtTradeChannel));
 //    _bloc.add(SubChannelEvent(channel: hynethTradeChannel));
   }
@@ -131,6 +142,10 @@ class _SocketState extends State<_SocketManager> {
           _updateMarketItemList(state.response, symbol: state.symbol);
         } else if (state is ChannelTradeDetailState) {
           _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
+        } else if (state is SubChannelState) {
+          _channelList.add(state.channel);
+        } else if (state is UnSubChannelState) {
+          _channelList.remove(state.channel);
         }
       },
       child: BlocBuilder<SocketBloc, SocketState>(

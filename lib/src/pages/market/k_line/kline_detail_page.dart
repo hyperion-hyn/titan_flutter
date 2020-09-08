@@ -1071,7 +1071,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       DepthEntity entity = DepthEntity(element.depthEntity.price, amount);
       _asks.add(entity);
     });
-
   }
 
 
