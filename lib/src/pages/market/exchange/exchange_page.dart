@@ -302,7 +302,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        '${S.of(context).exchange_latest_quote}1HYN  = $_hynToSelectedCoin $_selectedCoin',
+                        '${S.of(context).exchange_latest_quote} ${_exchangeType == ExchangeType.BUY ? '1HYN = $_hynToSelectedCoin $_selectedCoin' : '1$_selectedCoin = $_selectedCoinToHYN HYN'}',
                         style: TextStyle(
                           color: HexColor('#FF999999'),
                           fontSize: 12,
