@@ -370,21 +370,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    var _totalByEth = ExchangeInheritedModel.of(context)
+    var _totalByCoin = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         ?.assetList
-        ?.getTotalEth();
-    var _ethQuotePrice = QuotesInheritedModel.of(context)
-        .activatedQuoteVoAndSign('ETH')
+        ?.getTotalHyn();
+    var _coinQuotePrice = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('HYN')
         ?.quoteVo
         ?.price;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _ethTotalQuotePrice = _ethQuotePrice != null && _totalByEth != null
+      var _ethTotalQuotePrice = _coinQuotePrice != null && _totalByCoin != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
-              _totalByEth * Decimal.parse(_ethQuotePrice?.toString()),
+              _totalByCoin * Decimal.parse(_coinQuotePrice?.toString()),
               4,
             )
           : '--';
@@ -497,16 +497,16 @@ class _ExchangePageState extends BaseState<ExchangePage> {
         ),
       ),
     );
-    availableCoinItemList.add(
-      DropdownMenuItem(
-        value: 'ETH',
-        child: _coinItem(
-          'ETH',
-          SupportedTokens.ETHEREUM.logo,
-          false,
-        ),
-      ),
-    );
+//    availableCoinItemList.add(
+//      DropdownMenuItem(
+//        value: 'ETH',
+//        child: _coinItem(
+//          'ETH',
+//          SupportedTokens.ETHEREUM.logo,
+//          false,
+//        ),
+//      ),
+//    );
 
     return Row(
       children: <Widget>[

@@ -50,8 +50,17 @@ class AssetList {
     try {
       Decimal usdtToEth = Decimal.parse(USDT.eth);
       Decimal hynToEth = Decimal.parse(HYN.eth);
-      Decimal eth = Decimal.parse(ETH.eth);
-      total = usdtToEth + hynToEth + eth;
+      total = usdtToEth + hynToEth;
+    } catch (e) {}
+    return total;
+  }
+
+  Decimal getTotalHyn() {
+    var total;
+    try {
+      Decimal usdtToHyn = Decimal.parse(USDT.hyn);
+      Decimal hyn = Decimal.parse(HYN.hyn);
+      total = usdtToHyn + hyn;
     } catch (e) {}
     return total;
   }

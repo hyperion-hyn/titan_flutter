@@ -957,5 +957,6 @@
   "exchange_frozen": "冻结",
   "exchange_total_balance": "交易账户总资产估值",
   "exchange_buy": "买入",
-  "exchange_sell": "卖出"
+  "exchange_sell": "卖出",
+  "exchange_order_list_detail": "成交明细"
 }

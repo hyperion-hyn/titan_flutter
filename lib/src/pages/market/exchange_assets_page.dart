@@ -34,7 +34,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   ExchangeApi _exchangeApi = ExchangeApi();
   ActiveQuoteVoAndSign symbolQuote;
-  Decimal ethToCurrency;
+  Decimal _hynToCurrency;
 
   @override
   void initState() {
@@ -127,11 +127,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _totalBalances() {
-    var _totalByEth = ExchangeInheritedModel.of(context)
+    var _totalByHyn = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         ?.assetList
-        ?.getTotalEth();
+        ?.getTotalHyn();
 
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
@@ -163,10 +163,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       children: <Widget>[
                         Text(
                           _isShowBalances
-                              ? _totalByEth != null
-                                  ? '$_totalByEth ETH'
-                                  : '- ETH'
-                              : '***** ETH',
+                              ? _totalByHyn != null
+                                  ? '$_totalByHyn HYN'
+                                  : '- HYN'
+                              : '***** HYN',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -178,10 +178,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ),
                         Text(
                           _isShowBalances
-                              ? ethToCurrency == null || _totalByEth == null
+                              ? _hynToCurrency == null || _totalByHyn == null
                                   ? '--'
                                   : '≈ ${FormatUtil.truncateDecimalNum(
-                                      ethToCurrency * _totalByEth,
+                                      _hynToCurrency * _totalByHyn,
                                       4,
                                     )} ${symbolQuote?.sign?.quote}'
                               : '≈ ***** ${symbolQuote?.sign?.quote}',
@@ -271,21 +271,21 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             AssetItem(
               'HYN',
               _assetList.HYN,
-              ethToCurrency,
+              _hynToCurrency,
               _isShowBalances,
             ),
             AssetItem(
               'USDT',
               _assetList.USDT,
-              ethToCurrency,
+              _hynToCurrency,
               _isShowBalances,
             ),
-            AssetItem(
-              'ETH',
-              _assetList.ETH,
-              ethToCurrency,
-              _isShowBalances,
-            ),
+//            AssetItem(
+//              'ETH',
+//              _assetList.ETH,
+//              ethToCurrency,
+//              _isShowBalances,
+//            ),
           ],
         ),
       );
@@ -301,11 +301,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
   _updateTypeToCurrency() async {
     try {
-      var ethRet = await _exchangeApi.type2currency(
-        'ETH',
+      var ret = await _exchangeApi.type2currency(
+        'HYN',
         symbolQuote?.sign?.quote,
       );
-      ethToCurrency = Decimal.parse(ethRet.toString());
+      _hynToCurrency = Decimal.parse(ret.toString());
 
       setState(() {});
     } catch (e) {}
@@ -323,12 +323,12 @@ class AssetItem extends StatefulWidget {
   final String _symbol;
   final AssetType _assetType;
   final bool _isShowBalances;
-  final Decimal _ethToCurrency;
+  final Decimal _hynToCurrency;
 
   AssetItem(
     this._symbol,
     this._assetType,
-    this._ethToCurrency,
+    this._hynToCurrency,
     this._isShowBalances,
   );
 
@@ -476,11 +476,11 @@ class AssetItemState extends State<AssetItem> {
                               ExchangeInheritedModel.of(context)
                                       .exchangeModel
                                       .isShowBalances
-                                  ? widget._assetType.eth != null &&
-                                          widget._ethToCurrency != null
+                                  ? widget._assetType.hyn != null &&
+                                          widget._hynToCurrency != null
                                       ? '${FormatUtil.truncateDecimalNum(
-                                          Decimal.parse(widget._assetType.eth) *
-                                              widget._ethToCurrency,
+                                          Decimal.parse(widget._assetType.hyn) *
+                                              widget._hynToCurrency,
                                           4,
                                         )}'
                                       : '-'
