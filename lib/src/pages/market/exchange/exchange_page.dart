@@ -110,7 +110,33 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
               },
-              child: _contentView(),
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: ExchangeBannerWidget(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _account(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _exchange(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _divider(),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _quotesTabs(),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _marketItem(_marketItemList[index]);
+                      },
+                      childCount: _marketItemList.length,
+                    ),
+                  )
+                ],
+              ),
             ),
           );
         },
@@ -121,11 +147,10 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _contentView() {
     return Column(
       children: <Widget>[
-        ExchangeBannerWidget(),
         _account(),
         _exchange(),
         _divider(),
-        _quotesView(),
+        _quotesTabs(),
       ],
     );
   }
@@ -527,79 +552,61 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     );
   }
 
-  _quotesView() {
-    return Expanded(
-      child: Column(
+  _quotesTabs() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        vertical: 16.0,
+        horizontal: 16.0,
+      ),
+      child: Row(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 16.0,
-              horizontal: 16.0,
+          Expanded(
+            child: Text(
+              S.of(context).exchange_name,
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
             ),
-            child: Row(
-              children: <Widget>[
-                Expanded(
+          ),
+          Expanded(
+            child: Center(
+              child: Container(
+                width: 80,
+                child: InkWell(
+                  onTap: () {},
                   child: Text(
-                    S.of(context).exchange_name,
+                    S.of(context).exchange_latest_quote,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14,
                     ),
                   ),
                 ),
-                Expanded(
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Center(
-                    child: Container(
-                      width: 80,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Text(
-                          S.of(context).exchange_latest_quote,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
+                    child: Text(
+                      S.of(context).exchange_change_percentage,
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Row(
-                    children: <Widget>[
-                      Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Center(
-                          child: Text(
-                            S.of(context).exchange_change_percentage,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ],
             ),
           ),
-          _quotesItemList()
         ],
       ),
-    );
-  }
-
-  _quotesItemList() {
-    return Expanded(
-      child: ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: _marketItemList.length,
-          itemBuilder: (context, index) {
-            return _marketItem(_marketItemList[index]);
-          }),
     );
   }
 
