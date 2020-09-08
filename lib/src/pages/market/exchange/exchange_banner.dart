@@ -67,7 +67,7 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
   Widget build(BuildContext context) {
     if (_activeBannerList.isNotEmpty) {
       return Container(
-        height: 40,
+        height: 45,
         color: HexColor('#0F1FB9C7'),
         child: Padding(
           padding: EdgeInsets.all(8.0),
@@ -116,18 +116,25 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
   }
 
   _bannerItem(ExchangeBanner banner) {
-    return InkWell(
-      child: Html(
-        data: banner.html,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: InkWell(
+        child: Text(
+          banner.html,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WebViewContainer(
+                        initUrl: banner.url,
+                      )));
+        },
       ),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => WebViewContainer(
-                      initUrl: banner.url,
-                    )));
-      },
     );
   }
 }
