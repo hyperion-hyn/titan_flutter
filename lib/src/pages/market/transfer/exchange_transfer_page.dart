@@ -676,10 +676,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         return '0';
       }
     } else {
-      return FormatUtil.coinBalanceHumanReadFormat(WalletInheritedModel.of(
-        context,
-        aspect: WalletAspect.activatedWallet,
-      ).getCoinVoBySymbol(_selectedCoinType));
+      return FormatUtil.coinBalanceByDecimal(
+        WalletInheritedModel.of(
+          context,
+          aspect: WalletAspect.activatedWallet,
+        ).getCoinVoBySymbol(_selectedCoinType),
+        6,
+      );
     }
   }
 

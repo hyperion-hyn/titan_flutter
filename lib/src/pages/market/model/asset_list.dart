@@ -55,6 +55,16 @@ class AssetList {
     return total;
   }
 
+  Decimal getTotalUsdt() {
+    var total;
+    try {
+      Decimal usdt = Decimal.parse(USDT.usdt);
+      Decimal hynToUsdt = Decimal.parse(HYN.usdt);
+      total = usdt + hynToUsdt;
+    } catch (e) {}
+    return total;
+  }
+
   Decimal getTotalHyn() {
     var total;
     try {

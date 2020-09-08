@@ -395,21 +395,21 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
-    var _totalByCoin = ExchangeInheritedModel.of(context)
+    var _totalByUsdt = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         ?.assetList
-        ?.getTotalHyn();
+        ?.getTotalUsdt();
     var _coinQuotePrice = QuotesInheritedModel.of(context)
-        .activatedQuoteVoAndSign('HYN')
+        .activatedQuoteVoAndSign('USDT')
         ?.quoteVo
         ?.price;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _ethTotalQuotePrice = _coinQuotePrice != null && _totalByCoin != null
+      var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
-              _totalByCoin * Decimal.parse(_coinQuotePrice?.toString()),
+              _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
               4,
             )
           : '--';
@@ -419,7 +419,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
               text: ExchangeInheritedModel.of(context)
                       .exchangeModel
                       .isShowBalances
-                  ? _ethTotalQuotePrice
+                  ? _usdtTotalQuotePrice
                   : '*****',
               style: TextStyle(
                 fontSize: 12,

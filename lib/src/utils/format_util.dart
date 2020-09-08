@@ -98,6 +98,14 @@ class FormatUtil {
         .toString();
   }
 
+  static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
+    return truncateDecimalNum(
+      ConvertTokenUnit.weiToDecimal(
+          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      decimal,
+    );
+  }
+
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
     var value = double.parse(coinBalanceHumanRead(coinVo));
     if (isFloor) {

@@ -21,7 +21,9 @@ class ExchangeOrderManagementPage extends StatefulWidget {
   }
 }
 
-class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPage> with SingleTickerProviderStateMixin {
+class _ExchangeOrderManagementPageState
+    extends State<ExchangeOrderManagementPage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
 
   @override
@@ -67,8 +69,8 @@ class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPag
                       onTap: () => Navigator.of(context).pop(),
                     ),
                     Expanded(
-                      flex: 10,
                       child: TabBar(
+                        isScrollable: true,
                         labelColor: HexColor('#FF333333'),
                         labelStyle: TextStyle(
                           fontWeight: FontWeight.bold,
@@ -87,25 +89,24 @@ class _ExchangeOrderManagementPageState extends State<ExchangeOrderManagementPag
                           Tab(
                             child: Text(
                               S.of(context).exchange_order_list_active,
+                              style: TextStyle(fontSize: 14),
                             ),
                           ),
                           Tab(
                             child: Text(
                               S.of(context).exchange_order_list_history,
+                              style: TextStyle(fontSize: 14),
                             ),
                           ),
                           Tab(
                             child: Text(
                               S.of(context).exchange_order_list_detail,
+                              style: TextStyle(fontSize: 14),
                             ),
                           )
                         ],
                       ),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(),
-                    )
                   ],
                 ),
               ),
