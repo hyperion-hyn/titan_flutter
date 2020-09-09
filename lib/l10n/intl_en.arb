@@ -982,5 +982,6 @@
   "exchange_withdraw_status_8": "Cancelled",
   "exchange_assets_running_status_1": "Dividends",
   "exchange_assets_running_status_2": "airdrop",
-  "exchange_assets_status": "Status"
+  "exchange_assets_status": "Status",
+  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。"
 }

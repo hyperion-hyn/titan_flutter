@@ -315,7 +315,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _account() {
     var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
-    return GestureDetector(
+    return InkWell(
       onTap: (){
         if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
           Application.router.navigateTo(context,
@@ -324,52 +324,54 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 6.0,
-                vertical: 6.0,
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 6.0,
+                  vertical: 6.0,
+                ),
+                child: quote == null
+                    ? Image.asset(
+                        'res/drawable/ic_exchange_account_cny.png',
+                        width: 20,
+                        height: 20,
+                        color: Theme.of(context).primaryColor,
+                      )
+                    : QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
+                        ? Image.asset(
+                            'res/drawable/ic_exchange_account_cny.png',
+                            width: 18,
+                            height: 18,
+                          )
+                        : Image.asset(
+                            'res/drawable/ic_exchange_account_usd.png',
+                            width: 18,
+                            height: 18,
+                          ),
               ),
-              child: quote == null
-                  ? Image.asset(
-                      'res/drawable/ic_exchange_account_cny.png',
-                      width: 20,
-                      height: 20,
-                      color: Theme.of(context).primaryColor,
-                    )
-                  : QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
-                      ? Image.asset(
-                          'res/drawable/ic_exchange_account_cny.png',
-                          width: 18,
-                          height: 18,
-                        )
-                      : Image.asset(
-                          'res/drawable/ic_exchange_account_usd.png',
-                          width: 18,
-                          height: 18,
-                        ),
-            ),
-            Text(
-              S.of(context).exchange_account,
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16,
+              Text(
+                S.of(context).exchange_account,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            Spacer(),
-            _assetView(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-              ),
-            )
-          ],
+              Spacer(),
+              _assetView(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

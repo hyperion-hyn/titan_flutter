@@ -970,5 +970,6 @@
   "exchange_withdraw_status_7": "환불",
   "exchange_withdraw_status_8": "취소 된",
   "exchange_assets_running_status_2": "공중 투하",
-  "exchange_assets_status": "상태"
+  "exchange_assets_status": "상태",
+  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。"
 }

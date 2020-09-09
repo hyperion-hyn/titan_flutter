@@ -227,13 +227,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                S.of(context).exchange_auth_description(
-                      WalletInheritedModel.of(context)
-                          ?.activatedWallet
-                          ?.wallet
-                          ?.keystore
-                          ?.name,
-                    ),
+                S.of(context).exchange_auth_no_wallet,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,
