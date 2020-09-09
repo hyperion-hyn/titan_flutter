@@ -473,7 +473,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('数量'),
+              Text(S.of(context).exchange_transfer_amount),
               Text(
                 '（${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType）',
                 style: TextStyle(

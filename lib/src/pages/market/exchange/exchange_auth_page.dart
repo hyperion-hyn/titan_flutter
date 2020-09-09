@@ -107,7 +107,13 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                '你将使用钱包身份 ${WalletInheritedModel.of(context)?.activatedWallet?.wallet?.keystore?.name} 授权交易功能',
+                S.of(context).exchange_auth_description(
+                      WalletInheritedModel.of(context)
+                          ?.activatedWallet
+                          ?.wallet
+                          ?.keystore
+                          ?.name,
+                    ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,
@@ -139,7 +145,9 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      isLoggingIn ? S.of(context).exchange_loggin_in : S.of(context).exchange_auth_by_wallet,
+                      isLoggingIn
+                          ? S.of(context).exchange_loggin_in
+                          : S.of(context).exchange_auth_by_wallet,
                       style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 14,
@@ -219,7 +227,13 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             child: Container(
               width: 300,
               child: Text(
-                S.of(context).exchange_auth_description,
+                S.of(context).exchange_auth_description(
+                      WalletInheritedModel.of(context)
+                          ?.activatedWallet
+                          ?.wallet
+                          ?.keystore
+                          ?.name,
+                    ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   height: 1.8,

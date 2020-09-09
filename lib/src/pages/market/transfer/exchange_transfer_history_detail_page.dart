@@ -105,14 +105,14 @@ class _ExchangeTransferHistoryDetailPageState
                 ])),
               ),
               _item(
-                '到账时间',
+                S.of(context).exchange_transfer_history_detail_time,
                 Text(
                   widget._assetHistory.ctime,
                   style: TextStyle(fontSize: 14),
                 ),
               ),
               _item(
-                '${'区块链交易'}ID',
+                '${S.of(context).blockchain_transaction}ID',
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
@@ -145,7 +145,7 @@ class _ExchangeTransferHistoryDetailPageState
                             width: 8.0,
                           ),
                           Text(
-                            '复制',
+                            S.of(context).copy,
                             style: TextStyle(
                               color: Theme.of(context).primaryColor,
                             ),

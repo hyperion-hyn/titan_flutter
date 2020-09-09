@@ -499,7 +499,7 @@ class AssetItemState extends State<AssetItem> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    '冻结',
+                    S.of(context).exchange_frozen,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,

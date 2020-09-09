@@ -277,7 +277,7 @@ class _ExchangeWithdrawConfirmPageState
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          "实际到账",
+                          S.of(context).exchange_withdraw_actual_amount,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,

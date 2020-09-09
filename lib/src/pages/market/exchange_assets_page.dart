@@ -465,7 +465,7 @@ class AssetItemState extends State<AssetItem> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                        '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,

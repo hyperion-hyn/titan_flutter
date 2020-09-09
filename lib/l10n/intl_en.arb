@@ -912,7 +912,7 @@
   "exchange_login_success": "授权成功!",
   "exchange_login_failed": "授权失败, 请重试",
   "exchange_auth": "交易授权",
-  "exchange_auth_description": "你必须先创建/导入一个钱包身份，然后使用钱包授权使用交易功能。",
+  "exchange_auth_description": "You're about to use {walletName} to authorize exchange",
   "exchange_loggin_in": "授权中",
   "exchange_auth_by_wallet": "使用钱包授权",
   "exchange_trade": "交易",
@@ -963,5 +963,10 @@
   "exchange_buy": "买入",
   "exchange_sell": "卖出",
   "exchange_order_list_detail": "成交明细",
-  "limit_price": "限价"
+  "limit_price": "限价",
+  "exchange_transfer_history_detail_time": "到账时间",
+  "blockchain_transaction": "区块链交易",
+  "exchange_transfer_amount": "数量",
+  "exchange_withdraw_actual_amount": "实际到账",
+  "exchange_asset_convert": "折合"
 }
