@@ -904,7 +904,7 @@
   "order_completed": "Order completed",
   "price_market": "Price",
   "count_market": "Amount",
-  "actual_transaction_market": "Closing transactions({market})",",
+  "actual_transaction_market": "Closing transactions({market})",
   "revoke": "Cancel this transaction？",
   "revoking": "Cancelling",
   "completed": "completed",
