@@ -308,6 +308,7 @@ class _ExchangeAssetHistoryPageState
                     ),
                     Text(
                       assetHistory.getStatusText(),
+                      maxLines: 2,
                       style: TextStyle(
                         color: DefaultColors.color333,
                         fontWeight: FontWeight.w500,

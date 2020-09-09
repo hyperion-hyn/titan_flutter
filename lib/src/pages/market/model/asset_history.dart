@@ -49,42 +49,44 @@ class AssetHistory extends Object {
   String getStatusText() {
     if ((name ?? '') == 'recharge') {
       switch (status) {
-        case '0':
-          return '等待处理';
         case '1':
-          return '等待确认';
+          return S.of(Keys.rootKey.currentContext).exchange_recharge_status_1;
         case '2':
-          return '完成确认';
+          return S.of(Keys.rootKey.currentContext).exchange_recharge_status_2;
         default:
           return '-';
       }
     } else if ((name ?? '') == 'withdraw') {
       switch (status) {
         case '1':
-          return '已提交';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_1;
         case '2':
-          return '机器驳回';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_2;
         case '3':
-          return '人工驳回';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_3;
         case '4':
-          return '同意';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_4;
         case '5':
-          return '处理中';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_5;
         case '6':
-          return '处理完成';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_6;
         case '7':
-          return '处理失败';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_7;
         case '8':
-          return '用户取消';
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_8;
         default:
           return '-';
       }
     } else if ((name ?? '') == 'running') {
       switch (status) {
         case '1':
-          return '分红';
+          return S
+              .of(Keys.rootKey.currentContext)
+              .exchange_assets_running_status_1;
         case '2':
-          return '空投';
+          return S
+              .of(Keys.rootKey.currentContext)
+              .exchange_assets_running_status_2;
         default:
           return '-';
       }
