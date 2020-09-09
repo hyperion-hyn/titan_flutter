@@ -91,6 +91,8 @@ class _ApiDemoState extends State {
             onPressed: () async {
               var ret = await _exchangeApi.testRecharge('HYN', 10000);
               print(ret);
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(UpdateAssetsEvent());
             },
             child: Text('充10000HYN'),
           ),
@@ -98,6 +100,8 @@ class _ApiDemoState extends State {
             onPressed: () async {
               var ret = await _exchangeApi.testRecharge('USDT', 1000);
               print(ret);
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(UpdateAssetsEvent());
             },
             child: Text('充1000USDT'),
           ),
@@ -105,6 +109,8 @@ class _ApiDemoState extends State {
             onPressed: () async {
               var ret = await _exchangeApi.testRecharge('ETH', 1000);
               print(ret);
+              BlocProvider.of<ExchangeCmpBloc>(context)
+                  .add(UpdateAssetsEvent());
             },
             child: Text('充1000ETH'),
           ),

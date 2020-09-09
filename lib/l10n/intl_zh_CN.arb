@@ -964,5 +964,6 @@
   "blockchain_transaction": "区块链交易",
   "exchange_transfer_amount": "数量",
   "exchange_withdraw_actual_amount": "实际到账",
-  "exchange_asset_convert": "折合"
+  "exchange_asset_convert": "折合",
+  "exchange_login_before_view_orders": "授权后查看记录"
 }

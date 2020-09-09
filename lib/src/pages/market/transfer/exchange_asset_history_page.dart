@@ -46,7 +46,7 @@ class _ExchangeAssetHistoryPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadDataBloc.add(LoadingEvent());
+    _refresh();
   }
 
   @override
