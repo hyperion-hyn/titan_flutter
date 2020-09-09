@@ -373,7 +373,7 @@ class _ExchangeWithdrawConfirmPageState
         activatedWallet.wallet.getEthAccount().address,
         widget.coinVo.symbol,
         widget.coinVo.address,
-        _actualAmount,
+        widget.transferAmount,
       );
       print('$ret');
       Application.router.navigateTo(

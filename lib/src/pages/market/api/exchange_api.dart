@@ -83,14 +83,6 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> bannerList() async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_BANNER_LIST,
-      null,
-      params: {},
-    );
-  }
-
   Future<List<ExchangeBanner>> getBannerList() async {
     return await ExchangeHttp.instance
         .postEntity(ExchangeConst.PATH_BANNER_LIST,
