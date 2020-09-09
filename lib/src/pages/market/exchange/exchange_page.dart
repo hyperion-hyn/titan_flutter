@@ -317,7 +317,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
     return InkWell(
       onTap: () {
-        if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
+        if (ExchangeInheritedModel.of(context).exchangeModel.isActiveAccount()) {
           Application.router.navigateTo(context,
               Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
         } else {

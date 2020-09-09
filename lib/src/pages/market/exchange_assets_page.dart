@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -113,12 +114,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             children: <Widget>[
               _totalBalances(),
               _divider(),
-              _exchangeAssetListView(
-                ExchangeInheritedModel.of(context)
-                    .exchangeModel
-                    .activeAccount
-                    .assetList,
-              ),
+              _exchangeAssetListView(),
             ],
           ),
         ),
@@ -127,17 +123,15 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _totalBalances() {
-    var _totalByHyn = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalHyn();
+    var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
-    var _totalByUsdt = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalUsdt();
+    var _totalByHyn = _exchangeModel.isActiveAccount()
+        ? _exchangeModel.activeAccount?.assetList?.getTotalHyn()
+        : null;
+
+    var _totalByUsdt = _exchangeModel.isActiveAccount()
+        ? _exchangeModel.activeAccount?.assetList?.getTotalUsdt()
+        : null;
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
     return Container(
@@ -213,13 +207,20 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         child: OutlineButton(
                           child: Text(
                             S.of(context).exchange_transfer,
-                            style: TextStyle(color: Theme.of(context).primaryColor),
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
                           ),
                           onPressed: () {
-                            Application.router.navigateTo(
-                              context,
-                              Routes.exchange_transfer_page,
-                            );
+                            if (ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .isActiveAccount()) {
+                              Application.router.navigateTo(
+                                context,
+                                Routes.exchange_transfer_page,
+                              );
+                            }else {
+                              Fluttertoast.showToast(msg: S.of(context).exchange_authorize);
+                            }
                           },
                           borderSide: BorderSide(
                             color: Theme.of(context).primaryColor,
@@ -265,7 +266,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     );
   }
 
-  _exchangeAssetListView(AssetList _assetList) {
+  _exchangeAssetListView() {
+    var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    var _assetList = _exchangeModel.isActiveAccount()
+        ? _exchangeModel.activeAccount.assetList
+        : null;
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
     if (_assetList != null) {
@@ -295,13 +300,36 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         ),
       );
     } else {
-      return Container(
-        height: 200,
-        child: Center(
-          child: Text(S.of(context).exchange_empty_list),
-        ),
-      );
+      return _emptyView();
     }
+  }
+
+  _emptyView() {
+    var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 48,
+        ),
+        Image.asset(
+          'res/drawable/ic_empty_list.png',
+          height: 80,
+          width: 80,
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        Text(
+          _exchangeModel.isActiveAccount()
+              ? S.of(context).exchange_empty_list
+              : S.of(context).exchange_login_before_view_orders,
+          style: TextStyle(
+            color: HexColor('#FF999999'),
+          ),
+        )
+      ],
+    );
   }
 
   _updateTypeToCurrency() async {

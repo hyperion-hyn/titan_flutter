@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -136,6 +140,13 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
       if (mounted) setState(() {});
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
+      if (e is HttpResponseCodeNotSuccess) {
+        Fluttertoast.showToast(msg: e.message);
+        if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
+          BlocProvider.of<ExchangeCmpBloc>(context)
+              .add(ClearExchangeAccountEvent());
+        }
+      }
       _loadDataBloc.add(RefreshSuccessEvent());
     }
   }
@@ -156,6 +167,13 @@ class ExchangeOrderHistoryPageState extends State<ExchangeOrderHistoryPage>
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadingMoreSuccessEvent());
+      if (e is HttpResponseCodeNotSuccess) {
+        Fluttertoast.showToast(msg: e.message);
+        if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
+          BlocProvider.of<ExchangeCmpBloc>(context)
+              .add(ClearExchangeAccountEvent());
+        }
+      }
     }
   }
 

@@ -971,5 +971,6 @@
   "exchange_withdraw_status_8": "已取消",
   "exchange_assets_running_status_2": "空投",
   "exchange_assets_status": "狀態",
-  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。"
+  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。",
+  "exchange_authorize": "请授权交易账户"
 }

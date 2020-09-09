@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
@@ -89,7 +90,14 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
               var ret = await _exchangeApi.getAssetsList();
               exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
             } catch (e) {
-              //Fluttertoast.showToast(msg: e.toString());
+              if (e is HttpResponseCodeNotSuccess) {
+                Fluttertoast.showToast(msg: e.message);
+                if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
+                  ///clear current account if not login
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(ClearExchangeAccountEvent());
+                }
+              }
             }
             setState(() {});
           }
