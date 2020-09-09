@@ -971,6 +971,6 @@
   "exchange_withdraw_status_8": "취소 된",
   "exchange_assets_running_status_2": "공중 투하",
   "exchange_assets_status": "상태",
-  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。",
-  "exchange_authorize": "请授权交易账户"
+  "exchange_auth_no_wallet": "먼저 지갑 ID를 생성 / 가져온 후 지갑을 사용하여 거래 기능을 승인하십시오.",
+  "exchange_authorize": "거래 계좌를 승인하십시오"
 }
