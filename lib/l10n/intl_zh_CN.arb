@@ -968,13 +968,16 @@
   "exchange_login_before_view_orders": "授权后查看记录",
   "exchange_recharge_status_1": "处理中",
   "exchange_recharge_status_2": "已划转",
-  "exchange_withdraw_status_1": "处理中（可取消）",
-  "exchange_withdraw_status_2": "处理中（可取消）",
+  "exchange_withdraw_status_1": "处理中",
+  "exchange_withdraw_status_2": "处理中",
   "exchange_withdraw_status_3": "已驳回",
-  "exchange_withdraw_status_4": "处理中（可取消）",
-  "exchange_withdraw_status_5": "处理中（不可取消）",
+  "exchange_withdraw_status_4": "处理中",
+  "exchange_withdraw_status_5": "处理中",
   "exchange_withdraw_status_6": "划转成功",
   "exchange_withdraw_status_7": "划转失败已退款",
   "exchange_withdraw_status_8": "已取消",
-  "exchange_assets_running_status_2": "空投"
+  "exchange_assets_running_status_1": "分红",
+  "exchange_assets_running_status_2": "空投",
+  "exchange_assets_status": "状态",
+  "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。"
 }
