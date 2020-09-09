@@ -50,16 +50,18 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
     super.initState();
     _getActiveBannerList();
     _timer = Timer.periodic(Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < _activeBannerList.length) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
+      if (_activeBannerList.isNotEmpty) {
+        if (_currentPage < _activeBannerList.length) {
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+        _pageController.animateToPage(
+          _currentPage,
+          duration: Duration(milliseconds: 350),
+          curve: Curves.easeIn,
+        );
       }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: Duration(milliseconds: 350),
-        curve: Curves.easeIn,
-      );
     });
   }
 
