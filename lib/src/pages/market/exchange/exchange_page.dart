@@ -346,11 +346,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                           'res/drawable/ic_exchange_account_cny.png',
                           width: 18,
                           height: 18,
+                          color: Theme.of(context).primaryColor,
                         )
                       : Image.asset(
                           'res/drawable/ic_exchange_account_usd.png',
                           width: 18,
                           height: 18,
+                          color: Theme.of(context).primaryColor,
                         ),
             ),
             Text(
