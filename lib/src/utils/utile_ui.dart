@@ -16,10 +16,12 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/auth_util.dart';
@@ -587,6 +589,39 @@ class UiUtil {
       widget,
       duration: Duration(seconds: 1),
       onDismiss: () {},
+    );
+  }
+
+  static Future<T> showExchangeAuthAgainDialog<T>(
+    BuildContext context, {
+    Widget title,
+    Widget content,
+    List<Widget> actions,
+  }) {
+    return showDialogWidget(
+      context,
+      title: Text(S.of(context).exchange_auth),
+      content: Text(S.of(context).exchange_ask_auth_again),
+      actions: [
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S.of(context).setting),
+          onPressed: () {
+            Navigator.pop(context);
+
+            ///clear previous account
+            BlocProvider.of<ExchangeCmpBloc>(context)
+                .add(ClearExchangeAccountEvent());
+
+            ///
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          },
+        ),
+      ],
     );
   }
 }

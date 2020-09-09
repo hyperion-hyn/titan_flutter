@@ -980,5 +980,6 @@
   "exchange_assets_running_status_2": "空投",
   "exchange_assets_status": "状态",
   "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。",
-  "exchange_authorize": "请授权交易账户"
+  "exchange_authorize": "请授权交易账户",
+  "exchange_ask_auth_again": "交易授权过期，是否使用钱包重新授权？"
 }

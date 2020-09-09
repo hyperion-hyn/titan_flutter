@@ -984,5 +984,6 @@
   "exchange_assets_running_status_2": "airdrop",
   "exchange_assets_status": "Status",
   "exchange_auth_no_wallet": "Please create/import a wallet identity first, and then use the wallet to authorize the transaction function.",
-  "exchange_authorize": "Please authorize trading account"
+  "exchange_authorize": "Please authorize trading account",
+  "exchange_ask_auth_again": "Exchange authorization has expired, use the wallet to re-authorize?"
 }

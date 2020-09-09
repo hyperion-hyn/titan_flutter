@@ -57,6 +57,9 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
       listener: (context, state) async {
         if (state is LoginState) {
           try {
+            ///Clear previous account
+            exchangeModel.activeAccount = null;
+
             var ret = await _exchangeApi.walletLogin(
                 wallet: state.wallet,
                 password: state.password,

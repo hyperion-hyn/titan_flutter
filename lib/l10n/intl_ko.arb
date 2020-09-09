@@ -972,5 +972,6 @@
   "exchange_assets_running_status_2": "공중 투하",
   "exchange_assets_status": "상태",
   "exchange_auth_no_wallet": "먼저 지갑 ID를 생성 / 가져온 후 지갑을 사용하여 거래 기능을 승인하십시오.",
-  "exchange_authorize": "거래 계좌를 승인하십시오"
+  "exchange_authorize": "거래 계좌를 승인하십시오",
+  "exchange_ask_auth_again": "거래 승인이 만료되었습니다. 다시 승인하려면 지갑을 사용해야하나요?"
 }
