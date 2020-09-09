@@ -506,18 +506,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     return Row(
       children: <Widget>[
         if (_exchangeType == ExchangeType.BUY) Spacer(),
-        DropdownButtonHideUnderline(
-          child: DropdownButton(
-            onChanged: (value) {
-              setState(() {
-                _selectedCoin = value;
-              });
-            },
-            value: _selectedCoin,
-            items: availableCoinItemList,
-          ),
+        _coinItem(
+          'USDT',
+          SupportedTokens.USDT_ERC20.logo,
+          false,
         ),
-        if (_exchangeType == ExchangeType.SELL) Spacer(),
+        //if (_exchangeType == ExchangeType.SELL) Spacer(),
+        Spacer()
       ],
     );
   }
