@@ -316,7 +316,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   _account() {
     var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
     return InkWell(
-      onTap: (){
+      onTap: () {
         if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
           Application.router.navigateTo(context,
               Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
@@ -347,11 +347,13 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                             'res/drawable/ic_exchange_account_cny.png',
                             width: 18,
                             height: 18,
+                            color: Theme.of(context).primaryColor,
                           )
                         : Image.asset(
                             'res/drawable/ic_exchange_account_usd.png',
                             width: 18,
                             height: 18,
+                            color: Theme.of(context).primaryColor,
                           ),
               ),
               Text(
