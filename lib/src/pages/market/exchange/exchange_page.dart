@@ -315,17 +315,17 @@ class _ExchangePageState extends BaseState<ExchangePage> {
 
   _account() {
     var quote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
-            Application.router.navigateTo(context,
-                Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
-          } else {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
-          }
-        },
+    return GestureDetector(
+      onTap: (){
+        if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
+          Application.router.navigateTo(context,
+              Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[

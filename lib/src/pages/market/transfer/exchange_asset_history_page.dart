@@ -297,7 +297,7 @@ class _ExchangeAssetHistoryPageState
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      '状态',
+                      S.of(context).exchange_assets_status,
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -324,7 +324,7 @@ class _ExchangeAssetHistoryPageState
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Text(
-                      '时间',
+                      S.of(context).exchange_order_time,
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
