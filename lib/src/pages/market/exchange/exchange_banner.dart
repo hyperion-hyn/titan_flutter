@@ -67,16 +67,13 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
   Widget build(BuildContext context) {
     if (_activeBannerList.isNotEmpty) {
       return Container(
-        height: 45,
+        height: 42,
         color: HexColor('#0F1FB9C7'),
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                width: 8,
-              ),
               Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Image.asset(
@@ -86,11 +83,12 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
                   )),
               Expanded(
                 child: PageView(
+                  physics: NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   controller: _pageController,
                   children: _bannerWidgetList,
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -121,6 +119,7 @@ class _ExchangeBannerWidgetState extends BaseState<ExchangeBannerWidget> {
       child: InkWell(
         child: Text(
           banner.html,
+          maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 12,
