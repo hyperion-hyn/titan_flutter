@@ -1046,36 +1046,36 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                       ),
                       Spacer(),
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.end,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 2.0),
-                            child: Image.asset(
-                              "res/drawable/ic_exhange_all_consign.png",
-                              width: 12,
-                              height: 12,
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ExchangeOrderManagementPage(
+                                    marketCoin,
+                                  )));
+                        },
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.end,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 2.0),
+                              child: Image.asset(
+                                "res/drawable/ic_exhange_all_consign.png",
+                                width: 12,
+                                height: 12,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          InkWell(
-                            child: Text("${S.of(context).all}",
+                            SizedBox(
+                              width: 4,
+                            ),
+                            Text("${S.of(context).all}",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: DefaultColors.color999,
-                                )),
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ExchangeOrderManagementPage(
-                                            marketCoin,
-                                          )));
-                            },
-                          )
-                        ],
+                                ))
+                          ],
+                        ),
                       ),
                     ],
                   ),

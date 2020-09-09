@@ -96,7 +96,7 @@ class _ClickOvalIconButtonState extends State<ClickOvalIconButton> {
       );
     } else {
       return LinearGradient(
-        colors: <Color>[Color(0xff228BA1), Color(0xff228BA1)],
+        colors: <Color>[Theme.of(context).primaryColor, Theme.of(context).primaryColor],
       );
     }
   }

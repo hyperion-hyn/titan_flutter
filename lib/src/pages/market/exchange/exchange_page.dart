@@ -339,6 +339,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
                       'res/drawable/ic_exchange_account_cny.png',
                       width: 20,
                       height: 20,
+                      color: Theme.of(context).primaryColor,
                     )
                   : QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
                       ? Image.asset(
@@ -375,19 +376,9 @@ class _ExchangePageState extends BaseState<ExchangePage> {
   }
 
   _assetView() {
- 
-    var _totalByUsdt = ExchangeInheritedModel.of(context)
-
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalUsdt();
-    var _coinQuotePrice = QuotesInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.quoteVo
-        ?.price;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
-        null) {
+    var _totalByUsdt = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalUsdt();
+    var _coinQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.quoteVo?.price;
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
       var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
@@ -398,13 +389,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
- 
-              text: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
-                  ? _usdtTotalQuotePrice
-                  : '*****',
-
+              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _usdtTotalQuotePrice : '*****',
               style: TextStyle(
                 fontSize: 12,
               )),
@@ -598,8 +583,7 @@ class _ExchangePageState extends BaseState<ExchangePage> {
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour =
-        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity.amount,
       2,
     )}';

@@ -452,9 +452,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.explore, S.of(context).node, 2),
+                    tabItem(Icons.explore, S.of(context).node, 1),
                     tabItem(
-                        Icons.account_balance_wallet, S.of(context).wallet, 1),
+                        Icons.account_balance_wallet, S.of(context).wallet, 2),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
                   ],
@@ -536,10 +536,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
     switch (index) {
       case 1:
-        return WalletTabsPage();
+        return Map3NodeTabsPage();
 
       case 2:
-        return Map3NodeTabsPage();
+        return WalletTabsPage();
 
       /*return BlocProvider(
             create: (ctx) => DiscoverBloc(ctx),
