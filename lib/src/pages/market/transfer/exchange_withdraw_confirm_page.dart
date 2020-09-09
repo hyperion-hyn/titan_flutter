@@ -355,14 +355,6 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   _transferWithPwd(String walletPassword) async {
-    var _withdrawFee = ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
-            .getWithdrawFee(widget.coinVo.symbol) ??
-        '0';
-    var _actualAmount =
-        '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} ${widget.coinVo.symbol}';
     setState(() {
       isTransferring = true;
     });

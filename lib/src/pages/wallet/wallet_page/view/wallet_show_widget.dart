@@ -549,7 +549,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
-          Text('Repsten环境测试'),
+          Text('Ropsten环境测试'),
           RaisedButton(
             child: Text('-测试申请0.05ETH'),
             onPressed: () {

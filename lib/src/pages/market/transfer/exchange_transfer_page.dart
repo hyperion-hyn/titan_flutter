@@ -698,6 +698,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     } catch (e) {
       if (e is HttpResponseCodeNotSuccess) {
         Fluttertoast.showToast(msg: e.message);
+
       }
     }
   }

@@ -73,38 +73,51 @@ class ExchangeOrderDetailListPageState
 
   _content() {
     if (_orderDetailList.isEmpty) {
-      return Center(
-        child: Container(
-          height: 150,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'res/drawable/ic_empty_list.png',
-                height: 80,
-                width: 80,
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Text(
-                S.of(context).exchange_empty_list,
-                style: TextStyle(
-                  color: HexColor('#FF999999'),
-                ),
-              )
-            ],
-          ),
-        ),
-      );
+      return _emptyView();
     } else {
-      return ListView.builder(
-        itemCount: _orderDetailList.length,
-        itemBuilder: (ctx, index) => OrderDetailItem(
-          _orderDetailList[index],
-        ),
+      return CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return OrderDetailItem(_orderDetailList[index]);
+              },
+              childCount: _orderDetailList.length,
+            ),
+          ),
+        ],
       );
     }
+  }
+
+  _emptyView() {
+    var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    return Center(
+      child: Container(
+        height: 150,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'res/drawable/ic_empty_list.png',
+              height: 80,
+              width: 80,
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              _exchangeModel.isActiveAccount()
+                  ? S.of(context).exchange_empty_list
+                  : S.of(context).exchange_login_before_view_orders,
+              style: TextStyle(
+                color: HexColor('#FF999999'),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   _refresh() async {
