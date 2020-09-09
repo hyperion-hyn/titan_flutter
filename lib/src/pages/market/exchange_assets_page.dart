@@ -213,7 +213,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         child: OutlineButton(
                           child: Text(
                             S.of(context).exchange_transfer,
-                            style: TextStyle(color: HexColor('#FF1095B0')),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                           onPressed: () {
                             Application.router.navigateTo(
@@ -222,7 +222,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                             );
                           },
                           borderSide: BorderSide(
-                            color: HexColor('#FF1095B0'),
+                            color: Theme.of(context).primaryColor,
                             width: 1,
                           ),
                           shape: RoundedRectangleBorder(
@@ -249,13 +249,13 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         'res/drawable/ic_wallet_show_balances.png',
                         height: 20,
                         width: 20,
-                        color: HexColor('#FF228BA1'),
+                        color: Theme.of(context).primaryColor,
                       )
                     : Image.asset(
                         'res/drawable/ic_wallet_hide_balances.png',
                         height: 20,
                         width: 20,
-                        color: HexColor('#FF228BA1'),
+                        color: Theme.of(context).primaryColor,
                       ),
               ),
             )
@@ -372,7 +372,7 @@ class AssetItemState extends State<AssetItem> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
-                        color: HexColor('#FF228BA1'),
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
                   ],

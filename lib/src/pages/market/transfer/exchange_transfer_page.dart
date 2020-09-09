@@ -287,6 +287,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                   'res/drawable/ic_btn_transfer.png',
                   width: 50,
                   height: 50,
+                  color: Theme.of(context).primaryColor,
                 ),
                 onTap: () {
                   setState(() {
@@ -392,7 +393,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       height: 50,
       child: RaisedButton(
           textColor: Colors.white,
-          color: HexColor('#FF228BA1'),
+          color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
               side: BorderSide(
                 color: Theme.of(context).primaryColor,

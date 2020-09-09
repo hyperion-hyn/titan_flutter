@@ -58,13 +58,13 @@ class _WalletTabsPageState extends State<WalletTabsPage>
                     child: TabBar(
                       controller: _tabController,
                       isScrollable: true,
-                      labelColor: HexColor('#FF228BA1'),
+                      labelColor: Theme.of(context).primaryColor,
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: HexColor('#FF228BA1'),
+                      indicatorColor: Theme.of(context).primaryColor,
                       indicatorWeight: 3,
                       indicatorPadding: EdgeInsets.only(bottom: 2),
                       unselectedLabelColor: HexColor("#FF333333"),
