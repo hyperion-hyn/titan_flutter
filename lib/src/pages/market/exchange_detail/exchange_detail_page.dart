@@ -29,6 +29,7 @@ import 'package:titan/src/pages/market/order/exchange_order_mangement_page.dart'
 import 'package:titan/src/pages/market/k_line/kline_detail_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/custom_seekbar/custom_seekbar.dart';
 import 'dart:math' as math;
@@ -110,7 +111,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   ExchangeModel exchangeModel;
   String symbol;
   String marketCoin;
-  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(8, 8, 8, 1000000, 10, [1, 2, 3, 4]);
+  MarketInfoEntity marketInfoEntity = MarketInfoEntity.defaultEntity(4, 4, 8, 1000000, 10, [1, 2, 3, 4]);
   bool beforeJumpNoLogin = true;
 
   String _realTimePrice = "--";
@@ -570,13 +571,16 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             priceEditController.text = currentPriceStr;
             priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: currentPriceStr.length));
           } else if (optionKey == contrOptionsTypePriceDecrease) {
-            var preNum = math.pow(10, marketInfoEntity.pricePrecision);
-            currentPrice -= Decimal.parse((1 / preNum).toString());
-            updateTotalView();
+            if(currentPrice > Decimal.fromInt(0)) {
+              var preNum = math.pow(10, marketInfoEntity.pricePrecision);
+              currentPrice -= Decimal.parse((1 / preNum).toString());
+              updateTotalView();
 
-            currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
-            priceEditController.text = currentPriceStr;
-            priceEditController.selection = TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
+              currentPriceStr = FormatUtil.truncateDecimalNum(currentPrice, marketInfoEntity.pricePrecision);
+              priceEditController.text = currentPriceStr;
+              priceEditController.selection =
+                  TextSelection.fromPosition(TextPosition(offset: '$currentPriceStr'.length));
+            }
           } else if (optionKey == contrOptionsTypeNum) {
             updateTotalView();
 
@@ -801,9 +805,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                         ),
                         InkWell(
                           onTap: () {
-                            if (currentPrice.toDouble() == 0) {
-                              return;
-                            }
                             optionsController.add({contrOptionsTypePriceDecrease: ""});
                           },
                           child: Padding(
