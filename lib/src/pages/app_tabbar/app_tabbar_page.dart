@@ -481,35 +481,44 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           },
           child: Container(
             padding: EdgeInsets.only(top: 4, bottom: 2),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
+              alignment: Alignment.center,
               children: <Widget>[
-                if (Application.isUpdateAnnounce && index == 3)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                    child: Container(
-                      height: 8,
-                      width: 8,
-                      decoration: BoxDecoration(
-                          color: HexColor("#DA3B2A"),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: HexColor("#DA3B2A"))),
-                    ),
-                  ),
-                Icon(
-                  iconData,
-                  color: selected
-                      ? Theme.of(context).primaryColor
-                      : Colors.black38,
-                ),
-                Text(
-                  text,
-                  style: TextStyle(
-                      fontSize: 12,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      iconData,
                       color: selected
                           ? Theme.of(context).primaryColor
-                          : Colors.black38),
+                          : Colors.black38,
+                    ),
+                    Text(
+                      text,
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: selected
+                              ? Theme.of(context).primaryColor
+                              : Colors.black38),
+                    ),
+                  ],
                 ),
+                if (Application.isUpdateAnnounce && index == 3)
+                  Positioned(
+                    top: 2,
+                    right: 12,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      child: Container(
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                            color: HexColor("#DA3B2A"),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: HexColor("#DA3B2A"))),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
