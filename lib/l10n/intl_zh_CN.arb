@@ -981,5 +981,12 @@
   "exchange_assets_status": "状态",
   "exchange_auth_no_wallet": "请先创建/导入钱包身份，然后使用钱包授权使用交易功能。",
   "exchange_authorize": "请授权交易账户",
-  "exchange_ask_auth_again": "交易授权过期，是否使用钱包重新授权？"
+  "exchange_ask_auth_again": "交易授权过期，是否使用钱包重新授权？",
+  "exchange_bio_auth": "交易授权",
+  "bio_auth": "生物识别",
+  "bio_auth_intro_title_exchange": "免密授权",
+  "bio_auth_exchange_intro_content": "免密授权将您的钱包密码通过安全加密算法存储至手机设备的Keychain / KeyStore中，交易时调用生物识别（指纹或面容）鉴权，快速完成授权与签名。",
+  "bio_auth_exchange_intro_content_2": "开启免密授权后，请妥善备份密码。如果忘记密码，可以通过导入助计词 / 私钥，重新设置密码",
+  "bio_auth_exchange_risk_title": "Risk reminder",
+  "bio_auth_exchange_risk_content": "请了解你的手机设备生物识别的安全等级\n公共手机，请勿开启免密授权\n"
 }

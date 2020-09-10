@@ -56,7 +56,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
         title: Text(
           widget._authType == AuthType.pay
               ? S.of(context).secret_free_payment
-              : '交易授权',
+              : S.of(context).exchange_bio_auth,
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
       ),
@@ -119,7 +119,9 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
                 height: 16,
               ),
               Text(
-                S.of(context).introduct_non_secret_payment,
+                widget._authType == AuthType.pay
+                    ? S.of(context).introduct_non_secret_payment
+                    : S.of(context).bio_auth_intro_title_exchange,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -129,7 +131,9 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
                 height: 8,
               ),
               Text(
-                S.of(context).non_secret_payment_introduction_detail,
+                widget._authType == AuthType.pay
+                    ? S.of(context).non_secret_payment_introduction_detail
+                    : S.of(context).bio_auth_exchange_intro_content,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -139,7 +143,9 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
                 height: 16,
               ),
               Text(
-                S.of(context).remind_after_open_non_secret_payment,
+                widget._authType == AuthType.pay
+                    ? S.of(context).remind_after_open_non_secret_payment
+                    : S.of(context).bio_auth_exchange_intro_content_2,
                 style: TextStyle(
                   height: 1.7,
                   fontSize: 13,
@@ -156,7 +162,9 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
                 ),
               ),
               Text(
-                S.of(context).risk_warning_detail_non_secret_payment,
+                widget._authType == AuthType.pay
+                    ? S.of(context).risk_warning_detail_non_secret_payment
+                    : S.of(context).bio_auth_exchange_risk_content,
                 style: TextStyle(
                   height: 1.8,
                   fontSize: 13,
