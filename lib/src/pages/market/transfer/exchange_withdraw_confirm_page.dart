@@ -7,6 +7,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -375,6 +376,10 @@ class _ExchangeWithdrawConfirmPageState
       setState(() {
         isTransferring = true;
       });
+
+      ///update assets
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(UpdateAssetsEvent());
     } catch (e) {
       setState(() {
         isTransferring = false;

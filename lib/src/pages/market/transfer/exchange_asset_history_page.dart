@@ -268,7 +268,7 @@ class _ExchangeAssetHistoryPageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '数量(${assetHistory.type})',
+                            '${S.of(context).exchange_amount}(${assetHistory.type})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,
@@ -437,36 +437,32 @@ class AssetItemState extends State<AssetItem> {
             Expanded(
               flex: 1,
               child: Container(
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          '折合(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8.0,
-                        ),
-                        Text(
-                          widget._assetType.hyn != null &&
-                                  widget._hynToCurrency != null
-                              ? '${FormatUtil.truncateDecimalNum(
-                                  Decimal.parse(widget._assetType.hyn) *
-                                      widget._hynToCurrency,
-                                  4,
-                                )}'
-                              : '-',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 12),
-                        ),
-                      ],
+                    Text(
+                      '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
                     ),
-                    Spacer()
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      widget._assetType.hyn != null &&
+                              widget._hynToCurrency != null
+                          ? '${FormatUtil.truncateDecimalNum(
+                              Decimal.parse(widget._assetType.hyn) *
+                                  widget._hynToCurrency,
+                              4,
+                            )}'
+                          : '-',
+                      maxLines: 2,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                    ),
                   ],
                 ),
               ),
@@ -477,7 +473,7 @@ class AssetItemState extends State<AssetItem> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    '可用',
+                    S.of(context).exchange_available,
                     style: TextStyle(
                       color: Colors.grey,
                       fontSize: 12,
@@ -509,18 +505,12 @@ class AssetItemState extends State<AssetItem> {
                   SizedBox(
                     height: 8.0,
                   ),
-                  Row(
-                    children: <Widget>[
-                      Spacer(),
-                      Text(
-                        Decimal.parse(widget._assetType.exchangeFreeze)
-                            .toString(),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    Decimal.parse(widget._assetType.exchangeFreeze).toString(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),

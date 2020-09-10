@@ -247,31 +247,34 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               Expanded(
                 child: Column(
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          S.of(context).exchange_from,
-                          style: TextStyle(
-                            color: HexColor('#FF777777'),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 50,
+                            child: Text(
+                              S.of(context).exchange_from,
+                              style: TextStyle(
+                                color: HexColor('#FF777777'),
+                              ),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 32,
-                        ),
-                        _transferTypeItem(_fromExchangeToWallet),
-                      ],
+
+                          _transferTypeItem(_fromExchangeToWallet),
+                        ],
+                      ),
                     ),
                     Divider(),
                     Row(
                       children: <Widget>[
-                        Text(
-                          S.of(context).exchange_to,
-                          style: TextStyle(
-                            color: HexColor('#FF777777'),
+                        Container(
+                          width: 50,
+                          child: Text(
+                            S.of(context).exchange_to,
+                            style: TextStyle(
+                              color: HexColor('#FF777777'),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 32,
                         ),
                         _transferTypeItem(!_fromExchangeToWallet),
                       ],

@@ -13,6 +13,7 @@ import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/exchange_account.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'bloc/bloc.dart';
 

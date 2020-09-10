@@ -80,7 +80,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
             height: 12,
           ),
           Padding(
-            padding: EdgeInsets.only(right: 16.0, left: 8.0),
+            padding: EdgeInsets.only(right: 16.0),
             child: Align(
               alignment: Alignment.center,
               child: InkWell(
@@ -218,8 +218,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                 context,
                                 Routes.exchange_transfer_page,
                               );
-                            }else {
-                              Fluttertoast.showToast(msg: S.of(context).exchange_authorize);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: S.of(context).exchange_authorize);
                             }
                           },
                           borderSide: BorderSide(
@@ -428,33 +429,29 @@ class AssetItemState extends State<AssetItem> {
                 Expanded(
                   flex: 1,
                   child: Container(
-                    child: Row(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              S.of(context).exchange_available,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8.0,
-                            ),
-                            Text(
-                              widget._isShowBalances
-                                  ? Decimal.parse(
-                                          widget._assetType.exchangeAvailable)
-                                      .toString()
-                                  : '*****',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500, fontSize: 12),
-                            ),
-                          ],
+                        Text(
+                          S.of(context).exchange_available,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
-                        Spacer()
+                        SizedBox(
+                          height: 8.0,
+                        ),
+                        Text(
+                          widget._isShowBalances
+                              ? Decimal.parse(
+                                      widget._assetType.exchangeAvailable)
+                                  .toString()
+                              : '*****',
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 12),
+                        ),
                       ],
                     ),
                   ),
