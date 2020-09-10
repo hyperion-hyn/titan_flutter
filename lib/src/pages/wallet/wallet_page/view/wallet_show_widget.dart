@@ -25,6 +25,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
+import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -580,7 +581,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     ),
                     fetchChainIdFromNetworkId: true,
                   );
-                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                   logger.i('has is $txHash');
                   UiUtil.toast('-申请ETH成功,请等待2-5分钟');
                 }
@@ -623,8 +623,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     fetchChainIdFromNetworkId: true,
                   );
                   logger.i('has is $txHash');
-
-                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                   UiUtil.toast('-申请HYN成功, 请等待2-5分钟');
                 }
 
@@ -666,11 +664,68 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     fetchChainIdFromNetworkId: true,
                   );
                   logger.i('has is $txHash');
-
-                  _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                   UiUtil.toast('-申请USDT成功, 请等待2-5分钟');
 
                   await AppCache.saveValue(ContractTestConfig.OUTSIDE_REPSTEN_REQUEST_USDT, currentTime);
+                }
+              }, 2000)();
+            },
+          ),
+          RaisedButton(
+            child: Text('一键回收所有币种'),
+            onPressed: () async {
+              debounce(() async {
+                var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+                var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
+                if(password != null) {
+                  var gasPriceRecommend = QuotesInheritedModel
+                      .of(context, aspect: QuotesAspect.gasPrice)
+                      .gasPriceRecommend;
+                  var reciverAddr = "0xCb573bc656455A9B1464C59157B8A701aa6686ea";
+
+                  var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
+                  var hynBalance = await wallet.getErc20Balance(hynCoinVo.contractAddress);
+                  if(hynBalance > BigInt.from(10)) {
+                    final hynHash = await wallet.sendErc20Transaction(
+                      contractAddress: hynCoinVo.contractAddress,
+                      password: password,
+                      gasPrice: BigInt.parse(gasPriceRecommend.fast.toStringAsFixed(0)),
+                      value: hynBalance,
+                      toAddress: reciverAddr,
+                    );
+                    logger.i('has is $hynHash');
+                  }
+
+                  Future.delayed(Duration(milliseconds: 5000),() async {
+                    var usdtCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("USDT");
+                    var usdtBalance = await wallet.getErc20Balance(usdtCoinVo.contractAddress);
+                    if(usdtBalance > BigInt.from(10)) {
+                      final usdtHash = await wallet.sendErc20Transaction(
+                        contractAddress: usdtCoinVo.contractAddress,
+                        password: password,
+                        gasPrice: BigInt.parse(gasPriceRecommend.fast.toStringAsFixed(0)),
+                        value: usdtBalance,
+                        toAddress: reciverAddr,
+                      );
+                      logger.i('has is $usdtHash');
+                    }
+
+                    Future.delayed(Duration(milliseconds: 5000),() async {
+                      Account account = wallet.getEthAccount();
+                      var ethBalance = await wallet.getBalance(account);
+                      if (ethBalance > BigInt.from(0.5)) {
+                        var sendBalance = ethBalance - BigInt.from(0.5);
+                        final ethHash = await wallet.sendEthTransaction(
+                          password: password,
+                          toAddress: reciverAddr,
+                          gasPrice: BigInt.parse(gasPriceRecommend.fast.toStringAsFixed(0)),
+                          value: sendBalance,
+                        );
+                        logger.i('has is $ethHash');
+                      }
+                    });
+                  });
+                  UiUtil.toast('-申请成功, 请等待2-5分钟');
                 }
               }, 2000)();
             },

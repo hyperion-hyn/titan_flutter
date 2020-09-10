@@ -373,6 +373,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   ),
                 ),
               ),
+              Spacer(),
               InkWell(
                 onTap: () {
                   _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
@@ -385,14 +386,15 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               )));
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8, left: 20, right: 14),
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8),
                   child: Image.asset(
                     "res/drawable/ic_exchange_candle.png",
                     width: 13,
                     height: 16,
                   ),
                 ),
-              )
+              ),
+              Spacer(),
             ],
           );
         });

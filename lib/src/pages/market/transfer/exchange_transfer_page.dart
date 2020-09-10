@@ -435,7 +435,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             type,
             style: TextStyle(
                 color: _selectedCoinType == type
-                    ? HexColor('#FF0F95B0')
+                    ? Theme.of(context).primaryColor
                     : HexColor('#FF777777')),
           ),
         ),

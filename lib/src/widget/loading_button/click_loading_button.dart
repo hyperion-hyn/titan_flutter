@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -40,15 +41,21 @@ class _ClickLoadingButtonState extends State<ClickLoadingButton> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(widget.text,
-                  style: TextStyle(
-                    fontSize: widget.fontSize,
-                    color: widget.fontColor != null ? widget.fontColor : Colors.white,
-                  )),
+              SizedBox(
+                width: widget.width - 16,
+                child: Text(widget.text,
+                    overflow: TextOverflow.clip,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: widget.fontSize,
+                      color: widget.fontColor != null ? widget.fontColor : Colors.white,
+                    )),
+              ),
               Visibility(
                   visible: widget.isLoading,
                   child: SizedBox(
-                    width: 8,
+                    width: 2,
                   )),
               Visibility(
                 visible: widget.isLoading,
