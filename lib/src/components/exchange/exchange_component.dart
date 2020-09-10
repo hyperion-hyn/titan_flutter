@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
 import 'package:titan/src/pages/market/model/exchange_account.dart';
@@ -89,22 +90,20 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
         } else if (state is ClearExchangeAccountState) {
           exchangeModel.activeAccount = null;
         } else if (state is UpdateAssetsState) {
-          if (exchangeModel.activeAccount != null) {
-            try {
-              var ret = await _exchangeApi.getAssetsList();
-              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
-            } catch (e) {
-              if (e is HttpResponseCodeNotSuccess) {
-                Fluttertoast.showToast(msg: e.message);
-                if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
-                  ///clear current account if not login
-                  BlocProvider.of<ExchangeCmpBloc>(context)
-                      .add(ClearExchangeAccountEvent());
-                }
+          try {
+            var ret = await _exchangeApi.getAssetsList();
+            exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+          } catch (e) {
+            if (e is HttpResponseCodeNotSuccess) {
+              Fluttertoast.showToast(msg: e.message);
+              if (e.code == ERROR_CODE_EXCHANGE_NOT_LOGIN) {
+                ///clear current account if not login
+                BlocProvider.of<ExchangeCmpBloc>(context)
+                    .add(ClearExchangeAccountEvent());
               }
             }
-            setState(() {});
           }
+          setState(() {});
         }
       },
       child: BlocBuilder<ExchangeCmpBloc, ExchangeCmpState>(

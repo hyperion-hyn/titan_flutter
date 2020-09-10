@@ -608,14 +608,9 @@ class UiUtil {
           onPressed: () => Navigator.pop(context),
         ),
         FlatButton(
-          child: Text(S.of(context).setting),
+          child: Text(S.of(context).confirm),
           onPressed: () {
             Navigator.pop(context);
-
-            ///clear previous account
-            BlocProvider.of<ExchangeCmpBloc>(context)
-                .add(ClearExchangeAccountEvent());
-
             ///
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ExchangeAuthPage()));

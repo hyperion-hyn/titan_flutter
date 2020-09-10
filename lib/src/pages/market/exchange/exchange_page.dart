@@ -217,22 +217,6 @@ class _ExchangePageState extends BaseState<ExchangePage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Text(
-              //     '汇率',
-              //     style: TextStyle(color: Colors.grey, fontSize: 14),
-              //   ),
-              // ),
-              // Text(
-              //   _exchangeType == ExchangeType.BUY
-              //       ? '1HYN = $_hynToSelectedCoin $_selectedCoin'
-              //       : '1$_selectedCoin = $_selectedCoinToHYN HYN',
-              //   style: TextStyle(
-              //     fontWeight: FontWeight.bold,
-              //     fontSize: 14,
-              //   ),
-              // ),
               Spacer(),
               ClickOvalIconButton(
                 S.of(context).exchange_trade,

@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -21,6 +22,7 @@ import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 import 'order/exchange_order_mangement_page.dart';
 
@@ -36,11 +38,16 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   ExchangeApi _exchangeApi = ExchangeApi();
   ActiveQuoteVoAndSign symbolQuote;
   Decimal _usdtToCurrency;
+  ExchangeModel _exchangeModel;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      ///
+      _refreshAssets();
+    });
   }
 
   @override
@@ -49,7 +56,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     super.onCreated();
     symbolQuote =
         QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
-    _updateTypeToCurrency();
+    _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    //_refreshAssets();
   }
 
   @override
@@ -106,8 +114,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           bloc: _loadDataBloc,
           enablePullUp: false,
           onRefresh: () {
-            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-            _updateTypeToCurrency();
+            _refreshAssets();
             _loadDataBloc.add(RefreshSuccessEvent());
           },
           child: ListView(
@@ -120,6 +127,15 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         ),
       ),
     );
+  }
+
+  _refreshAssets() {
+    if (_exchangeModel.isActiveAccount()) {
+      BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+      _updateTypeToCurrency();
+    } else {
+      UiUtil.showExchangeAuthAgainDialog(context);
+    }
   }
 
   _totalBalances() {
@@ -219,8 +235,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                 Routes.exchange_transfer_page,
                               );
                             } else {
-                              Fluttertoast.showToast(
-                                  msg: S.of(context).exchange_authorize);
+                              UiUtil.showExchangeAuthAgainDialog(context);
                             }
                           },
                           borderSide: BorderSide(
