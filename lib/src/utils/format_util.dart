@@ -67,6 +67,13 @@ class FormatUtil {
         "";
   }
 
+  static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+    var dateTime = DateFormat(format).parse(utcStr, true);
+    var dateLocal = dateTime.toLocal();
+    return DateFormat(format).format(dateLocal) ?? "";
+  }
+
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
     return DateFormat("HH:mm MM/dd")
             .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
