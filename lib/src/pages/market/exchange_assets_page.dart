@@ -145,7 +145,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
     var _totalByHyn = _exchangeModel.isActiveAccount()
-        ? _exchangeModel.activeAccount?.assetList?.getTotalHyn()
+        ? FormatUtil.truncateDecimalNum(
+            _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
         : null;
 
     var _totalByUsdt = _exchangeModel.isActiveAccount()
