@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web_socket_channel/io.dart';
@@ -68,7 +69,7 @@ class _SocketState extends State<_SocketManager> {
   _initWS() {
     print('[WS]  init');
 
-    _socketChannel = IOWebSocketChannel.connect(SocketConfig.domain);
+    _socketChannel = IOWebSocketChannel.connect(ExchangeConst.WS_DOMAIN);
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
