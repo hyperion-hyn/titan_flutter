@@ -973,5 +973,12 @@
   "exchange_assets_status": "狀態",
   "exchange_auth_no_wallet": "請先創建/導入錢包身份，然後使用錢包授權使用交易功能。",
   "exchange_authorize": "請授權交易賬戶",
-  "exchange_ask_auth_again": "交易授權過期，是否使用錢包重新授權？"
+  "exchange_ask_auth_again": "交易授權過期，是否使用錢包重新授權？",
+  "exchange_bio_auth": "交易授權",
+  "bio_auth": "生物識別",
+  "bio_auth_intro_title_exchange": "免密授權",
+  "bio_auth_exchange_intro_content": "免密授權將您的錢包密碼通過安全加密算法存儲至手機設備的Keychain / KeyStore中，交易時調用生物識別（指紋或面容）鑑權，快速完成授權與簽名。",
+  "bio_auth_exchange_intro_content_2": "開啟免密授權後，請妥善備份密碼。如果忘記密碼，可以通過導入助計詞 / 私鑰，重新設置密碼",
+  "bio_auth_exchange_risk_title": "Risk reminder",
+  "bio_auth_exchange_risk_content": "請了解你的手機設備生物識別的安全等級\n公共手機，請勿開啟免密授權\n"
 }

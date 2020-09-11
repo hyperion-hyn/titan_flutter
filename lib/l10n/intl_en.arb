@@ -985,5 +985,12 @@
   "exchange_assets_status": "Status",
   "exchange_auth_no_wallet": "Please create/import a wallet identity first, and then use the wallet to authorize the transaction function.",
   "exchange_authorize": "Please authorize trading account",
-  "exchange_ask_auth_again": "Exchange authorization has expired, use the wallet to re-authorize?"
+  "exchange_ask_auth_again": "Exchange authorization has expired, use the wallet to re-authorize?",
+  "exchange_bio_auth": "Exchange authorization",
+  "bio_auth": "Biometrics",
+  "bio_auth_intro_title_exchange": "Introduction to password-free authorization",
+  "bio_auth_exchange_intro_content": "Password-free authorization allows you to save wallet password to the Keychain/Keystore on your mobile device via a secure encryption algorithm to quickly make payments and sign.",
+  "bio_auth_exchange_intro_content_2": "Please backup your password securely after unlocking password-free authorization method. You can also reset password via importing mnemonic phrase/private key.",
+  "bio_auth_exchange_risk_title": "Risk reminder",
+  "bio_auth_exchange_risk_content": "Please understand the biometric security level of your mobile device\nPublic mobile phones, please do not open the secret-free authorization"
 }

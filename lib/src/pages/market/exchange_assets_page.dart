@@ -82,28 +82,31 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         actions: [
-          Image.asset(
-            "res/drawable/ic_exhange_all_consign.png",
-            width: 12,
-            height: 12,
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 16.0),
-            child: Align(
-              alignment: Alignment.center,
-              child: InkWell(
-                child: Text(
-                  S.of(context).exchange_order_history,
-                  style: TextStyle(fontSize: 13, color: DefaultColors.color999),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ExchangeOrderManagementPage('')));
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  "res/drawable/ic_exhange_all_consign.png",
+                  width: 12,
+                  height: 12,
                 ),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              ExchangeOrderManagementPage('')));
-                },
-              ),
+                Padding(
+                  padding: EdgeInsets.only(right: 16.0, left: 4),
+                  child: Text(
+                    S.of(context).exchange_order_history,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: DefaultColors.color999,
+                    ),
+                  ),
+                )
+              ],
             ),
           )
         ],

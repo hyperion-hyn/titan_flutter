@@ -259,7 +259,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                               ),
                             ),
                           ),
-
                           _transferTypeItem(_fromExchangeToWallet),
                         ],
                       ),
@@ -473,17 +472,19 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.symmetric(vertical: 16.9),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+          padding: EdgeInsets.symmetric(vertical: 16.0),
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               Text(S.of(context).exchange_transfer_amount),
+              SizedBox(width: 4.0,),
               Text(
-                '（${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType）',
+                '(${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType)',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
-                  fontSize: 12,
+                  fontSize: 11,
                 ),
+                maxLines: 2,
               ),
             ],
           ),
@@ -702,7 +703,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     } catch (e) {
       if (e is HttpResponseCodeNotSuccess) {
         Fluttertoast.showToast(msg: e.message);
-
       }
     }
   }

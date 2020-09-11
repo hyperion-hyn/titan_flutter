@@ -29,31 +29,35 @@ class _BioAuthOptionsPage extends State<BioAuthOptionsPage> {
           iconTheme: IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
           title: Text(
-            '生物识别',
+            S.of(context).bio_auth,
             style: TextStyle(color: Colors.black, fontSize: 18),
           ),
           centerTitle: true,
         ),
         body: Column(
           children: <Widget>[
-            SizedBox(height: 16,),
+            SizedBox(
+              height: 16,
+            ),
             Divider(
               height: 1,
             ),
-            _buildMenuBar('免密支付', '', () {
+            _buildMenuBar(S.of(context).secret_free_payment, '', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BioAuthPage(widget.wallet, AuthType.pay)));
+                      builder: (context) =>
+                          BioAuthPage(widget.wallet, AuthType.pay)));
             }),
             Divider(
               height: 1,
             ),
-            _buildMenuBar('交易授权', '', () {
+            _buildMenuBar(S.of(context).exchange_bio_auth, '', () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BioAuthPage(widget.wallet, AuthType.exchange)));
+                      builder: (context) =>
+                          BioAuthPage(widget.wallet, AuthType.exchange)));
             }),
             Divider(
               height: 1,
