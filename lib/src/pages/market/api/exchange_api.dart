@@ -127,7 +127,7 @@ class ExchangeApi {
       wallet,
       password,
       'POST',
-      Const.EXCHANGE_DOMAIN.split('//')[1],
+      ExchangeConst.EXCHANGE_DOMAIN.split('//')[1],
       path,
       _params,
     );

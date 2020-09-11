@@ -1,8 +1,11 @@
 class ExchangeConst {
-  static const EXCHANGE_DOMAIN =
-      "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com";
-  static const WS_DOMAIN =
-      "ws://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com:8081";
+//  static const EXCHANGE_DOMAIN =
+//      "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com";
+//  static const WS_DOMAIN =
+//      "ws://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com:8081";
+
+  static const EXCHANGE_DOMAIN = "https://exchange.hyn.space";
+  static const WS_DOMAIN = "wss://ws-exchange.hyn.space";
 
   static const PATH_GET_ACCESS_SEED = '/api/user/getAccessSeed';
 

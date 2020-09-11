@@ -13,9 +13,6 @@ class Const {
 
   static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
 
-  static const EXCHANGE_DOMAIN =
-      "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com";
-
   static String get NODE_DOMAIN {
     if (env.buildType == BuildType.DEV) {
       return Config.NODE_API_URL_TEST;

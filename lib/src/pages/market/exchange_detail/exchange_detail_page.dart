@@ -421,7 +421,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   ),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 3.0),
-                    child: Text("≈$_realTimeQuotePrice CNY",
+                    child: Text("≈  ${selectQuote?.sign?.sign ?? ""} $_realTimeQuotePrice",
                         style: TextStyle(fontSize: 10, color: DefaultColors.color777)),
                   ),
                 ],
