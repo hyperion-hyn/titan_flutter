@@ -470,7 +470,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                           _iconWidget(isMain: false),
                         ],
                       ),
-
                     ],
                   ),
                 ),
@@ -746,7 +745,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     child: StreamBuilder(
                       stream: _depthController.stream,
                       builder: (context, optionType) {
-                        return delegationListView(context,_buyChartList, _sellChartList, enable: false);
+                        return delegationListView(context, _buyChartList, _sellChartList, enable: false);
                       },
                     )),
                 _loadingWidget(visible: _showLoadingDepth),
@@ -841,7 +840,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                             Expanded(
                               flex: 1,
                               child: Text(
-                                excDetailEntity.actionType == "sell" ? S.of(context).kline_direct_sell : S.of(context).kline_direct_buy,
+                                excDetailEntity.actionType == "sell"
+                                    ? S.of(context).kline_direct_sell
+                                    : S.of(context).kline_direct_buy,
                                 style: TextStyle(
                                     color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
                                     fontSize: 10,
@@ -952,7 +953,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-    print("[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
+    print(
+        "[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
 
     if (isReplace) {
       if (kLineDataList.isNotEmpty) {
@@ -961,7 +963,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       }
     } else {
       if (kLineDataList.isNotEmpty && _kChartItemList.isNotEmpty) {
-
         var lastItem = _kChartItemList.last;
         var tempItem = kLineDataList.last;
 
@@ -975,7 +976,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
   }
 
-  
   /*
     [
   "1592299815201", //时间
@@ -1077,7 +1077,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   void _setupDepthWidget() {
-
     // buy: high --> low
     _bids.clear();
     _buyChartList.forEach((element) {
@@ -1102,8 +1101,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       _asks.add(entity);
     });
   }
-
-
 
   // channel
   _initChannel() {
@@ -1201,7 +1198,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 }
 
-Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
+Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
     padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
@@ -1317,7 +1314,7 @@ Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartLis
                     ),
                     Text(
                       //"数量(HYN)卖盘",
-                      S.of(context).kline_delegate_amount +" "+ S.of(context).kline_delegate_sell,
+                      S.of(context).kline_delegate_amount + " " + S.of(context).kline_delegate_sell,
                       textAlign: TextAlign.right,
                       style: TextStyle(
                         fontSize: 10,
@@ -1535,7 +1532,8 @@ Widget delegationListView(BuildContext context,List<ExcDetailEntity> buyChartLis
   );
 }
 
-dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data, {var enable = true}) {
+dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList, dynamic data,
+    {var enable = true}) {
   if (!(data is Map)) {
     return;
   }
