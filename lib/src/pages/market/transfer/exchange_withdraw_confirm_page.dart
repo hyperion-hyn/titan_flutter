@@ -26,11 +26,11 @@ import 'package:titan/src/utils/utils.dart';
 
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
-  final String transferAmount;
+  final String actualTransferredAmount;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
-    this.transferAmount,
+    this.actualTransferredAmount,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -74,6 +74,9 @@ class _ExchangeWithdrawConfirmPageState
             .assetList
             .getWithdrawFee(widget.coinVo.symbol) ??
         '0';
+    var _totalAmount = Decimal.parse(widget.actualTransferredAmount) +
+        Decimal.parse(_withdrawFee);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -107,7 +110,7 @@ class _ExchangeWithdrawConfirmPageState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12.0, vertical: 8),
                           child: Text(
-                            "-${widget.transferAmount} ${widget.coinVo.symbol}",
+                            "-$_totalAmount ${widget.coinVo.symbol}",
                             style: TextStyle(
                                 color: Color(0xFF252525),
                                 fontWeight: FontWeight.bold,
@@ -115,7 +118,7 @@ class _ExchangeWithdrawConfirmPageState
                           ),
                         ),
                         Text(
-                          "≈ $_quoteSign${FormatUtil.formatPrice(double.parse(widget.transferAmount) * _quotePrice)}",
+                          "≈ $_quoteSign${FormatUtil.formatPrice(double.parse(widget.actualTransferredAmount) * _quotePrice)}",
                           style:
                               TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
@@ -291,7 +294,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '${Decimal.parse(widget.transferAmount) - Decimal.parse(_withdrawFee)} ${widget.coinVo.symbol}',
+                                widget.actualTransferredAmount,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -366,7 +369,7 @@ class _ExchangeWithdrawConfirmPageState
         activatedWallet.wallet.getEthAccount().address,
         widget.coinVo.symbol,
         widget.coinVo.address,
-        widget.transferAmount,
+        widget.actualTransferredAmount,
       );
       print('$ret');
       Application.router.navigateTo(
@@ -378,8 +381,7 @@ class _ExchangeWithdrawConfirmPageState
       });
 
       ///update assets
-      BlocProvider.of<ExchangeCmpBloc>(context)
-          .add(UpdateAssetsEvent());
+      BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
     } catch (e) {
       setState(() {
         isTransferring = false;

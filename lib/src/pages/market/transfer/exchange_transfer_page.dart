@@ -477,7 +477,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               Text(S.of(context).exchange_transfer_amount),
-              SizedBox(width: 4.0,),
+              SizedBox(
+                width: 4.0,
+              ),
               Text(
                 '(${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType)',
                 style: TextStyle(
@@ -506,11 +508,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (!_fromExchangeToWallet) {
-                      if (Decimal.parse(value) >
-                          Decimal.parse(_availableAmount())) {
-                        return S.of(context).input_count_over_balance;
-                      }
+                    if (Decimal.parse(value) >
+                        Decimal.parse(_availableAmount())) {
+                      return S.of(context).input_count_over_balance;
                     }
 
                     if (Decimal.parse(value) <
@@ -564,7 +564,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
-                                  _amountController.text = _availableAmount();
+                                  if (!_fromExchangeToWallet) {
+                                    _amountController.text = _availableAmount();
+                                  } else {
+                                    _amountController.text =
+                                        '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+                                  }
+
                                   _amountController.selection =
                                       TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
@@ -721,6 +727,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _withdraw() async {
+    var _withdrawFee = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        .getAsset(_selectedCoinType)
+        .withdrawFee;
+
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -728,9 +741,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
+    var _actualTransferredAmount = Decimal.parse(_amountController.text) +
+                Decimal.parse(_withdrawFee) <=
+            Decimal.parse(_availableAmount())
+        ? _amountController.text
+        : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=${_amountController.text}',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$voStr&transferAmount=$_actualTransferredAmount',
     );
   }
 }
