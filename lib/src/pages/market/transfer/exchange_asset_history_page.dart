@@ -334,7 +334,7 @@ class _ExchangeAssetHistoryPageState
                       height: 8.0,
                     ),
                     Text(
-                      '${assetHistory.ctime}',
+                      '${FormatUtil.formatUTCDateStr(assetHistory.ctime)}',
                       textAlign: TextAlign.right,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
