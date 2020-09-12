@@ -6,7 +6,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -40,13 +41,13 @@ class _ExchangeAssetHistoryPageState
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
-  Decimal _hynToCurrency;
+  Decimal _usdtToCurrency;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -67,11 +68,11 @@ class _ExchangeAssetHistoryPageState
 
   _updateTypeToCurrency() async {
     try {
-      var ethRet = await _exchangeApi.type2currency(
-        'ETH',
+      var usdt = await _exchangeApi.type2currency(
+        'USDT',
         symbolQuote?.sign?.quote,
       );
-      _hynToCurrency = Decimal.parse(ethRet.toString());
+      _usdtToCurrency = Decimal.parse(usdt.toString());
 
       setState(() {});
     } catch (e) {}
@@ -213,7 +214,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .HYN,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else if (widget._symbol == 'USDT') {
       return AssetItem(
@@ -222,7 +223,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .USDT,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else if (widget._symbol == 'ETH') {
       return AssetItem(
@@ -231,7 +232,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .ETH,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else {
       return SizedBox();
@@ -375,9 +376,6 @@ class _ExchangeAssetHistoryPageState
   Future _refresh() async {
     _currentPage = 1;
 
-    ///clear list before refresh
-    _assetHistoryList.clear();
-
     try {
       List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
         widget._symbol,
@@ -385,6 +383,11 @@ class _ExchangeAssetHistoryPageState
         _size,
         'all',
       );
+
+      ///clear list before refresh
+      _assetHistoryList.clear();
+
+      ///
       _assetHistoryList.addAll(resultList);
     } catch (e) {}
     _loadDataBloc.add(RefreshSuccessEvent());
@@ -411,11 +414,11 @@ class _ExchangeAssetHistoryPageState
 
 class AssetItem extends StatefulWidget {
   final AssetType _assetType;
-  final Decimal _hynToCurrency;
+  final Decimal _usdtToCurrency;
 
   AssetItem(
     this._assetType,
-    this._hynToCurrency,
+    this._usdtToCurrency,
   );
 
   @override
@@ -451,11 +454,11 @@ class AssetItemState extends State<AssetItem> {
                       height: 8.0,
                     ),
                     Text(
-                      widget._assetType.hyn != null &&
-                              widget._hynToCurrency != null
+                      widget._assetType.usdt != null &&
+                              widget._usdtToCurrency != null
                           ? '${FormatUtil.truncateDecimalNum(
-                              Decimal.parse(widget._assetType.hyn) *
-                                  widget._hynToCurrency,
+                              Decimal.parse(widget._assetType.usdt) *
+                                  widget._usdtToCurrency,
                               4,
                             )}'
                           : '-',

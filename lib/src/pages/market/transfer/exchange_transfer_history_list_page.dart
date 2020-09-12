@@ -275,7 +275,7 @@ class ExchangeTransferHistoryListPageState
                             height: 4.0,
                           ),
                           Text(
-                            assetHistory.ctime,
+                            FormatUtil.formatUTCDateStr(assetHistory.ctime),
                             textAlign: TextAlign.right,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 2,

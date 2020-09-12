@@ -107,7 +107,7 @@ class _ExchangeTransferHistoryDetailPageState
               _item(
                 S.of(context).exchange_transfer_history_detail_time,
                 Text(
-                  widget._assetHistory.ctime,
+                  FormatUtil.formatUTCDateStr(widget._assetHistory.ctime),
                   style: TextStyle(fontSize: 14),
                 ),
               ),
