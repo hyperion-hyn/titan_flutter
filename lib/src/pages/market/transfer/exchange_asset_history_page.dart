@@ -6,7 +6,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
@@ -46,7 +47,7 @@ class _ExchangeAssetHistoryPageState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _refresh();
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
@@ -375,9 +376,6 @@ class _ExchangeAssetHistoryPageState
   Future _refresh() async {
     _currentPage = 1;
 
-    ///clear list before refresh
-    _assetHistoryList.clear();
-
     try {
       List<AssetHistory> resultList = await _exchangeApi.getAccountHistory(
         widget._symbol,
@@ -385,6 +383,11 @@ class _ExchangeAssetHistoryPageState
         _size,
         'all',
       );
+
+      ///clear list before refresh
+      _assetHistoryList.clear();
+
+      ///
       _assetHistoryList.addAll(resultList);
     } catch (e) {}
     _loadDataBloc.add(RefreshSuccessEvent());
