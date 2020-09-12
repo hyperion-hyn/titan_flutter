@@ -624,9 +624,11 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   );
                   logger.i('has is $txHash');
                   UiUtil.toast('-申请HYN成功, 请等待2-5分钟');
+
+                  // 成功之后才存储，失败可以再试
+                  await AppCache.saveValue(ContractTestConfig.OUTSIDE_REPSTEN_REQUEST_HYN, currentTime);
                 }
 
-                await AppCache.saveValue(ContractTestConfig.OUTSIDE_REPSTEN_REQUEST_HYN, currentTime);
               }, 2000)();
             },
           ),
