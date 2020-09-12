@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 
+// ignore: must_be_immutable
 class CreateWalletBackupNoticePage extends StatefulWidget {
   String mnemoic;
   String walletName;
@@ -19,8 +19,7 @@ class CreateWalletBackupNoticePage extends StatefulWidget {
   }
 }
 
-class _CreateWalletBackupNoticePageState
-    extends State<CreateWalletBackupNoticePage> {
+class _CreateWalletBackupNoticePageState extends State<CreateWalletBackupNoticePage> {
   bool _noticeCheckboxChecked = false;
 
   @override
@@ -68,23 +67,30 @@ class _CreateWalletBackupNoticePageState
                   width: 200,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _noticeCheckboxChecked = !_noticeCheckboxChecked;
-                        });
-                      },
-                      child: _noticeCheckboxChecked
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image.asset(
-                                'res/drawable/ic_checkbox_checked.png',
-                                width: 20,
-                                height: 20,
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _noticeCheckboxChecked = !_noticeCheckboxChecked;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      _noticeCheckboxChecked
+                          ? GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _noticeCheckboxChecked = !_noticeCheckboxChecked;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.asset(
+                                  'res/drawable/ic_checkbox_checked.png',
+                                  width: 20,
+                                  height: 20,
+                                ),
                               ),
                             )
                           : Padding(
@@ -95,18 +101,18 @@ class _CreateWalletBackupNoticePageState
                                 height: 20,
                               ),
                             ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        S.of(context).lossz_wallet_mnemonic_notice,
-                        softWrap: true,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
+                      Flexible(
+                        child: Text(
+                          S.of(context).lossz_wallet_mnemonic_notice,
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
               Container(
@@ -116,8 +122,7 @@ class _CreateWalletBackupNoticePageState
                 ),
                 constraints: BoxConstraints.expand(height: 48),
                 child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                   disabledColor: HexColor('#dedede'),
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
@@ -130,8 +135,7 @@ class _CreateWalletBackupNoticePageState
                       children: <Widget>[
                         Text(
                           S.of(context).continue_text,
-                          style: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 16),
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                         ),
                       ],
                     ),
@@ -145,10 +149,7 @@ class _CreateWalletBackupNoticePageState
 
   void _next() {
     var walletName = FluroConvertUtils.fluroCnParamsEncode(widget.walletName);
-    Application.router.navigateTo(
-        context,
-        Routes.wallet_show_resume_word +
-            '?walletName=$walletName&password=${widget.password}');
-//    Navigator.push(context, MaterialPageRoute(builder: (context) => ShowResumeWordPage()));
+    Application.router
+        .navigateTo(context, Routes.wallet_show_resume_word + '?walletName=$walletName&password=${widget.password}');
   }
 }

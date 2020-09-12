@@ -66,7 +66,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          centerTitle: debugInstrumentationEnabled,
+          centerTitle: true,
           iconTheme: IconThemeData(color: Colors.black),
           elevation: 0,
           title: Text(

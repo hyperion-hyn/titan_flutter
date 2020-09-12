@@ -131,6 +131,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             S.of(context).exchange_transfer,
             style: TextStyle(
               color: Colors.black,
+              fontWeight: FontWeight.w500,
               fontSize: 18,
             ),
             textAlign: TextAlign.center,
@@ -703,10 +704,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         _withdraw();
       } else {
         var ret = await _exchangeApi.getAddress(_selectedCoinType);
+        print("[API] ret:$ret");
+
         var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
     } catch (e) {
+      print(e);
       if (e is HttpResponseCodeNotSuccess) {
         Fluttertoast.showToast(msg: e.message);
       }
@@ -714,6 +718,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _deposit(String exchangeAddress) async {
+    print("[API] _deposit");
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,

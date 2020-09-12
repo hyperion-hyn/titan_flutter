@@ -5,6 +5,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/basic/http/entity.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
@@ -371,10 +372,16 @@ class ExchangeApi {
       params: params,
     );
 
+    print("[API] data:$data");
+
     if (verifySign(data)) {
+      print("[API] sign verify success");
+
       return data;
     } else {
-      throw FormatException('sign verify error: ' + data);
+      throw HttpResponseCodeNotSuccess(500, 'sign verify error ' );
+
+      //throw FormatException('sign verify error: ' + data);
     }
   }
 
