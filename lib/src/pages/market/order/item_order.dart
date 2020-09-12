@@ -25,8 +25,8 @@ class OrderItem extends StatefulWidget {
 
 class OrderItemState extends State<OrderItem> {
   bool _isBuy = true;
-  var _base = '';
-  var _quote = '';
+  var _base = 'HYN';
+  var _quote = 'USDT';
 
   @override
   void initState() {

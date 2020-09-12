@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
@@ -203,6 +204,9 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading,
         try {
           orderEntity.status = "-1";
           await exchangeApi.orderCancel(orderEntity.orderId);
+          Future.delayed(Duration(milliseconds: 2000),(){
+            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+          });
         } catch (error) {
           if (error is HttpResponseCodeNotSuccess) {
             Fluttertoast.showToast(msg: error.message);
