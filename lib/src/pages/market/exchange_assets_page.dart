@@ -376,12 +376,12 @@ class AssetItem extends StatefulWidget {
   final String _symbol;
   final AssetType _assetType;
   final bool _isShowBalances;
-  final Decimal _hynToCurrency;
+  final Decimal _usdtToCurrency;
 
   AssetItem(
     this._symbol,
     this._assetType,
-    this._hynToCurrency,
+    this._usdtToCurrency,
     this._isShowBalances,
   );
 
@@ -525,11 +525,11 @@ class AssetItemState extends State<AssetItem> {
                               ExchangeInheritedModel.of(context)
                                       .exchangeModel
                                       .isShowBalances
-                                  ? widget._assetType.hyn != null &&
-                                          widget._hynToCurrency != null
+                                  ? widget._assetType.usdt != null &&
+                                          widget._usdtToCurrency != null
                                       ? '${FormatUtil.truncateDecimalNum(
-                                          Decimal.parse(widget._assetType.hyn) *
-                                              widget._hynToCurrency,
+                                          Decimal.parse(widget._assetType.usdt) *
+                                              widget._usdtToCurrency,
                                           4,
                                         )}'
                                       : '-'

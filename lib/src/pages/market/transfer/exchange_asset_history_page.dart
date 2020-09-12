@@ -40,7 +40,7 @@ class _ExchangeAssetHistoryPageState
   ExchangeApi _exchangeApi = ExchangeApi();
   int _currentPage = 1;
   int _size = 20;
-  Decimal _hynToCurrency;
+  Decimal _usdtToCurrency;
 
   @override
   void initState() {
@@ -67,11 +67,11 @@ class _ExchangeAssetHistoryPageState
 
   _updateTypeToCurrency() async {
     try {
-      var ethRet = await _exchangeApi.type2currency(
-        'ETH',
+      var usdt = await _exchangeApi.type2currency(
+        'USDT',
         symbolQuote?.sign?.quote,
       );
-      _hynToCurrency = Decimal.parse(ethRet.toString());
+      _usdtToCurrency = Decimal.parse(usdt.toString());
 
       setState(() {});
     } catch (e) {}
@@ -213,7 +213,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .HYN,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else if (widget._symbol == 'USDT') {
       return AssetItem(
@@ -222,7 +222,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .USDT,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else if (widget._symbol == 'ETH') {
       return AssetItem(
@@ -231,7 +231,7 @@ class _ExchangeAssetHistoryPageState
             .activeAccount
             .assetList
             .ETH,
-        _hynToCurrency,
+        _usdtToCurrency,
       );
     } else {
       return SizedBox();
@@ -411,11 +411,11 @@ class _ExchangeAssetHistoryPageState
 
 class AssetItem extends StatefulWidget {
   final AssetType _assetType;
-  final Decimal _hynToCurrency;
+  final Decimal _usdtToCurrency;
 
   AssetItem(
     this._assetType,
-    this._hynToCurrency,
+    this._usdtToCurrency,
   );
 
   @override
@@ -451,11 +451,11 @@ class AssetItemState extends State<AssetItem> {
                       height: 8.0,
                     ),
                     Text(
-                      widget._assetType.hyn != null &&
-                              widget._hynToCurrency != null
+                      widget._assetType.usdt != null &&
+                              widget._usdtToCurrency != null
                           ? '${FormatUtil.truncateDecimalNum(
-                              Decimal.parse(widget._assetType.hyn) *
-                                  widget._hynToCurrency,
+                              Decimal.parse(widget._assetType.usdt) *
+                                  widget._usdtToCurrency,
                               4,
                             )}'
                           : '-',
