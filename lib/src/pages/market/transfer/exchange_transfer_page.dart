@@ -433,10 +433,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Center(
           child: Text(
             type,
-            style: TextStyle(
-                color: _selectedCoinType == type
-                    ? Theme.of(context).primaryColor
-                    : HexColor('#FF777777')),
+            style: TextStyle(color: _selectedCoinType == type ? Theme.of(context).primaryColor : HexColor('#FF777777')),
           ),
         ),
       ),
@@ -509,13 +506,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) >
-                        Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) <
-                        Decimal.parse(_minTransferAmount)) {
+                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
                       return S.of(context).exchange_transfer_less_than_min;
                     }
 
@@ -560,9 +555,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 child: Text(
                                   S.of(context).all,
                                   style: TextStyle(
-                                      color: HexColor('#FF333333'),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+                                      color: HexColor('#FF333333'), fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
                                   if (!_fromExchangeToWallet) {
@@ -572,8 +565,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                         '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
                                   }
 
-                                  _amountController.selection =
-                                      TextSelection.fromPosition(TextPosition(
+                                  _amountController.selection = TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
@@ -682,8 +674,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(
-            Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }
@@ -704,13 +695,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         _withdraw();
       } else {
         var ret = await _exchangeApi.getAddress(_selectedCoinType);
-        print("[API] ret:$ret");
-
         var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
     } catch (e) {
-      print(e);
       if (e is HttpResponseCodeNotSuccess) {
         Fluttertoast.showToast(msg: e.message);
       }
@@ -746,11 +734,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
-    var _actualTransferredAmount = Decimal.parse(_amountController.text) +
-                Decimal.parse(_withdrawFee) <=
-            Decimal.parse(_availableAmount())
-        ? _amountController.text
-        : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+    var _actualTransferredAmount =
+        Decimal.parse(_amountController.text) + Decimal.parse(_withdrawFee) <= Decimal.parse(_availableAmount())
+            ? _amountController.text
+            : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
 
     Application.router.navigateTo(
       context,

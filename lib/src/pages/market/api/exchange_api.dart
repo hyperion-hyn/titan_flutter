@@ -43,8 +43,7 @@ class ExchangeHttp extends BaseHttpCore {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
       if (env.buildType == BuildType.DEV) {
-        _instance.dio.interceptors
-            .add(LogInterceptor(responseBody: true, requestBody: true));
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
       }
     }
     return _instance;
@@ -85,9 +84,8 @@ class ExchangeApi {
   }
 
   Future<List<ExchangeBanner>> getBannerList() async {
-    return await ExchangeHttp.instance
-        .postEntity(ExchangeConst.PATH_BANNER_LIST,
-            EntityFactory<List<ExchangeBanner>>((data) {
+    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_BANNER_LIST,
+        EntityFactory<List<ExchangeBanner>>((data) {
       var bannerList = List<ExchangeBanner>();
 
       (data as List).forEach((item) {
@@ -161,8 +159,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> testRecharge(String type, double balance) async {
-    return await ExchangeHttp.instance
-        .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
+    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
       "type": type,
       "balance": balance,
     });
@@ -197,8 +194,7 @@ class ExchangeApi {
   Future<MarketInfoEntity> getMarketInfo(String market) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_MARKET_INFO,
-      EntityFactory<MarketInfoEntity>(
-          (marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
       params: {
         "market": market,
       },
@@ -213,8 +209,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutLimit(
-      String market, exchangeType, String price, String amount) async {
+  Future<dynamic> orderPutLimit(String market, exchangeType, String price, String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
@@ -228,8 +223,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutMarket(
-      String market, exchangeType, String amount) async {
+  Future<dynamic> orderPutMarket(String market, exchangeType, String amount) async {
     return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,
@@ -277,8 +271,7 @@ class ExchangeApi {
     int size,
     String method,
   ) async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ORDER_LIST,
-        EntityFactory<List<Order>>((response) {
+    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ORDER_LIST, EntityFactory<List<Order>>((response) {
       var orderList = List<Order>();
       if (response is Map && response.length == 0) {
         return orderList;
@@ -302,9 +295,8 @@ class ExchangeApi {
     int size,
     String action,
   ) async {
-    return await ExchangeHttp.instance
-        .postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
-            EntityFactory<List<AssetHistory>>((response) {
+    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
+        EntityFactory<List<AssetHistory>>((response) {
       var assetHistoryList = List<AssetHistory>();
       if (response is Map && response.length == 0) {
         return assetHistoryList;
@@ -372,14 +364,10 @@ class ExchangeApi {
       params: params,
     );
 
-    print("[API] data:$data");
-
     if (verifySign(data)) {
-      print("[API] sign verify success");
-
       return data;
     } else {
-      throw HttpResponseCodeNotSuccess(500, 'sign verify error ' );
+      throw HttpResponseCodeNotSuccess(500, 'sign verify error!');
 
       //throw FormatException('sign verify error: ' + data);
     }
