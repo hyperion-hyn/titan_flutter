@@ -503,6 +503,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           'res/drawable/k_line_eye_${isOpen ? "open" : "close"}.png',
           width: 16,
           height: 11,
+          color: isOpen?HexColor("#228BA1"):HexColor("#999999"),
         ),
       ),
       onPressed: () {
