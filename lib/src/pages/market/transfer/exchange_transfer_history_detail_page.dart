@@ -97,7 +97,7 @@ class _ExchangeTransferHistoryDetailPageState
                       )),
                   TextSpan(
                       text:
-                          ' (${widget._assetHistory.name == 'withdraw' ? widget._assetHistory.type : 'HYN'})',
+                          ' (${widget._assetHistory.name == 'withdraw' ? widget._assetHistory.type : 'ETH'})',
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
