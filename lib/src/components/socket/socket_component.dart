@@ -295,6 +295,7 @@ class MarketInheritedModel extends InheritedModel<String> {
     var realPercent = marketItem == null
         ? 0.0
         : ((marketItem.kLineEntity?.close ?? 0.0 - marketItem.kLineEntity?.open) / marketItem.kLineEntity?.open ?? 1.0);
+    print('[KLineEntity]: open: ${marketItem.kLineEntity.open} close: ${marketItem.kLineEntity.close}');
     return realPercent;
   }
 

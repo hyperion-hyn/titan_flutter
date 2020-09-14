@@ -992,5 +992,7 @@
   "bio_auth_exchange_intro_content": "Password-free authorization allows you to save wallet password to the Keychain/Keystore on your mobile device via a secure encryption algorithm to quickly make payments and sign.",
   "bio_auth_exchange_intro_content_2": "Please backup your password securely after unlocking password-free authorization method. You can also reset password via importing mnemonic phrase/private key.",
   "bio_auth_exchange_risk_title": "Risk reminder",
-  "bio_auth_exchange_risk_content": "Please understand the biometric security level of your mobile device\nPublic mobile phones, please do not open the secret-free authorization"
+  "bio_auth_exchange_risk_content": "Please understand the biometric security level of your mobile device\nPublic mobile phones, please do not open the secret-free authorization",
+  "exchange_deposit_confirm": "充值确认",
+  "exchange_withdraw_confirm": "提币确认"
 }

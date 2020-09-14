@@ -14,14 +14,17 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 
 class ExchangeAssetHistoryPage extends StatefulWidget {
   final String _symbol;
@@ -95,27 +98,87 @@ class _ExchangeAssetHistoryPageState
             S.of(context).exchange_asset_history,
             style: TextStyle(color: Colors.black, fontSize: 18),
           )),
-      body: Container(
-        color: Colors.white,
-        child: LoadDataContainer(
-          bloc: _loadDataBloc,
-          enablePullUp: _assetHistoryList.isNotEmpty,
-          onLoadData: () async {
-            _refresh();
-          },
-          onLoadingMore: () async {
-            await _loadMore();
-          },
-          onRefresh: () async {
-            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-            await _refresh();
-          },
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: _assetLayout(),
+      body: SafeArea(
+        child: Container(
+          color: Colors.white,
+          child: Stack(
+            children: [
+              LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: _assetHistoryList.isNotEmpty,
+                onLoadData: () async {
+                  _refresh();
+                },
+                onLoadingMore: () async {
+                  await _loadMore();
+                },
+                onRefresh: () async {
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(UpdateAssetsEvent());
+                  await _refresh();
+                },
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverToBoxAdapter(
+                      child: _assetLayout(),
+                    ),
+                    _content(),
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        height: 64,
+                      ),
+                    )
+                  ],
+                ),
               ),
-              _content(),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 64.0, right: 64, bottom: 32),
+                    child: Container(
+                      child: RaisedButton(
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        disabledColor: Colors.grey[600],
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        disabledTextColor: Colors.white,
+                        onPressed: () {
+                          if (ExchangeInheritedModel.of(context)
+                              .exchangeModel
+                              .isActiveAccount()) {
+                            Application.router.navigateTo(
+                              context,
+                              Routes.exchange_transfer_page,
+                            );
+                          } else {
+                            UiUtil.showExchangeAuthAgainDialog(context);
+                          }
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                S.of(context).exchange_transfer,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -197,7 +260,7 @@ class _ExchangeAssetHistoryPageState
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
-                      )
+                      ),
                     ],
                   ),
                   _assetItem(),
