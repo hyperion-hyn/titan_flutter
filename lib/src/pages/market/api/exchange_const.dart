@@ -47,10 +47,11 @@ class ExchangeConst {
   static const PATH_QUICK_RECHARGE = "/api/account/recharge"; // 快速充币，只用于测试。
 
   //user api
-  static const PATH_ACCOUNT_ASSETS = "/api/v1/assetsList"; // 通过api请求资产列表
-  static const PATH_ORDER_LIMIT = '/api/v1/orderPut'; //通过api下单
-  static const PATH_ORDER_LIST = '/api/v1/orderList'; //通过api查看订单列表
-  static const PATH_ORDER_CANCEL = "/api/v1/orderCancel"; // 取消订单
-  static const PATH_GET_UID = '/api/v1/uid';  //获取uid
+  static const API_PATH_ACCOUNT_ASSETS = "/api/v1/assetsList"; // 通过api请求资产列表
+  static const API_PATH_ORDER_LIMIT = '/api/v1/orderPut'; //通过api下单
+  static const API_PATH_ORDER_LIST = '/api/v1/orderList'; //通过api查看订单列表
+  static const API_PATH_ORDER_CANCEL = "/api/v1/orderCancel"; // 取消订单
+  static const API_PATH_GET_UID = '/api/v1/uid';  //获取uid
+  static const API_PATH_ORDER_LOG_LIST = "/api/v1/order/dealDetailLists"; // 成交
 
 }

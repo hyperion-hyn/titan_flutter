@@ -144,7 +144,7 @@ class ExchangeApi {
 
   Future<dynamic> getUserId({String apiKey, String secret}) async {
     return await userApiSignAndPost(
-      path: ExchangeConst.PATH_GET_UID,
+      path: ExchangeConst.API_PATH_GET_UID,
       params: {},
       apiKey: apiKey,
       secret: secret,
@@ -153,7 +153,7 @@ class ExchangeApi {
 
   Future<dynamic> getAssetsList({String apiKey, String secret}) async {
     return await userApiSignAndPost(
-        path: ExchangeConst.PATH_ACCOUNT_ASSETS,
+        path: ExchangeConst.API_PATH_ACCOUNT_ASSETS,
         params: {},
         apiKey: apiKey,
         secret: secret);
@@ -226,7 +226,7 @@ class ExchangeApi {
   Future<dynamic> orderPutLimit(
       String market, exchangeType, String price, String amount) async {
     return await userApiSignAndPost(
-      path: ExchangeConst.PATH_ORDER_LIMIT,
+      path: ExchangeConst.API_PATH_ORDER_LIMIT,
       params: {
         "market": market,
         "side": exchangeType,
@@ -252,7 +252,7 @@ class ExchangeApi {
 
   Future<dynamic> orderCancel(String orderId) async {
     return await userApiSignAndPost(
-      path: ExchangeConst.PATH_ORDER_CANCEL,
+      path: ExchangeConst.API_PATH_ORDER_CANCEL,
       params: {
         "order_id": orderId,
         'market': "HYN/USDT",
@@ -289,7 +289,7 @@ class ExchangeApi {
     String method,
   ) async {
     return await userApiSignAndPost(
-      path: ExchangeConst.PATH_ORDER_LIST,
+      path: ExchangeConst.API_PATH_ORDER_LIST,
       factory: EntityFactory<List<Order>>((response) {
         var orderList = List<Order>();
         if (response is Map && response.length == 0) {
@@ -341,9 +341,9 @@ class ExchangeApi {
     int page,
     int size,
   ) async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_ORDER_LOG_LIST,
-      EntityFactory<List<OrderDetail>>((response) {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_LOG_LIST,
+      factory: EntityFactory<List<OrderDetail>>((response) {
         var orderDetailList = List<OrderDetail>();
         if (response is Map && response.length == 0) {
           return orderDetailList;
