@@ -237,16 +237,19 @@ class _WalletDemoState extends State<WalletDemo> {
                     .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
-                  var signedHex = await wallet0.signApproveErc20Token(
-                      contractAddress: hynErc20ContractAddress,
-                      approveToAddress: approveToAddress,
-                      amount:
-                          ConvertTokenUnit.etherToWei(etherDouble: myStaking),
-                      password: '111111',
-                      gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
-                      gasLimit: 5000000);
-                  var ret = await WalletUtil.postToEthereumNetwork(
-                      method: 'eth_sendRawTransaction', params: [signedHex]);
+                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress);
+                  print(ret);
+
+                  // var signedHex = await wallet0.signApproveErc20Token(
+                  //     contractAddress: hynErc20ContractAddress,
+                  //     approveToAddress: approveToAddress,
+                  //     amount:
+                  //         ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  //     password: '111111',
+                  //     gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  //     gasLimit: 500000);
+                  // var ret = await WalletUtil.postToEthereumNetwork(
+                  //     method: 'eth_sendRawTransaction', params: [signedHex]);
 
                   logger.i('hyn approve, result: $ret');
                 } catch (e) {

@@ -105,6 +105,20 @@ class Wallet {
     return BigInt.from(0);
   }
 
+  Future<BigInt> getAllowance(
+    String contractAddress,
+    String ownAddress,
+    String approveToAddress,
+  ) async {
+    final contract = WalletUtil.getHynErc20Contract(contractAddress);
+    final balanceFun = contract.function('allowance');
+    final allowance = await WalletUtil.getWeb3Client().call(
+        contract: contract,
+        function: balanceFun,
+        params: [web3.EthereumAddress.fromHex(ownAddress), web3.EthereumAddress.fromHex(approveToAddress)]);
+    return allowance.first;
+  }
+
   Future<BigInt> getBitcoinBalance(String pubString) async {
     var response = await BitcoinApi.requestBitcoinBalance(pubString);
     if (response != null && response['code'] == 0) {
@@ -125,7 +139,8 @@ class Wallet {
     String data,
   }) async {
     var account = getEthAccount();
-    SystemConfigEntity systemConfigEntity = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
+    SystemConfigEntity systemConfigEntity =
+        SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
     if (account != null) {
       if (gasLimit == null) {
         if (data == null) {
@@ -167,7 +182,7 @@ class Wallet {
     int nonce,
     int gasLimit = 0,
   }) async {
-    if(gasLimit == 0){
+    if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
@@ -196,7 +211,7 @@ class Wallet {
     int nonce,
     int gasLimit = 0,
   }) async {
-    if(gasLimit == 0){
+    if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
     }
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
@@ -218,12 +233,13 @@ class Wallet {
   }
 
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
-    var transResult = await BitcoinApi.sendBitcoinTransaction(keystore.fileName,password,pubString,toAddr,fee,amount);
+    var transResult =
+        await BitcoinApi.sendBitcoinTransaction(keystore.fileName, password, pubString, toAddr, fee, amount);
     return transResult;
   }
 
   Future<String> bitcoinActive(String password) async {
-    var result = await TitanPlugin.bitcoinActive(keystore.fileName,password);
+    var result = await TitanPlugin.bitcoinActive(keystore.fileName, password);
     return result;
   }
 
