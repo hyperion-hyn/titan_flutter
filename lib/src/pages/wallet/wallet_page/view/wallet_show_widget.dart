@@ -203,7 +203,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             if (widget.walletVo.wallet.getBitcoinAccount() == null)
               _bitcoinEmptyView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
-            _ropstenTestWalletView(context),
+            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
     );
   }

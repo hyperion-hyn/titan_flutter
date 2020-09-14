@@ -148,7 +148,7 @@ class _ExchangeDepositConfirmPageState
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: Text(
-          S.of(context).exchange_transfer_confirmation,
+          S.of(context).exchange_deposit_confirm,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18,
