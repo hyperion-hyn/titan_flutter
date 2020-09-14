@@ -358,11 +358,11 @@ class AssetItemState extends State<AssetItem> {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
-            ));
+//        Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
+//            ));
       },
       child: Column(
         children: <Widget>[
