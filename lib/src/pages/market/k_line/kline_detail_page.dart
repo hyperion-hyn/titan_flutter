@@ -5,6 +5,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -12,6 +13,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
@@ -47,7 +49,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => _periodTabController.index == 5;
+  bool get _isDepth => (_periodTabController?.index??0) == 5;
 
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
@@ -277,19 +279,21 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Widget _headerWidget() {
     var marketItemEntity = MarketInheritedModel.of(context).getMarketItem(widget.symbol);
 
-    var _high = marketItemEntity.kLineEntity?.high?.toString() ?? "--";
-    var _low = marketItemEntity.kLineEntity?.low?.toString() ?? "--";
-    var _amount24Hour = marketItemEntity.kLineEntity?.amount?.toString() ?? "--";
+    var _high = marketItemEntity?.kLineEntity?.high?.toString() ?? "--";
+    var _low = marketItemEntity?.kLineEntity?.low?.toString() ?? "--";
+    var _amount24Hour = marketItemEntity?.kLineEntity?.amount?.toString() ?? "--";
 
     // price
+    var close = marketItemEntity?.kLineEntity?.close;
+    var closeValue = close??0;
     var _latestPrice = FormatUtil.truncateDecimalNum(
-      Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
+      Decimal.parse(closeValue.toString()),
       4,
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
     var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity.symbolName,
+      marketItemEntity?.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
@@ -301,7 +305,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     // _latestPercent
     double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
-      marketItemEntity.symbol,
+      marketItemEntity?.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
@@ -744,7 +748,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     setState(() {});
   }
 
-  _clickMoreAction(int index) {
+  _clickMoreAction(int index) async {
     _lastSelectedIndex = _periodTabController.previousIndex;
 
     if (index == 4) {
@@ -758,7 +762,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
     _isShowSetting = false;
     _periodCurrentIndex = index;
-    print("_periodCurrentIndex:$_periodCurrentIndex");
+
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt(PrefsKey.PERIOD_CURRENT_INDEX, _periodCurrentIndex);
+    print("[API] 2, _periodCurrentIndex:$_periodCurrentIndex");
 
     if (index < _normalPeriodList.length) {
       // old
@@ -956,7 +963,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         });
   }
 
-  _initData() {
+  _initData() async {
     _periodParameter = _normalPeriodList[0];
 
     _detailTabController = TabController(
@@ -970,6 +977,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       vsync: this,
       length: 7,
     );
+
+    var prefs = await SharedPreferences.getInstance();
+    var index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+    if (index != null && index < 4 && _periodTabController != null) {
+      _periodTabController.index = index;
+    }
   }
 
   _setupRequest() {

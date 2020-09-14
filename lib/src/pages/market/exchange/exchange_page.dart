@@ -647,7 +647,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                       builder: (context) => KLineDetailPage(
                             symbol: marketItemEntity.symbol,
                             symbolName: marketItemEntity.symbolName,
-                        isPop: false,
+                            isPop: false,
                           )));
             },
             child: Padding(
