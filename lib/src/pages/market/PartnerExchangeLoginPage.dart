@@ -270,24 +270,15 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
   }
 
   Future<void> _getPreviousApiKeyAndSecret() async {
-//    var _sharePref = await SharedPreferences.getInstance();
-//    var _previousApiKey = _sharePref.getString('exchange_user_api_key');
-//    var _previousApiSecret = _sharePref.getString('exchange_user_api_secret');
-//    if (_previousApiKey != null && _previousApiSecret != null) {
-//      _userApiKeyController.text = _previousApiKey;
-//      _userSecretController.text = _previousApiSecret;
-//    }
-    _userApiKeyController.text = 'b0ee73fb9a088179f418d922efe0d402';
-    _userSecretController.text = 'c29ef55216b554fa89f4f88e37d9b1e4';
-  }
-
-  _getAssetsWithApiKeyAndSecret() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MaterialApp(
-                  home: ExchangePage(),
-                )));
+    var _sharePref = await SharedPreferences.getInstance();
+    var _previousApiKey = _sharePref.getString('exchange_user_api_key');
+    var _previousApiSecret = _sharePref.getString('exchange_user_api_secret');
+    if (_previousApiKey != null && _previousApiSecret != null) {
+      _userApiKeyController.text = _previousApiKey;
+      _userSecretController.text = _previousApiSecret;
+    }
+//    _userApiKeyController.text = '092898fbcf23f2409ce394e9b5e13632';
+//    _userSecretController.text = '2f459f6b0fc688fa00b75a44294f4835';
   }
 
   _saveApiKeyAndSecret() async {
@@ -343,12 +334,10 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
         _isProcessing = false;
       });
     } catch (e) {
+      Fluttertoast.showToast(msg: e.message);
       setState(() {
         _isProcessing = false;
       });
-      if (e is HttpResponseCodeNotSuccess) {
-        Fluttertoast.showToast(msg: e.message);
-      }
     }
   }
 }
