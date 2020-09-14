@@ -234,9 +234,8 @@ class ExchangeApi {
   }
 
   Future<dynamic> orderCancel(String orderId) async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_ORDER_CANCEL,
-      null,
+    return await userApiSignAndPost(
+      path:ExchangeConst.PATH_ORDER_CANCEL,
       params: {"order_id": orderId},
     );
   }
@@ -269,7 +268,7 @@ class ExchangeApi {
     int size,
     String method,
   ) async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ORDER_LIST, EntityFactory<List<Order>>((response) {
+    return await userApiSignAndPost(path: ExchangeConst.PATH_ORDER_LIST, factory: EntityFactory<List<Order>>((response) {
       var orderList = List<Order>();
       if (response is Map && response.length == 0) {
         return orderList;
@@ -395,8 +394,9 @@ class ExchangeApi {
     return signer.verify64(paramsStr, data['sign']);
   }
 
-  Future<dynamic> userApiSignAndPost({
+  Future<dynamic> userApiSignAndPost<T>({
     String path, //example: /api/index/testWalletSign
+    EntityFactory<T> factory,
     Map<String, dynamic> params,
   }) async {
     var apiKey = "";
@@ -419,7 +419,7 @@ class ExchangeApi {
 
     return await ExchangeHttp.instance.postEntity(
       path,
-      null,
+      factory,
       params: params,
     );
   }
