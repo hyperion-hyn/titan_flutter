@@ -153,7 +153,7 @@ class _ExchangeAssetHistoryPageState
                               .isActiveAccount()) {
                             Application.router.navigateTo(
                               context,
-                              Routes.exchange_transfer_page,
+                              '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
                             );
                           } else {
                             UiUtil.showExchangeAuthAgainDialog(context);
