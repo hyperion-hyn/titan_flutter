@@ -9,4 +9,5 @@ class ExchangeModel {
     return activeAccount != null && activeAccount.assetList != null;
   }
 
+
 }

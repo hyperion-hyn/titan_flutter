@@ -151,17 +151,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
-  _contentView() {
-    return Column(
-      children: <Widget>[
-        _account(),
-        _exchange(),
-        _divider(),
-        _quotesTabs(),
-      ],
-    );
-  }
-
   _exchange() {
     var _selectedCoinToHYN = "--";
     var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
@@ -373,7 +362,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 ),
               ),
               Spacer(),
-              _assetView(),
+             // _assetView(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(

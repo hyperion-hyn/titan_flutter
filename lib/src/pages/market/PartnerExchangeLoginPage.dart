@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/model/asset_list.dart';
+import 'package:titan/src/pages/market/model/exchange_account.dart';
+import 'package:titan/src/plugins/wallet/account.dart';
 
 import '../../widget/loading_button/click_oval_button.dart';
 import 'exchange/exchange_page.dart';
@@ -22,6 +31,8 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
 
   TextEditingController _userSecretController = TextEditingController();
   TextEditingController _userApiKeyController = TextEditingController();
+
+  ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
   void initState() {
@@ -223,11 +234,7 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
                         disabledTextColor: Colors.white,
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ExchangePage()));
-//                            _getAssetsWithApiKeyAndSecret();
+                            _getAssetWithApiKeyAndSecret();
                           }
                         },
                         child: Padding(
@@ -256,31 +263,73 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
   }
 
   Future<void> _getPreviousApiKeyAndSecret() async {
-    var _sharePref = await SharedPreferences.getInstance();
-    var _previousApiKey = _sharePref.getString('exchange_user_api_key');
-    var _previousApiSecret = _sharePref.getString('exchange_user_api_secret');
-    if (_previousApiKey != null && _previousApiSecret != null) {
-      _userApiKeyController.text = _previousApiKey;
-      _userSecretController.text = _previousApiSecret;
-    }
-//    _userApiKeyController.text = '085a079afac86bcf25418a508810d847';
-//    _userSecretController.text = 'bb376aa6b4d2b82367414fc510c1615c';
+//    var _sharePref = await SharedPreferences.getInstance();
+//    var _previousApiKey = _sharePref.getString('exchange_user_api_key');
+//    var _previousApiSecret = _sharePref.getString('exchange_user_api_secret');
+//    if (_previousApiKey != null && _previousApiSecret != null) {
+//      _userApiKeyController.text = _previousApiKey;
+//      _userSecretController.text = _previousApiSecret;
+//    }
+    _userApiKeyController.text = 'b0ee73fb9a088179f418d922efe0d402';
+    _userSecretController.text = 'c29ef55216b554fa89f4f88e37d9b1e4';
   }
 
   _getAssetsWithApiKeyAndSecret() {
-
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MaterialApp(
+                  home: ExchangePage(),
+                )));
   }
 
   _saveApiKeyAndSecret() async {
     var _sharePref = await SharedPreferences.getInstance();
-    if (_userApiKeyController.text.isNotEmpty) {
-      _sharePref.setString('exchange_user_api_key', _userApiKeyController.text);
-    }
-    if (_userSecretController.text.isNotEmpty) {
+    if (_userApiKeyController.text.isNotEmpty &&
+        _userSecretController.text.isNotEmpty) {
       _sharePref.setString(
-          'exchange_user_api_secret', _userSecretController.text);
+        'exchange_user_api_key',
+        _userApiKeyController.text,
+      );
+      _sharePref.setString(
+        'exchange_user_api_secret',
+        _userSecretController.text,
+      );
     }
   }
 
-  _getAsset() {}
+  _getAssetWithApiKeyAndSecret() async {
+    try {
+      var ret = await _exchangeApi.getAssetsList(
+        apiKey: _userApiKeyController.text,
+        secret: _userSecretController.text,
+      );
+
+      var _assetList = AssetList.fromJson(ret);
+
+      ExchangeAccount _exchangeAccount = ExchangeAccount.fromJson({});
+      _exchangeAccount.assetList = _assetList;
+
+      ///
+      BlocProvider.of<ExchangeCmpBloc>(context)
+          .add(UpdateExchangeAccountEvent(_exchangeAccount));
+
+      ///
+      _saveApiKeyAndSecret();
+
+      ///
+      if (ExchangeInheritedModel.of(context).exchangeModel.isActiveAccount()) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExchangePage(),
+          ),
+        );
+      }
+    } catch (e) {
+      if (e is HttpResponseCodeNotSuccess) {
+        Fluttertoast.showToast(msg: e.message);
+      }
+    }
+  }
 }

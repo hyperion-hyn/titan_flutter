@@ -121,7 +121,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           },
           child: ListView(
             children: <Widget>[
-              _totalBalances(),
+              //_totalBalances(),
               _divider(),
               _exchangeAssetListView(),
             ],

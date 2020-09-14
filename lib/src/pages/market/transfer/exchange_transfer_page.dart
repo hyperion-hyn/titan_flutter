@@ -415,10 +415,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             ),
           ),
           onPressed: () async {
-            FocusScope.of(context).requestFocus(FocusNode());
-            if (_fromKey.currentState.validate()) {
-              _transfer();
-            }
+
           }),
     );
   }
