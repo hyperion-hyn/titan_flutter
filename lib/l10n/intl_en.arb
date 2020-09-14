@@ -881,7 +881,7 @@
   "kline_market_sell_price": "Sell Price",
   "kline_tab_delegation": "Delegation",
   "kline_tab_market": "Deal",
-  "depth_bit": "Depth{selectDepthNum}位",
+  "depth_bit": "Depth{selectDepthNum}bit",
   "depth_decimal_places": "decimal",
   "num_decimal_places": "{depthIndex}DEC",
   "buy": "Buy",
