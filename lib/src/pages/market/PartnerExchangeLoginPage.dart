@@ -34,6 +34,8 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
 
   ExchangeApi _exchangeApi = ExchangeApi();
 
+  var _isProcessing = false;
+
   @override
   void initState() {
     super.initState();
@@ -232,18 +234,23 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
                         color: Theme.of(context).primaryColor,
                         textColor: Colors.white,
                         disabledTextColor: Colors.white,
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            _getAssetWithApiKeyAndSecret();
-                          }
-                        },
+                        onPressed: _isProcessing
+                            ? null
+                            : () async {
+                                if (_formKey.currentState.validate()) {
+                                  setState(() {
+                                    _isProcessing = true;
+                                  });
+                                  _getAssetWithApiKeyAndSecret();
+                                }
+                              },
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                S.of(context).next,
+                                _isProcessing ? '处理中' : S.of(context).next,
                                 style: TextStyle(
                                   fontWeight: FontWeight.normal,
                                   fontSize: 16,
@@ -310,6 +317,11 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
       ExchangeAccount _exchangeAccount = ExchangeAccount.fromJson({});
       _exchangeAccount.assetList = _assetList;
 
+      var _userInfo = _exchangeApi.getAssetsList(
+        apiKey: _userApiKeyController.text,
+        secret: _userSecretController.text,
+      );
+
       ///
       BlocProvider.of<ExchangeCmpBloc>(context)
           .add(UpdateExchangeAccountEvent(_exchangeAccount));
@@ -326,7 +338,13 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
           ),
         );
       }
+      setState(() {
+        _isProcessing = false;
+      });
     } catch (e) {
+      setState(() {
+        _isProcessing = false;
+      });
       if (e is HttpResponseCodeNotSuccess) {
         Fluttertoast.showToast(msg: e.message);
       }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -91,8 +92,20 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           exchangeModel.activeAccount = null;
         } else if (state is UpdateAssetsState) {
           try {
-            var ret = await _exchangeApi.getAssetsList();
-            exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            var _sharePref = await SharedPreferences.getInstance();
+            var _previousApiKey = _sharePref.getString('exchange_user_api_key');
+            var _previousApiSecret =
+                _sharePref.getString('exchange_user_api_secret');
+            if (_previousApiKey != null && _previousApiSecret != null) {
+              var ret = await _exchangeApi.getAssetsList(
+                apiKey: _previousApiKey,
+                secret: _previousApiSecret,
+              );
+              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            }else {
+              Fluttertoast.showToast(msg: '暂无KEY和SECRET');
+            }
+
           } catch (e) {
             if (e is HttpResponseCodeNotSuccess) {
               Fluttertoast.showToast(msg: e.message);
