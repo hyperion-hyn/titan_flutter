@@ -24,6 +24,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/DottedLine.dart';
 
 import '../../../global.dart';
@@ -415,10 +416,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             ),
           ),
           onPressed: () async {
-            FocusScope.of(context).requestFocus(FocusNode());
-            if (_fromKey.currentState.validate()) {
-              _transfer();
-            }
+            debounce(() {
+              FocusScope.of(context).requestFocus(FocusNode());
+              if (_fromKey.currentState.validate()) {
+                _transfer();
+              }
+            })();
           }),
     );
   }
