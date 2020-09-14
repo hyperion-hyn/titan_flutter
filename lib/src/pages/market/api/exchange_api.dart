@@ -140,9 +140,8 @@ class ExchangeApi {
   }
 
   Future<dynamic> getAssetsList() async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_ACCOUNT_ASSETS,
-      null,
+    return await userApiSignAndPost(
+      path: ExchangeConst.PATH_ACCOUNT_ASSETS,
       params: {},
     );
   }
@@ -210,9 +209,8 @@ class ExchangeApi {
   }
 
   Future<dynamic> orderPutLimit(String market, exchangeType, String price, String amount) async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_ORDER_LIMIT,
-      null,
+    return await userApiSignAndPost(
+      path:ExchangeConst.PATH_ORDER_LIMIT,
       params: {
         "market": market,
         "side": exchangeType,
@@ -395,5 +393,34 @@ class ExchangeApi {
     );
 
     return signer.verify64(paramsStr, data['sign']);
+  }
+
+  Future<dynamic> userApiSignAndPost({
+    String path, //example: /api/index/testWalletSign
+    Map<String, dynamic> params,
+  }) async {
+    var apiKey = "";
+    var secret = "";
+
+    params ??= {};
+    params['api'] = apiKey;
+    params['seed'] = Random().nextInt(0xfffffffe).toString();
+    params['ts'] = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    params['sign_method'] = 'HmacSHA256';
+    params['sign_ver'] = '2';
+
+    var signedStr = Signer.signApiWithSecretKey(
+        secret: secret,
+        method: 'POST',
+        host: ExchangeConst.EXCHANGE_DOMAIN.split('//')[1],
+        path: path,
+        params: params);
+    params['sign'] = signedStr;
+
+    return await ExchangeHttp.instance.postEntity(
+      path,
+      null,
+      params: params,
+    );
   }
 }

@@ -223,7 +223,11 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
                         disabledTextColor: Colors.white,
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
-                            _getAssetsWithApiKeyAndSecret();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ExchangePage()));
+//                            _getAssetsWithApiKeyAndSecret();
                           }
                         },
                         child: Padding(
