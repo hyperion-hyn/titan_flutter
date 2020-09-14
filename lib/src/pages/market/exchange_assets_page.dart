@@ -57,7 +57,6 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     symbolQuote =
         QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-    //_refreshAssets();
   }
 
   @override
@@ -217,43 +216,6 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                 SizedBox(
                   height: 24,
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        height: 30,
-                        width: 120,
-                        child: OutlineButton(
-                          child: Text(
-                            S.of(context).exchange_transfer,
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor),
-                          ),
-                          onPressed: () {
-                            if (ExchangeInheritedModel.of(context)
-                                .exchangeModel
-                                .isActiveAccount()) {
-                              Application.router.navigateTo(
-                                context,
-                                Routes.exchange_transfer_page,
-                              );
-                            } else {
-                              UiUtil.showExchangeAuthAgainDialog(context);
-                            }
-                          },
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                            width: 1,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
               ],
             ),
             Positioned(
@@ -376,12 +338,12 @@ class AssetItem extends StatefulWidget {
   final String _symbol;
   final AssetType _assetType;
   final bool _isShowBalances;
-  final Decimal _hynToCurrency;
+  final Decimal _usdtToCurrency;
 
   AssetItem(
     this._symbol,
     this._assetType,
-    this._hynToCurrency,
+    this._usdtToCurrency,
     this._isShowBalances,
   );
 
@@ -525,11 +487,12 @@ class AssetItemState extends State<AssetItem> {
                               ExchangeInheritedModel.of(context)
                                       .exchangeModel
                                       .isShowBalances
-                                  ? widget._assetType.hyn != null &&
-                                          widget._hynToCurrency != null
+                                  ? widget._assetType.usdt != null &&
+                                          widget._usdtToCurrency != null
                                       ? '${FormatUtil.truncateDecimalNum(
-                                          Decimal.parse(widget._assetType.hyn) *
-                                              widget._hynToCurrency,
+                                          Decimal.parse(
+                                                  widget._assetType.usdt) *
+                                              widget._usdtToCurrency,
                                           4,
                                         )}'
                                       : '-'

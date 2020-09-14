@@ -43,6 +43,7 @@ class _SocketState extends State<_SocketManager> {
   List<MarketItemEntity> _marketItemList;
   List<List<String>> _tradeDetailList;
   Timer _timer;
+
 //  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
 //  var hynethTradeChannel = SocketConfig.channelTradeDetail("hyneth");
   Set<String> _channelList = Set();
@@ -150,7 +151,9 @@ class _SocketState extends State<_SocketManager> {
         } else if (state is ChannelKLine24HourState) {
           _updateMarketItemList(state.response, symbol: state.symbol);
         } else if (state is ChannelTradeDetailState) {
-          _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
+          _tradeDetailList = state.response
+              .map((item) => (item as List).map((e) => e.toString()).toList())
+              .toList();
         } else if (state is SubChannelState) {
           _channelList.add(state.channel);
         } else if (state is UnSubChannelState) {
@@ -294,13 +297,19 @@ class MarketInheritedModel extends InheritedModel<String> {
     var marketItem = getMarketItem(symbol);
     var realPercent = marketItem == null
         ? 0.0
-        : ((marketItem.kLineEntity?.close ?? 0.0 - marketItem.kLineEntity?.open) / marketItem.kLineEntity?.open ?? 1.0);
+        : ((marketItem.kLineEntity?.close ?? 0.0) -
+                    marketItem.kLineEntity?.open ??
+                0.0) /
+            (marketItem.kLineEntity?.open ?? 1.0);
+    print(
+        '[KLineEntity]: open: ${marketItem.kLineEntity.open} close: ${marketItem.kLineEntity.close} percent: $realPercent');
     return realPercent;
   }
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount =
+        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 
@@ -312,7 +321,8 @@ class MarketInheritedModel extends InheritedModel<String> {
 
   @override
   bool updateShouldNotify(MarketInheritedModel old) {
-    return marketItemList != old.marketItemList || tradeDetailList != old.tradeDetailList;
+    return marketItemList != old.marketItemList ||
+        tradeDetailList != old.tradeDetailList;
   }
 
   @override
@@ -320,6 +330,7 @@ class MarketInheritedModel extends InheritedModel<String> {
     MarketInheritedModel old,
     Set<String> dependencies,
   ) {
-    return marketItemList != old.marketItemList || tradeDetailList != old.tradeDetailList;
+    return marketItemList != old.marketItemList ||
+        tradeDetailList != old.tradeDetailList;
   }
 }

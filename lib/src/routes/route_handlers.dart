@@ -152,7 +152,9 @@ var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
 
 var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return ExchangeTransferPage();
+  return ExchangeTransferPage(
+    params['coinType']?.first
+  );
 });
 
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {

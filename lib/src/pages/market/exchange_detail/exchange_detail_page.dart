@@ -532,7 +532,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                   itemCount: marketInfoEntity.depthPrecision.length + 1,
                 ),
               )),
-          left: 238,
+          left: 230,
           top: 66,
         ),
       ),

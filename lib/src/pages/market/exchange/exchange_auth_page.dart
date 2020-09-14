@@ -25,13 +25,11 @@ class ExchangeAuthPage extends StatefulWidget {
 
 class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   bool isLoggingIn = false;
-  Wallet _wallet;
 
   @override
   Future<void> onCreated() async {
     // TODO: implement onCreated
     super.onCreated();
-    _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
   }
 
   @override
@@ -164,6 +162,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   }
 
   _checkIsAuthAlready() async {
+    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
       bool _isAuthAlready = await AppCache.getValue(
               'exchange_auth_already_${_wallet.getEthAccount().address}') ??
@@ -177,6 +176,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   }
 
   _setAuthAlready() {
+    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     AppCache.saveValue(
       'exchange_auth_already_${_wallet.getEthAccount().address}',
       true,
@@ -184,6 +184,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   }
 
   _startLogin() async {
+    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
       var address = _wallet.getEthAccount().address;
       var walletPassword = await UiUtil.showWalletPasswordDialogV2(
@@ -201,6 +202,8 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           isLoggingIn = true;
         });
       }
+    }else {
+      Fluttertoast.showToast(msg: 'Wallet is null');
     }
   }
 

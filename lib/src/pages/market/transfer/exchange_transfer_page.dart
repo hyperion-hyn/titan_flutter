@@ -30,6 +30,10 @@ import '../../../global.dart';
 import '../model/asset_list.dart';
 
 class ExchangeTransferPage extends StatefulWidget {
+  final String coinType;
+
+  ExchangeTransferPage(this.coinType);
+
   @override
   State<StatefulWidget> createState() {
     return _ExchangeTransferPageState();
@@ -56,6 +60,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _selectedCoinType = widget.coinType ?? 'HYN';
   }
 
   @override
@@ -403,7 +408,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            S.of(context).exchange_transfer,
+            _fromExchangeToWallet ? '提币' : '充值',
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -433,7 +438,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Center(
           child: Text(
             type,
-            style: TextStyle(color: _selectedCoinType == type ? Theme.of(context).primaryColor : HexColor('#FF777777')),
+            style: TextStyle(
+                color: _selectedCoinType == type
+                    ? Theme.of(context).primaryColor
+                    : HexColor('#FF777777')),
           ),
         ),
       ),
@@ -447,6 +455,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _amount() {
+    var _minTransferText = _fromExchangeToWallet ? '最小提币数' : '最小充值数';
+    var _amountInputHint = _fromExchangeToWallet ? '请输入提币数量' : '请输入充值数量';
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
             .exchangeModel
@@ -479,7 +489,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 width: 4.0,
               ),
               Text(
-                '(${S.of(context).exchange_transfer_min} $_minTransferAmount $_selectedCoinType)',
+                '($_minTransferText $_minTransferAmount $_selectedCoinType)',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 11,
@@ -506,12 +516,14 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) >
+                        Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
-                      return S.of(context).exchange_transfer_less_than_min;
+                    if (Decimal.parse(value) <
+                        Decimal.parse(_minTransferAmount)) {
+                      return _fromExchangeToWallet ? '少于最小提币数' : '少于最小充值数';
                     }
 
                     return null;
@@ -528,7 +540,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                           borderSide: BorderSide(
                         color: HexColor('#FFD7D7D7'),
                       )),
-                      hintText: S.of(context).exchange_transfer_input_amount,
+                      hintText: _amountInputHint,
                       hintStyle: TextStyle(
                         color: HexColor('#FF999999'),
                         fontSize: 12,
@@ -555,7 +567,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 child: Text(
                                   S.of(context).all,
                                   style: TextStyle(
-                                      color: HexColor('#FF333333'), fontSize: 12, fontWeight: FontWeight.bold),
+                                      color: HexColor('#FF333333'),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
                                   if (!_fromExchangeToWallet) {
@@ -565,7 +579,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                         '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
                                   }
 
-                                  _amountController.selection = TextSelection.fromPosition(TextPosition(
+                                  _amountController.selection =
+                                      TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
@@ -674,7 +689,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(
+            Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }
@@ -706,7 +722,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _deposit(String exchangeAddress) async {
-    print("[API] _deposit");
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -734,10 +749,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
-    var _actualTransferredAmount =
-        Decimal.parse(_amountController.text) + Decimal.parse(_withdrawFee) <= Decimal.parse(_availableAmount())
-            ? _amountController.text
-            : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+    var _actualTransferredAmount = Decimal.parse(_amountController.text) +
+                Decimal.parse(_withdrawFee) <=
+            Decimal.parse(_availableAmount())
+        ? _amountController.text
+        : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
 
     Application.router.navigateTo(
       context,

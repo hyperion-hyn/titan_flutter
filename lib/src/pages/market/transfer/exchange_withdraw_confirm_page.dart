@@ -85,7 +85,7 @@ class _ExchangeWithdrawConfirmPageState
         iconTheme: IconThemeData(color: Colors.black),
         centerTitle: true,
         title: Text(
-          S.of(context).exchange_transfer_confirmation,
+          S.of(context).exchange_withdraw_confirm,
           style: TextStyle(color: Colors.black),
         ),
       ),

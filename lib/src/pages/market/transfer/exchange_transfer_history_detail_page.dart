@@ -97,7 +97,7 @@ class _ExchangeTransferHistoryDetailPageState
                       )),
                   TextSpan(
                       text:
-                          ' (${widget._assetHistory.name == 'withdraw' ? widget._assetHistory.type : 'HYN'})',
+                          ' (${widget._assetHistory.name == 'withdraw' ? widget._assetHistory.type : 'ETH'})',
                       style: TextStyle(
                         color: DefaultColors.color999,
                         fontSize: 12,
@@ -107,7 +107,7 @@ class _ExchangeTransferHistoryDetailPageState
               _item(
                 S.of(context).exchange_transfer_history_detail_time,
                 Text(
-                  widget._assetHistory.ctime,
+                  FormatUtil.formatUTCDateStr(widget._assetHistory.ctime),
                   style: TextStyle(fontSize: 14),
                 ),
               ),
