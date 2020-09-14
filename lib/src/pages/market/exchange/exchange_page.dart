@@ -81,68 +81,72 @@ class _ExchangePageState extends BaseState<ExchangePage>
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ExchangeBloc, ExchangeState>(
+    return Material(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ExchangeBloc, ExchangeState>(
+            bloc: _exchangeBloc,
+            listener: (context, state) {},
+          ),
+          BlocListener<SocketBloc, SocketState>(
+            listener: (context, state) {
+              setState(() {
+                _setupMarketItemList();
+              });
+            },
+          ),
+        ],
+        child: BlocBuilder<ExchangeBloc, ExchangeState>(
           bloc: _exchangeBloc,
-          listener: (context, state) {},
-        ),
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            setState(() {
-              _setupMarketItemList();
-            });
+          builder: (context, state) {
+            return SafeArea(
+              child: Container(
+                color: Colors.white,
+                child: LoadDataContainer(
+                  bloc: _loadDataBloc,
+                  enablePullUp: false,
+                  onLoadData: () async {
+                    _loadDataBloc.add(RefreshSuccessEvent());
+                    _refreshController.refreshCompleted();
+                  },
+                  onRefresh: () async {
+                    BlocProvider.of<ExchangeCmpBloc>(context)
+                        .add(UpdateAssetsEvent());
+                    _loadDataBloc.add(RefreshSuccessEvent());
+                    _refreshController.refreshCompleted();
+                  },
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      SliverToBoxAdapter(
+                        child: ExchangeBannerWidget(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _account(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _exchange(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _divider(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _quotesTabs(),
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return _marketItem(_marketItemList[index]);
+                          },
+                          childCount: _marketItemList.length,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
           },
         ),
-      ],
-      child: BlocBuilder<ExchangeBloc, ExchangeState>(
-        bloc: _exchangeBloc,
-        builder: (context, state) {
-          return Container(
-            color: Colors.white,
-            child: LoadDataContainer(
-              bloc: _loadDataBloc,
-              enablePullUp: false,
-              onLoadData: () async {
-                _loadDataBloc.add(RefreshSuccessEvent());
-                _refreshController.refreshCompleted();
-              },
-              onRefresh: () async {
-                BlocProvider.of<ExchangeCmpBloc>(context)
-                    .add(UpdateAssetsEvent());
-                _loadDataBloc.add(RefreshSuccessEvent());
-                _refreshController.refreshCompleted();
-              },
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: ExchangeBannerWidget(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _account(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _exchange(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _divider(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _quotesTabs(),
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return _marketItem(_marketItemList[index]);
-                      },
-                      childCount: _marketItemList.length,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }

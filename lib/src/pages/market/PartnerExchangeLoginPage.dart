@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../widget/loading_button/click_oval_button.dart';
+import 'exchange/exchange_page.dart';
 import 'exchange_detail/exchange_detail_page.dart';
 
 class PartnerExchangeLoginPage extends StatefulWidget {
@@ -31,7 +32,7 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
             child: ClickOvalButton(
               "登录",
                 (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(selectedCoin:"USDT", exchangeType:0)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangePage()));
                 }
             ),
           ),
