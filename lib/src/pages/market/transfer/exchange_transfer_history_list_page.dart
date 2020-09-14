@@ -239,7 +239,7 @@ class ExchangeTransferHistoryListPageState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            '${S.of(context).exchange_network_fee}(${assetHistory.name == 'withdraw' ? assetHistory.type : 'HYN'})',
+                            '${S.of(context).exchange_network_fee}(${assetHistory.name == 'withdraw' ? assetHistory.type : 'ETH'})',
                             style: TextStyle(
                               color: DefaultColors.color999,
                               fontSize: 12,

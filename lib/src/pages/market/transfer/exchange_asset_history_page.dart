@@ -13,9 +13,12 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
+import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -240,128 +243,146 @@ class _ExchangeAssetHistoryPageState
   }
 
   _assetHistoryItem(AssetHistory assetHistory) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            height: 16,
-          ),
-          Text(
-            assetHistory.getTypeText(),
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
+    return InkWell(
+      onTap: () {
+        var isChinaMainland =
+            SettingInheritedModel.of(context).areaModel?.isChinaMainland ==
+                true;
+        var url =
+            EtherscanApi.getTxDetailUrl(assetHistory.txId, isChinaMainland);
+        if (url != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => InAppWebViewContainer(
+                        initUrl: url,
+                        title: '',
+                      )));
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 16,
             ),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            '${S.of(context).exchange_amount}(${assetHistory.type})',
-                            style: TextStyle(
-                              color: DefaultColors.color999,
-                              fontSize: 12,
+            Text(
+              assetHistory.getTypeText(),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    child: Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '${S.of(context).exchange_amount}(${assetHistory.type})',
+                              style: TextStyle(
+                                color: DefaultColors.color999,
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          Text(
-                            "${Decimal.parse(assetHistory.balance)}",
-                            style: TextStyle(
-                                color: DefaultColors.color333,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 8.0,
+                            ),
+                            Text(
+                              "${Decimal.parse(assetHistory.balance)}",
+                              style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        Spacer()
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        S.of(context).exchange_assets_status,
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
                       ),
-                      Spacer()
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      Text(
+                        assetHistory.getStatusText(),
+                        maxLines: 2,
+                        style: TextStyle(
+                          color: DefaultColors.color333,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).exchange_assets_status,
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        S.of(context).exchange_order_time,
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      assetHistory.getStatusText(),
-                      maxLines: 2,
-                      style: TextStyle(
-                        color: DefaultColors.color333,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                      SizedBox(
+                        height: 8.0,
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                      S.of(context).exchange_order_time,
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
+                      Text(
+                        '${FormatUtil.formatUTCDateStr(assetHistory.ctime)}',
+                        textAlign: TextAlign.right,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: DefaultColors.color333,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${FormatUtil.formatUTCDateStr(assetHistory.ctime)}',
-                      textAlign: TextAlign.right,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: DefaultColors.color333,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 16.0,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 0.0,
+                    ],
+                  ),
+                )
+              ],
             ),
-            child: Divider(
-              height: 1,
+            SizedBox(
+              height: 16.0,
             ),
-          )
-        ],
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 0.0,
+              ),
+              child: Divider(
+                height: 1,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
