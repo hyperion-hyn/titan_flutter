@@ -81,6 +81,9 @@ class WalletConfig {
   static String get BITCOIN_MAIN_API => 'https://api.wallet.hyn.space/wallet/btc/';
 
   static String get BITCOIN_LOCAL_API => 'https://api.wallet.hyn.space/wallet/btc/';
+
+  static String get WALLET_ADDRESS_API => 'https://api.wallet.hyn.space/wallet/address';
+
 //  static String get BITCOIN_LOCAL_API => 'http://10.10.1.134/wallet/btc/';
 
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';

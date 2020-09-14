@@ -25,6 +25,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -77,7 +78,33 @@ class _WalletPageState extends BaseState<WalletPage>
     //update all coin balance
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
+    Future.delayed(Duration(milliseconds: 3000), () {
+      _postWalletBalance();
+    });
+
     listLoadingData();
+  }
+
+  Future<void> _postWalletBalance() async {
+    //appType:  0:titan; 1:star
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .activatedWallet;
+    String address = activatedWalletVo.wallet.getEthAccount().address;
+    int appType = 0;
+    String email = "";
+    String hynBalance = "";
+    print("[API] address:$address, hynBalance:$hynBalance");
+
+    // 同步用户钱包信息
+    if (address.isNotEmpty) {
+      var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
+      var balance = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
+
+
+      hynBalance = balance.toString();
+      BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
+    }
   }
 
   @override
