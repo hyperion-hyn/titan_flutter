@@ -139,10 +139,12 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> getAssetsList() async {
+  Future<dynamic> getAssetsList({String apiKey, String secret}) async {
     return await userApiSignAndPost(
       path: ExchangeConst.PATH_ACCOUNT_ASSETS,
       params: {},
+      apiKey: apiKey,
+      secret: secret
     );
   }
 
@@ -398,9 +400,15 @@ class ExchangeApi {
     String path, //example: /api/index/testWalletSign
     EntityFactory<T> factory,
     Map<String, dynamic> params,
+    String apiKey,
+    String secret
   }) async {
-    var apiKey = "";
-    var secret = "";
+    if(apiKey == null){
+
+    }
+    if(secret == null){
+
+    }
 
     params ??= {};
     params['api'] = apiKey;
