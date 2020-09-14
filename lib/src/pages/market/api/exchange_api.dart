@@ -142,12 +142,13 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> getUserInfo({String apiKey, String secret}) async {
+  Future<dynamic> getUserId({String apiKey, String secret}) async {
     return await userApiSignAndPost(
-        path: ExchangeConst.PATH_ACCOUNT_ASSETS,
-        params: {},
-        apiKey: apiKey,
-        secret: secret);
+      path: ExchangeConst.PATH_GET_UID,
+      params: {},
+      apiKey: apiKey,
+      secret: secret,
+    );
   }
 
   Future<dynamic> getAssetsList({String apiKey, String secret}) async {

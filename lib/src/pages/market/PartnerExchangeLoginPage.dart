@@ -307,6 +307,11 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
 
   _getAssetWithApiKeyAndSecret() async {
     try {
+      var uidRet = await _exchangeApi.getUserId(
+        apiKey: _userApiKeyController.text,
+        secret: _userSecretController.text,
+      );
+
       var ret = await _exchangeApi.getAssetsList(
         apiKey: _userApiKeyController.text,
         secret: _userSecretController.text,
@@ -315,12 +320,8 @@ class _PartnerExchangeLoginPageState extends State<PartnerExchangeLoginPage> {
       var _assetList = AssetList.fromJson(ret);
 
       ExchangeAccount _exchangeAccount = ExchangeAccount.fromJson({});
+      _exchangeAccount.id = uidRet['uid'];
       _exchangeAccount.assetList = _assetList;
-
-      var _userInfo = _exchangeApi.getAssetsList(
-        apiKey: _userApiKeyController.text,
-        secret: _userSecretController.text,
-      );
 
       ///
       BlocProvider.of<ExchangeCmpBloc>(context)
