@@ -20,6 +20,7 @@ import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_info_entity.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
@@ -375,15 +376,26 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               ),
               Spacer(),
               InkWell(
-                onTap: () {
+                onTap: () async{
                   _socketBloc.add(UnSubChannelEvent(channel: depthChannel));
-                  Navigator.push(
+
+
+                  int callBackValue = await Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => KLineDetailPage(
                                 symbol: symbol,
                                 symbolName: widget.selectedCoin,
+                            isPop: true,
                               )));
+
+                  if (callBackValue != null) {
+                    setState(() {
+                      isBuy = (callBackValue == ExchangeType.BUY);
+                    });
+
+                    print("[Pop] callBackValue:$callBackValue");
+                  }
                 },
                 child: Padding(
                   padding: EdgeInsets.only(top: 8.0, bottom: 8),

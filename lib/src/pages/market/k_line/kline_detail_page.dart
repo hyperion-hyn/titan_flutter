@@ -22,8 +22,9 @@ import 'package:titan/src/utils/format_util.dart';
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
   final String symbolName;
+  final bool isPop;
 
-  KLineDetailPage({this.symbol, this.symbolName});
+  KLineDetailPage({this.symbol, this.symbolName, this.isPop});
 
   @override
   State<StatefulWidget> createState() {
@@ -262,15 +263,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   _buySellAction(int exchangeType) {
-    //                    Navigator.push(
-//                        context,
-//                        MaterialPageRoute(
-//                            builder: (context) => ExchangeDetailPage(
-//                                selectedCoin: "HYN",
-//                                exchangeType: ExchangeType.BUY)));
-
-    Navigator.pushReplacement(context,
-        MaterialPageRoute(builder: (context) => ExchangeDetailPage(selectedCoin: "HYN", exchangeType: exchangeType),));
+    if (widget.isPop) {
+      Navigator.pop(context, exchangeType);
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExchangeDetailPage(selectedCoin: widget.symbolName, exchangeType: exchangeType),
+          ));
+    }
   }
 
   Widget _headerWidget() {
