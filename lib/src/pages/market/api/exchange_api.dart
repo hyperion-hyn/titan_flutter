@@ -253,7 +253,7 @@ class ExchangeApi {
   Future<dynamic> orderCancel(String orderId) async {
     return await userApiSignAndPost(
       path: ExchangeConst.PATH_ORDER_CANCEL,
-      params: {"order_id": orderId},
+      params: {"order_id": orderId,'market': "HYN/USDT",},
     );
   }
 
