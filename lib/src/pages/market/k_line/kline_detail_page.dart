@@ -210,55 +210,50 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget _bottomSureButtonWidget() {
-    return Positioned(
-      bottom: 0,
-      height: 48,
-      width: MediaQuery.of(context).size.width,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              //color: Colors.black38,
-              color: HexColor("#000000").withOpacity(0.08),
-              blurRadius: 8.0,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            //color: Colors.black38,
+            color: HexColor("#000000").withOpacity(0.08),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
+        child: Row(
+          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Expanded(
+              child: FlatButton(
+                textColor: Colors.white,
+                disabledColor: Colors.grey[600],
+                disabledTextColor: Colors.white,
+                color: HexColor("#53AE86"),
+                child: Text(S.of(context).exchange_buy, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                onPressed: () {
+                  _buySellAction(ExchangeType.BUY);
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+              child: FlatButton(
+                textColor: Colors.white,
+                disabledColor: Colors.grey[600],
+                disabledTextColor: Colors.white,
+                color: HexColor("#CC5858"),
+                child: Text(S.of(context).exchange_sell, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                onPressed: () {
+                  _buySellAction(ExchangeType.SELL);
+                },
+              ),
             ),
           ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
-          child: Row(
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                child: FlatButton(
-                  textColor: Colors.white,
-                  disabledColor: Colors.grey[600],
-                  disabledTextColor: Colors.white,
-                  color: HexColor("#53AE86"),
-                  child: Text(S.of(context).exchange_buy, style: TextStyle(fontSize: 16, color: Colors.white70)),
-                  onPressed: () {
-                    _buySellAction(ExchangeType.BUY);
-                  },
-                ),
-              ),
-              SizedBox(
-                width: 20,
-              ),
-              Expanded(
-                child: FlatButton(
-                  textColor: Colors.white,
-                  disabledColor: Colors.grey[600],
-                  disabledTextColor: Colors.white,
-                  color: HexColor("#CC5858"),
-                  child: Text(S.of(context).exchange_sell, style: TextStyle(fontSize: 16, color: Colors.white70)),
-                  onPressed: () {
-                    _buySellAction(ExchangeType.SELL);
-                  },
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
