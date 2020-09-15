@@ -74,6 +74,7 @@ class _ExchangeTransferHistoryDetailPageState
                   ),
                 ),
               ),
+              
               _item(
                 S.of(context).exchange_amount,
                 Text.rich(TextSpan(children: [
