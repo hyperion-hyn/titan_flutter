@@ -86,7 +86,7 @@ class _BioAuthPageState extends BaseState<BioAuthPage> {
       color: Colors.white,
       child: SwitchListTile(
         title: Text(S.of(context).face_recognition),
-        value: authConfigModel.useFace,
+        value: authConfigModel?.useFace,
         onChanged: (bool value) async {
           _setBioAuth(BiometricType.face, value);
         },
