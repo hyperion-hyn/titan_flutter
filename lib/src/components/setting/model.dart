@@ -62,6 +62,10 @@ class LanguageModel extends Equatable {
     };
   }
 
+  bool isKo() {
+    return locale?.languageCode == 'ko';
+  }
+
   bool isZh() {
     return locale?.languageCode == 'zh';
   }

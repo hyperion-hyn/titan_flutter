@@ -409,7 +409,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            _fromExchangeToWallet ? S.of(context).exchange_withdraw : S.of(context).exchange_deposit,
+            _fromExchangeToWallet
+                ? S.of(context).exchange_withdraw
+                : S.of(context).exchange_deposit,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -421,7 +423,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               if (_fromKey.currentState.validate()) {
                 _transfer();
               }
-            })();
+            }, 200)();
           }),
     );
   }

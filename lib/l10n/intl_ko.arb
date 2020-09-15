@@ -913,7 +913,7 @@
   "exchange_logged_out": "권한 요청을 해주세요.",
   "exchange_name": "명칭",
   "exchange_empty_list": "기록이 없습니다.",
-  "exchange_order_list_active": "전부 위탁",
+  "exchange_order_list_active": "현재 커미션",
   "exchange_fee": "수수료",
   "exchange_order_list_history": "과거 기록",
   "exchange_order_time": "시간",

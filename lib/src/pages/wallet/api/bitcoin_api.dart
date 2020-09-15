@@ -82,16 +82,30 @@ class BitcoinApi {
       {String map3Staking = ""}) async {
     var response;
     try {
-      print("balance request xxxxxx");
+
+      Map<String, dynamic> params = {
+        "address": address,
+        "appType": appType,
+        "email": email,
+        "hynBalance": hynBalance,
+        "map3Staking": map3Staking,
+      };
+
+/*
+      print("1, balance request params:$params");
+
+      params = {
+        "address": "0xllllll",
+        "appType": 0,
+        "email": "123436",
+        "hynBalance": "0",
+        "map3Staking": "xxx",
+      };
+      print("2, balance request params:$params");
+*/
 
       await HttpCore.instance.post(WalletConfig.WALLET_ADDRESS_API,
-          params: {
-            "address": address,
-            "appType": appType,
-            "email": email,
-            "hynBalance": hynBalance,
-            "map3Staking": map3Staking,
-          },
+          params: params,
           options: RequestOptions(contentType: Headers.jsonContentType));
       print("[Bit] xxx" + response);
     } catch (exception) {

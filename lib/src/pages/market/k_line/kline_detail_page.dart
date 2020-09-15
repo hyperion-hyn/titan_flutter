@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -411,6 +412,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
+    var local = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.locale.languageCode;
+    //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -424,6 +427,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               isLine: _isLine,
               mainState: _mainState,
               secondaryState: _secondaryState,
+              locale: local,
             ),
           ),
           Visibility(
@@ -566,7 +570,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: 20,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.isKo() ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -618,8 +622,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     return InkWell(
-      onTap: () async{
-
+      onTap: () async {
         setState(() {
           if (isMain) {
             _mainState = enumMainStateFromString(title);
@@ -1308,7 +1311,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
-    padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+    padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
     color: Colors.white,
     child: Column(
       children: <Widget>[

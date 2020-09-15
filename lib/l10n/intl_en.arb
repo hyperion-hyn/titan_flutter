@@ -924,7 +924,7 @@
   "exchange_logged_out": "Please authorize",
   "exchange_name": "Name",
   "exchange_empty_list": "No record",
-  "exchange_order_list_active": "All orders",
+  "exchange_order_list_active": "Current orders",
   "exchange_fee": " Fee",
   "exchange_order_list_history": " Trade History",
   "exchange_order_time": "Date",

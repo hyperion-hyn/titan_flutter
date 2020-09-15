@@ -138,7 +138,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                       _startLogin();
                     },
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
