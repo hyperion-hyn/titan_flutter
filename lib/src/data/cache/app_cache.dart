@@ -25,6 +25,12 @@ class AppCache {
   static Future<T> getValue<T>(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(key)) {
+      switch(T){
+        case List:
+          var growList = List();
+          growList.addAll(prefs.get(key) as List);
+          return growList as T;
+      }
       return prefs.get(key) as T;
     } else {
       return null;
