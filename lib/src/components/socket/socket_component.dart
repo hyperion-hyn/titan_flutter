@@ -85,6 +85,8 @@ class _SocketState extends State<_SocketManager> {
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
+
+        _initData();
       }
       _bloc.add(ReceivedDataEvent(data: data));
     }, onDone: () {
