@@ -991,7 +991,15 @@
   "bio_auth_exchange_risk_content": "请了解你的手机设备生物识别的安全等级\n公共手机，请勿开启免密授权\n",
   "exchange_deposit_confirm": "充值确认",
   "exchange_withdraw_confirm": "提币确认",
+  "exchange_withdraw_min": "最小提币数",
+  "exchange_deposit_min": "最小充值数",
+  "exchange_deposit_input_hint": "请输入提币数量",
+  "exchange_withdraw_input_hint": "请输入充值数量",
+  "exchange_withdraw_less_than_min": "少于最小提币数",
+  "exchange_deposit_less_than_min": "少于最小充值数",
   "order_success": "下单成功",
   "recharge": "充值",
-  "withdrawal": "提币"
+  "withdrawal": "提币",
+  "exchange_withdraw": "提币",
+  "exchange_deposit": "充值"
 }

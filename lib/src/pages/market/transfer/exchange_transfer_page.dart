@@ -409,7 +409,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            _fromExchangeToWallet ? '提币' : '充值',
+            _fromExchangeToWallet ? S.of(context).exchange_withdraw : S.of(context).exchange_deposit,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -458,8 +458,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _amount() {
-    var _minTransferText = _fromExchangeToWallet ? '最小提币数' : '最小充值数';
-    var _amountInputHint = _fromExchangeToWallet ? '请输入提币数量' : '请输入充值数量';
+    var _minTransferText = _fromExchangeToWallet
+        ? S.of(context).exchange_withdraw_min
+        : S.of(context).exchange_deposit_min;
+    var _amountInputHint = _fromExchangeToWallet
+        ? S.of(context).exchange_deposit_input_hint
+        : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
             .exchangeModel
@@ -526,7 +530,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
                     if (Decimal.parse(value) <
                         Decimal.parse(_minTransferAmount)) {
-                      return _fromExchangeToWallet ? '少于最小提币数' : '少于最小充值数';
+                      return _fromExchangeToWallet
+                          ? S.of(context).exchange_withdraw_less_than_min
+                          : S.of(context).exchange_deposit_less_than_min;
                     }
 
                     return null;
