@@ -286,7 +286,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
-          drawer: isDebug ? DrawerComponent() : null,
+//          drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
               bool isHomePanelMoving =
