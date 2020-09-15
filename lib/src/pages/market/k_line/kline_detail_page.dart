@@ -412,6 +412,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
+    var local = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.locale.languageCode;
+    print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -425,6 +427,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               isLine: _isLine,
               mainState: _mainState,
               secondaryState: _secondaryState,
+              locale: local,
             ),
           ),
           Visibility(
