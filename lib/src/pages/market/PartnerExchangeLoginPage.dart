@@ -445,15 +445,6 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
   }
 
   _getAssetWithApiKeyAndSecret() async {
-    await _saveApiKeyAndSecret();
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ExchangePage(),
-      ),
-    );
-
     try {
       var uidRet = await _exchangeApi.getUserId(
         apiKey: _userApiKeyController.text,
