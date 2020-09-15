@@ -121,6 +121,9 @@ class PrefsKey {
   // kLine
   static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
 
+  static const String KLINE_MAIN_STATE = 'mainState';
+  static const String KLINE_SECONDARY_STATE = 'secondaryState';
+
 }
 
 class SecurePrefsKey {

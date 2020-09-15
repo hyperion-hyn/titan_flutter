@@ -49,7 +49,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => (_periodTabController?.index??0) == 5;
+  bool get _isDepth => (_periodTabController?.index ?? 0) == 5;
 
   bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
@@ -279,7 +279,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     // price
     var close = marketItemEntity?.kLineEntity?.close;
-    var closeValue = close??0;
+    var closeValue = close ?? 0;
     var _latestPrice = FormatUtil.truncateDecimalNum(
       Decimal.parse(closeValue.toString()),
       4,
@@ -583,13 +583,25 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           color: isOpen ? HexColor("#228BA1") : HexColor("#999999"),
         ),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (isOpen) {
           setState(() {
             if (isMain) {
               _mainState = MainState.NONE;
             } else {
               _secondaryState = SecondaryState.NONE;
+            }
+          });
+        } else {
+          var prefs = await SharedPreferences.getInstance();
+
+          setState(() {
+            if (isMain) {
+              var mainStateValue = prefs.getInt(PrefsKey.KLINE_MAIN_STATE) ?? 0;
+              _mainState = MainState.values[mainStateValue];
+            } else {
+              var secondaryStateValue = prefs.getInt(PrefsKey.KLINE_SECONDARY_STATE) ?? 0;
+              _secondaryState = SecondaryState.values[secondaryStateValue];
             }
           });
         }
@@ -606,7 +618,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     return InkWell(
-      onTap: () {
+      onTap: () async{
+
         setState(() {
           if (isMain) {
             _mainState = enumMainStateFromString(title);
@@ -614,6 +627,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             _secondaryState = enumSecondaryStateFromString(title);
           }
         });
+
+        var prefs = await SharedPreferences.getInstance();
+        if (isMain) {
+          prefs.setInt(PrefsKey.KLINE_MAIN_STATE, _mainState.index);
+        } else {
+          prefs.setInt(PrefsKey.KLINE_SECONDARY_STATE, _secondaryState.index);
+        }
       },
       child: Container(
         //color: Colors.red,
@@ -759,7 +779,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     var prefs = await SharedPreferences.getInstance();
     prefs.setInt(PrefsKey.PERIOD_CURRENT_INDEX, _periodCurrentIndex);
-    print("[API] 2, _periodCurrentIndex:$_periodCurrentIndex");
+    //print("[API] 2, _periodCurrentIndex:$_periodCurrentIndex");
 
     if (index < _normalPeriodList.length) {
       // old
@@ -1004,7 +1024,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     var data = await api.historyKline(widget.symbol, period: _periodParameter.value);
-    print("[WS] --> _getPeriodData, data:$data");
+    //print("[WS] --> _getPeriodData, data:$data");
     _dealPeriodData(data);
 
     if (mounted) {
@@ -1040,8 +1060,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-    print(
-        "[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
+//    print(
+//        "[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
 
     if (isReplace) {
       if (kLineDataList.isNotEmpty) {
@@ -1080,10 +1100,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Future _getTradeData() async {
     var data = await api.historyTrade(widget.symbol, limit: (_kMaxTradeCount * 2).toString());
 
-    print("[WS] --> _getTradeData, data:$data");
+    //print("[WS] --> _getTradeData, data:$data");
 
     _dealTradeData(data);
-    print("[WS] --> _getTradeData, data:${data is List}");
+    //print("[WS] --> _getTradeData, data:${data is List}");
 
     if (mounted) {
       setState(() {
@@ -1148,13 +1168,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   */
   Future _getDepthData() async {
     var data = await api.historyDepth(widget.symbol);
-    print("[WS] --> _getDepthData, data:$data");
+    //print("[WS] --> _getDepthData, data:$data");
 
     _buyChartList.clear();
     _sellChartList.clear();
     dealDepthData(_buyChartList, _sellChartList, data, enable: false);
     _setupDepthWidget();
-    print("[WS] --> _getDepthData, _buyChartList.length:${_buyChartList.length}");
+    //print("[WS] --> _getDepthData, _buyChartList.length:${_buyChartList.length}");
 
     if (mounted) {
       setState(() {
@@ -1256,19 +1276,19 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     _socketBloc.listen((state) {
       if (state is SubChannelSuccessState) {
-        var msg = '订阅 ${state.channel} 成功';
-        print("[Bloc] msg:$msg");
+        //var msg = '订阅 ${state.channel} 成功';
+        //print("[Bloc] msg:$msg");
         //Fluttertoast.showToast(msg: msg);
       } else if (state is UnSubChannelSuccessState) {
-        var msg = '取阅 ${state.channel} 成功';
-        print("[Bloc] msg:$msg");
+        //var msg = '取阅 ${state.channel} 成功';
+        //print("[Bloc] msg:$msg");
         //Fluttertoast.showToast(msg: msg);
       } else if (state is ChannelKLine24HourState) {
         _amount24HourController.add(_amount24HourRefresh);
       } else if (state is ChannelKLinePeriodState) {
         if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
           _unSubPeriodChannel(period: state.channel.split(".").last);
-          print("[WS] 取消不是当前选中的channel:${state.channel}");
+          //print("[WS] 取消不是当前选中的channel:${state.channel}");
         }
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
@@ -1462,7 +1482,7 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                   ? () {
                                       var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
                                       clickPrice(depthPrice);
-                                      print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                      //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
 
@@ -1554,7 +1574,7 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                               onTap: enable
                                   ? () {
                                       clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
-                                      print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                      //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
 
@@ -1692,6 +1712,6 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
     }
   }
 
-  print(
-      "[WS] --> _getDepthData,buyChartList.length:${buyChartList.length}, sellChartList.length:${sellChartList.length}");
+//  print(
+//      "[WS] --> _getDepthData,buyChartList.length:${buyChartList.length}, sellChartList.length:${sellChartList.length}");
 }
