@@ -275,11 +275,11 @@ bool consignListSocket(BuildContext context, SocketState state,
         temCancelOrders.forEach((element) {
           _activeOrders.remove(element);
         });
-        if (showToast) {
+        /*if (showToast) {
           Fluttertoast.showToast(
               msg: S.of(context).order_cancelled_success,
               gravity: ToastGravity.CENTER);
-        }
+        }*/
         return true;
       }
     }
@@ -301,10 +301,10 @@ bool consignListSocket(BuildContext context, SocketState state,
           _activeOrders.remove(element);
         });
       }
-      if (showToast) {
+      /*if (showToast) {
         Fluttertoast.showToast(
             msg: S.of(context).order_completed, gravity: ToastGravity.CENTER);
-      }
+      }*/
       return true;
     }
   }
