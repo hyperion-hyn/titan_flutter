@@ -195,6 +195,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         listener: (ctx, state) {
           bool isRefresh = consignListSocket(context, state, _activeOrders, true);
           if(isRefresh){
+            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
             _loadDataBloc.add(LoadingMoreSuccessEvent());
             consignListController.add(contrConsignTypeRefresh);
           }

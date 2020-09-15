@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'order.g.dart';
@@ -53,7 +54,7 @@ class Order extends Object {
     this.amount = orderItem[3];
     this.amountNoDeal = orderItem[4];
     this.amountDeal =
-        (double.parse(amount) - double.parse(amountNoDeal)).toString();
+        (Decimal.parse(amount) - Decimal.parse(amountNoDeal)).toString();
     this.price = orderItem[5];
     this.side = orderItem[6];
   }
