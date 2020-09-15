@@ -52,7 +52,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   bool get _isDepth => (_periodTabController?.index ?? 0) == 5;
 
-  bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
+  bool  _isLine = false;
+  //bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
   List<PeriodInfoEntity> _normalPeriodList = [
@@ -63,7 +64,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ];
 
   List<PeriodInfoEntity> _morePeriodList = [
-    PeriodInfoEntity(name: "分时", value: "分时"),
+//    PeriodInfoEntity(name: "分时", value: "分时"),
     PeriodInfoEntity(name: "1分钟", value: "1min"),
     PeriodInfoEntity(name: "30分钟", value: "30min"),
     PeriodInfoEntity(name: "1周", value: "1week"),
@@ -131,7 +132,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     ];
 
     _morePeriodList = [
-      PeriodInfoEntity(name: S.of(context).kline_period_min, value: "分时"),
+//      PeriodInfoEntity(name: S.of(context).kline_period_min, value: "分时"),
       PeriodInfoEntity(name: S.of(context).kline_period_1min, value: "1min"),
       PeriodInfoEntity(name: S.of(context).kline_period_30min, value: "30min"),
       PeriodInfoEntity(name: S.of(context).kline_period_1week, value: "1week"),
@@ -656,7 +657,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         _isShowMore = false;
         _periodTabController.index = 4;
 
-        var index = _morePeriodList.indexOf(item);
+        // old
+        _unSubPeriodChannel();
+        _periodParameter = item;
+        _getPeriodData();
+
+        // new
+        _subPeriodChannel();
+
+       /* var index = _morePeriodList.indexOf(item);
         if (index != 0) {
           // old
           _unSubPeriodChannel();
@@ -666,7 +675,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           _subPeriodChannel();
         } else {
           _periodParameter = item;
-        }
+        }*/
 
         setState(() {});
       },
