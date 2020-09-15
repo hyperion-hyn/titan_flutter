@@ -52,7 +52,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   bool get _isDepth => (_periodTabController?.index ?? 0) == 5;
 
-  bool  _isLine = false;
+  bool _isLine = false;
   //bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
@@ -665,7 +665,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         // new
         _subPeriodChannel();
 
-       /* var index = _morePeriodList.indexOf(item);
+        /* var index = _morePeriodList.indexOf(item);
         if (index != 0) {
           // old
           _unSubPeriodChannel();
@@ -824,6 +824,16 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           setState(() {
             _detailCurrentIndex = index;
           });
+
+          if (index == 0) {
+            if (_buyChartList.isEmpty || _sellChartList.isEmpty) {
+              _getDepthData();
+            }
+          } else {
+            if (_tradeItemList.isEmpty) {
+              _getTradeData();
+            }
+          }
         },
         tabs: [
           Tab(
