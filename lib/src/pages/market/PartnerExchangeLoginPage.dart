@@ -175,15 +175,20 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
                 ],
               ),
             if (_apiKeyList.length > 0 && _apiSecretList.length > 0)
-              ClickOvalButton("一键清除记录",() async {
-                _apiKeyList.clear();
-                _apiSecretList.clear();
-                await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
-                await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
-                setState(() {
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  ClickOvalButton("一键清除记录",() async {
+                    _apiKeyList.clear();
+                    _apiSecretList.clear();
+                    await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_KEY_LIST);
+                    await AppCache.remove(PrefsKey.SHARED_PREF_LOGIN_USER_API_SECRET_LIST);
+                    setState(() {
 
-                });
-              }),
+                    });
+                  },width: 150,),
+                ],
+              ),
             Expanded(
               child: SingleChildScrollView(
                 child: GestureDetector(
