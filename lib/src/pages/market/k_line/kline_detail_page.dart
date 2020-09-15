@@ -10,6 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -566,7 +567,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: 20,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.isKo() ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -618,8 +619,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     return InkWell(
-      onTap: () async{
-
+      onTap: () async {
         setState(() {
           if (isMain) {
             _mainState = enumMainStateFromString(title);
