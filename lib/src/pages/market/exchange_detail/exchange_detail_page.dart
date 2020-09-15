@@ -227,7 +227,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               isOrderActionLoading = false;
               if (state.respMsg == null) {
                 BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-                Fluttertoast.showToast(msg: "下单成功", gravity: ToastGravity.CENTER);
+                Fluttertoast.showToast(msg: S.of(context).order_success, gravity: ToastGravity.CENTER);
                 currentPrice = Decimal.fromInt(0);
                 currentNum = Decimal.fromInt(0);
                 currentPriceStr = "";

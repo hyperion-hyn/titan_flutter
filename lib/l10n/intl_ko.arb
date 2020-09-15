@@ -982,5 +982,8 @@
   "bio_auth_exchange_risk_title": "Risk reminder",
   "bio_auth_exchange_risk_content": "모바일 장치의 생체 인식 보안 수준을 이해하십시오.\n공용 휴대폰, 비밀없는 인증을 열지 마십시오",
   "exchange_deposit_confirm": "充值确认",
-  "exchange_withdraw_confirm": "提币确认"
+  "exchange_withdraw_confirm": "提币确认",
+  "order_success": "성공적으로 주문",
+  "recharge": "재 충전",
+  "withdrawal": "출금"
 }

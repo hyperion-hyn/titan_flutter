@@ -994,5 +994,8 @@
   "bio_auth_exchange_risk_title": "Risk reminder",
   "bio_auth_exchange_risk_content": "Please understand the biometric security level of your mobile device\nPublic mobile phones, please do not open the secret-free authorization",
   "exchange_deposit_confirm": "充值确认",
-  "exchange_withdraw_confirm": "提币确认"
+  "exchange_withdraw_confirm": "提币确认",
+  "order_success": "Finished",
+  "recharge": "Top-up",
+  "withdrawal": "Withdraw"
 }
