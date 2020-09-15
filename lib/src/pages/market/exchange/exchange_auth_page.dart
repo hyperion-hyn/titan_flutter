@@ -162,7 +162,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   }
 
   _checkIsAuthAlready() async {
-    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     if (_wallet != null) {
       bool _isAuthAlready = await AppCache.getValue(
               'exchange_auth_already_${_wallet.getEthAccount().address}') ??
@@ -176,7 +176,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   }
 
   _setAuthAlready() {
-    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
     AppCache.saveValue(
       'exchange_auth_already_${_wallet.getEthAccount().address}',
       true,

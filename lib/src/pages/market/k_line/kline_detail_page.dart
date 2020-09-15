@@ -224,7 +224,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
         child: Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Expanded(
               child: FlatButton(
@@ -1222,10 +1221,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     _subChannel(channel);
   }
 
-  void _unSubTradeChannel() {
-    var channel = SocketConfig.channelTradeDetail(widget.symbol);
-    _unSubChannel(channel);
-  }
+//  void _unSubTradeChannel() {
+//    var channel = SocketConfig.channelTradeDetail(widget.symbol);
+//    _unSubChannel(channel);
+//  }
 
   // depth
   void _subDepthChannel() {
