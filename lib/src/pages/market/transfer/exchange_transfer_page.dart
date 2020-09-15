@@ -409,9 +409,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_withdraw
-                : S.of(context).exchange_deposit,
+            _fromExchangeToWallet ? S.of(context).exchange_withdraw : S.of(context).exchange_deposit,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -443,10 +441,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Center(
           child: Text(
             type,
-            style: TextStyle(
-                color: _selectedCoinType == type
-                    ? Theme.of(context).primaryColor
-                    : HexColor('#FF777777')),
+            style: TextStyle(color: _selectedCoinType == type ? Theme.of(context).primaryColor : HexColor('#FF777777')),
           ),
         ),
       ),
@@ -460,12 +455,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _amount() {
-    var _minTransferText = _fromExchangeToWallet
-        ? S.of(context).exchange_withdraw_min
-        : S.of(context).exchange_deposit_min;
-    var _amountInputHint = _fromExchangeToWallet
-        ? S.of(context).exchange_deposit_input_hint
-        : S.of(context).exchange_withdraw_input_hint;
+    var _minTransferText =
+        _fromExchangeToWallet ? S.of(context).exchange_withdraw_min : S.of(context).exchange_deposit_min;
+    var _amountInputHint =
+        _fromExchangeToWallet ? S.of(context).exchange_deposit_input_hint : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
             .exchangeModel
@@ -525,13 +518,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) >
-                        Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) <
-                        Decimal.parse(_minTransferAmount)) {
+                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
                       return _fromExchangeToWallet
                           ? S.of(context).exchange_withdraw_less_than_min
                           : S.of(context).exchange_deposit_less_than_min;
@@ -578,20 +569,19 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 child: Text(
                                   S.of(context).all,
                                   style: TextStyle(
-                                      color: HexColor('#FF333333'),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+                                      color: HexColor('#FF333333'), fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
                                   if (!_fromExchangeToWallet) {
                                     _amountController.text = _availableAmount();
                                   } else {
-                                    _amountController.text =
-                                        '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+                                    var _availableAmountValue = Decimal.parse(_availableAmount());
+                                    var _withdrawFeeValue = Decimal.parse(_withdrawFee);
+                                    var sub = _availableAmountValue - _withdrawFeeValue;
+                                    _amountController.text = '${(sub.toDouble() < 0) ? "" : sub}';
                                   }
 
-                                  _amountController.selection =
-                                      TextSelection.fromPosition(TextPosition(
+                                  _amountController.selection = TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
@@ -700,8 +690,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(
-            Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }
@@ -733,6 +722,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _deposit(String exchangeAddress) async {
+    if (context == null) return;
+
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -760,11 +751,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     var voStr = FluroConvertUtils.object2string(coinVo.toJson());
 
-    var _actualTransferredAmount = Decimal.parse(_amountController.text) +
-                Decimal.parse(_withdrawFee) <=
-            Decimal.parse(_availableAmount())
-        ? _amountController.text
-        : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
+    var _actualTransferredAmount =
+        Decimal.parse(_amountController.text) + Decimal.parse(_withdrawFee) <= Decimal.parse(_availableAmount())
+            ? _amountController.text
+            : '${Decimal.parse(_availableAmount()) - Decimal.parse(_withdrawFee)}';
 
     Application.router.navigateTo(
       context,
