@@ -42,7 +42,7 @@ class _ClickLoadingButtonState extends State<ClickLoadingButton> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(
-                width: widget.width - 16,
+                width: widget.width - 20,
                 child: Text(widget.text,
                     overflow: TextOverflow.clip,
                     maxLines: 1,
@@ -59,12 +59,15 @@ class _ClickLoadingButtonState extends State<ClickLoadingButton> {
                   )),
               Visibility(
                 visible: widget.isLoading,
-                child: SizedBox(
-                  height: 12,
-                  width: 12,
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(widget.fontColor != null ? widget.fontColor : Colors.white),
-                    strokeWidth: 1.5,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 4.0),
+                  child: SizedBox(
+                    height: 12,
+                    width: 12,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(widget.fontColor != null ? widget.fontColor : Colors.white),
+                      strokeWidth: 1.5,
+                    ),
                   ),
                 ),
               )
