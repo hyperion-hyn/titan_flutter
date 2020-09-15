@@ -52,6 +52,6 @@ class ExchangeConst {
   static const API_PATH_ORDER_LIST = '/api/v1/orderList'; //通过api查看订单列表
   static const API_PATH_ORDER_CANCEL = "/api/v1/orderCancel"; // 取消订单
   static const API_PATH_GET_UID = '/api/v1/uid';  //获取uid
-  static const API_PATH_ORDER_LOG_LIST = "/api/v1/order/dealDetailLists"; // 成交
+  static const API_PATH_ORDER_LOG_LIST = "/api/v1/dealDetailLists"; // 成交
 
 }
