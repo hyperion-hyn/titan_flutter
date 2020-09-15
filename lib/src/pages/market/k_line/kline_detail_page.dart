@@ -1308,7 +1308,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
-    padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+    padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
     color: Colors.white,
     child: Column(
       children: <Widget>[
