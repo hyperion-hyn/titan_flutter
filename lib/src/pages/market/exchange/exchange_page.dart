@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -640,7 +642,15 @@ class _ExchangePageState extends BaseState<ExchangePage>
     return Column(
       children: <Widget>[
         InkWell(
-            onTap: () {
+            onTap: () async {
+
+              var prefs = await SharedPreferences.getInstance();
+              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+              var periodCurrentIndex = 0;
+              if (index != null && index < 4 ) {
+                periodCurrentIndex = index;
+              }
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -648,6 +658,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                             symbol: marketItemEntity.symbol,
                             symbolName: marketItemEntity.symbolName,
                             isPop: false,
+                            periodCurrentIndex: periodCurrentIndex,
                           )));
             },
             child: Padding(
