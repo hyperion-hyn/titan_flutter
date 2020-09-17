@@ -36,9 +36,9 @@ class AssetHistory extends Object {
   String getTypeText() {
     switch (name ?? '') {
       case 'recharge':
-        return S.of(Keys.rootKey.currentContext).exchange_wallet_to_exchange;
+        return S.of(Keys.rootKey.currentContext).recharge;
       case 'withdraw':
-        return S.of(Keys.rootKey.currentContext).exchange_to_wallet;
+        return S.of(Keys.rootKey.currentContext).withdrawal;
       case 'running':
         return S.of(Keys.rootKey.currentContext).exchange_system_bonus;
       default:

@@ -131,7 +131,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                       _startLogin();
                     },
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -154,5 +154,99 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     );
   }
 
-  _startLogin() async {}
+  _checkIsAuthAlready() async {
+    var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
+    if (_wallet != null) {
+      bool _isAuthAlready = await AppCache.getValue(
+              'exchange_auth_already_${_wallet.getEthAccount().address}') ??
+          false;
+      var _bioAuthEnabled =
+          await AuthUtil.bioAuthEnabledByWallet(_wallet, AuthType.exchange);
+      if (_isAuthAlready && _bioAuthEnabled) {
+        _startLogin();
+      }
+    }
+  }
+
+  _setAuthAlready() {
+    var _wallet = WalletInheritedModel.of(context)?.activatedWallet?.wallet;
+    AppCache.saveValue(
+      'exchange_auth_already_${_wallet.getEthAccount().address}',
+      true,
+    );
+  }
+
+  _startLogin() async {
+    var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+    if (_wallet != null) {
+      var address = _wallet.getEthAccount().address;
+      var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+        context,
+        _wallet,
+        authType: AuthType.exchange,
+      );
+      if (walletPassword != null) {
+        BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
+          _wallet,
+          walletPassword,
+          address,
+        ));
+        setState(() {
+          isLoggingIn = true;
+        });
+      }
+    }else {
+      Fluttertoast.showToast(msg: 'Wallet is null');
+    }
+  }
+
+  _noWalletView() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 32,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/safe_lock.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Container(
+              width: 300,
+              child: Text(
+                S.of(context).exchange_auth_no_wallet,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  height: 1.8,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 32,
+          ),
+          ClickOvalButton(
+            S.of(context).create_wallet,
+            () {
+              ///
+              Application.router.navigateTo(
+                context,
+                Routes.wallet_manager,
+              );
+            },
+            height: 45,
+          )
+        ],
+      ),
+    );
+  }
 }

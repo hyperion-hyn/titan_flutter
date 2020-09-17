@@ -136,7 +136,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     child: Stack(
                       children: <Widget>[
                         walletHeaderWidget(
-                            widget.wallet.keystore.name.isEmpty ? "" : widget.wallet.keystore.name.characters.first,
+                            widget.wallet.keystore.name.isEmpty
+                                ? ""
+                                : widget.wallet.keystore.name.characters.first,
                             size: 64,
                             fontSize: 20,
                             address: widget.wallet.getEthAccount()?.address),
@@ -162,7 +164,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                     margin: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                     constraints: BoxConstraints.expand(height: 44),
                     child: RaisedButton(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
                       disabledColor: Colors.grey[600],
                       color: Theme.of(context).primaryColor,
                       textColor: Colors.white,
@@ -175,7 +178,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                           children: <Widget>[
                             Text(
                               S.of(context).save_update,
-                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 16),
                             ),
                           ],
                         ),
@@ -220,6 +224,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 validator: (value) {
                   if (value.isEmpty) {
                     return S.of(context).please_input_wallet_name;
+                  } else if (value.contains(' ')) {
+                    return S.of(context).wallet_name_do_not_contain_space;
                   } else {
                     return null;
                   }
@@ -228,8 +234,10 @@ class _WalletSettingState extends State<WalletSettingPage> {
                   LengthLimitingTextInputFormatter(6),
                 ],
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
                 keyboardType: TextInputType.text),
           ),
@@ -242,7 +250,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
               return GestureDetector(
                 onTap: () {
                   if (widget.wallet.getEthAccount().address.isNotEmpty) {
-                    Clipboard.setData(ClipboardData(text: widget.wallet.getEthAccount().address));
+                    Clipboard.setData(ClipboardData(
+                        text: widget.wallet.getEthAccount().address));
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
                       S.of(context).wallet_address_copied,
@@ -347,7 +356,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Divider(),
           InkWell(
             onTap: () {
-              var walletStr = FluroConvertUtils.object2string(widget.wallet.toJson());
+              var walletStr =
+                  FluroConvertUtils.object2string(widget.wallet.toJson());
               Application.router.navigateTo(
                   context,
                   Routes.wallet_setting_wallet_backup_notice +
@@ -403,15 +413,18 @@ class _WalletSettingState extends State<WalletSettingPage> {
     }
     */
 
-    var password = await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
+    var password =
+        await UiUtil.showWalletPasswordDialogV2(context, widget.wallet);
     if (password != null) {
       try {
         if (_focusNode.hasFocus) {
           _focusNode.unfocus();
         }
-        var success = await WalletUtil.updateWallet(wallet: widget.wallet, password: password, name: newName);
+        var success = await WalletUtil.updateWallet(
+            wallet: widget.wallet, password: password, name: newName);
         if (success == true) {
-          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: widget.wallet));
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast(S.of(context).update_success);
 //          await UiUtil.showSetBioAuthDialog(
 //            context,
@@ -470,12 +483,15 @@ class _WalletSettingState extends State<WalletSettingPage> {
       if (result) {
         await AppCache.remove(widget.wallet.getBitcoinAccount()?.address ?? "");
         List<Wallet> walletList = await WalletUtil.scanWallets();
-        var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet);
+        var activatedWalletVo = WalletInheritedModel.of(context,
+            aspect: WalletAspect.activatedWallet);
 
-        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName == widget.wallet.keystore.fileName &&
+        if (activatedWalletVo.activatedWallet.wallet.keystore.fileName ==
+                widget.wallet.keystore.fileName &&
             walletList.length > 0) {
           //delete current wallet
-          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: walletList[0]));
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(ActiveWalletEvent(wallet: walletList[0]));
           Routes.popUntilCachedEntryRouteName(context);
         } else if (walletList.length > 0) {
           //delete other wallet
@@ -483,7 +499,8 @@ class _WalletSettingState extends State<WalletSettingPage> {
           Routes.popUntilCachedEntryRouteName(context);
         } else {
           //no wallet
-          BlocProvider.of<WalletCmpBloc>(context).add(ActiveWalletEvent(wallet: null));
+          BlocProvider.of<WalletCmpBloc>(context)
+              .add(ActiveWalletEvent(wallet: null));
           Routes.cachedEntryRouteName = null;
           Routes.popUntilCachedEntryRouteName(context);
         }

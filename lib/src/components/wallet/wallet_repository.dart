@@ -6,6 +6,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import 'vo/coin_vo.dart';
 import 'vo/wallet_vo.dart';
@@ -21,7 +22,12 @@ class WalletRepository {
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = BigInt.from(0);
     if(coin.coinType == CoinType.ETHEREUM) {
-      balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
+      try {
+        balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
+      } catch (exception) {
+        LogUtil.uploadException(exception, 'update Coin Balance!');
+      }
+
     }else if(coin.coinType == CoinType.BITCOIN){
       balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
     }

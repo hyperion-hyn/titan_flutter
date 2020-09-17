@@ -118,6 +118,12 @@ class PrefsKey {
   static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
   static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
 
+  // kLine
+  static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
+
+  static const String KLINE_MAIN_STATE = 'mainState';
+  static const String KLINE_SECONDARY_STATE = 'secondaryState';
+
   static const String SHARED_PREF_LOGIN_USER_API_KEY_LIST = "shared_pref_login_user_api_key_list";
   static const String SHARED_PREF_LOGIN_USER_API_SECRET_LIST = "shared_pref_login_user_api_secret_list";
 }

@@ -5,23 +5,30 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/exc_detail_entity.dart';
 import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
   final String symbolName;
+  final bool isPop;
+  final int periodCurrentIndex;
 
-  KLineDetailPage({this.symbol, this.symbolName});
+  KLineDetailPage({this.symbol, this.symbolName, this.isPop, this.periodCurrentIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -44,9 +51,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   bool _isShowMore = false;
   bool _isShowSetting = false;
 
-  bool get _isDepth => _periodTabController.index == 5;
+  bool get _isDepth => (_periodTabController?.index ?? 0) == 5;
 
-  bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
+  bool _isLine = false;
+  //bool get _isLine => _periodParameter.name == _morePeriodList.first.name;
 
 //  注：period类型有如下”：'1min', '5min', '15min', '30min', '60min', '1day', '1week'，"1mon"
   List<PeriodInfoEntity> _normalPeriodList = [
@@ -57,7 +65,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   ];
 
   List<PeriodInfoEntity> _morePeriodList = [
-    PeriodInfoEntity(name: "分时", value: "分时"),
+//    PeriodInfoEntity(name: "分时", value: "分时"),
     PeriodInfoEntity(name: "1分钟", value: "1min"),
     PeriodInfoEntity(name: "30分钟", value: "30min"),
     PeriodInfoEntity(name: "1周", value: "1week"),
@@ -125,7 +133,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     ];
 
     _morePeriodList = [
-      PeriodInfoEntity(name: S.of(context).kline_period_min, value: "分时"),
+//      PeriodInfoEntity(name: S.of(context).kline_period_min, value: "分时"),
       PeriodInfoEntity(name: S.of(context).kline_period_1min, value: "1min"),
       PeriodInfoEntity(name: S.of(context).kline_period_30min, value: "30min"),
       PeriodInfoEntity(name: S.of(context).kline_period_1week, value: "1week"),
@@ -149,16 +157,25 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       body: SafeArea(
         child: Container(
           color: Colors.white,
-          child: CustomScrollView(slivers: <Widget>[
-            _headerWidget(),
-            _dividerWidget(),
-            _periodTabWidget(),
-            _dividerWidget(height: 1.0),
-            _kLineWidget(),
-            _dividerWidget(),
-            _detailTabWidget(),
-            _detailWidget(),
-          ]),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    _headerWidget(),
+                    _dividerWidget(),
+                    _periodTabWidget(),
+                    _dividerWidget(height: 1.0),
+                    _kLineWidget(),
+                    _dividerWidget(),
+                    _detailTabWidget(),
+                    _detailWidget(),
+                  ],
+                ),
+              ),
+              _bottomSureButtonWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -195,22 +212,85 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     );
   }
 
+  Widget _bottomSureButtonWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            //color: Colors.black38,
+            color: HexColor("#000000").withOpacity(0.08),
+            blurRadius: 8.0,
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 8),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: FlatButton(
+                textColor: Colors.white,
+                disabledColor: Colors.grey[600],
+                disabledTextColor: Colors.white,
+                color: HexColor("#53AE86"),
+                child: Text(S.of(context).exchange_buy, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                onPressed: () {
+                  _buySellAction(ExchangeType.BUY);
+                },
+              ),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            Expanded(
+              child: FlatButton(
+                textColor: Colors.white,
+                disabledColor: Colors.grey[600],
+                disabledTextColor: Colors.white,
+                color: HexColor("#CC5858"),
+                child: Text(S.of(context).exchange_sell, style: TextStyle(fontSize: 16, color: Colors.white70)),
+                onPressed: () {
+                  _buySellAction(ExchangeType.SELL);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buySellAction(int exchangeType) {
+    if (widget.isPop) {
+      Navigator.pop(context, exchangeType);
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExchangeDetailPage(selectedCoin: widget.symbolName, exchangeType: exchangeType),
+          ));
+    }
+  }
+
   Widget _headerWidget() {
     var marketItemEntity = MarketInheritedModel.of(context).getMarketItem(widget.symbol);
 
-    var _high = marketItemEntity.kLineEntity?.high?.toString() ?? "--";
-    var _low = marketItemEntity.kLineEntity?.low?.toString() ?? "--";
-    var _amount24Hour = marketItemEntity.kLineEntity?.amount?.toString() ?? "--";
+    var _high = marketItemEntity?.kLineEntity?.high?.toString() ?? "--";
+    var _low = marketItemEntity?.kLineEntity?.low?.toString() ?? "--";
+    var _amount24Hour = marketItemEntity?.kLineEntity?.amount?.toString() ?? "--";
 
     // price
+    var close = marketItemEntity?.kLineEntity?.close;
+    var closeValue = close ?? 0;
     var _latestPrice = FormatUtil.truncateDecimalNum(
-      Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
+      Decimal.parse(closeValue.toString()),
       4,
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
     var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
-      marketItemEntity.symbolName,
+      marketItemEntity?.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
@@ -222,7 +302,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     // _latestPercent
     double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
-      marketItemEntity.symbol,
+      marketItemEntity?.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
@@ -334,6 +414,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
+    var local = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.locale.languageCode;
+    //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
       child: Stack(
@@ -347,6 +429,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               isLine: _isLine,
               mainState: _mainState,
               secondaryState: _secondaryState,
+              locale: local,
+              fractionDigits: 4,
             ),
           ),
           Visibility(
@@ -489,7 +573,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: 20,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.isKo() ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -503,16 +587,28 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           'res/drawable/k_line_eye_${isOpen ? "open" : "close"}.png',
           width: 16,
           height: 11,
-          color: isOpen?HexColor("#228BA1"):HexColor("#999999"),
+          color: isOpen ? HexColor("#228BA1") : HexColor("#999999"),
         ),
       ),
-      onPressed: () {
+      onPressed: () async {
         if (isOpen) {
           setState(() {
             if (isMain) {
               _mainState = MainState.NONE;
             } else {
               _secondaryState = SecondaryState.NONE;
+            }
+          });
+        } else {
+          var prefs = await SharedPreferences.getInstance();
+
+          setState(() {
+            if (isMain) {
+              var mainStateValue = prefs.getInt(PrefsKey.KLINE_MAIN_STATE) ?? 0;
+              _mainState = MainState.values[mainStateValue];
+            } else {
+              var secondaryStateValue = prefs.getInt(PrefsKey.KLINE_SECONDARY_STATE) ?? 0;
+              _secondaryState = SecondaryState.values[secondaryStateValue];
             }
           });
         }
@@ -529,7 +625,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     return InkWell(
-      onTap: () {
+      onTap: () async {
         setState(() {
           if (isMain) {
             _mainState = enumMainStateFromString(title);
@@ -537,6 +633,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
             _secondaryState = enumSecondaryStateFromString(title);
           }
         });
+
+        var prefs = await SharedPreferences.getInstance();
+        if (isMain) {
+          prefs.setInt(PrefsKey.KLINE_MAIN_STATE, _mainState.index);
+        } else {
+          prefs.setInt(PrefsKey.KLINE_SECONDARY_STATE, _secondaryState.index);
+        }
       },
       child: Container(
         //color: Colors.red,
@@ -556,7 +659,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         _isShowMore = false;
         _periodTabController.index = 4;
 
-        var index = _morePeriodList.indexOf(item);
+        // old
+        _unSubPeriodChannel();
+        _periodParameter = item;
+        _getPeriodData();
+
+        // new
+        _subPeriodChannel();
+
+        /* var index = _morePeriodList.indexOf(item);
         if (index != 0) {
           // old
           _unSubPeriodChannel();
@@ -566,7 +677,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           _subPeriodChannel();
         } else {
           _periodParameter = item;
-        }
+        }*/
 
         setState(() {});
       },
@@ -665,7 +776,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     setState(() {});
   }
 
-  _clickMoreAction(int index) {
+  _clickMoreAction(int index) async {
     _lastSelectedIndex = _periodTabController.previousIndex;
 
     if (index == 4) {
@@ -679,7 +790,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
     _isShowSetting = false;
     _periodCurrentIndex = index;
-    print("_periodCurrentIndex:$_periodCurrentIndex");
+
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setInt(PrefsKey.PERIOD_CURRENT_INDEX, _periodCurrentIndex);
+    //print("[API] 2, _periodCurrentIndex:$_periodCurrentIndex");
 
     if (index < _normalPeriodList.length) {
       // old
@@ -712,6 +826,16 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           setState(() {
             _detailCurrentIndex = index;
           });
+
+          if (index == 0) {
+            if (_buyChartList.isEmpty || _sellChartList.isEmpty) {
+              _getDepthData();
+            }
+          } else {
+            if (_tradeItemList.isEmpty) {
+              _getTradeData();
+            }
+          }
         },
         tabs: [
           Tab(
@@ -877,8 +1001,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         });
   }
 
-  _initData() {
-    _periodParameter = _normalPeriodList[0];
+  _initData() async {
+
+    _periodCurrentIndex = widget.periodCurrentIndex??0;
+
+    _periodParameter = _normalPeriodList[_periodCurrentIndex];
 
     _detailTabController = TabController(
       initialIndex: 0,
@@ -918,7 +1045,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     var data = await api.historyKline(widget.symbol, period: _periodParameter.value);
-    print("[WS] --> _getPeriodData, data:$data");
+    //print("[WS] --> _getPeriodData, data:$data");
     _dealPeriodData(data);
 
     if (mounted) {
@@ -954,8 +1081,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
       return KLineEntity.fromJson(json);
     }).toList();
-    print(
-        "[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
+//    print(
+//        "[WS] --> _dealPeriodData:$isReplace, kLineDataList.length:${kLineDataList?.length}, symbol:${widget.symbol}");
 
     if (isReplace) {
       if (kLineDataList.isNotEmpty) {
@@ -994,10 +1121,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Future _getTradeData() async {
     var data = await api.historyTrade(widget.symbol, limit: (_kMaxTradeCount * 2).toString());
 
-    print("[WS] --> _getTradeData, data:$data");
+    //print("[WS] --> _getTradeData, data:$data");
 
     _dealTradeData(data);
-    print("[WS] --> _getTradeData, data:${data is List}");
+    //print("[WS] --> _getTradeData, data:${data is List}");
 
     if (mounted) {
       setState(() {
@@ -1062,13 +1189,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   */
   Future _getDepthData() async {
     var data = await api.historyDepth(widget.symbol);
-    print("[WS] --> _getDepthData, data:$data");
+    //print("[WS] --> _getDepthData, data:$data");
 
     _buyChartList.clear();
     _sellChartList.clear();
     dealDepthData(_buyChartList, _sellChartList, data, enable: false);
     _setupDepthWidget();
-    print("[WS] --> _getDepthData, _buyChartList.length:${_buyChartList.length}");
+    //print("[WS] --> _getDepthData, _buyChartList.length:${_buyChartList.length}");
 
     if (mounted) {
       setState(() {
@@ -1135,10 +1262,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     _subChannel(channel);
   }
 
-  void _unSubTradeChannel() {
-    var channel = SocketConfig.channelTradeDetail(widget.symbol);
-    _unSubChannel(channel);
-  }
+//  void _unSubTradeChannel() {
+//    var channel = SocketConfig.channelTradeDetail(widget.symbol);
+//    _unSubChannel(channel);
+//  }
 
   // depth
   void _subDepthChannel() {
@@ -1170,19 +1297,19 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
     _socketBloc.listen((state) {
       if (state is SubChannelSuccessState) {
-        var msg = '订阅 ${state.channel} 成功';
-        print("[Bloc] msg:$msg");
+        //var msg = '订阅 ${state.channel} 成功';
+        //print("[Bloc] msg:$msg");
         //Fluttertoast.showToast(msg: msg);
       } else if (state is UnSubChannelSuccessState) {
-        var msg = '取阅 ${state.channel} 成功';
-        print("[Bloc] msg:$msg");
+        //var msg = '取阅 ${state.channel} 成功';
+        //print("[Bloc] msg:$msg");
         //Fluttertoast.showToast(msg: msg);
       } else if (state is ChannelKLine24HourState) {
         _amount24HourController.add(_amount24HourRefresh);
       } else if (state is ChannelKLinePeriodState) {
         if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
           _unSubPeriodChannel(period: state.channel.split(".").last);
-          print("[WS] 取消不是当前选中的channel:${state.channel}");
+          //print("[WS] 取消不是当前选中的channel:${state.channel}");
         }
         _dealPeriodData(state.response, isReplace: false);
       } else if (state is ChannelExchangeDepthState) {
@@ -1202,7 +1329,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
     {limitNum = 20, enable = true, Function clickPrice}) {
   return Container(
-    padding: const EdgeInsets.only(left: 14, right: 14, top: 14),
+    padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 8),
     color: Colors.white,
     child: Column(
       children: <Widget>[
@@ -1376,7 +1503,7 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                                   ? () {
                                       var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
                                       clickPrice(depthPrice);
-                                      print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                      //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
 
@@ -1468,7 +1595,7 @@ Widget delegationListView(BuildContext context, List<ExcDetailEntity> buyChartLi
                               onTap: enable
                                   ? () {
                                       clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
-                                      print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                      //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
                                     }
                                   : null,
 
@@ -1606,6 +1733,6 @@ dealDepthData(List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChar
     }
   }
 
-  print(
-      "[WS] --> _getDepthData,buyChartList.length:${buyChartList.length}, sellChartList.length:${sellChartList.length}");
+//  print(
+//      "[WS] --> _getDepthData,buyChartList.length:${buyChartList.length}, sellChartList.length:${sellChartList.length}");
 }

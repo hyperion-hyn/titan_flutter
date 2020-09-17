@@ -216,6 +216,43 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                 SizedBox(
                   height: 24,
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        height: 30,
+                        width: 120,
+                        child: OutlineButton(
+                          child: Text(
+                            S.of(context).exchange_transfer,
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor),
+                          ),
+                          onPressed: () {
+                            if (ExchangeInheritedModel.of(context)
+                                .exchangeModel
+                                .isActiveAccount()) {
+                              Application.router.navigateTo(
+                                context,
+                                Routes.exchange_transfer_page,
+                              );
+                            } else {
+                              UiUtil.showExchangeAuthAgainDialog(context);
+                            }
+                          },
+                          borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor,
+                            width: 1,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
             Positioned(

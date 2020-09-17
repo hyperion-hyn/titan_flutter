@@ -24,7 +24,6 @@ class OrderItem extends StatefulWidget {
 }
 
 class OrderItemState extends State<OrderItem> {
-  bool _isBuy = true;
   var _base = 'HYN';
   var _quote = 'USDT';
 
@@ -32,7 +31,6 @@ class OrderItemState extends State<OrderItem> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _isBuy = widget._order.side == '1';
     if ((widget?._order?.market?.split('/')?.length ?? -1) == 2) {
       _base = widget._order.market.split('/')[0];
       _quote = widget._order.market.split('/')[1];
@@ -58,7 +56,7 @@ class OrderItemState extends State<OrderItem> {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: _isBuy
+                        text: widget._order.side == '1'
                             ? "${S.of(context).exchange_buy} "
                             : "${S.of(context).exchange_sell} ",
                         style: TextStyle(

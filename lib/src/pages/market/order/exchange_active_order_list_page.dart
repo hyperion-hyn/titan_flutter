@@ -34,8 +34,7 @@ class ExchangeActiveOrderListPage extends StatefulWidget {
   }
 }
 
-class ExchangeActiveOrderListPageState
-    extends BaseState<ExchangeActiveOrderListPage>
+class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderListPage>
     with AutomaticKeepAliveClientMixin, RouteAware {
   ExchangeDetailBloc exchangeDetailBloc = ExchangeDetailBloc();
   ExchangeModel exchangeModel;
@@ -58,12 +57,12 @@ class ExchangeActiveOrderListPageState
     if (exchangeModel.isActiveAccount() && widget.market.isNotEmpty) {
       var symbolList = widget.market.split("/");
       userTickChannel = SocketConfig.channelUserTick(
-          exchangeModel.activeAccount.id,
-          "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
+          exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
-    }else if(exchangeModel.isActiveAccount()){
-      _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id,"hynusdt")));
-      _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id,"hyneth")));
+    } else if (exchangeModel.isActiveAccount()) {
+      _socketBloc
+          .add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "hynusdt")));
+      _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "hyneth")));
     }
     _loadDataBloc.add(LoadingEvent());
     consignLoadData();
@@ -103,8 +102,7 @@ class ExchangeActiveOrderListPageState
     return BlocListener<SocketBloc, SocketState>(
       bloc: _socketBloc,
       listener: (ctx, state) {
-        bool isRefresh =
-            consignListSocket(context, state, _activeOrders, false);
+        bool isRefresh = consignListSocket(context, state, _activeOrders, false);
         if (isRefresh) {
           setState(() {});
         }
@@ -117,8 +115,7 @@ class ExchangeActiveOrderListPageState
           onLoadingMore: () async {
             if (exchangeModel.isActiveAccount()) {
               consignPageSize++;
-              await loadMoreConsignList(
-                  _loadDataBloc, widget.market, consignPageSize, _activeOrders);
+              await loadMoreConsignList(_loadDataBloc, widget.market, consignPageSize, _activeOrders);
             } else {
               _loadDataBloc.add(LoadingMoreSuccessEvent());
             }
@@ -135,26 +132,21 @@ class ExchangeActiveOrderListPageState
     if (_activeOrders.length == 0) {
       return orderListEmpty(context);
     }
-    return SingleChildScrollView(
-        child: orderListWidget(
-            context, widget.market, consignIsLoading, _activeOrders));
+    return SingleChildScrollView(child: orderListWidget(context, widget.market, consignIsLoading, _activeOrders));
   }
 }
 
-Future loadConsignList(
-    String marketCoin, int pageNum, List<Order> _activeOrders) async {
+Future loadConsignList(String marketCoin, int pageNum, List<Order> _activeOrders) async {
   _activeOrders.clear();
   ExchangeApi exchangeApi = ExchangeApi();
-  var orderList =
-      await exchangeApi.getOrderList(marketCoin, pageNum, 20, "active");
+  var orderList = await exchangeApi.getOrderList(marketCoin, pageNum, 20, "active");
   _activeOrders.addAll(orderList);
 }
 
-Future loadMoreConsignList(LoadDataBloc _loadDataBloc, String marketCoin,
-    int pageNum, List<Order> _activeOrders) async {
+Future loadMoreConsignList(
+    LoadDataBloc _loadDataBloc, String marketCoin, int pageNum, List<Order> _activeOrders) async {
   ExchangeApi exchangeApi = ExchangeApi();
-  var orderList =
-      await exchangeApi.getOrderList(marketCoin, pageNum, 20, "active");
+  var orderList = await exchangeApi.getOrderList(marketCoin, pageNum, 20, "active");
 
   if (orderList.length == 0 && _activeOrders.length > 0) {
     _loadDataBloc.add(LoadMoreEmptyEvent());
@@ -178,9 +170,7 @@ Widget orderListEmpty(BuildContext context) {
           height: 10,
         ),
         Text(
-          exchangeModel.isActiveAccount()
-              ? S.of(context).no_orders
-              : S.of(context).view_order_after_login,
+          exchangeModel.isActiveAccount() ? S.of(context).no_orders : S.of(context).view_order_after_login,
           style: TextStyle(fontSize: 14, color: HexColor("#999999")),
         ),
         SizedBox(
@@ -191,8 +181,7 @@ Widget orderListEmpty(BuildContext context) {
   );
 }
 
-Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading,
-    List<Order> _activeOrders) {
+Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading, List<Order> _activeOrders) {
   return ListView.builder(
     shrinkWrap: true,
     physics: NeverScrollableScrollPhysics(),
@@ -204,7 +193,7 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading,
         try {
           orderEntity.status = "-1";
           await exchangeApi.orderCancel(orderEntity.orderId);
-          Future.delayed(Duration(milliseconds: 2000),(){
+          Future.delayed(Duration(milliseconds: 2000), () {
             BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
           });
         } catch (error) {
@@ -217,18 +206,18 @@ Widget orderListWidget(BuildContext context, String marketCoin, bool isLoading,
   );
 }
 
-bool consignListSocket(BuildContext context, SocketState state,
-    List<Order> _activeOrders, bool showToast) {
+bool consignListSocket(BuildContext context, SocketState state, List<Order> _activeOrders, bool showToast) {
   if (state is ChannelUserTickState) {
     var netNewOrders = List<Order>();
+    var netUpdateOrders = List<Order>();
     var netCancelOrders = List<Order>();
     var netCompOrders = List<Order>();
     state.response.forEach((entity) => {
-          if ((entity as List<dynamic>).length >= 7 &&
-              (entity[2] == 0 || entity[2] == 1))
+          if ((entity as List<dynamic>).length >= 7 && (entity[2] == 0))
             {netNewOrders.add(Order.fromSocket(entity))}
-          else if ((entity as List<dynamic>).length >= 7 &&
-              (entity[2] >= 3 && entity[2] <= 5))
+          else if ((entity as List<dynamic>).length >= 7 && (entity[2] == 1))
+            {netUpdateOrders.add(Order.fromSocket(entity))}
+          else if ((entity as List<dynamic>).length >= 7 && (entity[2] >= 3 && entity[2] <= 5))
             {netCancelOrders.add(Order.fromSocket(entity))}
           else if ((entity as List<dynamic>).length >= 7 && entity[2] == 2)
             {netCompOrders.add(Order.fromSocket(entity))}
@@ -257,6 +246,24 @@ bool consignListSocket(BuildContext context, SocketState state,
         }*/
         return true;
       }
+    }
+
+    if (netUpdateOrders.length > 0) {
+      netUpdateOrders.forEach((netElement) {
+        _activeOrders.forEach((actElement) {
+          if (netElement.orderId == actElement.orderId) {
+            actElement.market = netElement.market;
+            actElement.side = netElement.side;
+            actElement.price = netElement.price;
+            actElement.amount = netElement.amount;
+            actElement.ctime = netElement.ctime;
+            actElement.status = netElement.status;
+            actElement.amountDeal = netElement.amountDeal;
+            actElement.amountNoDeal = netElement.amountNoDeal;
+          }
+        });
+      });
+      return true;
     }
 
     if (netCancelOrders.length > 0) {
