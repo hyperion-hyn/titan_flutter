@@ -282,6 +282,17 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> historyDepthForMM(String symbol, {int precision = -1}) async {
+    return await ExchangeHttp.instance.postEntity(
+      ExchangeConst.PATH_HISTORY_DEPTH,
+      null,
+      params: {
+        "symbol": symbol,
+        "precision": precision,
+      },
+    );
+  }
+
   Future<List<Order>> getOrderList(
     String market,
     int page,

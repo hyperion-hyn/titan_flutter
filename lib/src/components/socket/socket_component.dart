@@ -9,6 +9,7 @@ import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:web_socket_channel/io.dart';
 
 class SocketComponent extends StatelessWidget {
@@ -60,7 +61,7 @@ class _SocketState extends State<_SocketManager> {
 
   @override
   void dispose() {
-    print('[WS]  closed');
+    LogUtil.printMessage('[WS]  closed');
 
     _socketChannel.sink.close();
     _bloc.close();
@@ -68,20 +69,20 @@ class _SocketState extends State<_SocketManager> {
   }
 
   _initWS() {
-    print('[WS]  init');
+    LogUtil.printMessage('[WS]  init');
 
     _socketChannel = IOWebSocketChannel.connect(ExchangeConst.WS_DOMAIN);
     _bloc.setSocketChannel(_socketChannel);
 
     _socketChannel.stream.listen((data) {
-      print('[WS]  listen..., data');
+      LogUtil.printMessage('[WS]  listen..., data');
 
       if (!_connecting) {
         _connecting = true;
-        print('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
+        LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
-          print('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+          LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
@@ -90,7 +91,7 @@ class _SocketState extends State<_SocketManager> {
       }
       _bloc.add(ReceivedDataEvent(data: data));
     }, onDone: () {
-      print('[WS] Done!');
+      LogUtil.printMessage('[WS] Done!');
 
       _connecting = false;
 
@@ -104,7 +105,7 @@ class _SocketState extends State<_SocketManager> {
       // e is :WebSocketChannelException
       _socketChannel.sink.close();
 
-      print('[WS] Error, e:$e');
+      LogUtil.printMessage('[WS] Error, e:$e');
     });
 
     // 心跳，预防一分钟没有消息，自动断开链接。
@@ -134,14 +135,14 @@ class _SocketState extends State<_SocketManager> {
   }
 
   _reconnectWS() {
-    print('[WS] Reconnect!');
 
-    print('[WS] websocket断开了');
+    LogUtil.printMessage('[WS] Reconnect!');
+    LogUtil.printMessage('[WS] websocket断开了');
     Future.delayed(Duration(milliseconds: 1000)).then((_) {
       _initWS();
     });
 
-    print('[WS] websocket重连中。。。。');
+    LogUtil.printMessage('[WS] websocket重连中。。。。');
   }
 
   @override
@@ -303,7 +304,7 @@ class MarketInheritedModel extends InheritedModel<String> {
                     marketItem.kLineEntity?.open ??
                 0.0) /
             (marketItem?.kLineEntity?.open ?? 1.0);
-//    print(
+//    LogUtil.printMessage(
 //        '[KLineEntity]: open: ${marketItem.kLineEntity.open} close: ${marketItem.kLineEntity.close} percent: $realPercent');
     return realPercent;
   }

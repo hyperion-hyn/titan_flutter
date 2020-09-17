@@ -1,8 +1,8 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -14,7 +14,8 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -22,6 +23,7 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -132,7 +134,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                       ),
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (context, index) {
+                              (context, index) {
                             return _marketItem(_marketItemList[index]);
                           },
                           childCount: _marketItemList.length,
@@ -159,12 +161,12 @@ class _ExchangePageState extends BaseState<ExchangePage>
         _hynToSelectedCoin != "null" &&
         double.parse(_hynToSelectedCoin) > 0) {
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
-            Decimal.fromInt(1) /
-                (Decimal.parse(
-                  _hynToSelectedCoin.toString(),
-                )),
-            4,
-          ) ??
+        Decimal.fromInt(1) /
+            (Decimal.parse(
+              _hynToSelectedCoin.toString(),
+            )),
+        4,
+      ) ??
           '--';
     }
 
@@ -219,7 +221,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
               Spacer(),
               ClickOvalIconButton(
                 S.of(context).exchange_trade,
-                () {
+                    () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -329,28 +331,28 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 ),
                 child: quote == null
                     ? Image.asset(
-                        'res/drawable/ic_exchange_account_cny.png',
-                        width: 20,
-                        height: 20,
-                        color: Theme.of(context).primaryColor,
-                      )
+                  'res/drawable/ic_exchange_account_cny.png',
+                  width: 20,
+                  height: 20,
+                  color: Theme.of(context).primaryColor,
+                )
                     : QuotesInheritedModel.of(context)
-                                .activatedQuoteVoAndSign('USDT')
-                                .sign
-                                .quote ==
-                            'CNY'
-                        ? Image.asset(
-                            'res/drawable/ic_exchange_account_cny.png',
-                            width: 18,
-                            height: 18,
-                            color: Theme.of(context).primaryColor,
-                          )
-                        : Image.asset(
-                            'res/drawable/ic_exchange_account_usd.png',
-                            width: 18,
-                            height: 18,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                    .activatedQuoteVoAndSign('USDT')
+                    .sign
+                    .quote ==
+                    'CNY'
+                    ? Image.asset(
+                  'res/drawable/ic_exchange_account_cny.png',
+                  width: 18,
+                  height: 18,
+                  color: Theme.of(context).primaryColor,
+                )
+                    : Image.asset(
+                  'res/drawable/ic_exchange_account_usd.png',
+                  width: 18,
+                  height: 18,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
               Text(
                 S.of(context).exchange_account,
@@ -360,7 +362,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 ),
               ),
               Spacer(),
-             // _assetView(),
+              // _assetView(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(
@@ -389,17 +391,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
         null) {
       var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
           ? FormatUtil.truncateDecimalNum(
-              // ignore: null_aware_before_operator
-              _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
-              4,
-            )
+        // ignore: null_aware_before_operator
+        _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
+        4,
+      )
           : '--';
       return Text.rich(
         TextSpan(children: [
           TextSpan(
               text: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
+                  .exchangeModel
+                  .isShowBalances
                   ? _usdtTotalQuotePrice
                   : '*****',
               style: TextStyle(
@@ -407,7 +409,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
               )),
           TextSpan(
             text:
-                ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
+            ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
@@ -429,36 +431,36 @@ class _ExchangePageState extends BaseState<ExchangePage>
   _exchangeItem(bool isHynCoin) {
     return isHynCoin
         ? Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: <Widget>[
-                  if (_exchangeType == ExchangeType.SELL) Spacer(),
-                  _coinItem(
-                    'HYN',
-                    SupportedTokens.HYN.logo,
-                    false,
-                  ),
-                  if (_exchangeType == ExchangeType.SELL) Spacer(),
-                ],
-              ),
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            if (_exchangeType == ExchangeType.SELL) Spacer(),
+            _coinItem(
+              'HYN',
+              SupportedTokens.HYN.logo,
+              false,
             ),
-          )
+            if (_exchangeType == ExchangeType.SELL) Spacer(),
+          ],
+        ),
+      ),
+    )
         : Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: _coinListDropdownBtn(),
-            ),
-          );
+      flex: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _coinListDropdownBtn(),
+      ),
+    );
   }
 
   _coinItem(
-    String name,
-    String logoPath,
-    bool isOnlinePath,
-  ) {
+      String name,
+      String logoPath,
+      bool isOnlinePath,
+      ) {
     return Row(
       children: <Widget>[
         Container(
@@ -471,10 +473,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
           ),
           child: isOnlinePath
               ? FadeInImage.assetNetwork(
-                  placeholder: 'res/drawable/img_placeholder_circle.png',
-                  image: logoPath,
-                  fit: BoxFit.cover,
-                )
+            placeholder: 'res/drawable/img_placeholder_circle.png',
+            image: logoPath,
+            fit: BoxFit.cover,
+          )
               : Image.asset(logoPath),
         ),
         SizedBox(
@@ -605,21 +607,21 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPriceString = '$_latestPrice';
 
     var _selectedQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+    QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
         ? '--'
         : FormatUtil.truncateDoubleNum(
-            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-            4,
-          );
+      double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+      4,
+    );
     var _latestRmbPriceString =
         '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
 
     // _latestPercent
     double _latestPercent =
-        MarketInheritedModel.of(context).getRealTimePricePercent(
+    MarketInheritedModel.of(context).getRealTimePricePercent(
       marketItemEntity.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
@@ -635,28 +637,18 @@ class _ExchangePageState extends BaseState<ExchangePage>
     return Column(
       children: <Widget>[
         InkWell(
-            onTap: () async {
-
-              var prefs = await SharedPreferences.getInstance();
-              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
-              var periodCurrentIndex = 0;
-              if (index != null && index < 4 ) {
-                periodCurrentIndex = index;
-              }
-
+            onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => KLineDetailPage(
-                            symbol: marketItemEntity.symbol,
-                            symbolName: marketItemEntity.symbolName,
-                            isPop: false,
-                            periodCurrentIndex: periodCurrentIndex,
-                          )));
+                        symbol: marketItemEntity.symbol,
+                        symbolName: marketItemEntity.symbolName,
+                      )));
             },
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 children: <Widget>[
                   Row(

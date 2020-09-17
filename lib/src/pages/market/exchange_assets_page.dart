@@ -508,7 +508,7 @@ class AssetItemState extends State<AssetItem> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                        '总和',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -521,24 +521,11 @@ class AssetItemState extends State<AssetItem> {
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              ExchangeInheritedModel.of(context)
-                                      .exchangeModel
-                                      .isShowBalances
-                                  ? widget._assetType.usdt != null &&
-                                          widget._usdtToCurrency != null
-                                      ? '${FormatUtil.truncateDecimalNum(
-                                          Decimal.parse(
-                                                  widget._assetType.usdt) *
-                                              widget._usdtToCurrency,
-                                          4,
-                                        )}'
-                                      : '-'
-                                  : '*****',
+                              '${ Decimal.parse(widget._assetType.exchangeFreeze)+ Decimal.parse(widget._assetType.exchangeAvailable)}',
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: DefaultColors.color999,
                               ),
                             ),
                           ),
