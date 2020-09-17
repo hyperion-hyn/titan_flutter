@@ -1263,7 +1263,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   ]
   */
   Future _getDepthData() async {
-    var data = await api.historyDepthForMM(widget.symbol);
+    var data = await api.historyDepthForMM('HYN/${widget.symbolName}');
     //print("[WS] --> _getDepthData, data:$data");
 
     _buyChartList.clear();

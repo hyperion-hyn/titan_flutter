@@ -43,10 +43,10 @@ class ExchangeHttp extends BaseHttpCore {
   static ExchangeHttp _getInstance() {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
-      if (env.buildType == BuildType.DEV) {
+      //if (env.buildType == BuildType.DEV) {
         _instance.dio.interceptors
             .add(LogInterceptor(responseBody: true, requestBody: true));
-      }
+      //}
     }
     return _instance;
   }
@@ -282,15 +282,13 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> historyDepthForMM(String symbol, {int precision = -1}) async {
-    return await ExchangeHttp.instance.postEntity(
-      ExchangeConst.PATH_HISTORY_DEPTH,
-      null,
-      params: {
-        "symbol": symbol,
-        "precision": precision,
-      },
-    );
+  Future<dynamic> historyDepthForMM(String market, {int precision = -1}) async {
+    return await userApiSignAndPost(
+        path: ExchangeConst.API_PATH_DEPTH,
+        params: {
+          "market": market,
+          "precision": precision,
+        });
   }
 
   Future<List<Order>> getOrderList(
