@@ -5,6 +5,7 @@ import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:web_socket_channel/io.dart';
 import '../socket_config.dart';
 import './bloc.dart';
@@ -32,7 +33,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       _heartAction();
       yield HeartState();
     } else if (event is SubChannelEvent) {
-      print("channel = ${event.channel}");
+      LogUtil.printMessage("channel = ${event.channel}");
       _subChannelRequestAction(event.channel);
 
       yield SubChannelState(channel: event.channel);
@@ -42,11 +43,11 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       yield UnSubChannelState(channel: event.channel);
     } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
-      print("[SocketBloc] mapEventToState, receivedData:$receivedData");
+      LogUtil.printMessage("[SocketBloc] mapEventToState, receivedData:$receivedData");
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
-        //print("[SocketBloc] mapEventToState, dataMap:$dataMap");
+        //LogUtil.printMessage("[SocketBloc] mapEventToState, dataMap:$dataMap");
 
         var status = dataMap["status"];
         var eventAction = dataMap["event"];
@@ -81,7 +82,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                     }
                   }*/
 
-                  //print("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
+                  //LogUtil.printMessage("[SocketBloc] mapEventToState, channelValue:$channelValue， symbol:$symbol, data:$data");
 
                   yield ChannelKLine24HourState(symbol: symbol, response: data);
                 } else if (channelValue.contains("depth")) {
@@ -107,12 +108,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           }
         } else if (status == 200 || status == 500) {
           if (errMsg != null && status == 500) {
-            print("[SocketBloc] 接收心跳,正常");
+            LogUtil.printMessage("[SocketBloc] 接收心跳,正常");
 
             yield HeartSuccessState();
           }
         } else {
-          print("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          LogUtil.printMessage("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
@@ -121,7 +122,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           }
         }
       } catch (e) {
-        print("[SocketBloc] e:$e");
+        LogUtil.printMessage("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
     } else if (event is MarketSymbolEvent) {
@@ -147,14 +148,14 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   }
 
   void _heartAction() {
-    print('[WS] heart，发送心跳, date:${DateTime.now()}');
+    LogUtil.printMessage('[WS] heart，发送心跳, date:${DateTime.now()}');
 
     var pong = "heart time fired!";
     socketChannel.sink.add(json.encode(pong));
   }
 
   void _subChannelRequestAction(String channel) {
-    print('[WS] sub，正式发起订阅, channel:$channel');
+    LogUtil.printMessage('[WS] sub，正式发起订阅, channel:$channel');
 
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;
@@ -165,7 +166,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   }
 
   void _unSubChannelRequestAction(String channel) {
-    print('[WS] unSub，正式取消订阅, period:$channel');
+    LogUtil.printMessage('[WS] unSub，正式取消订阅, period:$channel');
 
     Map<String, dynamic> params = Map<String, dynamic>();
     params['channel'] = channel;

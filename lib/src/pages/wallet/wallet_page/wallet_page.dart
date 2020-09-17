@@ -90,6 +90,8 @@ class _WalletPageState extends BaseState<WalletPage>
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
+    if (activatedWalletVo == null) return;
+
     String address = activatedWalletVo.wallet.getEthAccount().address;
     int appType = 0;
     String email = "";
