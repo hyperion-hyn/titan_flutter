@@ -1001,5 +1001,6 @@
   "recharge": "充值",
   "withdrawal": "提币",
   "exchange_withdraw": "提币",
-  "exchange_deposit": "充值"
+  "exchange_deposit": "充值",
+  "wallet_name_do_not_contain_space": "请勿包含空格"
 }

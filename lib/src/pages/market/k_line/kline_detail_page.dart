@@ -430,6 +430,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               mainState: _mainState,
               secondaryState: _secondaryState,
               locale: local,
+              fractionDigits: 4,
             ),
           ),
           Visibility(

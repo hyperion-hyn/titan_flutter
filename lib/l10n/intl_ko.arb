@@ -993,5 +993,6 @@
   "recharge": "재 충전",
   "withdrawal": "출금",
   "exchange_withdraw": "철수",
-  "exchange_deposit": "재충전"
+  "exchange_deposit": "재충전",
+  "wallet_name_do_not_contain_space": "공백을 포함하지 마십시오"
 }

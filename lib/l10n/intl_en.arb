@@ -1005,5 +1005,6 @@
   "recharge": "Top-up",
   "withdrawal": "Withdraw",
   "exchange_withdraw": "Withdraw",
-  "exchange_deposit": "Recharge"
+  "exchange_deposit": "Recharge",
+  "wallet_name_do_not_contain_space": "Do not include space"
 }
