@@ -106,8 +106,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 _refreshController.refreshCompleted();
               },
               onRefresh: () async {
-                BlocProvider.of<ExchangeCmpBloc>(context)
-                    .add(UpdateAssetsEvent());
+                ///update assets if logged in
+                if (ExchangeInheritedModel.of(context)
+                    .exchangeModel
+                    .isActiveAccount()) {
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(UpdateAssetsEvent());
+                }
+
+                ///update symbol list
+                BlocProvider.of<SocketBloc>(context).add(MarketSymbolEvent());
+
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
               },
@@ -643,11 +652,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
       children: <Widget>[
         InkWell(
             onTap: () async {
-
               var prefs = await SharedPreferences.getInstance();
               int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
               var periodCurrentIndex = 0;
-              if (index != null && index < 4 ) {
+              if (index != null && index < 4) {
                 periodCurrentIndex = index;
               }
 
