@@ -83,11 +83,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
   String pwd;
 
   List<AddressData> accounts = [];
-  List<MMData> mmList = [
-    // MMData(address: Config.MM_Address_1, key: Config.MM_K_1, hynBalance: Decimal.zero, usdtBalance: Decimal.zero),
-    // MMData(address: Config.MM_Address_2, key: Config.MM_K_2, hynBalance: Decimal.zero, usdtBalance: Decimal.zero),
-    // MMData(address: Config.MM_Address_3, key: Config.MM_K_3, hynBalance: Decimal.zero, usdtBalance: Decimal.zero),
-  ];
+  List<MMData> mmList = [];
 
   @override
   void didChangeDependencies() {
@@ -777,7 +773,11 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 wallet: wallet,
                                 password: pwd,
                                 address: wallet.getEthAccount().address,
-                                params: {'uid': mmData.uid, 'type': getTypeName(type), 'balance': (_mmAmount * Decimal.fromInt(-1)).toString()},
+                                params: {
+                                  'uid': mmData.uid,
+                                  'type': getTypeName(type),
+                                  'balance': (_mmAmount * Decimal.fromInt(-1)).toString()
+                                },
                               );
 
                               await updateMMList();
