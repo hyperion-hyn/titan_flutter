@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:flutter_k_chart/entity/k_line_entity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
@@ -43,7 +45,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       yield UnSubChannelState(channel: event.channel);
     } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
-      LogUtil.printMessage("[SocketBloc] mapEventToState, receivedData:$receivedData");
+      LogUtil.printMessage(
+          "[SocketBloc] mapEventToState, receivedData:$receivedData");
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
@@ -89,10 +92,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelTradeDetailState(response: response);
-                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                } else if (channelValue.startsWith("user") &&
+                    channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
                 } else {
-                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(
+                      channel: channelValue, response: response);
                 }
               }
               yield ReceivedDataSuccessState(response: dataMap);
@@ -113,7 +118,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             yield HeartSuccessState();
           }
         } else {
-          LogUtil.printMessage("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          LogUtil.printMessage(
+              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
@@ -143,9 +149,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           symbolName: 'ETH',
         ));
       }
+
       yield MarketSymbolState(_marketItemList);
     }
   }
+
+
 
   void _heartAction() {
     LogUtil.printMessage('[WS] heart，发送心跳, date:${DateTime.now()}');
