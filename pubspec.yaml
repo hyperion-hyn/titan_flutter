@@ -156,6 +156,8 @@ dependencies:
 
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0
+  ethereum_address: ^1.0.1
+  bitcoin_flutter: ^2.0.1
 
 dev_dependencies:
   flutter_driver:

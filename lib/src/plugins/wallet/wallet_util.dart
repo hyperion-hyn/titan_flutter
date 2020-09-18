@@ -351,4 +351,25 @@ class WalletUtil {
     }
     return null;
   }
+
+  static Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
+      [String contractAddress, String block = 'latest']) async {
+    switch (coinType) {
+      case CoinType.ETHEREUM:
+        if (contractAddress == null) {
+          var response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
+          if (response['result'] != null) {
+            return hexToInt(response['result']);
+          }
+        } else {
+          final contract = WalletUtil.getHynErc20Contract(contractAddress);
+          final balanceFun = contract.function('balanceOf');
+          final balance = await WalletUtil.getWeb3Client()
+              .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+          return balance.first;
+        }
+        break;
+    }
+    return BigInt.from(0);
+  }
 }
