@@ -119,6 +119,11 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                   context,
                   wallet,
                 );
+
+                if(password == null || password.isEmpty) {
+                  return ;
+                }
+
                 pwd = password;
                 var mnemonic = await WalletUtil.exportMnemonic(fileName: wallet.keystore.fileName, password: password);
 
@@ -400,6 +405,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                   context,
                                   wallet,
                                 );
+
+                                if(password == null || password.isEmpty) {
+                                  return ;
+                                }
 
                                 var mnemonic = await WalletUtil.exportMnemonic(
                                     fileName: wallet.keystore.fileName, password: password);
@@ -768,6 +777,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 wallet,
                               );
 
+                              if(password == null || password.isEmpty) {
+                                return ;
+                              }
+
                               var rets = await _exchangeApi.walletSignAndPost(
                                 path: Config.MM_ACCOUNT_RECHARGE,
                                 wallet: wallet,
@@ -826,6 +839,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                 context,
                                 wallet,
                               );
+
+                              if(password == null || password.isEmpty) {
+                                return ;
+                              }
 
                               var rets = await _exchangeApi.walletSignAndPost(
                                 path: Config.MM_ACCOUNT_RECHARGE,
