@@ -7,6 +7,7 @@ class ExchangeConst {
 //  static const EXCHANGE_DOMAIN = "https://exchange.hyn.space";
 //  static const WS_DOMAIN = "wss://ws-exchange.hyn.space";
   static const EXCHANGE_DOMAIN = "https://api.dexchange.mobi";
+  // static const EXCHANGE_DOMAIN = "http://10.10.1.113";
   static const WS_DOMAIN = "wss://ws.dexchange.mobi";
 
   static const PATH_GET_ACCESS_SEED = '/api/user/getAccessSeed';

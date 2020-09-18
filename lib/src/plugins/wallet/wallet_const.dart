@@ -1,5 +1,6 @@
 import 'package:titan/config.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 
 import '../../../env.dart';
 
@@ -37,7 +38,7 @@ class EthereumConst {
   static const int COLLECT_HALF_MAP3_NODE_GAS_LIMIT = 150000;
 }
 
-class BitcoinConst{
+class BitcoinConst {
   static const BTC_LOW_SPEED = 15;
   static const BTC_FAST_SPEED = 30;
   static const BTC_SUPER_FAST_SPEED = 60;
@@ -107,6 +108,36 @@ class WalletConfig {
     return '';
   }
 
+  static String getHynErc20Address() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.HYN.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.HYN_ROPSTEN.contractAddress;
+      case EthereumNetType.rinkeby:
+        return SupportedTokens.HYN_RINKEBY.contractAddress;
+      case EthereumNetType.local:
+        return SupportedTokens.HYN_LOCAL.contractAddress;
+    }
+    return '';
+  }
+
+  static String getUsdtErc20Address() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.USDT_ERC20.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.USDT_ERC20_ROPSTEN.contractAddress;
+      case EthereumNetType.rinkeby:
+        //have not deployed
+        return SupportedTokens.USDT_ERC20.contractAddress;
+      case EthereumNetType.local:
+        //have not deployed
+        return SupportedTokens.USDT_ERC20.contractAddress;
+    }
+    return '';
+  }
+
   static String getEthereumApi() {
     switch (netType) {
       case EthereumNetType.main:
@@ -128,7 +159,7 @@ class WalletConfig {
         return BITCOIN_MAIN_API;
       case BitcoinNetType.local:
         return BITCOIN_LOCAL_API;
-    //return LOCAL_API;
+      //return LOCAL_API;
     }
     return '';
   }
