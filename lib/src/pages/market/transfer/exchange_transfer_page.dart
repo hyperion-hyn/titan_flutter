@@ -45,7 +45,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   WalletVo activatedWallet;
 
   String _gasFeeFullString = "";
-  String _gasFeeStr = "";
+  String _gasFeeStr = "0";
 
   Future<double> gasFeeFunc(String symbol) async {
     var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
@@ -523,11 +523,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   Future<String> _gasFeeFullStrFunc() async {
-    var fullStr = "";
+    var fullStr = "网络费";
     if (_fromExchangeToWallet) {
       var gasFee = await gasFeeFunc(_selectedCoinType);
       _gasFeeStr = gasFee.toStringAsFixed(2);
-      fullStr = ",网络费 " + _gasFeeStr + _selectedCoinType;
+      fullStr = "网络费 " + _gasFeeStr + _selectedCoinType;
     }
     return fullStr;
   }
@@ -685,7 +685,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           children: <Widget>[
             if (_fromExchangeToWallet)
               Text(
-                '${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType ${_gasFeeFullString}',
+                '${_gasFeeFullString}',
+
+                //'${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType ${_gasFeeFullString}',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -830,14 +832,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var coinVoStr = FluroConvertUtils.object2string(coinVo.toJson());
 
     var inputValue = Decimal.parse(_amountController?.text ?? "0");
-    var withdrawFeeValue = Decimal.parse(withdrawFeeStr);
+    print("[object] _gasFeeStf:$_gasFeeStr, is string :${_gasFeeStr is String}");
     var gasFeeValue = Decimal.parse(_gasFeeStr);
     var availableValue = Decimal.parse(_availableAmount());
-    var totalValue = inputValue + withdrawFeeValue + gasFeeValue;
+    var totalValue = inputValue  + gasFeeValue;
+    var balanceValue = availableValue  - gasFeeValue;
     var transferAmountStr =
-        totalValue <= availableValue ? _amountController.text : '${availableValue - withdrawFeeValue - gasFeeValue}';
+        totalValue <= availableValue ? _amountController.text : '$balanceValue';
 
-    var total = Decimal.parse(transferAmountStr) + withdrawFeeValue + gasFeeValue;
+    var total = Decimal.parse(transferAmountStr)  + gasFeeValue;
     var totalStr = total.toString();
 
     print(
@@ -845,7 +848,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&transferAmount=$transferAmountStr&gasFee=$_gasFeeStr&withdrawFee=$withdrawFeeStr&total=$totalStr',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&transferAmount=$transferAmountStr&gasFee=$_gasFeeStr&total=$totalStr',
     );
   }
 }

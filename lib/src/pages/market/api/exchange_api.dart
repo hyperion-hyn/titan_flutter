@@ -172,6 +172,7 @@ class ExchangeApi {
     String type,
     String outerAddress,
     String balance,
+      String gasFee,
   ) async {
     return await walletSignAndPost(
         path: ExchangeConst.PATH_WITHDRAW,
@@ -182,6 +183,7 @@ class ExchangeApi {
           'type': type,
           'outer_address': outerAddress,
           'balance': balance,
+          'fee': gasFee,
         });
   }
 

@@ -28,14 +28,12 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String actualTransferredAmount;
   final String gasFee;
-  final String withdrawFee;
   final String total;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
     this.actualTransferredAmount,
     this.gasFee,
-    this.withdrawFee,
     this.total,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
@@ -77,7 +75,6 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
 
     var totalAmountString = "-${widget.total}" + unit;
     var gasFeeString = "≈${widget.gasFee}" + unit;
-    var withdrawFeeString = '${widget.withdrawFee}' + unit;
     var actualValueString = widget.actualTransferredAmount + unit;
 
     return Scaffold(
@@ -218,6 +215,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
                 height: 2,
               ),
             ),
+            /*
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -257,6 +255,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
                 ],
               ),
             ),
+            */
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Divider(
@@ -404,6 +403,7 @@ class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfir
         widget.coinVo.symbol,
         widget.coinVo.address,
         widget.actualTransferredAmount,
+        widget.gasFee,
       );
       print('$ret');
       Application.router.navigateTo(
