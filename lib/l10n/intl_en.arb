@@ -1006,5 +1006,8 @@
   "withdrawal": "Withdraw",
   "exchange_withdraw": "Withdraw",
   "exchange_deposit": "Recharge",
-  "wallet_name_do_not_contain_space": "Do not include space"
+  "wallet_name_do_not_contain_space": "Do not include space",
+  "exchange_change_wallet": "Switch wallet",
+  "exchange_logout": "sign out",
+  "exchange_logout_hint": "You are about to exit the authorization status. Are you sure you want to exit?"
 }

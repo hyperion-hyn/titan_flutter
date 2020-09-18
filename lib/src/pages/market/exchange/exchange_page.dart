@@ -62,7 +62,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void onCreated() {
     super.onCreated();
-
     _setupMarketItemList();
   }
 
@@ -75,6 +74,9 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void initState() {
     super.initState();
+
+    ///check account
+    BlocProvider.of<ExchangeCmpBloc>(context).add(CheckAccountEvent());
   }
 
   @override

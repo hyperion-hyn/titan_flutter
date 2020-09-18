@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -32,7 +34,7 @@ class ExchangeHttp extends BaseHttpCore {
               baseUrl: ExchangeConst.EXCHANGE_DOMAIN,
               contentType: 'application/x-www-form-urlencoded',
             ),
-          )..interceptors.add(CookieManager(CookieJar())), //cookie 存在内存而已
+          ), //cookie 存在内存而已
         );
 
   static ExchangeHttp _instance;
@@ -42,17 +44,40 @@ class ExchangeHttp extends BaseHttpCore {
   static ExchangeHttp _getInstance() {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
-      if (env.buildType == BuildType.DEV) {
-        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
-      }
+
+      //if (env.buildType == BuildType.DEV) {
+      _instance.dio.interceptors
+          .add(LogInterceptor(responseBody: true, requestBody: true));
+      //}
     }
     return _instance;
   }
 }
 
 class ExchangeApi {
+  ExchangeHttp exchangeHttp;
+
+  ExchangeApi() {
+    init();
+  }
+
+  init() {
+    exchangeHttp = ExchangeHttp.instance;
+
+    getCookieDir().then((value) => {
+          exchangeHttp.dio.interceptors
+              .add(CookieManager(PersistCookieJar(dir: value)))
+        });
+  }
+
+  Future<String> getCookieDir() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    return '$appDocPath/.cookies/';
+  }
+
   Future<String> ping(String name) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       'api/index/ping',
       EntityFactory((json) => json),
       params: {'name': name},
@@ -61,7 +86,7 @@ class ExchangeApi {
 
   ///使用[address]钱包地址 和 访问路径[path]获取一个种子
   Future<String> _getAccessSeed(String address, String path) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_GET_ACCESS_SEED,
       null,
       params: {
@@ -72,7 +97,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> sendSms({String email, String language = 'zh-CN'}) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       '/api/user/mregister',
       null,
       params: {
@@ -84,7 +109,7 @@ class ExchangeApi {
   }
 
   Future<List<ExchangeBanner>> getBannerList() async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_BANNER_LIST,
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_BANNER_LIST,
         EntityFactory<List<ExchangeBanner>>((data) {
       var bannerList = List<ExchangeBanner>();
 
@@ -132,7 +157,7 @@ class ExchangeApi {
     );
     _params['sign'] = signed;
 
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       path,
       null,
       params: _params,
@@ -140,7 +165,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> getAssetsList() async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ACCOUNT_ASSETS,
       null,
       params: {},
@@ -148,7 +173,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> type2currency(String _type, String _currency) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_TYPE_TO_CURRENCY,
       null,
       params: {
@@ -159,7 +184,8 @@ class ExchangeApi {
   }
 
   Future<dynamic> testRecharge(String type, double balance) async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
+    return await exchangeHttp
+        .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
       "type": type,
       "balance": balance,
     });
@@ -194,9 +220,10 @@ class ExchangeApi {
   }
 
   Future<MarketInfoEntity> getMarketInfo(String market) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_MARKET_INFO,
-      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      EntityFactory<MarketInfoEntity>(
+          (marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
       params: {
         "market": market,
       },
@@ -204,15 +231,16 @@ class ExchangeApi {
   }
 
   Future<dynamic> getMarketAllSymbol() async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_MARKET_ALL,
       null,
       params: {},
     );
   }
 
-  Future<dynamic> orderPutLimit(String market, exchangeType, String price, String amount) async {
-    return await ExchangeHttp.instance.postEntity(
+  Future<dynamic> orderPutLimit(
+      String market, exchangeType, String price, String amount) async {
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
       params: {
@@ -225,8 +253,9 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutMarket(String market, exchangeType, String amount) async {
-    return await ExchangeHttp.instance.postEntity(
+  Future<dynamic> orderPutMarket(
+      String market, exchangeType, String amount) async {
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,
       params: {
@@ -238,7 +267,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> orderCancel(String orderId) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_CANCEL,
       null,
       params: {"order_id": orderId},
@@ -246,7 +275,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> historyTrade(String symbol, {String limit = '100'}) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_HISTORY_TRADE,
       null,
       params: {
@@ -257,7 +286,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> historyDepth(String symbol, {int precision = -1}) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_HISTORY_DEPTH,
       null,
       params: {
@@ -273,7 +302,8 @@ class ExchangeApi {
     int size,
     String method,
   ) async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ORDER_LIST, EntityFactory<List<Order>>((response) {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ORDER_LIST,
+        EntityFactory<List<Order>>((response) {
       var orderList = List<Order>();
       if (response is Map && response.length == 0) {
         return orderList;
@@ -297,7 +327,7 @@ class ExchangeApi {
     int size,
     String action,
   ) async {
-    return await ExchangeHttp.instance.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
         EntityFactory<List<AssetHistory>>((response) {
       var assetHistoryList = List<AssetHistory>();
       if (response is Map && response.length == 0) {
@@ -321,7 +351,7 @@ class ExchangeApi {
     int page,
     int size,
   ) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_LOG_LIST,
       EntityFactory<List<OrderDetail>>((response) {
         var orderDetailList = List<OrderDetail>();
@@ -346,7 +376,7 @@ class ExchangeApi {
     String symbol, {
     String period = '15min',
   }) async {
-    return await ExchangeHttp.instance.postEntity(
+    return await exchangeHttp.postEntity(
       ExchangeConst.PATH_HISTORY_KLINE,
       null,
       params: {
@@ -360,7 +390,7 @@ class ExchangeApi {
     String url, {
     Map<String, dynamic> params,
   }) async {
-    var data = await ExchangeHttp.instance.postEntity(
+    var data = await exchangeHttp.postEntity(
       url,
       null,
       params: params,
@@ -389,7 +419,9 @@ class ExchangeApi {
     }
 
     var parser = rsa.RSAKeyParser();
-    var k = utf8.decode(base64Decode(env.buildType == BuildType.DEV?Config.EXCHANGE_API_SIGN_PUBLIC_KEY_TEST:Config.EXCHANGE_API_SIGN_PUBLIC_KEY));
+    var k = utf8.decode(base64Decode(env.buildType == BuildType.DEV
+        ? Config.EXCHANGE_API_SIGN_PUBLIC_KEY_TEST
+        : Config.EXCHANGE_API_SIGN_PUBLIC_KEY));
     var publicKey = parser.parse(k) as RSAPublicKey;
 
     var signer = rsa.Signer(

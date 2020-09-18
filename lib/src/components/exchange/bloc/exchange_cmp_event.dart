@@ -11,6 +11,8 @@ class SetShowBalancesEvent extends ExchangeCmpEvent {
   SetShowBalancesEvent(this.isShow);
 }
 
+class CheckAccountEvent extends ExchangeCmpEvent {}
+
 class LoginEvent extends ExchangeCmpEvent {
   final Wallet wallet;
   final String password;

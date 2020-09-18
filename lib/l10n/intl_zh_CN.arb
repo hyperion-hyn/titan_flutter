@@ -921,7 +921,7 @@
   "exchange_name": "名称",
   "exchange_empty_list": "暂无记录",
   "exchange_order_list_active": "当前委托",
-  "exchange_fee": "手续费",
+  "exchange_fee": "网络费",
   "exchange_order_list_history": "历史委托",
   "exchange_order_time": "时间",
   "exchange_order_method": "方式",
@@ -1002,5 +1002,8 @@
   "withdrawal": "提币",
   "exchange_withdraw": "提币",
   "exchange_deposit": "充值",
-  "wallet_name_do_not_contain_space": "请勿包含空格"
+  "wallet_name_do_not_contain_space": "请勿包含空格",
+  "exchange_change_wallet": "更换钱包",
+  "exchange_logout": "退出登录",
+  "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？"
 }

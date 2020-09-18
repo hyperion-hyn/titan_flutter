@@ -44,17 +44,21 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   ExchangeApi _exchangeApi = ExchangeApi();
   WalletVo activatedWallet;
 
-  String _gasFeeFullString = "";
   String _gasFeeStr = "0";
 
   Future<double> gasFeeFunc(String symbol) async {
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var gasPriceRecommend =
+        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+            .gasPriceRecommend;
     var gasPrice = gasPriceRecommend.fast;
 
-    var totalGasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit;
+    var totalGasLimit = SettingInheritedModel.ofConfig(context)
+        .systemConfigEntity
+        .erc20TransferGasLimit;
     totalGasLimit = 40000;
     var gasEstimate = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
+        weiBigInt: BigInt.parse(
+            (gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
     var quotesSign = SupportedQuoteSigns.defaultQuotesSign;
     var ethQuotePrice = QuotesInheritedModel.of(context)
@@ -63,7 +67,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             ?.price ??
         0; //
 
-    var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+    var gasPriceEstimate =
+        gasEstimate * Decimal.parse(ethQuotePrice.toString());
     var fee = gasPriceEstimate.toDouble();
     print("[object] baseSymbol:$symbol, u_fee:$fee");
 
@@ -95,7 +100,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   Future<double> _getDefaultGasFee(String symbol) async {
     double fee = 0;
-    var saveFee = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_FEE_KEY + symbol);
+    var saveFee =
+        await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_FEE_KEY + symbol);
     if (saveFee == null || !(saveFee is double)) {
       fee = symbol == "HYN" ? 5.0 : 4.0;
     } else {
@@ -109,18 +115,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_FEE_KEY + symbol, fee);
   }
 
-  @override
-  void onCreated() {
-    // TODO: implement onCreated
-    super.onCreated();
-    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-  }
+//  @override
+//  void onCreated() {
+//    // TODO: implement onCreated
+//    super.onCreated();
+//  }
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-
-    _gasFeeFullString = await _gasFeeFullStrFunc();
+    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    await _gasFeeFullStrFunc();
   }
 
   @override
@@ -475,7 +480,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            _fromExchangeToWallet ? S.of(context).exchange_withdraw : S.of(context).exchange_deposit,
+            _fromExchangeToWallet
+                ? S.of(context).exchange_withdraw
+                : S.of(context).exchange_deposit,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -509,34 +516,36 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Center(
           child: Text(
             type,
-            style: TextStyle(color: _selectedCoinType == type ? Theme.of(context).primaryColor : HexColor('#FF777777')),
+            style: TextStyle(
+                color: _selectedCoinType == type
+                    ? Theme.of(context).primaryColor
+                    : HexColor('#FF777777')),
           ),
         ),
       ),
       onTap: () {
         setState(() {
           _selectedCoinType = type;
+          _gasFeeFullStrFunc();
         });
         Navigator.of(context).pop();
       },
     );
   }
 
-  Future<String> _gasFeeFullStrFunc() async {
-    var fullStr = "网络费";
-    if (_fromExchangeToWallet) {
-      var gasFee = await gasFeeFunc(_selectedCoinType);
-      _gasFeeStr = gasFee.toStringAsFixed(2);
-      fullStr = "网络费 " + _gasFeeStr + _selectedCoinType;
-    }
-    return fullStr;
+  _gasFeeFullStrFunc() async {
+    var gasFee = await gasFeeFunc(_selectedCoinType);
+    _gasFeeStr = gasFee.toStringAsFixed(2);
+    setState(() {});
   }
 
   _amount() {
-    var _minTransferText =
-        _fromExchangeToWallet ? S.of(context).exchange_withdraw_min : S.of(context).exchange_deposit_min;
-    var _amountInputHint =
-        _fromExchangeToWallet ? S.of(context).exchange_deposit_input_hint : S.of(context).exchange_withdraw_input_hint;
+    var _minTransferText = _fromExchangeToWallet
+        ? S.of(context).exchange_withdraw_min
+        : S.of(context).exchange_deposit_min;
+    var _amountInputHint = _fromExchangeToWallet
+        ? S.of(context).exchange_deposit_input_hint
+        : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
             .exchangeModel
@@ -597,11 +606,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) >
+                        Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
+                    if (Decimal.parse(value) <
+                        Decimal.parse(_minTransferAmount)) {
                       return _fromExchangeToWallet
                           ? S.of(context).exchange_withdraw_less_than_min
                           : S.of(context).exchange_deposit_less_than_min;
@@ -648,19 +659,26 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 child: Text(
                                   S.of(context).all,
                                   style: TextStyle(
-                                      color: HexColor('#FF333333'), fontSize: 12, fontWeight: FontWeight.bold),
+                                      color: HexColor('#FF333333'),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 onTap: () {
                                   if (!_fromExchangeToWallet) {
                                     _amountController.text = _availableAmount();
                                   } else {
-                                    var _availableAmountValue = Decimal.parse(_availableAmount());
-                                    var _withdrawFeeValue = Decimal.parse(_withdrawFee);
-                                    var sub = _availableAmountValue - _withdrawFeeValue;
-                                    _amountController.text = '${(sub.toDouble() < 0) ? "" : sub}';
+                                    var _availableAmountValue =
+                                        Decimal.parse(_availableAmount());
+                                    var _withdrawFeeValue =
+                                        Decimal.parse(_gasFeeStr);
+                                    var sub = _availableAmountValue -
+                                        _withdrawFeeValue;
+                                    _amountController.text =
+                                        '${(sub.toDouble() < 0) ? "" : sub}';
                                   }
 
-                                  _amountController.selection = TextSelection.fromPosition(TextPosition(
+                                  _amountController.selection =
+                                      TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
@@ -685,9 +703,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           children: <Widget>[
             if (_fromExchangeToWallet)
               Text(
-                '${_gasFeeFullString}',
-
-                //'${S.of(context).exchange_fee} $_withdrawFee $_selectedCoinType ${_gasFeeFullString}',
+                '${S.of(context).exchange_fee} $_gasFeeStr $_selectedCoinType',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 12,
@@ -747,7 +763,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           child: Text(
             _fromExchangeToWallet
                 ? S.of(context).exchange_transfer_hint_account_to_wallet(
-                      _withdrawFee,
+                      _gasFeeStr,
                       _selectedCoinType,
                     )
                 : S.of(context).exchange_transfer_hint_wallet_to_exchange,
@@ -771,7 +787,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(
+            Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }
@@ -832,15 +849,16 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var coinVoStr = FluroConvertUtils.object2string(coinVo.toJson());
 
     var inputValue = Decimal.parse(_amountController?.text ?? "0");
-    print("[object] _gasFeeStf:$_gasFeeStr, is string :${_gasFeeStr is String}");
+    print(
+        "[object] _gasFeeStf:$_gasFeeStr, is string :${_gasFeeStr is String}");
     var gasFeeValue = Decimal.parse(_gasFeeStr);
     var availableValue = Decimal.parse(_availableAmount());
-    var totalValue = inputValue  + gasFeeValue;
-    var balanceValue = availableValue  - gasFeeValue;
+    var totalValue = inputValue + gasFeeValue;
+    var balanceValue = availableValue - gasFeeValue;
     var transferAmountStr =
         totalValue <= availableValue ? _amountController.text : '$balanceValue';
 
-    var total = Decimal.parse(transferAmountStr)  + gasFeeValue;
+    var total = Decimal.parse(transferAmountStr) + gasFeeValue;
     var totalStr = total.toString();
 
     print(

@@ -23,6 +23,10 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/popup/bubble_widget.dart';
+import 'package:titan/src/widget/popup/pop_route.dart';
+import 'package:titan/src/widget/popup/pop_widget.dart';
 
 import 'order/exchange_order_mangement_page.dart';
 
@@ -88,25 +92,30 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                   MaterialPageRoute(
                       builder: (context) => ExchangeOrderManagementPage('')));
             },
-            child: Row(
-              children: [
-                Image.asset(
-                  "res/drawable/ic_exhange_all_consign.png",
-                  width: 12,
-                  height: 12,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(right: 16.0, left: 4),
-                  child: Text(
-                    S.of(context).exchange_order_history,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: DefaultColors.color999,
-                    ),
-                  ),
-                )
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Image.asset(
+                "res/drawable/ic_exhange_all_consign.png",
+                width: 15,
+                height: 15,
+              ),
             ),
+          ),
+          InkWell(
+            onTap: () {
+              _showOptionsPopup();
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Image.asset(
+                "res/drawable/k_line_setting.png",
+                width: 15,
+                height: 15,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 16,
           )
         ],
       ),
@@ -126,6 +135,58 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
               _exchangeAssetListView(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  _showOptionsPopup() {
+    return Navigator.push(
+      context,
+      PopRoute(
+        child: Popup(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6.0),
+            ),
+            child: Column(
+              children: [
+                InkWell(
+                  onTap: () {
+                    ///close popup
+                    Navigator.of(context).pop();
+
+                    ///close asset page
+                    Navigator.of(context).pop();
+                    Application.router
+                        .navigateTo(context, Routes.wallet_manager);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(S.of(context).exchange_change_wallet),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    showLogoutDialog(context, () {
+                      ///
+                      BlocProvider.of<ExchangeCmpBloc>(context)
+                          .add(ClearExchangeAccountEvent());
+                      Navigator.of(context).pop();
+                      Routes.popUntilCachedEntryRouteName(context);
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(S.of(context).exchange_logout),
+                  ),
+                )
+              ],
+            ),
+          ),
+          left: 270,
+          top: 66,
         ),
       ),
     );
@@ -321,6 +382,80 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
     } else {
       return _emptyView();
     }
+  }
+
+  static Future<T> showLogoutDialog<T>(
+    BuildContext context,
+    Function onClick,
+  ) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+              Radius.circular(30.0),
+            )),
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(
+                child: Text(
+                  S.of(context).exchange_logout_hint,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(height: 1.8),
+                ),
+              ),
+            ),
+            content: Wrap(
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  height: 32,
+                ),
+                Row(
+                  children: <Widget>[
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: Center(
+                          child: InkWell(
+                            child: Text(
+                              S.of(context).cancel,
+                              style: TextStyle(
+                                color: HexColor('#FF999999'),
+                              ),
+                            ),
+                            onTap: () async {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 13,
+                    ),
+                    Expanded(
+                      child: ClickOvalButton(
+                        S.of(context).exchange_logout,
+                        () async {
+                          Navigator.pop(context);
+                          onClick();
+                        },
+                        height: 45,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                )
+              ],
+            ),
+          );
+        });
   }
 
   _emptyView() {

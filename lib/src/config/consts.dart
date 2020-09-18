@@ -143,6 +143,10 @@ class PrefsKey {
   static const String KLINE_MAIN_STATE = 'mainState';
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
+  ///Exchange account
+  static const String EXCHANGE_ACCOUNT = 'exchange_account';
+  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
+
 }
 
 class SecurePrefsKey {

@@ -914,7 +914,7 @@
   "exchange_name": "명칭",
   "exchange_empty_list": "기록이 없습니다.",
   "exchange_order_list_active": "현재 커미션",
-  "exchange_fee": "수수료",
+  "exchange_fee": "네트워크 수수료",
   "exchange_order_list_history": "과거 기록",
   "exchange_order_time": "시간",
   "exchange_order_method": "방식",
@@ -994,5 +994,8 @@
   "withdrawal": "출금",
   "exchange_withdraw": "철수",
   "exchange_deposit": "재충전",
-  "wallet_name_do_not_contain_space": "공백을 포함하지 마십시오"
+  "wallet_name_do_not_contain_space": "공백을 포함하지 마십시오",
+  "exchange_change_wallet": "지갑 변경",
+  "exchange_logout": "로그 아웃",
+  "exchange_logout_hint": "승인 상태를 종료하려고합니다. 종료 하시겠습니까?"
 }
