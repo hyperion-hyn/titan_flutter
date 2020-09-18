@@ -387,7 +387,7 @@ class ExchangeApi {
     }
 
     var parser = rsa.RSAKeyParser();
-    var k = utf8.decode(base64Decode(Config.EXCHANGE_API_SIGN_PUBLIC_KEY));
+    var k = utf8.decode(base64Decode(env.buildType == BuildType.DEV?Config.EXCHANGE_API_SIGN_PUBLIC_KEY_TEST:Config.EXCHANGE_API_SIGN_PUBLIC_KEY));
     var publicKey = parser.parse(k) as RSAPublicKey;
 
     var signer = rsa.Signer(

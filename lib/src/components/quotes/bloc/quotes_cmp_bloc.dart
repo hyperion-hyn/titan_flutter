@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -108,30 +109,34 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
   }
 
   Future requestGasPrice() async {
-    var response = await EtherscanApi().getGas();
+    var responseFromEtherScan = await EtherscanApi().getGasFromEtherScan();
+    var responseFromEthGasStation = await requestGasFromEthGasStation();
+    //print("[object] requestGasPrice，1, responseFromEtherScan:$responseFromEtherScan, responseFromEthGasStation:$responseFromEthGasStation");
 
-    if (!(response.data is Map)) {
-      var response = await requestGasPriceOld();
-      return response;
-    }
+    var responseFromEtherScanDict = responseFromEtherScan.data as Map;
+    var responseFromEthGasStationDict = responseFromEthGasStation as Map;
 
-    var responseDict = response.data as Map;
-    Map<String, dynamic> responseMap = {
-      "fastest": double.parse(responseDict["FastGasPrice"]),
-      "fastestWait": 0.5,
-      "fast": double.parse(responseDict["ProposeGasPrice"]),
-      "fastWait": 2.0,
-      "average": double.parse(responseDict["SafeGasPrice"]),
-      "avgWait": 5.0,
-      "safeLow": 500,
-      "safeLowWait": 30.0,
-    };
-    print("[object] requestGasPrice, response:$response, responseMap:$responseMap");
+    // fastest
+    var fastGasPrice = double.parse(responseFromEtherScanDict["FastGasPrice"]) * 10.0;
+    var fastest = double.parse(responseFromEthGasStationDict["fastest"].toString());
+    responseFromEthGasStationDict["fastest"] = max(fastGasPrice, fastest);
 
-    return responseMap;
+    // fast
+    var proposeGasPrice = double.parse(responseFromEtherScanDict["ProposeGasPrice"]) * 10.0;
+    var fast = double.parse(responseFromEthGasStationDict["fast"].toString());
+    responseFromEthGasStationDict["fast"] = max(proposeGasPrice, fast);
+
+    // average
+    var safeGasPrice = double.parse(responseFromEtherScanDict["SafeGasPrice"]) * 10.0;
+    var average = double.parse(responseFromEthGasStationDict["average"].toString());
+    responseFromEthGasStationDict["average"] = max(safeGasPrice, average);
+
+    //print("[object] requestGasPrice，2, responseFromEtherScanDict:$responseFromEtherScanDict, responseFromEthGasStationDict:$responseFromEthGasStationDict");
+
+    return responseFromEthGasStationDict;
   }
 
-  Future requestGasPriceOld() async {
+  Future requestGasFromEthGasStation() async {
     var response = await HttpCore.instance.get('https://ethgasstation.info/json/ethgasAPI.json');
     return response;
   }

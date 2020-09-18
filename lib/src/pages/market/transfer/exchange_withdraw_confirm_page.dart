@@ -27,10 +27,16 @@ import 'package:titan/src/utils/utils.dart';
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String actualTransferredAmount;
+  final String gasFee;
+  final String withdrawFee;
+  final String total;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
     this.actualTransferredAmount,
+    this.gasFee,
+    this.withdrawFee,
+    this.total,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -39,12 +45,10 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
   }
 }
 
-class _ExchangeWithdrawConfirmPageState
-    extends BaseState<ExchangeWithdrawConfirmPage> {
+class _ExchangeWithdrawConfirmPageState extends BaseState<ExchangeWithdrawConfirmPage> {
   double ethFee = 0.0;
   double currencyFee = 0.0;
   var isTransferring = false;
-
   int selectedPriceLevel = 1;
 
   WalletVo activatedWallet;
@@ -52,9 +56,9 @@ class _ExchangeWithdrawConfirmPageState
   ExchangeApi _exchangeApi = ExchangeApi();
 
   @override
-  void onCreated() {
-    activatedQuoteSign = QuotesInheritedModel.of(context)
-        .activatedQuoteVoAndSign(widget.coinVo.symbol);
+  void onCreated() async {
+    var symbol = widget.coinVo.symbol;
+    activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
@@ -68,14 +72,13 @@ class _ExchangeWithdrawConfirmPageState
   Widget build(BuildContext context) {
     var _quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var _quoteSign = activatedQuoteSign?.sign?.sign;
-    var _withdrawFee = ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
-            .getWithdrawFee(widget.coinVo.symbol) ??
-        '0';
-    var _totalAmount = Decimal.parse(widget.actualTransferredAmount) +
-        Decimal.parse(_withdrawFee);
+
+    var unit = " ${widget.coinVo.symbol}";
+
+    var totalAmountString = "-${widget.total}" + unit;
+    var gasFeeString = "≈${widget.gasFee}" + unit;
+    var withdrawFeeString = '${widget.withdrawFee}' + unit;
+    var actualValueString = widget.actualTransferredAmount + unit;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -107,20 +110,15 @@ class _ExchangeWithdrawConfirmPageState
                           size: 48,
                         ),
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                           child: Text(
-                            "-$_totalAmount ${widget.coinVo.symbol}",
-                            style: TextStyle(
-                                color: Color(0xFF252525),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
+                            totalAmountString,
+                            style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                           ),
                         ),
                         Text(
                           "≈ $_quoteSign${FormatUtil.formatPrice(double.parse(widget.actualTransferredAmount) * _quotePrice)}",
-                          style:
-                              TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
+                          style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                         )
                       ],
                     ),
@@ -197,19 +195,13 @@ class _ExchangeWithdrawConfirmPageState
                             children: <Widget>[
                               Text(
                                 "${activatedWallet.wallet.keystore.name}",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF333333),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF333333), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               ),
                               Text(
                                 "(${shortBlockChainAddress(widget.coinVo.address)})",
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF999999),
-                                    fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 14, color: Color(0xFF999999), fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
                               )
@@ -249,7 +241,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                '$_withdrawFee ${widget.coinVo.symbol}',
+                                withdrawFeeString,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -262,6 +254,51 @@ class _ExchangeWithdrawConfirmPageState
                           )),
                     ],
                   )
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Divider(
+                height: 2,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      "网络费",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: HexColor('#FF999999'),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          height: 24,
+                          child: Text(
+                            gasFeeString,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF333333),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -294,7 +331,7 @@ class _ExchangeWithdrawConfirmPageState
                           child: Row(
                             children: <Widget>[
                               Text(
-                                widget.actualTransferredAmount,
+                                actualValueString,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -317,8 +354,7 @@ class _ExchangeWithdrawConfirmPageState
               margin: EdgeInsets.symmetric(vertical: 36, horizontal: 36),
               constraints: BoxConstraints.expand(height: 48),
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                 disabledColor: Colors.grey[600],
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
@@ -330,9 +366,7 @@ class _ExchangeWithdrawConfirmPageState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        isTransferring
-                            ? S.of(context).please_waiting
-                            : S.of(context).send,
+                        isTransferring ? S.of(context).please_waiting : S.of(context).send,
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 16,
