@@ -609,15 +609,19 @@ class _ExchangePageState extends BaseState<ExchangePage>
     // 24hour
     var _amount24Hour =
         '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity.amount,
+      marketItemEntity.kLineEntity?.amount,
       2,
     )}';
 
     // price
-    var _latestPrice = FormatUtil.truncateDecimalNum(
-      Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
-      4,
-    );
+    var _latestPrice = marketItemEntity.kLineEntity != null
+        ? FormatUtil.truncateDecimalNum(
+              Decimal.parse(
+                  marketItemEntity.kLineEntity?.close.toString() ?? '0'),
+              4,
+            ) ??
+            '-'
+        : '-';
     var _latestPriceString = '$_latestPrice';
 
     var _selectedQuote =
@@ -701,7 +705,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               height: 4,
                             ),
                             Text(
-                              _amount24Hour,
+                              _amount24Hour ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -718,7 +722,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  _latestPriceString,
+                                  _latestPriceString ?? '--',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
