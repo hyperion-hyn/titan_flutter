@@ -88,7 +88,7 @@ class EtherscanApi {
   }
 
 
-  Future<ResponseEntity> getGas() async {
+  Future<ResponseEntity> getGasFromEtherScan() async {
     Map json = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "gastracker",
       "action": "gasoracle",

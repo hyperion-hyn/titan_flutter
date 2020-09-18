@@ -135,6 +135,8 @@ class PrefsKey {
   static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
   static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
 
+  static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
+
   // kLine
   static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
 
