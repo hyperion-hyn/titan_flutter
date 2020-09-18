@@ -45,10 +45,10 @@ class ExchangeHttp extends BaseHttpCore {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
 
-      //if (env.buildType == BuildType.DEV) {
+      if (env.buildType == BuildType.DEV) {
       _instance.dio.interceptors
           .add(LogInterceptor(responseBody: true, requestBody: true));
-      //}
+      }
     }
     return _instance;
   }
