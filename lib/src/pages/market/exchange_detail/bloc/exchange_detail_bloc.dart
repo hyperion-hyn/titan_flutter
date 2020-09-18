@@ -28,6 +28,8 @@ class ExchangeDetailBloc extends Bloc<ExchangeDetailEvent, ExchangeDetailState> 
       }catch(error){
         if(error is HttpResponseCodeNotSuccess){
           yield OrderPutLimitState(respCode: error.code, respMsg: error.message);
+        }else{
+          yield OrderPutLimitState(respCode: -10000, respMsg: "网络异常");
         }
       }
     } else if (event is MarketExchangeEvent) {
