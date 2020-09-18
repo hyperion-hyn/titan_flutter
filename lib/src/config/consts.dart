@@ -6,6 +6,7 @@ import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
+
 class Const {
   static String get DOMAIN {
     return 'https://api.hyn.space/';
@@ -18,6 +19,22 @@ class Const {
       return Config.NODE_API_URL_TEST;
     } else {
       return Config.NODE_API_URL;
+    }
+  }
+
+  static String get EXCHANGE_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.EXCHANGE_DOMAIN_TEST;
+    } else {
+      return Config.EXCHANGE_DOMAIN;
+    }
+  }
+
+  static String get WS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.WS_DOMAIN_TEST;
+    } else {
+      return Config.WS_DOMAIN;
     }
   }
 
@@ -117,6 +134,8 @@ class PrefsKey {
 
   static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
   static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
+
+  static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
 
   // kLine
   static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';

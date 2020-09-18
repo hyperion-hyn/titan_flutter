@@ -130,6 +130,17 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
     return null;
   }
 
+  ActiveQuoteVoAndSign selectedQuoteVoAndSign({String symbol,QuotesSign quotesSign}) {
+    if (quotesModel != null && quotesSign != null) {
+      for (var quote in quotesModel.quotes) {
+        if (quote.symbol == symbol && quote.quote == quotesSign.quote) {
+          return ActiveQuoteVoAndSign(quoteVo: quote, sign: quotesSign);
+        }
+      }
+    }
+    return null;
+  }
+
   static QuotesInheritedModel of(BuildContext context, {QuotesAspect aspect}) {
     return InheritedModel.inheritFrom<QuotesInheritedModel>(context, aspect: aspect);
   }

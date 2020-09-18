@@ -4,6 +4,10 @@ part 'transtion_detail_vo.g.dart';
 
 @JsonSerializable()
 class TransactionDetailVo {
+  int id;
+  String contractAddress;
+  int localTransferType;
+
   int type; //1、转出 2、转入
   String hash;
   int state; //1 success, 0 pending, -1 failed
@@ -19,6 +23,9 @@ class TransactionDetailVo {
   String describe;
 
   TransactionDetailVo({
+    this.id,
+    this.contractAddress,
+    this.localTransferType,
     this.type,
     this.state,
     this.amount,
@@ -42,4 +49,10 @@ class TransactionDetailVo {
   String toString() {
     return toJson().toString();
   }
+}
+
+class LocalTransferType {
+  static const LOCAL_TRANSFER_ETH = 1;
+  static const LOCAL_TRANSFER_HYN_USDT = 2;
+  static const LOCAL_TRANSFER_MAP3 = 3;
 }

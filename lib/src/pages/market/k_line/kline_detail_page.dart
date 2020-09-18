@@ -26,8 +26,9 @@ class KLineDetailPage extends StatefulWidget {
   final String symbol;
   final String symbolName;
   final bool isPop;
+  final int periodCurrentIndex;
 
-  KLineDetailPage({this.symbol, this.symbolName, this.isPop});
+  KLineDetailPage({this.symbol, this.symbolName, this.isPop, this.periodCurrentIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -429,6 +430,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               mainState: _mainState,
               secondaryState: _secondaryState,
               locale: local,
+              fractionDigits: 4,
             ),
           ),
           Visibility(
@@ -1000,7 +1002,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   _initData() async {
-    _periodParameter = _normalPeriodList[0];
+
+    _periodCurrentIndex = widget.periodCurrentIndex??0;
+
+    _periodParameter = _normalPeriodList[_periodCurrentIndex];
 
     _detailTabController = TabController(
       initialIndex: 0,
@@ -1013,12 +1018,6 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       vsync: this,
       length: 7,
     );
-
-    var prefs = await SharedPreferences.getInstance();
-    var index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
-    if (index != null && index < 4 && _periodTabController != null) {
-      _periodTabController.index = index;
-    }
   }
 
   _setupRequest() {

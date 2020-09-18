@@ -2,6 +2,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -13,6 +14,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -104,8 +106,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 _refreshController.refreshCompleted();
               },
               onRefresh: () async {
-                BlocProvider.of<ExchangeCmpBloc>(context)
-                    .add(UpdateAssetsEvent());
+                ///update assets if logged in
+                if (ExchangeInheritedModel.of(context)
+                    .exchangeModel
+                    .isActiveAccount()) {
+                  BlocProvider.of<ExchangeCmpBloc>(context)
+                      .add(UpdateAssetsEvent());
+                }
+
+                ///update symbol list
+                BlocProvider.of<SocketBloc>(context).add(MarketSymbolEvent());
+
                 _loadDataBloc.add(RefreshSuccessEvent());
                 _refreshController.refreshCompleted();
               },
@@ -598,15 +609,19 @@ class _ExchangePageState extends BaseState<ExchangePage>
     // 24hour
     var _amount24Hour =
         '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
-      marketItemEntity.kLineEntity.amount,
+      marketItemEntity.kLineEntity?.amount,
       2,
     )}';
 
     // price
-    var _latestPrice = FormatUtil.truncateDecimalNum(
-      Decimal.parse(marketItemEntity.kLineEntity.close.toString()),
-      4,
-    );
+    var _latestPrice = marketItemEntity.kLineEntity != null
+        ? FormatUtil.truncateDecimalNum(
+              Decimal.parse(
+                  marketItemEntity.kLineEntity?.close.toString() ?? '0'),
+              4,
+            ) ??
+            '-'
+        : '-';
     var _latestPriceString = '$_latestPrice';
 
     var _selectedQuote =
@@ -640,7 +655,14 @@ class _ExchangePageState extends BaseState<ExchangePage>
     return Column(
       children: <Widget>[
         InkWell(
-            onTap: () {
+            onTap: () async {
+              var prefs = await SharedPreferences.getInstance();
+              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+              var periodCurrentIndex = 0;
+              if (index != null && index < 4) {
+                periodCurrentIndex = index;
+              }
+
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -648,6 +670,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                             symbol: marketItemEntity.symbol,
                             symbolName: marketItemEntity.symbolName,
                             isPop: false,
+                            periodCurrentIndex: periodCurrentIndex,
                           )));
             },
             child: Padding(
@@ -682,7 +705,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               height: 4,
                             ),
                             Text(
-                              _amount24Hour,
+                              _amount24Hour ?? '-',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 12,
@@ -699,7 +722,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  _latestPriceString,
+                                  _latestPriceString ?? '--',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
