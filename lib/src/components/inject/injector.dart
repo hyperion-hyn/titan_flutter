@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/data/repository/repository.dart';
 import 'package:titan/src/domain/domain.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
 
 class Injector extends InheritedWidget {
   final SearchInteractor searchInteractor;
+  final TransactionInteractor transactionInteractor;
   final Repository repository;
 
 //  final ScaffoldMapStore mapStore;
@@ -14,6 +16,7 @@ class Injector extends InheritedWidget {
     Key key,
     @required this.child,
     @required this.searchInteractor,
+    @required this.transactionInteractor,
     @required this.repository,
 //    @required this.mapStore,
   }) : super(key: key, child: child);
