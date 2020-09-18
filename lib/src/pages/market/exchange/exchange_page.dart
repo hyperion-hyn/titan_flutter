@@ -10,11 +10,14 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
+import 'package:titan/src/components/quotes/bloc/bloc.dart';
+import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -29,6 +32,7 @@ import 'package:titan/src/widget/loading_button/click_oval_icon_button.dart';
 
 import '../k_line/kline_detail_page.dart';
 import 'bloc/bloc.dart';
+import 'dart:convert';
 
 class ExchangePage extends StatefulWidget {
   @override
@@ -62,7 +66,26 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void onCreated() {
     super.onCreated();
+
+    ///check account
+    BlocProvider.of<ExchangeCmpBloc>(context).add(CheckAccountEvent());
+
+    _updateQuotes();
+
+    ///
     _setupMarketItemList();
+  }
+
+  _updateQuotes() async {
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
   }
 
   _setupMarketItemList() {
@@ -74,9 +97,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void initState() {
     super.initState();
-
-    ///check account
-    BlocProvider.of<ExchangeCmpBloc>(context).add(CheckAccountEvent());
   }
 
   @override
@@ -111,7 +131,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 ///update assets if logged in
                 if (ExchangeInheritedModel.of(context)
                     .exchangeModel
-                    .isActiveAccount()) {
+                    .hasActiveAccount()) {
                   BlocProvider.of<ExchangeCmpBloc>(context)
                       .add(UpdateAssetsEvent());
                 }
@@ -324,7 +344,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
       onTap: () {
         if (ExchangeInheritedModel.of(context)
             .exchangeModel
-            .isActiveAccount()) {
+            .hasActiveAccount()) {
           Application.router.navigateTo(
               context,
               Routes.exchange_assets_page +
@@ -403,6 +423,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
         .activatedQuoteVoAndSign('USDT')
         ?.quoteVo
         ?.price;
+    var _quoteSymbol = QuotesInheritedModel.of(context)
+        .activatedQuoteVoAndSign('USDT')
+        ?.sign
+        ?.quote;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
       var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
@@ -424,8 +448,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 fontSize: 12,
               )),
           TextSpan(
-            text:
-                ' (${QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote ?? ''})',
+            text: ' ${_quoteSymbol != null ? '($_quoteSymbol)' : ''}',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,

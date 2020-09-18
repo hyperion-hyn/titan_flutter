@@ -124,6 +124,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
         child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullUp: false,
+          onLoadData: () {
+            _refreshAssets();
+            _loadDataBloc.add(RefreshSuccessEvent());
+          },
           onRefresh: () {
             _refreshAssets();
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -193,7 +197,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   }
 
   _refreshAssets() {
-    if (_exchangeModel.isActiveAccount()) {
+    if (_exchangeModel.hasActiveAccount()) {
       BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
       _updateTypeToCurrency();
     } else {
@@ -204,12 +208,12 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   _totalBalances() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
-    var _totalByHyn = _exchangeModel.isActiveAccount()
+    var _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
         ? FormatUtil.truncateDecimalNum(
             _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
         : null;
 
-    var _totalByUsdt = _exchangeModel.isActiveAccount()
+    var _totalByUsdt = _exchangeModel.isActiveAccountAndHasAssets()
         ? _exchangeModel.activeAccount?.assetList?.getTotalUsdt()
         : null;
     var _isShowBalances =
@@ -293,7 +297,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                           onPressed: () {
                             if (ExchangeInheritedModel.of(context)
                                 .exchangeModel
-                                .isActiveAccount()) {
+                                .hasActiveAccount()) {
                               Application.router.navigateTo(
                                 context,
                                 Routes.exchange_transfer_page,
@@ -348,7 +352,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
   _exchangeAssetListView() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
-    var _assetList = _exchangeModel.isActiveAccount()
+    var _assetList = _exchangeModel.isActiveAccountAndHasAssets()
         ? _exchangeModel.activeAccount.assetList
         : null;
     var _isShowBalances =
@@ -475,7 +479,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           height: 16,
         ),
         Text(
-          _exchangeModel.isActiveAccount()
+          _exchangeModel.hasActiveAccount()
               ? S.of(context).exchange_empty_list
               : S.of(context).exchange_login_before_view_orders,
           style: TextStyle(

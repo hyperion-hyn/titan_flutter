@@ -551,20 +551,20 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             .exchangeModel
             .activeAccount
             .assetList
-            .getAsset(_selectedCoinType)
-            .withdrawMin
+            ?.getAsset(_selectedCoinType)
+            ?.withdrawMin
         : ExchangeInheritedModel.of(context)
             .exchangeModel
             .activeAccount
             .assetList
-            .getAsset(_selectedCoinType)
-            .rechargeMin;
+            ?.getAsset(_selectedCoinType)
+            ?.rechargeMin;
     var _withdrawFee = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         .assetList
-        .getAsset(_selectedCoinType)
-        .withdrawFee;
+        ?.getAsset(_selectedCoinType)
+        ?.withdrawFee;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -748,8 +748,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         .exchangeModel
         .activeAccount
         .assetList
-        .getAsset(_selectedCoinType)
-        .withdrawFee;
+        ?.getAsset(_selectedCoinType)
+        ?.withdrawFee;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 32.0),
       child: Container(
@@ -784,7 +784,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           .exchangeModel
           .activeAccount
           .assetList
-          .getAsset(_selectedCoinType)
+          ?.getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
         return FormatUtil.truncateDecimalNum(

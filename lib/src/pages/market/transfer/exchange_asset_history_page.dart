@@ -150,7 +150,7 @@ class _ExchangeAssetHistoryPageState
                         onPressed: () {
                           if (ExchangeInheritedModel.of(context)
                               .exchangeModel
-                              .isActiveAccount()) {
+                              .isActiveAccountAndHasAssets()) {
                             Application.router.navigateTo(
                               context,
                               '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
