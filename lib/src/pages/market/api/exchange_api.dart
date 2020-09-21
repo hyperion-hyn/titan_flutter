@@ -21,6 +21,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'dart:convert';
 import 'package:encrypt/encrypt.dart' as rsa;
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import '../../../../config.dart';
 
@@ -46,8 +47,8 @@ class ExchangeHttp extends BaseHttpCore {
       _instance = ExchangeHttp._internal();
 
       if (env.buildType == BuildType.DEV) {
-      _instance.dio.interceptors
-          .add(LogInterceptor(responseBody: true, requestBody: true));
+        _instance.dio.interceptors
+            .add(LogInterceptor(responseBody: true, requestBody: true));
       }
     }
     return _instance;
@@ -64,10 +65,17 @@ class ExchangeApi {
   init() {
     exchangeHttp = ExchangeHttp.instance;
 
-    getCookieDir().then((value) => {
-          exchangeHttp.dio.interceptors
-              .add(CookieManager(PersistCookieJar(dir: value)))
-        });
+    getCookieDir()
+        .then((value) => {
+              exchangeHttp.dio.interceptors
+                  .add(CookieManager(PersistCookieJar(dir: value)))
+            })
+        .catchError((e) {
+      LogUtil.printMessage(e);
+
+      ///If has error, use CookieJar instead
+      exchangeHttp.dio.interceptors.add(CookieManager(CookieJar()));
+    });
   }
 
   Future<String> getCookieDir() async {
@@ -198,7 +206,7 @@ class ExchangeApi {
     String type,
     String outerAddress,
     String balance,
-      String gasFee,
+    String gasFee,
   ) async {
     return await walletSignAndPost(
         path: ExchangeConst.PATH_WITHDRAW,
