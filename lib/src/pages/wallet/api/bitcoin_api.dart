@@ -79,7 +79,7 @@ class BitcoinApi {
   //{ address:string, appType:int, email:string, hynBalance:string, map3Staking:string}
 
   static Future<dynamic> postWalletBalance(String address, int appType, String email, String hynBalance,
-      {String map3Staking = ""}) async {
+      {String map3Staking = "0"}) async {
     var response;
     try {
 
@@ -87,7 +87,7 @@ class BitcoinApi {
         "address": address,
         "appType": appType,
         "email": email,
-        "hynBalance": hynBalance,
+        "hynBalance": hynBalance.isEmpty?"0":hynBalance,
         "map3Staking": map3Staking,
       };
 

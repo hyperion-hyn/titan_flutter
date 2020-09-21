@@ -95,7 +95,7 @@ class _WalletPageState extends BaseState<WalletPage>
     String address = activatedWalletVo.wallet.getEthAccount().address;
     int appType = 0;
     String email = "";
-    String hynBalance = "";
+    String hynBalance = "0";
     print("[API] address:$address, hynBalance:$hynBalance");
 
     // 同步用户钱包信息
