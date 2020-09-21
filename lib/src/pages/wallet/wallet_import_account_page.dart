@@ -213,8 +213,6 @@ class _ImportAccountState extends BaseState<ImportAccountPage> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return S.of(context).input_wallet_name_hint;
-                          } else if (value.length > 6) {
-                            return S.of(context).input_wallet_name_length_hint;
                           } else {
                             return null;
                           }
