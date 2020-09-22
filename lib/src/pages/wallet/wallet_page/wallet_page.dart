@@ -26,8 +26,10 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
@@ -87,23 +89,32 @@ class _WalletPageState extends BaseState<WalletPage>
 
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
+
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
+
     if (activatedWalletVo == null) return;
 
     String address = activatedWalletVo.wallet.getEthAccount().address;
     int appType = 0;
-    String email = "";
+    String email = "titan";
     String hynBalance = "0";
-    print("[API] address:$address, hynBalance:$hynBalance");
+    LogUtil.printMessage("[API] address:$address, hynBalance:$hynBalance, email:$email");
 
     // 同步用户钱包信息
     if (address.isNotEmpty) {
       var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
-      var balance = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
-
-
+      LogUtil.printMessage("object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
+      var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
+      balance = 0;
+      if (balance <= 0) {
+        var balanceValue = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
+        balance = ConvertTokenUnit.weiToDecimal(
+            balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
+            .toDouble();
+        LogUtil.printMessage("object] balance2: $balance");
+      }
       hynBalance = balance.toString();
       BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
     }
