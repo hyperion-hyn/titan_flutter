@@ -201,10 +201,10 @@ class NodeApi {
     var walletHynAddress = wallet.getEthAccount().address;
     var walletName = wallet.keystore.name;
 
-//    final client = WalletUtil.getWeb3Client();
-//    var count =
-//        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
-    int nonce = await wallet.getCurrentWalletNonce();
+    final client = WalletUtil.getWeb3Client();
+    var count =
+        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
+//    int nonce = await wallet.getCurrentWalletNonce();
 
     var approveNum = await wallet.getAllowance(hynErc20ContractAddress, ethAccount.address, approveToAddress);
 
@@ -220,7 +220,7 @@ class NodeApi {
             .ofConfig(Keys.rootKey.currentContext)
             .systemConfigEntity
             .erc20ApproveGasLimit,
-        nonce: nonce,
+        nonce: count,
       );
       print('approveHex is: $approveHex');
     }
@@ -231,7 +231,7 @@ class NodeApi {
       gasPrice: BigInt.from(gasPrice),
       gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.delegateMap3NodeGasLimit,
       password: password,
-      nonce: nonce + 1,
+      nonce: count + 1,
     );
     print('joinHex is: $joinHex');
 
