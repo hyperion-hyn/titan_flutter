@@ -44,88 +44,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   ExchangeApi _exchangeApi = ExchangeApi();
   WalletVo activatedWallet;
 
-  String _gasFeeStr = "0";
-
-  Future<double> gasFeeFunc(String symbol) async {
-    var gasPriceRecommend =
-        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-            .gasPriceRecommend;
-    var gasPrice = gasPriceRecommend.fast;
-
-    var totalGasLimit = SettingInheritedModel.ofConfig(context)
-        .systemConfigEntity
-        .erc20TransferGasLimit;
-    totalGasLimit = 40000;
-    var gasEstimate = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-            (gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
-
-    var quotesSign = SupportedQuoteSigns.defaultQuotesSign;
-    var ethQuotePrice = QuotesInheritedModel.of(context)
-            .selectedQuoteVoAndSign(symbol: 'ETH', quotesSign: quotesSign)
-            ?.quoteVo
-            ?.price ??
-        0; //
-
-    var gasPriceEstimate =
-        gasEstimate * Decimal.parse(ethQuotePrice.toString());
-    var fee = gasPriceEstimate.toDouble();
-    print("[object] baseSymbol:$symbol, u_fee:$fee");
-
-    // 使用的hyn ---fee
-    if (symbol == "HYN") {
-      double calculateBase = 0.000038;
-      calculateBase = 1.0;
-      var hynQuotePrice = QuotesInheritedModel.of(context)
-              .selectedQuoteVoAndSign(symbol: symbol, quotesSign: quotesSign)
-              ?.quoteVo
-              ?.price ??
-          0;
-      var uAmount = calculateBase * fee;
-      fee = uAmount / hynQuotePrice;
-      fee = double.parse(fee.toStringAsFixed(2));
-      print("[object] baseSymbol:$symbol, hyn_fee:$fee");
-    }
-
-    //fee = 0;
-    if (fee == 0) {
-      fee = await _getDefaultGasFee(symbol);
-    } else {
-      _setDefaultGasFee(fee, symbol);
-    }
-    print("[object] baseSymbol:$symbol, fee:$fee");
-
-    return fee;
-  }
-
-  Future<double> _getDefaultGasFee(String symbol) async {
-    double fee = 0;
-    var saveFee =
-        await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_FEE_KEY + symbol);
-    if (saveFee == null || !(saveFee is double)) {
-      fee = symbol == "HYN" ? 5.0 : 4.0;
-    } else {
-      fee = saveFee as double;
-    }
-
-    return fee;
-  }
-
-  _setDefaultGasFee(double fee, String symbol) async {
-    await AppCache.saveValue(PrefsKey.SHARED_PREF_GAS_FEE_KEY + symbol, fee);
-  }
-
-//  @override
-//  void onCreated() {
-//    // TODO: implement onCreated
-//    super.onCreated();
-//  }
-
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
+  void onCreated() {
+    // TODO: implement onCreated
+    super.onCreated();
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    await _gasFeeFullStrFunc();
   }
 
   @override
@@ -169,7 +92,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                   _transferTypeSelection(),
                                   _coinTypeSelection(),
                                   _amount(),
-                                  _transferHint(),
+                                  //_transferHint(),
                                 ],
                               ),
                             ),
@@ -526,17 +449,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       onTap: () {
         setState(() {
           _selectedCoinType = type;
-          _gasFeeFullStrFunc();
+          // _gasFeeFullStrFunc();
         });
         Navigator.of(context).pop();
       },
     );
-  }
-
-  _gasFeeFullStrFunc() async {
-    var gasFee = await gasFeeFunc(_selectedCoinType);
-    _gasFeeStr = gasFee.toStringAsFixed(2);
-    setState(() {});
   }
 
   _amount() {
@@ -559,12 +476,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             .assetList
             ?.getAsset(_selectedCoinType)
             ?.rechargeMin;
-    var _withdrawFee = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        .assetList
-        ?.getAsset(_selectedCoinType)
-        ?.withdrawFee;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -656,26 +567,18 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                 style: TextStyle(color: HexColor('#FFD8D8D8')),
                               ),
                               InkWell(
-                                child: Text(
-                                  S.of(context).all,
-                                  style: TextStyle(
-                                      color: HexColor('#FF333333'),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    S.of(context).all,
+                                    style: TextStyle(
+                                        color: HexColor('#FF333333'),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 onTap: () {
-                                  if (!_fromExchangeToWallet) {
-                                    _amountController.text = _availableAmount();
-                                  } else {
-                                    var _availableAmountValue =
-                                        Decimal.parse(_availableAmount());
-                                    var _withdrawFeeValue =
-                                        Decimal.parse(_gasFeeStr);
-                                    var sub = _availableAmountValue -
-                                        _withdrawFeeValue;
-                                    _amountController.text =
-                                        '${(sub.toDouble() < 0) ? "" : sub}';
-                                  }
+                                  _amountController.text = _availableAmount();
 
                                   _amountController.selection =
                                       TextSelection.fromPosition(TextPosition(
@@ -701,14 +604,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         Row(
           children: <Widget>[
-            if (_fromExchangeToWallet)
-              Text(
-                '${S.of(context).exchange_fee} $_gasFeeStr $_selectedCoinType',
-                style: TextStyle(
-                  color: HexColor('#FFAAAAAA'),
-                  fontSize: 12,
-                ),
-              ),
             Spacer(),
             Text.rich(TextSpan(children: [
               TextSpan(
@@ -740,41 +635,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           height: 16,
         ),
       ],
-    );
-  }
-
-  _transferHint() {
-    var _withdrawFee = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        .assetList
-        ?.getAsset(_selectedCoinType)
-        ?.withdrawFee;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 32.0),
-      child: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: HexColor('#FFF2F2F2'),
-          borderRadius: BorderRadius.circular(4.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_transfer_hint_account_to_wallet(
-                      _gasFeeStr,
-                      _selectedCoinType,
-                    )
-                : S.of(context).exchange_transfer_hint_wallet_to_exchange,
-            style: TextStyle(
-              color: HexColor('#FF777777'),
-              fontSize: 14,
-              height: 1.8,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -835,38 +695,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _withdraw() async {
-    var withdrawFeeStr = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        .assetList
-        .getAsset(_selectedCoinType)
-        .withdrawFee;
-
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbol(_selectedCoinType);
     var coinVoStr = FluroConvertUtils.object2string(coinVo.toJson());
 
-    var inputValue = Decimal.parse(_amountController?.text ?? "0");
-    print(
-        "[object] _gasFeeStf:$_gasFeeStr, is string :${_gasFeeStr is String}");
-    var gasFeeValue = Decimal.parse(_gasFeeStr);
-    var availableValue = Decimal.parse(_availableAmount());
-    var totalValue = inputValue + gasFeeValue;
-    var balanceValue = availableValue - gasFeeValue;
-    var transferAmountStr =
-        totalValue <= availableValue ? _amountController.text : '$balanceValue';
-
-    var total = Decimal.parse(transferAmountStr) + gasFeeValue;
-    var totalStr = total.toString();
-
-    print(
-        "[object] transferAmountStr:$transferAmountStr, gasFeeStr:$_gasFeeStr, withdrawFeeStr:$withdrawFeeStr, totalStr:$totalStr");
+    var _withdrawAmount = _amountController.text;
 
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&transferAmount=$transferAmountStr&gasFee=$_gasFeeStr&total=$totalStr',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&amount=$_withdrawAmount',
     );
   }
 }
