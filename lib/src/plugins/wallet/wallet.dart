@@ -191,7 +191,7 @@ class Wallet {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
-    nonce = await getCurrentWalletNonce(nonce: nonce);
+//    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -208,8 +208,8 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    await transactionInteractor.insertTransactionDB(
-        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
+//    await transactionInteractor.insertTransactionDB(
+//        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
 
     return txHash;
   }
@@ -227,7 +227,7 @@ class Wallet {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
     }
-    nonce = await getCurrentWalletNonce(nonce: nonce);
+//    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
@@ -246,9 +246,9 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    await transactionInteractor.insertTransactionDB(
-        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
-        id: id, contractAddress: contractAddress);
+//    await transactionInteractor.insertTransactionDB(
+//        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
+//        id: id, contractAddress: contractAddress);
     return txHash;
   }
 
@@ -295,9 +295,9 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    await transactionInteractor.insertTransactionDB(
-        txHash, approveToAddress, amount, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
-        contractAddress: contractAddress);
+//    await transactionInteractor.insertTransactionDB(
+//        txHash, approveToAddress, amount, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
+//        contractAddress: contractAddress);
     return txHash;
   }
 
@@ -411,8 +411,8 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, stakingAmount, gasPrice,
-        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
+//    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, stakingAmount, gasPrice,
+//        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
     return txHash;
   }
 
@@ -466,8 +466,8 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, BigInt.parse("0"), gasPrice,
-        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
+//    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, BigInt.parse("0"), gasPrice,
+//        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
     return txHash;
   }
 
