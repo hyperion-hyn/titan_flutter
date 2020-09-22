@@ -223,6 +223,8 @@ class NodeApi {
         nonce: count,
       );
       print('approveHex is: $approveHex');
+
+      count = count + 1;
     }
 
     var joinHex = await wallet.sendDelegateMap3Node(
@@ -231,7 +233,7 @@ class NodeApi {
       gasPrice: BigInt.from(gasPrice),
       gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.delegateMap3NodeGasLimit,
       password: password,
-      nonce: count + 1,
+      nonce: count,
     );
     print('joinHex is: $joinHex');
 
