@@ -30,7 +30,10 @@ class NodeDefaultEntity extends Object {
   @JsonKey(name: 'shareKey')
   String shareKey;
 
-  NodeDefaultEntity(this.address,this.txHash,{this.name,this.amount,this.publicKey,this.nodeProvider,this.nodeRegion,this.shareKey});
+  @JsonKey(name: 'gasprice')
+  int gasPrice;
+
+  NodeDefaultEntity(this.address,this.txHash,this.gasPrice,{this.name,this.amount,this.publicKey,this.nodeProvider,this.nodeRegion,this.shareKey});
 
   factory NodeDefaultEntity.fromJson(Map<String, dynamic> srcJson) => _$NodeDefaultEntityFromJson(srcJson);
 
