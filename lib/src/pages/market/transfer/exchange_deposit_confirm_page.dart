@@ -49,8 +49,6 @@ class ExchangeDepositConfirmPage extends StatefulWidget {
 
 class _ExchangeDepositConfirmPageState
     extends BaseState<ExchangeDepositConfirmPage> {
-  double ethFee = 0.0;
-  double currencyFee = 0.0;
   var isTransferring = false;
   var isLoadingGasFee = false;
 

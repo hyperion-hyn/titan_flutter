@@ -170,9 +170,7 @@ var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
 var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeWithdrawConfirmPage(
     params['coinVo']?.first,
-    '${params['transferAmount']?.first ?? 0}',
-    '${params['gasFee']?.first ?? 0}',
-    '${params['total']?.first ?? 0}',
+    '${params['amount']?.first ?? 0}',
   );
 });
 

@@ -266,8 +266,8 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                   : '≈ ${FormatUtil.truncateDecimalNum(
                                       _usdtToCurrency * _totalByUsdt,
                                       4,
-                                    )} ${symbolQuote?.sign?.quote}'
-                              : '≈ ***** ${symbolQuote?.sign?.quote}',
+                                    )} ${symbolQuote?.sign?.quote ?? '-'}'
+                              : '≈ ***** ${symbolQuote?.sign?.quote ?? '-'}',
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -647,7 +647,7 @@ class AssetItemState extends State<AssetItem> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                        '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign?.quote ?? '-'})',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
