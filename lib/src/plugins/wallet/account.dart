@@ -28,14 +28,16 @@ class Account {
   factory Account.fromJsonWithNet(Map<dynamic, dynamic> json, [EthereumNetType netType = EthereumNetType.main]) {
     AssetToken token;
     var erc20Tokens = <AssetToken>[];
-    if (json['coinType'] == CoinType.ETHEREUM) {
+    if (json['coinType'] == CoinType.HYN_MAIN) {
+      token = SupportedTokens.HYN_MAIN;
+    }else if (json['coinType'] == CoinType.ETHEREUM) {
       token = SupportedTokens.ETHEREUM;
       //active contract tokens
       if (netType == EthereumNetType.main) {
-        erc20Tokens.add(SupportedTokens.HYN);
+//        erc20Tokens.add(SupportedTokens.HYN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else if (netType == EthereumNetType.ropsten) {
-        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
+//        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
       } else if (netType == EthereumNetType.rinkeby) {
         erc20Tokens.add(SupportedTokens.HYN_RINKEBY);

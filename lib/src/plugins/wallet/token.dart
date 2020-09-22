@@ -35,6 +35,15 @@ class SupportedTokens {
     logo: 'res/drawable/ic_btc_logo_large.png',
     symbol: 'BTC',
   );
+
+  static const HYN_MAIN = const AssetToken(
+    name: 'Hyperion',
+    decimals: 18,
+    contractAddress: null,
+    logo: 'res/drawable/ic_hyn_logo_new.png',
+    symbol: 'HYN',
+  );
+
   static const ETHEREUM = const AssetToken(
     name: 'Ethereum',
     decimals: 18,

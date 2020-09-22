@@ -18,6 +18,8 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -64,17 +66,17 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
   int selectedPriceLevel = 2;
 
   WalletVo activatedWallet;
-  ActiveQuoteVoAndSign activatedQuoteSign;
 
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
   List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
   String _pageTitle = "";
+  var gasPriceRecommend;
 
   @override
   void onCreated() {
-    activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo?.symbol ?? "btc");
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    var myActiveShortAddr = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
     switch (widget.actionEvent) {
 //      case Map3NodeActionEvent.DELEGATE:
 //        _pageTitle = S.of(context).transfer_confirm;
@@ -94,7 +96,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         _subList[1] = "钱包";
         _detailList = [
           "节点号: ${widget.atlasNodeId}",
-          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr})",
           "${widget.transferAmount} HYN"
         ];
         break;
@@ -102,7 +104,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         _pageTitle = "确认编辑Atlas节点";
         _subList[1] = "Atlas节点";
         _detailList = [
-          "${activatedWallet.wallet.keystore.name} (${activatedWallet.wallet.getEthAccount().address})",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
           "节点号: ${widget.atlasNodeId}",
           "${widget.transferAmount} HYN"
         ];
@@ -111,7 +113,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         _pageTitle = "激活节点";
         _subList[1] = "Atlas链";
         _detailList = [
-          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
           "",
           "${widget.transferAmount} HYN"
         ];
@@ -120,9 +122,19 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         _pageTitle = "激活节点";
         _subList[1] = "Atlas链";
         _detailList = [
-          "${activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address)})",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
           "",
           "${widget.transferAmount} HYN"
+        ];
+        break;
+      case Map3NodeActionEvent.EXCHANGE_HYN:
+        _pageTitle = "兑换HYN";
+        _titleList[2] = "网络费用";
+        _subList = ["ERC20钱包", "主链钱包", ""];
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+          ""
         ];
         break;
       default:
@@ -157,6 +169,19 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
 
+    if (widget.actionEvent == Map3NodeActionEvent.EXCHANGE_HYN) {
+      var activatedQuoteSign = QuotesInheritedModel.of(context).activeQuotesSign;
+      var ethQuotePrice = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0;
+      var quoteSign = activatedQuoteSign?.sign;
+      gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+      var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate = gasEstimate * Decimal.parse(ethQuotePrice.toString());
+      var gasPriceEstimateStr =
+          "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign ${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+      _subList[2] = gasPriceEstimateStr;
+    }
     return Column(
       children: <Widget>[
         Expanded(
@@ -234,12 +259,135 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                   physics: NeverScrollableScrollPhysics(),
                 ),
               ),
+              if (widget.actionEvent == Map3NodeActionEvent.EXCHANGE_HYN)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(0);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: selectedPriceLevel == 0 ? Colors.grey : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius:
+                                      BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30))),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_slow,
+                                    style: TextStyle(
+                                        color: selectedPriceLevel == 0 ? Colors.white : Colors.black, fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.safeLowWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        VerticalDivider(
+                          width: 1,
+                          thickness: 2,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(1);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: selectedPriceLevel == 1 ? Colors.grey : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius: BorderRadius.all(Radius.circular(0))),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_normal,
+                                    style: TextStyle(
+                                        color: selectedPriceLevel == 1 ? Colors.white : Colors.black, fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.avgWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        VerticalDivider(
+                          width: 1,
+                          thickness: 2,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _speedOnTap(2);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: selectedPriceLevel == 2 ? Colors.grey : Colors.grey[200],
+                                  border: Border(),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(30), bottomRight: Radius.circular(30))),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    S.of(context).speed_fast,
+                                    style: TextStyle(
+                                        color: selectedPriceLevel == 2 ? Colors.white : Colors.black, fontSize: 12),
+                                  ),
+                                  Text(
+                                    S.of(context).wait_min(gasPriceRecommend.fastWait.toString()),
+                                    style: TextStyle(fontSize: 10, color: Colors.black38),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
             ],
           ),
         ),
         _confirmButtonWidget(),
       ],
     );
+  }
+
+  Decimal get gasPrice {
+    switch (selectedPriceLevel) {
+      case 0:
+        return gasPriceRecommend.safeLow;
+      case 1:
+        return gasPriceRecommend.average;
+      case 2:
+        return gasPriceRecommend.fast;
+      default:
+        return gasPriceRecommend.average;
+    }
+  }
+
+  void _speedOnTap(int index) {
+    setState(() {
+      selectedPriceLevel = index;
+    });
   }
 
   Widget _headerWidget() {
@@ -267,7 +415,6 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
- 
                     "-${widget.transferAmount} ${widget.coinVo?.symbol ?? "HYN"}",
                     style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
@@ -329,9 +476,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                 Routes.map3node_broadcast_success_page +
                     "?actionEvent=${widget.actionEvent}" +
                     "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-          }catch(error){
-
-          }
+          } catch (error) {}
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

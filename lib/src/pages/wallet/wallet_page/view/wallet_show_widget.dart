@@ -25,6 +25,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -209,34 +210,58 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             ),
             if (widget.walletVo.wallet.getBitcoinAccount() == null)
               _bitcoinEmptyView(context),
+            _exchangeHYNView(context),
             if (env.buildType == BuildType.DEV) _testWalletView(context),
           ]),
     );
   }
 
-  Widget _bitcoinEmptyView(BuildContext context) {
-    /*FlatButton(
-      onPressed: () {
-        showModalBottomSheet(
-            isScrollControlled: true,
-            context: context,
-            builder: (BuildContext context) {
-              return EnterWalletPasswordWidget();
-            }).then((walletPassword) async {
-          if (walletPassword == null) {
-            return;
-          }
-
-          await walletVo.wallet.bitcoinActive(walletPassword);
-          BlocProvider.of<WalletCmpBloc>(context)
-              .add(LoadLocalDiskWalletAndActiveEvent());
-//                    Future.delayed(Duration(milliseconds: 1000),(){
-//                      loadDataBloc.add(LoadingEvent());
-//                    });
-        });
+  Widget _exchangeHYNView(BuildContext context) {
+    var coinVo = CoinVo(
+      name: "Hyperion",
+      symbol: "HYN",
+      coinType: 0,
+      address: "",
+      decimals: 18,
+      logo: "res/drawable/ic_hyn_logo_empty.png",
+      contractAddress: null,
+      extendedPublicKey: "",
+      balance: BigInt.from(0),
+    );
+    return InkWell(
+      onTap: () {
+        Application.router.navigateTo(
+            context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.EXCHANGE_HYN.index}");
       },
-      child: Text("激活比特币"),
-    ),*/
+      child: Column(
+        children: <Widget>[
+          _buildAccountItem(context, coinVo),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 6),
+                child: Text(
+                  "兑换主链币",
+                  style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Image.asset(
+                  "res/drawable/ic_question_remind.png",
+                  width: 16,
+                  height: 16,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _bitcoinEmptyView(BuildContext context) {
     var coinVo = CoinVo(
       name: "BITCOIN",
       symbol: "BTC",
