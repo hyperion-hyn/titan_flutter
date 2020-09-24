@@ -170,12 +170,11 @@ class Wallet {
       WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       String fromAddress = walletVo.wallet.getEthAccount().address;
       nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
-      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
-      if (localNonce != null && int.parse(localNonce) >= nonce) {
-        nonce = int.parse(localNonce) + 1;
-      }
+//      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
+//      if (localNonce != null && int.parse(localNonce) >= nonce) {
+//        nonce = int.parse(localNonce) + 1;
+//      }
     }
-    print("!!!!!nonce = $nonce");
     return nonce;
   }
 
@@ -208,8 +207,9 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-//    await transactionInteractor.insertTransactionDB(
-//        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
+    nonce = await getCurrentWalletNonce();
+    await transactionInteractor.insertTransactionDB(
+        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
 
     return txHash;
   }
@@ -246,9 +246,10 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-//    await transactionInteractor.insertTransactionDB(
-//        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
-//        id: id, contractAddress: contractAddress);
+    nonce = await getCurrentWalletNonce();
+    await transactionInteractor.insertTransactionDB(
+        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
+        id: id, contractAddress: contractAddress);
     return txHash;
   }
 

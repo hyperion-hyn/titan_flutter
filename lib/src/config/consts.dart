@@ -147,6 +147,8 @@ class PrefsKey {
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
 
+  static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+
 }
 
 class SecurePrefsKey {

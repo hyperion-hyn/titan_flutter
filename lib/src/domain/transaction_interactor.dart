@@ -46,7 +46,6 @@ class TransactionInteractor {
         symbol = "Tether USD";
       }
       amount = ConvertTokenUnit.weiToDecimal(BigInt.parse(value.toString()), decimal).toDouble();
-      print("!!!!! symbol $symbol $amount $decimal");
     }
     TransactionDetailVo transactionDetailVo = TransactionDetailVo(
         id: id,
@@ -65,14 +64,27 @@ class TransactionInteractor {
     await repository.transferHistoryDao.insertOrUpdate(transactionDetailVo);
   }
 
+  Future<TransactionDetailVo> getShareTransaction(int type, bool isAll, {String contractAddress}) async {
+    String fromAddress =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+    var entity = await repository.transferHistoryDao.getShareTransaction(type, fromAddress, contractAddress: contractAddress,isAll: isAll);
+    return entity;
+  }
+
   Future<List<TransactionDetailVo>> getTransactionList(int type, {String contractAddress}) {
     String fromAddress =
-        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getEthAccount().address;
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ?? "";
     return repository.transferHistoryDao.getList(type, fromAddress, contractAddress: contractAddress);
   }
 
-  Future<int> deleteSameNonce(String nonce) {
-    return repository.transferHistoryDao.deleteSameNonce(nonce);
+  Future deleteSameNonce(String nonce) async {
+    var tranEntity = await getShareTransaction(LocalTransferType.LOCAL_TRANSFER_ETH,true);
+    if(tranEntity == null){
+      return ;
+    }
+    if(int.parse(nonce) >= int.parse(tranEntity.nonce)){
+      repository.transferHistoryDao.deleteSameNonce();
+    }
   }
 
   Future<String> showPasswordDialog(BuildContext context) async {
@@ -85,29 +97,34 @@ class TransactionInteractor {
   }
 
   Future cancelTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,String password) async {
-    var activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
     var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
-    var gasPrice = int.parse(transactionDetailVo.gasPrice) + (10 * TokenUnit.G_WEI);
-    print(
-        "!!!!!$gasPrice ${int.parse(transactionDetailVo.gasPrice)} ${transactionDetailVo.gasPrice} ${10 * TokenUnit.G_WEI}");
-    print("!!!!!amount $amount ${transactionDetailVo.id} ${transactionDetailVo.nonce}");
+    Decimal maxGasPrice = gasPriceRecommend.fast;
+    Decimal speedGasPrice = Decimal.parse(transactionDetailVo.gasPrice) * Decimal.parse("1.1");
+    Decimal resultGasPrice;
+    if(speedGasPrice < maxGasPrice){
+      resultGasPrice = speedGasPrice;
+    }else{
+      resultGasPrice = maxGasPrice;
+    }
 
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
-      var txHash = await activeWallet.sendEthTransaction(
+      var txHash = await walletVo.wallet.sendEthTransaction(
           id: transactionDetailVo.id,
           password: password,
           value: amount,
           toAddress: transactionDetailVo.toAddress,
-          gasPrice: BigInt.from(gasPrice),
+          gasPrice: BigInt.from(resultGasPrice.toInt()),
           nonce: int.parse(transactionDetailVo.nonce));
       logger.i('ETH交易已提交，交易hash $txHash');
     } else if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_HYN_USDT) {
-      var txHash = await activeWallet.sendErc20Transaction(
+      var txHash = await walletVo.wallet.sendErc20Transaction(
           id: transactionDetailVo.id,
           contractAddress: transactionDetailVo.contractAddress,
           password: password,
-          gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+          gasPrice: BigInt.from(resultGasPrice.toInt()),
           value: amount,
           toAddress: transactionDetailVo.toAddress,
           nonce: int.parse(transactionDetailVo.nonce));
@@ -127,10 +144,6 @@ class TransactionInteractor {
     }else{
       resultGasPrice = maxGasPrice;
     }
-    print("!!!!!resultGasPrice = ${transactionDetailVo.gasPrice} $resultGasPrice");
-//    var gasPrice = int.parse(transactionDetailVo.gasPrice) + (10 * TokenUnit.G_WEI);
-//    print("!!!!!$gasPrice ${int.parse(transactionDetailVo.gasPrice)} ${transactionDetailVo.gasPrice} ${10 * TokenUnit.G_WEI}");
-//    print("!!!!!amount $amount ${transactionDetailVo.id} ${transactionDetailVo.nonce}");
 
     if (transactionDetailVo.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH) {
       var amount = ConvertTokenUnit.etherToWei(etherDouble: transactionDetailVo.amount);

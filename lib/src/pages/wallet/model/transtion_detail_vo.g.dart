@@ -36,7 +36,7 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'type': instance.type,
       'hash': instance.hash,
       'state': instance.state,
-      'amount': instance.amount,
+      'amount': instance.amount.toString(),
       'symbol': instance.symbol,
       'fromAddress': instance.fromAddress,
       'toAddress': instance.toAddress,

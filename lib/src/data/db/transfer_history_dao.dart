@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import '../entity/history_search.dart';
 
@@ -21,47 +26,38 @@ class TransferHistoryDao {
   static const String kColumnLocalTransferType = 'localTransferType';
 
   Future<TransactionDetailVo> insertOrUpdate(TransactionDetailVo entity) async {
-    if (entity.id == null) {
-      print("!!!!! insert");
-      entity.id = await (await _db).rawInsert(
-          'INSERT OR REPLACE INTO $kTable($kColumnHash, $kColumnNonce, $kColumnFromAddress, $kColumnToAddress'
-          ', $kColumnTime, $kColumnType, $kColumnSymbol, $kColumnAmount, $kColumnGas, $kColumnGasPrice, $kColumnContractAddress, $kColumnLocalTransferType) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',
-          [
-            entity.hash,
-            entity.nonce,
-            entity.fromAddress,
-            entity.toAddress,
-            entity.time,
-            entity.type,
-            entity.symbol,
-            entity.amount,
-            entity.gas,
-            entity.gasPrice,
-            entity.contractAddress,
-            entity.localTransferType,
-          ]);
-    } else {
-      print("!!!!! update ${entity.amount}");
-      entity.id = await (await _db).rawInsert(
-          'INSERT OR REPLACE INTO $kTable($kColumnId, $kColumnHash, $kColumnNonce, $kColumnFromAddress, $kColumnToAddress'
-              ', $kColumnTime, $kColumnType, $kColumnSymbol, $kColumnAmount, $kColumnGas, $kColumnGasPrice, $kColumnContractAddress, $kColumnLocalTransferType) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          [
-            entity.id,
-            entity.hash,
-            entity.nonce,
-            entity.fromAddress,
-            entity.toAddress,
-            entity.time,
-            entity.type,
-            entity.symbol,
-            entity.amount,
-            entity.gas,
-            entity.gasPrice,
-            entity.contractAddress,
-            entity.localTransferType,
-          ]);
+    String fromAddress =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+    if(fromAddress.isEmpty){
+      return null;
     }
+    await AppCache.saveValue(PrefsKey.PENDING_TRANSFER_KEY_PREFIX + fromAddress, json.encode(entity.toJson()));
+
     return entity;
+  }
+
+  Future<TransactionDetailVo> getShareTransaction(int type, String fromAddress,{String contractAddress,bool isAll}) async {
+    String entityStr = await AppCache.getValue(PrefsKey.PENDING_TRANSFER_KEY_PREFIX + fromAddress);
+    if(entityStr == null){
+      return null;
+    }
+    var transcactionEntity = TransactionDetailVo.fromJson(json.decode(entityStr));
+    if(isAll){
+      return transcactionEntity;
+    }
+    if(type == LocalTransferType.LOCAL_TRANSFER_ETH){
+      if(transcactionEntity.localTransferType == LocalTransferType.LOCAL_TRANSFER_ETH
+          && transcactionEntity.fromAddress == fromAddress){
+        return transcactionEntity;
+      }
+    }else if (type == LocalTransferType.LOCAL_TRANSFER_HYN_USDT){
+      if(transcactionEntity.localTransferType == LocalTransferType.LOCAL_TRANSFER_HYN_USDT
+          && transcactionEntity.fromAddress == fromAddress
+          && transcactionEntity.contractAddress == contractAddress){
+        return transcactionEntity;
+      }
+    }
+    return null;
   }
 
   Future<List<TransactionDetailVo>> getList(int type, String fromAddress,{String contractAddress}) async {
@@ -110,8 +106,13 @@ class TransferHistoryDao {
     return await (await _db).delete(kTable, where: '$kColumnId=?', whereArgs: [id]);
   }
 
-  Future<int> deleteSameNonce(String nonce) async {
-    return await (await _db).delete(kTable, where: '$kColumnNonce=?', whereArgs: [nonce]);
+  Future deleteSameNonce() async {
+    String fromAddress =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+    if(fromAddress.isEmpty){
+      return;
+    }
+    await AppCache.remove(PrefsKey.PENDING_TRANSFER_KEY_PREFIX + fromAddress);
   }
 
   Future<int> deleteAll() async {
