@@ -45,8 +45,6 @@ class ExchangeWithdrawConfirmPage extends StatefulWidget {
 
 class _ExchangeWithdrawConfirmPageState
     extends BaseState<ExchangeWithdrawConfirmPage> {
-  double ethFee = 0.0;
-  double currencyFee = 0.0;
   var isTransferring = false;
   var isLoadingGasFee = false;
 
@@ -303,12 +301,6 @@ class _ExchangeWithdrawConfirmPageState
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Divider(
-                height: 2,
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -415,7 +407,9 @@ class _ExchangeWithdrawConfirmPageState
                     ? null
                     : () async {
                         await _transfer(
-                            _actualAmount.toString(), _gasPriceByToken);
+                          _actualAmount.toString(),
+                          _gasPriceByToken,
+                        );
                       },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
