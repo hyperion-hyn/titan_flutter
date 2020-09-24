@@ -78,9 +78,8 @@ class BitcoinApi {
 
   //{ address:string, appType:int, email:string, hynBalance:string, map3Staking:string}
 
-  static Future<dynamic> postWalletBalance(String address, int appType, String email, String hynBalance,
+  static Future postWalletBalance(String address, int appType, String email, String hynBalance,
       {String map3Staking = "0"}) async {
-    var response;
     try {
 
       Map<String, dynamic> params = {
@@ -91,26 +90,11 @@ class BitcoinApi {
         "map3Staking": map3Staking,
       };
 
-/*
-      print("1, balance request params:$params");
-
-      params = {
-        "address": "0xllllll",
-        "appType": 0,
-        "email": "123436",
-        "hynBalance": "0",
-        "map3Staking": "xxx",
-      };
-      print("2, balance request params:$params");
-*/
-
       await HttpCore.instance.post(WalletConfig.WALLET_ADDRESS_API,
           params: params,
           options: RequestOptions(contentType: Headers.jsonContentType));
-      print("[Bit] xxx" + response);
     } catch (exception) {
-      LogUtil.uploadException(exception, 'wallet balance empty!');
+      LogUtil.uploadException(exception, '[postWalletBalance]');
     }
-    return response;
   }
 }
