@@ -13,6 +13,9 @@ class AssetType extends Object {
   @JsonKey(name: 'withdraw_fee')
   String withdrawFee;
 
+  @JsonKey(name: 'withdraw_fee_by_gas')
+  String withdrawFeeByGas;
+
   @JsonKey(name: 'recharge')
   bool recharge;
 
@@ -53,6 +56,7 @@ class AssetType extends Object {
     this.accountAvailable,
     this.accountFreeze,
     this.withdrawFee,
+    this.withdrawFeeByGas,
     this.recharge,
     this.withdraw,
     this.rechargeMin,

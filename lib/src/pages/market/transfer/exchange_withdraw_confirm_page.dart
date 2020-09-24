@@ -31,10 +31,12 @@ import 'package:titan/src/utils/utils.dart';
 class ExchangeWithdrawConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String amount;
+  final String withdrawFeeByGas;
 
   ExchangeWithdrawConfirmPage(
     String coinVo,
     this.amount,
+    this.withdrawFeeByGas,
   ) : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 
   @override
@@ -141,6 +143,11 @@ class _ExchangeWithdrawConfirmPageState
       _gasPriceEstimateStr =
           "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
     }
+
+    ///Actual withdrawFee:
+    ///[withdrawFeeByGas] * _gasPriceEstimate
+    _gasPriceEstimate =
+        Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
 
     var _gasPriceByToken = FormatUtil.truncateDoubleNum(
         _gasPriceEstimate.toDouble() / _quotePrice, 4);

@@ -703,9 +703,16 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
     var _withdrawAmount = _amountController.text;
 
+    var _withDrawFeeByGas = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        ?.getAsset(_selectedCoinType)
+        ?.withdrawFeeByGas;
+
     Application.router.navigateTo(
       context,
-      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&amount=$_withdrawAmount',
+      '${Routes.exchange_withdraw_confirm_page}?coinVo=$coinVoStr&amount=$_withdrawAmount&withdrawFeeByGas=$_withDrawFeeByGas',
     );
   }
 }
