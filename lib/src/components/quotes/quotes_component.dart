@@ -49,16 +49,16 @@ class _QuotesManagerState extends State<_QuotesManager> {
 
   void initData() async {
     var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
-    if(gasPriceEntityStr != null){
+    if (gasPriceEntityStr != null) {
       _gasPriceRecommend = GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
-    }else{
+    } else {
       _gasPriceRecommend = GasPriceRecommend.defaultValue();
     }
 
     var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
-    if(btcGasPriceEntityStr != null){
+    if (btcGasPriceEntityStr != null) {
       _btcGasPriceRecommend = BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
-    }else{
+    } else {
       _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
     }
   }
@@ -66,7 +66,7 @@ class _QuotesManagerState extends State<_QuotesManager> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<QuotesCmpBloc, QuotesCmpState>(
-      listener: (context,state){
+      listener: (context, state) {
         print("state is UpdatedQuotesSignState 111 = ${state is UpdatedQuotesSignState}");
         if (state is UpdatedQuotesSignState) {
           _quotesSign = state.sign;
@@ -130,7 +130,7 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
     return null;
   }
 
-  ActiveQuoteVoAndSign selectedQuoteVoAndSign({String symbol,QuotesSign quotesSign}) {
+  ActiveQuoteVoAndSign selectedQuoteVoAndSign({String symbol, QuotesSign quotesSign}) {
     if (quotesModel != null && quotesSign != null) {
       for (var quote in quotesModel.quotes) {
         if (quote.symbol == symbol && quote.quote == quotesSign.quote) {

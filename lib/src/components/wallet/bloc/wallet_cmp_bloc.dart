@@ -83,7 +83,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         try {
           await walletRepository.updateWalletVoBalance(
-              _activatedWalletVo, event.symbol);
+              _activatedWalletVo, event.symbol, event.contractAddress);
           _saveWalletVoBalanceToDisk(
               _activatedWalletVo); //save balance data to disk;
           yield UpdatedWalletBalanceState(
@@ -161,7 +161,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var deList = decoded.map((item) => CoinVo.fromJson(item)).toList();
       for (var cVo in vo.coins) {
         for (var dVO in deList) {
-          if (cVo.symbol == dVO.symbol) {
+          if (cVo.symbol == dVO.symbol && cVo.contractAddress == dVO.contractAddress) {
             cVo.balance = dVO.balance;
             break;
           }

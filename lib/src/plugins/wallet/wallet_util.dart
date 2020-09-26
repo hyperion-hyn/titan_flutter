@@ -20,6 +20,7 @@ import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/hyn_erc20_abi.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/map3_staking_abi.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:http/http.dart';
@@ -56,9 +57,7 @@ class WalletUtil {
 
   ///store mnemonic
   static Future<Wallet> storeByMnemonic(
-      {@required String name,
-      @required String password,
-      @required String mnemonic}) async {
+      {@required String name, @required String password, @required String mnemonic}) async {
     var fileName = await WalletChannel.saveAsTrustWalletKeyStoreByMnemonic(
       name: name,
       mnemonic: mnemonic,
@@ -70,11 +69,9 @@ class WalletUtil {
 
   ///store private key
   static Future<Wallet> storePrivateKey(
-      {@required String name,
-      @required String password,
-      @required String prvKeyHex}) async {
-    var fileName = await WalletChannel.saveAsTrustWalletKeyStoreByPrivateKey(
-        name: name, prvKeyHex: prvKeyHex, password: password);
+      {@required String name, @required String password, @required String prvKeyHex}) async {
+    var fileName =
+        await WalletChannel.saveAsTrustWalletKeyStoreByPrivateKey(name: name, prvKeyHex: prvKeyHex, password: password);
     return loadWallet(fileName);
   }
 
@@ -95,8 +92,7 @@ class WalletUtil {
 
   ///get eth gas price
   static Future<BigInt> ethGasPrice({int requestId = 1}) async {
-    var response =
-        await postToEthereumNetwork(method: 'eth_gasPrice', params: []);
+    var response = await postToEthereumNetwork(method: 'eth_gasPrice', params: []);
     if (response['result'] != null) {
       BigInt gasPrice = hexToInt(response['result']);
       return gasPrice;
@@ -108,8 +104,7 @@ class WalletUtil {
     @required String fileName,
     @required password,
   }) {
-    return WalletChannel.exportPrivateKey(
-        fileName: fileName, password: password);
+    return WalletChannel.exportPrivateKey(fileName: fileName, password: password);
   }
 
   static Future<String> exportMnemonic({
@@ -127,8 +122,7 @@ class WalletUtil {
   }
 
   static checkUseDigitsPwd(Wallet wallet) async {
-    var result = await AppCache.getValue<bool>(
-        '${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
+    var result = await AppCache.getValue<bool>('${PrefsKey.WALLET_USE_DIGITS_PWD_PREFIX}_${wallet.keystore.fileName}');
     return result != null && result;
   }
 
@@ -158,8 +152,7 @@ class WalletUtil {
     BuildContext context,
     Wallet wallet,
   ) async {
-    String pwd = await AppCache.secureGetValue(
-        '${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
+    String pwd = await AppCache.secureGetValue('${SecurePrefsKey.WALLET_PWD_KEY_PREFIX}${wallet.keystore.fileName}');
 
     ///Check password from secureStorage is correct
     String result;
@@ -234,10 +227,8 @@ class WalletUtil {
       List<dynamic> params = const [],
       bool include0x = true,
       bool padToEvenLength = true}) {
-    var abi = getErc20FuncAbi(
-        contractAddress: contractAddress, params: params, funName: funName);
-    return bytesToHex(abi,
-        include0x: include0x, padToEvenLength: padToEvenLength);
+    var abi = getErc20FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
   static String getMap3FuncAbiHex(
@@ -246,16 +237,27 @@ class WalletUtil {
       List<dynamic> params = const [],
       bool include0x = true,
       bool padToEvenLength = true}) {
-    var abi = getMap3FuncAbi(
-        contractAddress: contractAddress, params: params, funName: funName);
-    return bytesToHex(abi,
-        include0x: include0x, padToEvenLength: padToEvenLength);
+    var abi = getMap3FuncAbi(contractAddress: contractAddress, params: params, funName: funName);
+    return bytesToHex(abi, include0x: include0x, padToEvenLength: padToEvenLength);
   }
 
   static Wallet _parseWalletJson(dynamic map) {
     var keystore = KeyStore.fromDynamicMap(map);
-    var accounts = List<Account>.from(map['accounts'].map((accountMap) =>
-        Account.fromJsonWithNet(accountMap, WalletConfig.netType)));
+    var backAccounts = [];
+    // add Hyn atlas
+    for (var account in map['accounts']) {
+      if (account['coinType'] == CoinType.ETHEREUM) {
+        backAccounts.add({
+          "address": account["address"],
+          "derivationPath": account['derivationPath'],
+          'coinType': CoinType.HYN_ATLAS
+        });
+      }
+      backAccounts.add(account);
+    }
+
+    var accounts =
+        List<Account>.from(backAccounts.map((accountMap) => Account.fromJsonWithNet(accountMap, WalletConfig.netType)));
 
     //filter only ETHEREUM
 //    accounts = accounts.where((account) {
@@ -272,79 +274,87 @@ class WalletUtil {
 
   static web3.DeployedContract _newHynContract(String contractAddress) {
     final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(HYN_ERC20_ABI, 'HYN'),
-        web3.EthereumAddress.fromHex(contractAddress));
+        web3.ContractAbi.fromJson(HYN_ERC20_ABI, 'HYN'), web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   static web3.DeployedContract _newMap3Contract(String contractAddress) {
     final contract = web3.DeployedContract(
-        web3.ContractAbi.fromJson(MAP3_STAKING_ABI, 'Map3Staking'),
-        web3.EthereumAddress.fromHex(contractAddress));
+        web3.ContractAbi.fromJson(MAP3_STAKING_ABI, 'Map3Staking'), web3.EthereumAddress.fromHex(contractAddress));
     return contract;
   }
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
-  static Future<dynamic> postToEthereumNetwork(
-      {String method, List params, int id = 1}) {
+  static Future<dynamic> postToEthereumNetwork({String method, List params, int id = 1}) {
     return HttpCore.instance.post(WalletConfig.getEthereumApi(),
-        params: {
-          "jsonrpc": "2.0",
-          "method": method,
-          "params": params,
-          "id": id
-        },
+        params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
+        options: RequestOptions(contentType: Headers.jsonContentType));
+  }
+
+  static Future<dynamic> postToAtlasNetwork({String method, List params, int id = 1}) {
+    return HttpCore.instance.post(WalletConfig.getAtlasApi(),
+        params: {"jsonrpc": "2.0", "method": method, "params": params, "id": id},
         options: RequestOptions(contentType: Headers.jsonContentType));
   }
 
   static web3.DeployedContract _hynErc20Contract;
   static web3.DeployedContract _map3StakingContract;
 
+  static web3.Web3Client _web3AtlasClientMain;
+  static web3.Web3Client _web3AtlasClientTest;
   static web3.Web3Client _web3clientMain;
   static web3.Web3Client _web3clientRopsten;
   static web3.Web3Client _web3clientRinkeby;
   static web3.Web3Client _web3clientLocal;
 
   static web3.DeployedContract getHynErc20Contract(String contractAddress) {
-    if (_hynErc20Contract == null ||
-        _hynErc20Contract?.address?.hex?.contains(contractAddress) != true) {
+    if (_hynErc20Contract == null || _hynErc20Contract?.address?.hex?.contains(contractAddress) != true) {
       _hynErc20Contract = WalletUtil._newHynContract(contractAddress);
     }
     return _hynErc20Contract;
   }
 
   static web3.DeployedContract getMap3Contract(String contractAddress) {
-    if (_map3StakingContract == null ||
-        _map3StakingContract?.address?.hex?.contains(contractAddress) != true) {
+    if (_map3StakingContract == null || _map3StakingContract?.address?.hex?.contains(contractAddress) != true) {
       _map3StakingContract = WalletUtil._newMap3Contract(contractAddress);
     }
     return _map3StakingContract;
   }
 
-  static web3.Web3Client getWeb3Client() {
+  static web3.Web3Client getWeb3Client([bool isAtlas = false]) {
+    if (isAtlas) {
+      if (WalletConfig.netType == EthereumNetType.main) {
+        if (_web3AtlasClientMain == null) {
+          _web3AtlasClientMain = WalletUtil._newWeb3Client(WalletConfig.ATLAS_API);
+        }
+        return _web3AtlasClientMain;
+      } else {
+        if (_web3AtlasClientTest == null) {
+          _web3AtlasClientTest = WalletUtil._newWeb3Client(WalletConfig.ATLAS_API);
+        }
+        return _web3AtlasClientTest;
+      }
+    }
+
     switch (WalletConfig.netType) {
       case EthereumNetType.main:
         if (_web3clientMain == null) {
-          _web3clientMain =
-              WalletUtil._newWeb3Client(WalletConfig.INFURA_MAIN_API);
+          _web3clientMain = WalletUtil._newWeb3Client(WalletConfig.INFURA_MAIN_API);
         }
         return _web3clientMain;
       case EthereumNetType.ropsten:
         if (_web3clientRopsten == null) {
-          _web3clientRopsten =
-              WalletUtil._newWeb3Client(WalletConfig.INFURA_ROPSTEN_API);
+          _web3clientRopsten = WalletUtil._newWeb3Client(WalletConfig.INFURA_ROPSTEN_API);
         }
         return _web3clientRopsten;
       case EthereumNetType.rinkeby:
         if (_web3clientRinkeby == null) {
-          _web3clientRinkeby =
-              WalletUtil._newWeb3Client(WalletConfig.INFURA_RINKEBY_API);
+          _web3clientRinkeby = WalletUtil._newWeb3Client(WalletConfig.INFURA_RINKEBY_API);
         }
         return _web3clientRinkeby;
       case EthereumNetType.local:
         if (_web3clientLocal == null) {
-          _web3clientLocal =
-              WalletUtil._newWeb3Client(ContractTestConfig.walletLocalDomain);
+          _web3clientLocal = WalletUtil._newWeb3Client(ContractTestConfig.walletLocalDomain);
           //_web3clientLocal = WalletUtil._newWeb3Client(WalletConfig.LOCAL_API);
         }
         return _web3clientLocal;
@@ -354,21 +364,24 @@ class WalletUtil {
 
   static Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
       [String contractAddress, String block = 'latest']) async {
-    switch (coinType) {
-      case CoinType.ETHEREUM:
-        if (contractAddress == null) {
-          var response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
-          if (response['result'] != null) {
-            return hexToInt(response['result']);
-          }
+    if ([CoinType.ETHEREUM, CoinType.HYN_ATLAS].contains(coinType)) {
+      if (contractAddress == null) {
+        var response;
+        if (coinType == CoinType.ETHEREUM) {
+          response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
         } else {
-          final contract = WalletUtil.getHynErc20Contract(contractAddress);
-          final balanceFun = contract.function('balanceOf');
-          final balance = await WalletUtil.getWeb3Client()
-              .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
-          return balance.first;
+          response = await WalletUtil.postToAtlasNetwork(method: "eth_getBalance", params: [address, block]);
         }
-        break;
+        if (response['result'] != null) {
+          return hexToInt(response['result']);
+        }
+      } else {
+        final contract = WalletUtil.getHynErc20Contract(contractAddress);
+        final balanceFun = contract.function('balanceOf');
+        final balance = await WalletUtil.getWeb3Client()
+            .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
+        return balance.first;
+      }
     }
     return BigInt.from(0);
   }

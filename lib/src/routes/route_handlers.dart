@@ -141,7 +141,10 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
-  return ConfirmSuccessPage();
+  var msg = params['msg']?.first != null
+      ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first)
+      : null;
+  return ConfirmSuccessPage(msg: msg);
 });
 
 ///Exchange

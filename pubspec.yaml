@@ -91,7 +91,10 @@ dependencies:
   decimal: ^0.3.5
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
-  web3dart: ^1.2.3
+  web3dart:
+    git:
+      url: git@github.com:hyperion-hyn/web3dart.git
+      ref: stable
   bip39: ^1.0.3
   intl: ^0.16.0
   webview_flutter: ^0.3.20+2

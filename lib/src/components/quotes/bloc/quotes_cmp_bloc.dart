@@ -5,11 +5,13 @@ import 'package:bloc/bloc.dart';
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/utils/future_util.dart';
 import '../../../../config.dart';
@@ -42,6 +44,17 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
 
           var converts = SupportedQuoteSigns.all.map((sign) => sign.quote).toList();
           var quotes = await _coinMarketApi.quotes(DEFAULT_SYMBOLS, converts);
+          //hack add (HYN ERC20)quotes
+          List<SymbolQuoteVo> addQuotes = [];
+          for (var quote in quotes) {
+            if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
+              var q = SymbolQuoteVo.clone(quote);
+              q.symbol = SupportedTokens.HYN_ERC20.symbol;
+              addQuotes.add(q);
+            }
+          }
+          quotes.addAll(addQuotes);
+
           currentQuotesModel = QuotesModel(
               quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 

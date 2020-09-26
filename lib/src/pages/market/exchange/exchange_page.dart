@@ -478,7 +478,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   if (_exchangeType == ExchangeType.SELL) Spacer(),
                   _coinItem(
                     'HYN',
-                    SupportedTokens.HYN.logo,
+                    SupportedTokens.HYN_ERC20.logo,
                     false,
                   ),
                   if (_exchangeType == ExchangeType.SELL) Spacer(),

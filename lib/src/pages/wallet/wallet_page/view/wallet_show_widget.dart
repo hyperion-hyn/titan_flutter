@@ -26,6 +26,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
+import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -200,8 +201,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               },
               itemCount: widget.walletVo.coins.length,
             ),
-            if (widget.walletVo.wallet.getBitcoinAccount() == null)
-              _bitcoinEmptyView(context),
+            if (widget.walletVo.wallet.getBitcoinAccount() == null) _bitcoinEmptyView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
             if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
@@ -450,9 +450,22 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  coin.symbol,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      coin.symbol,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    if (coin.coinType == CoinType.HYN_ATLAS)
+                      Text(
+                        '主链',
+                        style: TextStyle(fontSize: 10),
+                      ),
+                  ],
                 ),
                 SizedBox(
                   height: 4,
@@ -628,7 +641,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   // 成功之后才存储，失败可以再试
                   await AppCache.saveValue(ContractTestConfig.OUTSIDE_REPSTEN_REQUEST_HYN, currentTime);
                 }
-
               }, 2000)();
             },
           ),
@@ -679,15 +691,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               debounce(() async {
                 var wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
                 var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
-                if(password != null) {
-                  var gasPriceRecommend = QuotesInheritedModel
-                      .of(context, aspect: QuotesAspect.gasPrice)
-                      .gasPriceRecommend;
+                if (password != null) {
+                  var gasPriceRecommend =
+                      QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
                   var reciverAddr = "0xCb573bc656455A9B1464C59157B8A701aa6686ea";
 
                   var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
                   var hynBalance = await wallet.getErc20Balance(hynCoinVo.contractAddress);
-                  if(hynBalance > BigInt.from(10)) {
+                  if (hynBalance > BigInt.from(10)) {
                     final hynHash = await wallet.sendErc20Transaction(
                       contractAddress: hynCoinVo.contractAddress,
                       password: password,
@@ -698,10 +709,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     logger.i('has is $hynHash');
                   }
 
-                  Future.delayed(Duration(milliseconds: 5000),() async {
+                  Future.delayed(Duration(milliseconds: 5000), () async {
                     var usdtCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("USDT");
                     var usdtBalance = await wallet.getErc20Balance(usdtCoinVo.contractAddress);
-                    if(usdtBalance > BigInt.from(10)) {
+                    if (usdtBalance > BigInt.from(10)) {
                       final usdtHash = await wallet.sendErc20Transaction(
                         contractAddress: usdtCoinVo.contractAddress,
                         password: password,
@@ -712,7 +723,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                       logger.i('has is $usdtHash');
                     }
 
-                    Future.delayed(Duration(milliseconds: 5000),() async {
+                    Future.delayed(Duration(milliseconds: 5000), () async {
                       Account account = wallet.getEthAccount();
                       var ethBalance = await wallet.getBalance(account);
                       if (ethBalance > BigInt.from(0.5)) {

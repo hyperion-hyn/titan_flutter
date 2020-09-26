@@ -230,7 +230,7 @@ class _ExchangeAssetHistoryPageState
   _assetLayout() {
     String _logoPath = '';
     if (widget._symbol == 'HYN') {
-      _logoPath = SupportedTokens.HYN.logo;
+      _logoPath = SupportedTokens.HYN_ERC20.logo;
     } else if (widget._symbol == 'ETH') {
       _logoPath = SupportedTokens.ETHEREUM.logo;
     } else if (widget._symbol == 'USDT') {

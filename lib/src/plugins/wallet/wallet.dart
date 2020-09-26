@@ -52,6 +52,15 @@ class Wallet {
     return null;
   }
 
+  Account getAtlasAccount() {
+    for (var account in accounts) {
+      if (account.coinType == CoinType.HYN_ATLAS) {
+        return account;
+      }
+    }
+    return null;
+  }
+
   Account getBitcoinAccount() {
     for (var account in accounts) {
       if (account.coinType == CoinType.BITCOIN) {
@@ -186,6 +195,7 @@ class Wallet {
     BigInt gasPrice,
     int nonce,
     int gasLimit = 0,
+    int type,
   }) async {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
@@ -193,7 +203,7 @@ class Wallet {
 //    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(true);
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final txHash = await client.sendTransaction(
       credentials,
@@ -203,13 +213,17 @@ class Wallet {
         maxGas: gasLimit,
         value: web3.EtherAmount.inWei(value),
         nonce: nonce,
+        type: type,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: type == null ? true : false,
     );
 
-    nonce = await getCurrentWalletNonce();
-    await transactionInteractor.insertTransactionDB(
-        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
+    if (type == null) {
+      nonce = await getCurrentWalletNonce();
+      await transactionInteractor.insertTransactionDB(
+          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+          id: id);
+    }
 
     return txHash;
   }
