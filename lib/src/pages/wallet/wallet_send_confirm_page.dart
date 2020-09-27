@@ -153,7 +153,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           weiBigInt: BigInt.parse((gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
       var gasPriceEstimate = gasEstimate * Decimal.parse(hynQuotePrice.toString());
       gasPriceEstimateStr =
-          '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
+          '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $quoteSign${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     }
 
     return Scaffold(

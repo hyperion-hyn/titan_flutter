@@ -196,6 +196,7 @@ class Wallet {
     int nonce,
     int gasLimit = 0,
     int type,
+    web3.IMessage message,
   }) async {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
@@ -214,6 +215,7 @@ class Wallet {
         value: web3.EtherAmount.inWei(value),
         nonce: nonce,
         type: type,
+        message: message,
       ),
       fetchChainIdFromNetworkId: type == null ? true : false,
     );
