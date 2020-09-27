@@ -187,6 +187,10 @@ class Wallet {
     return nonce;
   }
 
+  /// 发送转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendEthTransaction({
     int id,
     String password,
