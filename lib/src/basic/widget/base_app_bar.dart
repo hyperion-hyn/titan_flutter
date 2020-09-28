@@ -4,15 +4,16 @@ class BaseAppBar extends AppBar {
   final String baseTitle;
   //final List<Widget> baseActions;
   final List<Widget> actions;
+  final Widget leading;
 
-  BaseAppBar({this.baseTitle, this.actions})
+  BaseAppBar({this.baseTitle, this.actions, this.leading})
       : super(
           title: Text(
             baseTitle,
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black,
-              fontSize: 16,
+              fontSize: 17,
             ),
           ),
           elevation: 0,
@@ -20,6 +21,7 @@ class BaseAppBar extends AppBar {
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.black),
           actions: actions,
+          leading: leading,
         );
 }
 

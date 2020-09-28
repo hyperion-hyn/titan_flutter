@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/widget/widget_shot.dart';
 
 class InAppWebViewContainer extends StatefulWidget {
@@ -49,6 +50,29 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         return true;
       },
       child: Scaffold(
+        appBar: BaseAppBar(
+          baseTitle: title ?? widget.title,
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.share),
+              tooltip: S.of(context).share,
+              onPressed: () {
+                _shareQr(context);
+              },
+            ),
+          ],
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          ),
+        ),
+        /*
         appBar: AppBar(
           leading: Builder(
             builder: (BuildContext context) {
@@ -77,6 +101,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
             style: TextStyle(color: Colors.white),
           ),
         ),
+        */
         body: SafeArea(
           child: Column(
             children: <Widget>[

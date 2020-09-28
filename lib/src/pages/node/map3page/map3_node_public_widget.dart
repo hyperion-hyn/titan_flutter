@@ -61,7 +61,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   }
 
   var nodeName = "天道酬勤唐唐";
-  var nodeAddress = "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 6)}";
+  var nodeAddress = "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 1)}";
   var nodeIdPre = "节点号";
   var nodeId = " ${contractNodeItem.contractCode ?? "PB2020"}";
   var feeRatePre = "管理费：";
