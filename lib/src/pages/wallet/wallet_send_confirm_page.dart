@@ -36,6 +36,8 @@ import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/gas_input_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 
+import 'api/hyn_api.dart';
+
 class WalletSendConfirmPage extends StatefulWidget {
   final CoinVo coinVo;
   final String transferAmount;
@@ -515,8 +517,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           return;
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        await _transferEth(
-            true,
+        await HYNApi.transferHYN(
             walletPassword,
             ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
             widget.receiverAddress,
