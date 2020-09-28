@@ -610,6 +610,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               onTap: () {
                 _showMoreAlertView();
               },
+              borderRadius: BorderRadius.circular(60),
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 35),
                 child: Icon(
@@ -721,7 +722,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(_moreSizeWidth, 128.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(_moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -730,11 +731,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (subContext, index) {
                     var title = "";
-                    if (index == 0) {
+                    if (index == 2) {
                       title = "裂变";
-                    } else if (index == 1) {
+                    } else if (index == 0) {
                       title = "终止";
-                    } else if (index == 2) {
+                    } else if (index == 1) {
                       title = "分享";
                     }
 
@@ -745,11 +746,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         onPressed: () {
                           Navigator.of(context).pop();
 
-                          if (index == 0) {
+                          if (index == 2) {
                             Application.router.navigateTo(context, Routes.map3node_divide_page);
-                          } else if (index == 1) {
+                          } else if (index == 0) {
                             Application.router.navigateTo(context, Routes.map3node_exit_page);
-                          } else if (index == 2) {
+                          } else if (index == 1) {
                             Application.router.navigateTo(
                                 context,
                                 Routes.map3node_share_page +
@@ -780,7 +781,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       ),
                     );
                   },
-                  itemCount: 3,
+                  itemCount: 2,
                 ),
               )),
           left: _moreOffsetLeft,

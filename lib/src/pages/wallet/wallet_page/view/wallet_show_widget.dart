@@ -212,10 +212,12 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               },
               itemCount: widget.walletVo.coins.length,
             ),
-            if (widget.walletVo.wallet.getBitcoinAccount() == null) _bitcoinEmptyView(context),
+            if (widget.walletVo.wallet.getBitcoinAccount() == null)
+              _bitcoinEmptyView(context),
             _exchangeHYNView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
-            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
+            if (env.buildType == BuildType.DEV)
+              _ropstenTestWalletView(context),
           ]),
     );
   }
@@ -352,9 +354,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           RaisedButton(
             child: Text('atlas detail'),
             onPressed: () async {
-              Application.router.navigateTo(
-                  context,
-                  Routes.atlas_detail_page);
+              Application.router.navigateTo(context, Routes.atlas_detail_page);
             },
           ),
           RaisedButton(
@@ -474,7 +474,20 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
-    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(coin.symbol);
+    var symbol = coin.symbol;
+    var symbolQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+    var subSymbol = "";
+
+    if (coin.coinType == CoinType.HYN_ATLAS) {
+      subSymbol = '主链';
+    } else if (coin.coinType == CoinType.ETHEREUM) {
+      var symbolComponents = symbol.split(" ");
+      if (symbolComponents.length == 2) {
+        symbol = symbolComponents.first;
+        subSymbol = symbolComponents.last.toLowerCase();
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -497,17 +510,16 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      coin.symbol,
+                      symbol,
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF252525)),
                     ),
                     SizedBox(
                       width: 4,
                     ),
-                    if (coin.coinType == CoinType.HYN_ATLAS)
-                      Text(
-                        '主链',
-                        style: TextStyle(fontSize: 10),
-                      ),
+                    Text(
+                      subSymbol,
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ],
                 ),
                 SizedBox(

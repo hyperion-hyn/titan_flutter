@@ -148,7 +148,7 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
 
   void getNetworkData() async {
     try {
-      var requestList = await Future.wait([_nodeApi.getContractItem("1"), _nodeApi.getNodeProviderList()]);
+      var requestList = await Future.wait([_nodeApi.getContractInstanceItem("1"), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 

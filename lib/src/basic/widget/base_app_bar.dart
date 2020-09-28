@@ -12,7 +12,7 @@ class BaseAppBar extends AppBar {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               color: Colors.black,
-              fontSize: 16,
+              fontSize: 17,
             ),
           ),
           elevation: 0,

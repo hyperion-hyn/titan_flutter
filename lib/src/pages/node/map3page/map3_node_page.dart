@@ -401,7 +401,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${1}");
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${2}");
     }
 
     // 2.创建成功回调的处理

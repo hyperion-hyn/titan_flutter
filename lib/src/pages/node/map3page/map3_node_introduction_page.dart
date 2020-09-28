@@ -54,7 +54,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   void getNetworkData() async {
     try {
       var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+          await Future.wait([_nodeApi.getContractInstanceItem(widget.contractId), _nodeApi.getNodeProviderList()]);
       _contractItem = requestList[0];
       _nodeItem = _contractItem.contract;
 

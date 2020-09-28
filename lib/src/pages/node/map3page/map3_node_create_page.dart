@@ -467,7 +467,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   void getNetworkData() async {
     try {
       var requestList =
-          await Future.wait([_nodeApi.getContractItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+          await Future.wait([_nodeApi.getContractInstanceItem(widget.contractId), _nodeApi.getNodeProviderList()]);
       contractItem = requestList[0];
       providerList = requestList[1];
 
