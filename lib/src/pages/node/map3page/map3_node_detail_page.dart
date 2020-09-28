@@ -49,6 +49,7 @@ import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
+import 'package:characters/characters.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
   final int contractId;
@@ -580,7 +581,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   _getMorePosition() {
-    final RenderBox renderBox = _moreKey.currentContext.findRenderObject();
+    final RenderBox renderBox = _moreKey?.currentContext?.findRenderObject();
+    if (renderBox == null) return;
+
     final positions = renderBox.localToGlobal(Offset(0, 0));
     _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
     _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
@@ -1562,8 +1565,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var operaState = enumBillsOperaStateFromString(item.operaType);
     var recordState = enumBillsRecordStateFromString(item.state);
     var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
-    var isWithdrawDelegatePengding =
-        operaState == BillsOperaState.DELEGATE && recordState == BillsRecordState.PRE_CREATE || isPengding;
+    // var isWithdrawDelegatePengding =
+    //     operaState == BillsOperaState.DELEGATE && recordState == BillsRecordState.PRE_CREATE || isPengding;
+    String showName = item.userName;
+    if (item.userName.isNotEmpty) {
+      showName = item.userName.characters.first;
+    }
 
     return Container(
       color: Colors.white,
@@ -1582,7 +1589,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: walletHeaderWidget(item.userName, address: item.userAddress),
+                    child: walletHeaderWidget(showName, address: item.userAddress),
                   ),
                   Flexible(
                     flex: 4,
