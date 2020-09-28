@@ -330,7 +330,7 @@ class WalletUtil {
         return _web3AtlasClientMain;
       } else {
         if (_web3AtlasClientTest == null) {
-          _web3AtlasClientTest = WalletUtil._newWeb3Client(WalletConfig.ATLAS_API);
+          _web3AtlasClientTest = WalletUtil._newWeb3Client(WalletConfig.ATLAS_API_TEST);
         }
         return _web3AtlasClientTest;
       }
