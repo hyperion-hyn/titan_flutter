@@ -25,8 +25,11 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
@@ -72,34 +75,75 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   Future<void> onCreated() async {
     //update quotes
-    BlocProvider.of<QuotesCmpBloc>(context)
-        .add(UpdateQuotesEvent(isForceUpdate: true));
+//    BlocProvider.of<QuotesCmpBloc>(context)
+//        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+//    BlocProvider.of<WalletCmpBloc>(context)
+//        .add(UpdateActivatedWalletBalanceEvent());
+    Future.delayed(Duration(milliseconds: 3000), () {
+      _postWalletBalance();
+    });
+
+    listLoadingData();
+  }
+
+  Future<void> _postWalletBalance() async {
+    //appType:  0:titan; 1:star
+
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .activatedWallet;
+
+    if (activatedWalletVo == null) return;
+
+    String address = activatedWalletVo.wallet.getEthAccount().address;
+    int appType = 0;
+    String email = "titan";
+    String hynBalance = "0";
+    LogUtil.printMessage("[API] address:$address, hynBalance:$hynBalance, email:$email");
+
+    // 同步用户钱包信息
+    if (address.isNotEmpty) {
+      var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
+      LogUtil.printMessage("object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
+      var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
+      balance = 0;
+      if (balance <= 0) {
+        var balanceValue = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
+        balance = ConvertTokenUnit.weiToDecimal(
+            balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
+            .toDouble();
+        LogUtil.printMessage("object] balance2: $balance");
+      }
+      hynBalance = balance.toString();
+      BitcoinApi.postWalletBalance(address, appType, email, hynBalance);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Center(
-          child: Text(
-            S.of(context).wallet,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-            ),
-          ),
-        ),
-      ),
+//      appBar: AppBar(
+//        elevation: 0,
+//        backgroundColor: Colors.white,
+//        title: Center(
+//          child: Text(
+//            S.of(context).wallet,
+//            style: TextStyle(
+//              color: Colors.black,
+//              fontSize: 18,
+//            ),
+//          ),
+//        ),
+//      ),
       body: Container(
         color: Colors.white,
         child: Column(
           children: <Widget>[
+            SizedBox(
+              height: 16,
+            ),
             Expanded(child: _buildWalletView(context)),
             //hyn quotes view
             // hynQuotesView(),

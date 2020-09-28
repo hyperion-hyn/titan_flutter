@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -6,22 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/src/basic/http/signer.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
@@ -39,7 +34,7 @@ class _WalletDemoState extends State<WalletDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Wallet Demo1"),
+        title: Text("Wallet Demo"),
       ),
       body: ListView(
         shrinkWrap: true,
@@ -67,7 +62,7 @@ class _WalletDemoState extends State<WalletDemo> {
                     .add(ActiveWalletEvent(wallet: wallets[0]));
               }
             },
-            child: Text('激活一个钱包'),
+            child: Text('激活一个钱包aa'),
           ),
           RaisedButton(
             onPressed: () async {
@@ -109,6 +104,12 @@ class _WalletDemoState extends State<WalletDemo> {
               }
             },
             child: Text('快捷一步，创建一个新钱包, 并且激活新钱包'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+
+            },
+            child: Text('Atlas转账'),
           ),
           RaisedButton(
             onPressed: () async {
@@ -237,16 +238,19 @@ class _WalletDemoState extends State<WalletDemo> {
                     .contractAddress;
                 var approveToAddress = WalletConfig.map3ContractAddress;
                 try {
-                  var signedHex = await wallet0.signApproveErc20Token(
-                      contractAddress: hynErc20ContractAddress,
-                      approveToAddress: approveToAddress,
-                      amount:
-                          ConvertTokenUnit.etherToWei(etherDouble: myStaking),
-                      password: '111111',
-                      gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
-                      gasLimit: 5000000);
-                  var ret = await WalletUtil.postToEthereumNetwork(
-                      method: 'eth_sendRawTransaction', params: [signedHex]);
+                  var ret = await wallet0.getAllowance(hynErc20ContractAddress, wallet0.getEthAccount().address, approveToAddress);
+                  print(ret);
+
+                  // var signedHex = await wallet0.signApproveErc20Token(
+                  //     contractAddress: hynErc20ContractAddress,
+                  //     approveToAddress: approveToAddress,
+                  //     amount:
+                  //         ConvertTokenUnit.etherToWei(etherDouble: myStaking),
+                  //     password: '111111',
+                  //     gasPrice: BigInt.from(EthereumConst.SUPER_FAST_SPEED),
+                  //     gasLimit: 500000);
+                  // var ret = await WalletUtil.postToEthereumNetwork(
+                  //     method: 'eth_sendRawTransaction', params: [signedHex]);
 
                   logger.i('hyn approve, result: $ret');
                 } catch (e) {
@@ -802,7 +806,7 @@ class _WalletDemoState extends State<WalletDemo> {
                   "c": 'c_p',
                   'b': 'b_p'
                 };
-                await Signer.signMessage(context, password, params);
+//                await Signer.signMessage(context, password, params);
                 print(params);
               } catch (e) {
                 logger.e(e);

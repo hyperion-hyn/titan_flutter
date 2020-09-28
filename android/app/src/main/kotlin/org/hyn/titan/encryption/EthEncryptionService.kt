@@ -2,7 +2,7 @@ package org.hyn.titan.encryption
 
 import android.content.Context
 import io.reactivex.Flowable
-import mobile.Cipher
+import org.atlas.mobile_lib.Mobile_lib
 import org.hyn.titan.ErrorCode
 import org.hyn.titan.encryption.rsa.RsaEncryption
 import org.hyn.titan.utils.Numeric
@@ -13,7 +13,7 @@ import java.security.KeyStore
 import java.security.cert.X509Certificate
 
 class EthEncryptionService(private val context: Context) : EncryptionService {
-    private val cipher = Cipher()
+    private val cipher = Mobile_lib.newCipher()
     private val rsaEncryption: RsaEncryption = RsaEncryption(1024)
     private var rsaEntry: KeyStore.PrivateKeyEntry? = null
     private val sharedPreferences = context.getSharedPreferences("eth_encryption", Context.MODE_PRIVATE)
@@ -26,14 +26,14 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
         }
     }
 
-    override fun generateKeyPairAndStore(): Flowable<Map<String,String>> {
+    override fun generateKeyPairAndStore(): Flowable<Map<String, String>> {
         return Flowable.fromCallable {
             val pairs = cipher.genKeyPair().split(',')
             val prvStr = pairs[0]
             val pubStr = pairs[1]
             Timber.i("Eth public key is: $pubStr")
 
-            return@fromCallable mapOf("publicKey" to pubStr,"privateKey" to prvStr)
+            return@fromCallable mapOf("publicKey" to pubStr, "privateKey" to prvStr)
         }
     }
 
@@ -66,10 +66,10 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
 
     override fun decrypt(privateKey: String, ciphertext: String): Flowable<String> {
         return Flowable.fromCallable {
-                val message = cipher.decrypt(privateKey, ciphertext)
-                if (message.isNotEmpty()) {
-                    return@fromCallable message
-                }
+            val message = cipher.decrypt(privateKey, ciphertext)
+            if (message.isNotEmpty()) {
+                return@fromCallable message
+            }
 //            }
             throw Exception("decrypt error")
         }
@@ -77,16 +77,13 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
 
     override fun trustActiveEncrypt(password: String, fileName: String): Flowable<String> {
         return Flowable.fromCallable {
-            var privateKey = KeyStoreUtil.getPrvKeyEntity(KeyStoreUtil.getKeyStorePath(context, fileName),password,CoinType.ETHEREUM)
-            if (privateKey == null) {
-                throw Exception("password error")
-            }
-            var publicKeyEntity = privateKey?.getPublicKeySecp256k1(false)
-            var deComPublicKey = publicKeyEntity?.description() ?: ""
+            val privateKey = KeyStoreUtil.getPrvKeyEntity(KeyStoreUtil.getKeyStorePath(context, fileName), password, CoinType.ETHEREUM)
+                    ?: throw Exception("password error")
+            val publicKeyEntity = privateKey.getPublicKeySecp256k1(false)
             /*if(comPublicKey.isNotEmpty()){
                 comPublicKey = "0x$comPublicKey"
             }*/
-            return@fromCallable deComPublicKey
+            return@fromCallable publicKeyEntity?.description() ?: ""
         }
     }
 
@@ -96,7 +93,7 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
             if (tempPublicKey.isEmpty()) {
                 throw Exception("encrypt error")
             }*/
-            var cipherText = cipher.encrypt(publicKeyStr, message)
+            val cipherText = cipher.encrypt(publicKeyStr, message)
             if (cipherText.isEmpty()) {
                 throw Exception("encrypt error")
             }
@@ -106,16 +103,12 @@ class EthEncryptionService(private val context: Context) : EncryptionService {
 
     override fun trustDecrypt(cipherText: String, fileName: String, password: String): Flowable<String> {
         return Flowable.fromCallable {
-            var privateKey = KeyStoreUtil.getPrvKeyEntity(KeyStoreUtil.getKeyStorePath(context, fileName),password, CoinType.ETHEREUM)
-            if (privateKey == null) {
-                throw Exception(ErrorCode.PASSWORD_WRONG)
-            }
-            var privateKeyStr = Numeric.toHexString(privateKey?.data(),false)
-            if (privateKeyStr != null) {
-                val message = cipher.decrypt(privateKeyStr, cipherText)
-                if (message.isNotEmpty()) {
-                    return@fromCallable message
-                }
+            val privateKey = KeyStoreUtil.getPrvKeyEntity(KeyStoreUtil.getKeyStorePath(context, fileName), password, CoinType.ETHEREUM)
+                    ?: throw Exception(ErrorCode.PASSWORD_WRONG)
+            val privateKeyStr = Numeric.toHexString(privateKey.data(), false)
+            val message = cipher.decrypt(privateKeyStr, cipherText)
+            if (message.isNotEmpty()) {
+                return@fromCallable message
             }
             throw Exception(ErrorCode.PARAMETERS_WRONG)
         }

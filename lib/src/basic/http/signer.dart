@@ -1,70 +1,79 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
-import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:crypto/crypto.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+
 import 'package:web3dart/crypto.dart';
-import 'package:web3dart/web3dart.dart';
 
 class Signer {
-  static const _messagePrefix = '\u0019Ethereum Signed Message:\n';
+  static Future<String> signApiWithWallet(
+    Wallet wallet,
+    String password,
+    String method, //GET, POST
+    String host, //example: api.hyn.space
+    String path, //example: /api/index/testWalletSign
+    Map<String, dynamic> params,
+  ) async {
+    var msg = _formatSignString(
+      method: method,
+      host: host,
+      path: path,
+      params: params,
+    );
+    print('[Signer.signApiWithWallet]: msg: $msg');
 
-  static Future signMessage(BuildContext context, String password, Map<String, dynamic> params) async {
-    var wallet = WalletInheritedModel.of(context).activatedWallet;
-    if (wallet == null) {
-      throw S.of(context).cannot_fint_wallet;
-    }
-
-    params['t'] = DateTime.now().millisecondsSinceEpoch;
-    var sortedParams = params.keys.toList()..sort();
-    var msg = '';
-    for (var k in sortedParams) {
-      if (msg != '') {
-        msg += '&';
-      }
-      msg += '$k=${params[k].toString()}';
-    }
-
-    final client = WalletUtil.getWeb3Client();
-    final credentials = await wallet.wallet.getCredentials(password);
-
-
-
-    var m = keccakUtf8('I like signatures');
-    m = utf8.encode('I like signatures');
-    print("长度: ${uint8ListFromList(m).length} ${bytesToHex(m)}");
-    var personalSign = await credentials.signPersonalMessage(m);
-    print(bytesToHex(personalSign));
-
-    final prefix = _messagePrefix + m.length.toString();
-    final prefixBytes = ascii.encode(prefix);
-
-    // will be a Uint8List, see the documentation of Uint8List.+
-    final concat = uint8ListFromList(prefixBytes + m);
-    print('xxx1');
-    print(bytesToHex(keccak256(concat)));
-    
-    var signed = await client.signTransaction(
-        credentials,
-        Transaction(
-          from: EthereumAddress.fromHex(wallet.wallet.getEthAccount().address),
-          data: keccakUtf8(msg),
-          to: EthereumAddress.fromHex(wallet.wallet.getEthAccount().address),
-          nonce: 0,
-          gasPrice: EtherAmount.inWei(BigInt.one),
-          maxGas: 1,
-          value: EtherAmount.inWei(BigInt.zero),
-        ),
-        chainId: 8888);
-
-    params['sign'] = bytesToHex(signed);
+    final credentials = await wallet.getCredentials(password);
+    var msgHash = keccakUtf8(msg);
+    var personalSign =
+        await credentials.signPersonalMessage(utf8.encode(bytesToHex(msgHash)));
+    return bytesToHex(personalSign);
   }
-}
 
-Uint8List uint8ListFromList(List<int> data) {
-  if (data is Uint8List) return data;
+  static String signApiWithSecretKey({
+    String secret,
+    String method, //GET, POST
+    String host, //example: api.hyn.space
+    String path, //example: /api/index/testWalletSign
+    Map<String, dynamic> params,
+  }) {
+    var msg = _formatSignString(
+      method: method,
+      host: host,
+      path: path,
+      params: params,
+      onlySignParamsKeys: ['api', 'seed', 'sign_method', 'sign_ver', 'ts'],
+    );
 
-  return Uint8List.fromList(data);
+    var key = utf8.encode(secret);
+    var hmac = Hmac(sha256, key);
+    var digest = hmac.convert(utf8.encode(msg));
+    print(bytesToHex(digest.bytes));
+    return base64.encode(digest.bytes);
+  }
+
+  static String _formatSignString({
+    String method, //GET, POST
+    String host, //example: api.hyn.space
+    String path, //example: /api/index/testWalletSign
+    Map<String, dynamic> params,
+    List<String> onlySignParamsKeys,
+  }) {
+    var msg = '$method\n$host\n$path\n';
+
+    var paramsStr = '';
+    var sortedParams = params.keys.toList()..sort();
+    for (var k in sortedParams) {
+      if (onlySignParamsKeys != null) {
+        if (!onlySignParamsKeys.contains(k)) {
+          continue;
+        }
+      }
+      if (paramsStr != '') {
+        paramsStr += '&';
+      }
+      paramsStr += '$k=${params[k].toString()}';
+    }
+    msg += paramsStr;
+    return msg;
+  }
 }

@@ -11,6 +11,12 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/exchange_assets_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_success_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_withdraw_confirm_page.dart';
 import 'package:titan/src/pages/mine/qr_code_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_collect_page.dart';
@@ -140,7 +146,40 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
-  return ConfirmSuccessPage();
+  var msg = params['msg']?.first != null
+      ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first)
+      : null;
+  return ConfirmSuccessPage(msg: msg);
+});
+
+///Exchange
+var exchangeAssetsHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeAssetsPage();
+});
+
+var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+  return ExchangeTransferPage(params['coinType']?.first);
+});
+
+var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
+  return ExchangeDepositConfirmPage(
+      params['coinVo']?.first,
+      '${params['transferAmount']?.first ?? 0}',
+      params['exchangeAddress']?.first);
+});
+
+var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
+  return ExchangeWithdrawConfirmPage(
+    params['coinVo']?.first,
+    '${params['amount']?.first ?? 0}',
+    params['withdrawFeeByGas']?.first,
+  );
+});
+
+var exchangeTransferSuccessHandler = Handler(handlerFunc: (context, params) {
+  return ExchangeTransferSuccessPage();
 });
 
 //contribution

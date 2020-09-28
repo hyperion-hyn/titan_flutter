@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
@@ -150,7 +152,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   String activatedHynAddress() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.HYN.symbol) {
+        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           return coin.address;
         }
       }
@@ -172,7 +174,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   CoinVo getCoinVoOfHyn() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.HYN.symbol) {
+        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           return coin;
         }
       }

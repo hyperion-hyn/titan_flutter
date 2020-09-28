@@ -88,7 +88,7 @@ android {
 
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
-                    if(output.outputFileName.contains('-release')) {
+                    if (output.outputFileName.contains('-release')) {
                         def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
                         output.outputFileName = fileName
                     }
@@ -120,11 +120,11 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation (name:'cipher', ext:'aar')
+    implementation(name: 'mobile_lib', ext: 'aar')
 
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-rc1"
 
-    implementation "io.reactivex.rxjava2:rxjava:2.2.6"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.10"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
@@ -147,17 +147,19 @@ dependencies {
     implementation 'com.trello.rxlifecycle3:rxlifecycle-android-lifecycle-kotlin:3.0.0'
 
     //trust wallet core
-    implementation ('com.trustwallet:wallet-core:2.0.15') {
-//    implementation ('com.trustwallet.walletcore:walletcore:0.10.0') {
+    implementation('com.trustwallet:wallet-core:2.0.15') {
         exclude group: 'com.google.guava'
     }
     //web3j
-    implementation 'org.web3j:core:4.5.0'
+    implementation 'org.web3j:core:5.0.0'
+//    implementation('org.bitcoinj:bitcoinj-core:0.15.8') {
+//        exclude group: 'org.bouncycastle'
+//    }
 
     implementation 'com.google.code.gson:gson:2.8.6'
 
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 

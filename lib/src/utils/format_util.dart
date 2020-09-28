@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
@@ -38,9 +39,22 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp, {bool isSecond = false}) {
+  static String formatDate(int timestamp,
+      {bool isSecond = false, bool isMillisecond = false}) {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
-    timestamp = timestamp * 1000;
+    if (!isMillisecond) {
+      timestamp = timestamp * 1000;
+    }
+
+    var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
+    //print("[format]   timestamp:$timestamp, date:$date");
+
+    return DateFormat(format).format(date) ?? "";
+  }
+
+  static String formatSecondDate(int timestamp) {
+    var format = "HH:mm:ss";
+
     var date = DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: false);
     //print("[format]   timestamp:$timestamp, date:$date");
 
@@ -55,6 +69,19 @@ class FormatUtil {
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
     return DateFormat("yyyy.MM.dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
+  }
+
+  static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+    var dateTime = DateFormat(format).parse(utcStr, true);
+    var dateLocal = dateTime.toLocal();
+    return DateFormat(format).format(dateLocal) ?? "";
+  }
+
+  static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
+    return DateFormat("HH:mm MM/dd")
             .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
         "";
   }
@@ -97,6 +124,14 @@ class FormatUtil {
     return ConvertTokenUnit.weiToDecimal(
             coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
         .toString();
+  }
+
+  static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
+    return truncateDecimalNum(
+      ConvertTokenUnit.weiToDecimal(
+          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      decimal,
+    );
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
@@ -201,5 +236,56 @@ class FormatUtil {
       timeStr += S.of(context).n_minute_simple('$minute');
     }
     return timeStr;
+  }
+
+  static String truncateDecimalNum(Decimal decNum, int decimal) {
+    var number = decNum.toDouble();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
+      result = FormatUtil.strClearZero(result);
+      return result;
+    } else {
+      var result = number
+          .toString()
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
+      result = FormatUtil.strClearZero(result);
+      return result;
+    }
+  }
+
+  static String truncateDoubleNum(double number, int decimal) {
+    if (number == null) {
+      return null;
+    }
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
+      return result;
+    } else {
+      var result = number
+          .toString()
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
+      return result;
+    }
+  }
+
+  static String strClearZero(String value) {
+    return Decimal.parse(value).toString();
+  }
+
+  static String clearScientificCounting(double value) {
+    if (value == null) {
+      return "";
+    }
+    return Decimal.parse(value.toString()).toString();
   }
 }

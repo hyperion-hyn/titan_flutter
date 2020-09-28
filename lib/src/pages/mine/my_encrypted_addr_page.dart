@@ -315,7 +315,7 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
             height: 32,
           ),
           ClickOvalButton(S.of(context).authorized, () {
-             _activateWallet();
+            _activateWallet();
           })
         ],
       ),

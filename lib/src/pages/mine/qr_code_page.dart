@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 
 class QrCodePage extends StatelessWidget {
-  String qrCodeStr;
+  final String qrCodeStr;
 
   QrCodePage(this.qrCodeStr);
 

@@ -27,11 +27,36 @@ class ResponseEntity<T> {
   ResponseEntity._({this.code, this.msg, this.data, this.subMsg});
 
   factory ResponseEntity.fromJson(Map<String, dynamic> json, {EntityFactory<T> factory}) {
+    var retData;
+    if (json.containsKey('data')) {
+      retData = json['data'];
+    } else if (json.containsKey('result')) {
+      retData = json['result'];
+    }
+    if (factory != null) {
+      retData = factory.constructor(retData);
+    }
+    var retCode = ResponseCode.FAILED;
+    if (json.containsKey('code')) {
+      retCode = json['code'];
+    } else if (json.containsKey('errorCode')) {
+      retCode = json['errorCode'];
+    }
+    var retMsg = '';
+    if (json.containsKey('msg')) {
+      retMsg = json['msg'];
+    } else if (json.containsKey('errorMsg')) {
+      retMsg = json['errorMsg'];
+    }
+    var retSubMsg = '';
+    if (json.containsKey('subMsg')) {
+      retSubMsg = json['subMsg'];
+    }
     return ResponseEntity._(
-      code: json['code'] ?? ResponseCode.FAILED,
-      msg: json['msg'] ?? '',
-      subMsg: json['subMsg'] ?? '',
-      data: json['data'] != null ? factory?.constructor(json['data']) : null,
+      code: retCode,
+      msg: retMsg,
+      subMsg: retSubMsg,
+      data: retData,
     );
   }
 }

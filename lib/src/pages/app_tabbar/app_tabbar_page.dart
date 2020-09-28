@@ -28,10 +28,12 @@ import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
+import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+
 import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';
@@ -447,9 +449,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.explore, S.of(context).node, 2),
                     tabItem(
                         Icons.account_balance_wallet, S.of(context).wallet, 1),
+                    tabItem(Icons.explore, S.of(context).node, 2),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
                   ],
@@ -476,35 +478,44 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
           },
           child: Container(
             padding: EdgeInsets.only(top: 4, bottom: 2),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
+              alignment: Alignment.center,
               children: <Widget>[
-                if (Application.isUpdateAnnounce && index == 3)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-                    child: Container(
-                      height: 8,
-                      width: 8,
-                      decoration: BoxDecoration(
-                          color: HexColor("#DA3B2A"),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: HexColor("#DA3B2A"))),
-                    ),
-                  ),
-                Icon(
-                  iconData,
-                  color: selected
-                      ? Theme.of(context).primaryColor
-                      : Colors.black38,
-                ),
-                Text(
-                  text,
-                  style: TextStyle(
-                      fontSize: 12,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      iconData,
                       color: selected
                           ? Theme.of(context).primaryColor
-                          : Colors.black38),
+                          : Colors.black38,
+                    ),
+                    Text(
+                      text,
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: selected
+                              ? Theme.of(context).primaryColor
+                              : Colors.black38),
+                    ),
+                  ],
                 ),
+                if (Application.isUpdateAnnounce && index == 3)
+                  Positioned(
+                    top: 2,
+                    right: 12,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      child: Container(
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                            color: HexColor("#DA3B2A"),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: HexColor("#DA3B2A"))),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -531,7 +542,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
     switch (index) {
       case 1:
-        return WalletPage();
+        return WalletTabsPage();
 
       case 2:
         return Map3NodeTabsPage();

@@ -6,7 +6,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/auth/SetBioAuthPage.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/wallet/forgot_wallet_password_page.dart';
@@ -22,8 +22,15 @@ class EnterWalletPasswordWidget extends StatefulWidget {
   final CheckPwdValid onPwdSubmitted;
   final bool isShowBioAuthIcon;
   final Wallet wallet;
+  final AuthType authType;
 
-  EnterWalletPasswordWidget({this.useDigits = false, this.onPwdSubmitted, this.isShowBioAuthIcon = true, this.wallet});
+  EnterWalletPasswordWidget({
+    this.useDigits = false,
+    this.onPwdSubmitted,
+    this.isShowBioAuthIcon = true,
+    this.authType,
+    this.wallet,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -252,7 +259,13 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
   }
 
   _goToBioAuthSettingPage() async {
-    await Navigator.push(context, MaterialPageRoute(builder: (context) => SetBioAuthPage(widget.wallet)));
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => BioAuthPage(
+                  widget.wallet,
+                  widget.authType,
+                )));
     setState(() {
       _isHideLayout = true;
     });
@@ -261,6 +274,7 @@ class EnterWalletPasswordState extends BaseState<EnterWalletPasswordWidget> {
     var pwd = await UiUtil.showWalletPasswordDialogV2(
       context,
       wallet,
+      authType: widget.authType,
     );
     Navigator.of(context).pop(pwd);
   }

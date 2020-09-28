@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/auth/SetBioAuthPage.dart';
-import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 import 'me_area_page.dart';
 import 'me_language_page.dart';

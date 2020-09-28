@@ -9,6 +9,7 @@ import 'package:local_auth/local_auth.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/auth/bloc/bloc.dart';
 import 'package:titan/src/components/auth/model.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -50,7 +51,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           isSameWallet = true;
         }
         _activatedWalletVo = walletToWalletCoinsVo(event.wallet);
-
       }
 
       if (event.wallet != null && !isSameWallet) {
@@ -58,7 +58,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         walletRepository.saveActivatedWalletFileName(
             _activatedWalletVo?.wallet?.keystore?.fileName);
 
-        _recoverBalanceFromDisk(_activatedWalletVo);
+        if (_activatedWalletVo != null) {
+          _recoverBalanceFromDisk(_activatedWalletVo);
+        }
 
         //sync wallet account to server
         if (event.wallet?.getBitcoinZPub()?.isNotEmpty ?? false) {
@@ -81,7 +83,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         try {
           await walletRepository.updateWalletVoBalance(
-              _activatedWalletVo, event.symbol);
+              _activatedWalletVo, event.symbol, event.contractAddress);
           _saveWalletVoBalanceToDisk(
               _activatedWalletVo); //save balance data to disk;
           yield UpdatedWalletBalanceState(
@@ -159,7 +161,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var deList = decoded.map((item) => CoinVo.fromJson(item)).toList();
       for (var cVo in vo.coins) {
         for (var dVO in deList) {
-          if (cVo.symbol == dVO.symbol) {
+          if (cVo.symbol == dVO.symbol && cVo.contractAddress == dVO.contractAddress) {
             cVo.balance = dVO.balance;
             break;
           }

@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.0.10+110
+version: 3.0.17+117
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -28,7 +28,9 @@ dependencies:
   cupertino_icons: ^0.1.2
 
   #https://github.com/flutterchina/dio
-  dio: ^3.0.7
+  dio: ^3.0.9
+  dio_cookie_manager: 1.0.0
+  cookie_jar: ^1.0.0
   #https://pub.dev/packages/package_info
   package_info: ^0.4.0+4
   #https://github.com/baseflowit/flutter-permission-handler
@@ -85,11 +87,14 @@ dependencies:
   #https://pub.dev/packages/rxdart
   rxdart: ^0.23.1
   #https://pub.dev/packages/url_launcher
-  url_launcher: 5.1.2
+  url_launcher: 5.5.0
   decimal: ^0.3.5
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
-  web3dart: ^1.2.3
+  web3dart:
+    git:
+      url: git@github.com:hyperion-hyn/web3dart.git
+      ref: stable
   bip39: ^1.0.3
   intl: ^0.16.0
   webview_flutter: ^0.3.20+2
@@ -100,6 +105,7 @@ dependencies:
   flutter_inappwebview: ^3.1.0
   #  characters: ^0.5.0
   characters: ^1.0.0
+  encrypt: ^4.0.2
 
   #  flutter_inappwebview:
   #    git:
@@ -146,6 +152,17 @@ dependencies:
     git:
       url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
+  #K-Line Chart
+  #https://github.com/lanceqiuz/flutter_k_chart
+  flutter_k_chart:
+    git:
+      url: git@github.com:hyperion-hyn/flutter_k_chart.git
+
+  # WebSocket: https://pub.dev/packages/web_socket_channel
+  web_socket_channel: 1.1.0
+  ethereum_address: ^1.0.1
+  bitcoin_flutter: ^2.0.1
+
 dev_dependencies:
   flutter_driver:
     sdk: flutter
@@ -176,6 +193,7 @@ flutter:
   assets:
 
     - res/drawable/
+    - res/kline/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

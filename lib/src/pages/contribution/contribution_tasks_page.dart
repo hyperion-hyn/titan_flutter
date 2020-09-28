@@ -225,6 +225,7 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
             var duration = DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(lastDate));
             print(
                 "[Radion] confirmPoiTimes:$confirmPoiTimes, lastDate:$lastDate, day:${duration.inDays}, inHours:${duration.inHours}");
+
             if (lastDate == 0 || (lastDate > 0 && duration.inDays > 0)) {
               Navigator.push(
                 context,

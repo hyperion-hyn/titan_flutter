@@ -6,16 +6,35 @@ import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
+
 class Const {
   static String get DOMAIN {
     return 'https://api.hyn.space/';
   }
+
+  static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
 
   static String get NODE_DOMAIN {
     if (env.buildType == BuildType.DEV) {
       return Config.NODE_API_URL_TEST;
     } else {
       return Config.NODE_API_URL;
+    }
+  }
+
+  static String get EXCHANGE_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.EXCHANGE_DOMAIN_TEST;
+    } else {
+      return Config.EXCHANGE_DOMAIN;
+    }
+  }
+
+  static String get WS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.WS_DOMAIN_TEST;
+    } else {
+      return Config.WS_DOMAIN;
     }
   }
 
@@ -124,6 +143,21 @@ class PrefsKey {
 
   static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
   static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
+
+  static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
+
+  // kLine
+  static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
+
+  static const String KLINE_MAIN_STATE = 'mainState';
+  static const String KLINE_SECONDARY_STATE = 'secondaryState';
+
+  ///Exchange account
+  static const String EXCHANGE_ACCOUNT = 'exchange_account';
+  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
+
+  static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
+
 }
 
 class SecurePrefsKey {

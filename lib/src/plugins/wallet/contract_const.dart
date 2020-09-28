@@ -16,7 +16,8 @@ class ContractTestConfig {
     if (WalletConfig.netType == EthereumNetType.rinkeby) {
       return '0x97B9e0EfeF243720FB024C823a39cBD73C25D601';
     } else if (WalletConfig.netType == EthereumNetType.ropsten) {
-      return '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6'; //0xF931A59Ac15C450147b827Cd978A4451ef7a35f1
+      return "0xaebbada2bece10c84cbeac637c438cb63e1446c9";
+      //return '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6'; //0xF931A59Ac15C450147b827Cd978A4451ef7a35f1
     }
     return '0x884845609ea5DC317FA74Ccc5bdEc161Ce58D357';
   }
@@ -49,6 +50,17 @@ class ContractTestConfig {
 
 //  static const String apiLocalDomain = "http://219.137.207.27:35000/";
 //  static const String apiLocalDomain = "http://10.10.1.115:5000/";
+
+  static const String OUTSIDE_REPSTEN_REQUEST_ETH = 'outside_repsten_request_eth';
+  static const String OUTSIDE_REPSTEN_REQUEST_HYN = 'outside_repsten_request_hyn';
+  static const String OUTSIDE_REPSTEN_REQUEST_USDT = 'outside_repsten_request_usdt';
+
+  static String get outsidePrivateKey {
+    if (WalletConfig.netType == EthereumNetType.ropsten) {
+      return '0x205c777d10cb2437f832868552a41b77442cb9eedcd5d9e0d063cec11eae13c2';
+    }
+    return '';
+  }
 
 }
 

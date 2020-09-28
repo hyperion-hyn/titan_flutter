@@ -38,7 +38,7 @@ end
 target 'Runner' do
   use_frameworks!
   use_modular_headers!
-  
+
   # Flutter Pod
 
   copied_flutter_dir = File.join(__dir__, 'Flutter')
@@ -78,7 +78,7 @@ target 'Runner' do
     symlink = File.join('.symlinks', 'plugins', name)
     File.symlink(path, symlink)
     pod name, :path => File.join(symlink, 'ios')
-    
+
     pod 'SwiftKeychainWrapper'
     pod 'RxSwift', '~> 5.0'
 #    pod 'RxCocoa', '~> 5.0'

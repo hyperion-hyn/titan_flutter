@@ -7,6 +7,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/auth/model.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -182,6 +183,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                     if (!isSelected) {
                       BlocProvider.of<WalletCmpBloc>(context)
                           .add(ActiveWalletEvent(wallet: wallet));
+
+                      ///Clear exchange account when switch wallet
+                      BlocProvider.of<ExchangeCmpBloc>(context)
+                          .add(ClearExchangeAccountEvent());
                     }
                   },
                   child: Row(
@@ -199,7 +204,7 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                             Align(
                               alignment: Alignment.center,
                               child: walletHeaderWidget(
-                                walletKeyStore.name.characters.first,
+                                walletKeyStore.name.isEmpty?"Name is empty":walletKeyStore.name.characters.first,
                                 address: ethAccount.address,
                                 size: 52,
                                 fontSize: 20,

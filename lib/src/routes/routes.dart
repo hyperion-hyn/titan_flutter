@@ -18,24 +18,43 @@ class Routes {
   static const String wallet_create = '/wallet/create';
   static const String wallet_import = '/wallet/import';
   static const String wallet_account_detail = '/wallet/account/detail';
-  static const String wallet_account_send_transaction = '/wallet/account/send_transaction';
-  static const String wallet_transfer_token_confirm = '/wallet/account/confirm_transfer';
+  static const String wallet_account_send_transaction =
+      '/wallet/account/send_transaction';
+  static const String wallet_transfer_token_confirm =
+      '/wallet/account/confirm_transfer';
   static const String wallet_manager = '/wallet/manager';
   static const String wallet_setting = '/wallet/manager/setting';
-  static const String wallet_setting_wallet_backup_notice = '/wallet/manager/setting/backup_notice';
-  static const String wallet_backup_notice_for_creation = '/wallet/create/backup_notice';
-  static const String wallet_show_resume_word = '/wallet/create/show_resume_word';
-  static const String wallet_confirm_resume_word = '/wallet/create/confirm_resume_word';
+  static const String wallet_setting_wallet_backup_notice =
+      '/wallet/manager/setting/backup_notice';
+  static const String wallet_backup_notice_for_creation =
+      '/wallet/create/backup_notice';
+  static const String wallet_show_resume_word =
+      '/wallet/create/show_resume_word';
+  static const String wallet_confirm_resume_word =
+      '/wallet/create/confirm_resume_word';
   static const String confirm_success_papge = '/wallet/transfer/success_page';
+
+  ///Exchange
+  static const String exchange_assets_page = '/exchange/assets';
+  static const String exchange_transfer_page = '/exchange/transfer';
+  static const String exchange_deposit_confirm_page =
+      '/exchange/deposit_confirm';
+  static const String exchange_withdraw_confirm_page =
+      '/exchange/withdraw_confirm';
+  static const String exchange_transfer_success_page =
+      '/exchange/transfer_success';
 
   //contribution
   static const String contribute_tasks_list = '/contribution/tasks';
   static const String contribute_done = '/contribution/done';
-  static const String contribute_scan_signal = '/contribution/tasks/signal_scan';
+  static const String contribute_scan_signal =
+      '/contribution/tasks/signal_scan';
   static const String contribute_add_poi = '/contribution/tasks/add_poi';
   static const String contribute_verify_poi = '/contribution/tasks/verify_poi';
-  static const String contribute_add_nCov_poi = '/contribution/tasks/add_nCov_poi';
-  static const String contribute_position_finish = '/contribution/tasks/position_finish';
+  static const String contribute_add_nCov_poi =
+      '/contribution/tasks/add_nCov_poi';
+  static const String contribute_position_finish =
+      '/contribution/tasks/position_finish';
 
   //map3node
   static const String map3node_product_list = '/map3node/product_list';
@@ -69,20 +88,24 @@ class Routes {
 
   static String cachedEntryRouteName;
 
-  static void popUntilCachedEntryRouteName<T extends Object>(BuildContext context, [T result]) {
+  static void popUntilCachedEntryRouteName<T extends Object>(
+      BuildContext context,
+      [T result]) {
     print("Routes.cachedEntryRouteName:${Routes.cachedEntryRouteName}");
     if (Routes.cachedEntryRouteName == null) {
       //back to root
       Navigator.of(context).popUntilRouteName(Routes.root, result);
     } else {
       print("Routes.cachedEntryRouteName:nulllllll, result:$result");
-      Navigator.of(context).popUntilRouteName(Routes.cachedEntryRouteName, result);
+      Navigator.of(context)
+          .popUntilRouteName(Routes.cachedEntryRouteName, result);
 
       Routes.cachedEntryRouteName = null;
     }
   }
 
-  static void pushAndRemove(BuildContext context, Route newRoute, String rootName) {
+  static void pushAndRemove(
+      BuildContext context, Route newRoute, String rootName) {
     Navigator.of(context).pushAndRemoveUntil(
       newRoute,
       ModalRoute.withName(rootName),
@@ -90,38 +113,86 @@ class Routes {
   }
 
   static void configureRoutes(Router router) {
-    router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+    router.notFoundHandler = Handler(
+        handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
       return unknownPage();
     });
 
     //root
-    router.define(root, handler: rootHandler, transitionType: TransitionType.fadeIn);
+    router.define(root,
+        handler: rootHandler, transitionType: TransitionType.fadeIn);
 
     //tools
-    router.define(toolspage_webview_page, handler: toolsPageWebviewHandler, transitionType: pushNewPageTransitionType);
-    router.define(toolspage_qrcode_page, handler: toolsPageQrcodeHandler, transitionType: pushNewPageTransitionType);
+    router.define(toolspage_webview_page,
+        handler: toolsPageWebviewHandler,
+        transitionType: pushNewPageTransitionType);
+    router.define(toolspage_qrcode_page,
+        handler: toolsPageQrcodeHandler,
+        transitionType: pushNewPageTransitionType);
 
     //wallet
-    router.define(wallet_create, handler: createWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_import, handler: importWalletHandler, transitionType: pushNewPageTransitionType);
+    router.define(wallet_create,
+        handler: createWalletHandler,
+        transitionType: pushNewPageTransitionType);
+    router.define(wallet_import,
+        handler: importWalletHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_account_detail,
-        handler: walletAccountDetailHandler, transitionType: pushNewPageTransitionType);
+        handler: walletAccountDetailHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_account_send_transaction,
-        handler: walletAccountSendTransactionHandler, transitionType: pushNewPageTransitionType);
+        handler: walletAccountSendTransactionHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_transfer_token_confirm,
-        handler: transferConfirmHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_manager, handler: managerWalletHandler, transitionType: pushNewPageTransitionType);
-    router.define(wallet_setting, handler: settingWalletHandler, transitionType: pushNewPageTransitionType);
+        handler: transferConfirmHandler,
+        transitionType: pushNewPageTransitionType);
+    router.define(wallet_manager,
+        handler: managerWalletHandler,
+        transitionType: pushNewPageTransitionType);
+    router.define(wallet_setting,
+        handler: settingWalletHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_setting_wallet_backup_notice,
-        handler: settingBackupNoticeWalletHandler, transitionType: pushNewPageTransitionType);
+        handler: settingBackupNoticeWalletHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_backup_notice_for_creation,
-        handler: backUpMnemoicNoticeForCreation, transitionType: pushNewPageTransitionType);
+        handler: backUpMnemoicNoticeForCreation,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_show_resume_word,
-        handler: showResumeWordForCreation, transitionType: pushNewPageTransitionType);
+        handler: showResumeWordForCreation,
+        transitionType: pushNewPageTransitionType);
     router.define(wallet_confirm_resume_word,
-        handler: confirmResumeWordForCreation, transitionType: pushNewPageTransitionType);
-    router.define(confirm_success_papge, handler: confirmSuccessHandler, transitionType: pushNewPageTransitionType);
+        handler: confirmResumeWordForCreation,
+        transitionType: pushNewPageTransitionType);
+    router.define(confirm_success_papge,
+        handler: confirmSuccessHandler,
+        transitionType: pushNewPageTransitionType);
+
+    ///Exchange
+    router.define(
+      exchange_assets_page,
+      handler: exchangeAssetsHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(
+      exchange_transfer_page,
+      handler: exchangeTransferHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+    router.define(exchange_deposit_confirm_page,
+        handler: exchangeDepositConfirmHandler,
+        transitionType: pushNewPageTransitionType);
+
+    router.define(exchange_withdraw_confirm_page,
+        handler: exchangeWithdrawConfirmHandler,
+        transitionType: pushNewPageTransitionType);
+
+    router.define(
+      exchange_transfer_success_page,
+      handler: exchangeTransferSuccessHandler,
+      transitionType: pushNewPageTransitionType,
+    );
 
     //contribution
     router.define(contribute_tasks_list, handler: contributionTasksHandler, transitionType: pushNewPageTransitionType);
@@ -131,9 +202,11 @@ class Routes {
       transitionType: pushNewPageTransitionType,
     );
     router.define(contribute_scan_signal,
-        handler: contributionScanSignalHandler, transitionType: pushNewPageTransitionType);
+        handler: contributionScanSignalHandler,
+        transitionType: pushNewPageTransitionType);
     router.define(contribute_position_finish,
-        handler: contributionPositionFinishHandler, transitionType: pushNewPageTransitionType);
+        handler: contributionPositionFinishHandler,
+        transitionType: pushNewPageTransitionType);
 
     //map3node
     router.define(map3node_create_wallet,

@@ -228,7 +228,7 @@ class ShareDialogState extends State<ShareDialog> {
               Spacer(),
               InkWell(
                 onTap: onScan,
-                child: Icon(IconData(0xe75a, fontFamily: 'iconfont')),
+                child: const Icon(const IconData(0xe75a, fontFamily: 'iconfont')),
               ),
               SizedBox(
                 width: 16.0,

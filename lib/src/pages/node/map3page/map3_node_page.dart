@@ -130,7 +130,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   void getContractActiveList() async {
-    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(0);
+    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(page: 0);
 
     if (mounted) {
       _lastActiveList = tempMemberList;

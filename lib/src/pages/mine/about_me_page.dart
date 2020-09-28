@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/config/consts.dart';
@@ -71,7 +72,9 @@ class _AboueMeState extends BaseState<AboutMePage> {
                   Text(
                     version,
                     style: TextStyle(color: Colors.grey),
-                  )
+                  ),
+                  if(env.buildType != BuildType.PROD)
+                    Text("(Test1.3)")
                 ],
               ),
             ),

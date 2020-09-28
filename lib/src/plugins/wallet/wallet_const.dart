@@ -1,5 +1,6 @@
 import 'package:titan/config.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 
 import '../../../env.dart';
 
@@ -37,7 +38,7 @@ class EthereumConst {
   static const int COLLECT_HALF_MAP3_NODE_GAS_LIMIT = 150000;
 }
 
-class BitcoinConst{
+class BitcoinConst {
   static const BTC_LOW_SPEED = 15;
   static const BTC_FAST_SPEED = 30;
   static const BTC_SUPER_FAST_SPEED = 60;
@@ -81,6 +82,13 @@ class WalletConfig {
   static String get BITCOIN_MAIN_API => 'https://api.wallet.hyn.space/wallet/btc/';
 
   static String get BITCOIN_LOCAL_API => 'https://api.wallet.hyn.space/wallet/btc/';
+
+  static String get WALLET_ADDRESS_API => 'https://api.wallet.hyn.space/wallet/address';
+
+  static String get ATLAS_API => Config.ATLAS_API;
+
+  static String get ATLAS_API_TEST => Config.ATLAS_API_TEST;
+
 //  static String get BITCOIN_LOCAL_API => 'http://10.10.1.134/wallet/btc/';
 
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
@@ -104,6 +112,36 @@ class WalletConfig {
     return '';
   }
 
+  static String getHynErc20Address() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.HYN_ERC20.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.HYN_ROPSTEN.contractAddress;
+      case EthereumNetType.rinkeby:
+        return SupportedTokens.HYN_RINKEBY.contractAddress;
+      case EthereumNetType.local:
+        return SupportedTokens.HYN_LOCAL.contractAddress;
+    }
+    return '';
+  }
+
+  static String getUsdtErc20Address() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.USDT_ERC20.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.USDT_ERC20_ROPSTEN.contractAddress;
+      case EthereumNetType.rinkeby:
+        //have not deployed
+        return SupportedTokens.USDT_ERC20.contractAddress;
+      case EthereumNetType.local:
+        //have not deployed
+        return SupportedTokens.USDT_ERC20.contractAddress;
+    }
+    return '';
+  }
+
   static String getEthereumApi() {
     switch (netType) {
       case EthereumNetType.main:
@@ -119,13 +157,30 @@ class WalletConfig {
     return '';
   }
 
+  static String getAtlasApi() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return ATLAS_API;
+      case EthereumNetType.ropsten:
+        return ATLAS_API_TEST;
+        break;
+      case EthereumNetType.rinkeby:
+        return ATLAS_API_TEST;
+        break;
+      case EthereumNetType.local:
+        return ATLAS_API_TEST;
+        break;
+    }
+    return ATLAS_API;
+  }
+
   static String getBitcoinApi() {
     switch (bitcoinNetType) {
       case BitcoinNetType.main:
         return BITCOIN_MAIN_API;
       case BitcoinNetType.local:
         return BITCOIN_LOCAL_API;
-    //return LOCAL_API;
+      //return LOCAL_API;
     }
     return '';
   }

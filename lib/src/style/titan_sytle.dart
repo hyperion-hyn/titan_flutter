@@ -62,11 +62,14 @@ class DefaultColors {
   static Color color333 = HexColor("#333333");
   static Color color777 = HexColor("#777777");
   static Color color999 = HexColor("#999999");
+  static Color colord0d0d0 = HexColor("#d0d0d0");
+  static Color colord7d7d7 = HexColor("#d7d7d7");
+  static Color colordedede = HexColor("#dedede");
+  static Color colorf2f2f2 = HexColor("#f2f2f2");
   static Color coloraaa = HexColor("#aaaaaa");
   static Color colorfff = HexColor("#ffffff");
   static Color colorccfff = HexColor("#ccffffff");
   static Color color000 = HexColor("#000000");
-  static Color colorf2f2f2 = HexColor("#f2f2f2");
   static Color colorf5f5f5 = HexColor("#f5f5f5");
   static Color colorf4f4f4 = HexColor("#f4f4f4");
   static Color color9b9b9b = HexColor("#9b9b9b");
@@ -84,4 +87,6 @@ class DefaultColors {
   static Color color7c5b00 = HexColor("#7c5b00");
   static Color color2277869e = HexColor("#2277869e");
   static Color color141fb9c7 = HexColor("#141fb9c7");
+  static Color color53ae86 = HexColor("#53ae86");
+  static Color colorcc5858 = HexColor("#cc5858");
 }

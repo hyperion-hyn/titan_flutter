@@ -410,7 +410,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               width: 120,
                               height: 32,
                               fontSize: 14,
-                              textColor: DefaultColors.color999,
+                              fontColor: DefaultColors.color999,
                               btnColor: Colors.transparent,
                             ),
                             SizedBox(
@@ -865,7 +865,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               width: 90,
               height: 32,
               fontSize: 14,
-              textColor: DefaultColors.color999,
+              fontColor: DefaultColors.color999,
               btnColor: Colors.transparent,
             ),
           ),

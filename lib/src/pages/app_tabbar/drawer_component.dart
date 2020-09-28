@@ -8,7 +8,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/wallet_demo/ApiDemo.dart';
 import 'package:titan/src/pages/wallet_demo/WalletDemo.dart';
 import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -43,7 +45,7 @@ class _DrawerComponentState extends State<DrawerComponent> {
       _pubKey = '';
       setState(() {});
 
-      TitanPlugin.genKeyPair().then((pub) async {
+      TitanPlugin.getPublicKey().then((pub) async {
         _pubKey = pub;
         expireTime = await TitanPlugin.getExpiredTime();
         _pubKeyAutoRefreshTip = getExpiredTimeShowTip(context, expireTime);
@@ -189,6 +191,15 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   title: Text(S.of(context).nav_about_us),
                   trailing: Icon(Icons.navigate_next),
                 ),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeDetailPage(selectedCoin:"USDT", exchangeType:0)));
+                  },
+                  leading: Icon(Icons.monetization_on),
+                  title: Text('交易详情页'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
                 Container(height: 1, color: Colors.grey[100]),
                 ListTile(
                   onTap: () {
@@ -198,6 +209,15 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('钱包测试'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ApiDemo()));
+                  },
+                  leading: Icon(Icons.http),
+                  title: Text('API Demo'),
                   trailing: Icon(Icons.navigate_next),
                 ),
                 ListTile(

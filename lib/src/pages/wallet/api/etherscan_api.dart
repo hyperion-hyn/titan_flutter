@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
@@ -83,6 +84,21 @@ class EtherscanApi {
       return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
     } else {
       return [];
+    }
+  }
+
+
+  Future<ResponseEntity> getGasFromEtherScan() async {
+    Map json = await HttpCore.instance.get("$apiHost/api", params: {
+      "module": "gastracker",
+      "action": "gasoracle",
+      "apikey": Config.ETHERSCAN_APIKEY,
+    });
+
+    if (json["status"] == "1") {
+      return ResponseEntity.fromJson(json);
+    } else {
+      throw new Exception();
     }
   }
 

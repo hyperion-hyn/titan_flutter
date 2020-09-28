@@ -16,9 +16,12 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -26,6 +29,7 @@ import 'package:titan/src/utils/auth_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -371,6 +375,7 @@ class UiUtil {
     BuildContext context,
     Wallet wallet, {
     String dialogTitle,
+    AuthType authType = AuthType.pay,
   }) async {
     CheckPwdValid onCheckPwdValid = (walletPwd) {
       return WalletUtil.checkPwdValid(
@@ -380,7 +385,11 @@ class UiUtil {
       );
     };
 
-    var authConfig = await AuthUtil.getAuthConfigByWallet(wallet);
+    var authConfig = await AuthUtil.getAuthConfigByWallet(
+      wallet,
+      authType: authType,
+    );
+
     if (AuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthUtil.bioAuthExpired(authConfig)) {
@@ -388,23 +397,18 @@ class UiUtil {
           context,
           wallet,
           onCheckPwdValid: onCheckPwdValid,
+          authType: authType,
         );
 
         if (pwd != null) {
           ///Update last bio-auth time
-//          BlocProvider.of<AuthBloc>(context).add(
-//            SetBioAuthEvent(
-//              AuthInheritedModel.of(
-//                context,
-//                aspect: AuthAspect.config,
-//              ).currentBioMetricType,
-//              true,
-//              wallet,
-//            ),
-//          );
-
           authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-          AuthUtil.saveAuthConfig(authConfig, wallet);
+
+          AuthUtil.saveAuthConfig(
+            authConfig,
+            wallet,
+            authType: authType,
+          );
 
           return pwd;
         }
@@ -435,6 +439,7 @@ class UiUtil {
       wallet,
       onCheckPwdValid: onCheckPwdValid,
       dialogTitle: dialogTitle,
+      authType: authType,
     );
     return pwd;
   }
@@ -445,6 +450,7 @@ class UiUtil {
     @required CheckPwdValid onCheckPwdValid,
     bool isShowBioAuthIcon = true,
     String dialogTitle,
+    AuthType authType = AuthType.pay,
   }) async {
     var useDigits = await WalletUtil.checkUseDigitsPwd(
       wallet,
@@ -459,6 +465,7 @@ class UiUtil {
             checkPwdValid: onCheckPwdValid,
             isShowBioAuthIcon: isShowBioAuthIcon,
             wallet: wallet,
+            authType: authType,
           ));
     } else {
       var pwd = await showModalBottomSheet(
@@ -471,6 +478,7 @@ class UiUtil {
             return EnterWalletPasswordWidget(
               isShowBioAuthIcon: isShowBioAuthIcon,
               wallet: wallet,
+              authType: authType,
               onPwdSubmitted: onCheckPwdValid,
             );
           });
@@ -561,6 +569,34 @@ class UiUtil {
       widget,
       duration: Duration(seconds: 1),
       onDismiss: () {},
+    );
+  }
+
+  static Future<T> showExchangeAuthAgainDialog<T>(
+    BuildContext context, {
+    Widget title,
+    Widget content,
+    List<Widget> actions,
+  }) {
+    return showDialogWidget(
+      context,
+      title: Text(S.of(context).exchange_auth),
+      content: Text(S.of(context).exchange_ask_auth_again),
+      actions: [
+        FlatButton(
+          child: Text(S.of(context).cancel),
+          onPressed: () => Navigator.pop(context),
+        ),
+        FlatButton(
+          child: Text(S.of(context).confirm),
+          onPressed: () {
+            Navigator.pop(context);
+            ///
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          },
+        ),
+      ],
     );
   }
 }

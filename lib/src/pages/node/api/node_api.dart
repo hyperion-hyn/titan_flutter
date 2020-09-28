@@ -186,7 +186,7 @@ class NodeApi {
       return contractNodeItem;
     }
     return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount.toDouble(),publicKey,createMap3Hex
-        ,startJoinInstance.provider,startJoinInstance.region);
+        ,startJoinInstance.provider,startJoinInstance.region, gasPrice);
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
@@ -194,6 +194,7 @@ class NodeApi {
     var wallet = activatedWallet.wallet;
 
     var myStaking = amount;
+    var stakingBigInt = ConvertTokenUnit.decimalToWei(myStaking);
     var ethAccount = wallet.getEthAccount();
     var hynErc20ContractAddress = wallet.getEthAccount().contractAssetTokens[0].contractAddress;
     var approveToAddress = WalletConfig.map3ContractAddress;
@@ -203,30 +204,40 @@ class NodeApi {
     final client = WalletUtil.getWeb3Client();
     var count =
         await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
+//    int nonce = await wallet.getCurrentWalletNonce();
 
-    //approve
-    var approveHex = await wallet.sendApproveErc20Token(
-      contractAddress: hynErc20ContractAddress,
-      approveToAddress: approveToAddress,
-      amount: ConvertTokenUnit.decimalToWei(myStaking),
-      password: password,
-      gasPrice: BigInt.from(gasPrice),
-      gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20ApproveGasLimit,
-      nonce: count,
-    );
-    print('approveHex is: $approveHex');
+    var approveNum = await wallet.getAllowance(hynErc20ContractAddress, ethAccount.address, approveToAddress);
+
+    if(approveNum < stakingBigInt) {
+      //approve
+      var approveHex = await wallet.sendApproveErc20Token(
+        contractAddress: hynErc20ContractAddress,
+        approveToAddress: approveToAddress,
+        amount: stakingBigInt,
+        password: password,
+        gasPrice: BigInt.from(gasPrice),
+        gasLimit: SettingInheritedModel
+            .ofConfig(Keys.rootKey.currentContext)
+            .systemConfigEntity
+            .erc20ApproveGasLimit,
+        nonce: count,
+      );
+      print('approveHex is: $approveHex');
+
+      count = count + 1;
+    }
 
     var joinHex = await wallet.sendDelegateMap3Node(
       createNodeWalletAddress: createNodeWalletAddress,
-      stakingAmount: ConvertTokenUnit.decimalToWei(myStaking),
+      stakingAmount: stakingBigInt,
       gasPrice: BigInt.from(gasPrice),
       gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.delegateMap3NodeGasLimit,
       password: password,
-      nonce: count + 1,
+      nonce: count,
     );
     print('joinHex is: $joinHex');
 
-    await postJoinDefaultInstance(contractNodeItem.id, walletHynAddress, walletName, amount.toDouble(), joinHex);
+    await postJoinDefaultInstance(contractNodeItem.id, walletHynAddress, walletName, amount.toDouble(), joinHex, gasPrice);
 
     return "success";
   }
@@ -250,7 +261,7 @@ class NodeApi {
     return contractsList;
   }
 
-  Future<List<ContractNodeItem>> getContractActiveList([int page = 0]) async {
+  Future<List<ContractNodeItem>> getContractActiveList({int page = 0}) async {
     var contractsList = await NodeHttpCore.instance.getEntity("/instances/active?page=$page",
         EntityFactory<List<ContractNodeItem>>((data) {
           return (data as List).map((dataItem) => ContractNodeItem.fromJson(dataItem)).toList();
@@ -291,8 +302,10 @@ class NodeApi {
     String txHash,
     String nodeProvider,
     String nodeRegion,
+    int gasPrice
   ) async {
-    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(address, txHash,
+    gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
+    NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(address, txHash, gasPrice,
         name: name, amount: amount, publicKey: publicKey, nodeProvider: nodeProvider, nodeRegion: nodeRegion);
     print("[api] postStart , nodeDefaultEntity.toJson():${nodeDefaultEntity.toJson()}");
 
@@ -308,10 +321,12 @@ class NodeApi {
   }
 
   Future postJoinDefaultInstance(
-      int contractInstanceId, String address, String name, double amount, String txHash) async {
+      int contractInstanceId, String address, String name, double amount, String txHash,int gasPrice) async {
+    gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
     NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
       address,
       txHash,
+      gasPrice,
       name: name,
       amount: amount,
       shareKey: MemoryCache.shareKey,
@@ -320,10 +335,12 @@ class NodeApi {
         data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future postWithdrawDefaultInstance(int contractInstanceId, String address, String txHash) async {
+  Future postWithdrawDefaultInstance(int contractInstanceId, String address, String txHash,int gasPrice) async {
+    gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
     NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
       address,
       txHash,
+      gasPrice,
     );
     NodeHttpCore.instance.post("instances/precollect/$contractInstanceId",
         data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
@@ -346,7 +363,7 @@ class NodeApi {
     );
     print('collectHex is: $collectHex');
 
-    await postWithdrawDefaultInstance(contractNodeItem.id, address, collectHex);
+    await postWithdrawDefaultInstance(contractNodeItem.id, address, collectHex, gasPrice);
 
     return "success";
   }

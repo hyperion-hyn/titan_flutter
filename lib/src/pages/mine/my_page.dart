@@ -6,6 +6,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
+import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/mine/my_nodes_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
@@ -153,12 +154,18 @@ class _MyPageState extends State<MyPage> {
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         S.of(context).map_smart_contract_management,
-                        Icons.account_balance_wallet,
+                        Icons.book,
                         () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Map3ContractControlPage()))),
+                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
+                  Divider(
+                    height: 0,
+                  ),
+                  if ([
+                    '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A'.toLowerCase(),
+                    '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
+                  ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
+                    _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
+                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
                 ],
               ),
             ),

@@ -86,12 +86,12 @@ class GasPriceRecommend extends Object {
   Map<String, dynamic> toJson() => _$GasPriceRecommendToJson(this);
 
   GasPriceRecommend.defaultValue() {
-    this.fast = Decimal.fromInt(EthereumConst.LOW_SPEED);
-    this.fastWait = 30;
+    this.fast = Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED);
     this.average = Decimal.fromInt(EthereumConst.FAST_SPEED);
+    this.safeLow = Decimal.fromInt(EthereumConst.LOW_SPEED);
+    this.fastWait = 0.5;
     this.avgWait = 3;
-    this.safeLow = Decimal.fromInt(EthereumConst.SUPER_FAST_SPEED);
-    this.safeLowWait = 0.5;
+    this.safeLowWait = 30;
   }
 
 }
@@ -145,12 +145,12 @@ class BTCGasPriceRecommend extends Object {
   Map<String, dynamic> toJson() => _$BTCGasPriceRecommendToJson(this);
 
   BTCGasPriceRecommend.defaultValue(){
-    this.safeLow = Decimal.fromInt(BitcoinConst.BTC_LOW_SPEED);
-    this.average = Decimal.fromInt(BitcoinConst.BTC_FAST_SPEED);
     this.fast = Decimal.fromInt(BitcoinConst.BTC_SUPER_FAST_SPEED);
-    this.safeLowWait = 70;
-    this.avgWait = 45;
+    this.average = Decimal.fromInt(BitcoinConst.BTC_FAST_SPEED);
+    this.safeLow = Decimal.fromInt(BitcoinConst.BTC_LOW_SPEED);
     this.fastWait = 15;
+    this.avgWait = 45;
+    this.safeLowWait = 70;
   }
 }
 

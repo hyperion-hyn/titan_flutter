@@ -10,11 +10,11 @@ class ClickOvalButton extends StatefulWidget {
   Function onTap;
   bool isLoading = false;
   Color btnColor;
-  Color textColor;
+  Color fontColor;
   double radius;
 
   ClickOvalButton(this.text, this.onTap,
-      {this.height = 36, this.width = 180, this.fontSize = 13, this.btnColor, this.textColor, this.radius});
+      {this.height = 36, this.width = 180, this.fontSize = 13, this.fontColor, this.btnColor, this.radius});
 
   @override
   State<StatefulWidget> createState() {
@@ -40,9 +40,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
           child: Text(widget.text,
               style: TextStyle(
                 fontSize: widget.fontSize,
-                color: widget.isLoading
-                    ? DefaultColors.color999
-                    : widget.textColor != null ? widget.textColor : Colors.white,
+                color: widget.isLoading ? DefaultColors.color999 : widget.fontColor != null ? widget.fontColor : Colors.white,
               )),
           onPressed: widget.isLoading
               ? null
@@ -64,11 +62,11 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         colors: <Color>[Color(0xffDEDEDE), Color(0xffDEDEDE)],
       );
     } else {
-      if (widget.btnColor != null) {
+      if(widget.btnColor != null){
         return LinearGradient(
           colors: <Color>[widget.btnColor, widget.btnColor],
         );
-      } else {
+      }else{
         return LinearGradient(
           colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
         );

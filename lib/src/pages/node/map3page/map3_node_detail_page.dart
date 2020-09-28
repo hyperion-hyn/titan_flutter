@@ -812,7 +812,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             width: 120,
             height: 32,
             fontSize: 14,
-            textColor: DefaultColors.color999,
+            fontColor: DefaultColors.color999,
             btnColor: Colors.transparent,
           ),
           Spacer(),

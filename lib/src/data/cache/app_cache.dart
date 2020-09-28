@@ -17,7 +17,7 @@ class AppCache {
       case bool:
         return prefs.setBool(key, value as bool);
       case List:
-        return prefs.setStringList(key, value as List<String>);
+        return prefs.setStringList(key, List.generate((value as List).length, (index) => (value as List)[index].toString()).toList());
     }
     return false;
   }
@@ -25,6 +25,12 @@ class AppCache {
   static Future<T> getValue<T>(String key) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(key)) {
+      switch(T){
+        case List:
+          var growList = List();
+          growList.addAll(prefs.get(key) as List);
+          return growList as T;
+      }
       return prefs.get(key) as T;
     } else {
       return null;

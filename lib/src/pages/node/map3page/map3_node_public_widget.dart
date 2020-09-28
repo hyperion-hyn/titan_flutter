@@ -1,5 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:image_pickers/UIConfig.dart';
+import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -7,7 +9,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -774,5 +775,92 @@ Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFun
   return Row(
     mainAxisAlignment: mainAxisAlignment,
     children: children,
+  );
+}
+
+typedef EditIconCallback = void Function(String path);
+
+Future EditIconSheet(BuildContext context, EditIconCallback callback) async {
+  showModalBottomSheet(
+    context: context,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20.0),
+        topRight: Radius.circular(20.0),
+      ),
+    ),
+    builder: (BuildContext dialogContext) {
+      return Container(
+        height: 199,
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: 54,
+              child: ListTile(
+                title: Text(
+                  "拍照",
+                  textAlign: TextAlign.center,
+                  style: TextStyles.textC333S18,
+                ),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.openCamera(
+                    compressSize: 500,
+                  );
+                  if (tempListImagePaths != null) {
+                    callback(tempListImagePaths.path);
+                  }
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10),
+              child: Divider(height: 1, color: DefaultColors.colorf2f2f2),
+            ),
+            SizedBox(
+              height: 54,
+              child: ListTile(
+                title: Text("从相册选择", textAlign: TextAlign.center, style: TextStyles.textC333S18),
+                onTap: () async {
+                  Future.delayed(Duration(milliseconds: 500), () {
+                    Navigator.pop(dialogContext);
+                  });
+
+                  var tempListImagePaths = await ImagePickers.pickerPaths(
+                    galleryMode: GalleryMode.image,
+                    selectCount: 1,
+                    showCamera: true,
+                    cropConfig: null,
+                    compressSize: 500,
+                    uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
+                  );
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                    callback(tempListImagePaths[0].path);
+                  }
+                },
+              ),
+            ),
+            Container(
+              height: 10,
+              color: DefaultColors.colorf4f4f4,
+            ),
+//                Divider(color:DefaultColors.colorf4f4f4,height: 10,),
+            ListTile(
+              title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            Expanded(
+                child: Container(
+                  color: DefaultColors.colorf4f4f4,
+                )),
+          ],
+        ),
+      );
+    },
   );
 }

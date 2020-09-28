@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -26,61 +27,94 @@ class BaseHttpCore {
   static const String POST = "post";
   static const String PATCH = "patch";
 
-  Future<ResponseEntity<T>> getResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var res = await get(url, params: params, options: options, cancelToken: cancelToken);
+  Future<ResponseEntity<T>> getResponseEntity<T>(
+      String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    var res = await get(url,
+        params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
-  Future<ResponseEntity<T>> postResponseEntity<T>(String url, EntityFactory<T> factory,
-      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var res = await post(url, data: data, params: params, options: options, cancelToken: cancelToken);
+  Future<ResponseEntity<T>> postResponseEntity<T>(
+      String url, EntityFactory<T> factory,
+      {dynamic data,
+      Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    var res = await post(url,
+        data: data, params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
-  Future<ResponseEntity<T>> patchResponseEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var res = await patch(url, params: params, options: options, cancelToken: cancelToken);
+  Future<ResponseEntity<T>> patchResponseEntity<T>(
+      String url, EntityFactory<T> factory,
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    var res = await patch(url,
+        params: params, options: options, cancelToken: cancelToken);
     var responseEntity = ResponseEntity<T>.fromJson(res, factory: factory);
     return responseEntity;
   }
 
   Future<T> getEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var responseEntity =
-        await getResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
-    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    var responseEntity = await getResponseEntity<T>(url, factory,
+        params: params, options: options, cancelToken: cancelToken);
+    if (responseEntity.code != ResponseCode.SUCCESS &&
+        responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     //print('[request] responseEntity.data:${responseEntity.data}');
     return responseEntity.data;
   }
 
-  Future<T> postEntity<T>(String url, EntityFactory<T> factory,
-      {dynamic data, Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
+  Future<T> postEntity<T>(
+    String url,
+    EntityFactory<T> factory, {
+    dynamic data,
+    Map<String, dynamic> params,
+    Options options,
+    CancelToken cancelToken,
+  }) async {
     var responseEntity = await postResponseEntity<T>(url, factory,
         data: data, params: params, options: options, cancelToken: cancelToken);
-    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+    if (responseEntity.code != ResponseCode.SUCCESS &&
+        responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
 
   Future<T> patchEntity<T>(String url, EntityFactory<T> factory,
-      {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    var responseEntity =
-        await patchResponseEntity<T>(url, factory, params: params, options: options, cancelToken: cancelToken);
-    if (responseEntity.code != ResponseCode.SUCCESS && responseEntity.code != 200) {
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    var responseEntity = await patchResponseEntity<T>(url, factory,
+        params: params, options: options, cancelToken: cancelToken);
+    if (responseEntity.code != ResponseCode.SUCCESS &&
+        responseEntity.code != 200) {
       throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
     }
     return responseEntity.data;
   }
 
   //get method
-  Future<dynamic> get(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    return _request(url, method: GET, params: params, options: options, cancelToken: cancelToken);
+  Future<dynamic> get(String url,
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    return _request(url,
+        method: GET,
+        params: params,
+        options: options,
+        cancelToken: cancelToken);
   }
 
   //post method
@@ -100,8 +134,15 @@ class BaseHttpCore {
   }
 
   //patch method
-  Future<dynamic> patch(String url, {Map<String, dynamic> params, Options options, CancelToken cancelToken}) async {
-    return _request(url, method: PATCH, params: params, options: options, cancelToken: cancelToken);
+  Future<dynamic> patch(String url,
+      {Map<String, dynamic> params,
+      Options options,
+      CancelToken cancelToken}) async {
+    return _request(url,
+        method: PATCH,
+        params: params,
+        options: options,
+        cancelToken: cancelToken);
   }
 
   Future<dynamic> _request(String url,
@@ -135,10 +176,17 @@ class BaseHttpCore {
     if (packageInfo == null) {
       packageInfo = await PackageInfo.fromPlatform();
     }
-    options.headers["versionCode"] = packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
+    options.headers["versionCode"] =
+        packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
-    options.headers["walletAddress"] =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+    options.headers["walletAddress"] = Keys.rootKey.currentContext != null
+        ? WalletInheritedModel.of(Keys.rootKey.currentContext)
+                ?.activatedWallet
+                ?.wallet
+                ?.getEthAccount()
+                ?.address ??
+            ''
+        : '';
 
     // todo rich add userid
 
@@ -157,29 +205,42 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        LogUtil.printMessage("[base_http] post params = ${params.toString()} ***URL = $url");
+        LogUtil.printMessage(
+            "[base_http] post params = ${params.toString()} ***URL = $url");
         /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
         });*/
-        response = await dio.post(url, data: params, options: options, cancelToken: cancelToken);
+        response = await dio.post(url,
+            data: params, options: options, cancelToken: cancelToken);
       } else if (data != null) {
-        LogUtil.printMessage("[base_http] post data = ${data.toString()} ***URL = $url");
-        response =
-            await dio.post(url, data: data, options: options, cancelToken: cancelToken, onSendProgress: onSendProgress);
+        LogUtil.printMessage(
+            "[base_http] post data = ${data.toString()} ***URL = $url");
+        response = await dio.post(url,
+            data: data,
+            options: options,
+            cancelToken: cancelToken,
+            onSendProgress: onSendProgress);
       } else {
-        response = await dio.post(url, options: options, cancelToken: cancelToken);
+        response =
+            await dio.post(url, options: options, cancelToken: cancelToken);
       }
     } else if (method == PATCH) {
       if (params != null && params.isNotEmpty) {
-        response = await dio.patch(url, data: params, options: options, cancelToken: cancelToken);
+        response = await dio.patch(url,
+            data: params, options: options, cancelToken: cancelToken);
       } else {
-        response = await dio.patch(url, options: options, cancelToken: cancelToken);
+        response =
+            await dio.patch(url, options: options, cancelToken: cancelToken);
       }
     }
 
     statusCode = response.statusCode;
     if (statusCode < 0) {
-      errorMsg = S.of(Keys.rootKey.currentContext).network_request_err(statusCode.toString());
+      errorMsg = Keys.rootKey.currentContext != null
+          ? S
+              .of(Keys.rootKey.currentContext)
+              .network_request_err(statusCode.toString())
+          : 'net work error';
       throw HttpResponseNot200Exception(errorMsg);
     }
 //    String res2Json = '{"code":0,"msg":"mssss","data":[{"name":"moo"},{"name":"moo2"}]}';
