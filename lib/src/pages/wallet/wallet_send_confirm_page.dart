@@ -498,7 +498,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
       if (widget.coinVo.symbol == "ETH") {
         await _transferEth(
-            false,
             walletPassword,
             ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
             widget.receiverAddress,
@@ -557,16 +556,15 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     }
   }
 
-  Future _transferEth(bool isAtlas, String password, BigInt amount, String toAddress, Wallet wallet) async {
+  Future _transferEth(String password, BigInt amount, String toAddress, Wallet wallet) async {
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
       value: amount,
-      type: isAtlas ? 0 : null,
     );
 
-    logger.i('${isAtlas ? 'HYN atlas' : 'ETH'} transaction committed，txhash $txHash');
+    logger.i('ETH transaction committed，txhash $txHash');
   }
 
   Future _transferErc20(String password, BigInt amount, String toAddress, Wallet wallet) async {

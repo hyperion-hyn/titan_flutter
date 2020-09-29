@@ -12,6 +12,10 @@ class ConvertTokenUnit {
     return BigInt.parse(dstr);
   }
 
+  static BigInt bigintToWei(BigInt num, [int decimals = 18]) {
+    return num * BigInt.from(10).pow(decimals);
+  }
+
   static BigInt strToBigInt(String str, [int decimals = 18]) {
     var dstr = (Decimal.parse(str) * Decimal.fromInt(10).pow(decimals)).toString();
     return BigInt.parse(dstr);
