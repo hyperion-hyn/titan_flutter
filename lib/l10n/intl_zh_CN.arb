@@ -1005,5 +1005,6 @@
   "wallet_name_do_not_contain_space": "请勿包含空格",
   "exchange_change_wallet": "更换钱包",
   "exchange_logout": "退出登录",
-  "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？"
+  "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？",
+  "bio_auth_expired_hint": "生物识别已过期，请输入密码"
 }
