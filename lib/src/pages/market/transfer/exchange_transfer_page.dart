@@ -403,9 +403,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
               ),
               borderRadius: BorderRadius.circular(4.0)),
           child: Text(
-            _fromExchangeToWallet
-                ? S.of(context).exchange_withdraw
-                : S.of(context).exchange_deposit,
+            _fromExchangeToWallet ? S.of(context).exchange_withdraw : S.of(context).exchange_deposit,
             style: TextStyle(
               fontSize: 16,
               color: Colors.white,
@@ -439,10 +437,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         child: Center(
           child: Text(
             type,
-            style: TextStyle(
-                color: _selectedCoinType == type
-                    ? Theme.of(context).primaryColor
-                    : HexColor('#FF777777')),
+            style: TextStyle(color: _selectedCoinType == type ? Theme.of(context).primaryColor : HexColor('#FF777777')),
           ),
         ),
       ),
@@ -457,12 +452,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   }
 
   _amount() {
-    var _minTransferText = _fromExchangeToWallet
-        ? S.of(context).exchange_withdraw_min
-        : S.of(context).exchange_deposit_min;
-    var _amountInputHint = _fromExchangeToWallet
-        ? S.of(context).exchange_deposit_input_hint
-        : S.of(context).exchange_withdraw_input_hint;
+    var _minTransferText =
+        _fromExchangeToWallet ? S.of(context).exchange_withdraw_min : S.of(context).exchange_deposit_min;
+    var _amountInputHint =
+        _fromExchangeToWallet ? S.of(context).exchange_deposit_input_hint : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
             .exchangeModel
@@ -476,7 +469,34 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             .assetList
             ?.getAsset(_selectedCoinType)
             ?.rechargeMin;
+    var complex = _minTransferText + _minTransferAmount + _selectedCoinType;
 
+    var _maxTransferAmount = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        ?.getAsset(_selectedCoinType)
+        ?.withdrawMax;
+    if (_maxTransferAmount == null || _maxTransferAmount.isEmpty) {
+      double price = 10000.0;
+      if (_selectedCoinType == "HYN") {
+        price = 250000;
+      } else if (_selectedCoinType == "USDT") {
+        price = 15000;
+      }
+      _maxTransferAmount = FormatUtil.formatPrice(price);
+    }
+    var _maxTransferText = S.of(context).exchange_withdraw_max;
+
+    if (_fromExchangeToWallet) {
+      complex = _minTransferText +
+          _minTransferAmount +
+          _selectedCoinType +
+          "," +
+          _maxTransferText +
+          _maxTransferAmount +
+          _selectedCoinType;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -490,7 +510,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 width: 4.0,
               ),
               Text(
-                '($_minTransferText $_minTransferAmount $_selectedCoinType)',
+                '($complex) ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 11,
@@ -517,13 +537,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                       return S.of(context).input_corrent_count_hint;
                     }
 
-                    if (Decimal.parse(value) >
-                        Decimal.parse(_availableAmount())) {
+                    if (Decimal.parse(value) > Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
                     }
 
-                    if (Decimal.parse(value) <
-                        Decimal.parse(_minTransferAmount)) {
+                    if (Decimal.parse(value) > Decimal.parse(_maxTransferAmount) && _fromExchangeToWallet) {
+                      return S.of(context).exchange_withdraw_over_than_max;
+                    }
+
+                    if (Decimal.parse(value) < Decimal.parse(_minTransferAmount)) {
                       return _fromExchangeToWallet
                           ? S.of(context).exchange_withdraw_less_than_min
                           : S.of(context).exchange_deposit_less_than_min;
@@ -572,16 +594,13 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                   child: Text(
                                     S.of(context).all,
                                     style: TextStyle(
-                                        color: HexColor('#FF333333'),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
+                                        color: HexColor('#FF333333'), fontSize: 12, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 onTap: () {
                                   _amountController.text = _availableAmount();
 
-                                  _amountController.selection =
-                                      TextSelection.fromPosition(TextPosition(
+                                  _amountController.selection = TextSelection.fromPosition(TextPosition(
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
@@ -647,8 +666,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           ?.getAsset(_selectedCoinType)
           ?.exchangeAvailable;
       if (_exchangeAvailable != null) {
-        return FormatUtil.truncateDecimalNum(
-            Decimal.parse(_exchangeAvailable), 6);
+        return FormatUtil.truncateDecimalNum(Decimal.parse(_exchangeAvailable), 6);
       } else {
         return '0';
       }
