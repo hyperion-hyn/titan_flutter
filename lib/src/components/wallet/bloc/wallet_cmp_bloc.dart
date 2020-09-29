@@ -23,6 +23,7 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
+import 'package:rxdart/rxdart.dart';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   final WalletRepository walletRepository;
@@ -37,6 +38,12 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   NodeApi _nodeApi = NodeApi();
 
   int _lastUpdateBalanceTime = 0;
+
+  @override
+  Stream<Transition<WalletCmpEvent, WalletCmpState>> transformEvents(
+      Stream<WalletCmpEvent> events, transitionFn) {
+    return events.switchMap(transitionFn);
+  }
 
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
