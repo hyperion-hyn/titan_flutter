@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class NodeActiveContractWidget extends StatefulWidget {
-  final List<ContractNodeItem> contractList;
+  final List<Map3InfoEntity> contractList;
 
   NodeActiveContractWidget({this.contractList});
 
@@ -65,7 +65,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     );
   }
 
-  Widget _item(ContractNodeItem item, {int index = 0}) {
+  Widget _item(Map3InfoEntity item, {int index = 0}) {
     // todo: test_jison_0813
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = "大道至简";

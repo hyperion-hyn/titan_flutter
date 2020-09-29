@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -18,12 +19,10 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 
 import 'map3_node_pronounce_page.dart';
 
-Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
+Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem) {
   if (contractNodeItem == null) return Container();
 
-  var state = contractNodeItem.stateValue;
-
-//  var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
+  var state = ContractState.values[contractNodeItem?.status??0];
   var isNotFull = true;
   var fullDesc = "";
   var dateDesc = "";
@@ -31,14 +30,14 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(contractNodeItem?.atlas?.staking??"0"));
       dateDesc = S.of(context).active + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(contractNodeItem?.atlas?.staking??"0"));
       dateDesc = S.of(context).expired + dateDesc;
       break;
 
@@ -61,14 +60,14 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   }
 
   var nodeName = "天道酬勤唐唐";
-  var nodeAddress = "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 1)}";
+  var nodeAddress = "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address??"oxfdaf89fdaff", limitLength: 1)}";
   var nodeIdPre = "节点号";
-  var nodeId = " ${contractNodeItem.contractCode ?? "PB2020"}";
+  var nodeId = " ${contractNodeItem.nodeId ?? "PB2020"}";
   var feeRatePre = "管理费：";
-  var feeRate = contractNodeItem.announcement ?? "10%";
+  var feeRate = contractNodeItem.feeRate ?? "10%";
   var descPre = "描   述：";
-  var desc = contractNodeItem.announcement ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
-  var remainDelegation = "${FormatUtil.formatNum(int.parse(contractNodeItem.remainDelegation ?? "10000"))}";
+  var desc = contractNodeItem.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
+  var remainDelegation = "${FormatUtil.formatNum(int.parse(contractNodeItem.staking ?? "10000"))}";
   var date = "2020/12/12 12:12";
   var times = "第一期";
 
@@ -534,7 +533,7 @@ Widget editInfoItem(
         splashColor: Colors.blue,
         onTap: () async {
           if (index == 0) {
-            EditIconSheet(context, (path) {
+            editIconSheet(context, (path) {
               callback(value: path);
             });
             return;
@@ -780,7 +779,7 @@ Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFun
 
 typedef EditIconCallback = void Function(String path);
 
-Future EditIconSheet(BuildContext context, EditIconCallback callback) async {
+Future editIconSheet(BuildContext context, EditIconCallback callback) async {
   showModalBottomSheet(
     context: context,
     shape: RoundedRectangleBorder(
@@ -847,7 +846,6 @@ Future EditIconSheet(BuildContext context, EditIconCallback callback) async {
               height: 10,
               color: DefaultColors.colorf4f4f4,
             ),
-//                Divider(color:DefaultColors.colorf4f4f4,height: 10,),
             ListTile(
               title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
               onTap: () {

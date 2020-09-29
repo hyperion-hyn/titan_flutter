@@ -14,14 +14,12 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_pronounce_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeCreatePage extends StatefulWidget {
@@ -73,7 +71,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     _rateCoinController.text = "$_managerSpendCount";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
-      getCurrentSpend(text);
+      _dealTextField(text);
     });
 
     getNetworkData();
@@ -410,58 +408,60 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
         child: ClickOvalButton(
           "创建提交",
-          () async {
-            if (_localImagePath.isEmpty) {
-              Fluttertoast.showToast(msg: _hintList[0]);
-              return;
-            }
-
-            if (_detailList[1].isEmpty) {
-              Fluttertoast.showToast(msg: _hintList[1]);
-              return;
-            }
-
-            if (_detailList[2].isEmpty) {
-              Fluttertoast.showToast(msg: _hintList[2]);
-              return;
-            }
-
-            for (var index = 0; index < _titleList.length; index++) {
-              var title = _titleList[index];
-              if (title == "图标") {
-                _map3InfoEntity.pic = _localImagePath;
-              } else if (title == "名称") {
-                _map3InfoEntity.name = _detailList[1];
-              } else if (title == "节点号") {
-                _map3InfoEntity.nodeId = _detailList[2];
-              } else if (title == "网址") {
-                _map3InfoEntity.home = _detailList[3];
-              } else if (title == "安全联系") {
-                _map3InfoEntity.contact = _detailList[4];
-              } else if (title == "描述") {
-                _map3InfoEntity.describe = _detailList[5];
-              }
-
-              var feeRate = _rateCoinController.text ?? "0";
-              _map3InfoEntity.feeRate = feeRate;
-
-              var staking = _joinCoinController.text ?? "0";
-
-              _map3InfoEntity.staking = staking;
-
-              _selectProviderEntity = providerList[0];
-              _map3InfoEntity.region = _selectProviderEntity.regions[selectNodeItemValue].name;
-              _map3InfoEntity.provider = _selectProviderEntity.name;
-            }
-            var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
-            Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
-          },
+          _confirmAction,
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
           fontSize: 18,
         ),
       ),
     );
+  }
+
+  void _confirmAction() async {
+    if (_localImagePath.isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[0]);
+      return;
+    }
+
+    if (_detailList[1].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[1]);
+      return;
+    }
+
+    if (_detailList[2].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[2]);
+      return;
+    }
+
+    for (var index = 0; index < _titleList.length; index++) {
+      var title = _titleList[index];
+      if (title == "图标") {
+        _map3InfoEntity.pic = _localImagePath;
+      } else if (title == "名称") {
+        _map3InfoEntity.name = _detailList[1];
+      } else if (title == "节点号") {
+        _map3InfoEntity.nodeId = _detailList[2];
+      } else if (title == "网址") {
+        _map3InfoEntity.home = _detailList[3];
+      } else if (title == "安全联系") {
+        _map3InfoEntity.contact = _detailList[4];
+      } else if (title == "描述") {
+        _map3InfoEntity.describe = _detailList[5];
+      }
+
+      var feeRate = _rateCoinController.text ?? "0";
+      _map3InfoEntity.feeRate = feeRate;
+
+      var staking = _joinCoinController.text ?? "0";
+
+      _map3InfoEntity.staking = staking;
+
+      _selectProviderEntity = providerList[0];
+      _map3InfoEntity.region = _selectProviderEntity.regions[selectNodeItemValue].name;
+      _map3InfoEntity.provider = _selectProviderEntity.name;
+    }
+    var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+    Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 
   void getNetworkData() async {
@@ -520,7 +520,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     _managerSpendCount = int.parse(_rateCoinController.text ?? "0");
   }
 
-  void getCurrentSpend(String inputText) {
+  void _dealTextField(String inputText) {
     if (contractItem == null || !mounted || originInputStr == inputText) {
       return;
     }

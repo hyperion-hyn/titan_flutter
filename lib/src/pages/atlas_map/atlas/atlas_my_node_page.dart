@@ -66,8 +66,8 @@ class _AtlasMyNodePageState extends State<AtlasMyNodePage>
                         fontSize: 15,
                       ),
                       indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: HexColor('##FF228BA1'),
-                      indicatorWeight: 3,
+                      indicatorColor: HexColor('#FF228BA1'),
+                      indicatorWeight: 2,
                       indicatorPadding: EdgeInsets.only(
                         bottom: 2,
                         right: 12,

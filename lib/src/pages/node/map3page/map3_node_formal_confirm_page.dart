@@ -7,7 +7,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
@@ -15,6 +14,8 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -35,19 +36,21 @@ class Map3NodeFormalConfirmPage extends StatefulWidget {
   final String contractId;
   final ContractNodeItem contractNodeItem;
   final String atlasNodeId;
-
+  final CreateMap3Entity createMap3Entity;
 //  Map3NodeSendConfirmPage(
 //      String coinVo, [this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId])
 //      : coinVo = CoinVo.fromJson(FluroConvertUtils.string2map(coinVo));
 //
-  Map3NodeFormalConfirmPage(
-      {this.coinVo,
-      this.contractNodeItem,
-      this.transferAmount,
-      this.receiverAddress,
-      this.actionEvent,
-      this.contractId,
-      this.atlasNodeId});
+  Map3NodeFormalConfirmPage({
+    this.coinVo,
+    this.contractNodeItem,
+    this.transferAmount,
+    this.receiverAddress,
+    this.actionEvent,
+    this.contractId,
+    this.atlasNodeId,
+    this.createMap3Entity,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -167,7 +170,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 
   Widget _pageView(BuildContext context) {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
+    //var walletName = activatedWallet.wallet.keystore.name;
 
     if (widget.actionEvent == Map3NodeActionEvent.EXCHANGE_HYN) {
       var activatedQuoteSign = QuotesInheritedModel.of(context).activeQuotesSign;
@@ -395,9 +398,9 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
 
-    SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
+    //SettingInheritedModel.ofConfig(context).systemConfigEntity.createMap3NodeGasLimit;
 
-    var pre = widget.actionEvent != Map3NodeActionEvent.COLLECT ? "-" : "+";
+    //var pre = widget.actionEvent != Map3NodeActionEvent.COLLECT ? "-" : "+";
     return Row(
       children: <Widget>[
         Expanded(
@@ -445,10 +448,14 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
             if (password == null) {
               return;
             }
-            //todo sign transfer
+
+            // todo: sign transfer
             switch (widget.actionEvent) {
               case Map3NodeActionEvent.CREATE:
+                TxHashEntity txHashEntity = await _atlasApi.postCreateMap3Node(widget.createMap3Entity);
+                print("[Confirm] txHashEntity:${txHashEntity.txHash}");
                 break;
+
               case Map3NodeActionEvent.DELEGATE:
                 break;
               case Map3NodeActionEvent.COLLECT:

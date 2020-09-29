@@ -154,6 +154,47 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
     );
   }
 
+  _tabBarWidget1() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            child: TabBar(
+              labelColor: HexColor('#FF228BA1'),
+              labelStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+              indicatorSize: TabBarIndicatorSize.label,
+              indicatorColor: HexColor('##FF228BA1'),
+              indicatorWeight: 3,
+              controller: _tabController,
+              indicatorPadding: EdgeInsets.only(
+                bottom: 2,
+                right: 12,
+                left: 12,
+              ),
+              unselectedLabelColor: HexColor("#FF333333"),
+              tabs: [
+                Tab(
+                  child: Text(
+                    '我发起的',
+                  ),
+                ),
+                Tab(
+                  child: Text(
+                    '我参与的',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   _tabBarWidget() {
     return Row(
       children: <Widget>[
@@ -162,21 +203,19 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
             color: Colors.white,
             child: TabBar(
               isScrollable: true,
-              //indicatorColor: Theme.of(context).primaryColor,
-              indicatorPadding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
               indicatorColor: HexColor("#228BA1"),
+              indicatorSize: TabBarIndicatorSize.label,
               indicatorWeight: 3,
               controller: _tabController,
               labelColor: Theme.of(context).primaryColor,
               unselectedLabelColor: HexColor("#333333"),
-              indicatorSize: TabBarIndicatorSize.label,
               tabs: _contractTypeModels
                   .map((MyContractModel model) => Tab(
-                        child: Text(
-                          model.name,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ))
+                child: Text(
+                  model.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ))
                   .toList(),
             ),
           ),

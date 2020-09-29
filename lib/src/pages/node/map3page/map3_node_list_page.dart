@@ -4,14 +4,12 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'map3_node_public_widget.dart';
-
-
 
 class Map3NodeListPage extends StatefulWidget {
   final MyContractModel model;
@@ -24,11 +22,13 @@ class Map3NodeListPage extends StatefulWidget {
 }
 
 class _Map3NodeListState extends State<Map3NodeListPage> {
-  List<ContractNodeItem> _dataArray = [];
+  List<Map3InfoEntity> _dataArray = [];
   LoadDataBloc loadDataBloc = LoadDataBloc();
   var _currentPage = 0;
+  int _pageSize = 30;
   Wallet _wallet;
-  var api = NodeApi();
+  AtlasApi api = AtlasApi();
+
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   @override
@@ -60,8 +60,6 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
         setState(() {
           _currentState = all_page_state.LoadingState();
         });
-
-        //_loadData();
       });
     }
 
@@ -89,22 +87,18 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:widget.model.name,
-
+        baseTitle: widget.model.name,
       ),
       body: _pageWidget(context),
     );
   }
 
   _loadMoreData() async {
-    List<ContractNodeItem> dataList = [];
-    if (widget.model.type == MyContractType.create) {
-      List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract(page: _currentPage);
-      dataList = createContractList;
-    } else {
-      List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract(page: _currentPage);
-      dataList = joinContractList;
-    }
+    List<Map3InfoEntity> dataList = await api.postMap3NodeList(
+      'address',
+      page: _currentPage + 1,
+      size: _pageSize,
+    );
 
     if (dataList.length == 0) {
       loadDataBloc.add(LoadMoreEmptyEvent());
@@ -124,32 +118,33 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     try {
       _currentPage = 0;
 
-      List<ContractNodeItem> dataList = [];
+      List<Map3InfoEntity> dataList = await api.postMap3NodeList(
+        'address',
+        page: _currentPage + 1,
+        size: _pageSize,
+      );
+
       switch (widget.model.type) {
         case MyContractType.join:
-          List<ContractNodeItem> joinContractList = await api.getMyJoinNodeContract();
-          dataList = joinContractList;
           break;
 
         case MyContractType.create:
-          List<ContractNodeItem> createContractList = await api.getMyCreateNodeContract();
-          dataList = createContractList;
           break;
 
         default:
-          List<ContractNodeItem> createContractList = await api.getContractActiveList();
-          dataList = createContractList;
           break;
       }
+
       // todo: test_jison_0813
+      /*
       if (_dataArray.isEmpty) {
         for (int i = 0; i < 3; i++) {
-          ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
+          Map3InfoEntity item = Map3InfoEntity.onlyId(i);
           dataList.add(item);
           dataList.add(item);
           dataList.add(item);
         }
-      }
+      }*/
 
       if (dataList.length == 0) {
         loadDataBloc.add(LoadEmptyEvent());

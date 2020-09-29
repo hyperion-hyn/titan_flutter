@@ -205,6 +205,10 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
+          // todo: test_jison
+          // 1.上传图片 ---> 获取url
+
+          // 2.编辑创建节点需要的基本信息
           Application.router.navigateTo(
               context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
         },

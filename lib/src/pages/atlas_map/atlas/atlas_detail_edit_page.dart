@@ -55,7 +55,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BaseAppBar(baseTitle: ""),
+      appBar: BaseAppBar(baseTitle: "编辑节点"),
       body: _pageWidget(context),
     );
   }
@@ -134,7 +134,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
                 splashColor: Colors.blue,
                 onTap: () async {
                   if (index == 0) {
-                    EditIconSheet(context, (path) {
+                    editIconSheet(context, (path) {
                       setState(() {
                         _localImagePath = path;
                       });

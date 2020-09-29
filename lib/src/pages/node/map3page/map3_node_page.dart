@@ -7,11 +7,11 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -30,12 +30,11 @@ class Map3NodePage extends StatefulWidget {
 
 class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
-  NodeApi _nodeApi = NodeApi();
-  NodePageEntityVo _nodePageEntityVo = MemoryCache.nodePageData;
+  AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 0;
-  List<ContractNodeItem> _lastActiveList = [];
-  List<ContractNodeItem> _myList = [];
-  List<ContractNodeItem> _pendingList = [];
+  List<Map3InfoEntity> _lastActiveList = [];
+  List<Map3InfoEntity> _myList = [];
+  List<Map3InfoEntity> _pendingList = [];
 
   @override
   bool get wantKeepAlive => true;
@@ -51,12 +50,13 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     }
 
     // todo: test_jison_0813
+    /*
     for (int i = 0; i < 3; i++) {
-      ContractNodeItem item = ContractNodeItem.onlyNodeId(i);
+      Map3InfoEntity item = Map3InfoEntity.onlyId(i);
       _myList.add(item);
       _lastActiveList.add(item);
       _pendingList.add(item);
-    }
+    }*/
   }
 
   @override
@@ -69,9 +69,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   // ignore: must_call_super
   Widget build(BuildContext context) {
     return Container(
-      //color: Colors.white,
-      //color: Color(0xfff5f5f5),
-      //color: Color(0xffFDFAFF),
       child: LoadDataContainer(
         enablePullUp: _pendingList.isNotEmpty,
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
@@ -83,7 +80,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           getNetworkData();
         },
         onLoadingMore: () {
-          getMoreNetworkData();
+          getNetworkData();
         },
         child: CustomScrollView(
           slivers: <Widget>[
@@ -100,49 +97,21 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     );
   }
 
+
   void getNetworkData() async {
     try {
-      _currentPage = 0;
-      _nodePageEntityVo = MemoryCache.nodePageData;
 
-      NodePageEntityVo netData = await _nodeApi.getNodePageEntityVo();
-      //_lastActiveList = await _nodeApi.getContractActiveList();
-
-      NodePageEntityVo cloneData = netData.clone();
-      cloneData.nodeHeadEntity?.lastRecordMessage = null;
-      if (!cloneData.isEqual(MemoryCache.nodePageData)) {
-        MemoryCache.nodePageData = cloneData;
-        _nodePageEntityVo = MemoryCache.nodePageData;
-      }
-
-      if (mounted) {
-        setState(() {
-          loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          loadDataBloc.add(LoadFailEvent());
-        });
-      }
-    }
-  }
-
-  void getContractActiveList() async {
-    List<ContractNodeItem> tempMemberList = await _nodeApi.getContractActiveList(page: 0);
-
-    if (mounted) {
-      _lastActiveList = tempMemberList;
-    }
-  }
-
-  void getMoreNetworkData() async {
-    try {
-      _currentPage = _currentPage + 1;
-      List<ContractNodeItem> contractNodeList = await _nodeApi.getContractPendingList(_currentPage);
+      List<Map3InfoEntity> contractNodeList = await _atlasApi.postMap3NodeList(
+        'address',
+        page: _currentPage,
+        size: 30,
+      );
+      
       if (contractNodeList.length > 0) {
-        _nodePageEntityVo.contractNodeList.addAll(contractNodeList);
+        _lastActiveList = contractNodeList;
+        _myList = contractNodeList;
+        _pendingList = contractNodeList;
+
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -260,6 +229,9 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Widget _nodesMapWidget() {
+    // todo: test_jison
+    int instanceCount = 10;
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Material(
@@ -286,7 +258,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
                   children: <Widget>[
                     Text(
                       sprintf(
-                          S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
+                          S.of(context).earth_outpace_server_node, [instanceCount]),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -310,11 +282,9 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Widget _map3HeadWidget() {
-    if (_nodePageEntityVo.nodeHeadEntity == null || _nodePageEntityVo == null) {
-      return SliverToBoxAdapter(child: Container());
-    }
 
-    var title = "${_nodePageEntityVo.nodeHeadEntity.node.name}";
+    // todo: test_jison
+    var title = "";
     var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
     var guideTitle = "开通教程";
     return SliverToBoxAdapter(

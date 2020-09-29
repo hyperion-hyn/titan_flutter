@@ -501,7 +501,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       splashColor: Colors.blue,
       onTap: () async {
         if (isLogo) {
-          EditIconSheet(context, (path) {
+          editIconSheet(context, (path) {
             setState(() {
               callback(path);
             });
