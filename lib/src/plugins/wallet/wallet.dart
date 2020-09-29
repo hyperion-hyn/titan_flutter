@@ -216,7 +216,7 @@ class Wallet {
         to: web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
-        value: web3.EtherAmount.inWei(value),
+        value: value == null ? null : web3.EtherAmount.inWei(value),
         nonce: nonce,
         type: type,
         message: message,
