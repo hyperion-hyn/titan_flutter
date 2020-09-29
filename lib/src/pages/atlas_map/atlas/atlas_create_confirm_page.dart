@@ -120,6 +120,7 @@ class _AtlasNodeCreateConfirmPageState
                                         fontSize: 14,
                                         color: DefaultColors.color333,
                                       )),
+                                  TextSpan(text: ' '),
                                   TextSpan(
                                     text:
                                         '${_activatedWallet.wallet.keystore.name} (${shortBlockChainAddress(_activatedWallet.wallet.getEthAccount().address)})',

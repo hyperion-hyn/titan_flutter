@@ -204,70 +204,75 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
 
   _launchTutorial() {
     return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          _steps(),
-          _divider(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 60.0),
-            child: Image.asset(
-              'res/drawable/ic_computer.png',
-              width: 100,
-              height: 83,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            _steps(),
+            _divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 48.0),
+              child: Image.asset(
+                'res/drawable/ic_computer.png',
+                width: 100,
+                height: 83,
+              ),
             ),
-          ),
-          Container(
-            width: 350,
-            child: Text(
-              '请在电脑端按照文档指示启动一个Atlas节点，启动之后，你会获得一个bls key，然后进入下一步操作',
-              style: TextStyle(height: 1.8),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 32.0),
-            child: InkWell(
-              child: Text(
-                '前往操作>>',
-                style: TextStyle(
-                  color: Colors.blue,
+            Container(
+              width: 350,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '请在电脑端按照文档指示启动一个Atlas节点，启动之后，你会获得一个bls key，然后进入下一步操作',
+                  style: TextStyle(height: 1.8),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => WebViewContainer(
-                              initUrl: '',
-                              title: 'Atlas Tutorial',
-                            )));
-              },
             ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              '已启动且有bls key，直接下一步',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
-            ),
-          ),
-          ClickOvalButton(
-            '创建提交',
-            () {
-              setState(
-                () {
-                  _currentStep = Step.info;
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 32.0),
+              child: InkWell(
+                child: Text(
+                  '前往操作 >>',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WebViewContainer(
+                                initUrl: '',
+                                title: 'Atlas Tutorial',
+                              )));
                 },
-              );
-            },
-            width: 300,
-            height: 46,
-          ),
-          SizedBox(
-            height: 32,
-          )
-        ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(
+                '已启动且有bls key，直接下一步',
+                style: TextStyle(color: Colors.grey, fontSize: 14),
+              ),
+            ),
+            ClickOvalButton(
+              '创建提交',
+              () {
+                setState(
+                  () {
+                    _currentStep = Step.info;
+                  },
+                );
+              },
+              width: 300,
+              height: 46,
+            ),
+            SizedBox(
+              height: 32,
+            )
+          ],
+        ),
       ),
     );
   }
