@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -133,16 +134,13 @@ class _Map3NodeState extends State<Map3NodePage> {
   Widget _pendingListWidget() {
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-//      if (index == 0) {
-//        return Column(
-//          crossAxisAlignment: CrossAxisAlignment.start,
-//          children: <Widget>[getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index])],
-//        );
-//      } else {
-        return Container(
+      var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+      var canCheck = config?.canCheckMap3Node ?? true;
+
+      return Container(
           padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
-            child: getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index]));
+          child: getMap3NodeWaitItem(context, _nodePageEntityVo.contractNodeList[index], canCheck: canCheck));
 //      }
     }, childCount: _nodePageEntityVo.contractNodeList.length));
   }
@@ -341,7 +339,7 @@ class _Map3NodeState extends State<Map3NodePage> {
   }
 }
 
-Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem) {
+Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeItem, {bool canCheck = true}) {
   if (contractNodeItem == null) return Container();
 
   var state = contractNodeItem.stateValue;
@@ -354,7 +352,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
       dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
-      dateDesc = S.of(context).active + " "+ dateDesc;
+      dateDesc = S.of(context).active + " " + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
@@ -439,6 +437,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
+                      if (!canCheck) return;
                       Application.router.navigateTo(
                           context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
                     },
@@ -523,20 +522,24 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                         text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
                       ),
                     ),
-              SizedBox(
-                height: 30,
+              Visibility(
+                visible: canCheck,
+                child: SizedBox(
+                  height: 30,
 //                width: 80,
-                child: FlatButton(
-                  color: HexColor("#FF15B2D2"),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                  onPressed: () {
-                    Application.router.navigateTo(
-                        context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
-                  },
-                  child:Text(isPending ? S.of(context).check_join : S.of(context).detail, style: TextStyle(fontSize: 13, color: Colors.white)),
-                  //style: TextStyles.textC906b00S13),
+                  child: FlatButton(
+                    color: HexColor("#FF15B2D2"),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    onPressed: () {
+                      Application.router.navigateTo(
+                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                    },
+                    child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
+                        style: TextStyle(fontSize: 13, color: Colors.white)),
+                    //style: TextStyles.textC906b00S13),
+                  ),
                 ),
-              ),
+              )
             ],
           )
         ],
