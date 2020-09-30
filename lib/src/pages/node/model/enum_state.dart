@@ -88,12 +88,12 @@ enum Map3NodeActionEvent {
   CANCEL,
   CANCEL_CONFIRMED,
   ADD,
+  PRE_EDIT,
   RECEIVE_AWARD,
   EDIT_ATLAS,
   ACTIVE_NODE,
   STAKE_ATLAS,
   EXCHANGE_HYN,
-  PRE_EDIT,
 }
 
 Map3NodeActionEvent enumActionEventFromString(String fruit) {

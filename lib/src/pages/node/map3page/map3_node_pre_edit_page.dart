@@ -170,7 +170,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         "确认修改",
         () async {
           Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.EDIT_ATLAS.index}");
+              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.PRE_EDIT.index}");
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

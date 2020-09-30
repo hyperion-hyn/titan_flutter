@@ -140,6 +140,18 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
           ""
         ];
         break;
+
+      case Map3NodeActionEvent.PRE_EDIT:
+        _pageTitle = "修改预设";
+        _subList[1] = "Atlas节点";
+        _subList[0] = "钱包";
+        _detailList = [
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+          "${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+          ""
+        ];
+        break;
+
       default:
         _pageTitle = S.of(context).transfer_confirm;
         break;
