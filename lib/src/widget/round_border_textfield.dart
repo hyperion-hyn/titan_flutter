@@ -1,9 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/pages/node/widget/new_input_decorator.dart';
-import 'package:titan/src/pages/node/widget/new_text_form_field.dart';
 
 typedef RoundBorderTextFieldOnChanged = void Function(String text);
 

@@ -479,21 +479,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
   }
 
   Widget _getTabView(int index) {
-//    var barHeight = MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight;
-//    return Padding(
-//      padding: EdgeInsets.only(bottom: barHeight),
-//      child: IndexedStack(
-//        index: index,
-//        children: <Widget>[
-//          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey)),
-//          WalletTabsPage(),
-//          BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
-//          InformationPage(),
-//          MyPage(),
-//        ],
-//      ),
-//    );
-
     switch (index) {
       case 1:
         return WalletTabsPage();
