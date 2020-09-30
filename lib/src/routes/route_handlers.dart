@@ -34,6 +34,7 @@ import 'package:titan/src/pages/node/map3page/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_my_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
+import 'package:titan/src/pages/node/map3page/map3_node_pre_edit_page.dart';
 import 'package:titan/src/pages/node/map3page/map3_node_share_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -234,6 +235,14 @@ var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
 
   return Map3NodeEditPage(
     entity: entity,
+  );
+});
+
+
+var map3NodePreEditHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
+  return Map3NodePreEditPage(
   );
 });
 

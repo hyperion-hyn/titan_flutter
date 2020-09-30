@@ -93,6 +93,7 @@ enum Map3NodeActionEvent {
   ACTIVE_NODE,
   STAKE_ATLAS,
   EXCHANGE_HYN,
+  PRE_EDIT,
 }
 
 Map3NodeActionEvent enumActionEventFromString(String fruit) {

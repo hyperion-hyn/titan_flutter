@@ -62,6 +62,7 @@ class Routes {
   static const String map3node_create_contract_page = '/map3node/create_contract_page';
   static const String map3node_create_confirm_page = '/map3node/create_confirm_page';
   static const String map3node_edit_page = '/map3node/edit_page';
+  static const String map3node_pre_edit_page = '/map3node/pre_edit_page';
   static const String map3node_formal_confirm_page = '/map3node/formal_confirm_page';
 
   static const String map3node_join_contract_page = '/map3node/join_contract_page';
@@ -225,6 +226,12 @@ class Routes {
     router.define(
       map3node_edit_page,
       handler: map3NodeEditHandler,
+      transitionType: pushNewPageTransitionType,
+    );
+
+    router.define(
+      map3node_pre_edit_page,
+      handler: map3NodePreEditHandler,
       transitionType: pushNewPageTransitionType,
     );
 

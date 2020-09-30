@@ -390,7 +390,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=2");
   }
 }
 

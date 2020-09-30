@@ -1078,7 +1078,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   height: 30,
                   child: InkWell(
                     onTap: () {
-                      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${1}");
+                      Application.router.navigateTo(context, Routes.map3node_pre_edit_page);
                     },
                     child: Center(child: Text("修改", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
                     //style: TextStyles.textC906b00S13),
