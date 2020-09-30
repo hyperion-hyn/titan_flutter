@@ -7,8 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
@@ -21,7 +19,6 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
@@ -32,8 +29,6 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
-import 'package:titan/src/widget/gas_input_widget.dart';
 import 'package:web3dart/json_rpc.dart';
 
 import 'api/hyn_api.dart';
@@ -497,11 +492,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       });
       var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
       if (widget.coinVo.symbol == "ETH") {
-        await _transferEth(
-            walletPassword,
-            ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-            widget.receiverAddress,
-            activatedWallet.wallet);
+        await _transferEth(walletPassword, ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+            widget.receiverAddress, activatedWallet.wallet);
       } else if (widget.coinVo.coinType == CoinType.BITCOIN) {
         var activatedWalletVo = activatedWallet.wallet;
         var transResult = await activatedWalletVo.sendBitcoinTransaction(
@@ -517,10 +509,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         await HYNApi.transferHYN(
-            walletPassword,
-            ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
-            widget.receiverAddress,
-            activatedWallet.wallet);
+          walletPassword,
+          widget.receiverAddress,
+          activatedWallet.wallet,
+          amount: ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
+        );
       } else {
         await _transferErc20(
             walletPassword,
@@ -530,7 +523,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       }
 
       var msg;
-      if(widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         msg = '已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。';
       } else {
         msg = S.of(context).transfer_broadcase_success_description;
