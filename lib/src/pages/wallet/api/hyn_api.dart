@@ -1,7 +1,6 @@
 import 'package:decimal/decimal.dart';
-import 'package:flutter_k_chart/utils/date_format_util.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -60,7 +59,7 @@ class HYNApi {
   }
 
   static Future transCreateMap3Node(
-    Map3InfoEntity entity,
+      CreateMap3Payload entity,
     String password,
     String toAddress,
     localWallet.Wallet wallet,
@@ -73,7 +72,7 @@ class HYNApi {
           name: entity.name,
           details: entity.describe,
           identity: entity.nodeId,
-          securityContact: entity.contact,
+          securityContact: entity.connect,
           website: entity.home),
       operatorAddress: wallet.getAtlasAccount().address,
       // todo: test
@@ -88,7 +87,7 @@ class HYNApi {
   }
 
   static Future transEditMap3Node(
-    Map3InfoEntity entity,
+      CreateMap3Payload entity,
     String password,
     String toAddress,
     String map3NodeAddress,
@@ -100,7 +99,7 @@ class HYNApi {
           name: entity.name,
           details: entity.describe,
           identity: entity.nodeId,
-          securityContact: entity.contact,
+          securityContact: entity.connect,
           website: entity.home),
       operatorAddress: wallet.getAtlasAccount().address,
       // todo: test

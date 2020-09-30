@@ -9,10 +9,12 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_broadcast_success_page.dar
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_cancel_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
@@ -213,11 +215,10 @@ var map3NodeCreateConfirmHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
   var item = params['entity']?.first;
-  Map3InfoEntity entity;
+  CreateMap3Payload entity;
   if (item != null) {
-    entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(item));
+    entity = CreateMap3Payload.fromJson(FluroConvertUtils.string2map(item));
   }
-
   return Map3NodeCreateConfirmPage(
     entity: entity,
   );
@@ -254,6 +255,7 @@ var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
     actionEvent: actionEvent,
   );
 });
+
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);

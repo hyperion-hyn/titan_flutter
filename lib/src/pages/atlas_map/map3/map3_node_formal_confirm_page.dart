@@ -36,6 +36,7 @@ class Map3NodeFormalConfirmPage extends StatefulWidget {
   final String contractId;
   final ContractNodeItem contractNodeItem;
   final String atlasNodeId;
+
   final CreateMap3Entity createMap3Entity;
 //  Map3NodeSendConfirmPage(
 //      String coinVo, [this.contractNodeItem, this.transferAmount, this.receiverAddress, this.actionEvent, this.contractId])

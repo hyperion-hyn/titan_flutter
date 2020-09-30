@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'map3_node_confirm_page.dart';
 
 class Map3NodeCreateConfirmPage extends StatefulWidget {
-  final Map3InfoEntity entity;
+  final CreateMap3Payload entity;
   Map3NodeCreateConfirmPage({this.entity});
 
   @override
@@ -73,9 +73,9 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       _detailList.add(entity.home);
     }
 
-    if (entity.contact?.isNotEmpty ?? false) {
+    if (entity.connect?.isNotEmpty ?? false) {
       _titleList.add("安全联系");
-      _detailList.add(entity.contact);
+      _detailList.add(entity.connect);
     }
 
     if (entity.describe?.isNotEmpty ?? false) {
@@ -209,8 +209,19 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           // 1.上传图片 ---> 获取url
 
           // 2.编辑创建节点需要的基本信息
-          Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
+          // Application.router.navigateTo(
+          //     context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
+
+          var entity = CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+          entity.payload = widget.entity;
+          var message = ConfirmCreateMap3NodeMessage(entity: entity);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ));
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

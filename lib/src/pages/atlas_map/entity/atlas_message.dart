@@ -1,0 +1,158 @@
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/utils/utils.dart';
+
+abstract class AtlasMessage {
+  Future<bool> action(String password);
+  Map3NodeActionEvent get type;
+  ConfirmInfoDescription get description;
+}
+
+class ConfirmInfoDescription {
+  final String title;
+  final String amountDirection; // -,+
+  final String amount;
+  final String fromName;
+  final String fromDetail;
+  final String toName;
+  final String toDetail;
+  final String fee;
+
+  ConfirmInfoDescription(
+      {this.title,
+      this.amountDirection,
+      this.amount,
+      this.fromName,
+      this.fromDetail,
+      this.toName,
+      this.toDetail,
+      this.fee});
+}
+
+class ConfirmCreateMap3NodeMessage implements AtlasMessage {
+  final CreateMap3Entity entity;
+  ConfirmCreateMap3NodeMessage({this.entity});
+
+/*  @override
+  Future<bool> action(String password) async {
+    TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transCreateMap3Node(this.entity.payload, password, this.entity.to, wallet);
+    return txHashEntity.txHash.isNotEmpty;
+  }*/
+
+  @override
+  Future<bool> action(String password) async {
+    print("[ConfirmCreateMap3NodeMessage] action:$password");
+    return password.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.CREATE;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "确认创建节点",
+      amountDirection: "-",
+      amount: entity.payload.staking,
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Map3节点",
+      toDetail: "节点号:${entity.payload.nodeId}",
+      fee: "0.0000021",
+    );
+  }
+}
+
+/*
+activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+var myActiveShortAddr = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+switch (widget.actionEvent) {
+case Map3NodeActionEvent.DELEGATE:
+_pageTitle = S.of(context).transfer_confirm;
+break;
+case Map3NodeActionEvent.COLLECT:
+_pageTitle = "提取奖励";
+break;
+case Map3NodeActionEvent.CANCEL:
+break;
+case Map3NodeActionEvent.CANCEL_CONFIRMED:
+break;
+case Map3NodeActionEvent.ADD:
+break;
+case Map3NodeActionEvent.RECEIVE_AWARD:
+_pageTitle = "提取奖励";
+_subList[0] = "Atlas节点";
+_subList[1] = "钱包";
+_detailList = [
+"节点号: ${widget.atlasNodeId}",
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr})",
+"${widget.transferAmount} HYN"
+];
+break;
+case Map3NodeActionEvent.EDIT_ATLAS:
+_pageTitle = "确认编辑Atlas节点";
+_subList[1] = "Atlas节点";
+_detailList = [
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+"节点号: ${widget.atlasNodeId}",
+"${widget.transferAmount} HYN"
+];
+break;
+case Map3NodeActionEvent.ACTIVE_NODE:
+_pageTitle = "激活节点";
+_subList[1] = "Atlas链";
+_detailList = [
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+"",
+"${widget.transferAmount} HYN"
+];
+break;
+case Map3NodeActionEvent.STAKE_ATLAS:
+_pageTitle = "激活节点";
+_subList[1] = "Atlas链";
+_detailList = [
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+"",
+"${widget.transferAmount} HYN"
+];
+break;
+case Map3NodeActionEvent.EXCHANGE_HYN:
+_pageTitle = "兑换HYN";
+_titleList[2] = "网络费用";
+_subList = ["ERC20钱包", "主链钱包", ""];
+_detailList = [
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+""
+];
+break;
+
+case Map3NodeActionEvent.PRE_EDIT:
+_pageTitle = "修改预设";
+_subList[1] = "Atlas节点";
+_subList[0] = "钱包";
+_detailList = [
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
+""
+];
+break;
+
+default:
+_pageTitle = S.of(context).transfer_confirm;
+break;
+}
+*/

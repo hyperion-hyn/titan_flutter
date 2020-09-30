@@ -9,6 +9,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -50,7 +52,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   List<NodeProviderEntity> providerList = [];
   String originInputStr = "";
   int _managerSpendCount = 20;
-  Map3InfoEntity _map3InfoEntity = Map3InfoEntity.onlyId(1);
+  CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
 
   // 输入框的焦点实例
   FocusNode _focusNode;
@@ -436,31 +438,31 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     for (var index = 0; index < _titleList.length; index++) {
       var title = _titleList[index];
       if (title == "图标") {
-        _map3InfoEntity.pic = _localImagePath;
+        _payload.pic = _localImagePath;
       } else if (title == "名称") {
-        _map3InfoEntity.name = _detailList[1];
+        _payload.name = _detailList[1];
       } else if (title == "节点号") {
-        _map3InfoEntity.nodeId = _detailList[2];
+        _payload.nodeId = _detailList[2];
       } else if (title == "网址") {
-        _map3InfoEntity.home = _detailList[3];
+        _payload.home = _detailList[3];
       } else if (title == "安全联系") {
-        _map3InfoEntity.contact = _detailList[4];
+        _payload.connect = _detailList[4];
       } else if (title == "描述") {
-        _map3InfoEntity.describe = _detailList[5];
+        _payload.describe = _detailList[5];
       }
 
       var feeRate = _rateCoinController.text ?? "0";
-      _map3InfoEntity.feeRate = feeRate;
+      _payload.feeRate = feeRate;
 
       var staking = _joinCoinController.text ?? "0";
 
-      _map3InfoEntity.staking = staking;
+      _payload.staking = staking;
 
       _selectProviderEntity = providerList[0];
-      _map3InfoEntity.region = _selectProviderEntity.regions[selectNodeItemValue].name;
-      _map3InfoEntity.provider = _selectProviderEntity.name;
+      _payload.region = _selectProviderEntity.regions[selectNodeItemValue].name;
+      _payload.provider = _selectProviderEntity.name;
     }
-    var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+    var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
     Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 

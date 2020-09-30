@@ -36,6 +36,7 @@ part 'create_map3_entity.g.dart';
   AtlasActionType type;
 
   CreateMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
+  CreateMap3Entity.onlyType(this.type);
 
   factory CreateMap3Entity.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3EntityFromJson(srcJson);
 
@@ -124,6 +125,7 @@ part 'create_map3_entity.g.dart';
   String staking;
 
   CreateMap3Payload(this.connect,this.describe,this.feeRate,this.home,this.name,this.nodeId,this.parentNodeId,this.pic,this.pledge,this.provider,this.region,this.staking);
+  CreateMap3Payload.onlyNodeId(this.nodeId);
 
   factory CreateMap3Payload.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3PayloadFromJson(srcJson);
 
