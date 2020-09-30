@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
@@ -42,6 +44,13 @@ class _Map3NodeState extends State<Map3NodePage> {
     } else {
       getNetworkData();
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
   }
 
   @override
@@ -136,7 +145,9 @@ class _Map3NodeState extends State<Map3NodePage> {
         delegate: SliverChildBuilderDelegate((context, index) {
       var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
       var canCheck = config?.canCheckMap3Node ?? true;
-
+      if (index == 0) {
+        canCheck = true;
+      }
       return Container(
           padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
