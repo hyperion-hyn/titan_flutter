@@ -20,7 +20,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
-import 'package:titan/src/pages/atlas_map/map3page/map3_node_tabs_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
