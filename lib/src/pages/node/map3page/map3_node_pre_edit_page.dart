@@ -31,7 +31,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   @override
   void initState() {
-
     _rateCoinController.text = "$_managerSpendCount";
 
     super.initState();
@@ -76,34 +75,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
                 SliverToBoxAdapter(
                   child: Container(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Text(
-                              "期满自动续约",
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 16,
-                              ),
-                            ),
-                            Spacer(),
-                            Switch(
-                              value: _isOpen,
-                              activeColor: Theme.of(context).primaryColor,
-                              activeTrackColor: Theme.of(context).primaryColor,
-                              onChanged: (bool newValue) {
-                                setState(() {
-                                  _isOpen = newValue;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                      _switchWidget(),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -113,24 +85,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
                           height: 0.5,
                         ),
                       ),
-                      managerSpendWidget(context, _rateCoinController, reduceFunc: () {
-                        setState(() {
-                          _managerSpendCount--;
-                          if (_managerSpendCount < 1) {
-                            _managerSpendCount = 1;
-                          }
-
-                          _rateCoinController.text = "$_managerSpendCount";
-                        });
-                      }, addFunc: () {
-                        setState(() {
-                          _managerSpendCount++;
-                          if (_managerSpendCount > 20) {
-                            _managerSpendCount = 20;
-                          }
-                          _rateCoinController.text = "$_managerSpendCount";
-                        });
-                      }),
+                      _rateWidget(),
                       divider,
                       _tipsWidget(),
                     ]),
@@ -142,6 +97,58 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         ),
         _confirmButtonWidget(),
       ],
+    );
+  }
+
+  Widget _rateWidget() {
+    return managerSpendWidget(context, _rateCoinController, reduceFunc: () {
+      setState(() {
+        _managerSpendCount--;
+        if (_managerSpendCount < 1) {
+          _managerSpendCount = 1;
+        }
+
+        _rateCoinController.text = "$_managerSpendCount";
+      });
+    }, addFunc: () {
+      setState(() {
+        _managerSpendCount++;
+        if (_managerSpendCount > 20) {
+          _managerSpendCount = 20;
+        }
+        _rateCoinController.text = "$_managerSpendCount";
+      });
+    });
+  }
+
+  Widget _switchWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 10,
+      ),
+      child: Row(
+        children: <Widget>[
+          Text(
+            "期满自动续约",
+            style: TextStyle(
+              color: HexColor("#333333"),
+              fontSize: 16,
+            ),
+          ),
+          Spacer(),
+          Switch(
+            value: _isOpen,
+            activeColor: Theme.of(context).primaryColor,
+            activeTrackColor: Theme.of(context).primaryColor,
+            onChanged: (bool newValue) {
+              setState(() {
+                _isOpen = newValue;
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 
