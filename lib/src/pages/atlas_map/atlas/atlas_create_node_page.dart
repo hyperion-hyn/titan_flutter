@@ -1,15 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_public_widget.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
+import 'package:titan/src/pages/atlas_map/map3page/map3_node_public_widget.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';

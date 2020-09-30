@@ -7,7 +7,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -16,7 +15,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
-
+import 'map3_node_create_wallet_page.dart';
 import 'map3_node_pronounce_page.dart';
 
 Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem) {

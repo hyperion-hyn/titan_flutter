@@ -1,4 +1,3 @@
-import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -15,12 +14,9 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';

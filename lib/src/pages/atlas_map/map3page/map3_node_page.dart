@@ -9,8 +9,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_create_wallet_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_list_page.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -19,6 +17,8 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
+import 'map3_node_create_wallet_page.dart';
+import 'map3_node_list_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodePage extends StatefulWidget {

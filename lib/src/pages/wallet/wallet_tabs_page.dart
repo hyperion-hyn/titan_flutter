@@ -2,13 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/market/exchange/exchange_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
-import 'package:titan/src/pages/webview/webview.dart';
-import 'package:titan/src/style/titan_sytle.dart';
-
 import 'wallet_page/wallet_page.dart';
 
 class WalletTabsPage extends StatefulWidget {

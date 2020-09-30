@@ -8,8 +8,6 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_exit_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_formal_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -17,7 +15,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
-
 import 'map3_node_public_widget.dart';
 
 class Map3NodeCancelPage extends StatefulWidget {
