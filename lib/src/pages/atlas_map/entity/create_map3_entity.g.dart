@@ -12,9 +12,7 @@ CreateMap3Entity _$CreateMap3EntityFromJson(Map<String, dynamic> json) {
     json['from'] as String,
     json['gas_limit'] as int,
     json['nonce'] as int,
-    json['payload'] == null
-        ? null
-        : CreateMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
+    json['payload'] == null ? null : CreateMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
     json['price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
@@ -22,8 +20,7 @@ CreateMap3Entity _$CreateMap3EntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$CreateMap3EntityToJson(CreateMap3Entity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CreateMap3EntityToJson(CreateMap3Entity instance) => <String, dynamic>{
       'amount': instance.amount,
       'from': instance.from,
       'gas_limit': instance.gasLimit,
@@ -49,11 +46,11 @@ CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
     json['provider'] as String,
     json['region'] as String,
     json['staking'] as String,
+    json['is_edit'] as bool,
   );
 }
 
-Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) => <String, dynamic>{
       'connect': instance.connect,
       'describe': instance.describe,
       'fee_rate': instance.feeRate,
@@ -66,4 +63,5 @@ Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) =>
       'provider': instance.provider,
       'region': instance.region,
       'staking': instance.staking,
+      'is_edit': instance.isEdit,
     };

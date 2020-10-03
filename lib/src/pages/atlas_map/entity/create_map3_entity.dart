@@ -1,13 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'enum_atlas_type.dart';
-  
+
 part 'create_map3_entity.g.dart';
 
-
 @JsonSerializable()
-  class CreateMap3Entity extends Object {
-
+class CreateMap3Entity extends Object {
   @JsonKey(name: 'amount')
   String amount;
 
@@ -35,17 +33,25 @@ part 'create_map3_entity.g.dart';
   @JsonKey(name: 'type')
   AtlasActionType type;
 
-  CreateMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
+  CreateMap3Entity(
+    this.amount,
+    this.from,
+    this.gasLimit,
+    this.nonce,
+    this.payload,
+    this.price,
+    this.rawTx,
+    this.to,
+    this.type,
+  );
   CreateMap3Entity.onlyType(this.type);
 
   factory CreateMap3Entity.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3EntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$CreateMap3EntityToJson(this);
-
 }
 
-
-  /*
+/*
 
   {
   connect	string
@@ -84,10 +90,8 @@ part 'create_map3_entity.g.dart';
   }
   */
 
-
 @JsonSerializable()
-  class CreateMap3Payload extends Object {
-
+class CreateMap3Payload extends Object {
   @JsonKey(name: 'connect')
   String connect;
 
@@ -124,13 +128,27 @@ part 'create_map3_entity.g.dart';
   @JsonKey(name: 'staking')
   String staking;
 
-  CreateMap3Payload(this.connect,this.describe,this.feeRate,this.home,this.name,this.nodeId,this.parentNodeId,this.pic,this.pledge,this.provider,this.region,this.staking);
+  @JsonKey(name: 'is_edit')
+  bool isEdit;
+
+  CreateMap3Payload(
+    this.connect,
+    this.describe,
+    this.feeRate,
+    this.home,
+    this.name,
+    this.nodeId,
+    this.parentNodeId,
+    this.pic,
+    this.pledge,
+    this.provider,
+    this.region,
+    this.staking,
+    this.isEdit,
+  );
   CreateMap3Payload.onlyNodeId(this.nodeId);
 
   factory CreateMap3Payload.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3PayloadFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$CreateMap3PayloadToJson(this);
-
 }
-
-  

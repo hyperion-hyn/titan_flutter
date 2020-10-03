@@ -43,7 +43,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   void initState() {
     super.initState();
 
-    //BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
   }
 
   @override
@@ -176,7 +175,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
-    var _amountValue = double.parse(_amount);
+    var _amountValue = double.parse(_amount??'0');
     var _price = _amountValue * quotePrice;
     return Row(
       children: <Widget>[

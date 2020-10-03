@@ -6,13 +6,12 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'map3_node_pronounce_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeEditPage extends StatefulWidget {
@@ -24,7 +23,8 @@ class Map3NodeEditPage extends StatefulWidget {
 }
 
 class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
-  Map3InfoEntity _map3InfoEntity = Map3InfoEntity.onlyId(1);
+
+  CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
 
   var _localImagePath = "";
   var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
@@ -224,6 +224,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             if (index == 0) {
               setState(() {
                 _localImagePath = value;
+                _detailList[index] = value;
               });
             } else {
               setState(() {
@@ -270,20 +271,22 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
             if (title == "图标") {
-              _map3InfoEntity.pic = _localImagePath;
+              _payload.pic = _localImagePath;
             } else if (title == "名称") {
-              _map3InfoEntity.name = _detailList[1];
+              _payload.name = _detailList[1];
             } else if (title == "节点号") {
-              _map3InfoEntity.nodeId = _detailList[2];
+              _payload.nodeId = _detailList[2];
             } else if (title == "网址") {
-              _map3InfoEntity.home = _detailList[3];
+              _payload.home = _detailList[3];
             } else if (title == "安全联系") {
-              _map3InfoEntity.contact = _detailList[4];
+              _payload.connect = _detailList[4];
             } else if (title == "描述") {
-              _map3InfoEntity.describe = _detailList[5];
+              _payload.describe = _detailList[5];
             }
           }
-          var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+          _payload.isEdit = true;
+
+          var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
           Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
         },
         height: 46,
