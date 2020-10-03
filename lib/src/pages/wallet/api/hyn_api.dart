@@ -1,5 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -30,27 +31,21 @@ class HYNApi {
   }
 
   static Future transCreateAtlasNode(
-    Decimal maxChangeRate,
-    Decimal maxRate,
-    Decimal rate,
-    BigInt maxTotalDelegation,
+    CreateAtlasEntity createAtlasEntity,
     String password,
-    BigInt amount,
-    String toAddress,
-    Map3InfoEntity entity,
     localWallet.Wallet wallet,
   ) async {
     var message = CreateAtlasNodeMessage(
-      maxChangeRate: ConvertTokenUnit.decimalToWei(maxChangeRate),
-      maxRate: ConvertTokenUnit.decimalToWei(maxRate),
-      rate: ConvertTokenUnit.decimalToWei(rate),
-      maxTotalDelegation: ConvertTokenUnit.bigintToWei(maxTotalDelegation),
+      maxChangeRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateTrim),
+      maxRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateMax),
+      rate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
+      maxTotalDelegation: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
       description: NodeDescription(
-          name: entity.name,
-          details: entity.describe,
-          identity: entity.nodeId,
-          securityContact: entity.contact,
-          website: entity.home),
+          name: createAtlasEntity.payload.name,
+          details: createAtlasEntity.payload.describe,
+          identity: createAtlasEntity.payload.map3NodeId,
+          securityContact: createAtlasEntity.payload.contact,
+          website: createAtlasEntity.payload.home),
       operatorAddress: wallet.getAtlasAccount().address,
       slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
@@ -58,7 +53,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, toAddress, wallet, type: message.type, amount: amount);
+    transferHYN(password, createAtlasEntity.to, wallet, type: message.type);
   }
 
   static Future transCreateMap3Node(
