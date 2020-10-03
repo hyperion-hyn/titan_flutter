@@ -4,6 +4,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
@@ -174,8 +176,17 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: ClickOvalButton(
         "确认修改",
         () async {
-          Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.PRE_EDIT.index}");
+          var message = ConfirmPreEditMap3NodeMessage(
+            autoRenew: _isOpen,
+            feeRate: _rateCoinController?.text ?? "0",
+          );
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ));
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

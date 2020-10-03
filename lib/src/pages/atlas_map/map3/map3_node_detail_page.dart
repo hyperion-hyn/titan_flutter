@@ -1981,7 +1981,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     await Application.router.navigateTo(
         context,
         Routes.map3node_broadcast_success_page +
-            "?entryRouteName=$entryRouteName&actionEvent=${Map3NodeActionEvent.COLLECT}");
+            "?entryRouteName=$entryRouteName&actionEvent=${Map3NodeActionEvent.MAP3_COLLECT}");
     _nextAction();
   }
 

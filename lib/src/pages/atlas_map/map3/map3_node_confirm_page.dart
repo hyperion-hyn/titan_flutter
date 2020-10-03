@@ -30,7 +30,7 @@ class Map3NodeConfirmPage extends StatefulWidget {
 }
 
 class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
-  var _isTransferring = true;
+  var _isTransferring = false;
 
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
@@ -219,9 +219,16 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
+          setState(() {
+            _isTransferring = true;
+          });
+
           try {
             var password = await UiUtil.showWalletPasswordDialogV2(context, activatedWallet.wallet);
             if (password == null) {
+              setState(() {
+                _isTransferring = false;
+              });
               return;
             }
             bool isOK = await widget.message.action(password);
@@ -237,7 +244,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
             //}
           } catch (error) {
             setState(() {
-              _isTransferring = true;
+              _isTransferring = false;
             });
           }
         },

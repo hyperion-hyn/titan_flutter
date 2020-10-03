@@ -42,6 +42,7 @@ enum AtlasActionType {
   JOIN_DELEGATE_ALAS,
   CANCEL_DELEGATE_ALAS,
   EDIT_MAP3_NODE,
+  COLLECT_MAP3_NODE,
 }
 
 //节点选举情况，0候选节点，1清算节点，2出块节点

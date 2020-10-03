@@ -82,15 +82,22 @@ String transactionHistoryAction2String(TransactionHistoryAction action) {
 enum AppSource { DEFAULT, TITAN, STARRICH }
 
 enum Map3NodeActionEvent {
-  //Map3
-  CREATE,
-  DELEGATE,
-  COLLECT,
-  CANCEL,
-  CANCEL_CONFIRMED,
-  ADD,
-  PRE_EDIT,
-  EDIT_MAP3,
+
+  // Map3
+  MAP3_CREATE,
+  MAP3_DELEGATE,
+  MAP3_COLLECT,
+  MAP3_CANCEL,
+  MAP3_CANCEL_CONFIRMED,
+  MAP3_ADD,
+  MAP3_EDIT,
+  MAP3_PRE_EDIT,
+  MAP3_TERMINAL,
+  RECEIVE_AWARD,
+  EDIT_ATLAS,
+  ACTIVE_NODE,
+  STAKE_ATLAS,
+ 
 
   //Atlas
   ATLAS_CREATE,
@@ -100,6 +107,7 @@ enum Map3NodeActionEvent {
   ATLAS_STAKE,
 
   //Other
+
   EXCHANGE_HYN,
 }
 

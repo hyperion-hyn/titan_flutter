@@ -478,7 +478,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
           "马上分裂",
           () async {
             Application.router.navigateTo(
-                context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ADD.index}");
+                context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.MAP3_ADD.index}");
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
