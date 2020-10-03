@@ -210,7 +210,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
             "确定",
             () {
               Application.router.navigateTo(
-                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.DELEGATE.index}");
+                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.MAP3_DELEGATE.index}");
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

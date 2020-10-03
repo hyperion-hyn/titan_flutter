@@ -16,29 +16,33 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
     String action = "";
     String detail = "";
     switch (actionEvent) {
-      case Map3NodeActionEvent.CREATE:
+      case Map3NodeActionEvent.MAP3_CREATE:
         action = "创建 Map3节点";
         detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
 
-      case Map3NodeActionEvent.DELEGATE:
+      case Map3NodeActionEvent.MAP3_DELEGATE:
         action = "参与 Map3节点";
         detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
 
-      case Map3NodeActionEvent.COLLECT:
+      case Map3NodeActionEvent.MAP3_COLLECT:
         action = "Map3提币";
         break;
 
-      case Map3NodeActionEvent.CANCEL:
+      case Map3NodeActionEvent.MAP3_CANCEL:
         action = "Map3撤销抵押";
         break;
 
-      case Map3NodeActionEvent.CANCEL_CONFIRMED:
+      case Map3NodeActionEvent.MAP3_TERMINAL:
+        action = "Map3终止抵押";
+        break;
+
+      case Map3NodeActionEvent.MAP3_CANCEL_CONFIRMED:
         action = "Map3取消节点";
         break;
 
-      case Map3NodeActionEvent.ADD:
+      case Map3NodeActionEvent.MAP3_ADD:
         action = "Map3节点分裂";
         break;
 
@@ -46,8 +50,12 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "提取奖励";
         break;
 
-      case Map3NodeActionEvent.EDIT_MAP3:
+      case Map3NodeActionEvent.MAP3_EDIT:
         action = "编辑Map3节点";
+        break;
+
+      case Map3NodeActionEvent.MAP3_PRE_EDIT:
+        action = "修改预设";
         break;
 
       case Map3NodeActionEvent.EDIT_ATLAS:
@@ -199,11 +207,20 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
 
   void _pop(BuildContext context) {
     switch (actionEvent) {
-      case Map3NodeActionEvent.CREATE:
+      case Map3NodeActionEvent.MAP3_CREATE:
         print("[pop] -----> _pop, contractNodeItem:${this.contractNodeItem.toJson()}");
 
         Routes.popUntilCachedEntryRouteName(context, this.contractNodeItem);
         break;
+
+      case Map3NodeActionEvent.MAP3_EDIT:
+      case Map3NodeActionEvent.MAP3_PRE_EDIT:
+
+        print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
+        Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
+        Routes.popUntilCachedEntryRouteName(context);
+        break;
+
 
       default:
         print("[pop] -----> _pop, contractNodeItem");

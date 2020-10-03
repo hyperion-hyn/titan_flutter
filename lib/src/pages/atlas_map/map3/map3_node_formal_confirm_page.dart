@@ -85,14 +85,14 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 //      case Map3NodeActionEvent.DELEGATE:
 //        _pageTitle = S.of(context).transfer_confirm;
 //        break;
-      case Map3NodeActionEvent.COLLECT:
+      case Map3NodeActionEvent.MAP3_COLLECT:
         _pageTitle = "提取奖励";
         break;
-      case Map3NodeActionEvent.CANCEL:
+      case Map3NodeActionEvent.MAP3_CANCEL:
         break;
-      case Map3NodeActionEvent.CANCEL_CONFIRMED:
+      case Map3NodeActionEvent.MAP3_CANCEL_CONFIRMED:
         break;
-      case Map3NodeActionEvent.ADD:
+      case Map3NodeActionEvent.MAP3_ADD:
         break;
       case Map3NodeActionEvent.RECEIVE_AWARD:
         _pageTitle = "提取奖励";
@@ -142,7 +142,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         ];
         break;
 
-      case Map3NodeActionEvent.PRE_EDIT:
+      case Map3NodeActionEvent.MAP3_PRE_EDIT:
         _pageTitle = "修改预设";
         _subList[1] = "Atlas节点";
         _subList[0] = "钱包";
@@ -464,20 +464,20 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
 
             // todo: sign transfer
             switch (widget.actionEvent) {
-              case Map3NodeActionEvent.CREATE:
+              case Map3NodeActionEvent.MAP3_CREATE:
                 TxHashEntity txHashEntity = await _atlasApi.postCreateMap3Node(widget.createMap3Entity);
                 print("[Confirm] txHashEntity:${txHashEntity.txHash}");
                 break;
 
-              case Map3NodeActionEvent.DELEGATE:
+              case Map3NodeActionEvent.MAP3_DELEGATE:
                 break;
-              case Map3NodeActionEvent.COLLECT:
+              case Map3NodeActionEvent.MAP3_COLLECT:
                 break;
-              case Map3NodeActionEvent.CANCEL:
+              case Map3NodeActionEvent.MAP3_CANCEL:
                 break;
-              case Map3NodeActionEvent.CANCEL_CONFIRMED:
+              case Map3NodeActionEvent.MAP3_CANCEL_CONFIRMED:
                 break;
-              case Map3NodeActionEvent.ADD:
+              case Map3NodeActionEvent.MAP3_ADD:
                 break;
               case Map3NodeActionEvent.RECEIVE_AWARD:
                 break;

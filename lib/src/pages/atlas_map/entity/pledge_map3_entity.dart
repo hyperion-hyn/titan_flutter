@@ -36,6 +36,7 @@ part 'pledge_map3_entity.g.dart';
   AtlasActionType type;
 
   PledgeMap3Entity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
+  PledgeMap3Entity.onlyType(this.type);
 
   factory PledgeMap3Entity.fromJson(Map<String, dynamic> srcJson) => _$PledgeMap3EntityFromJson(srcJson);
 

@@ -3,11 +3,16 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+
+import 'map3_node_confirm_page.dart';
 
 class Map3NodeExitPage extends StatefulWidget {
   @override
@@ -200,8 +205,18 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
           child: ClickOvalButton(
             "确认终止",
             () {
-              Application.router.navigateTo(
-                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CANCEL.index}");
+              var entity = PledgeMap3Entity.onlyType(AtlasActionType.CANCEL_MAP3_NODE);
+              var message = ConfirmTerminateMap3NodeMessage(
+                entity: entity,
+                map3NodeAddress: "xxx",
+              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Map3NodeConfirmPage(
+                      message: message,
+                    ),
+                  ));
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
