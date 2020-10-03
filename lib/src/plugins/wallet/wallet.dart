@@ -213,7 +213,7 @@ class Wallet {
     final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction(
-        to: web3.EthereumAddress.fromHex(toAddress),
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         value: value == null ? null : web3.EtherAmount.inWei(value),

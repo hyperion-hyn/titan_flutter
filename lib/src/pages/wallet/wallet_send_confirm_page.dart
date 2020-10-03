@@ -510,8 +510,8 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         await HYNApi.transferHYN(
           walletPassword,
-          widget.receiverAddress,
           activatedWallet.wallet,
+          toAddress: widget.receiverAddress,
           amount: ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
         );
       } else {

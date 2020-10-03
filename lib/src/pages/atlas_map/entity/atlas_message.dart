@@ -7,6 +7,8 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/utils/utils.dart';
 
+import 'create_atlas_entity.dart';
+
 abstract class AtlasMessage {
   Future<bool> action(String password);
   Map3NodeActionEvent get type;
@@ -33,6 +35,121 @@ class ConfirmInfoDescription {
       this.toDetail,
       this.fee});
 }
+
+//==================================Atlas Message Begin==============================================
+
+class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
+  final CreateAtlasEntity entity;
+  ConfirmCreateAtlasNodeMessage({this.entity});
+
+  @override
+  Future<bool> action(String password) async {
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+
+    TxHashEntity txHashEntity = await AtlasApi().postCreateAtlasNode(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_CREATE;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "确认创建Atlas节点",
+      amountDirection: "",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Atlas节点",
+      toDetail: "节点号:${entity.payload.nodeId}",
+      fee: "0.0000021",
+    );
+  }
+}
+
+class ConfirmEditAtlasNodeMessage implements AtlasMessage {
+  final CreateAtlasEntity entity;
+  ConfirmEditAtlasNodeMessage({this.entity});
+
+  @override
+  Future<bool> action(String password) async {
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+
+    TxHashEntity txHashEntity = await AtlasApi().postEditAtlasNode(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_EDIT;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "确认编辑Atlas节点",
+      amountDirection: "",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Atlas节点",
+      toDetail: "节点号:${entity.payload.nodeId}",
+      fee: "0.0000021",
+    );
+  }
+}
+
+class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
+  final String nodeId;
+  final String delegatorAddress;
+  final String validatorAddress;
+  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.delegatorAddress, this.validatorAddress});
+
+  @override
+  Future<bool> action(String password) async {
+//    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+//    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+//
+//    TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(this.entity);
+//    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+//    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_RECEIVE_AWARD;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "提取奖励",
+      amountDirection: "+",
+      amount: "0",
+      fromName: "Atlas节点",
+      fromDetail: "节点号:$nodeId",
+      toName: "Map3节点",
+      toDetail: "",
+      fee: "0.0000021",
+    );
+  }
+}
+
+//==================================Atlas Message End==============================================
+
 
 class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
