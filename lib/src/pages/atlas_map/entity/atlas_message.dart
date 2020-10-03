@@ -109,7 +109,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
 
     return ConfirmInfoDescription(
       title: "确认编辑节点",
-      amountDirection: "-",
+      amountDirection: "",
       amount: "0",
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
