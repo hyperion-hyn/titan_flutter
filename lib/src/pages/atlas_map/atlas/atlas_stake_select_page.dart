@@ -208,7 +208,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
         S.of(context).confirm,
         () async {
           Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.STAKE_ATLAS.index}");
+              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_STAKE.index}");
           /*var atlasEntity = widget._atlasInfoEntity;
           var map3Entity = widget._atlasInfoEntity.myMap3[_selectedMap3NodeValue];
           await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(

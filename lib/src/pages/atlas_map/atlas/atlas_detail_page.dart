@@ -327,7 +327,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   break;
                 case NodeJoinType.CREATOR:
                   Application.router.navigateTo(context,
-                      Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ACTIVE_NODE.index}");
+                      Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_ACTIVE_NODE.index}");
                   break;
               }
             },
@@ -418,7 +418,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 Application.router.navigateTo(
                                     context,
                                     Routes.map3node_formal_confirm_page +
-                                        "?actionEvent=${Map3NodeActionEvent.RECEIVE_AWARD.index}");
+                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
                               },
                               width: 120,
                               height: 38,
