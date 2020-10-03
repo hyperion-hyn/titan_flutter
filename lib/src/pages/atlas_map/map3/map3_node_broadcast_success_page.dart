@@ -46,6 +46,10 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "提取奖励";
         break;
 
+      case Map3NodeActionEvent.EDIT_MAP3:
+        action = "编辑Map3节点";
+        break;
+
       case Map3NodeActionEvent.EDIT_ATLAS:
         action = "编辑Atlas节点";
         break;

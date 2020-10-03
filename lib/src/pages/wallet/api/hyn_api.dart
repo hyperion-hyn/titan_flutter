@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -61,58 +62,59 @@ class HYNApi {
   }
 
   static Future transCreateMap3Node(
-      CreateMap3Payload entity,
+      CreateMap3Entity entity,
     String password,
-    String toAddress,
     localWallet.Wallet wallet,
   ) async {
-    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.staking));
+    var payload = entity.payload;
+    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.amount));
     var message = CreateMap3NodeMessage(
       amount: amount,
       commission: BigInt.from(10).pow(17),
       // 0.1   10%手续费
       description: NodeDescription(
-          name: entity.name,
-          details: entity.describe,
-          identity: entity.nodeId,
-          securityContact: entity.connect,
-          website: entity.home),
+          name: payload.name,
+          details: payload.describe,
+          identity: payload.nodeId,
+          securityContact: payload.connect,
+          website: payload.home),
       operatorAddress: wallet.getAtlasAccount().address,
       // todo: test
-      nodePubKey: entity.region,
-      nodeKeySig: entity.provider,
+      nodePubKey: payload.region,
+      nodeKeySig: payload.provider,
       //nodePubKey: '5228b7f763038bb5b7638b624a56535a97b7e2cf6cba6e43d303d8919d7397fffd2eed7060bd29a13f5a9ab78994f614',
       //nodeKeySig: 'eb88a3e92d7e6a8c1b356730cda4e6ef24dec89fd2d5279761c50e0f71c6597f06aec6c861c884ee5b3f311832a0f9026d3864b9c116294333301999737ff2a02331ee9bdde89e3963ba794ceaedd3bfbf39243405c1b2f99a52ccf5aca0f411',
     );
     print(message);
 
-    transferHYN(password, toAddress, wallet, type: message.type, amount: amount);
+    transferHYN(password, entity.to, wallet, type: message.type, amount: amount);
   }
 
   static Future transEditMap3Node(
-      CreateMap3Payload entity,
+      CreateMap3Entity entity,
     String password,
-    String toAddress,
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
+    var payload = entity.payload;
+
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: entity.name,
-          details: entity.describe,
-          identity: entity.nodeId,
-          securityContact: entity.connect,
-          website: entity.home),
+          name: payload.name,
+          details: payload.describe,
+          identity: payload.nodeId,
+          securityContact: payload.connect,
+          website: payload.home),
       operatorAddress: wallet.getAtlasAccount().address,
       // todo: test
-      nodeKeyToRemove: entity.region,
-      nodeKeyToAdd: entity.region,
-      nodeKeyToAddSig: entity.provider,
+      nodeKeyToRemove: payload.region,
+      nodeKeyToAdd: payload.region,
+      nodeKeyToAddSig: payload.provider,
     );
     print(message);
 
-    transferHYN(password, toAddress, wallet, type: message.type);
+    transferHYN(password, entity.to, wallet, type: message.type);
   }
 
   static Future transTerminateMap3Node(

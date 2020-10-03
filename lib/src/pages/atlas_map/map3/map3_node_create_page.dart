@@ -462,6 +462,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _payload.region = _selectProviderEntity.regions[selectNodeItemValue].name;
       _payload.provider = _selectProviderEntity.name;
     }
+    _payload.isEdit = false;
     var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
     Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }

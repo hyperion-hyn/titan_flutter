@@ -98,7 +98,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '确认创建节点',
+        baseTitle: widget.entity.isEdit ? '确认编辑节点' : '确认创建节点',
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -134,7 +134,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              "你即将要创建如下Map3节点",
+              "你即将要${widget.entity.isEdit ? "编辑" : "创建"}如下Map3节点",
               style: TextStyle(
                 color: HexColor("#333333"),
                 fontSize: 16,
@@ -212,9 +212,17 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           // Application.router.navigateTo(
           //     context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
 
-          var entity = CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
-          entity.payload = widget.entity;
-          var message = ConfirmCreateMap3NodeMessage(entity: entity);
+          AtlasMessage message;
+          if (!widget.entity.isEdit) {
+            CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+            map3entity.payload = widget.entity;
+            message = ConfirmCreateMap3NodeMessage(entity: map3entity);
+          } else {
+            CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+            map3entity.payload = widget.entity;
+            message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: "xxx");
+          }
+
           Navigator.push(
               context,
               MaterialPageRoute(

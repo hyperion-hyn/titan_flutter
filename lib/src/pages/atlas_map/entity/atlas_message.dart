@@ -38,21 +38,21 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   ConfirmCreateMap3NodeMessage({this.entity});
 
-/*  @override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transCreateMap3Node(this.entity.payload, password, this.entity.to, wallet);
+    HYNApi.transCreateMap3Node(this.entity, password, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
-  @override
+  /*@override
   Future<bool> action(String password) async {
     print("[ConfirmCreateMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.CREATE;
@@ -75,6 +75,51 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
     );
   }
 }
+
+
+class ConfirmEditMap3NodeMessage implements AtlasMessage {
+  final CreateMap3Entity entity;
+  final String map3NodeAddress;
+  ConfirmEditMap3NodeMessage({this.entity, this.map3NodeAddress});
+
+  /*@override
+  Future<bool> action(String password) async {
+    TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
+    return txHashEntity.txHash.isNotEmpty;
+  }*/
+
+  @override
+  Future<bool> action(String password) async {
+    print("[ConfirmEditMap3NodeMessage] action:$password");
+    return password.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.EDIT_MAP3;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "确认编辑节点",
+      amountDirection: "-",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Map3节点",
+      toDetail: "节点号:${entity.payload.nodeId}",
+      fee: "0.0000021",
+    );
+  }
+}
+
 
 /*
 activatedWallet = WalletInheritedModel.of(context).activatedWallet;

@@ -224,7 +224,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
             if (password == null) {
               return;
             }
-            bool isOK = widget.message.action(password) as bool;
+            bool isOK = await widget.message.action(password);
             print("object --> isOK:$isOK");
             //if (isOK) {
               // todo: test_jison

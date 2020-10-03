@@ -129,7 +129,7 @@ class CreateMap3Payload extends Object {
   String staking;
 
   @JsonKey(name: 'is_edit')
-  bool isEdit;
+  bool isEdit = false;
 
   CreateMap3Payload(
     this.connect,
