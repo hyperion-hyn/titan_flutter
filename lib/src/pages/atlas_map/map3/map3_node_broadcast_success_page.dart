@@ -46,7 +46,7 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "Map3节点分裂";
         break;
 
-      case Map3NodeActionEvent.RECEIVE_AWARD:
+      case Map3NodeActionEvent.ATLAS_RECEIVE_AWARD:
         action = "提取奖励";
         break;
 
@@ -54,19 +54,20 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "编辑Map3节点";
         break;
 
+ 
       case Map3NodeActionEvent.MAP3_PRE_EDIT:
         action = "修改预设";
         break;
-
-      case Map3NodeActionEvent.EDIT_ATLAS:
+ 
+      case Map3NodeActionEvent.ATLAS_EDIT:
         action = "编辑Atlas节点";
         break;
 
-      case Map3NodeActionEvent.ACTIVE_NODE:
+      case Map3NodeActionEvent.ATLAS_ACTIVE_NODE:
         action = "激活Atlas节点";
         break;
 
-      case Map3NodeActionEvent.STAKE_ATLAS:
+      case Map3NodeActionEvent.ATLAS_STAKE:
         action = "激活Atlas节点";
         break;
 

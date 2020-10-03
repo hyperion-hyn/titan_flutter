@@ -249,7 +249,7 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
           }
           var encodeEntity = FluroConvertUtils.object2string(_atlasInfoEntity.toJson());
           Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.EDIT_ATLAS.index}");
+              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_EDIT.index}");
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

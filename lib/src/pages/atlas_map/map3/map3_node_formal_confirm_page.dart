@@ -94,7 +94,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
         break;
       case Map3NodeActionEvent.MAP3_ADD:
         break;
-      case Map3NodeActionEvent.RECEIVE_AWARD:
+      case Map3NodeActionEvent.ATLAS_RECEIVE_AWARD:
         _pageTitle = "提取奖励";
         _subList[0] = "Atlas节点";
         _subList[1] = "钱包";
@@ -104,7 +104,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
           "${widget.transferAmount} HYN"
         ];
         break;
-      case Map3NodeActionEvent.EDIT_ATLAS:
+      case Map3NodeActionEvent.ATLAS_EDIT:
         _pageTitle = "确认编辑Atlas节点";
         _subList[1] = "Atlas节点";
         _detailList = [
@@ -113,7 +113,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
           "${widget.transferAmount} HYN"
         ];
         break;
-      case Map3NodeActionEvent.ACTIVE_NODE:
+      case Map3NodeActionEvent.ATLAS_ACTIVE_NODE:
         _pageTitle = "激活节点";
         _subList[1] = "Atlas链";
         _detailList = [
@@ -122,7 +122,7 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
           "${widget.transferAmount} HYN"
         ];
         break;
-      case Map3NodeActionEvent.STAKE_ATLAS:
+      case Map3NodeActionEvent.ATLAS_STAKE:
         _pageTitle = "激活节点";
         _subList[1] = "Atlas链";
         _detailList = [
@@ -479,14 +479,14 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
                 break;
               case Map3NodeActionEvent.MAP3_ADD:
                 break;
-              case Map3NodeActionEvent.RECEIVE_AWARD:
+              case Map3NodeActionEvent.ATLAS_RECEIVE_AWARD:
                 break;
-              case Map3NodeActionEvent.EDIT_ATLAS:
+              case Map3NodeActionEvent.ATLAS_EDIT:
                 break;
-              case Map3NodeActionEvent.ACTIVE_NODE:
+              case Map3NodeActionEvent.ATLAS_ACTIVE_NODE:
 //                await _atlasApi.activeAtlasNode(entity);
                 break;
-              case Map3NodeActionEvent.STAKE_ATLAS:
+              case Map3NodeActionEvent.ATLAS_STAKE:
                 break;
             }
 
