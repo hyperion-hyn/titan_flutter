@@ -204,7 +204,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  @override
+  /*@override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -212,15 +212,15 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transUnMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }
+  }*/
 
 
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }*/
+  }
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_CANCEL;
