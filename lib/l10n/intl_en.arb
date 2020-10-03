@@ -1012,5 +1012,6 @@
   "exchange_change_wallet": "Switch wallet",
   "exchange_logout": "sign out",
   "exchange_logout_hint": "You are about to exit the authorization status. Are you sure you want to exit?",
-  "bio_auth_expired_hint": "Biometrics has expired, please enter password"
+  "bio_auth_expired_hint": "Biometrics has expired, please enter password",
+  "map3_main_page_title": "Map3 map service node"
 }

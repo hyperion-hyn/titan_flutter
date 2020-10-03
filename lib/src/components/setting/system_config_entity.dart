@@ -46,6 +46,9 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'canCheckMap3Node')
   bool canCheckMap3Node = true;
 
+  @JsonKey(name: 'canCheckMap3NodeCount')
+  int canCheckMap3NodeCount = 1;
+
   SystemConfigEntity(
     this.ethTransferGasLimit,
     this.erc20TransferGasLimit,
@@ -61,6 +64,7 @@ class SystemConfigEntity extends Object {
     this.collectHalfMap3NodeGasLimit,
     this.canShareMap3Node,
     this.canCheckMap3Node,
+    this.canCheckMap3NodeCount,
   );
 
   SystemConfigEntity.def();

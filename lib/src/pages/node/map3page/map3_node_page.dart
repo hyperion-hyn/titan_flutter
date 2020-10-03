@@ -144,10 +144,20 @@ class _Map3NodeState extends State<Map3NodePage> {
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+
       var canCheck = config?.canCheckMap3Node ?? true;
       if (index == 0) {
         canCheck = true;
       }
+      print("[object] --> canCheck:$canCheck");
+
+      // todo: test_10_03
+      var canCheckMap3NodeCount = config?.canCheckMap3NodeCount ?? 1;
+      print("[object] --> canCheckMap3NodeCount:$canCheckMap3NodeCount");
+      if (index < canCheckMap3NodeCount) {
+        canCheck = true;
+      }
+
       return Container(
           padding: EdgeInsets.only(top: index == 0 ? 8 : 0),
           color: Colors.white,
@@ -222,7 +232,8 @@ class _Map3NodeState extends State<Map3NodePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  sprintf(S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
+                  S.of(context).map3_main_page_title,
+                  //sprintf(S.of(context).earth_outpace_server_node, [_nodePageEntityVo.nodeHeadEntity.instanceCount]),
                   style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 Text(

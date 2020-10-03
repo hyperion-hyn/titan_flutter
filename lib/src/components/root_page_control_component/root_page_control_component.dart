@@ -74,9 +74,9 @@ class RootPageControlComponentState
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
 
-    Future.delayed(Duration(milliseconds: 1500), () {
+    //Future.delayed(Duration(milliseconds: 1500), () {
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
-    });
+    //});
   }
 
   void launchRootPage() async {

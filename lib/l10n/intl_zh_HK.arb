@@ -1000,5 +1000,6 @@
   "exchange_change_wallet": "更換錢包",
   "exchange_logout": "退出登錄",
   "exchange_logout_hint": "您將要退出授權狀態，確定要退出嗎？",
-  "bio_auth_expired_hint": "生物識別已過期，請輸入密碼"
+  "bio_auth_expired_hint": "生物識別已過期，請輸入密碼",
+  "map3_main_page_title": "Map3地圖服務節點"
 }
