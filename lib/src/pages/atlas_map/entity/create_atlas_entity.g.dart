@@ -45,10 +45,11 @@ CreateAtlasPayload _$CreateAtlasPayloadFromJson(Map<String, dynamic> json) {
     json['fee_rate_max'] as String,
     json['fee_rate_trim'] as String,
     json['home'] as String,
-    json['map3_node_id'] as String,
+    json['map3_address'] as String,
     json['max_staking'] as String,
     json['name'] as String,
     json['node_id'] as String,
+    json['atlas_address'] as String,
     json['pic'] as String,
   );
 }
@@ -63,9 +64,10 @@ Map<String, dynamic> _$CreateAtlasPayloadToJson(CreateAtlasPayload instance) =>
       'fee_rate_max': instance.feeRateMax,
       'fee_rate_trim': instance.feeRateTrim,
       'home': instance.home,
-      'map3_node_id': instance.map3NodeId,
+      'map3_address': instance.map3Address,
       'max_staking': instance.maxStaking,
       'name': instance.name,
       'node_id': instance.nodeId,
+      'atlas_address': instance.atlasAddress,
       'pic': instance.pic,
     };

@@ -112,8 +112,8 @@ part 'create_atlas_entity.g.dart';
   @JsonKey(name: 'home')
   String home;
 
-  @JsonKey(name: 'map3_node_id')
-  String map3NodeId;
+  @JsonKey(name: 'map3_address')
+  String map3Address;
 
   @JsonKey(name: 'max_staking')
   String maxStaking;
@@ -124,10 +124,13 @@ part 'create_atlas_entity.g.dart';
   @JsonKey(name: 'node_id')
   String nodeId;
 
+  @JsonKey(name: 'atlas_address')
+  String atlasAddress;
+
   @JsonKey(name: 'pic')
   String pic;
 
-  CreateAtlasPayload(this.blsKey,this.blsSign,this.contact,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.map3NodeId,this.maxStaking,this.name,this.nodeId,this.pic,);
+  CreateAtlasPayload(this.blsKey,this.blsSign,this.contact,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.map3Address,this.maxStaking,this.name,this.nodeId,this.atlasAddress,this.pic,);
 
   factory CreateAtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$CreateAtlasPayloadFromJson(srcJson);
 

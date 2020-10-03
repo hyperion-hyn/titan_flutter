@@ -66,6 +66,18 @@ class AtlasApi {
 
   }
 
+  // 编辑Atlas节点
+  Future<TxHashEntity> postEditAtlasNode(CreateAtlasEntity entity) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/mod",
+        EntityFactory<TxHashEntity>(
+              (json) => TxHashEntity.fromJson(json),
+        ),
+        data: entity.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+
+  }
+
   // 查询atlas节点详情
   Future<AtlasInfoEntity> postAtlasInfo(String address, String nodeId) async {
     return AtlasHttpCore.instance.postEntity(
