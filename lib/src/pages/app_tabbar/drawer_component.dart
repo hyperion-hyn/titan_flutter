@@ -18,6 +18,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/smart_drawer.dart';
 
 import 'package:titan/src/pages/mine/about_me_page.dart';
+import 'package:titan/src/widget/webview_demo_page.dart';
 import 'package:titan/src/widget/widget_demo_page.dart';
 
 class DrawerComponent extends StatefulWidget {
@@ -230,6 +231,18 @@ class _DrawerComponentState extends State<DrawerComponent> {
                   },
                   leading: Icon(Icons.monetization_on),
                   title: Text('widget demo'),
+                  trailing: Icon(Icons.navigate_next),
+                ),
+                ListTile(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WebviewDemoPage()));
+                  },
+                  leading: Icon(Icons.monetization_on),
+                  title: Text('webview page'),
                   trailing: Icon(Icons.navigate_next),
                 ),
               ],

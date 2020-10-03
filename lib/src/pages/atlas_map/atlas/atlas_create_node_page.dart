@@ -413,12 +413,12 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '最大抵押量',
             '节点允许的最大抵押量',
-            _createAtlasPayLoad.maxPledge != null
-                ? '${_createAtlasPayLoad.maxPledge}'
+            _createAtlasPayLoad.maxStaking != null
+                ? '${_createAtlasPayLoad.maxStaking}'
                 : null,
             (text) {
               setState(() {
-                _createAtlasPayLoad.maxPledge = int.parse(text);
+                _createAtlasPayLoad.maxStaking = text;
               });
             },
             isEssential: false,
@@ -446,10 +446,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           _basicInfoItem(
             '安全联系',
             '请输入节点的联系方式',
-            _createAtlasPayLoad.connect,
+            _createAtlasPayLoad.contact,
             (text) {
               setState(() {
-                _createAtlasPayLoad.connect = text;
+                _createAtlasPayLoad.contact = text;
               });
             },
             isEssential: false,

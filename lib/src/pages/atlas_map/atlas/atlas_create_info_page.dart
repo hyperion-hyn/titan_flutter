@@ -137,7 +137,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           ),
           _optionItem(
             '最大抵押量',
-            '${widget._createAtlasPayload.maxPledge}',
+            '${widget._createAtlasPayload.maxStaking}',
           ),
           _optionItem(
             '网址',
@@ -145,7 +145,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           ),
           _optionItem(
             '安全联系',
-            widget._createAtlasPayload.connect,
+            widget._createAtlasPayload.contact,
           ),
           _optionItem(
             '描述',
