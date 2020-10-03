@@ -4,6 +4,7 @@ import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+
 // import 'package:web3dart/web3dart.dart' as web3;
 import 'package:web3dart/web3dart.dart';
 
@@ -35,6 +36,7 @@ class HYNApi {
     String password,
     BigInt amount,
     String toAddress,
+    Map3InfoEntity entity,
     localWallet.Wallet wallet,
   ) async {
     var message = CreateAtlasNodeMessage(
@@ -43,11 +45,11 @@ class HYNApi {
       rate: ConvertTokenUnit.decimalToWei(rate),
       maxTotalDelegation: ConvertTokenUnit.bigintToWei(maxTotalDelegation),
       description: NodeDescription(
-          name: 'moo',
-          details: 'moo_detail',
-          identity: 'moo_idx',
-          securityContact: 'moo_contact',
-          website: 'moo_website'),
+          name: entity.name,
+          details: entity.describe,
+          identity: entity.nodeId,
+          securityContact: entity.contact,
+          website: entity.home),
       operatorAddress: wallet.getAtlasAccount().address,
       slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
@@ -67,7 +69,8 @@ class HYNApi {
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.staking));
     var message = CreateMap3NodeMessage(
       amount: amount,
-      commission: BigInt.from(10).pow(17), // 0.1   10%手续费
+      commission: BigInt.from(10).pow(17),
+      // 0.1   10%手续费
       description: NodeDescription(
           name: entity.name,
           details: entity.describe,
