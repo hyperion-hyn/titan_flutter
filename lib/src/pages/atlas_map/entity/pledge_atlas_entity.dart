@@ -38,6 +38,8 @@ part 'pledge_atlas_entity.g.dart';
 
   PledgeAtlasEntity(this.value,this.from,this.gasLimit,this.nonce,this.payload,this.gasPrice,this.rawTx,this.to,this.type,);
 
+  PledgeAtlasEntity.emptyEntity();
+
   factory PledgeAtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$PledgeAtlasEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$PledgeAtlasEntityToJson(this);
