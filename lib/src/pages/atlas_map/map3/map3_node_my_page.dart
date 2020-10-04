@@ -257,7 +257,6 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
               entity.amount = "200000";
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
-                map3NodeAddress: "xxx",
               );
               Navigator.push(
                   context,

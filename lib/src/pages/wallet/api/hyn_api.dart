@@ -97,6 +97,8 @@ class HYNApi {
     transferHYN(password, wallet, message: message);
   }
 
+  //==================================Atlas Message End==============================================
+
   static Future transCreateMap3Node(
     CreateMap3Entity entity,
     String password,
@@ -106,7 +108,10 @@ class HYNApi {
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.amount));
     var message = CreateMap3NodeMessage(
       amount: amount,
-      commission: BigInt.from(10).pow(17),
+      // todo: test
+      commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
+
+      //commission: BigInt.from(10).pow(17),
       // 0.1   10%手续费
       description: NodeDescription(
           name: payload.name,
@@ -207,7 +212,6 @@ class HYNApi {
   static Future transCollectMap3Node(
     String password,
     String toAddress,
-    String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
     var message = CollectMicroRewardsMessage(

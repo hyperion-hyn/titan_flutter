@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
@@ -213,9 +215,15 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              if (!_joinCoinFormKey.currentState.validate()) {
+              // if (!(_joinCoinFormKey.currentState?.validate()??false)) {
+              //   return;
+              // };
+
+
+              if (_joinCoinController?.text?.isEmpty??true) {
+                Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
                 return;
-              };
+              }
 
               var amount = _joinCoinController?.text??"200000";
               var entity = PledgeMap3Entity.onlyType(AtlasActionType.JOIN_DELEGATE_MAP3);
