@@ -419,13 +419,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       ),
                     ),
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => WebViewContainer(
-                                    initUrl: '',
-                                    title: 'Atlas Tutorial',
-                                  )));
+                      AtlasApi.goToAtlasMap3HelpPage(context);
                     },
                   ),
                 ),
