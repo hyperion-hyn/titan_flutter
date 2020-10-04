@@ -216,6 +216,7 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
 
       case Map3NodeActionEvent.MAP3_EDIT:
       case Map3NodeActionEvent.MAP3_PRE_EDIT:
+      case Map3NodeActionEvent.MAP3_CANCEL:
 
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;

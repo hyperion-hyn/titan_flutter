@@ -5,6 +5,9 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -14,6 +17,7 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
@@ -209,8 +213,25 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              Application.router.navigateTo(
-                  context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.MAP3_DELEGATE.index}");
+              if (!_joinCoinFormKey.currentState.validate()) {
+                return;
+              };
+
+              var amount = _joinCoinController?.text??"200000";
+              var entity = PledgeMap3Entity.onlyType(AtlasActionType.JOIN_DELEGATE_MAP3);
+              entity.payload = PledgeMap3Payload("abc",amount);
+              entity.amount = amount;
+              var message = ConfirmDelegateMap3NodeMessage(
+                entity: entity,
+                map3NodeAddress: "xxx",
+              );
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Map3NodeConfirmPage(
+                      message: message,
+                    ),
+                  ));
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,

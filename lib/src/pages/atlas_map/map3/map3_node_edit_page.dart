@@ -301,8 +301,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                 ),
               ));
 
-          //var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
-          //Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
