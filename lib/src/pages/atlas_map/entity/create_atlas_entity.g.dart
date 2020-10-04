@@ -37,8 +37,9 @@ Map<String, dynamic> _$CreateAtlasEntityToJson(CreateAtlasEntity instance) =>
 
 CreateAtlasPayload _$CreateAtlasPayloadFromJson(Map<String, dynamic> json) {
   return CreateAtlasPayload(
-    json['bls_key'] as String,
-    json['bls_sign'] as String,
+    json['bls_add_key'] as String,
+    json['bls_add_sign'] as String,
+    json['bls_rm_key'] as String,
     json['contact'] as String,
     json['describe'] as String,
     json['fee_rate'] as String,
@@ -56,8 +57,9 @@ CreateAtlasPayload _$CreateAtlasPayloadFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$CreateAtlasPayloadToJson(CreateAtlasPayload instance) =>
     <String, dynamic>{
-      'bls_key': instance.blsKey,
-      'bls_sign': instance.blsSign,
+      'bls_add_key': instance.blsAddKey,
+      'bls_add_sign': instance.blsAddSign,
+      'bls_rm_key': instance.blsRmSign,
       'contact': instance.contact,
       'describe': instance.describe,
       'fee_rate': instance.feeRate,

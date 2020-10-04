@@ -764,7 +764,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           RoundBorderTextField(
             onChanged: (text) {
               setState(() {
-                _createAtlasPayLoad.blsKey = text;
+                _createAtlasPayLoad.blsAddKey = text;
               });
             },
             controller: _blsKeyTextController,
@@ -794,7 +794,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           RoundBorderTextField(
             onChanged: (text) {
               setState(() {
-                _createAtlasPayLoad.blsSign = text;
+                _createAtlasPayLoad.blsAddSign = text;
               });
             },
             controller: _blsSignTextController,

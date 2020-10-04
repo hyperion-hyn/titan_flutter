@@ -11,11 +11,14 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -326,8 +329,17 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   );
                   break;
                 case NodeJoinType.CREATOR:
-                  Application.router.navigateTo(context,
-                      Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_ACTIVE_NODE.index}");
+                  CreateAtlasEntity entity = CreateAtlasEntity.onlyType(AtlasActionType.ACTIVE_ATLAS_NODE);
+                  AtlasMessage message = ConfirmAtlasActiveMessage(nodeId: _atlasInfoEntity.nodeId,entity: entity);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Map3NodeConfirmPage(
+                          message: message,
+                        ),
+                      ));
+//                  Application.router.navigateTo(context,
+//                      Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_ACTIVE_NODE.index}");
                   break;
               }
             },
@@ -415,10 +427,19 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             ClickOvalButton(
                               "领取",
                               () {
-                                Application.router.navigateTo(
+                                var entity = PledgeAtlasEntity.emptyEntity();
+                                AtlasMessage message = ConfirmAtlasReceiveAwardMessage(nodeId: _atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+                                Navigator.push(
                                     context,
-                                    Routes.map3node_formal_confirm_page +
-                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
+                                    MaterialPageRoute(
+                                      builder: (context) => Map3NodeConfirmPage(
+                                        message: message,
+                                      ),
+                                    ));
+//                                Application.router.navigateTo(
+//                                    context,
+//                                    Routes.map3node_formal_confirm_page +
+//                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
                               },
                               width: 120,
                               height: 38,
@@ -852,7 +873,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     map3Entity.address,
                     111,
                     111,
-                    AtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
+                    PledgeAtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
                     "1111",
                     "11111",
                     atlasEntity.address,

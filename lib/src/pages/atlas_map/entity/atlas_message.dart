@@ -216,8 +216,8 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
       amount: "0",
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
-      toName: "Atlas链",
-      toDetail: "",
+      toName: "Atlas节点",
+      toDetail: "节点号:$nodeId",
       fee: "0.0000021",
     );
   }

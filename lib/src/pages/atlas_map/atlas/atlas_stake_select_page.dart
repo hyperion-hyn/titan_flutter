@@ -5,10 +5,12 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -207,8 +209,17 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
-          Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_STAKE.index}");
+          var entity = PledgeAtlasEntity.emptyEntity();
+          AtlasMessage message = ConfirmAtlasStakeMessage(nodeId: widget._atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ));
+//          Application.router.navigateTo(
+//              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_STAKE.index}");
           /*var atlasEntity = widget._atlasInfoEntity;
           var map3Entity = widget._atlasInfoEntity.myMap3[_selectedMap3NodeValue];
           await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(

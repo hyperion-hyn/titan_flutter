@@ -29,6 +29,10 @@ enum Map3InfoStatus {
   6 创建atlas节点；
   7 参与atlas节点抵押；
   8 撤销atlas节点抵押
+  9 修改atlas节点；
+  10 重新激活Atlas；
+  11 领取atlas奖励；
+  12 领取map3奖励;
    */
 
 enum AtlasActionType {
@@ -41,6 +45,10 @@ enum AtlasActionType {
   CREATE_ATLAS_NODE,
   JOIN_DELEGATE_ALAS,
   CANCEL_DELEGATE_ALAS,
+  EDIT_ATLAS_NODE,
+  ACTIVE_ATLAS_NODE,
+  RECEIVE_ATLAS_REWARD,
+  RECEIVE_MAP3_REWARD,
   EDIT_MAP3_NODE,
   COLLECT_MAP3_NODE,
 }

@@ -21,7 +21,7 @@ part 'pledge_atlas_entity.g.dart';
   int nonce;
 
   @JsonKey(name: 'payload')
-  AtlasPayload payload;
+  PledgeAtlasPayload payload;
 
   @JsonKey(name: 'gas_price')
   String gasPrice;
@@ -38,6 +38,8 @@ part 'pledge_atlas_entity.g.dart';
 
   PledgeAtlasEntity(this.value,this.from,this.gasLimit,this.nonce,this.payload,this.gasPrice,this.rawTx,this.to,this.type,);
 
+  PledgeAtlasEntity.emptyEntity();
+
   factory PledgeAtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$PledgeAtlasEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$PledgeAtlasEntityToJson(this);
@@ -46,17 +48,17 @@ part 'pledge_atlas_entity.g.dart';
 
   
 @JsonSerializable()
-  class AtlasPayload extends Object {
+  class PledgeAtlasPayload extends Object {
 
-  @JsonKey(name: 'atlas_node_id')
-  String atlasNodeId;
+  @JsonKey(name: 'atlas_address')
+  String atlasAddress;
 
-  @JsonKey(name: 'map3_node_id')
-  String map3NodeId;
+  @JsonKey(name: 'map3_address')
+  String map3Address;
 
-  AtlasPayload(this.atlasNodeId,this.map3NodeId,);
+  PledgeAtlasPayload(this.atlasAddress,this.map3Address,);
 
-  factory AtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$AtlasPayloadFromJson(srcJson);
+  factory PledgeAtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$AtlasPayloadFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AtlasPayloadToJson(this);
 
