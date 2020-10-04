@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
@@ -13,10 +15,19 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 
 import '../../../../config.dart';
 
 class AtlasApi {
+  static goToAtlasMap3HelpPage(BuildContext context){
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode("帮助页面");
+    Application.router
+        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
+
   Map<String, dynamic> getOptionHeader({hasLang = false, hasAddress = false, hasSign = false}) {
     if (!hasLang && !hasAddress && !hasSign) {
       return null;
@@ -147,7 +158,7 @@ class AtlasApi {
   }
 
   // 重新激活atlas节点
-  Future<TxHashEntity> activeAtlasNode(PledgeAtlasEntity entity) async {
+  Future<TxHashEntity> activeAtlasNode(CreateAtlasEntity entity) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/active",
         EntityFactory<TxHashEntity>(

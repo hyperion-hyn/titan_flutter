@@ -97,6 +97,36 @@ class HYNApi {
     transferHYN(password, wallet, message: message);
   }
 
+ 
+ 
+  static Future transAtlasActive(
+      CreateAtlasEntity createAtlasEntity,
+      String password,
+      localWallet.Wallet wallet,
+      ) async {
+    var message = EditAtlasNodeMessage(
+      validatorAddress: createAtlasEntity.payload.atlasAddress,
+      operatorAddress: wallet.getAtlasAccount().address,
+      eposStatus: 0,//0、 Active 1、Inactive 2、Banned
+    );
+    print(message);
+
+    transferHYN(password, wallet, message: message);
+  }
+
+  static Future transAtlasStake(
+      PledgeAtlasEntity pledgeAtlasEntity,
+      String password,
+      localWallet.Wallet wallet,
+      ) async {
+    var message = ReDelegateAtlasMessage(
+        delegatorAddress: pledgeAtlasEntity.payload.map3NodeId,
+        validatorAddress: pledgeAtlasEntity.payload.atlasNodeId);
+    print(message);
+
+    transferHYN(password, wallet, message: message);
+  }
+
   //==================================Atlas Message End==============================================
 
   static Future transCreateMap3Node(
