@@ -138,9 +138,8 @@ class HYNApi {
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.amount));
     var message = CreateMap3NodeMessage(
       amount: amount,
-      // todo: test
       commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
-
+      // todo: test
       //commission: BigInt.from(10).pow(17),
       // 0.1   10%手续费
       description: NodeDescription(

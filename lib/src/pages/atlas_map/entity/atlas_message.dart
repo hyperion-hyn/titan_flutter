@@ -225,7 +225,6 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 
 //==================================Atlas Message End==============================================
 
-
 class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   ConfirmCreateMap3NodeMessage({this.entity});
@@ -273,22 +272,21 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmEditMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  @override
+  /*@override
   Future<bool> action(String password) async {
-    TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
+    TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }
+  }*/
 
-/*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }*/
+  }
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_EDIT;
@@ -316,7 +314,6 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   final bool autoRenew;
   final String feeRate;
   ConfirmPreEditMap3NodeMessage({this.autoRenew, this.feeRate});
-
 
   @override
   Future<bool> action(String password) async {
@@ -380,8 +377,8 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       title: "确认终止节点",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
@@ -404,8 +401,6 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
     return txHashEntity.txHash.isNotEmpty;
   }*/
 
-
-
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
@@ -425,8 +420,8 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       title: "确认撤销",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
@@ -470,8 +465,8 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
-      toDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       fee: "0.0000021",
     );
   }
@@ -492,7 +487,6 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
     return txHashEntity.txHash.isNotEmpty;
   }*/
 
-
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
@@ -512,12 +506,11 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       title: "提取奖励",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
     );
   }
 }
-
