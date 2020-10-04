@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -552,8 +554,8 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                           child: Container(
                             width: 36,
                             height: 36,
-                            child: Image.asset(
-                              content,
+                            child: Image.file(
+                              File(content),
                               fit: BoxFit.cover,
                             ),
                           ),
