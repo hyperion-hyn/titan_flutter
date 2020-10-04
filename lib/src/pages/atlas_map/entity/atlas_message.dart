@@ -2,6 +2,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -113,18 +114,17 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
 
 class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   final String nodeId;
-  final String delegatorAddress;
-  final String validatorAddress;
-  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.delegatorAddress, this.validatorAddress});
+  final PledgeAtlasEntity pledgeAtlasEntity;
+  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.pledgeAtlasEntity});
 
   @override
   Future<bool> action(String password) async {
-//    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-//    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transAtlasReceiveReward(this.pledgeAtlasEntity, password, wallet);
 //
-//    TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(this.entity);
-//    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
-//    return txHashEntity.txHash.isNotEmpty;
+    TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(this.pledgeAtlasEntity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
   }
 
   @override
@@ -143,6 +143,80 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
       fromName: "Atlas节点",
       fromDetail: "节点号:$nodeId",
       toName: "Map3节点",
+      toDetail: "",
+      fee: "0.0000021",
+    );
+  }
+}
+
+class ConfirmAtlasActiveMessage implements AtlasMessage {
+  final String nodeId;
+  final CreateAtlasEntity entity;
+  ConfirmAtlasActiveMessage({this.nodeId, this.entity});
+
+  @override
+  Future<bool> action(String password) async {
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transAtlasActive(this.entity, password, wallet);
+
+    TxHashEntity txHashEntity = await AtlasApi().activeAtlasNode(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_ACTIVE_NODE;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "激活节点",
+      amountDirection: "",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Atlas链",
+      toDetail: "",
+      fee: "0.0000021",
+    );
+  }
+}
+
+class ConfirmAtlasStakeMessage implements AtlasMessage {
+  final String nodeId;
+  final PledgeAtlasEntity pledgeAtlasEntity;
+  ConfirmAtlasStakeMessage({this.nodeId, this.pledgeAtlasEntity});
+
+  @override
+  Future<bool> action(String password) async {
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transAtlasStake(this.pledgeAtlasEntity, password, wallet);
+
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_STAKE;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "抵押Atlas节点",
+      amountDirection: "",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Atlas链",
       toDetail: "",
       fee: "0.0000021",
     );
