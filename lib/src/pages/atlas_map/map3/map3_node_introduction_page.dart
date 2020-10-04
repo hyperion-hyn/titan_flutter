@@ -9,14 +9,12 @@ import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
 import 'map3_node_public_widget.dart';
 
 class Map3NodeIntroductionPage extends StatefulWidget {
@@ -116,12 +114,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       if (subTitle.isEmpty) {
         return;
       }
-      // todo: test_jison_0604
       AtlasApi.goToAtlasMap3HelpPage(context);
-
-      // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-      // String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-      // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
     };
 
     return Container(
@@ -240,11 +233,6 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                       child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
                         AtlasApi.goToAtlasMap3HelpPage(context);
-
-                        // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                        // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                        // Application.router
-                        //     .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                     ),
                   ],
