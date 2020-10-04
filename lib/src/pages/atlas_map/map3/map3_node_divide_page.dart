@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,21 +8,17 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/wallet/wallet_setting.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/round_border_textfield.dart';
-
-import 'map3_node_pronounce_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeDividePage extends StatefulWidget {
@@ -129,10 +124,12 @@ class _Map3NodeDivideState extends State<Map3NodeDividePage> with WidgetsBinding
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-              String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于节点分裂");
-              Application.router
-                  .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+              AtlasApi.goToAtlasMap3HelpPage(context);
+
+              // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+              // String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于节点分裂");
+              // Application.router
+              //     .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
             },
             child: Text(
               "关于节点分裂",

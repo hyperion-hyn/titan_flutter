@@ -193,6 +193,18 @@ class AtlasApi {
 
   }
 
+  // 编辑Map3节点
+  Future<TxHashEntity> postEditMap3Node(CreateMap3Entity entity) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/mod",
+        EntityFactory<TxHashEntity>(
+              (json) => TxHashEntity.fromJson(json),
+        ),
+        data: entity.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+
+  }
+
   // 查询map3节点详情
   Future<Map3InfoEntity> postMap3Info(String address, String nodeId) async {
     return AtlasHttpCore.instance.postEntity(

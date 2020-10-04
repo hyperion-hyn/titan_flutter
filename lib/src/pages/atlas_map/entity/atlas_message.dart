@@ -225,7 +225,6 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 
 //==================================Atlas Message End==============================================
 
-
 class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   ConfirmCreateMap3NodeMessage({this.entity});
@@ -268,7 +267,6 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   }
 }
 
-
 class ConfirmEditMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   final String map3NodeAddress;
@@ -276,8 +274,8 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
 
   /*@override
   Future<bool> action(String password) async {
-    // TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
-    // print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
@@ -312,12 +310,10 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   }
 }
 
-
 class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   final bool autoRenew;
   final String feeRate;
   ConfirmPreEditMap3NodeMessage({this.autoRenew, this.feeRate});
-
 
   @override
   Future<bool> action(String password) async {
@@ -381,8 +377,8 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       title: "确认终止节点",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
@@ -405,8 +401,6 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
     return txHashEntity.txHash.isNotEmpty;
   }*/
 
-
-
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
@@ -426,8 +420,8 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       title: "确认撤销",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
@@ -450,7 +444,6 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
     return txHashEntity.txHash.isNotEmpty;
   }*/
 
-
   @override
   Future<bool> action(String password) async {
     print("[ConfirmDelegateMap3NodeMessage] action:$password");
@@ -472,18 +465,17 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
-      toDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       fee: "0.0000021",
     );
   }
 }
 
-
 class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
-  final String map3NodeAddress;
-  ConfirmCollectMap3NodeMessage({this.entity, this.map3NodeAddress});
+
+  ConfirmCollectMap3NodeMessage({this.entity});
 
   /*@override
   Future<bool> action(String password) async {
@@ -491,10 +483,9 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transCollectMap3Node(password, this.entity.to, this.map3NodeAddress, wallet);
+    HYNApi.transCollectMap3Node(password, this.entity.to, wallet);
     return txHashEntity.txHash.isNotEmpty;
   }*/
-
 
   @override
   Future<bool> action(String password) async {
@@ -515,8 +506,8 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       title: "提取奖励",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId??""}",
-      amount: entity?.payload?.staking??"0",
+      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.0000021",
@@ -525,83 +516,45 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
 }
 
 
-/*
-activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-var myActiveShortAddr = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
-switch (widget.actionEvent) {
-case Map3NodeActionEvent.DELEGATE:
-_pageTitle = S.of(context).transfer_confirm;
-break;
-case Map3NodeActionEvent.COLLECT:
-_pageTitle = "提取奖励";
-break;
-case Map3NodeActionEvent.CANCEL:
-break;
-case Map3NodeActionEvent.CANCEL_CONFIRMED:
-break;
-case Map3NodeActionEvent.ADD:
-break;
-case Map3NodeActionEvent.RECEIVE_AWARD:
-_pageTitle = "提取奖励";
-_subList[0] = "Atlas节点";
-_subList[1] = "钱包";
-_detailList = [
-"节点号: ${widget.atlasNodeId}",
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr})",
-"${widget.transferAmount} HYN"
-];
-break;
-case Map3NodeActionEvent.EDIT_ATLAS:
-_pageTitle = "确认编辑Atlas节点";
-_subList[1] = "Atlas节点";
-_detailList = [
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-"节点号: ${widget.atlasNodeId}",
-"${widget.transferAmount} HYN"
-];
-break;
-case Map3NodeActionEvent.ACTIVE_NODE:
-_pageTitle = "激活节点";
-_subList[1] = "Atlas链";
-_detailList = [
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-"",
-"${widget.transferAmount} HYN"
-];
-break;
-case Map3NodeActionEvent.STAKE_ATLAS:
-_pageTitle = "激活节点";
-_subList[1] = "Atlas链";
-_detailList = [
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-"",
-"${widget.transferAmount} HYN"
-];
-break;
-case Map3NodeActionEvent.EXCHANGE_HYN:
-_pageTitle = "兑换HYN";
-_titleList[2] = "网络费用";
-_subList = ["ERC20钱包", "主链钱包", ""];
-_detailList = [
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-""
-];
-break;
+class ConfirmDivideMap3NodeMessage implements AtlasMessage {
+  final PledgeMap3Entity entity;
+  final String map3NodeAddress;
+  ConfirmDivideMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-case Map3NodeActionEvent.PRE_EDIT:
-_pageTitle = "修改预设";
-_subList[1] = "Atlas节点";
-_subList[0] = "钱包";
-_detailList = [
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-"${activatedWallet.wallet.keystore.name} ($myActiveShortAddr)",
-""
-];
-break;
+  /*@override
+  Future<bool> action(String password) async {
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
-default:
-_pageTitle = S.of(context).transfer_confirm;
-break;
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
+    return txHashEntity.txHash.isNotEmpty;
+  }*/
+
+  @override
+  Future<bool> action(String password) async {
+    print("[ConfirmDivideMap3NodeMessage] action:$password");
+    return password.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_ADD;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "节点分裂",
+      amountDirection: "-",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Map3节点",
+      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
+      fee: "0.0000021",
+    );
+  }
 }
-*/

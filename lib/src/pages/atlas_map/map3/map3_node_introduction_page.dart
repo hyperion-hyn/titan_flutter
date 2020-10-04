@@ -4,6 +4,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
@@ -116,9 +117,11 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
         return;
       }
       // todo: test_jison_0604
-      String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-      String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+      AtlasApi.goToAtlasMap3HelpPage(context);
+
+      // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+      // String webTitle = FluroConvertUtils.fluroCnParamsEncode(subTitle);
+      // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
     };
 
     return Container(
@@ -236,10 +239,12 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                     InkWell(
                       child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
-                        String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                        String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                        Application.router
-                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                        AtlasApi.goToAtlasMap3HelpPage(context);
+
+                        // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                        // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+                        // Application.router
+                        //     .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                     ),
                   ],

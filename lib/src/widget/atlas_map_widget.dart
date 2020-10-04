@@ -53,7 +53,7 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
       onLoad: () {},
       option: _eChartOption,
       extensions: [worldScript],
-      captureAllGestures: true,
+      captureAllGestures: false,
     );
   }
 

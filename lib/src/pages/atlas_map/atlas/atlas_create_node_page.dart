@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -43,10 +44,15 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(
-                '介绍文档',
-                style: TextStyle(
-                  color: Colors.blue,
+              child: InkWell(
+                onTap: (){
+                  AtlasApi.goToAtlasMap3HelpPage(context);
+                },
+                child: Text(
+                  '介绍文档',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
@@ -234,13 +240,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WebViewContainer(
-                                initUrl: '',
-                                title: 'Atlas Tutorial',
-                              )));
+                  AtlasApi.goToAtlasMap3HelpPage(context);
                 },
               ),
             ),

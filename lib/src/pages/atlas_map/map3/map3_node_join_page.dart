@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
@@ -164,9 +167,11 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
             // todo: test_jison_0604
-            String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-            String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于扩容");
-            Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+            AtlasApi.goToAtlasMap3HelpPage(context);
+
+            // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+            // String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于扩容");
+            // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
           }),
         ],
       ),
@@ -213,9 +218,15 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              if (!_joinCoinFormKey.currentState.validate()) {
+              // if (!(_joinCoinFormKey.currentState?.validate()??false)) {
+              //   return;
+              // };
+
+
+              if (_joinCoinController?.text?.isEmpty??true) {
+                Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
                 return;
-              };
+              }
 
               var amount = _joinCoinController?.text??"200000";
               var entity = PledgeMap3Entity.onlyType(AtlasActionType.JOIN_DELEGATE_MAP3);

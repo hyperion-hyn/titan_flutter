@@ -357,9 +357,11 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
   void _pushWebViewAction() {
     // todo: test_jison_0604
-    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-    String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
-    Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    AtlasApi.goToAtlasMap3HelpPage(context);
+
+    // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+    // String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
+    // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
   Future _pushCreateContractAction() async {
