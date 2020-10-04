@@ -514,3 +514,47 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
     );
   }
 }
+
+
+class ConfirmDivideMap3NodeMessage implements AtlasMessage {
+  final PledgeMap3Entity entity;
+  final String map3NodeAddress;
+  ConfirmDivideMap3NodeMessage({this.entity, this.map3NodeAddress});
+
+  /*@override
+  Future<bool> action(String password) async {
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
+    return txHashEntity.txHash.isNotEmpty;
+  }*/
+
+  @override
+  Future<bool> action(String password) async {
+    print("[ConfirmDivideMap3NodeMessage] action:$password");
+    return password.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_ADD;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "节点分裂",
+      amountDirection: "-",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Map3节点",
+      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
+      amount: entity?.payload?.staking ?? "0",
+      fee: "0.0000021",
+    );
+  }
+}

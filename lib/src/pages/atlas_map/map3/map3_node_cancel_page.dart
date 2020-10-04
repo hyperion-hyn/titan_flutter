@@ -169,7 +169,8 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
                                     } else if (Decimal.parse(textStr) >
                                         Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                       return S.of(context).hyn_balance_no_enough;
-                                    }*/ else {
+                                    }*/
+                                    else {
                                       return null;
                                     }
                                   },
@@ -226,15 +227,14 @@ class _Map3NodeCancelState extends State<Map3NodeCancelPage> {
           child: ClickOvalButton(
             "确认撤销",
             () {
-
               if (!_formKey.currentState.validate()) {
                 return;
-              };
+              }
 
-              var amount = _textEditingController?.text??"200000";
+              var amount = _textEditingController?.text ?? "200000";
 
               var entity = PledgeMap3Entity.onlyType(AtlasActionType.CANCEL_MAP3_NODE);
-              entity.payload = PledgeMap3Payload("abc",amount);
+              entity.payload = PledgeMap3Payload("abc", amount);
               entity.amount = amount;
               var message = ConfirmCancelMap3NodeMessage(
                 entity: entity,
