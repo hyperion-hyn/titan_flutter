@@ -14,7 +14,7 @@ PledgeAtlasEntity _$PledgeAtlasEntityFromJson(Map<String, dynamic> json) {
     json['nonce'] as int,
     json['payload'] == null
         ? null
-        : AtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
+        : PledgeAtlasPayload.fromJson(json['payload'] as Map<String, dynamic>),
     json['gas_price'] as String,
     json['raw_tx'] as String,
     json['to'] as String,
@@ -35,15 +35,15 @@ Map<String, dynamic> _$PledgeAtlasEntityToJson(PledgeAtlasEntity instance) =>
       'type': instance.type,
     };
 
-AtlasPayload _$AtlasPayloadFromJson(Map<String, dynamic> json) {
-  return AtlasPayload(
-    json['atlas_node_id'] as String,
-    json['map3_node_id'] as String,
+PledgeAtlasPayload _$AtlasPayloadFromJson(Map<String, dynamic> json) {
+  return PledgeAtlasPayload(
+    json['atlas_address'] as String,
+    json['map3_address'] as String,
   );
 }
 
-Map<String, dynamic> _$AtlasPayloadToJson(AtlasPayload instance) =>
+Map<String, dynamic> _$AtlasPayloadToJson(PledgeAtlasPayload instance) =>
     <String, dynamic>{
-      'atlas_node_id': instance.atlasNodeId,
-      'map3_node_id': instance.map3NodeId,
+      'atlas_address': instance.atlasAddress,
+      'map3_address': instance.map3Address,
     };

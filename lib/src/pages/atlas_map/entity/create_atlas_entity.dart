@@ -39,6 +39,8 @@ part 'create_atlas_entity.g.dart';
 
   CreateAtlasEntity(this.amount,this.from,this.gasLimit,this.nonce,this.payload,this.price,this.rawTx,this.to,this.type,);
 
+  CreateAtlasEntity.onlyType(this.type);
+
   factory CreateAtlasEntity.fromJson(Map<String, dynamic> srcJson) => _$CreateAtlasEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$CreateAtlasEntityToJson(this);
@@ -88,11 +90,14 @@ part 'create_atlas_entity.g.dart';
 @JsonSerializable()
   class CreateAtlasPayload extends Object {
 
-  @JsonKey(name: 'bls_key')
-  String blsKey;
+  @JsonKey(name: 'bls_add_key')
+  String blsAddKey;
 
-  @JsonKey(name: 'bls_sign')
-  String blsSign;
+  @JsonKey(name: 'bls_add_sign')
+  String blsAddSign;
+
+  @JsonKey(name: 'bls_rm_key')
+  String blsRmSign;
 
   @JsonKey(name: 'contact')
   String contact;
@@ -130,7 +135,9 @@ part 'create_atlas_entity.g.dart';
   @JsonKey(name: 'pic')
   String pic;
 
-  CreateAtlasPayload(this.blsKey,this.blsSign,this.contact,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.map3Address,this.maxStaking,this.name,this.nodeId,this.atlasAddress,this.pic,);
+  CreateAtlasPayload(this.blsAddKey,this.blsAddSign,this.blsRmSign,this.contact,this.describe,this.feeRate,this.feeRateMax,this.feeRateTrim,this.home,this.map3Address,this.maxStaking,this.name,this.nodeId,this.atlasAddress,this.pic,);
+
+  CreateAtlasPayload.emptyEntity();
 
   factory CreateAtlasPayload.fromJson(Map<String, dynamic> srcJson) => _$CreateAtlasPayloadFromJson(srcJson);
 

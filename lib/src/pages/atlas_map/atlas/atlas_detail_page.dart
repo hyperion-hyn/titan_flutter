@@ -852,7 +852,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     map3Entity.address,
                     111,
                     111,
-                    AtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
+                    PledgeAtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
                     "1111",
                     "11111",
                     atlasEntity.address,

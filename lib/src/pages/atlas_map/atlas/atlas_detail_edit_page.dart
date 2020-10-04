@@ -6,6 +6,10 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_pronounce_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -230,26 +234,37 @@ class _AtlasDetailEditPageState extends State<AtlasDetailEditPage> {
             _detailList[2] = widget._atlasInfoEntity.nodeId;
           }
 
-          var _atlasInfoEntity = widget._atlasInfoEntity;
+          var atlasPayload = CreateAtlasPayload.emptyEntity();
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
             if (title == "图标") {
-              _atlasInfoEntity.pic = _localImagePath;
+              atlasPayload.pic = _localImagePath;
             } else if (title == "名称") {
-              _atlasInfoEntity.name = _detailList[1];
+              atlasPayload.name = _detailList[1];
             } else if (title == "节点号") {
-              _atlasInfoEntity.nodeId = _detailList[2];
+              atlasPayload.nodeId = _detailList[2];
             } else if (title == "网址") {
-              _atlasInfoEntity.home = _detailList[3];
+              atlasPayload.home = _detailList[3];
             } else if (title == "安全联系") {
-              _atlasInfoEntity.contact = _detailList[4];
+              atlasPayload.contact = _detailList[4];
             } else if (title == "描述") {
-              _atlasInfoEntity.describe = _detailList[5];
+              atlasPayload.describe = _detailList[5];
             }
           }
-          var encodeEntity = FluroConvertUtils.object2string(_atlasInfoEntity.toJson());
-          Application.router.navigateTo(
-              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_EDIT.index}");
+
+          CreateAtlasEntity map3entity = CreateAtlasEntity.onlyType(AtlasActionType.EDIT_ATLAS_NODE);
+          map3entity.payload = atlasPayload;
+          AtlasMessage message = ConfirmEditAtlasNodeMessage(entity: map3entity);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ));
+//          var encodeEntity = FluroConvertUtils.object2string(_atlasInfoEntity.toJson());
+//          Application.router.navigateTo(
+//              context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.ATLAS_EDIT.index}");
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

@@ -167,11 +167,11 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
           _divider(),
           _optionItem(
             'bls key',
-            widget._createAtlasPayload.blsKey,
+            widget._createAtlasPayload.blsAddKey,
           ),
           _optionItem(
             'bls 签名',
-            widget._createAtlasPayload.blsSign,
+            widget._createAtlasPayload.blsAddSign,
           ),
         ],
       ),

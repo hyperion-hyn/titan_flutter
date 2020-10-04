@@ -90,8 +90,8 @@ class HYNApi {
       localWallet.Wallet wallet,
       ) async {
     var message = CollectAtlasRewardMessage(
-      delegatorAddress: pledgeAtlasEntity.payload.map3NodeId,
-      validatorAddress: pledgeAtlasEntity.payload.atlasNodeId);
+      delegatorAddress: pledgeAtlasEntity.payload.map3Address,
+      validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
     transferHYN(password, wallet, message: message);
@@ -120,8 +120,8 @@ class HYNApi {
       localWallet.Wallet wallet,
       ) async {
     var message = ReDelegateAtlasMessage(
-        delegatorAddress: pledgeAtlasEntity.payload.map3NodeId,
-        validatorAddress: pledgeAtlasEntity.payload.atlasNodeId);
+        delegatorAddress: pledgeAtlasEntity.payload.map3Address,
+        validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
     transferHYN(password, wallet, message: message);
