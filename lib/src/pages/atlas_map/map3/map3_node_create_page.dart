@@ -9,6 +9,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -215,12 +216,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                           Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
                             child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: () {
-                              String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                              String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                              Application.router.navigateTo(
-                                  context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-                            },
+                            onTap: _pushWebView,
                           ),
                         ],
                       ),
@@ -552,5 +548,16 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                 TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
+  }
+
+  _pushWebView() {
+
+    AtlasApi.goToAtlasMap3HelpPage(context);
+
+    // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+    // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+    // Application.router.navigateTo(
+    //     context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+
   }
 }

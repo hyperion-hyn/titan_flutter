@@ -10,6 +10,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -126,10 +127,12 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-              String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于节点分裂");
-              Application.router
-                  .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+              AtlasApi.goToAtlasMap3HelpPage(context);
+
+              // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+              // String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于节点分裂");
+              // Application.router
+              //     .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
             },
             child: Text(
               "关于节点分裂",

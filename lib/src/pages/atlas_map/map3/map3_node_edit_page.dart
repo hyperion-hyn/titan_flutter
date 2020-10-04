@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
@@ -147,10 +148,12 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                         child: InkWell(
                           child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           onTap: () {
-                            String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                            String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                            Application.router.navigateTo(
-                                context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                            AtlasApi.goToAtlasMap3HelpPage(context);
+
+                            // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
+                            // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
+                            // Application.router.navigateTo(
+                            //     context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                           },
                         ),
                       ),
