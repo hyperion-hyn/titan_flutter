@@ -216,7 +216,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                           Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
                             child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: _pushWebView,
+                            onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
                           ),
                         ],
                       ),
@@ -548,16 +548,5 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                 TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
-  }
-
-  _pushWebView() {
-
-    AtlasApi.goToAtlasMap3HelpPage(context);
-
-    // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-    // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-    // Application.router.navigateTo(
-    //     context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
-
   }
 }
