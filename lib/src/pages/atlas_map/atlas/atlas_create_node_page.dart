@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -37,17 +39,28 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   TextEditingController _blsKeyTextController = TextEditingController();
   TextEditingController _blsSignTextController = TextEditingController();
 
+  AtlasApi _atlasApi = AtlasApi();
+  List<Map3InfoEntity> _map3NodeList = List();
+  var _selectedMap3NodeIndex = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getMap3Nodes();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '创建Atlas节点',
+        baseTitle: S.of(context).create_atlas_node,
         actions: [
           InkWell(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   AtlasApi.goToAtlasMap3HelpPage(context);
                 },
                 child: Text(
@@ -70,6 +83,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
         ),
       ),
     );
+  }
+
+  _getMap3Nodes() {
+    _atlasApi.postMap3NodeList('address');
   }
 
   _steps() {
@@ -310,11 +327,27 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _map3NodeSelection() {
-    var _selectedMap3NodeValue = 'map3Node1';
     List<DropdownMenuItem> _map3NodeItems = List();
+
+    ///put map3 item into list
+    ///
+    for (int i = 0; i < _map3NodeList.length; i++) {
+      _map3NodeItems.add(
+        DropdownMenuItem(
+          value: i,
+          child: Text(
+            _map3NodeList[i]?.name,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        ),
+      );
+    }
+
     _map3NodeItems.add(
       DropdownMenuItem(
-        value: 'map3Node1',
+        value: 0,
         child: Text(
           'Lance的Map3节点-1',
           style: TextStyle(
@@ -325,7 +358,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     );
     _map3NodeItems.add(
       DropdownMenuItem(
-        value: 'map3Node2',
+        value: 1,
         child: Text(
           'Lance的Map3节点-2',
           style: TextStyle(
@@ -352,10 +385,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                   border: InputBorder.none),
               onChanged: (value) {
                 setState(() {
-                  _selectedMap3NodeValue = value;
+                  _selectedMap3NodeIndex = value;
                 });
               },
-              value: _selectedMap3NodeValue,
+              value: _selectedMap3NodeIndex,
               items: _map3NodeItems,
             ),
           )
@@ -386,9 +419,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             '图标',
             '',
             _createAtlasPayLoad.pic,
-            (text) {
+            (data) {
               setState(() {
-                _createAtlasPayLoad.pic = text;
+                _uploadImage(data);
+                _createAtlasPayLoad.pic = data;
               });
             },
             isLogo: true,
@@ -825,33 +859,39 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _lastStep() {
-    return InkWell(
-      child: Text(
-        '上一步',
-        style: TextStyle(
-          color: Colors.blue,
+    return Center(
+      child: InkWell(
+        child: Text(
+          S.of(context).last_step,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.blue,
+          ),
         ),
+        onTap: () {
+          if (_currentStep == Step.bls) {
+            _currentStep = Step.fee;
+          } else if (_currentStep == Step.fee) {
+            _currentStep = Step.info;
+          } else if (_currentStep == Step.info) {
+            _currentStep = Step.launch;
+          }
+          setState(() {});
+        },
       ),
-      onTap: () {
-        if (_currentStep == Step.bls) {
-          _currentStep = Step.fee;
-        } else if (_currentStep == Step.fee) {
-          _currentStep = Step.info;
-        } else if (_currentStep == Step.info) {
-          _currentStep = Step.launch;
-        }
-        setState(() {});
-      },
     );
   }
 
   _bottomButtons(bool isCanNext) {
-    return Stack(
+    return Row(
       children: <Widget>[
-        Align(
-          alignment: Alignment.center,
+        Expanded(
+          flex: 1,
+          child: _lastStep(),
+        ),
+        Expanded(
+          flex: 2,
           child: Container(
-            width: 200,
             height: 38,
             decoration: BoxDecoration(
               gradient: isCanNext
@@ -868,7 +908,9 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               disabledTextColor: HexColor('#FFFFFFFF'),
               onPressed: isCanNext ? _nextStep : null,
               child: Text(
-                _currentStep != Step.bls ? '下一步' : '提交',
+                _currentStep != Step.bls
+                    ? S.of(context).next_step
+                    : S.of(context).submit,
                 style: TextStyle(
                   fontWeight: FontWeight.normal,
                   fontSize: 16,
@@ -877,15 +919,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             ),
           ),
         ),
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: _lastStep(),
-            ),
-          ),
-        ),
+        Expanded(
+          flex: 1,
+          child: Container(),
+        )
       ],
     );
   }
@@ -897,5 +934,8 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     );
   }
 }
+
+///update icon
+_uploadImage(String path) {}
 
 enum Step { launch, info, fee, bls }
