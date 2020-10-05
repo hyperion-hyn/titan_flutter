@@ -1,12 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -32,7 +36,9 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BaseAppBar(baseTitle: '确认创建节点',),
+      appBar: BaseAppBar(
+        baseTitle: '确认创建节点',
+      ),
       body: _nodeSetupInfo(),
     );
   }
@@ -212,17 +218,32 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
 
   _confirm() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       child: ClickOvalButton(
-        '提交',
+        S.of(context).submit,
         () {
-          Application.router.navigateTo(
-            context,
-            Routes.atlas_create_node_confirm_page +
-                '?createAtlasPayload=${FluroConvertUtils.object2string(widget._createAtlasPayload)}',
+          CreateAtlasEntity createAtlasEntity = CreateAtlasEntity.onlyType(
+            AtlasActionType.CREATE_ATLAS_NODE,
+          )..payload = widget._createAtlasPayload;
+
+          AtlasMessage message = ConfirmCreateAtlasNodeMessage(
+            entity: createAtlasEntity,
           );
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ));
+
+//          Application.router.navigateTo(
+//            context,
+//            Routes.atlas_create_node_confirm_page +
+//                '?createAtlasPayload=${FluroConvertUtils.object2string(widget._createAtlasPayload)}',
+//          );
         },
-        width: 300,
         height: 46,
       ),
     );
