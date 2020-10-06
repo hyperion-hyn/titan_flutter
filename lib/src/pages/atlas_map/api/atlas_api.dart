@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -11,21 +12,26 @@ import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import '../../../../config.dart';
 
 class AtlasApi {
-  static goToAtlasMap3HelpPage(BuildContext context){
-    String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
+  static goToAtlasMap3HelpPage(BuildContext context) {
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(
+        "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode("帮助页面");
-    Application.router
-        .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
   Map<String, dynamic> getOptionHeader({hasLang = false, hasAddress = false, hasSign = false}) {
@@ -58,11 +64,13 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/test",
         EntityFactory<TestPostEntity>(
-              (json) => TestPostEntity.fromJson(json),
+          (json) => TestPostEntity.fromJson(json),
         ),
         data: entity.toJson(),
-        options: RequestOptions(headers: getOptionHeader(hasSign: true),contentType: "application/json",));
-
+        options: RequestOptions(
+          headers: getOptionHeader(hasSign: true),
+          contentType: "application/json",
+        ));
   }
 
   // 创建Atlas节点
@@ -70,11 +78,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/create",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 编辑Atlas节点
@@ -82,11 +89,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/mod",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 查询atlas节点详情
@@ -94,14 +100,13 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/info",
         EntityFactory<AtlasInfoEntity>(
-              (json) => AtlasInfoEntity.fromJson(json),
+          (json) => AtlasInfoEntity.fromJson(json),
         ),
         params: {
           "address": address,
           "node_id": nodeId,
         },
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 查询Atlas节点下的所有map3节点列表
@@ -109,7 +114,7 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
         EntityFactory<List<Map3InfoEntity>>(
-                (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "node_id": nodeId,
           "page": page,
@@ -123,15 +128,13 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/node_list",
         EntityFactory<List<AtlasInfoEntity>>(
-                (list) => (list as List).map((item) => AtlasInfoEntity.fromJson(item)).toList()),
-
+            (list) => (list as List).map((item) => AtlasInfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
           "size": size,
         },
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 查询atlas概览数据
@@ -139,10 +142,9 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/outline",
         EntityFactory<CommitteeInfoEntity>(
-              (json) => CommitteeInfoEntity.fromJson(json),
+          (json) => CommitteeInfoEntity.fromJson(json),
         ),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 领取atlas奖励
@@ -150,11 +152,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 重新激活atlas节点
@@ -162,11 +163,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/active",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 抵押atlas节点
@@ -174,11 +174,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/pledge",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 创建/分裂-map3节点
@@ -186,11 +185,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/create",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 编辑Map3节点
@@ -198,11 +196,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/mod",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 查询map3节点详情
@@ -210,14 +207,13 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/info",
         EntityFactory<Map3InfoEntity>(
-              (json) => Map3InfoEntity.fromJson(json),
+          (json) => Map3InfoEntity.fromJson(json),
         ),
         params: {
           "address": address,
           "node_id": nodeId,
         },
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 查询查询Map3节点列表
@@ -225,14 +221,13 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
         EntityFactory<List<Map3InfoEntity>>(
-                (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
+            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
         params: {
           "address": address,
           "page": page,
           "size": size,
         },
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 抵押/撤销抵押/终止-map3节点
@@ -240,11 +235,10 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/pledge",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
   // 领取map3节点奖励
@@ -252,11 +246,85 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/reward",
         EntityFactory<TxHashEntity>(
-              (json) => TxHashEntity.fromJson(json),
+          (json) => TxHashEntity.fromJson(json),
         ),
         data: entity.toJson(),
         options: RequestOptions(contentType: "application/json"));
-
   }
 
+  // 获取节点的简介
+  Future<Map3IntroduceEntity> postMap3Introduce() async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/introduce",
+        EntityFactory<Map3IntroduceEntity>(
+          (json) => Map3IntroduceEntity.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 获取用户的未领取总收益
+  Future<UserRewardEntity> postRewardInfo(String address) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/reward_info",
+        EntityFactory<UserRewardEntity>(
+          (json) => UserRewardEntity.fromJson(json),
+        ),
+        params: {
+          "address": address,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 获取节点的抵押流水
+  Future<List<Map3StakingLogEntity>> postMap3StakingLogList(String nodeAddress, {int page = 0, int size = 0}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/staking_log",
+        EntityFactory<List<Map3StakingLogEntity>>(
+            (list) => (list as List).map((item) => Map3StakingLogEntity.fromJson(item)).toList()),
+        params: {
+          "node_address": nodeAddress,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 获取节点的抵押人地址列表
+  Future<List<UserMap3Entity>> postMap3UserList(String nodeAddress, {int page = 0, int size = 0}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/user_list",
+        EntityFactory<List<UserMap3Entity>>(
+            (list) => (list as List).map((item) => UserMap3Entity.fromJson(item)).toList()),
+        params: {
+          "node_address": nodeAddress,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 上传图片
+  Future<String> postUploadImageFile(Media media, ProgressCallback onSendProgress) async {
+    try {
+      Map<String, dynamic> params = {};
+
+      params["file"] = MultipartFile.fromFileSync(media.path);
+
+      FormData formData = FormData.fromMap(params);
+
+      var res = await AtlasHttpCore.instance.post("/v1/map3/upload",
+          data: formData, options: RequestOptions(contentType: "multipart/form-data"), onSendProgress: onSendProgress);
+      var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
+      print("[AtlasApi] , postUploadImageFile,  responseEntity:${responseEntity.code}, msg:${responseEntity.msg}");
+
+      if (responseEntity.code == 0) {
+        return "0";
+      } else {
+        return responseEntity.data;
+      }
+    } catch (_) {
+      LogUtil.uploadException("[Atlas] upload image", 'post upload fail');
+      return "-1";
+    }
+  }
 }

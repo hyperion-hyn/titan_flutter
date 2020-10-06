@@ -515,7 +515,6 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   }
 }
 
-
 class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
