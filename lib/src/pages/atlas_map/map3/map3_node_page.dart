@@ -356,7 +356,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   void _pushWebViewAction() {
-    // todo: test_jison_0604
     AtlasApi.goToAtlasMap3HelpPage(context);
 
     // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");

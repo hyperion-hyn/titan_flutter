@@ -137,7 +137,6 @@ class HYNApi {
     var message = CreateMap3NodeMessage(
       amount: amount,
       commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
-      // todo: test
       //commission: BigInt.from(10).pow(17),
       // 0.1   10%手续费
       description: NodeDescription(

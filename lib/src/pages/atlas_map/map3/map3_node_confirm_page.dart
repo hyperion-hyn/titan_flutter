@@ -233,7 +233,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
             }
             bool isOK = await widget.message.action(password);
             print("object --> isOK:$isOK");
-            //if (isOK) {
+            if (isOK) {
               // todo: test_jison
               var contractNodeItem = ContractNodeItem.onlyNodeId(1);
               Application.router.navigateTo(
@@ -241,7 +241,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   Routes.map3node_broadcast_success_page +
                       "?actionEvent=${widget.message.type}" +
                       "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
-            //}
+            }
           } catch (error) {
             setState(() {
               _isTransferring = false;

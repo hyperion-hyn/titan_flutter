@@ -166,12 +166,9 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           rowTipsItem("需要总抵押满100万HYN才能正式启动，每次参与抵押数额不少于10000HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
-            // todo: test_jison_0604
+
             AtlasApi.goToAtlasMap3HelpPage(context);
 
-            // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-            // String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于扩容");
-            // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
           }),
         ],
       ),
