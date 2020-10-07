@@ -30,7 +30,7 @@ class Map3NodePage extends StatefulWidget {
 class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
-  int _currentPage = 0;
+  int _currentPage = 1;
   List<Map3InfoEntity> _lastActiveList = [];
   List<Map3InfoEntity> _myList = [];
   List<Map3InfoEntity> _pendingList = [];
@@ -103,7 +103,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       List<Map3InfoEntity> contractNodeList = await _atlasApi.postMap3NodeList(
         'address',
         page: _currentPage,
-        size: 30,
+        size: 10,
       );
       
       if (contractNodeList.length > 0) {
@@ -371,7 +371,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${2}");
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page);
     }
 
     // 2.创建成功回调的处理
@@ -390,7 +390,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-
     Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=2");
   }
 }

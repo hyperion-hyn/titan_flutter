@@ -292,7 +292,7 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeIntroductionHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeIntroductionPage(params['contractId']?.first);
+  return Map3NodeIntroductionPage();
 });
 
 var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
