@@ -1012,5 +1012,8 @@
   "atlas_reward_rate": "预期收益",
   "atlas_node_rank": "节点排名",
   "edit": "编辑",
-  "save": "保存"
+  "save": "保存",
+  "create_atlas_node": "创建Atlas节点",
+  "last_step": "上一步",
+  "next_step": "下一步"
 }

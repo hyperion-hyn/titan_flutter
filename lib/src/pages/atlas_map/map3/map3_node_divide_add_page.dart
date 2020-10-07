@@ -128,11 +128,6 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
           FlatButton(
             onPressed: () {
               AtlasApi.goToAtlasMap3HelpPage(context);
-
-              // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-              // String webTitle = FluroConvertUtils.fluroCnParamsEncode("关于节点分裂");
-              // Application.router
-              //     .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
             },
             child: Text(
               "关于节点分裂",

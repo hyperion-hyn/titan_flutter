@@ -108,26 +108,6 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     onTap: () {
-                      // todo: test_jison_0426
-                      print('[Home_panel] -->focusArea， 数组展示');
-                      /*if (Platform.isIOS) {
-                        // old version
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WebViewContainer(
-                                  initUrl: 'https://news.hyn.space/react-reduction/',
-                                  title: S.of(context).map3_global_nodes,
-                                )));
-
-                      } else {
-                        // new version
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GlobalDataPage()));
-                      }*/
-
                       Navigator.push(
                           context,
                           MaterialPageRoute(

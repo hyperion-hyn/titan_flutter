@@ -414,8 +414,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           onPressed: () async {
             debounce(() {
               FocusScope.of(context).requestFocus(FocusNode());
-
-              // todo: test_jison_0918
               if (_fromKey.currentState.validate()) {
                 _transfer();
               }

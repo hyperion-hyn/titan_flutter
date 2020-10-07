@@ -34,6 +34,9 @@ Map<String, dynamic> _$CreateMap3EntityToJson(CreateMap3Entity instance) => <Str
 
 CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
   return CreateMap3Payload(
+    json['bls_add_key'] as String,
+    json['bls_add_sign'] as String,
+    json['bls_rm_key'] as String,
     json['connect'] as String,
     json['describe'] as String,
     json['fee_rate'] as String,
@@ -51,6 +54,9 @@ CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) => <String, dynamic>{
+      'bls_add_key': instance.blsAddKey,
+      'bls_add_sign': instance.blsAddSign,
+      'bls_rm_key': instance.blsRemoveKey,
       'connect': instance.connect,
       'describe': instance.describe,
       'fee_rate': instance.feeRate,

@@ -110,15 +110,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           children: <Widget>[
                             InkWell(
                               onTap: () {
-                                // todo: test_socket
-                                /*
-                                var channel = SocketConfig.channelKLinePeriod("btcusdts", "11min");
-                                BlocProvider.of<SocketBloc>(context)
-                                    .add(UnSubChannelEvent(channel: channel));
-                                print("[Socket] 取消订阅， channel：$channel");
-
-                                return;*/
-
                                 Application.router.navigateTo(
                                   context,
                                   Routes.wallet_manager,

@@ -5,9 +5,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -18,9 +17,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeIntroductionPage extends StatefulWidget {
-  final String contractId;
-
-  Map3NodeIntroductionPage(this.contractId);
+  Map3NodeIntroductionPage();
 
   @override
   _Map3NodeIntroductionState createState() => new _Map3NodeIntroductionState();
@@ -28,15 +25,16 @@ class Map3NodeIntroductionPage extends StatefulWidget {
 
 class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   AllPageState currentState = LoadingState();
+  AtlasApi _atlasApi = AtlasApi();
   NodeApi _nodeApi = NodeApi();
-  ContractNodeItem _contractItem;
+  Map3IntroduceEntity _entity;
   List<NodeProviderEntity> _providerList = [];
-  NodeItem _nodeItem;
 
   @override
   void initState() {
-    getNetworkData();
     super.initState();
+
+    getNetworkData();
   }
 
   @override
@@ -53,16 +51,16 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   void getNetworkData() async {
     try {
       var requestList =
-          await Future.wait([_nodeApi.getContractInstanceItem(widget.contractId), _nodeApi.getNodeProviderList()]);
-      _contractItem = requestList[0];
-      _nodeItem = _contractItem.contract;
+      await Future.wait([_atlasApi.postMap3Introduce(), _nodeApi.getNodeProviderList()]);
 
+      _entity = requestList[0];
       _providerList = requestList[1];
 
       setState(() {
         currentState = null;
       });
     } catch (e) {
+      print(e);
       setState(() {
         currentState = LoadFailState();
       });
@@ -75,7 +73,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || _nodeItem == null) {
+    if (currentState != null || _entity == null) {
       return Scaffold(
         body: AllPageStateContainer(currentState, () {
           setState(() {
@@ -129,7 +127,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           rowTipsItem("创建7天内不可撤销", top: 0),
-          rowTipsItem("需要总抵押满100万才能正式启动，你至少需要20万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押100万即可启动节点"),
+          rowTipsItem("需要总抵押满${_entity?.startMin??0}万才能正式启动，你至少需要${(_entity?.startMin??0)*(_entity?.feeMin??0)}万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押${_entity?.startMin??0}万即可启动节点"),
           rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
           rowTipsItem(
             "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
@@ -157,8 +155,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
         child: ClickOvalButton(
           "立即创建",
           () {
-            Application.router
-                .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${widget.contractId}");
+            Application.router.navigateTo(context, Routes.map3node_create_contract_page + "?contractId=2");
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -188,24 +185,22 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _delegateCountWidget() {
-    double tempMinTotal = double.parse(_nodeItem.minTotalDelegation) * _nodeItem.ownerMinDelegationRate;
-    var detail = FormatUtil.amountToString(tempMinTotal.toString());
-
+    var detail = FormatUtil.formatPrice(_entity?.createMin?.toDouble() ?? 0);
+    var fee = "${_entity?.feeMin ?? 1}%-${_entity?.feeMax ?? 20}%";
+    var day = "${_entity?.days ?? 180}天";
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
       child: profitListLightWidget(
         [
           {"创建最低抵押": detail},
-          {"管理费": "1%-20%"},
-          {"合约周期": "180天"}
+          {"管理费": fee},
+          {"合约周期": day}
         ],
       ),
     );
   }
 
   Widget _nodeIntroductionWidget() {
-    var nodeItem = _nodeItem;
-
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Row(
@@ -228,7 +223,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text(nodeItem.name, style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(child: Text(_entity?.title??"Map3云节点 (${_entity?.version??"v1.0"})", style: TextStyle(fontWeight: FontWeight.bold))),
                     InkWell(
                       child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
@@ -244,7 +239,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                     children: <Widget>[
                       Text(
                           "启动所需" +
-                              " ${FormatUtil.formatTenThousandNoUnit(nodeItem.minTotalDelegation)}" +
+                              " ${FormatUtil.formatTenThousandNoUnit(_entity?.startMin?.toString()??"0")}" +
                               S.of(context).ten_thousand,
                           style: TextStyles.textC99000000S13,
                           maxLines: 1,

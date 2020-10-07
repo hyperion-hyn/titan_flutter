@@ -12,7 +12,6 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -31,7 +30,7 @@ class Map3NodePage extends StatefulWidget {
 class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
-  int _currentPage = 0;
+  int _currentPage = 1;
   List<Map3InfoEntity> _lastActiveList = [];
   List<Map3InfoEntity> _myList = [];
   List<Map3InfoEntity> _pendingList = [];
@@ -104,7 +103,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       List<Map3InfoEntity> contractNodeList = await _atlasApi.postMap3NodeList(
         'address',
         page: _currentPage,
-        size: 30,
+        size: 10,
       );
       
       if (contractNodeList.length > 0) {
@@ -356,7 +355,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   void _pushWebViewAction() {
-    // todo: test_jison_0604
     AtlasApi.goToAtlasMap3HelpPage(context);
 
     // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
@@ -373,7 +371,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
           Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_introduction_page + "?contractId=${2}");
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page);
     }
 
     // 2.创建成功回调的处理
@@ -392,7 +390,6 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-
     Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=2");
   }
 }

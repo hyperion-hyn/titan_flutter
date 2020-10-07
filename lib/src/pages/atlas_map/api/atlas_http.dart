@@ -16,8 +16,7 @@ class AtlasHttpCore extends BaseHttpCore {
     if (_instance == null) {
       _instance = AtlasHttpCore._internal();
 
-      // todo: test_jison_0822_close_log
-      if (env.buildType == BuildType.DEV) {
+      if (showLog) {
         _instance.dio.interceptors.add(LogInterceptor(responseBody: true));
       }
     }

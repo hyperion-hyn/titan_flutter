@@ -87,11 +87,23 @@ class CreateMap3Entity extends Object {
   staking	number
   抵押量
 
+bls_add_key	string
+bls_add_sign	string
+bls_rm_key	string
   }
   */
 
 @JsonSerializable()
 class CreateMap3Payload extends Object {
+  @JsonKey(name: 'bls_add_key')
+  String blsAddKey;
+
+  @JsonKey(name: 'bls_add_sign')
+  String blsAddSign;
+
+  @JsonKey(name: 'bls_rm_key')
+  String blsRemoveKey;
+
   @JsonKey(name: 'connect')
   String connect;
 
@@ -132,6 +144,9 @@ class CreateMap3Payload extends Object {
   bool isEdit = false;
 
   CreateMap3Payload(
+    this.blsAddKey,
+    this.blsAddSign,
+    this.blsRemoveKey,
     this.connect,
     this.describe,
     this.feeRate,

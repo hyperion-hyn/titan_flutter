@@ -56,6 +56,8 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   void didChangeDependencies() {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    _postWalletBalance();
   }
 
   @override
@@ -78,9 +80,6 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
     //update all coin balance
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
-    Future.delayed(Duration(milliseconds: 3000), () {
-      _postWalletBalance();
-    });
 
     listLoadingData();
   }
@@ -88,7 +87,7 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
 
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)?.activatedWallet;
 
     if (activatedWalletVo == null) return;
 

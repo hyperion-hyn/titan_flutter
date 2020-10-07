@@ -214,7 +214,8 @@ class _AtlasNodeCreateConfirmPageState
                 constraints: BoxConstraints.expand(height: 48),
                 child: RaisedButton(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
                   disabledColor: Colors.grey[600],
                   color: Theme.of(context).primaryColor,
                   textColor: Colors.white,
@@ -226,7 +227,7 @@ class _AtlasNodeCreateConfirmPageState
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          isTransferring ? S.of(context).please_waiting : '提交',
+                          isTransferring ? S.of(context).please_waiting : S.of(context).submit,
                           style: TextStyle(
                             fontWeight: FontWeight.normal,
                             fontSize: 16,
