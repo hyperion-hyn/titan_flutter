@@ -125,6 +125,19 @@ class HYNApi {
     transferHYN(password, wallet, message: message);
   }
 
+  static Future transAtlasUnStake(
+      PledgeAtlasEntity pledgeAtlasEntity,
+      String password,
+      localWallet.Wallet wallet,
+      ) async {
+    var message = UnReDelegateAtlasMessage(
+        delegatorAddress: pledgeAtlasEntity.payload.map3Address,
+        validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
+    print(message);
+
+    transferHYN(password, wallet, message: message);
+  }
+
   //==================================Atlas Message End==============================================
 
   static Future transCreateMap3Node(

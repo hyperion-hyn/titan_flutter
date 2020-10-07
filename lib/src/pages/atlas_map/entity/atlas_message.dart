@@ -223,6 +223,43 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   }
 }
 
+class ConfirmAtlasUnStakeMessage implements AtlasMessage {
+  final String nodeId;
+  final PledgeAtlasEntity pledgeAtlasEntity;
+  ConfirmAtlasUnStakeMessage({this.nodeId, this.pledgeAtlasEntity});
+
+  @override
+  Future<bool> action(String password) async {
+    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
+
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
+    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    return txHashEntity.txHash.isNotEmpty;
+  }
+
+  @override
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_STAKE;
+
+  @override
+  ConfirmInfoDescription get description {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var walletName = activatedWallet.wallet.keystore.name;
+    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+
+    return ConfirmInfoDescription(
+      title: "撤销抵押",
+      amountDirection: "",
+      amount: "0",
+      fromName: "钱包",
+      fromDetail: "$walletName ($address)",
+      toName: "Atlas链",
+      toDetail: "",
+      fee: "0.0000021",
+    );
+  }
+}
+
 //==================================Atlas Message End==============================================
 
 class ConfirmCreateMap3NodeMessage implements AtlasMessage {
