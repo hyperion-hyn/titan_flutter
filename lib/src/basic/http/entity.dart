@@ -36,22 +36,26 @@ class ResponseEntity<T> {
     if (factory != null) {
       retData = factory.constructor(retData);
     }
+
     var retCode = ResponseCode.FAILED;
     if (json.containsKey('code')) {
       retCode = json['code'];
     } else if (json.containsKey('errorCode')) {
       retCode = json['errorCode'];
     }
+
     var retMsg = '';
     if (json.containsKey('msg')) {
       retMsg = json['msg'];
     } else if (json.containsKey('errorMsg')) {
       retMsg = json['errorMsg'];
     }
+
     var retSubMsg = '';
     if (json.containsKey('subMsg')) {
       retSubMsg = json['subMsg'];
     }
+
     return ResponseEntity._(
       code: retCode,
       msg: retMsg,

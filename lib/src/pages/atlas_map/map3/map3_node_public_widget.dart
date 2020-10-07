@@ -343,8 +343,8 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
     {bool isMyself = false, FocusNode focusNode}) {
-  double minTotal = 0;
-  double remainTotal = 0;
+  double minTotal = 5500;
+  double remainTotal = 50000;
 
 //  List<int> suggestList =
 //      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
@@ -373,6 +373,7 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
   var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
   walletName = UiUtil.shortString(walletName, limitLength: 6);
 */
+
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
     color: Colors.white,

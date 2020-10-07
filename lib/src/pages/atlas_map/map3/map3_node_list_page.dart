@@ -94,7 +94,7 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
   }
 
   _loadMoreData() async {
-    List<Map3InfoEntity> dataList = await api.postMap3NodeList(
+    List<Map3InfoEntity> dataList = await api.getMap3NodeList(
       'address',
       page: _currentPage + 1,
       size: _pageSize,
@@ -118,7 +118,7 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     try {
       _currentPage = 0;
 
-      List<Map3InfoEntity> dataList = await api.postMap3NodeList(
+      List<Map3InfoEntity> dataList = await api.getMap3NodeList(
         'address',
         page: _currentPage + 1,
         size: _pageSize,

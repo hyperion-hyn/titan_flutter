@@ -10,9 +10,11 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -40,7 +42,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
+  AtlasApi _atlasApi = AtlasApi();
   NodeApi _nodeApi = NodeApi();
+  Map3IntroduceEntity _introduceEntity;
+  BlsKeySignEntity _blsKeySignEntity;
   ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
@@ -213,7 +218,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Expanded(child: Text(_introduceEntity?.name??"", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
                             child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                             onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
@@ -225,7 +230,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("启动所需100万  ", style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
+                            Text("启动所需${_introduceEntity?.startMin??0}万  ", style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
@@ -235,7 +240,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                               child: Text("  |  ",
                                   style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(S.of(context).n_day("180"), style: TextStyles.textC99000000S13)
+                            Text(S.of(context).n_day("${_introduceEntity?.days??0}"), style: TextStyles.textC99000000S13)
                           ],
                         ),
                       ),
@@ -457,6 +462,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _selectProviderEntity = providerList[0];
       _payload.region = _selectProviderEntity.regions[selectNodeItemValue].name;
       _payload.provider = _selectProviderEntity.name;
+      _payload.blsAddKey = _blsKeySignEntity.blsKey;
+      _payload.blsAddSign = _blsKeySignEntity.blsSign;
+      _payload.blsRemoveKey = "";
     }
     _payload.isEdit = false;
     var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
@@ -465,10 +473,17 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
   void getNetworkData() async {
     try {
-      var requestList =
-          await Future.wait([_nodeApi.getContractInstanceItem(widget.contractId), _nodeApi.getNodeProviderList()]);
+      var requestList = await Future.wait([
+        _nodeApi.getContractInstanceItem(widget.contractId),
+        _nodeApi.getNodeProviderList(),
+        _atlasApi.getMap3Introduce(),
+        _atlasApi.getMap3Bls(),
+      ]);
+
       contractItem = requestList[0];
       providerList = requestList[1];
+      _introduceEntity = requestList[2];
+      _blsKeySignEntity = requestList[3];
 
       selectNodeProvider(0, 0);
 

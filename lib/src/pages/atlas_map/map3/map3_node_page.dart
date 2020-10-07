@@ -3,9 +3,12 @@ import 'package:flutter/painting.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -27,7 +30,7 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
+class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 1;
@@ -37,10 +40,14 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
   @override
   bool get wantKeepAlive => true;
+  var _address = "";
 
   @override
   void initState() {
     super.initState();
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    _address = activatedWallet.wallet.getEthAccount().address;
 
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
@@ -56,6 +63,14 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       _lastActiveList.add(item);
       _pendingList.add(item);
     }*/
+  }
+
+  @override
+  void onCreated() {
+    super.onCreated();
+
+
+
   }
 
   @override
@@ -84,7 +99,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty, isMine: true),
+            _sectionTitleWidget(title: "我的节点", hasMore: true, isMine: true),
             _myNodeListWidget(),
             _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
@@ -96,12 +111,11 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     );
   }
 
-
   void getNetworkData() async {
     try {
 
-      List<Map3InfoEntity> contractNodeList = await _atlasApi.postMap3NodeList(
-        'address',
+      List<Map3InfoEntity> contractNodeList = await _atlasApi.getMap3NodeList(
+        _address,
         page: _currentPage,
         size: 10,
       );
@@ -161,8 +175,12 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       child: InkWell(
         onTap: () {
           if (isMine) {
-            Application.router.navigateTo(context, Routes.map3node_my_page);
+            Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=2");
+
+            // Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
+            if (!hasMore) return;
+
             Application.router.navigateTo(
                 context,
                 Routes.map3node_list_page +
@@ -182,7 +200,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  "查看更多",
+                  isMine?"查看收益":"查看更多",
                   style: TextStyles.textC999S12,
                 ),
               ),

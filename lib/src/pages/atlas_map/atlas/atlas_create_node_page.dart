@@ -86,7 +86,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _getMap3Nodes() {
-    _atlasApi.postMap3NodeList('address');
+    _atlasApi.getMap3NodeList('address');
   }
 
   _steps() {

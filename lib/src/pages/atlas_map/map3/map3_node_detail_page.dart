@@ -16,8 +16,12 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -35,6 +39,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
@@ -63,6 +68,7 @@ class Map3NodeDetailPage extends StatefulWidget {
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   NodeApi _api = NodeApi();
+  AtlasApi _atlasApi = AtlasApi();
 
   ContractDetailItem _contractDetailItem;
   UserDelegateState _userDelegateState;
@@ -558,10 +564,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   double _moreSizeWidth = 100;
   double _moreOffsetLeft = 246;
   double _moreOffsetTop = 76;
+  var _address = "";
+  var _nodeAddress = "";
 
   @override
   void onCreated() {
-    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+
+    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet.getEthAccount().address;
+    // todo: test_1007
+    _nodeAddress = widget.contractId.toString();
+
     getContractDetailData();
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
@@ -1783,6 +1796,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Future getContractDetailData() async {
     try {
+      /*
+      var requestList = await Future.wait([
+        _atlasApi.getMap3Info(_address, _nodeAddress),
+        _atlasApi.getMap3StakingLogList(_nodeAddress),
+        _atlasApi.getMap3UserList(_nodeAddress),
+      ]);
+
+      Map3InfoEntity map3infoEntity = requestList[0];
+      List<Map3StakingLogEntity> stakingList = requestList[1];
+      List<UserMap3Entity> userList = requestList[2];
+    */
+      
       // 0.
       if (_isNoWallet) {
         _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
@@ -1820,6 +1845,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       });
     } catch (e) {
       logger.e(e);
+      LogUtil.toastException(e);
 
       if (mounted) {
         setState(() {

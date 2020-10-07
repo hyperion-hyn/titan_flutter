@@ -4,9 +4,17 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
+import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_list_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -19,9 +27,16 @@ class Map3NodeMyPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMixin {
+class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStateMixin {
   TabController _tabController;
   List<MyContractModel> _contractTypeModels;
+  UserRewardEntity _rewardEntity;
+  AtlasApi _atlasApi = AtlasApi();
+  AllPageState currentState = LoadingState();
+
+  var walletName = "";
+  var address = "";
+  var _balance = "0";
 
   @override
   void initState() {
@@ -29,8 +44,20 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    print("[Map3NodeMyPage]  dispose!!!");
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+  }
+
+  @override
+  void onCreated() {
+    super.onCreated();
 
     if (_contractTypeModels?.isEmpty ?? true) {
       _contractTypeModels = [
@@ -39,6 +66,12 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
       ];
       _tabController = TabController(length: _contractTypeModels.length, vsync: this);
     }
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    walletName = activatedWallet.wallet.keystore.name;
+    address = activatedWallet.wallet.getEthAccount().address;
+
+    getNetworkData();
   }
 
   @override
@@ -48,18 +81,60 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
       appBar: BaseAppBar(
         baseTitle: S.of(context).my_contract,
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            _myProfitWidget(),
-            _tabBarWidget(),
-            _childrenWidget(),
-          ],
-        ),
+      body: _pageView(context),
+    );
+  }
+
+  _pageView(BuildContext context) {
+    if (currentState != null || _rewardEntity == null) {
+      return Scaffold(
+        body: AllPageStateContainer(currentState, () {
+          if (mounted) {
+            setState(() {
+              currentState = LoadingState();
+            });
+          }
+
+          getNetworkData();
+        }),
+      );
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          _myProfitWidget(),
+          _tabBarWidget(),
+          _childrenWidget(),
+        ],
       ),
     );
+  }
+
+  void getNetworkData() async {
+    try {
+      var requestList = await Future.wait([_atlasApi.getRewardInfo(address)]);
+
+      _rewardEntity = requestList[0];
+
+      _balance = "${FormatUtil.formatPrice(double.parse(_rewardEntity?.reward ?? "0"))}";
+
+      if (mounted) {
+        setState(() {
+          currentState = null;
+        });
+      }
+    } catch (e) {
+      print(e);
+
+      if (mounted) {
+        setState(() {
+          currentState = LoadFailState();
+        });
+      }
+    }
   }
 
   _myProfitWidget() {
@@ -86,7 +161,7 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
                 Padding(
                   padding: const EdgeInsets.only(top: 28),
                   child: Text(
-                    "3,043",
+                    _balance,
                     style: TextStyle(
                       color: HexColor("#228BA1"),
                       fontSize: 24,
@@ -105,6 +180,7 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
                     ),
                   ),
                 ),
+                /*
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Container(
@@ -136,6 +212,7 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
                     ),
                   ),
                 ),
+                */
                 Padding(
                   padding: const EdgeInsets.only(top: 28, bottom: 25),
                   child: ClickOvalButton(
@@ -145,47 +222,6 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
                     },
                     height: 32,
                     width: 160,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  _tabBarWidget1() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: Container(
-            color: Colors.white,
-            child: TabBar(
-              labelColor: HexColor('#FF228BA1'),
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-              indicatorSize: TabBarIndicatorSize.label,
-              indicatorColor: HexColor('##FF228BA1'),
-              indicatorWeight: 3,
-              controller: _tabController,
-              indicatorPadding: EdgeInsets.only(
-                bottom: 2,
-                right: 12,
-                left: 12,
-              ),
-              unselectedLabelColor: HexColor("#FF333333"),
-              tabs: [
-                Tab(
-                  child: Text(
-                    '我发起的',
-                  ),
-                ),
-                Tab(
-                  child: Text(
-                    '我参与的',
                   ),
                 ),
               ],
@@ -212,11 +248,11 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
               unselectedLabelColor: HexColor("#333333"),
               tabs: _contractTypeModels
                   .map((MyContractModel model) => Tab(
-                child: Text(
-                  model.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ))
+                        child: Text(
+                          model.name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ))
                   .toList(),
             ),
           ),
@@ -253,7 +289,7 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
               Navigator.pop(context);
 
               var entity = PledgeMap3Entity.onlyType(AtlasActionType.COLLECT_MAP3_NODE);
-              entity.payload = PledgeMap3Payload("abc","200000");
+              entity.payload = PledgeMap3Payload("abc", "200000");
               entity.amount = "200000";
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
@@ -271,8 +307,8 @@ class _Map3NodeMyState extends State<Map3NodeMyPage> with TickerProviderStateMix
             fontSize: 16,
           ),
         ],
-        content: "您一共创建或参与了3个Map3节点，截止昨日可提奖励为: 3,043 HYN 确定全部提取到钱包",
-        boldContent: "(Star01)",
+        content: "您一共创建或参与了${_rewardEntity?.nodeNum ?? 0}个Map3节点，截止昨日可提奖励为: $_balance HYN 确定全部提取到钱包",
+        boldContent: "($walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),
           fontSize: 12,

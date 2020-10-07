@@ -51,7 +51,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   void getNetworkData() async {
     try {
       var requestList =
-      await Future.wait([_atlasApi.postMap3Introduce(), _nodeApi.getNodeProviderList()]);
+      await Future.wait([_atlasApi.getMap3Introduce(), _nodeApi.getNodeProviderList()]);
 
       _entity = requestList[0];
       _providerList = requestList[1];
@@ -223,7 +223,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text(_entity?.title??"Map3云节点 (${_entity?.version??"v1.0"})", style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(child: Text(_entity?.name??"", style: TextStyle(fontWeight: FontWeight.bold))),
                     InkWell(
                       child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
