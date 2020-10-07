@@ -166,9 +166,7 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
           rowTipsItem("需要总抵押满100万HYN才能正式启动，每次参与抵押数额不少于10000HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
-
             AtlasApi.goToAtlasMap3HelpPage(context);
-
           }),
         ],
       ),

@@ -149,11 +149,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                           child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           onTap: () {
                             AtlasApi.goToAtlasMap3HelpPage(context);
-
-                            // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-                            // String webTitle = FluroConvertUtils.fluroCnParamsEncode("详细介绍");
-                            // Application.router.navigateTo(
-                            //     context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                           },
                         ),
                       ),
