@@ -866,7 +866,50 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             child: ClickOvalButton(
               "撤销抵押",
               () async {
-                var atlasEntity = _atlasInfoEntity;
+                UiUtil.showAlertView(
+                  context,
+                  title: "撤销抵押",
+                  actions: [
+                    ClickOvalButton(
+                      S.of(context).cancel,
+                          () {
+                        Navigator.pop(context);
+                      },
+                      width: 120,
+                      height: 32,
+                      fontSize: 14,
+                      fontColor: DefaultColors.color999,
+                      btnColor: Colors.transparent,
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    ClickOvalButton(
+                      "确定",
+                          () {
+                        var entity = PledgeAtlasEntity.emptyEntity();
+                        AtlasMessage message = ConfirmAtlasUnStakeMessage(nodeId: _atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Map3NodeConfirmPage(
+                                message: message,
+                              ),
+                            ));
+//                                Application.router.navigateTo(
+//                                    context,
+//                                    Routes.map3node_formal_confirm_page +
+//                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
+                      },
+                      width: 120,
+                      height: 38,
+                      fontSize: 16,
+                    ),
+                  ],
+                  content: "撤销抵押后将不再获得Atlas节点出块奖励，当前为止获得的奖励，将在Atlas节点主领取奖励时发送至您的钱包，撤销之后可以再次抵押，确定要撤销吗？",
+                );
+
+                /*var atlasEntity = _atlasInfoEntity;
                 var map3Entity = _atlasInfoEntity.myMap3[_selectedMap3NodeValue];
                 await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(
                     map3Entity.staking,
@@ -877,7 +920,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     "1111",
                     "11111",
                     atlasEntity.address,
-                    AtlasActionType.JOIN_DELEGATE_ALAS));
+                    AtlasActionType.JOIN_DELEGATE_ALAS));*/
               },
               width: 90,
               height: 32,
