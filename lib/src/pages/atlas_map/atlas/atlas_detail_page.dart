@@ -436,10 +436,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                         message: message,
                                       ),
                                     ));
-//                                Application.router.navigateTo(
-//                                    context,
-//                                    Routes.map3node_formal_confirm_page +
-//                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
                               },
                               width: 120,
                               height: 38,
@@ -896,10 +892,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 message: message,
                               ),
                             ));
-//                                Application.router.navigateTo(
-//                                    context,
-//                                    Routes.map3node_formal_confirm_page +
-//                                        "?actionEvent=${Map3NodeActionEvent.ATLAS_RECEIVE_AWARD.index}");
                       },
                       width: 120,
                       height: 38,
@@ -908,19 +900,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   ],
                   content: "撤销抵押后将不再获得Atlas节点出块奖励，当前为止获得的奖励，将在Atlas节点主领取奖励时发送至您的钱包，撤销之后可以再次抵押，确定要撤销吗？",
                 );
-
-                /*var atlasEntity = _atlasInfoEntity;
-                var map3Entity = _atlasInfoEntity.myMap3[_selectedMap3NodeValue];
-                await _atlasApi.postPledgeAtlas(PledgeAtlasEntity(
-                    map3Entity.staking,
-                    map3Entity.address,
-                    111,
-                    111,
-                    PledgeAtlasPayload(atlasEntity.nodeId, map3Entity.nodeId),
-                    "1111",
-                    "11111",
-                    atlasEntity.address,
-                    AtlasActionType.JOIN_DELEGATE_ALAS));*/
               },
               width: 90,
               height: 32,
