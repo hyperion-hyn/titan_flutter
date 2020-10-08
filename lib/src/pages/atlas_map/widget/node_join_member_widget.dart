@@ -5,8 +5,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
@@ -15,14 +15,14 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
-  final String contractId;
+  final String nodeAddress;
   final String remainDay;
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.contractId, this.remainDay, this.shareName, this.shareUrl,
+  NodeJoinMemberWidget(this.nodeAddress, this.remainDay, this.shareName, this.shareUrl,
       {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
@@ -34,8 +34,8 @@ class NodeJoinMemberWidget extends StatefulWidget {
 class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
-  NodeApi _nodeApi = NodeApi();
-  List<ContractDelegatorItem> memberList = [];
+  AtlasApi _atlasApi = AtlasApi();
+  List<UserMap3Entity> memberList = [];
 
   @override
   void initState() {
@@ -61,8 +61,8 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   void getJoinMemberData() async {
     _currentPage = 0;
-    List<ContractDelegatorItem> tempMemberList =
-        await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+    List<UserMap3Entity> tempMemberList =
+        await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -79,8 +79,8 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<ContractDelegatorItem> tempMemberList =
-          await _nodeApi.getContractDelegator(int.parse(widget.contractId), page: _currentPage);
+      List<UserMap3Entity> tempMemberList =
+          await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -141,7 +141,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     itemBuilder: (context, index) {
                       var i = index;
                       var model = memberList[i];
-                      return _item(model, i == 0);
+                      return _itemBuilder(model);
                     },
                     itemCount: memberList.length,
                     scrollDirection: Axis.horizontal,
@@ -153,13 +153,13 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-  Widget _item(ContractDelegatorItem item, bool isFirst) {
-    String showName = item.userName;
-    if (item.userName.isNotEmpty) {
-      showName = item.userName.characters.first;
+  Widget _itemBuilder(UserMap3Entity entity) {
+    String showName = entity.id.toString();
+    if (showName.isNotEmpty) {
+      showName = showName.characters.first;
     }
     return InkWell(
-      onTap: () => _pushTransactionDetailAction(item),
+      onTap: () => _pushTransactionDetailAction(entity),
       child: Padding(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         child: SizedBox(
@@ -185,24 +185,24 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        child: walletHeaderWidget(showName, isShowShape: false, address: item.userAddress),
+                        child: walletHeaderWidget(showName, isShowShape: false, address: entity.address),
                       ),
                       SizedBox(
                         height: 8,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text("${item.userName}",
+                        child: Text("${entity.id}",
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
-                      Text("${FormatUtil.stringFormatNum(item.amountDelegation)}",
+                      Text("${FormatUtil.stringFormatNum(entity.staking)}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),
                 ),
-                if (isFirst)
+                if (entity.creator == 1)
                   Positioned(
                     top: 15,
                     right: 4,
@@ -222,9 +222,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
-  void _pushTransactionDetailAction(ContractDelegatorItem item) {
+  void _pushTransactionDetailAction(UserMap3Entity item) {
     var url = EtherscanApi.getAddressDetailUrl(
-        item.userAddress, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+        item.address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
     if (url != null) {
       /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
       String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
