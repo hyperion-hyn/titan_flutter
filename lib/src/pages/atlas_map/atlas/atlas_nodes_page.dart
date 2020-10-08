@@ -170,6 +170,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         '节点列表',
                         style: TextStyle(
                           fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -445,6 +446,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 '我的节点',
                 style: TextStyle(
                   fontSize: 16,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               Spacer(),

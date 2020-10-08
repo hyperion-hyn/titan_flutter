@@ -3,8 +3,10 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class AtlasNodeDetailItem extends StatelessWidget {
   final AtlasInfoEntity _atlasInfo;
@@ -14,7 +16,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.all(16.0),
       child: InkWell(
         onTap: () async {
           Application.router.navigateTo(context, Routes.atlas_detail_page);
@@ -30,7 +32,6 @@ class AtlasNodeDetailItem extends StatelessWidget {
               ),
             ],
           ),
-          margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -45,16 +46,18 @@ class AtlasNodeDetailItem extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                     SizedBox(
-                      width: 6,
+                      width: 8,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text.rich(TextSpan(children: [
                           TextSpan(
-                              text: _atlasInfo.name ?? 'name',
+                              text: _atlasInfo.name ?? 'node name',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16)),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              )),
                           TextSpan(text: "", style: TextStyles.textC333S14bold),
                         ])),
                         Container(
@@ -63,7 +66,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         Row(
                           children: <Widget>[
                             Text(
-                              S.of(context).atlas_node_rank,
+                              '${S.of(context).atlas_node_rank}: ',
                               style: TextStyles.textC9b9b9bS12,
                             ),
                             Text(
@@ -81,9 +84,10 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(4.0),
                           child: Text(
-                            _atlasInfo.createdAt,
+                            '节点号：${_atlasInfo.nodeId}',
                             style: TextStyle(
-                                fontSize: 12, color: HexColor("#9B9B9B")),
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                         Container(
@@ -93,7 +97,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                           color: HexColor("#1FB9C7").withOpacity(0.08),
                           padding:
                               EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text("_atlasInfo.getNodeType",
+                          child: Text('${getAtlasNodeType(_atlasInfo.type)}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: HexColor("#5C4304"),
@@ -127,7 +131,8 @@ class AtlasNodeDetailItem extends StatelessWidget {
                           Expanded(
                             child: Text.rich(TextSpan(children: [
                               TextSpan(
-                                  text: S.of(context).atlas_total_staking,
+                                  text:
+                                      '${S.of(context).atlas_total_staking}: ',
                                   style: TextStyle(
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
@@ -173,6 +178,45 @@ class AtlasNodeDetailItem extends StatelessWidget {
                           ])),
                         )
                       ],
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Divider(),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      '${FormatUtil.formatDateStr(_atlasInfo.createdAt)}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: HexColor('#FF9B9B9B'),
+                      ),
+                    ),
+                    Spacer(),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 8.0,
+                      ),
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: HexColor('#FF00E4A1'),
+                        borderRadius: BorderRadius.circular(
+                          16.0,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      '活跃',
+                      style: TextStyle(
+                        fontSize: 12,
+                      ),
                     )
                   ],
                 )
