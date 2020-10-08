@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
@@ -32,10 +33,12 @@ class AtlasApi {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
         "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode("帮助页面");
-    Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+    Application.router.navigateTo(context,
+        Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
-  Map<String, dynamic> getOptionHeader({hasLang = false, hasAddress = false, hasSign = false}) {
+  Map<String, dynamic> getOptionHeader(
+      {hasLang = false, hasAddress = false, hasSign = false}) {
     if (!hasLang && !hasAddress && !hasSign) {
       return null;
     }
@@ -43,13 +46,16 @@ class AtlasApi {
 
     headMap.putIfAbsent("appSource", () => Config.APP_SOURCE);
 
-    var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var activeWalletVo =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     if (hasAddress && activeWalletVo != null) {
-      headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
+      headMap.putIfAbsent(
+          "Address", () => activeWalletVo.wallet.getEthAccount().address);
     }
 
     if (hasLang) {
-      var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
+      var language =
+          SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
       headMap.putIfAbsent("Lang", () => language);
     }
 
@@ -111,11 +117,13 @@ class AtlasApi {
   }
 
   // 查询Atlas节点下的所有map3节点列表
-  Future<List<Map3InfoEntity>> postAtlasMap3NodeList(String nodeId, {int page = 0, int size = 0}) async {
+  Future<List<Map3InfoEntity>> postAtlasMap3NodeList(String nodeId,
+      {int page = 0, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
-        EntityFactory<List<Map3InfoEntity>>(
-            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
+        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
+            .map((item) => Map3InfoEntity.fromJson(item))
+            .toList()),
         params: {
           "node_id": nodeId,
           "page": page,
@@ -125,11 +133,13 @@ class AtlasApi {
   }
 
   // 查询Atlas节点列表
-  Future<List<AtlasInfoEntity>> postAtlasNodeList(String address, {int page = 0, int size = 0}) async {
+  Future<List<AtlasInfoEntity>> postAtlasNodeList(String address,
+      {int page = 0, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/node_list",
-        EntityFactory<List<AtlasInfoEntity>>(
-            (list) => (list as List).map((item) => AtlasInfoEntity.fromJson(item)).toList()),
+        EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
+            .map((item) => AtlasInfoEntity.fromJson(item))
+            .toList()),
         params: {
           "address": address,
           "page": page,
@@ -204,7 +214,8 @@ class AtlasApi {
   }
 
   // 查询map3节点详情
-  Future<Map3InfoEntity> getMap3Info1(String address, String nodeAddress) async {
+  Future<Map3InfoEntity> getMap3Info1(
+      String address, String nodeAddress) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/info",
         EntityFactory<Map3InfoEntity>(
@@ -218,29 +229,28 @@ class AtlasApi {
   }
 
   Future<Map3InfoEntity> getMap3Info(String address, String nodeAddress) async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/map3/info",
+    return AtlasHttpCore.instance.postEntity("/v1/map3/info",
         EntityFactory<Map3InfoEntity>(
-              (json) {
-                if (json != null) {
-                  return Map3InfoEntity.fromJson(json);
-                }
-                return null;
-              },
-        ),
-        params: {
-          "address": address,
-          "node_address": nodeAddress,
-        },
-        options: RequestOptions(contentType: "application/json"));
+      (json) {
+        if (json != null) {
+          return Map3InfoEntity.fromJson(json);
+        }
+        return null;
+      },
+    ), params: {
+      "address": address,
+      "node_address": nodeAddress,
+    }, options: RequestOptions(contentType: "application/json"));
   }
 
   // 查询查询Map3节点列表
-  Future<List<Map3InfoEntity>> getMap3NodeList(String address, {int page = 0, int size = 0}) async {
+  Future<List<Map3InfoEntity>> getMap3NodeList(String address,
+      {int page = 0, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
-        EntityFactory<List<Map3InfoEntity>>(
-            (list) => (list as List).map((item) => Map3InfoEntity.fromJson(item)).toList()),
+        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
+            .map((item) => Map3InfoEntity.fromJson(item))
+            .toList()),
         params: {
           "address": address,
           "page": page,
@@ -276,7 +286,7 @@ class AtlasApi {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/introduce",
         EntityFactory<Map3IntroduceEntity>(
-              (json) => Map3IntroduceEntity.fromJson(json),
+          (json) => Map3IntroduceEntity.fromJson(json),
         ),
         options: RequestOptions(contentType: "application/json"));
   }
@@ -305,11 +315,13 @@ class AtlasApi {
   }
 
   // 获取节点的抵押流水
-  Future<List<Map3StakingLogEntity>> getMap3StakingLogList(String nodeAddress, {int page = 1, int size = 10}) async {
+  Future<List<Map3StakingLogEntity>> getMap3StakingLogList(String nodeAddress,
+      {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/staking_log",
-        EntityFactory<List<Map3StakingLogEntity>>(
-            (list) => (list as List).map((item) => Map3StakingLogEntity.fromJson(item)).toList()),
+        EntityFactory<List<Map3StakingLogEntity>>((list) => (list as List)
+            .map((item) => Map3StakingLogEntity.fromJson(item))
+            .toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -319,11 +331,13 @@ class AtlasApi {
   }
 
   // 获取节点的抵押人地址列表
-  Future<List<UserMap3Entity>> getMap3UserList(String nodeAddress, {int page = 1, int size = 10}) async {
+  Future<List<UserMap3Entity>> getMap3UserList(String nodeAddress,
+      {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/user_list",
-        EntityFactory<List<UserMap3Entity>>(
-            (list) => (list as List).map((item) => UserMap3Entity.fromJson(item)).toList()),
+        EntityFactory<List<UserMap3Entity>>((list) => (list as List)
+            .map((item) => UserMap3Entity.fromJson(item))
+            .toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -333,27 +347,37 @@ class AtlasApi {
   }
 
   // 上传图片
-  Future<String> postUploadImageFile(String path, ProgressCallback onSendProgress) async {
+  Future<String> postUploadImageFile(
+      String path, ProgressCallback onSendProgress) async {
     try {
       Map<String, dynamic> params = {};
-
       params["file"] = MultipartFile.fromFileSync(path);
-
       FormData formData = FormData.fromMap(params);
 
-      var res = await AtlasHttpCore.instance.post("/v1/map3/upload",
-          data: formData, options: RequestOptions(contentType: "multipart/form-data"), onSendProgress: onSendProgress);
-      var responseEntity = ResponseEntity<String>.fromJson(res, factory: EntityFactory((json) => json));
-      print("[AtlasApi], postUploadImageFile, responseEntity:${responseEntity.code}, msg:${responseEntity.msg}");
+      var res = await AtlasHttpCore.instance.post(
+        "/v1/map3/upload",
+        data: formData,
+        options: RequestOptions(contentType: "multipart/form-data"),
+        onSendProgress: onSendProgress,
+      );
 
-      if (responseEntity.code == 0) {
+      var responseEntity = ResponseEntity<String>.fromJson(
+        res,
+        factory: EntityFactory((json) => json),
+      );
+      print(
+          "[AtlasApi], postUploadImageFile, responseEntity:${responseEntity.code}, msg:${responseEntity.msg}");
+
+      if (responseEntity.data.isNotEmpty) {
         return responseEntity.data;
       } else {
-        return responseEntity.code.toString();
+        Fluttertoast.showToast(msg: responseEntity.msg);
+        return null;
       }
     } catch (_) {
+      Fluttertoast.showToast(msg: '图片上传失败');
       LogUtil.uploadException("[Atlas] upload image", 'post upload fail');
-      return "-1";
+      return null;
     }
   }
 }
