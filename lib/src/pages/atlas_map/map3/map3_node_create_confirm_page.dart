@@ -12,14 +12,27 @@ import 'map3_node_confirm_page.dart';
 
 class Map3NodeCreateConfirmPage extends StatefulWidget {
   final CreateMap3Payload entity;
+
   Map3NodeCreateConfirmPage({this.entity});
 
   @override
-  _Map3NodeCreateConfirmState createState() => new _Map3NodeCreateConfirmState();
+  _Map3NodeCreateConfirmState createState() =>
+      new _Map3NodeCreateConfirmState();
 }
 
 class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
-  List<String> _titleList = ["图标", "名称", "节点号", "首次抵押", "管理费", "网址", "安全联系", "描述", "云服务商", "节点地址"];
+  List<String> _titleList = [
+    "图标",
+    "名称",
+    "节点号",
+    "首次抵押",
+    "管理费",
+    "网址",
+    "安全联系",
+    "描述",
+    "云服务商",
+    "节点地址"
+  ];
   List<String> _detailList = [
     "",
     "派大星",
@@ -157,21 +170,24 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           return Container(
             color: Colors.white,
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+              padding: EdgeInsets.symmetric(
+                  vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
               child: Row(
                 children: <Widget>[
                   SizedBox(
                     width: 100,
                     child: Text(
                       title,
-                      style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                      style:
+                          TextStyle(color: HexColor("#999999"), fontSize: 14),
                     ),
                   ),
                   title != "图标"
                       ? Expanded(
                           child: Text(
                             detail,
-                            style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+                            style: TextStyle(
+                                color: HexColor("#333333"), fontSize: 14),
                           ),
                         )
                       : Image.asset(
@@ -207,9 +223,9 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
-
           // 1.上传图片 ---> 获取url
-          String result = await _atlasApi.postUploadImageFile(widget.entity.pic, (count, total) {
+          String result = await _atlasApi.postUploadImageFile(widget.entity.pic,
+              (count, total) {
             print("[object] ---> count:$count, total:$total");
           });
           print("[object] ---> result:$result");
@@ -217,13 +233,16 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;
           if (!widget.entity.isEdit) {
-            CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+            CreateMap3Entity map3entity =
+                CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
             map3entity.payload = widget.entity;
             message = ConfirmCreateMap3NodeMessage(entity: map3entity);
           } else {
-            CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+            CreateMap3Entity map3entity =
+                CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
             map3entity.payload = widget.entity;
-            message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: "xxx");
+            message = ConfirmEditMap3NodeMessage(
+                entity: map3entity, map3NodeAddress: "xxx");
           }
 
           Navigator.push(

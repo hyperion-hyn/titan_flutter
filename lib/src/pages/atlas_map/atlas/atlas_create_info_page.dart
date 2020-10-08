@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
@@ -33,6 +34,9 @@ class AtlasCreateInfoPage extends StatefulWidget {
 }
 
 class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
+  AtlasApi _atlasApi = AtlasApi();
+  var _isUploading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,22 +235,45 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
       padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
       child: ClickOvalButton(
         S.of(context).submit,
-        () {
-          CreateAtlasEntity createAtlasEntity = CreateAtlasEntity.onlyType(
-            AtlasActionType.CREATE_ATLAS_NODE,
-          )..payload = widget._createAtlasPayload;
+        () async {
+          setState(() {
+            _isUploading = true;
+          });
 
-          AtlasMessage message = ConfirmCreateAtlasNodeMessage(
-            entity: createAtlasEntity,
+          ///upload icon pic
+          var result = await _atlasApi.postUploadImageFile(
+            widget._createAtlasPayload.pic,
+            (count, total) {
+              print(
+                '[atlas_create_info] upload  ---> count:$count, total:$total',
+              );
+            },
           );
 
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Map3NodeConfirmPage(
-                  message: message,
-                ),
-              ));
+          setState(() {
+            _isUploading = false;
+          });
+
+          if (result != null) {
+            CreateAtlasEntity createAtlasEntity = CreateAtlasEntity.onlyType(
+              AtlasActionType.CREATE_ATLAS_NODE,
+            )..payload = widget._createAtlasPayload;
+
+            ///replace pic with url given by server
+            createAtlasEntity.payload.pic = result;
+
+            AtlasMessage message = ConfirmCreateAtlasNodeMessage(
+              entity: createAtlasEntity,
+            );
+
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Map3NodeConfirmPage(
+                    message: message,
+                  ),
+                ));
+          }
 
 //          Application.router.navigateTo(
 //            context,
@@ -257,6 +284,8 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
         width: 300,
         height: 46,
         fontSize: 18,
+        isLoading: _isUploading,
+        loadingText: '处理中...',
       ),
     );
   }

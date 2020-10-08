@@ -57,16 +57,18 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
         baseTitle: S.of(context).create_atlas_node,
         actions: [
           InkWell(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: InkWell(
-                onTap: () {
-                  AtlasApi.goToAtlasMap3HelpPage(context);
-                },
-                child: Text(
-                  '介绍文档',
-                  style: TextStyle(
-                    color: Colors.blue,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: InkWell(
+                  onTap: () {
+                    AtlasApi.goToAtlasMap3HelpPage(context);
+                  },
+                  child: Text(
+                    '介绍文档',
+                    style: TextStyle(
+                      color: Colors.blue,
+                    ),
                   ),
                 ),
               ),
@@ -76,17 +78,14 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       ),
       body: Container(
         color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            _currentStep == Step.launch ? _launchTutorial() : _nodeSetup(),
-          ],
-        ),
+        height: double.infinity,
+        child: _currentStep == Step.launch ? _launchNodeTutorial() : _nodeOptionsSetup(),
       ),
     );
   }
 
-  _getMap3Nodes() {
-    _atlasApi.getMap3NodeList('address');
+  _getMap3Nodes() async {
+    await _atlasApi.getMap3NodeList('address');
   }
 
   _steps() {
@@ -224,7 +223,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     );
   }
 
-  _launchTutorial() {
+  _launchNodeTutorial() {
     return Expanded(
       child: SingleChildScrollView(
         child: Column(
@@ -301,7 +300,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     );
   }
 
-  _nodeSetup() {
+  _nodeOptionsSetup() {
     var child;
     if (_currentStep == Step.info) {
       child = _basicInfo();
@@ -430,7 +429,6 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             _createAtlasPayLoad.pic,
             (data) {
               setState(() {
-                _uploadImage(data);
                 _createAtlasPayLoad.pic = data;
               });
             },
@@ -679,27 +677,30 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          RoundBorderTextField(
-            keyboardType: TextInputType.number,
-            suffixIcon: Container(
-              width: 10,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '%',
-                  style: TextStyle(
-                    color: Colors.grey,
+          Container(
+            height: 42,
+            child: RoundBorderTextField(
+              keyboardType: TextInputType.number,
+              suffixIcon: Container(
+                width: 10,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '%',
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ),
+              onChanged: (text) {
+                setState(() {
+                  _createAtlasPayLoad.feeRate = text;
+                });
+              },
+              controller: _feeTextController,
+              isDense: false,
             ),
-            onChanged: (text) {
-              setState(() {
-                _createAtlasPayLoad.feeRate = text;
-              });
-            },
-            controller: _feeTextController,
-            isDense: false,
           ),
           SizedBox(
             height: 16,
@@ -727,25 +728,28 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          RoundBorderTextField(
-            keyboardType: TextInputType.number,
-            suffixIcon: Container(
-              width: 10,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '%',
-                  style: TextStyle(color: Colors.grey),
+          Container(
+            height: 42,
+            child: RoundBorderTextField(
+              keyboardType: TextInputType.number,
+              suffixIcon: Container(
+                width: 10,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '%',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
+              onChanged: (text) {
+                setState(() {
+                  _createAtlasPayLoad.feeRateMax = text;
+                });
+              },
+              controller: _maxFeeTextController,
+              isDense: false,
             ),
-            onChanged: (text) {
-              setState(() {
-                _createAtlasPayLoad.feeRateMax = text;
-              });
-            },
-            controller: _maxFeeTextController,
-            isDense: false,
           ),
           SizedBox(
             height: 16,
@@ -773,25 +777,28 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          RoundBorderTextField(
-            keyboardType: TextInputType.number,
-            suffixIcon: Container(
-              width: 10,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  '%',
-                  style: TextStyle(color: Colors.grey),
+          Container(
+            height: 42,
+            child: RoundBorderTextField(
+              keyboardType: TextInputType.number,
+              suffixIcon: Container(
+                width: 10,
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '%',
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
+              onChanged: (text) {
+                setState(() {
+                  _createAtlasPayLoad.feeRateTrim = text;
+                });
+              },
+              controller: _feeExtentTextController,
+              isDense: false,
             ),
-            onChanged: (text) {
-              setState(() {
-                _createAtlasPayLoad.feeRateTrim = text;
-              });
-            },
-            controller: _feeExtentTextController,
-            isDense: false,
           ),
           SizedBox(
             height: 36,
@@ -833,14 +840,17 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          RoundBorderTextField(
-            onChanged: (text) {
-              setState(() {
-                _createAtlasPayLoad.blsAddKey = text;
-              });
-            },
-            controller: _blsKeyTextController,
-            isDense: false,
+          Container(
+            height: 42,
+            child: RoundBorderTextField(
+              onChanged: (text) {
+                setState(() {
+                  _createAtlasPayLoad.blsAddKey = text;
+                });
+              },
+              controller: _blsKeyTextController,
+              isDense: false,
+            ),
           ),
           SizedBox(
             height: 16,
@@ -868,14 +878,17 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           SizedBox(
             height: 16,
           ),
-          RoundBorderTextField(
-            onChanged: (text) {
-              setState(() {
-                _createAtlasPayLoad.blsAddSign = text;
-              });
-            },
-            controller: _blsSignTextController,
-            isDense: false,
+          Container(
+            height: 42,
+            child: RoundBorderTextField(
+              onChanged: (text) {
+                setState(() {
+                  _createAtlasPayLoad.blsAddSign = text;
+                });
+              },
+              controller: _blsSignTextController,
+              isDense: false,
+            ),
           ),
           SizedBox(
             height: 36,
@@ -978,8 +991,5 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     );
   }
 }
-
-///update icon
-_uploadImage(String path) {}
 
 enum Step { launch, info, fee, bls }
