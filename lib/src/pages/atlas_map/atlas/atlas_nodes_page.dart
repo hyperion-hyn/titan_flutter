@@ -187,7 +187,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _atlasInfo() {
     return Column(
       children: <Widget>[
-        _atlasMap(),
+        Padding(
+          padding: EdgeInsets.all(16.0),
+          child: _atlasMap(),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -237,7 +240,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           decoration: TextDecoration.underline,
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+
+                      },
                     ),
                   ],
                 ),
@@ -301,87 +306,75 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 //
 //    var _remainTimeMilliseconds = _ageEndTime - _ageStartTime;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black12,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.05, color: Colors.black12),
-          borderRadius: BorderRadius.all(
-            Radius.circular(16.0),
-          ),
-        ),
-        child: Container(
-          width: double.infinity,
-          height: 162,
-          child: Stack(
-            children: <Widget>[
-              AtlasMapWidget(_atlasNodeCoordinates),
-              Positioned(
-                left: 16,
-                bottom: 32,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Atlas共识节点',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
+    return Container(
+      width: double.infinity,
+      height: 162,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Stack(
+          children: <Widget>[
+            AtlasMapWidget(_atlasNodeCoordinates),
+            Positioned(
+              left: 16,
+              bottom: 32,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Atlas共识节点',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '为海伯利安生态提供共识保证',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    '为海伯利安生态提供共识保证',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  )
+                ],
               ),
-              Positioned(
-                right: 16,
-                top: 8,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_next_age,
-                      style:
-                          TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
-                    ),
-                    SizedBox(height: 4),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        AnimatedBuilder(
-                          animation: _ageIconAnimationController,
-                          builder: (_, child) {
-                            return Transform.rotate(
-                              angle:
-                                  _ageIconAnimationController.value * 2 * 3.14,
-                              child: child,
-                            );
-                          },
-                          child: Image.asset(
-                            'res/drawable/ic_atlas_age.png',
-                            width: 60,
-                            height: 60,
-                          ),
+            ),
+            Positioned(
+              right: 16,
+              top: 8,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    S.of(context).atlas_next_age,
+                    style:
+                        TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
+                  ),
+                  SizedBox(height: 4),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      AnimatedBuilder(
+                        animation: _ageIconAnimationController,
+                        builder: (_, child) {
+                          return Transform.rotate(
+                            angle: _ageIconAnimationController.value * 2 * 3.14,
+                            child: child,
+                          );
+                        },
+                        child: Image.asset(
+                          'res/drawable/ic_atlas_age.png',
+                          width: 60,
+                          height: 60,
                         ),
-                        TimerTextWidget(
-                          remainTime: _remainTime,
-                          loopTime: _loopTime,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+                      ),
+                      TimerTextWidget(
+                        remainTime: _remainTime,
+                        loopTime: _loopTime,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -594,7 +587,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       ),
     );
   }
-  
 
   _refreshData() async {
     _currentPage = 1;

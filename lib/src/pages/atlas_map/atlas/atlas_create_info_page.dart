@@ -56,7 +56,8 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
                 child: Text(
                   '你即将要创建如下Atlas节点',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -96,11 +97,17 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
             '复抵押的map3节点',
             style: TextStyle(
               color: DefaultColors.color999,
+              fontSize: 14,
             ),
           ),
         ),
         Expanded(
-          child: Text('Lance的Map3节点'),
+          child: Text(
+            'Lance的Map3节点',
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
         )
       ],
     );
@@ -124,11 +131,14 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
                     ),
                   ),
                 ),
-                Image.asset(
-                  widget._createAtlasPayload.pic,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4.0),
+                  child: Image.asset(
+                    widget._createAtlasPayload.pic,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
                 )
               ],
             ),
@@ -244,7 +254,9 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
 //                '?createAtlasPayload=${FluroConvertUtils.object2string(widget._createAtlasPayload)}',
 //          );
         },
+        width: 300,
         height: 46,
+        fontSize: 18,
       ),
     );
   }
