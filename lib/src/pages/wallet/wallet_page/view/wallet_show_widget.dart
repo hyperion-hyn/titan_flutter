@@ -193,19 +193,24 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                    onTap: () {
-                      var coinVo = widget.walletVo.coins[index];
-                      var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
-                      Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
-                    },
-                    child: _buildAccountItem(context, widget.walletVo.coins[index]));
+                var coinVo = widget.walletVo.coins[index];
+                if(coinVo.symbol == SupportedTokens.HYN_ERC20.symbol){
+                  return _exchangeHYNView(context, coinVo);
+                } else {
+                  return InkWell(
+                      onTap: () {
+                        var coinVo = widget.walletVo.coins[index];
+                        var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+                        Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+                      },
+                      child: _buildAccountItem(context, coinVo));
+                }
               },
               itemCount: widget.walletVo.coins.length,
             ),
             if (widget.walletVo.wallet.getBitcoinAccount() == null)
               _bitcoinEmptyView(context),
-            _exchangeHYNView(context),
+//            _exchangeHYNView(context),
 //            if (env.buildType == BuildType.DEV) _testWalletView(context),
             if (env.buildType == BuildType.DEV)
               _ropstenTestWalletView(context),
@@ -213,48 +218,31 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     );
   }
 
-  Widget _exchangeHYNView(BuildContext context) {
-    var coinVo = CoinVo(
-      name: "Hyperion",
-      symbol: "HYN",
-      coinType: 0,
-      address: "",
-      decimals: 18,
-      logo: "res/drawable/ic_hyn_logo_empty.png",
-      contractAddress: null,
-      extendedPublicKey: "",
-      balance: BigInt.from(0),
-    );
-    return InkWell(
-      onTap: () {
-        Application.router.navigateTo(
-            context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.EXCHANGE_HYN.index}");
-      },
-      child: Column(
-        children: <Widget>[
-          _buildAccountItem(context, coinVo),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 6),
-                child: Text(
-                  "兑换主链币",
-                  style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
-                ),
+  Widget _exchangeHYNView(BuildContext context, CoinVo coin) {
+    return Column(
+      children: <Widget>[
+        _buildAccountItem(context, coin),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 6),
+              child: Text(
+                "兑换主链币",
+                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 14),
-                child: Image.asset(
-                  "res/drawable/ic_question_remind.png",
-                  width: 16,
-                  height: 16,
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: Image.asset(
+                "res/drawable/ic_question_remind.png",
+                width: 16,
+                height: 16,
               ),
-            ],
-          )
-        ],
-      ),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -289,28 +277,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         } catch (error) {
           LogUtil.toastException(error);
         }
-
-        /*showModalBottomSheet(
-            isScrollControlled: true,
-            context: context,
-            builder: (BuildContext context) {
-              return EnterWalletPasswordWidget();
-            }).then((walletPassword) async {
-          if (walletPassword == null) {
-            return;
-          }
-
-          try {
-            await widget.walletVo.wallet.bitcoinActive(walletPassword);
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(LoadLocalDiskWalletAndActiveEvent());
-            Future.delayed(Duration(milliseconds: 500), () {
-              widget.loadDataBloc.add(LoadingEvent());
-            });
-          } catch (error) {
-            LogUtil.toastException(error);
-          }
-        });*/
       },
       child: Column(
         children: <Widget>[
