@@ -329,8 +329,6 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   _map3NodeSelection() {
     List<DropdownMenuItem> _map3NodeItems = List();
 
-    ///put map3 item into list
-    ///
     for (int i = 0; i < _map3NodeList.length; i++) {
       _map3NodeItems.add(
         DropdownMenuItem(
