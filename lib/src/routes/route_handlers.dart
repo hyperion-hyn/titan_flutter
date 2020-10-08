@@ -148,9 +148,7 @@ var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
-  var msg = params['msg']?.first != null
-      ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first)
-      : null;
+  var msg = params['msg']?.first != null ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first) : null;
   return ConfirmSuccessPage(msg: msg);
 });
 
@@ -167,9 +165,7 @@ var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
 
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeDepositConfirmPage(
-      params['coinVo']?.first,
-      '${params['transferAmount']?.first ?? 0}',
-      params['exchangeAddress']?.first);
+      params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['exchangeAddress']?.first);
 });
 
 var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
@@ -238,12 +234,10 @@ var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
   );
 });
 
-
 var map3NodePreEditHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  return Map3NodePreEditPage(
-  );
+  return Map3NodePreEditPage();
 });
 
 var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
@@ -255,7 +249,6 @@ var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
     actionEvent: actionEvent,
   );
 });
-
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
@@ -313,7 +306,10 @@ var map3NodeListHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeExitHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeExitPage();
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
+  return Map3NodeExitPage(
+    map3infoEntity: map3infoEntity,
+  );
 });
 
 var map3NodeCollectHandler = Handler(handlerFunc: (context, params) {
@@ -323,7 +319,10 @@ var map3NodeCollectHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeCancelHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeCancelPage();
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
+  return Map3NodeCancelPage(
+    map3infoEntity: map3infoEntity,
+  );
 });
 
 var map3NodeDivideHandler = Handler(handlerFunc: (context, params) {

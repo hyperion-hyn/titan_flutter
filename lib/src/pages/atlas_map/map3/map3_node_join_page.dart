@@ -6,22 +6,30 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/config/application.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
+
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class Map3NodeJoinPage extends StatefulWidget {
   final String contractId;
@@ -32,17 +40,25 @@ class Map3NodeJoinPage extends StatefulWidget {
   _Map3NodeJoinState createState() => new _Map3NodeJoinState();
 }
 
-class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
+class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
-  AllPageState currentState = LoadingState();
-
+  
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  AllPageState _currentState = LoadingState();
+  Map3InfoEntity _map3infoEntity;
+  AtlasApi _atlasApi = AtlasApi();
+  var _address = "string";
+  var _nodeAddress = "string";
+  
   ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
 
   String originInputStr = "";
+
+
 
   @override
   void initState() {
@@ -52,8 +68,29 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
       getCurrentSpend(text);
     });
 
-    getNetworkData();
+    // getNetworkData();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    print("[Join] dispose");
+
+    _filterSubject.close();
+    _loadDataBloc.close();
+    super.dispose();
+  }
+
+  @override
+  void onCreated() {
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet.getEthAccount().address;
+    // todo: test_1007
+    _nodeAddress = widget.contractId.toString();
+
+    getNetworkData();
+
+    super.onCreated();
   }
 
   @override
@@ -67,10 +104,26 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
     );
   }
 
-  void getNetworkData() async {
-    setState(() {
-      currentState = null;
-    });
+  Future getNetworkData() async {
+    try {
+      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
+
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
+    }
   }
 
   void textChangeListener() {
@@ -108,41 +161,37 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
     }
   }
 
-  @override
-  void dispose() {
-    _filterSubject.close();
-    super.dispose();
-  }
-
   Widget _pageView(BuildContext context) {
-    /*if (currentState != null || contractItem?.contract == null) {
+    if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
-        body: AllPageStateContainer(currentState, () {
+        body: AllPageStateContainer(_currentState, () {
           setState(() {
-            currentState = LoadingState();
+            _currentState = LoadingState();
           });
           getNetworkData();
         }),
       );
     }
 
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-  */
     return Column(
       children: <Widget>[
         Expanded(
-          child: BaseGestureDetector(
-            context: context,
-            child: SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _nodeWidget(context, contractItem?.contract),
-              SizedBox(height: 8),
-              getHoldInNum(
-                  context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
-              SizedBox(height: 8),
-              _tipsWidget(),
-            ])),
+          child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            enablePullUp: false,
+            onRefresh: getNetworkData,
+            child: BaseGestureDetector(
+              context: context,
+              child: SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _nodeWidget(context, contractItem?.contract),
+                SizedBox(height: 8),
+                getHoldInNum(
+                    context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false),
+                SizedBox(height: 8),
+                _tipsWidget(),
+              ])),
+            ),
           ),
         ),
         _confirmButtonWidget(),
@@ -217,15 +266,14 @@ class _Map3NodeJoinState extends State<Map3NodeJoinPage> {
               //   return;
               // };
 
-
-              if (_joinCoinController?.text?.isEmpty??true) {
+              if (_joinCoinController?.text?.isEmpty ?? true) {
                 Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
                 return;
               }
 
-              var amount = _joinCoinController?.text??"200000";
+              var amount = _joinCoinController?.text ?? "200000";
               var entity = PledgeMap3Entity.onlyType(AtlasActionType.JOIN_DELEGATE_MAP3);
-              entity.payload = PledgeMap3Payload("abc",amount);
+              entity.payload = PledgeMap3Payload("abc", amount);
               entity.amount = amount;
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,

@@ -2,33 +2,106 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/config/application.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
+
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-
+import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 
 class Map3NodeExitPage extends StatefulWidget {
+  final Map3InfoEntity map3infoEntity;
+  Map3NodeExitPage({this.map3infoEntity});
+
   @override
   State<StatefulWidget> createState() {
     return _Map3NodeExitState();
   }
 }
 
-class _Map3NodeExitState extends State<Map3NodeExitPage> {
+class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  Map3InfoEntity _map3infoEntity;
+  AtlasApi _atlasApi = AtlasApi();
+  var _address = "string";
+  var _nodeAddress = "string";
+
+  @override
+  void onCreated() {
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet.getEthAccount().address;
+    _nodeAddress = widget.map3infoEntity.nodeId;
+
+    getNetworkData();
+
+    super.onCreated();
+  }
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    print("[${widget.runtimeType}] dispose");
+
+    _loadDataBloc.close();
+    super.dispose();
+  }
+
+  Future getNetworkData() async {
+    try {
+      print("[${widget.runtimeType}] getNetworkData");
+
+      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
+
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_currentState != null || _map3infoEntity == null) {
+      return Scaffold(
+        body: AllPageStateContainer(_currentState, () {
+          setState(() {
+            _currentState = all_page_state.LoadingState();
+          });
+          getNetworkData();
+        }),
+      );
+    }
+
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: '终止节点',
@@ -40,154 +113,160 @@ class _Map3NodeExitState extends State<Map3NodeExitPage> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: SingleChildScrollView(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Image.asset(
-                              "res/drawable/map3_node_default_avatar.png",
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.cover,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text.rich(TextSpan(children: [
-                                  TextSpan(text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                  TextSpan(
-                                      text: "  币龄: 12天", style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
-                                ])),
-                                Container(
-                                  height: 4,
-                                ),
-                                Text("节点地址 oxfdaf89fda47sn43sf9sllsaFf", style: TextStyles.textC9b9b9bS12),
-                              ],
-                            ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Container(
-                                  color: HexColor("#1FB9C7").withOpacity(0.08),
-                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  child: Text("第二期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                ),
-                                Container(
-                                  height: 4,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
-                        child: Container(
-                          color: HexColor("#F2F2F2"),
-                          height: 0.5,
-                        ),
-                      ),
-                      _nodeServerWidget(),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                  child: Container(
-                    color: HexColor("#F4F4F4"),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Image.asset(
-                              "res/drawable/map3_node_default_avatar.png",
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.cover,
-                            ),
-                            SizedBox(
-                              width: 6,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text.rich(TextSpan(children: [
-                                  TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                  TextSpan(text: "", style: TextStyles.textC333S14bold),
-                                ])),
-                                Container(
-                                  height: 4,
-                                ),
-                                Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 18)}",
-                                    style: TextStyles.textC9b9b9bS12),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                  child: Container(
-                    color: HexColor("#F4F4F4"),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 12, right: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: LoadDataContainer(
+                bloc: _loadDataBloc,
+                enablePullUp: false,
+                onRefresh: getNetworkData,
+                child: SingleChildScrollView(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(
+                    color: Colors.white,
+                    child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(top: 3),
-                          child: Text(
-                            "*",
-                            style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
+                          padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Image.asset(
+                                "res/drawable/map3_node_default_avatar.png",
+                                width: 42,
+                                height: 42,
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(
+                                        text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(
+                                        text: "  币龄: 12天", style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  Text("节点地址 oxfdaf89fda47sn43sf9sllsaFf", style: TextStyles.textC9b9b9bS12),
+                                ],
+                              ),
+                              Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: <Widget>[
+                                  Container(
+                                    color: HexColor("#1FB9C7").withOpacity(0.08),
+                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    child: Text("第二期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                  ),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          width: 12,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 16),
+                          child: Container(
+                            color: HexColor("#F2F2F2"),
+                            height: 0.5,
+                          ),
                         ),
-                        Expanded(
-                          child: Text(
-                            "终止后无法再次激活，请谨慎操作！",
-//                            "撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
-                            style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.5),
+                        _nodeServerWidget(),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                    child: Container(
+                      color: HexColor("#F4F4F4"),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Image.asset(
+                                "res/drawable/map3_node_default_avatar.png",
+                                width: 42,
+                                height: 42,
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 18)}",
+                                      style: TextStyles.textC9b9b9bS12),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ])),
+                  SizedBox(
+                    height: 10,
+                    child: Container(
+                      color: HexColor("#F4F4F4"),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 12, right: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3),
+                            child: Text(
+                              "*",
+                              style: TextStyle(fontSize: 22, color: HexColor("#FF4C3B")),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: Text(
+                              "终止后无法再次激活，请谨慎操作！",
+//                            "撤销抵押将会影响节点进度，剩余抵押不足20%节点将会被取消",
+                              style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ])),
+              ),
             ),
             _confirmButtonWidget(),
           ],
