@@ -12,6 +12,10 @@ class Const {
     return 'https://api.hyn.space/';
   }
 
+  static String get LOCAL_DOMAIN {
+    return 'http://10.10.1.120:8090/';
+  }
+
   static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
 
   static String get NODE_DOMAIN {

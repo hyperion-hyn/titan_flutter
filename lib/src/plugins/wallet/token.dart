@@ -34,14 +34,6 @@ class SupportedTokens {
     symbol: 'BTC',
   );
 
-  static const HYN_MAIN = const AssetToken(
-    name: 'Hyperion',
-    decimals: 18,
-    contractAddress: null,
-    logo: 'res/drawable/ic_hyn_logo_new.png',
-    symbol: 'HYN',
-  );
-
   static const ETHEREUM = const AssetToken(
     name: 'Ethereum',
     decimals: 18,
@@ -62,7 +54,7 @@ class SupportedTokens {
     name: 'Hyperion',
     decimals: 18,
     contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
-    logo: "res/drawable/ic_hyn_logo_new.png",
+    logo: "res/drawable/ic_hyn_logo_empty.png",
     symbol: 'HYN ERC20',
   );
 
@@ -88,7 +80,7 @@ class SupportedTokens {
       decimals: 18,
       contractAddress: '0xaebbada2bece10c84cbeac637c438cb63e1446c9',
       //contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
-      logo: "res/drawable/ic_hyn_logo_new.png",
+      logo: "res/drawable/ic_hyn_logo_empty.png",
       symbol: 'HYN ERC20');
 
   static const HYN_RINKEBY = const AssetToken(

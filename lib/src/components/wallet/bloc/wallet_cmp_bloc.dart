@@ -15,6 +15,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -121,6 +122,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// flat wallet accounts
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
+    var hynContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -148,8 +150,15 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        coins.add(contractCoin);
+        if(contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol){
+          hynContractCoin = contractCoin;
+        }else{
+          coins.add(contractCoin);
+        }
       }
+    }
+    if(hynContractCoin != null){
+      coins.add(hynContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
