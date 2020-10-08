@@ -152,22 +152,26 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
         _currentPage++;
         loadDataBloc.add(RefreshSuccessEvent());
 
-        setState(() {
-          if (mounted) {
+        if (mounted) {
+          setState(() {
             _dataArray = dataList;
-          }
-        });
+          });
+        }
       }
 
       Future.delayed(Duration(seconds: 1), () {
-        setState(() {
-          _currentState = null;
-        });
+        if (mounted) {
+          setState(() {
+            _currentState = null;
+          });
+        }
       });
     } catch (e) {
-      setState(() {
-        _currentState = all_page_state.LoadFailState();
-      });
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
     }
   }
 }

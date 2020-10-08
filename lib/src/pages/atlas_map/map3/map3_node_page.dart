@@ -179,10 +179,10 @@ class _Map3NodeState extends BaseState<Map3NodePage>
       child: InkWell(
         onTap: () {
           if (isMine) {
-            Application.router.navigateTo(context,
-                Routes.map3node_contract_detail_page + "?contractId=2");
+            // Application.router.navigateTo(context,
+            //     Routes.map3node_contract_detail_page + "?contractId=2");
 
-            // Application.router.navigateTo(context, Routes.map3node_my_page);
+            Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
             if (!hasMore) return;
 
