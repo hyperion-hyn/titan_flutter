@@ -769,7 +769,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                           if (index == 2) {
                             Application.router.navigateTo(context, Routes.map3node_divide_page);
                           } else if (index == 0) {
-                            Application.router.navigateTo(context, Routes.map3node_exit_page);
+                            if (_map3infoEntity != null) {
+                              Application.router.navigateTo(
+                                context,
+                                Routes.map3node_exit_page +
+                                    '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+                              );
+                            }
                           } else if (index == 1) {
                             Application.router.navigateTo(
                                 context,
@@ -828,7 +834,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           ClickOvalButton(
             "撤销抵押",
             () {
-              Application.router.navigateTo(context, Routes.map3node_cancel_page);
+              if (_map3infoEntity != null) {
+                Application.router.navigateTo(
+                  context,
+                  Routes.map3node_cancel_page +
+                      '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+                );
+              }
             },
             width: 120,
             height: 32,
