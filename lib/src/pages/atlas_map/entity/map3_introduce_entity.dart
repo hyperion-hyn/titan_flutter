@@ -27,6 +27,8 @@ part 'map3_introduce_entity.g.dart';
   @JsonKey(name: 'version')
   String version;
 
+  String get name => this?.title??"Map3云节点 (${this?.version??"v1.0"})";
+
   Map3IntroduceEntity(this.createMin,this.days,this.feeMax,this.feeMin,this.startMin,this.title,this.version,);
 
   factory Map3IntroduceEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3IntroduceEntityFromJson(srcJson);

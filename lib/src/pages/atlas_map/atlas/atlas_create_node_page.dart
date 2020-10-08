@@ -86,7 +86,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _getMap3Nodes() {
-    _atlasApi.postMap3NodeList('address');
+    _atlasApi.getMap3NodeList('address');
   }
 
   _steps() {
@@ -141,6 +141,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                       fontWeight: _currentStep == Step.launch
                           ? FontWeight.bold
                           : FontWeight.w400,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -211,6 +212,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                       fontWeight: _currentStep != Step.launch
                           ? FontWeight.bold
                           : FontWeight.w400,
+                      fontSize: 12,
                     ),
                   ),
                 ],
@@ -244,8 +246,11 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   '请在电脑端按照文档指示启动一个Atlas节点，启动之后，你会获得一个bls key，然后进入下一步操作',
-                  style: TextStyle(height: 1.8),
-                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    height: 1.8,
+                    fontSize: 12,
+                  ),
+                  textAlign: TextAlign.left,
                 ),
               ),
             ),
@@ -256,6 +261,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                   '前往操作 >>',
                   style: TextStyle(
                     color: Colors.blue,
+                    fontSize: 14,
                   ),
                 ),
                 onTap: () {
@@ -267,7 +273,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Text(
                 '已启动且有bls key，直接下一步',
-                style: TextStyle(color: Colors.grey, fontSize: 14),
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
               ),
             ),
             ClickOvalButton(
@@ -281,6 +290,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               },
               width: 300,
               height: 46,
+              fontSize: 18,
             ),
             SizedBox(
               height: 32,
@@ -329,8 +339,6 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   _map3NodeSelection() {
     List<DropdownMenuItem> _map3NodeItems = List();
 
-    ///put map3 item into list
-    ///
     for (int i = 0; i < _map3NodeList.length; i++) {
       _map3NodeItems.add(
         DropdownMenuItem(
@@ -412,7 +420,8 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           Text(
             '填写基本信息',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
           _basicInfoItem(
@@ -562,7 +571,10 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
             children: <Widget>[
               Text(
                 title,
-                style: TextStyle(color: HexColor("#333333"), fontSize: 16),
+                style: TextStyle(
+                  color: HexColor("#333333"),
+                  fontSize: 14,
+                ),
               ),
               if (isEssential)
                 Text(
@@ -570,7 +582,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: HexColor("#FFFF4C3B"),
-                    fontSize: 16,
+                    fontSize: 14,
                   ),
                 ),
               Padding(
@@ -610,12 +622,16 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                       ? Text(
                           content,
                           style: TextStyle(
-                              color: HexColor("#999999"), fontSize: 14),
+                            color: HexColor("#999999"),
+                            fontSize: 14,
+                          ),
                         )
                       : Text(
                           hint,
                           style: TextStyle(
-                              color: HexColor("#999999"), fontSize: 14),
+                            color: HexColor("#999999"),
+                            fontSize: 14,
+                          ),
                         ),
               Padding(
                 padding: const EdgeInsets.only(left: 6),
@@ -647,13 +663,19 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           Text(
             '设置费率',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(
             height: 16,
           ),
-          Text('费率'),
+          Text(
+            '费率',
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
           SizedBox(
             height: 16,
           ),
@@ -684,7 +706,12 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           ),
           Row(
             children: <Widget>[
-              Text('最大费率'),
+              Text(
+                '最大费率',
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
               SizedBox(
                 width: 4,
               ),
@@ -692,7 +719,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                 '(设置过后不可以更改)',
                 style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               )
             ],
@@ -725,7 +752,12 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           ),
           Row(
             children: <Widget>[
-              Text('费率幅度'),
+              Text(
+                '费率幅度',
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
               SizedBox(
                 width: 4,
               ),
@@ -733,7 +765,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                 '(设置过后不可以更改)',
                 style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               )
             ],
@@ -785,13 +817,19 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           Text(
             'bls参数',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
           SizedBox(
             height: 16,
           ),
-          Text('bls key'),
+          Text(
+            'bls key',
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
           SizedBox(
             height: 16,
           ),
@@ -809,7 +847,12 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
           ),
           Row(
             children: <Widget>[
-              Text('bls签名'),
+              Text(
+                'bls签名',
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
               SizedBox(
                 width: 4,
               ),
@@ -817,7 +860,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
                 '(设置过后不可以更改)',
                 style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               )
             ],
@@ -892,6 +935,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
         Expanded(
           flex: 2,
           child: Container(
+            width: 200,
             height: 38,
             decoration: BoxDecoration(
               gradient: isCanNext

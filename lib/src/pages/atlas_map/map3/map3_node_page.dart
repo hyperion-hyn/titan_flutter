@@ -3,9 +3,12 @@ import 'package:flutter/painting.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -27,7 +30,8 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMixin {
+class _Map3NodeState extends BaseState<Map3NodePage>
+    with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 1;
@@ -37,10 +41,15 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
   @override
   bool get wantKeepAlive => true;
+  var _address = "";
 
   @override
   void initState() {
     super.initState();
+
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    _address = activatedWallet.wallet.getEthAccount().address;
 
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
@@ -56,6 +65,11 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
       _lastActiveList.add(item);
       _pendingList.add(item);
     }*/
+  }
+
+  @override
+  void onCreated() {
+    super.onCreated();
   }
 
   @override
@@ -84,11 +98,13 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: "我的节点", hasMore: _myList.isNotEmpty, isMine: true),
+            _sectionTitleWidget(title: "我的节点", hasMore: true, isMine: true),
             _myNodeListWidget(),
-            _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
+            _sectionTitleWidget(
+                title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
-            _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
+            _sectionTitleWidget(
+                title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],
         ),
@@ -96,16 +112,14 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     );
   }
 
-
   void getNetworkData() async {
     try {
-
-      List<Map3InfoEntity> contractNodeList = await _atlasApi.postMap3NodeList(
-        'address',
+      List<Map3InfoEntity> contractNodeList = await _atlasApi.getMap3NodeList(
+        _address,
         page: _currentPage,
         size: 10,
       );
-      
+
       if (contractNodeList.length > 0) {
         _lastActiveList = contractNodeList;
         _myList = contractNodeList;
@@ -147,22 +161,31 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
   Widget _pendingListWidget() {
     if (_pendingList.isEmpty) {
-      return _emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
+      return _emptyListWidget(
+          title: S.of(context).no_pengding_node_contract_hint);
     }
 
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-      return Container(color: Colors.white, child: getMap3NodeWaitItem(context, _pendingList[index]));
+      return Container(
+          color: Colors.white,
+          child: getMap3NodeWaitItem(context, _pendingList[index]));
     }, childCount: _pendingList.length));
   }
 
-  Widget _sectionTitleWidget({String title, bool hasMore = true, bool isMine = false}) {
+  Widget _sectionTitleWidget(
+      {String title, bool hasMore = true, bool isMine = false}) {
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
           if (isMine) {
-            Application.router.navigateTo(context, Routes.map3node_my_page);
+            Application.router.navigateTo(context,
+                Routes.map3node_contract_detail_page + "?contractId=2");
+
+            // Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
+            if (!hasMore) return;
+
             Application.router.navigateTo(
                 context,
                 Routes.map3node_list_page +
@@ -177,12 +200,13 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
               Expanded(
                   child: Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                style: TextStyle(
+                    fontWeight: FontWeight.w500, color: HexColor("#000000")),
               )),
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  "查看更多",
+                  isMine ? "查看收益" : "查看更多",
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -233,16 +257,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black12,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.05, color: Colors.black12),
-          borderRadius: BorderRadius.all(
-            Radius.circular(16.0),
-          ),
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
         child: Container(
           width: double.infinity,
           height: 162,
@@ -256,8 +272,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      sprintf(
-                          S.of(context).earth_outpace_server_node, [instanceCount]),
+                      sprintf(S.of(context).earth_outpace_server_node,
+                          [instanceCount]),
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -281,10 +297,10 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Widget _map3HeadWidget() {
-
     // todo: test_jison
     var title = "";
-    var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
+    var desc =
+        "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
     var guideTitle = "开通教程";
     return SliverToBoxAdapter(
       child: Container(
@@ -295,7 +311,8 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
             _nodesMapWidget(),
             Container(
               color: Colors.white24,
-              margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
+              margin: const EdgeInsets.only(
+                  left: 15, right: 15, top: 8, bottom: 16),
               child: Column(
                 children: <Widget>[
                   Padding(
@@ -305,7 +322,9 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
                       children: <Widget>[
                         Text(title,
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: DefaultColors.colorcc000000)),
                         Spacer(),
                         InkWell(
                           onTap: _pushWebViewAction,
@@ -326,15 +345,21 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
                         Padding(
                           padding: const EdgeInsets.only(top: 6),
                           child: ClipRRect(
-                            child: Image.asset("res/drawable/ic_map3_node_item_2.png",
-                                width: 80, height: 80, fit: BoxFit.cover),
+                            child: Image.asset(
+                                "res/drawable/ic_map3_node_item_2.png",
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.cover),
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                         ),
                         SizedBox(width: 16),
                         Flexible(
                           child: Text(desc,
-                              style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  height: 1.7,
+                                  color: DefaultColors.color99000000)),
                         )
                       ],
                     ),
@@ -367,11 +392,14 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
     var walletList = await WalletUtil.scanWallets();
 
     if (walletList.length == 0) {
-      Application.router.navigateTo(context,
-          Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_create_wallet +
+              "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_introduction_page);
+      await Application.router
+          .navigateTo(context, Routes.map3node_introduction_page);
     }
 
     // 2.创建成功回调的处理
@@ -390,7 +418,7 @@ class _Map3NodeState extends State<Map3NodePage> with AutomaticKeepAliveClientMi
   }
 
   Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=2");
+    Application.router.navigateTo(
+        context, Routes.map3node_contract_detail_page + "?contractId=2");
   }
 }
-

@@ -9,7 +9,7 @@ part of 'user_reward_entity.dart';
 UserRewardEntity _$UserRewardEntityFromJson(Map<String, dynamic> json) {
   return UserRewardEntity(
     json['node_num'] as int,
-    json['reward'] as int,
+    json['reward'] as String,
   );
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
@@ -31,6 +32,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
     "亚马逊云",
     "美国东部（弗吉尼亚北部）"
   ];
+  AtlasApi _atlasApi = AtlasApi();
 
   @override
   void initState() {
@@ -205,13 +207,14 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
-          // todo: test_jison
+
           // 1.上传图片 ---> 获取url
+          String result = await _atlasApi.postUploadImageFile(widget.entity.pic, (count, total) {
+            print("[object] ---> count:$count, total:$total");
+          });
+          print("[object] ---> result:$result");
 
           // 2.编辑创建节点需要的基本信息
-          // Application.router.navigateTo(
-          //     context, Routes.map3node_formal_confirm_page + "?actionEvent=${Map3NodeActionEvent.CREATE.index}");
-
           AtlasMessage message;
           if (!widget.entity.isEdit) {
             CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);

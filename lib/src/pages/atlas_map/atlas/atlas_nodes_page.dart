@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_node_detail_item.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/webview/webview.dart';
@@ -78,6 +79,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _getCommitteeInfo() async {
     try {
       _committeeInfo = await _atlasApi.postAtlasOverviewData();
+      setState(() {});
     } catch (e) {
       print('[_getCommitteeInfo]: $e');
     }
@@ -168,6 +170,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         '节点列表',
                         style: TextStyle(
                           fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -185,7 +188,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _atlasInfo() {
     return Column(
       children: <Widget>[
-        _atlasMap(),
+        Padding(
+          padding: EdgeInsets.all(16.0),
+          child: _atlasMap(),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 16,
@@ -235,7 +241,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           decoration: TextDecoration.underline,
                         ),
                       ),
-                      onTap: () {},
+                      onTap: () {
+
+                      },
                     ),
                   ],
                 ),
@@ -299,87 +307,75 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 //
 //    var _remainTimeMilliseconds = _ageEndTime - _ageStartTime;
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Material(
-        clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black12,
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 0.05, color: Colors.black12),
-          borderRadius: BorderRadius.all(
-            Radius.circular(16.0),
-          ),
-        ),
-        child: Container(
-          width: double.infinity,
-          height: 162,
-          child: Stack(
-            children: <Widget>[
-              AtlasMapWidget(_atlasNodeCoordinates),
-              Positioned(
-                left: 16,
-                bottom: 32,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Atlas共识节点',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.white,
-                      ),
+    return Container(
+      width: double.infinity,
+      height: 162,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.0),
+        child: Stack(
+          children: <Widget>[
+            AtlasMapWidget(_atlasNodeCoordinates),
+            Positioned(
+              left: 16,
+              bottom: 32,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Atlas共识节点',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '为海伯利安生态提供共识保证',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    )
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Text(
+                    '为海伯利安生态提供共识保证',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  )
+                ],
               ),
-              Positioned(
-                right: 16,
-                top: 8,
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_next_age,
-                      style:
-                          TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
-                    ),
-                    SizedBox(height: 4),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        AnimatedBuilder(
-                          animation: _ageIconAnimationController,
-                          builder: (_, child) {
-                            return Transform.rotate(
-                              angle:
-                                  _ageIconAnimationController.value * 2 * 3.14,
-                              child: child,
-                            );
-                          },
-                          child: Image.asset(
-                            'res/drawable/ic_atlas_age.png',
-                            width: 60,
-                            height: 60,
-                          ),
+            ),
+            Positioned(
+              right: 16,
+              top: 8,
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    S.of(context).atlas_next_age,
+                    style:
+                        TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
+                  ),
+                  SizedBox(height: 4),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      AnimatedBuilder(
+                        animation: _ageIconAnimationController,
+                        builder: (_, child) {
+                          return Transform.rotate(
+                            angle: _ageIconAnimationController.value * 2 * 3.14,
+                            child: child,
+                          );
+                        },
+                        child: Image.asset(
+                          'res/drawable/ic_atlas_age.png',
+                          width: 60,
+                          height: 60,
                         ),
-                        TimerTextWidget(
-                          remainTime: _remainTime,
-                          loopTime: _loopTime,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
+                      ),
+                      TimerTextWidget(
+                        remainTime: _remainTime,
+                        loopTime: _loopTime,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -450,6 +446,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 '我的节点',
                 style: TextStyle(
                   fontSize: 16,
+                  fontWeight: FontWeight.bold
                 ),
               ),
               Spacer(),
@@ -501,7 +498,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       return SliverList(
           delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return _nodeDetailItem(_atlasNodeList[index]);
+          return AtlasNodeDetailItem(_atlasNodeList[index]);
         },
         childCount: _atlasNodeList.length,
       ));
@@ -533,7 +530,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey[200],
-                    blurRadius: 20.0,
+                    blurRadius: 15.0,
                   ),
                 ],
               ),
@@ -588,178 +585,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               ),
             )
           ],
-        ),
-      ),
-    );
-  }
-
-  _nodeDetailItem(AtlasInfoEntity _atlasInfo) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: InkWell(
-        onTap: () async {
-          Application.router.navigateTo(context, Routes.atlas_detail_page);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 8.0,
-              ),
-            ],
-          ),
-          margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Image.asset(
-                      "res/drawable/map3_node_default_avatar.png",
-                      width: 42,
-                      height: 42,
-                      fit: BoxFit.cover,
-                    ),
-                    SizedBox(
-                      width: 6,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: _atlasInfo.name ?? 'name',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16)),
-                          TextSpan(text: "", style: TextStyles.textC333S14bold),
-                        ])),
-                        Container(
-                          height: 4,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              S.of(context).atlas_node_rank,
-                              style: TextStyles.textC9b9b9bS12,
-                            ),
-                            Text(
-                              '${1}',
-                              style: TextStyles.textC333S11,
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    Spacer(),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Text(
-                            _atlasInfo.createdAt,
-                            style: TextStyle(
-                                fontSize: 12, color: HexColor("#9B9B9B")),
-                          ),
-                        ),
-                        Container(
-                          height: 4,
-                        ),
-                        Container(
-                          color: HexColor("#1FB9C7").withOpacity(0.08),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          child: Text("_atlasInfo.getNodeType",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: HexColor("#5C4304"),
-                              )),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text.rich(TextSpan(children: [
-                              TextSpan(
-                                  text: '${S.of(context).atlas_reward_rate}: ',
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12)),
-                              TextSpan(text: ' '),
-                              TextSpan(
-                                  text: _atlasInfo.rewardRate,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ))
-                            ])),
-                          ),
-                          Expanded(
-                            child: Text.rich(TextSpan(children: [
-                              TextSpan(
-                                  text: S.of(context).atlas_total_staking,
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12)),
-                              TextSpan(text: ' '),
-                              TextSpan(
-                                  text: _atlasInfo.staking,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ))
-                            ])),
-                          )
-                        ],
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Expanded(
-                          child: Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: '${S.of(context).atlas_fee_rate}: ',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 12)),
-                            TextSpan(text: ' '),
-                            TextSpan(
-                                text: _atlasInfo.feeRate,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ))
-                          ])),
-                        ),
-                        Expanded(
-                          child: Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: '${S.of(context).atlas_sign_rate}: ',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 12)),
-                            TextSpan(text: ' '),
-                            TextSpan(
-                                text: _atlasInfo.signRate,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ))
-                          ])),
-                        )
-                      ],
-                    )
-                  ],
-                )
-              ],
-            ),
-          ),
         ),
       ),
     );

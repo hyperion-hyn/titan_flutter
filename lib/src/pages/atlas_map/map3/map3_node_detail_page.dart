@@ -16,8 +16,12 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -35,6 +39,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
@@ -62,12 +67,14 @@ class Map3NodeDetailPage extends StatefulWidget {
 
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
-  NodeApi _api = NodeApi();
+  NodeApi _nodeApi = NodeApi();
+  AtlasApi _atlasApi = AtlasApi();
 
   ContractDetailItem _contractDetailItem;
   UserDelegateState _userDelegateState;
   ContractNodeItem _contractNodeItem;
   ContractState _contractState;
+  Map3InfoEntity _map3infoEntity;
 
   Wallet _wallet;
   bool _haveNextEpisode = true;
@@ -81,8 +88,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
-  NodeApi _nodeApi = NodeApi();
-  List<ContractDelegateRecordItem> _delegateRecordList = [];
+  List<Map3StakingLogEntity> _delegateRecordList = [];
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
@@ -558,10 +564,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   double _moreSizeWidth = 100;
   double _moreOffsetLeft = 246;
   double _moreOffsetTop = 76;
+  var _address = "string";
+  var _nodeAddress = "string";
 
   @override
   void onCreated() {
-    _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet.getEthAccount().address;
+    // todo: test_1007
+    _nodeAddress = widget.contractId.toString();
+
     getContractDetailData();
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
@@ -706,7 +718,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _spacer(),
 
                   // 5.合约流水信息
-                  SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
+
+                  SliverToBoxAdapter(
+                      child: Visibility(
+                    visible: _delegateRecordList.isNotEmpty,
+                    child: _delegateRecordHeaderWidget(),
+                  )),
                   SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                     return _delegateRecordItemWidget(_delegateRecordList[index]);
@@ -1560,16 +1577,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _delegateRecordItemWidget(ContractDelegateRecordItem item) {
+  Widget _delegateRecordItemWidget(Map3StakingLogEntity item) {
+    // todo: 缺少交易状态信息
     String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
-    var operaState = enumBillsOperaStateFromString(item.operaType);
-    var recordState = enumBillsRecordStateFromString(item.state);
-    var isPengding = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
-    // var isWithdrawDelegatePengding =
-    //     operaState == BillsOperaState.DELEGATE && recordState == BillsRecordState.PRE_CREATE || isPengding;
-    String showName = item.userName;
-    if (item.userName.isNotEmpty) {
-      showName = item.userName.characters.first;
+    var operaState = enumBillsOperaStateFromString("DELEGATE");
+    var recordState = enumBillsRecordStateFromString("PRE_CREATE");
+    var isPending = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
+
+    String showName = item.id.toString();
+    if (showName.isNotEmpty) {
+      showName = showName.characters.first;
     }
 
     return Container(
@@ -1600,7 +1617,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         children: <Widget>[
                           RichText(
                             text: TextSpan(
-                              text: "${item.userName}",
+                              text: "${item.id}",
                               style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
                             ),
                           ),
@@ -1630,7 +1647,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                isPengding ? "*" : FormatUtil.amountToString(item.amount),
+                                isPending ? "*" : FormatUtil.amountToString(item.staking.toString()),
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1640,7 +1657,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         Container(
                           height: 8.0,
                         ),
-                        Text(FormatUtil.formatDate(item.createAt, isSecond: true),
+                        Text(item.createdAt,
+                            // Text(FormatUtil.formatDate(item.createdAt, isSecond: true),
                             style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                       ],
                     ),
@@ -1663,9 +1681,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _billStateWidget(ContractDelegateRecordItem item) {
-    var operaState = enumBillsOperaStateFromString(item.operaType);
-    var recordState = enumBillsRecordStateFromString(item.state);
+  Widget _billStateWidget(Map3StakingLogEntity item) {
+    // todo: 缺少交易状态信息
+    var operaState = enumBillsOperaStateFromString("DELEGATE");
+    var recordState = enumBillsRecordStateFromString("PRE_CREATE");
 
     switch (recordState) {
       case BillsRecordState.PRE_CREATE:
@@ -1738,8 +1757,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _currentPage = 0;
       _delegateRecordList = [];
 
-      List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+      List<Map3StakingLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1759,8 +1777,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<ContractDelegateRecordItem> tempMemberList =
-          await _nodeApi.getContractDelegateRecord(widget.contractId, page: _currentPage);
+
+      List<Map3StakingLogEntity> tempMemberList =
+          await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1783,20 +1802,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Future getContractDetailData() async {
     try {
+
       // 0.
       if (_isNoWallet) {
-        _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
+        _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
       } else {
-        _isDelegated = await _api.checkIsDelegatedContractInstance(widget.contractId);
+        _isDelegated = await _nodeApi.checkIsDelegatedContractInstance(widget.contractId);
         if (_isDelegated) {
-          _contractDetailItem = await _api.getContractDetail(widget.contractId);
+          _contractDetailItem = await _nodeApi.getContractDetail(widget.contractId);
           _contractNodeItem = _contractDetailItem?.instance;
 
           _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
         } else {
-          _contractNodeItem = await _api.getContractInstanceItem("${widget.contractId}");
+          _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
         }
       }
+
+      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
 
       // 1.
       _contractState = _contractNodeItem.stateValue;
@@ -1820,6 +1842,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       });
     } catch (e) {
       logger.e(e);
+      LogUtil.toastException(e);
 
       if (mounted) {
         setState(() {
@@ -1892,7 +1915,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
 
-        var success = await _api.withdrawContractInstance(
+        var success = await _nodeApi.withdrawContractInstance(
             _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
         if (success == "success") {
           _broadcastContractAction();
@@ -1943,9 +1966,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
+  void _pushTransactionDetailAction(Map3StakingLogEntity item) {
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-    var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
+    var url = EtherscanApi.getTxDetailUrl(item.map3Address, isChinaMainland);
     if (url != null) {
       Navigator.push(
           context,
@@ -1985,7 +2008,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _nextAction();
   }
 
-  _nextAction() {
+  void _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
 
     print("[detai] _next action, result:$result");

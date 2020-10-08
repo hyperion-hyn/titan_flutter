@@ -10,7 +10,7 @@ part 'user_reward_entity.g.dart';
   int nodeNum;
 
   @JsonKey(name: 'reward')
-  int reward;
+  String reward;
 
   UserRewardEntity(this.nodeNum,this.reward,);
 

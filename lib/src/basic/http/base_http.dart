@@ -210,9 +210,14 @@ class BaseHttpCore {
         /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
         });*/
+
         response = await dio.post(url,
             data: params, options: options, cancelToken: cancelToken);
-      } else if (data != null) {
+
+        /*if (url == '/v1/map3/info') {
+          print("[object] ---> code:${response.statusCode}");
+        }*/
+      }  else if (data != null) {
         LogUtil.printMessage(
             "[base_http] post data = ${data.toString()} ***URL = $url");
         response = await dio.post(url,
