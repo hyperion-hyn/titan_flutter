@@ -125,6 +125,7 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
         } else if (state is UpdateAssetsState) {
           try {
             var ret = await _exchangeApi.getAssetsList();
+            print("[object] ---> ret:$ret");
             exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
           } catch (e) {
             if (e is HttpResponseCodeNotSuccess) {

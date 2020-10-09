@@ -632,6 +632,9 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     }
 
     var remainDay = S.of(context).left + FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft);
+    var config = SettingInheritedModel.ofConfig(context)
+        .systemConfigEntity;
+    var hasShare = config?.canShareMap3Node??true;
 
     return Padding(
       padding: EdgeInsets.only(bottom: _visible ? 48 : 0),
@@ -647,7 +650,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
                 child: Container(
                     color: Colors.white,
                     child: getMap3NodeProductHeadItem(context, _contractNodeItem,
-                        isJoin: true, isDetail: false, hasShare: true)),
+                        isJoin: true, isDetail: false, hasShare: hasShare)),
               ),
 
               // 2.节点信息

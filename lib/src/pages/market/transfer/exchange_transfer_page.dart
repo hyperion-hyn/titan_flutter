@@ -476,7 +476,34 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             .assetList
             ?.getAsset(_selectedCoinType)
             ?.rechargeMin;
+    var complex = _minTransferText + _minTransferAmount + _selectedCoinType;
 
+    var _maxTransferAmount = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList
+        ?.getAsset(_selectedCoinType)
+        ?.withdrawMax;
+//    if (_maxTransferAmount == null || _maxTransferAmount.isEmpty) {
+//      double price = 10000.0;
+//      if (_selectedCoinType == "HYN") {
+//        price = 250000;
+//      } else if (_selectedCoinType == "USDT") {
+//        price = 15000;
+//      }
+//      _maxTransferAmount = FormatUtil.formatPrice(price);
+//    }
+    var _maxTransferText = S.of(context).exchange_withdraw_max;
+
+    if (_fromExchangeToWallet) {
+      complex = _minTransferText +
+          _minTransferAmount +
+          _selectedCoinType +
+          "," +
+          _maxTransferText +
+          _maxTransferAmount +
+          _selectedCoinType;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -490,7 +517,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 width: 4.0,
               ),
               Text(
-                '($_minTransferText $_minTransferAmount $_selectedCoinType)',
+                '($complex) ',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 11,
@@ -520,6 +547,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     if (Decimal.parse(value) >
                         Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
+                    }
+
+                    if (Decimal.parse(value) >
+                            Decimal.parse(_maxTransferAmount) &&
+                        _fromExchangeToWallet) {
+                      return S.of(context).exchange_withdraw_over_than_max;
                     }
 
                     if (Decimal.parse(value) <

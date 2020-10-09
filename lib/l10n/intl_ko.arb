@@ -113,7 +113,7 @@
   "rmb": "인민폐",
   "map3_node_introduction": "Map3 노드 소개",
   "private_and_safety": "개인보호 와 안전",
-  "create_wallet": "지갑 생성",
+  "create_wallet": "새 지갑 생성",
   "import_wallet": "지갑 가져오기",
   "private_wallet_tips": "당신 지갑 키는 당신 것입니다 (개인 보호 지갑)",
   "create_wallet_tips": "비공개 개인 지갑 만들기",
@@ -984,10 +984,12 @@
   "exchange_deposit_confirm": "충전 확인",
   "exchange_withdraw_confirm": "출금 확인",
   "exchange_withdraw_min": "최소 출금 금액",
+  "exchange_withdraw_max": "최대 인출",
   "exchange_deposit_min": "최소 충전",
   "exchange_deposit_input_hint": "출금 수량을 입력하세요",
   "exchange_withdraw_input_hint": "재충전 수량을 입력하세요",
   "exchange_withdraw_less_than_min": "최소 출금 금액 미만",
+  "exchange_withdraw_over_than_max": "최대 인출 금액 초과",
   "exchange_deposit_less_than_min": "최소 충전량 미만",
   "order_success": "성공적으로 주문",
   "recharge": "재 충전",
@@ -997,5 +999,7 @@
   "wallet_name_do_not_contain_space": "공백을 포함하지 마십시오",
   "exchange_change_wallet": "지갑 변경",
   "exchange_logout": "로그 아웃",
-  "exchange_logout_hint": "승인 상태를 종료하려고합니다. 종료 하시겠습니까?"
+  "exchange_logout_hint": "승인 상태를 종료하려고합니다. 종료 하시겠습니까?",
+  "bio_auth_expired_hint": "생체 인식이 만료되었습니다. 비밀번호를 입력하세요.",
+  "map3_main_page_title": "Map3지도 서비스 노드"
 }

@@ -410,6 +410,7 @@ class UiUtil {
     if (AuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthUtil.bioAuthExpired(authConfig)) {
+        Fluttertoast.showToast(msg: S.of(context).bio_auth_expired_hint);
         var pwd = await showPasswordDialog(
           context,
           wallet,
@@ -418,14 +419,15 @@ class UiUtil {
         );
 
         if (pwd != null) {
-          ///Update last bio-auth time
-          authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-
-          AuthUtil.saveAuthConfig(
-            authConfig,
-            wallet,
-            authType: authType,
-          );
+          ///Update last bio-auth time if pwd is correct
+          if (await onCheckPwdValid(pwd)) {
+            authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+            AuthUtil.saveAuthConfig(
+              authConfig,
+              wallet,
+              authType: authType,
+            );
+          }
 
           return pwd;
         }
@@ -611,6 +613,7 @@ class UiUtil {
           child: Text(S.of(context).confirm),
           onPressed: () {
             Navigator.pop(context);
+
             ///
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ExchangeAuthPage()));

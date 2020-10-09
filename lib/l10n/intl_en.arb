@@ -114,7 +114,7 @@
   "rmb": "CNY",
   "map3_node_introduction": "Map3",
   "private_and_safety": "Private and Secure",
-  "create_wallet": "Create Wallet",
+  "create_wallet": "Create New Wallet",
   "import_wallet": "Import Wallet",
   "private_wallet_tips": "Private key never leaves your device",
   "create_wallet_tips": "Create a private account",
@@ -996,10 +996,12 @@
   "exchange_deposit_confirm": "Recharge Confirmation",
   "exchange_withdraw_confirm": "Withdraw confirmation",
   "exchange_withdraw_min": "Minimum withdrawal amount",
+  "exchange_withdraw_max": "Maximum withdrawal amount",
   "exchange_deposit_min": "Minimum Recharge amount",
   "exchange_deposit_input_hint": "Please enter the withdrawal quantity",
   "exchange_withdraw_input_hint": "Please enter the recharge quantity",
   "exchange_withdraw_less_than_min": "Less than the minimum withdrawal amount",
+  "exchange_withdraw_over_than_max": "Over than the maximum withdrawal amount",
   "exchange_deposit_less_than_min": "Less than the minimum recharge amount",
   "order_success": "Finished",
   "recharge": "Top-up",
@@ -1009,5 +1011,7 @@
   "wallet_name_do_not_contain_space": "Do not include space",
   "exchange_change_wallet": "Switch wallet",
   "exchange_logout": "sign out",
-  "exchange_logout_hint": "You are about to exit the authorization status. Are you sure you want to exit?"
+  "exchange_logout_hint": "You are about to exit the authorization status. Are you sure you want to exit?",
+  "bio_auth_expired_hint": "Biometrics has expired, please enter password",
+  "map3_main_page_title": "Map3 map service node"
 }

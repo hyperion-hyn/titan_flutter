@@ -113,7 +113,7 @@
   "rmb": "人民币",
   "map3_node_introduction": "Map3",
   "private_and_safety": "私密和安全",
-  "create_wallet": "创建钱包",
+  "create_wallet": "创建新钱包",
   "import_wallet": "导入钱包",
   "private_wallet_tips": "账户私钥永远不会离开你的设备",
   "create_wallet_tips": "创建一个私密钱包",
@@ -992,10 +992,12 @@
   "exchange_deposit_confirm": "充值确认",
   "exchange_withdraw_confirm": "提币确认",
   "exchange_withdraw_min": "最小提币数",
+  "exchange_withdraw_max": "最大提币数",
   "exchange_deposit_min": "最小充值数",
   "exchange_deposit_input_hint": "请输入提币数量",
   "exchange_withdraw_input_hint": "请输入充值数量",
   "exchange_withdraw_less_than_min": "少于最小提币数",
+  "exchange_withdraw_over_than_max": "超过最大提币数",
   "exchange_deposit_less_than_min": "少于最小充值数",
   "order_success": "下单成功",
   "recharge": "充值",
@@ -1005,5 +1007,7 @@
   "wallet_name_do_not_contain_space": "请勿包含空格",
   "exchange_change_wallet": "更换钱包",
   "exchange_logout": "退出登录",
-  "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？"
+  "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？",
+  "bio_auth_expired_hint": "生物识别已过期，请输入密码",
+  "map3_main_page_title": "Map3地图服务节点"
 }

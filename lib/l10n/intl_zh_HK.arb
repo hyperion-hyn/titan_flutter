@@ -113,7 +113,7 @@
   "rmb": "人民幣",
   "map3_node_introduction": "MAP3",
   "private_and_safety": "私密和安全",
-  "create_wallet": "創建錢包",
+  "create_wallet": "創建新錢包",
   "import_wallet": "導入錢包",
   "private_wallet_tips": "賬戶私鑰永遠不會離開妳的設備",
   "create_wallet_tips": "創建壹個私密賬戶",
@@ -984,10 +984,12 @@
   "exchange_deposit_confirm": "充值確認",
   "exchange_withdraw_confirm": "提幣確認",
   "exchange_withdraw_min": "最小提幣數",
+  "exchange_withdraw_max": "最大提幣數",
   "exchange_deposit_min": "最小充值數",
   "exchange_deposit_input_hint": "請輸入提幣數量",
   "exchange_withdraw_input_hint": "請輸入充值數量",
   "exchange_withdraw_less_than_min": "少於最小提幣數",
+  "exchange_withdraw_over_than_max": "大於最大提幣數",
   "exchange_deposit_less_than_min": "少於最小充值數",
   "order_success": "下單成功",
   "recharge": "充值",
@@ -997,5 +999,7 @@
   "wallet_name_do_not_contain_space": "請勿包含空格",
   "exchange_change_wallet": "更換錢包",
   "exchange_logout": "退出登錄",
-  "exchange_logout_hint": "您將要退出授權狀態，確定要退出嗎？"
+  "exchange_logout_hint": "您將要退出授權狀態，確定要退出嗎？",
+  "bio_auth_expired_hint": "生物識別已過期，請輸入密碼",
+  "map3_main_page_title": "Map3地圖服務節點"
 }

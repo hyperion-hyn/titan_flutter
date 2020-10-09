@@ -20,11 +20,13 @@ SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
     json['collectMap3NodeCreatorGasLimit'] as int ?? 800000,
     json['collectMap3NodePartnerGasLimit'] as int ?? 80000,
     json['collectHalfMap3NodeGasLimit'] as int ?? 150000,
+    json['canShareMap3Node'] as bool ?? true,
+    json['canCheckMap3Node'] as bool ?? true,
+    json['canCheckMap3NodeCount'] as int ?? 1,
   );
 }
 
-Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) => <String, dynamic>{
       'ethTransferGasLimit': instance.ethTransferGasLimit,
       'erc20TransferGasLimit': instance.erc20TransferGasLimit,
       'erc20ApproveGasLimit': instance.erc20ApproveGasLimit,
@@ -37,4 +39,7 @@ Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) =>
       'collectMap3NodeCreatorGasLimit': instance.collectMap3NodeCreatorGasLimit,
       'collectMap3NodePartnerGasLimit': instance.collectMap3NodePartnerGasLimit,
       'collectHalfMap3NodeGasLimit': instance.collectHalfMap3NodeGasLimit,
+      'canShareMap3Node': instance.canShareMap3Node,
+      'canCheckMap3Node': instance.canCheckMap3Node,
+      'canCheckMap3NodeCount': instance.canCheckMap3NodeCount,
     };
