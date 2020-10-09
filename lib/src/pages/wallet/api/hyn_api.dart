@@ -17,6 +17,7 @@ class HYNApi {
     String toAddress,
     BigInt amount,
     IMessage message,
+    bool isAtlasTrans = true
   }) async {
     var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI);
     final txHash = await wallet.sendEthTransaction(
@@ -26,6 +27,7 @@ class HYNApi {
       value: amount,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
+      isAtlasTrans: isAtlasTrans
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
