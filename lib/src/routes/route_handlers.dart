@@ -62,7 +62,8 @@ import 'package:titan/src/pages/wallet/wallet_show_account_widget.dart';
 import '../config/consts.dart';
 import 'fluro_convert_utils.dart';
 
-var rootHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+var rootHandler = Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
   return RootPageControlComponent(key: Keys.rootKey);
 });
 
@@ -99,14 +100,17 @@ var walletAccountDetailHandler = Handler(handlerFunc: (context, params) {
   return ShowAccountPage(params['coinVo']?.first);
 });
 
-var walletAccountSendTransactionHandler = Handler(handlerFunc: (context, params) {
+var walletAccountSendTransactionHandler =
+    Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return WalletSendPage(params['coinVo']?.first, params['toAddress']?.first);
 });
 
 var transferConfirmHandler = Handler(handlerFunc: (context, params) {
   return WalletSendConfirmPage(
-      params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['receiverAddress']?.first);
+      params['coinVo']?.first,
+      '${params['transferAmount']?.first ?? 0}',
+      params['receiverAddress']?.first);
 });
 
 var managerWalletHandler = Handler(
@@ -118,13 +122,15 @@ var managerWalletHandler = Handler(
 
 var settingWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  Wallet wallet =
+      Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
   return WalletSettingPage(wallet);
 });
 
 var settingBackupNoticeWalletHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Wallet wallet = Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
+  Wallet wallet =
+      Wallet.fromJson(FluroConvertUtils.string2map(params['walletStr']?.first));
   return WalletBackupNoticePage(wallet);
 });
 
@@ -143,12 +149,16 @@ var showResumeWordForCreation = Handler(handlerFunc: (context, params) {
 });
 
 var confirmResumeWordForCreation = Handler(handlerFunc: (context, params) {
-  return ConfirmResumeWordPage(params['mnemonic']?.first,
-      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first), params['password']?.first);
+  return ConfirmResumeWordPage(
+      params['mnemonic']?.first,
+      FluroConvertUtils.fluroCnParamsDecode(params['walletName']?.first),
+      params['password']?.first);
 });
 
 var confirmSuccessHandler = Handler(handlerFunc: (context, params) {
-  var msg = params['msg']?.first != null ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first) : null;
+  var msg = params['msg']?.first != null
+      ? FluroConvertUtils.fluroCnParamsDecode(params['msg']?.first)
+      : null;
   return ConfirmSuccessPage(msg: msg);
 });
 
@@ -165,7 +175,9 @@ var exchangeTransferHandler = Handler(handlerFunc: (context, params) {
 
 var exchangeDepositConfirmHandler = Handler(handlerFunc: (context, params) {
   return ExchangeDepositConfirmPage(
-      params['coinVo']?.first, '${params['transferAmount']?.first ?? 0}', params['exchangeAddress']?.first);
+      params['coinVo']?.first,
+      '${params['transferAmount']?.first ?? 0}',
+      params['exchangeAddress']?.first);
 });
 
 var exchangeWithdrawConfirmHandler = Handler(handlerFunc: (context, params) {
@@ -186,7 +198,8 @@ var contributionTasksHandler = Handler(handlerFunc: (context, params) {
 });
 
 var contributionDoneHandler = Handler(handlerFunc: (context, params) {
-  return ContributionFinishUploadPage(backRouteName: params['backRouteName']?.first);
+  return ContributionFinishUploadPage(
+      backRouteName: params['backRouteName']?.first);
 });
 
 var contributionScanSignalHandler = Handler(handlerFunc: (context, params) {
@@ -260,7 +273,8 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   ContractNodeItem contractNodeItem;
   var item = params['contractNodeItem']?.first;
   if (item != null) {
-    contractNodeItem = ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+    contractNodeItem =
+        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
   }
 
   var actionEvent = params['actionEvent']?.first;
@@ -278,8 +292,8 @@ var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
-  ContractNodeItem contractNodeItem =
-      ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
+  ContractNodeItem contractNodeItem = ContractNodeItem.fromJson(
+      FluroConvertUtils.string2map(params['contractNodeItem']?.first));
   return Map3NodeSharePage(contractNodeItem);
 });
 
@@ -306,7 +320,8 @@ var map3NodeListHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeExitHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['info']?.first));
   return Map3NodeExitPage(
     map3infoEntity: map3infoEntity,
   );
@@ -319,7 +334,8 @@ var map3NodeCollectHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeCancelHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['info']?.first));
   return Map3NodeCancelPage(
     map3infoEntity: map3infoEntity,
   );
@@ -348,15 +364,23 @@ var atlasCreateNodeHandler = Handler(handlerFunc: (context, params) {
 
 var atlasCreateNodeInfoHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  CreateAtlasPayload _createAtlasPayload =
-      CreateAtlasPayload.fromJson(FluroConvertUtils.string2map(params['createAtlasPayload']?.first));
-  return AtlasCreateInfoPage(_createAtlasPayload);
+  CreateAtlasPayload _createAtlasPayload = CreateAtlasPayload.fromJson(
+    FluroConvertUtils.string2map(params['createAtlasPayload']?.first),
+  );
+  var _selectedMap3NodeName = FluroConvertUtils.fluroCnParamsDecode(
+    params['selectedMap3NodeName']?.first,
+  );
+
+  return AtlasCreateInfoPage(
+    _createAtlasPayload,
+    _selectedMap3NodeName,
+  );
 });
 
 var atlasCreateNodeConfirmHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  CreateAtlasPayload _createAtlasPayload =
-      CreateAtlasPayload.fromJson(FluroConvertUtils.string2map(params['createAtlasPayload']?.first));
+  CreateAtlasPayload _createAtlasPayload = CreateAtlasPayload.fromJson(
+      FluroConvertUtils.string2map(params['createAtlasPayload']?.first));
   return AtlasNodeCreateConfirmPage(_createAtlasPayload);
 });
 

@@ -22,9 +22,11 @@ typedef TextChangeCallback = void Function(String text);
 
 class AtlasCreateInfoPage extends StatefulWidget {
   final CreateAtlasPayload _createAtlasPayload;
+  final String _selectedMap3NodeName;
 
   AtlasCreateInfoPage(
     this._createAtlasPayload,
+    this._selectedMap3NodeName,
   );
 
   @override
@@ -107,7 +109,7 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
         ),
         Expanded(
           child: Text(
-            'Lance的Map3节点',
+            widget._selectedMap3NodeName,
             style: TextStyle(
               fontSize: 14,
             ),
@@ -267,12 +269,13 @@ class _AtlasCreateInfoPageState extends State<AtlasCreateInfoPage> {
             );
 
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Map3NodeConfirmPage(
-                    message: message,
-                  ),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => Map3NodeConfirmPage(
+                  message: message,
+                ),
+              ),
+            );
           }
 
 //          Application.router.navigateTo(
