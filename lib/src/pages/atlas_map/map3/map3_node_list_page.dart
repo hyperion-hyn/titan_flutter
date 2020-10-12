@@ -54,12 +54,28 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    if (widget.model.type != MyContractType.active) {
+      return _pageWidget(context);
+    }
+
+    return Scaffold(
+      appBar: BaseAppBar(
+        baseTitle: widget.model.name,
+      ),
+      body: _pageWidget(context),
+    );
+  }
+
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null) {
       return AllPageStateContainer(_currentState, () {
         setState(() {
           _currentState = all_page_state.LoadingState();
         });
+
+        //_loadData();
       });
     }
 
@@ -76,20 +92,6 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
             },
             itemCount: _dataArray.length),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.model.type != MyContractType.active) {
-      return _pageWidget(context);
-    }
-
-    return Scaffold(
-      appBar: BaseAppBar(
-        baseTitle: widget.model.name,
-      ),
-      body: _pageWidget(context),
     );
   }
 
