@@ -47,7 +47,7 @@ class HYNApi {
           identity: createAtlasEntity.payload.nodeId,
           securityContact: createAtlasEntity.payload.contact,
           website: createAtlasEntity.payload.home),
-      operatorAddress: wallet.getAtlasAccount().address,
+      operatorAddress: createAtlasEntity.payload.map3Address,
       slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
@@ -72,7 +72,7 @@ class HYNApi {
           identity: createAtlasEntity.payload.nodeId,
           securityContact: createAtlasEntity.payload.contact,
           website: createAtlasEntity.payload.home),
-      operatorAddress: wallet.getAtlasAccount().address,
+      operatorAddress: createAtlasEntity.payload.map3Address,
       slotKeyToRemove: "",
       slotKeyToAdd: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeyToAddSig:

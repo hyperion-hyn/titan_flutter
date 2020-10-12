@@ -1,9 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_option_edit_page.dart';
@@ -17,6 +21,8 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 
+import 'atlas_stake_list_page.dart';
+
 typedef TextChangeCallback = void Function(String text);
 
 class AtlasCreateNodePage extends StatefulWidget {
@@ -28,7 +34,7 @@ class AtlasCreateNodePage extends StatefulWidget {
   }
 }
 
-class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
+class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
   var _currentStep = Step.launch;
 
   CreateAtlasPayload _createAtlasPayLoad = CreateAtlasPayload.fromJson({});
@@ -43,11 +49,18 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   List<Map3InfoEntity> _map3NodeList = List();
   var _selectedMap3NodeIndex = 0;
 
+  WalletVo activatedWallet;
+
+  @override
+  void onCreated() {
+    activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    _getMap3Nodes();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _getMap3Nodes();
   }
 
   @override
@@ -79,13 +92,44 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       body: Container(
         color: Colors.white,
         height: double.infinity,
-        child: _currentStep == Step.launch ? _launchNodeTutorial() : _nodeOptionsSetup(),
+        child: _currentStep == Step.launch
+            ? _launchNodeTutorial()
+            : _nodeOptionsSetup(),
       ),
     );
   }
 
   _getMap3Nodes() async {
-    await _atlasApi.getMap3NodeList('address');
+    try {
+//      _map3NodeList = await _atlasApi.getMap3NodeList(
+//        activatedWallet?.wallet?.getAtlasAccount()?.address,
+//      );
+
+      _map3NodeList.add(
+        Map3InfoEntity.onlyId(1)
+          ..name = 'Lance的Map3-1'
+          ..address = 'sdkfjslkgn',
+      );
+
+      _map3NodeList.add(
+        Map3InfoEntity.onlyId(2)
+          ..name = 'Lance的Map3-2'
+          ..address = 'dsgsjgkls',
+      );
+
+      _map3NodeList.add(
+        Map3InfoEntity.onlyId(3)
+          ..name = 'Lance的Map3-3'
+          ..address = 'fksjgncodf',
+      );
+
+      ///select first map3 node on default
+      _selectedMap3NodeIndex = 0;
+      _createAtlasPayLoad.map3Address =
+          _map3NodeList[_selectedMap3NodeIndex]?.address;
+
+      setState(() {});
+    } catch (e) {}
   }
 
   _steps() {
@@ -336,6 +380,25 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
   }
 
   _map3NodeSelection() {
+    if (_map3NodeList.length == 0) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Text("抵押Atlas节点，你需要先拥有Map3节点，现在你可以进行以下操作参与抵押Atlas节点：",
+                style: TextStyles.textC333S14),
+            Padding(
+              padding: const EdgeInsets.only(top: 28, bottom: 10),
+              child: Text("1、创建并启动一个Map3节点，然后抵押到Atlas节点并享受节点出块奖励",
+                  style: TextStyles.textC333S12),
+            ),
+            Text("马上创建Map3节点",
+                style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12)),
+          ],
+        ),
+      );
+    }
     List<DropdownMenuItem> _map3NodeItems = List();
 
     for (int i = 0; i < _map3NodeList.length; i++) {
@@ -343,7 +406,7 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
         DropdownMenuItem(
           value: i,
           child: Text(
-            _map3NodeList[i]?.name,
+            _map3NodeList[i].name,
             style: TextStyle(
               fontSize: 14,
             ),
@@ -352,28 +415,6 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
       );
     }
 
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 0,
-        child: Text(
-          'Lance的Map3节点-1',
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );
-    _map3NodeItems.add(
-      DropdownMenuItem(
-        value: 1,
-        child: Text(
-          'Lance的Map3节点-2',
-          style: TextStyle(
-            fontSize: 14,
-          ),
-        ),
-      ),
-    );
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -393,6 +434,9 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
               onChanged: (value) {
                 setState(() {
                   _selectedMap3NodeIndex = value;
+                  _createAtlasPayLoad.map3Address = _map3NodeList.isNotEmpty
+                      ? _map3NodeList[_selectedMap3NodeIndex]?.address
+                      : null;
                 });
               },
               value: _selectedMap3NodeIndex,
@@ -905,11 +949,18 @@ class _AtlasCreateNodePageState extends State<AtlasCreateNodePage> {
     } else if (_currentStep == Step.fee) {
       _currentStep = Step.bls;
     } else if (_currentStep == Step.bls) {
-      Application.router.navigateTo(
-        context,
-        Routes.atlas_create_node_info_page +
-            '?createAtlasPayload=${FluroConvertUtils.object2string(_createAtlasPayLoad)}',
-      );
+      if (_createAtlasPayLoad.map3Address != null) {
+        var selectedMap3NameEncoded = FluroConvertUtils.fluroCnParamsEncode(
+          _map3NodeList[_selectedMap3NodeIndex]?.name,
+        );
+        Application.router.navigateTo(
+          context,
+          Routes.atlas_create_node_info_page +
+              '?createAtlasPayload=${FluroConvertUtils.object2string(_createAtlasPayLoad)}&selectedMap3NodeName=$selectedMap3NameEncoded',
+        );
+      } else {
+        Fluttertoast.showToast(msg: '请先选择Map3节点');
+      }
     }
     setState(() {});
   }

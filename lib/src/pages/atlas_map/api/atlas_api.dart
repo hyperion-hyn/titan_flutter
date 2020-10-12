@@ -244,8 +244,11 @@ class AtlasApi {
   }
 
   // 查询查询Map3节点列表
-  Future<List<Map3InfoEntity>> getMap3NodeList(String address,
-      {int page = 0, int size = 0}) async {
+  Future<List<Map3InfoEntity>> getMap3NodeList(
+    String address, {
+    int page = 0,
+    int size = 0,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -366,7 +369,8 @@ class AtlasApi {
         factory: EntityFactory((json) => json),
       );
       print(
-          "[AtlasApi], postUploadImageFile, responseEntity:${responseEntity.code}, msg:${responseEntity.msg}");
+        '[AtlasApi], postUploadImageFile, responseEntity:${responseEntity.code}, msg:${responseEntity.msg}',
+      );
 
       if (responseEntity.data.isNotEmpty) {
         return responseEntity.data;
