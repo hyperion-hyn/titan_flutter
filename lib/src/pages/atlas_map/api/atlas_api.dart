@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_pickers/Media.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -118,7 +117,7 @@ class AtlasApi {
 
   // 查询Atlas节点下的所有map3节点列表
   Future<List<Map3InfoEntity>> postAtlasMap3NodeList(String nodeId,
-      {int page = 0, int size = 0}) async {
+      {int page = 1, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -134,7 +133,7 @@ class AtlasApi {
 
   // 查询Atlas节点列表
   Future<List<AtlasInfoEntity>> postAtlasNodeList(String address,
-      {int page = 0, int size = 0}) async {
+      {int page = 1, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/node_list",
         EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
@@ -246,7 +245,7 @@ class AtlasApi {
   // 查询查询Map3节点列表
   Future<List<Map3InfoEntity>> getMap3NodeList(
     String address, {
-    int page = 0,
+    int page = 1,
     int size = 0,
   }) async {
     return AtlasHttpCore.instance.postEntity(
