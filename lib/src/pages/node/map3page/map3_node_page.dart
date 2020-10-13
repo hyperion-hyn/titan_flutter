@@ -145,17 +145,17 @@ class _Map3NodeState extends State<Map3NodePage> {
         delegate: SliverChildBuilderDelegate((context, index) {
       var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
 
-      var canCheck = config?.canCheckMap3Node ?? true;
-      if (index == 0) {
-        canCheck = true;
-      }
-      print("[object] --> canCheck:$canCheck");
-
-      // todo: test_10_03
+      var canCheck = false;
+      var canCheckMap3Node = config?.canCheckMap3Node ?? false;
       var canCheckMap3NodeCount = config?.canCheckMap3NodeCount ?? 1;
-      print("[object] --> canCheckMap3NodeCount:$canCheckMap3NodeCount");
-      if (index < canCheckMap3NodeCount) {
+      //print("[object] --> canCheckMap3Node:$canCheckMap3Node, canCheckMap3NodeCount:$canCheckMap3NodeCount");
+
+      if (canCheckMap3Node) {
         canCheck = true;
+      } else {
+        if (index < canCheckMap3NodeCount) {
+          canCheck = true;
+        }
       }
 
       return Container(
