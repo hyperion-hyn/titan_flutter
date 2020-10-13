@@ -138,6 +138,8 @@ class _WalletPageState extends BaseState<WalletPage>
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
 
+    if (context == null) return;
+    
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
