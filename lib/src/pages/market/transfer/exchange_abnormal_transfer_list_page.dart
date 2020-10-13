@@ -11,6 +11,7 @@ import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -132,6 +133,19 @@ class ExchangeAbnormalTransferListPageState
               style: TextStyle(
                 fontSize: 12,
                 color: DefaultColors.color999,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => AboutMePage()));
+            },
+            child: Text(
+              S.of(context).dex_fix_account_contact_us,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.blue,
               ),
             ),
           ),

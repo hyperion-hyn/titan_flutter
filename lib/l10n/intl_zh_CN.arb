@@ -1024,5 +1024,6 @@
   "status": "状态",
   "dex_settlement_error": "钱包已到账，DEX数据结算失败",
   "exchange_withdraw_status_9": "提币账单异常",
-  "wallet_send_fix_dex_account": "你的dex账户数据异常，请先修复！"
+  "wallet_send_fix_dex_account": "你的dex账户数据异常，请先修复！",
+  "dex_fix_account_contact_us": "如有疑问，请联系客服"
 }

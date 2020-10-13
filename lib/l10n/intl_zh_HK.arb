@@ -1016,5 +1016,6 @@
   "status": "狀態",
   "dex_settlement_error": "錢包已到賬，DEX數據結算失敗",
   "exchange_withdraw_status_9": "提幣賬單異常",
-  "wallet_send_fix_dex_account": "你的dex賬戶數據異常，請先修復！"
+  "wallet_send_fix_dex_account": "你的dex賬戶數據異常，請先修復！",
+  "dex_fix_account_contact_us": "如有疑問，請聯繫客服"
 }
