@@ -165,7 +165,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: Row(
                   children: <Widget>[
                     Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Text(
                         '节点列表',
                         style: TextStyle(
@@ -241,9 +244,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           decoration: TextDecoration.underline,
                         ),
                       ),
-                      onTap: () {
-
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),
@@ -383,7 +384,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 
   _createNode() {
     return Padding(
-      padding: const EdgeInsets.only(top: 24.0, bottom: 8),
+      padding: const EdgeInsets.only(top: 24.0, bottom: 0),
       child: Container(
         width: double.infinity,
         child: Stack(
@@ -437,17 +438,13 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: 16.0,
-            vertical: 16.0,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
                 '我的节点',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Spacer(),
               InkWell(

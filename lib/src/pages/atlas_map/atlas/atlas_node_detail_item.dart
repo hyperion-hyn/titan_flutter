@@ -16,7 +16,10 @@ class AtlasNodeDetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 8.0,
+      ),
       child: InkWell(
         onTap: () async {
           Application.router.navigateTo(context, Routes.atlas_detail_page);
@@ -166,12 +169,12 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         Expanded(
                           child: Text.rich(TextSpan(children: [
                             TextSpan(
-                                text: '${S.of(context).atlas_sign_rate}: ',
+                                text: '状态: ',
                                 style: TextStyle(
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),
                             TextSpan(
-                                text: _atlasInfo.signRate,
+                                text: '正常',
                                 style: TextStyle(
                                   fontSize: 12,
                                 ))
@@ -184,42 +187,6 @@ class AtlasNodeDetailItem extends StatelessWidget {
                 SizedBox(
                   height: 8.0,
                 ),
-                Divider(),
-                SizedBox(
-                  height: 8.0,
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '${FormatUtil.formatDateStr(_atlasInfo.createdAt)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#FF9B9B9B'),
-                      ),
-                    ),
-                    Spacer(),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: 8.0,
-                      ),
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: HexColor('#FF00E4A1'),
-                        borderRadius: BorderRadius.circular(
-                          16.0,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '活跃',
-                      style: TextStyle(
-                        fontSize: 12,
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
           ),
