@@ -6,7 +6,6 @@ import 'package:titan/src/plugins/wallet/contract_const.dart';
 
 import '../../env.dart';
 
-
 class Const {
   static String get DOMAIN {
     return 'https://api.hyn.space/';
@@ -133,7 +132,8 @@ class PrefsKey {
   static const String VERIFY_DATE = 'verify_date';
 
   static const String SHARED_PREF_GAS_PRICE_KEY = "shared_pref_gas_price_key";
-  static const String SHARED_PREF_BTC_GAS_PRICE_KEY = "shared_pref_btc_gas_price_key";
+  static const String SHARED_PREF_BTC_GAS_PRICE_KEY =
+      "shared_pref_btc_gas_price_key";
 
   static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
 
@@ -145,10 +145,11 @@ class PrefsKey {
 
   ///Exchange account
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
-  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME = 'exchange_account_last_auth_time';
-
+  static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
+      'exchange_account_last_auth_time';
   static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
 
+  static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
 }
 
 class SecurePrefsKey {
@@ -160,8 +161,8 @@ class SecurePrefsKey {
 
   ///complete key:  WALLET_P2P_PUB_KEY_PREFIX + wallet.getEthAccount().address
   static final String WALLET_P2P_PUB_KEY_PREFIX = 'wallet_p2p_pub_key_';
-  static final String WALLET_P2P_DECOMP_PUB_KEY_PREFIX = 'wallet_p2p_decomp_pub_key_';
-
+  static final String WALLET_P2P_DECOMP_PUB_KEY_PREFIX =
+      'wallet_p2p_decomp_pub_key_';
 }
 
 enum Status { idle, loading, success, failed, cancelled }

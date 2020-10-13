@@ -1001,5 +1001,20 @@
   "exchange_logout": "退出登錄",
   "exchange_logout_hint": "您將要退出授權狀態，確定要退出嗎？",
   "bio_auth_expired_hint": "生物識別已過期，請輸入密碼",
-  "map3_main_page_title": "Map3地圖服務節點"
+  "map3_main_page_title": "Map3地圖服務節點",
+  "dex_account_error": "數據異常",
+  "dex_account_data_abnormal": "DEX賬戶數據異常",
+  "dex_fix_account": "修復賬戶狀態",
+  "dex_fix_account_hint": "為了避免賬號不能正常使用，請盡快修復數據",
+  "dex_fix_account_dialog_title": "修復賬戶狀態",
+  "dex_fix_account_balance_condition": "系統將對異常交易進行重新結算，您的賬戶餘額可能會有變動，為了順利完成修復，請確保你的交易賬戶可用餘額滿足以下條件:",
+  "not_less_than": "不少於",
+  "dex_fix_account_success": "修復成功啦!",
+  "dex_fix_accounta_fail": "修復失敗! 請確保你的交易賬戶中可用餘額滿足以下條件",
+  "dex_fixing_account": "修復中，請稍等",
+  "wallet_show_dex_account_error": "你的dex賬戶數據異常，請盡快修復！查看詳情",
+  "status": "狀態",
+  "dex_settlement_error": "錢包已到賬，DEX數據結算失敗",
+  "exchange_withdraw_status_9": "提幣賬單異常",
+  "wallet_send_fix_dex_account": "你的dex賬戶數據異常，請先修復！"
 }

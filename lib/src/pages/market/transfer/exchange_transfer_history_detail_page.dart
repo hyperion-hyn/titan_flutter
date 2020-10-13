@@ -66,6 +66,31 @@ class _ExchangeTransferHistoryDetailPageState
           child: Column(
             children: <Widget>[
               _item(
+                S.of(context).status,
+                widget._assetHistory.isAbnormal()
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            widget._assetHistory.getStatusText(),
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor('#FFCE1F0F')),
+                          ),
+                          Text(
+                            S.of(context).dex_settlement_error,
+                            style: TextStyle(
+                                fontSize: 12, color: DefaultColors.color999),
+                          )
+                        ],
+                      )
+                    : Text(
+                        widget._assetHistory.getStatusText(),
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+              ),
+              _item(
                 S.of(context).exchange_type,
                 Text(
                   widget._assetHistory.getTypeText(),
@@ -74,7 +99,6 @@ class _ExchangeTransferHistoryDetailPageState
                   ),
                 ),
               ),
-              
               _item(
                 S.of(context).exchange_amount,
                 Text.rich(TextSpan(children: [
@@ -183,10 +207,11 @@ class _ExchangeTransferHistoryDetailPageState
                   child: Align(
                 alignment: Alignment.centerRight,
                 child: Container(
-                    padding: EdgeInsets.only(
-                      left: 48,
-                    ),
-                    child: child),
+                  padding: EdgeInsets.only(
+                    left: 48,
+                  ),
+                  child: child,
+                ),
               ))
             ],
           ),

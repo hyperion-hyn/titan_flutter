@@ -1013,5 +1013,20 @@
   "exchange_logout": "sign out",
   "exchange_logout_hint": "You are about to exit the authorization status. Are you sure you want to exit?",
   "bio_auth_expired_hint": "Biometrics has expired, please enter password",
-  "map3_main_page_title": "Map3 map service node"
+  "map3_main_page_title": "Map3 map service node",
+  "dex_account_error": "Abnormal data",
+  "dex_account_data_abnormal": "DEX account data is abnormal",
+  "dex_fix_account": "Fix account",
+  "dex_fix_account_hint": "In order to avoid the account cannot be used normally, please repair the data as soon as possible",
+  "dex_fix_account_dialog_title": "Fix account",
+  "dex_fix_account_balance_condition": "The system will re-settlement the abnormal transaction, and your account balance may change. In order to successfully complete the repair, please ensure that the available balance of your trading account meets the following conditions:",
+  "not_less_than": "Not less than",
+  "dex_fix_account_success": "The repair is successful!",
+  "dex_fix_accounta_fail": "Repair failed! Please ensure that the available balance in your trading account meets the following conditions",
+  "dex_fixing_account": "Repairing, please wait",
+  "wallet_show_dex_account_error": "Your dex account data is abnormal, please fix it as soon as possible! see details",
+  "status": "status",
+  "dex_settlement_error": "The balance has transferred to wallet, but the DEX data settlement failed",
+  "exchange_withdraw_status_9": "Abnormal withdrawal bill",
+  "wallet_send_fix_dex_account": "Your dex account data is abnormal, please fix it first!"
 }

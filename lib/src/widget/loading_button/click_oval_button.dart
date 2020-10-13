@@ -13,8 +13,16 @@ class ClickOvalButton extends StatefulWidget {
   Color fontColor;
   double radius;
 
-  ClickOvalButton(this.text, this.onTap,
-      {this.height = 36, this.width = 180, this.fontSize = 13, this.fontColor, this.btnColor, this.radius});
+  ClickOvalButton(
+    this.text,
+    this.onTap, {
+    this.height = 36,
+    this.width = 180,
+    this.fontSize = 13,
+    this.fontColor,
+    this.btnColor,
+    this.radius,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -29,7 +37,8 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
+        borderRadius: BorderRadius.all(Radius.circular(
+            widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
       child: FlatButton(
@@ -40,7 +49,11 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
           child: Text(widget.text,
               style: TextStyle(
                 fontSize: widget.fontSize,
-                color: widget.isLoading ? DefaultColors.color999 : widget.fontColor != null ? widget.fontColor : Colors.white,
+                color: widget.isLoading
+                    ? DefaultColors.color999
+                    : widget.fontColor != null
+                        ? widget.fontColor
+                        : Colors.white,
               )),
           onPressed: widget.isLoading
               ? null
@@ -62,11 +75,11 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
         colors: <Color>[Color(0xffDEDEDE), Color(0xffDEDEDE)],
       );
     } else {
-      if(widget.btnColor != null){
+      if (widget.btnColor != null) {
         return LinearGradient(
           colors: <Color>[widget.btnColor, widget.btnColor],
         );
-      }else{
+      } else {
         return LinearGradient(
           colors: <Color>[Color(0xff15B2D2), Color(0xff1097B4)],
         );

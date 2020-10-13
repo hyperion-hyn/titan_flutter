@@ -15,6 +15,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -25,6 +26,9 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -50,6 +54,10 @@ class _WalletPageState extends BaseState<WalletPage>
 
   final LocalAuthentication auth = LocalAuthentication();
 
+  ExchangeApi _exchangeApi = ExchangeApi();
+
+  bool _isExchangeAccountAbnormal = false;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -57,6 +65,9 @@ class _WalletPageState extends BaseState<WalletPage>
   void didChangeDependencies() {
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    ///check dex account is abnormal
+    _checkDexAccount();
   }
 
   @override
@@ -84,7 +95,44 @@ class _WalletPageState extends BaseState<WalletPage>
       _postWalletBalance();
     });
 
+    ///check dex account is abnormal
+    _checkDexAccount();
+
     listLoadingData();
+  }
+
+  _checkDexAccount() async {
+    setState(() {});
+
+    var activatedWalletVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    ///get value from cache first
+    _isExchangeAccountAbnormal = await AppCache.getValue(
+          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo.wallet.getEthAccount().address}',
+        ) ??
+        false;
+
+    setState(() {});
+
+    ///get value from server
+    try {
+      ///
+      var result = await _exchangeApi.checkAccountAbnormal(
+        activatedWalletVo.wallet.getEthAccount().address,
+      );
+
+      _isExchangeAccountAbnormal = result == '1';
+
+      await AppCache.saveValue(
+        '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo.wallet.getEthAccount().address}',
+        _isExchangeAccountAbnormal,
+      );
+
+      setState(() {});
+    } catch (e) {}
   }
 
   Future<void> _postWalletBalance() async {
@@ -100,18 +148,21 @@ class _WalletPageState extends BaseState<WalletPage>
     int appType = 0;
     String email = "titan";
     String hynBalance = "0";
-    LogUtil.printMessage("[API] address:$address, hynBalance:$hynBalance, email:$email");
+    LogUtil.printMessage(
+        "[API] address:$address, hynBalance:$hynBalance, email:$email");
 
     // 同步用户钱包信息
     if (address.isNotEmpty) {
       var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
-      LogUtil.printMessage("object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
+      LogUtil.printMessage(
+          "object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
       var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
       balance = 0;
       if (balance <= 0) {
-        var balanceValue = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
+        var balanceValue = await activatedWalletVo.wallet
+            .getErc20Balance(hynCoinVo.contractAddress);
         balance = ConvertTokenUnit.weiToDecimal(
-            balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
+                balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
             .toDouble();
         LogUtil.printMessage("object] balance2: $balance");
       }
@@ -144,7 +195,10 @@ class _WalletPageState extends BaseState<WalletPage>
             SizedBox(
               height: 16,
             ),
-            Expanded(child: _buildWalletView(context)),
+            _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
+            Expanded(
+              child: _buildWalletView(context),
+            ),
             //hyn quotes view
             // hynQuotesView(),
             _authorizedView(),
@@ -152,6 +206,74 @@ class _WalletPageState extends BaseState<WalletPage>
         ),
       ),
     );
+  }
+
+  _abnormalAccountBanner() {
+    return InkWell(
+      onTap: () async {
+        _navigateToFixDexAccountPage();
+      },
+      child: Container(
+        color: HexColor('#FFFFF7F8'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 8.0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(
+                  Icons.warning,
+                  color: HexColor('#FFFF5041'),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  '${S.of(context).wallet_show_dex_account_error} >>',
+                  style: TextStyle(
+                    color: HexColor('#FFCE1F0F'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _navigateToFixDexAccountPage() async {
+    var activatedWalletVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    var navigateToFixPage = () async {
+      await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ExchangeAbnormalTransferListPage(
+                    activatedWalletVo.wallet.getEthAccount().address,
+                  )));
+
+      ///check account is fixed when back to wallet page
+      _checkDexAccount();
+    };
+
+    if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
+      navigateToFixPage();
+    } else {
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+
+      ///if authorized, jump to fix error page
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
+        navigateToFixPage();
+      ;
+    }
   }
 
   Widget _buildWalletView(BuildContext context) {
@@ -163,14 +285,19 @@ class _WalletPageState extends BaseState<WalletPage>
           bloc: loadDataBloc,
           enablePullUp: false,
           onLoadData: () {
+            _checkDexAccount();
             listLoadingData();
           },
           onRefresh: () async {
+            _checkDexAccount();
             listLoadingData();
           },
           child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
-              child: ShowWalletView(activatedWalletVo, loadDataBloc)));
+              child: ShowWalletView(
+                activatedWalletVo,
+                loadDataBloc,
+              )));
     }
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(

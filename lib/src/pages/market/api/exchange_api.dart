@@ -78,6 +78,52 @@ class ExchangeApi {
     });
   }
 
+  Future<dynamic> checkAccountAbnormal(String walletAddress) async {
+    return await exchangeHttp.postEntity(
+      ExchangeConst.PATH_CHECK_ACCOUNT_ABNORMAL,
+      null,
+      params: {"address": walletAddress},
+    );
+  }
+
+  Future<dynamic> fixAbnormalAccount(
+    Wallet wallet,
+    String password,
+    String address,
+  ) async {
+    return await walletSignAndPost(
+        path: ExchangeConst.PATH_FIX_ABNORMAL_ACCOUNT,
+        wallet: wallet,
+        password: password,
+        address: address,
+        params: {});
+  }
+
+  Future<AbnormalTransferHistory> getAbnormalTransferHistory(
+    String address,
+  ) async {
+    return await exchangeHttp
+        .postEntity(ExchangeConst.PATH_ABNORMAL_TRANSFER_LIST,
+            EntityFactory<AbnormalTransferHistory>(
+      (response) {
+        var abnormalTransferHistory = AbnormalTransferHistory();
+        if (response is Map && response.length == 0) {
+          return abnormalTransferHistory;
+        }
+        var dataList = response['data'];
+        (dataList as List).forEach((item) {
+          abnormalTransferHistory.list.add(AssetHistory.fromJson(item));
+        });
+        abnormalTransferHistory.usdt = response['usdt'];
+        abnormalTransferHistory.hyn = response['hyn'];
+        abnormalTransferHistory.total = response['total'];
+        return abnormalTransferHistory;
+      },
+    ), params: {
+      'address': address,
+    });
+  }
+
   Future<String> getCookieDir() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
@@ -330,6 +376,31 @@ class ExchangeApi {
   }
 
   Future<List<AssetHistory>> getAccountHistory(
+    String type,
+    int page,
+    int size,
+    String action,
+  ) async {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
+        EntityFactory<List<AssetHistory>>((response) {
+      var assetHistoryList = List<AssetHistory>();
+      if (response is Map && response.length == 0) {
+        return assetHistoryList;
+      }
+      var dataList = response['data'];
+      (dataList as List).forEach((item) {
+        assetHistoryList.add(AssetHistory.fromJson(item));
+      });
+      return assetHistoryList;
+    }), params: {
+      'type': type,
+      'page': page,
+      'size': size,
+      'action': action,
+    });
+  }
+
+  Future<List<AssetHistory>> get(
     String type,
     int page,
     int size,

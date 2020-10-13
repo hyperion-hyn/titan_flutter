@@ -1001,5 +1001,20 @@
   "exchange_logout": "로그 아웃",
   "exchange_logout_hint": "승인 상태를 종료하려고합니다. 종료 하시겠습니까?",
   "bio_auth_expired_hint": "생체 인식이 만료되었습니다. 비밀번호를 입력하세요.",
-  "map3_main_page_title": "Map3지도 서비스 노드"
+  "map3_main_page_title": "Map3지도 서비스 노드",
+  "dex_account_error": "비정상적인 데이터",
+  "dex_account_data_abnormal": "DEX 계정 데이터가 비정상입니다.",
+  "dex_fix_account": "계정 상태 수정",
+  "dex_fix_account_hint": "계정을 정상적으로 사용할 수없는 것을 피하기 위해 가능한 한 빨리 데이터를 복구하십시오.",
+  "dex_fix_account_dialog_title": "계정 복구",
+  "dex_fix_account_balance_condition": "시스템은 비정상적인 거래를 재정 산하며 계좌 잔고가 변경 될 수 있습니다. 성공적으로 수리를 완료하려면 거래 계좌의 사용 가능한 잔고가 다음 조건을 충족하는지 확인하십시오:",
+  "not_less_than": "적어도",
+  "dex_fix_account_success": "수리가 성공적입니다!",
+  "dex_fix_accounta_fail": "수리에 실패했습니다. 거래 계좌의 사용 가능한 잔액이 다음 조건을 충족하는지 확인하세요.",
+  "dex_fixing_account": "수리 중입니다. 잠시 기다려주십시오.",
+  "wallet_show_dex_account_error": "귀하의 dex 계정 데이터가 비정상입니다. 가능한 한 빨리 수정하십시오! 자세히보다",
+  "상태": "状态",
+  "dex_settlement_error": "잔액이 지갑으로 이체되었지만 DEX 데이터 정산에 실패했습니다.",
+  "exchange_withdraw_status_9": "비정상 인출 청구서",
+  "wallet_send_fix_dex_account": "귀하의 dex 계정 데이터가 비정상입니다. 먼저 수정하십시오!"
 }
