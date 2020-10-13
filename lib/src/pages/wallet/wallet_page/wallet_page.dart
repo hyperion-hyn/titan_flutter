@@ -95,15 +95,10 @@ class _WalletPageState extends BaseState<WalletPage>
       _postWalletBalance();
     });
 
-    ///check dex account is abnormal
-    _checkDexAccount();
-
     listLoadingData();
   }
 
   _checkDexAccount() async {
-    setState(() {});
-
     var activatedWalletVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
