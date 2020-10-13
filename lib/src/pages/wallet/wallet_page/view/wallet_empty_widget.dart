@@ -60,17 +60,14 @@ class EmptyWalletView extends StatelessWidget {
                   },
                   child: Container(
                     width: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 52.0, vertical: 10.0),
-                      child: Text(
-                        S.of(context).create_wallet,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
-                      ),
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      S.of(context).create_wallet,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                   color: Colors.white,
@@ -91,17 +88,14 @@ class EmptyWalletView extends StatelessWidget {
                     },
                     child: Container(
                       width: 200,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 52.0, vertical: 10.0),
-                        child: Text(
-                          S.of(context).import_wallet,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.w500),
-                        ),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        S.of(context).import_wallet,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     color: Colors.white,
