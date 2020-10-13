@@ -59,11 +59,13 @@ class EmptyWalletView extends StatelessWidget {
                             '?entryRouteName=$currentRouteName');
                   },
                   child: Container(
+                    width: 200,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 52.0, vertical: 10.0),
                       child: Text(
                         S.of(context).create_wallet,
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
                             color: Theme.of(context).primaryColor,
@@ -88,11 +90,13 @@ class EmptyWalletView extends StatelessWidget {
                               '?entryRouteName=$currentRouteName');
                     },
                     child: Container(
+                      width: 200,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 52.0, vertical: 10.0),
                         child: Text(
                           S.of(context).import_wallet,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context).primaryColor,
