@@ -139,7 +139,7 @@ class _WalletPageState extends BaseState<WalletPage>
     //appType:  0:titan; 1:star
 
     if (context == null) return;
-    
+
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
