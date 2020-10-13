@@ -463,19 +463,17 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var _amountInputHint = _fromExchangeToWallet
         ? S.of(context).exchange_deposit_input_hint
         : S.of(context).exchange_withdraw_input_hint;
+    var assetList = ExchangeInheritedModel.of(context)
+        .exchangeModel
+        .activeAccount
+        .assetList;
     var _minTransferAmount = _fromExchangeToWallet
-        ? ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
+        ? assetList
             ?.getAsset(_selectedCoinType)
-            ?.withdrawMin
-        : ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
+            ?.withdrawMin??"0"
+        : assetList
             ?.getAsset(_selectedCoinType)
-            ?.rechargeMin;
+            ?.rechargeMin??"0";
     var complex = _minTransferText + _minTransferAmount + _selectedCoinType;
 
     var _maxTransferAmount = ExchangeInheritedModel.of(context)
