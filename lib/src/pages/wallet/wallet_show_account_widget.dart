@@ -283,7 +283,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                           selectedCoin: 'USDT',
                                                           exchangeType: ExchangeType.BUY)));
                                             }else{
-                                              Fluttertoast.showToast(msg: "功能开发中，尽请期待！");
+                                              Fluttertoast.showToast(msg: "即将开通该交易对，敬请期待!");
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
