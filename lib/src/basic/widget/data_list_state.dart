@@ -21,7 +21,7 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
   Future<List<dynamic>> onLoadData(int page);
 
   Future onWidgetLoadDataCallback() async {
-//    try {
+    try {
       currentPage = getStartPage();
       var list = await onLoadData(currentPage);
       _updateDataListOnReceive(list, currentPage);
@@ -31,10 +31,10 @@ abstract class DataListState<T extends StatefulWidget> extends BaseState<T> {
       } else {
         loadDataBloc.add(RefreshSuccessEvent());
       }
-    /*} catch (e) {
+    } catch (e) {
       logger.e(e);
       loadDataBloc.add(LoadFailEvent());
-    }*/
+    }
   }
 
   Future onWidgetRefreshCallback() async {
