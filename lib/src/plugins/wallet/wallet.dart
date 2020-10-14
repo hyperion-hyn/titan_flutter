@@ -201,6 +201,7 @@ class Wallet {
     int gasLimit = 0,
     int type,
     web3.IMessage message,
+    bool isAtlasTrans = false
   }) async {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
@@ -208,7 +209,7 @@ class Wallet {
 //    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
-    final client = WalletUtil.getWeb3Client(true);
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final txHash = await client.sendTransaction(
       credentials,

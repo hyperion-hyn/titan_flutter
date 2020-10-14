@@ -19,12 +19,14 @@ class TextStyles {
   static TextStyle textC333S10 = textStyle(fontSize: 10, color: DefaultColors.color333);
   static TextStyle textC333S11 = textStyle(fontSize: 11, color: DefaultColors.color333);
   static TextStyle textC333S12 = textStyle(fontSize: 12, color: DefaultColors.color333);
+  static TextStyle textC333S13 = textStyle(fontSize: 13, color: DefaultColors.color333);
   static TextStyle textC333S16 = textStyle(fontSize: 16, color: DefaultColors.color333);
   static TextStyle textC777S14 = textStyle(color: DefaultColors.color777);
   static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
   static TextStyle textC999S10 = textStyle(fontSize: 10, color: DefaultColors.color999);
   static TextStyle textC999S11 = textStyle(fontSize: 11, color: DefaultColors.color999);
   static TextStyle textC999S12 = textStyle(fontSize: 12, color: DefaultColors.color999);
+  static TextStyle textC999S13 = textStyle(fontSize: 13, color: DefaultColors.color999);
   static TextStyle textC999S14 = textStyle(color: DefaultColors.color999);
   static TextStyle textC999S14medium = textStyle(color: DefaultColors.color999,fontWeight: FontWeight.w500);
   static TextStyle textCaaaS14 = textStyle(color: DefaultColors.coloraaa);
@@ -89,4 +91,6 @@ class DefaultColors {
   static Color color141fb9c7 = HexColor("#141fb9c7");
   static Color color53ae86 = HexColor("#53ae86");
   static Color colorcc5858 = HexColor("#cc5858");
+  static Color colorf8f8f8 = HexColor("#f8f8f8");
+  static Color colorf23524 = HexColor("#f23524");
 }

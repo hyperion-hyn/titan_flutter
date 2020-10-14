@@ -43,7 +43,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
           final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
           var converts = SupportedQuoteSigns.all.map((sign) => sign.quote).toList();
-          var quotes = await _coinMarketApi.quotes(DEFAULT_SYMBOLS, converts);
+          var quotes = await _coinMarketApi.quotes(0);
           //hack add (HYN ERC20)quotes
           List<SymbolQuoteVo> addQuotes = [];
           for (var quote in quotes) {

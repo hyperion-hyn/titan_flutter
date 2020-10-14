@@ -679,7 +679,7 @@
   "update_success": "更新成功",
   "update_error": "更新出错",
   "has_unconfirm_btc_wait": "你有未确认的比特币转账，请稍后再试！",
-  "pending": "待确认",
+  "pending": "确认中...",
   "confirm_num": "确认{num}次",
   "go_to_settings": "前往设置",
   "go_to_setting_page_open_face_id": "请到设置页开启您的面容 ID",

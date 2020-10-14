@@ -85,14 +85,11 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   void initState() {
     super.initState();
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
-//    _getGasFee();
   }
 
   Decimal get gasPrice {
-//    if (widget.coinVo.coinType == CoinType.BITCOIN) {
-//      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).btcGasPriceRecommend;
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-      return Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      return Decimal.fromInt(1 * TokenUnit.G_WEI);
     }
 
     switch (selectedPriceLevel) {
@@ -105,19 +102,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       default:
         return gasPriceRecommend.average;
     }
-//    } else {
-//      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-//      switch (selectedPriceLevel) {
-//        case 0:
-//          return gasPriceRecommend.safeLow;
-//        case 1:
-//          return gasPriceRecommend.average;
-//        case 2:
-//          return gasPriceRecommend.fast;
-//        default:
-//          return gasPriceRecommend.average;
-//      }
-//    }
   }
 
   @override

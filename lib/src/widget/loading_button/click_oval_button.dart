@@ -46,7 +46,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       ),
       child: FlatButton(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(22.0)),
+            borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
           ),
           padding: const EdgeInsets.all(0.0),
           child: Text(

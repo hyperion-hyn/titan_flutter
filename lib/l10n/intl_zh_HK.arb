@@ -672,7 +672,7 @@
   "update_success": "更新成功",
   "update_error": "更新出錯",
   "has_unconfirm_btc_wait": "妳有未確認的比特幣轉賬，請稍後再試！",
-  "pending": "待確認",
+  "pending": "確認中...",
   "confirm_num": "確認{num}次",
   "go_to_settings": "前往設置",
   "go_to_setting_page_open_face_id": "請到設置頁開啟您的面容 ID",

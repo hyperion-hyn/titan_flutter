@@ -9,34 +9,13 @@ import 'vo/symbol_quote_entity.dart';
 import 'vo/symbol_quote_vo.dart';
 
 class CoinMarketApi {
-  Future<List<SymbolQuoteVo>> quotes(List<String> symbols, List<String> quoteConverts) async {
-    /*var response = await HttpCore.instance.get('api/v1/market/prices/latest',
-        options: RequestOptions(
-            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
-
-    var status = response['state'];
-
-    if (status['error_code'] == 0) {
-      List<SymbolQuoteVo> list = [];
-      var datas = response["data"] as Map;
-      var keys = datas.keys;
-      for (var key in keys) {
-        for (var convert in quoteConverts) {
-          var price = datas[key]["quote"][convert]["price"];
-          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
-          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: percentChange24h);
-          list.add(vo);
-        }
-      }
-      return list;
-    }*/
-
+  Future<List<SymbolQuoteVo>> quotes(int timestamp) async {
     var response = await TestHttpCore.instance.postEntity('v1/wallet/quotes',
         EntityFactory<SymbolQuoteEntity>(
               (json) => SymbolQuoteEntity.fromJson(json),
         ),
         params: {
-          "ts": 0,
+          "ts": timestamp,
         },
         options: RequestOptions(contentType: "application/json"));
 
@@ -62,24 +41,5 @@ class CoinMarketApi {
     list.add(usdtVo2);
 
     return list;
-
-//    var status = response['state'];
-
-//    if (status['error_code'] == 0) {
-//      List<SymbolQuoteVo> list = [];
-//      var datas = response["data"] as Map;
-//      var keys = datas.keys;
-//      for (var key in keys) {
-//        for (var convert in quoteConverts) {
-//          var price = datas[key]["quote"][convert]["price"];
-//          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
-//          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: percentChange24h);
-//          list.add(vo);
-//        }
-//      }
-//      return list;
-//    }
-
-//    throw HttpResponseCodeNotSuccess(status['error_code'], status['error_message']);
   }
 }
