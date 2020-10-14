@@ -33,6 +33,9 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'data')
   String data;
 
+  @JsonKey(name: 'dataDecoded')
+  Map dataDecoded;
+
   @JsonKey(name: 'gas_price')
   String gasPrice;
 
@@ -72,7 +75,7 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'hynCnyPrice')
   int hynCnyPrice;
 
-  HynTransferHistory(this.id,this.createdAt,this.updatedAt,this.txHash,this.from,this.to,this.nonce,this.value,this.data,this.gasPrice,this.gasLimit,this.type,this.status,this.gasUsed,this.blockHash,this.blockNum,this.epoch,this.timestamp,this.contractAddress,this.transactionIndex,this.hynUsdPrice,this.hynCnyPrice,);
+  HynTransferHistory(this.id,this.createdAt,this.updatedAt,this.txHash,this.from,this.to,this.nonce,this.value,this.data,this.dataDecoded,this.gasPrice,this.gasLimit,this.type,this.status,this.gasUsed,this.blockHash,this.blockNum,this.epoch,this.timestamp,this.contractAddress,this.transactionIndex,this.hynUsdPrice,this.hynCnyPrice,);
 
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
 
