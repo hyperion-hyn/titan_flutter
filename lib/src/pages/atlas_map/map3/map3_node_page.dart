@@ -49,7 +49,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
     var activatedWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    _address = activatedWallet.wallet.getEthAccount().address;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());

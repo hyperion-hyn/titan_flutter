@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
@@ -35,7 +38,7 @@ class AccountTransferService {
       } else if (hynTransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
-      return TransactionDetailVo(
+      var transactionItem =  TransactionDetailVo(
         type: type,
         state: hynTransferHistory.status,
         amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(hynTransferHistory.value)).toDouble(),
@@ -48,7 +51,25 @@ class AccountTransferService {
         gasUsed: hynTransferHistory.gasUsed.toString(),
         gas: hynTransferHistory.gasLimit.toString(),
         nonce: hynTransferHistory.nonce.toString(),
+        contractAddress: hynTransferHistory.contractAddress,
+        data: hynTransferHistory.data,
+        dataDecoded: hynTransferHistory.dataDecoded,
+        blockHash: hynTransferHistory.blockHash,
+        blockNum: hynTransferHistory.blockNum,
+        epoch: hynTransferHistory.epoch,
+        transactionIndex: hynTransferHistory.transactionIndex,
+        hynType: hynTransferHistory.type,
       );
+
+      if(hynTransferHistory.dataDecoded != null){
+        var dataDecodedMap = transactionItem.dataDecoded;
+        if(dataDecodedMap["amount"] != null){
+          var bigIntAmount = BigInt.parse(dataDecodedMap["amount"]);
+          transactionItem.amount = ConvertTokenUnit.weiToEther(weiBigInt: bigIntAmount).toDouble();
+        }
+      }
+
+      return transactionItem;
     }).toList();
     return detailList;
   }

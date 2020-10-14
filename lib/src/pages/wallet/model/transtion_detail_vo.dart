@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert' as jsonUtils;
 
 part 'transtion_detail_vo.g.dart';
 
@@ -22,6 +23,14 @@ class TransactionDetailVo {
   String gasUsed;
   String describe;
 
+  String data;
+  Map dataDecoded;
+  String blockHash;
+  int blockNum;
+  int epoch;
+  int transactionIndex;
+  int hynType;
+
   TransactionDetailVo({
     this.id,
     this.contractAddress,
@@ -39,6 +48,13 @@ class TransactionDetailVo {
     this.gasPrice,
     this.gasUsed,
     this.describe,
+    this.data,
+    this.dataDecoded,
+    this.blockHash,
+    this.blockNum,
+    this.epoch,
+    this.transactionIndex,
+    this.hynType,
   });
 
   factory TransactionDetailVo.fromJson(Map<String, dynamic> json) => _$TransactionDetailVoFromJson(json);

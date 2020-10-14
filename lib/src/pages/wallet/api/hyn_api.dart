@@ -4,6 +4,7 @@ import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
@@ -259,5 +260,66 @@ class HYNApi {
     print(message);
 
     transferHYN(password, wallet, toAddress: toAddress, message: message);
+  }
+
+  static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}){
+    String typeStr;
+    switch(hynMessageType){
+      case MessageType.typeNormal:
+        typeStr = "转账";
+        break;
+      case MessageType.typeCreateValidator:
+        typeStr = "创建Atlas";
+        break;
+      case MessageType.typeEditValidator:
+        typeStr = "编辑Atlas";
+        break;
+      case MessageType.typeReDelegate:
+        typeStr = "复抵押";
+        break;
+      case MessageType.typeUnReDelegate:
+        typeStr = "取消复抵押";
+        break;
+      case MessageType.typeCollectReStakingReward:
+        typeStr = "提取复抵押奖励";
+        break;
+      case MessageType.typeCreateMap3:
+        typeStr = "创建Map3";
+        break;
+      case MessageType.typeEditMap3:
+        typeStr = "编辑Map3";
+        break;
+      case MessageType.typeTerminateMap3:
+        typeStr = "终止Map3";
+        break;
+      case MessageType.typeMicroDelegate:
+        typeStr = "微抵押";
+        break;
+      case MessageType.typeUnMicroDelegate:
+        typeStr = "取消微抵押";
+        break;
+      case MessageType.typeCollectMicroStakingRewards:
+        typeStr = "提取微抵押奖励";
+        break;
+    }
+
+    if(getTypeStr){
+      return typeStr;
+    }
+
+    return "";
+  }
+
+  static String getHynToAddress(TransactionDetailVo transactionDetailVo){
+    String toAddressStr;
+    switch(transactionDetailVo.hynType) {
+      case MessageType.typeNormal:
+        toAddressStr = transactionDetailVo.toAddress;
+        break;
+      default:
+        toAddressStr = transactionDetailVo.contractAddress;
+        break;
+    }
+    return toAddressStr;
   }
 }

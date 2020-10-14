@@ -22,6 +22,9 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
+import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
+import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -42,6 +45,7 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import '../../pages/wallet/model/transtion_detail_vo.dart';
 import 'api/etherscan_api.dart';
+import 'api/hyn_api.dart';
 
 class ShowAccountPage extends StatefulWidget {
   final CoinVo coinVo;
@@ -269,9 +273,21 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            Clipboard.setData(ClipboardData(text: coinVo.address));
+                                            if(widget.coinVo.coinType == CoinType.HYN_ATLAS
+                                                || widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol
+                                                || widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => ExchangeDetailPage(
+                                                          selectedCoin: 'USDT',
+                                                          exchangeType: ExchangeType.BUY)));
+                                            }else{
+                                              Fluttertoast.showToast(msg: "功能开发中，尽请期待！");
+                                            }
+                                            /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
-                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));
+                                                .showSnackBar(SnackBar(content: Text(S.of(context).address_copied)));*/
                                           },
                                           child: Row(
                                             children: <Widget>[
@@ -333,7 +349,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var titleColor = DefaultColors.color333;
     var describe = "";
     var amountColor;
-    var amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+    var amountText = "";
+    if(widget.coinVo.coinType == CoinType.HYN_ATLAS){
+      amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} (${HYNApi.getValueByHynType(transactionDetail.hynType,getTypeStr: true)})";
+    }else{
+      amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
+    }
     var isPending = transactionDetail.state == null;
     var limitLength = isPending ? 4 : 9;
 
@@ -346,7 +367,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       }
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
-      describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+      if(widget.coinVo.coinType == CoinType.HYN_ATLAS){
+        describe = "To: " + shortBlockChainAddress(HYNApi.getHynToAddress(transactionDetail), limitCharsLength: limitLength);
+      }else{
+        describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
+      }
 
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FFE51C23");
@@ -361,7 +386,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             widget.coinVo.coinType == CoinType.BITCOIN) ||
         (transactionDetail.state != null &&
             transactionDetail.state == 0 &&
-            (widget.coinVo.coinType == CoinType.ETHEREUM || widget.coinVo.coinType == CoinType.HYN_ATLAS))) {
+            widget.coinVo.coinType == CoinType.ETHEREUM) ||
+        (transactionDetail.state != null &&
+            transactionDetail.state == 1 &&
+            widget.coinVo.coinType == CoinType.HYN_ATLAS)) {
       title = S.of(context).pending;
     } else if (((widget.coinVo.coinType == CoinType.ETHEREUM) && transactionDetail.state == 1)
         || (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6)
@@ -401,16 +429,26 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                 title: '',
                               )));
                 } else {
-                  var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-                  var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
-                  if (url != null) {
-                    Navigator.push(
-                        context,
+                  if(widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+                    Navigator.push(context,
                         MaterialPageRoute(
-                            builder: (context) => InAppWebViewContainer(
-                                  initUrl: url,
-                                  title: '',
-                                )));
+                            builder: (context) => WalletShowAccountInfoPage(transactionDetail)));
+                  } else {
+                    var isChinaMainland = SettingInheritedModel
+                        .of(context)
+                        .areaModel
+                        ?.isChinaMainland == true;
+                    var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
+                    if (url != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  InAppWebViewContainer(
+                                    initUrl: url,
+                                    title: '',
+                                  )));
+                    }
                   }
                 }
               },
@@ -420,7 +458,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Image.asset(iconPath,width: 18,height: 18,),
-                    SizedBox(width: 8,),
+                    SizedBox(width: 13,),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -462,7 +500,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         ],
                       ),
                     ),
-                    SizedBox(width: 8,),
+                    SizedBox(width: 14,),
                     Image.asset("res/drawable/add_position_image_next.png",height: 13,)
                   ],
                 ),
@@ -471,7 +509,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
           ),
           if(transactionDetail.localTransferType != null)
             Padding(
-              padding: const EdgeInsets.only(top:12,right:21.0),
+              padding: const EdgeInsets.only(top:11,right:21.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
@@ -542,7 +580,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         Fluttertoast.showToast(msg: "交易即将完成，无法加速。", toastLength: Toast.LENGTH_LONG);
                       }
                     }
-                  }, width: 52, height: 22, fontSize: 12),
+                  }, width: 52, height: 22, fontSize: 12, btnColor: Theme.of(context).primaryColor),
                 ],
               ),
             ),
