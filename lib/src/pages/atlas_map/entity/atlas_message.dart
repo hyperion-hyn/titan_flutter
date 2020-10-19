@@ -266,7 +266,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   final CreateMap3Entity entity;
   ConfirmCreateMap3NodeMessage({this.entity});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -274,13 +274,14 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transCreateMap3Node(this.entity, password, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmCreateMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_CREATE;
@@ -309,7 +310,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmEditMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -317,13 +318,14 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_EDIT;
@@ -385,7 +387,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmTerminateMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -393,13 +395,14 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transTerminateMap3Node(password, this.entity.to, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_TERMINAL;
@@ -428,7 +431,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -436,13 +439,14 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transUnMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_CANCEL;
@@ -471,7 +475,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -479,13 +483,14 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmDelegateMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_DELEGATE;
@@ -514,7 +519,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
 
   ConfirmCollectMap3NodeMessage({this.entity});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -522,13 +527,14 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transCollectMap3Node(password, this.entity.to, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_COLLECT;
@@ -557,7 +563,7 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   ConfirmDivideMap3NodeMessage({this.entity, this.map3NodeAddress});
 
-  /*@override
+  @override
   Future<bool> action(String password) async {
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -565,13 +571,14 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
     return txHashEntity.txHash.isNotEmpty;
-  }*/
+  }
 
+  /*
   @override
   Future<bool> action(String password) async {
     print("[ConfirmDivideMap3NodeMessage] action:$password");
     return password.isNotEmpty;
-  }
+  }*/
 
   @override
   Map3NodeActionEvent get type => Map3NodeActionEvent.MAP3_ADD;
