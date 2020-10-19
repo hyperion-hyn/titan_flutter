@@ -71,7 +71,7 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas节点",
       toDetail: "节点号:${entity.payload.nodeId}",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -107,7 +107,7 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas节点",
       toDetail: "节点号:${entity.payload.nodeId}",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -144,7 +144,7 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
       fromDetail: "节点号:$nodeId",
       toName: "Map3节点",
       toDetail: "",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -181,7 +181,7 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas链",
       toDetail: "",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -218,7 +218,7 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas节点",
       toDetail: "节点号:$nodeId",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -255,7 +255,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas链",
       toDetail: "",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -300,7 +300,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
       toDetail: "节点号:${entity.payload.nodeId}",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -344,7 +344,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
       toDetail: "节点号:${entity.payload.nodeId}",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -377,7 +377,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
       fromDetail: "$walletName ($address)",
       toName: "Atlas链",
       toDetail: "",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -421,7 +421,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -465,7 +465,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -509,7 +509,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       toName: "Map3节点",
       toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
       amount: entity?.payload?.staking ?? "0",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -553,7 +553,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       amount: entity?.payload?.staking ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
@@ -597,7 +597,7 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
       toName: "Map3节点",
       toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
       amount: entity?.payload?.staking ?? "0",
-      fee: "0.0000021",
+      fee: "0.000021",
     );
   }
 }
