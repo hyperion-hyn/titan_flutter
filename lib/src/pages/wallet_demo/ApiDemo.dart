@@ -10,6 +10,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/wallet_demo/recaptcha_test_page.dart';
 import 'package:titan/src/plugins/wallet/contract_const.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -150,10 +151,12 @@ class _ApiDemoState extends State {
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
@@ -162,9 +165,12 @@ class _ApiDemoState extends State {
                   Transaction(
                     to: EthereumAddress.fromHex(toAddress),
                     value: EtherAmount.inWei(amount),
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
 //                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.ethTransferGasLimit,
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .ethTransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -183,23 +189,30 @@ class _ApiDemoState extends State {
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var hynErc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.hynContractAddress);
-                var hynAmount = ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
+                var hynErc20Contract = WalletUtil.getHynErc20Contract(
+                    ContractTestConfig.hynContractAddress);
+                var hynAmount =
+                    ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: hynErc20Contract,
                     function: hynErc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -219,23 +232,30 @@ class _ApiDemoState extends State {
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
-              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              var activeWallet =
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
-              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              final credentials =
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getEthAccount().address;
 
-                var erc20Contract = WalletUtil.getHynErc20Contract(ContractTestConfig.usdtContractAddress);
-                var amount = ConvertTokenUnit.numToWei(100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
+                var erc20Contract = WalletUtil.getHynErc20Contract(
+                    ContractTestConfig.usdtContractAddress);
+                var amount = ConvertTokenUnit.numToWei(
+                    100, SupportedTokens.USDT_ERC20_ROPSTEN.decimals);
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
                     contract: erc20Contract,
                     function: erc20Contract.function('transfer'),
                     parameters: [EthereumAddress.fromHex(toAddress), amount],
-                    gasPrice: EtherAmount.inWei(BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20TransferGasLimit,
+                    gasPrice: EtherAmount.inWei(
+                        BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
+                    maxGas: SettingInheritedModel.ofConfig(context)
+                        .systemConfigEntity
+                        .erc20TransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
@@ -246,8 +266,17 @@ class _ApiDemoState extends State {
               }
             },
           ),
+          RaisedButton(
+            child: Text('Map3 providers'),
+            onPressed: () async {
+              NodeApi _nodeApi = NodeApi();
+              List list = await _nodeApi.getNodeProviderList();
+              print(' Map3 providers ${list.length}');
+            },
+          )
         ],
       ),
     );
   }
 }
+
