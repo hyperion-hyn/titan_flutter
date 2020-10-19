@@ -116,7 +116,7 @@ dependencies:
   #      url: git@github.com:moyaying/flutter_bugly.git
   android_intent: ^0.3.4
   app_settings: ^3.0.0
-  fluro: ^1.5.1
+  fluro: 1.6.3
   #https://pub:dev/packages/image_pickers#-readme-tab-
 #  image_pickers:
 #    git:
