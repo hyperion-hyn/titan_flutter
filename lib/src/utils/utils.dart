@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
@@ -76,4 +77,21 @@ Future launchUrl(String url) async {
   }
 }
 
+void printAction(dynamic input, {bool isEncode = false}) {
+  const encoder = JsonEncoder.withIndent('  ');
 
+  dynamic obj = input;
+
+  print('obj.runtimeType: ${obj.runtimeType}');
+
+  if (isEncode) {
+    if (input is String) {
+      const decoder = JsonDecoder();
+      obj = decoder.convert(input);
+    }
+
+    obj = encoder.convert(obj);
+  }
+
+  print(obj);
+}
