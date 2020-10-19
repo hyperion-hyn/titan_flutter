@@ -342,37 +342,10 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
 
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
-    {bool isMyself = false, FocusNode focusNode}) {
+    {bool isMyself = false, FocusNode focusNode, List<String> suggestList}) {
   double minTotal = 5500;
   double remainTotal = 50000;
 
-//  List<int> suggestList =
-//      contractNodeItem.contract.suggestQuantity.split(",").map((suggest) => int.parse(suggest)).toList();
-  List<int> suggestList = [40000, 60000, 80000];
-  /*
-  if (isJoin) {
-    //calculation
-    remainTotal = double.parse(contractNodeItem.remainDelegation);
-    double tempMinTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.minDelegationRate;
-    if (remainTotal <= 0) {
-      minTotal = 0;
-      remainTotal = 0;
-      contractNodeItem.remainDelegation = "0";
-    } else if (tempMinTotal >= remainTotal) {
-      minTotal = remainTotal;
-    } else {
-      minTotal = tempMinTotal;
-    }
-  } else {
-    remainTotal = double.parse(contractNodeItem.contract.minTotalDelegation);
-    minTotal =
-        double.parse(contractNodeItem.contract.minTotalDelegation) * contractNodeItem.contract.ownerMinDelegationRate;
-  }
-
-  var walletName = WalletInheritedModel.of(context).activatedWallet.wallet.keystore.name;
-  walletName = UiUtil.shortString(walletName, limitLength: 6);
-*/
 
   var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
   return Container(
@@ -460,11 +433,11 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                           child: Container(
                             color: HexColor("#1FB9C7").withOpacity(0.08),
                             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            child: Text(suggestList[value].toString(),
+                            child: Text(suggestList[value],
                                 style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
-                            textEditingController.text = suggestList[value].toString();
+                            textEditingController.text = suggestList[value];
                           },
                         );
                       }).toList(),

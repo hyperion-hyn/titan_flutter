@@ -383,4 +383,14 @@ class AtlasApi {
       return null;
     }
   }
+
+  Future<List<String>> getMap3RecCreate() async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/rec_create",
+        EntityFactory<List<String>>((list) => (list as List)
+            .map((item) => "$item")
+            .toList()),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
 }

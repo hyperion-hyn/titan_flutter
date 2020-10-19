@@ -8,11 +8,11 @@ part of 'map3_introduce_entity.dart';
 
 Map3IntroduceEntity _$Map3IntroduceEntityFromJson(Map<String, dynamic> json) {
   return Map3IntroduceEntity(
-    int.parse(json['create_min'] as String),
+    json['create_min'] as String,
     json['days'] as int,
-    json['fee_max'] as int,
-    json['fee_min'] as int,
-    int.parse(json['start_min'] as String),
+    json['fee_max'] as String,
+    json['fee_min'] as String,
+    json['start_min'] as String,
     json['title'] as String,
     json['version'] as String,
   );
