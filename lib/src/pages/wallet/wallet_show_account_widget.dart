@@ -356,7 +356,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
     }
     var isPending = transactionDetail.state == null;
-    var limitLength = isPending ? 4 : 9;
+    var limitLength = isPending ? 4 : 6;
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
