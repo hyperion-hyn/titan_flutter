@@ -7,13 +7,14 @@ import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -41,12 +42,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   TextEditingController _rateCoinController = new TextEditingController();
 
   final _joinCoinFormKey = GlobalKey<FormState>();
-  AllPageState currentState = LoadingState();
+  AllPageState _currentState = LoadingState();
   AtlasApi _atlasApi = AtlasApi();
   NodeApi _nodeApi = NodeApi();
   Map3IntroduceEntity _introduceEntity;
   BlsKeySignEntity _blsKeySignEntity;
-  ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -59,6 +59,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   String originInputStr = "";
   int _managerSpendCount = 20;
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
+  List<String> _reCreateList = [];
+  // ignore: close_sinks
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   // 输入框的焦点实例
   FocusNode _focusNode;
@@ -160,10 +163,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || contractItem.contract == null) {
-      return AllPageStateContainer(currentState, () {
+    if (_currentState != null || _blsKeySignEntity == null) {
+      return AllPageStateContainer(_currentState, () {
         setState(() {
-          currentState = LoadingState();
+          _currentState = LoadingState();
         });
         getNetworkData();
       });
@@ -175,13 +178,18 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     return Column(
       children: <Widget>[
         Expanded(
-          child: BaseGestureDetector(
-            context: context,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                _headerWidget(),
-                _contentWidget(),
-              ],
+          child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            enablePullUp: false,
+            onRefresh: getNetworkData,
+            child: BaseGestureDetector(
+              context: context,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  _headerWidget(),
+                  _contentWidget(),
+                ],
+              ),
             ),
           ),
         ),
@@ -323,8 +331,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _nodeServerWidget(),
           divider,
-          getHoldInNum(context, contractItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-              focusNode: _focusNode),
+          getHoldInNum(context, null, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
+              focusNode: _focusNode, suggestList: _reCreateList),
           divider,
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
@@ -474,25 +482,32 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   void getNetworkData() async {
     try {
       var requestList = await Future.wait([
-        _nodeApi.getContractInstanceItem(widget.contractId),
         _nodeApi.getNodeProviderList(),
         _atlasApi.getMap3Introduce(),
         _atlasApi.getMap3Bls(),
+        _atlasApi.getMap3RecCreate(),
       ]);
 
-      contractItem = requestList[0];
-      providerList = requestList[1];
-      _introduceEntity = requestList[2];
-      _blsKeySignEntity = requestList[3];
+      print("[object] ===> requestList:${requestList.length}");
+
+      providerList = requestList[0];
+      _introduceEntity = requestList[1];
+      _blsKeySignEntity = requestList[2];
+      _reCreateList = requestList[3];
 
       selectNodeProvider(0, 0);
 
-      setState(() {
-        currentState = null;
-      });
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
     } catch (e) {
+      print(e);
+
       setState(() {
-        currentState = LoadFailState();
+        _currentState = LoadFailState();
       });
     }
   }
@@ -535,7 +550,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   void _dealTextField(String inputText) {
-    if (contractItem == null || !mounted || originInputStr == inputText) {
+    if (!mounted || originInputStr == inputText) {
       return;
     }
 
@@ -550,8 +565,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
     double inputValue = double.parse(inputText);
-    endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
+    //endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
+    //spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {

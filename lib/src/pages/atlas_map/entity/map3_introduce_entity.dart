@@ -7,19 +7,19 @@ part 'map3_introduce_entity.g.dart';
   class Map3IntroduceEntity extends Object {
 
   @JsonKey(name: 'create_min')
-  int createMin;
+  String createMin;
 
   @JsonKey(name: 'days')
   int days;
 
   @JsonKey(name: 'fee_max')
-  int feeMax;
+  String feeMax;
 
   @JsonKey(name: 'fee_min')
-  int feeMin;
+  String feeMin;
 
   @JsonKey(name: 'start_min')
-  int startMin;
+  String startMin;
 
   @JsonKey(name: 'title')
   String title;
