@@ -66,18 +66,18 @@ class AtlasNodeDetailItem extends StatelessWidget {
                         Container(
                           height: 4,
                         ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              '${S.of(context).atlas_node_rank}: ',
-                              style: TextStyles.textC9b9b9bS12,
-                            ),
-                            Text(
-                              '${1}',
-                              style: TextStyles.textC333S11,
-                            ),
-                          ],
-                        )
+//                        Row(
+//                          children: <Widget>[
+//                            Text(
+//                              '${S.of(context).atlas_node_rank}: ',
+//                              style: TextStyles.textC9b9b9bS12,
+//                            ),
+//                            Text(
+//                              '${1}',
+//                              style: TextStyles.textC333S11,
+//                            ),
+//                          ],
+//                        )
                       ],
                     ),
                     Spacer(),

@@ -5,7 +5,9 @@ import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:titan/src/pages/global_data/echarts/world.dart';
 
 class Map3NodesWidget extends StatefulWidget {
-  Map3NodesWidget();
+  Map3NodesWidget(this.points);
+
+  final String points;
 
   @override
   State<StatefulWidget> createState() {
@@ -22,62 +24,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 250,
-      child: Echarts(
-        option: _eChartOption,
-        extensions: [worldScript],
-        captureAllGestures: true,
-      ),
-    );
-  }
-}
-
-var nodes = [
-  {
-    "name": "Sydney",
-    "value": [151.2002, -33.8591]
-  },
-  {
-    "name": "Singapore",
-    "value": [103.819836, 1.352083]
-  },
-  {
-    "name": "Paris",
-    "value": [2.35222, 48.8566]
-  },
-  {
-    "name": "Jakarta",
-    "value": [106.865, -6.17511]
-  },
-  {
-    "name": "San Jose",
-    "value": [-121.895, 37.3394]
-  },
-  {
-    "name": "Ashburn",
-    "value": [-77.4874, 39.0438]
-  },
-  {
-    "name": "Mumbai",
-    "value": [72.8777, 19.076]
-  },
-  {
-    "name": "Seoul",
-    "value": [126.978, 37.5665]
-  },
-  {
-    "name": "Tokyo",
-    "value": [139.692, 35.6895]
-  },
-  {
-    "name": "Hong Kong",
-    "value": [114.109, 22.3964]
-  }
-];
-
-var _eChartOption = '''
+    var _eChartOption = '''
 {
     backgroundColor: '#313947',
     tooltip: {
@@ -117,7 +64,7 @@ var _eChartOption = '''
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${jsonEncode(nodes)},
+        data: ${jsonEncode(widget.points)},
         symbolSize: 4,
         label: {
           normal: {
@@ -138,3 +85,57 @@ var _eChartOption = '''
     ]
 }
     ''';
+    return Container(
+      width: double.infinity,
+      height: 250,
+      child: Echarts(
+        option: _eChartOption,
+        extensions: [worldScript],
+        captureAllGestures: false,
+      ),
+    );
+  }
+}
+//
+//var nodeCoordinates = [
+//  {
+//    "name": "Sydney",
+//    "value": [151.2002, -33.8591]
+//  },
+//  {
+//    "name": "Singapore",
+//    "value": [103.819836, 1.352083]
+//  },
+//  {
+//    "name": "Paris",
+//    "value": [2.35222, 48.8566]
+//  },
+//  {
+//    "name": "Jakarta",
+//    "value": [106.865, -6.17511]
+//  },
+//  {
+//    "name": "San Jose",
+//    "value": [-121.895, 37.3394]
+//  },
+//  {
+//    "name": "Ashburn",
+//    "value": [-77.4874, 39.0438]
+//  },
+//  {
+//    "name": "Mumbai",
+//    "value": [72.8777, 19.076]
+//  },
+//  {
+//    "name": "Seoul",
+//    "value": [126.978, 37.5665]
+//  },
+//  {
+//    "name": "Tokyo",
+//    "value": [139.692, 35.6895]
+//  },
+//  {
+//    "name": "Hong Kong",
+//    "value": [114.109, 22.3964]
+//  }
+//];

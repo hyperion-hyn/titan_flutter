@@ -11,14 +11,17 @@ class Map3HomeEntity extends Object {
   @JsonKey(name: 'new_start_nodes')
   List<Map3InfoEntity> newStartNodes;
 
+  @JsonKey(name: 'points')
+  String points;
 
   Map3HomeEntity(
-      this.myNodes,
-      this.newStartNodes,
-      );
+    this.myNodes,
+    this.newStartNodes,
+    this.points,
+  );
 
-
-  factory Map3HomeEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3HomeEntityFromJson(srcJson);
+  factory Map3HomeEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$Map3HomeEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3HomeEntityToJson(this);
 }
