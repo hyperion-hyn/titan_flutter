@@ -1027,5 +1027,6 @@
   "save": "Save",
   "create_atlas_node": "Create Atlas node",
   "last_step": "Previous",
-  "next_step": "Next"
+  "next_step": "Next",
+  "not_open_please_wait": "待开放，敬请期待"
 }

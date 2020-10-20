@@ -15,6 +15,12 @@ class Map3NodesWidget extends StatefulWidget {
 
 class _Map3NodesWidgetState extends State<Map3NodesWidget> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -31,43 +37,43 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
 var nodes = [
   {
     "name": "Sydney",
-    "value": [151.2002, -33.8591, 4, 4]
+    "value": [151.2002, -33.8591]
   },
   {
     "name": "Singapore",
-    "value": [103.819836, 1.352083, 8, 8]
+    "value": [103.819836, 1.352083]
   },
   {
     "name": "Paris",
-    "value": [2.35222, 48.8566, 10, 10]
+    "value": [2.35222, 48.8566]
   },
   {
     "name": "Jakarta",
-    "value": [106.865, -6.17511, 1, 1]
+    "value": [106.865, -6.17511]
   },
   {
     "name": "San Jose",
-    "value": [-121.895, 37.3394, 2, 2]
+    "value": [-121.895, 37.3394]
   },
   {
     "name": "Ashburn",
-    "value": [-77.4874, 39.0438, 114, 114]
+    "value": [-77.4874, 39.0438]
   },
   {
     "name": "Mumbai",
-    "value": [72.8777, 19.076, 6, 6]
+    "value": [72.8777, 19.076]
   },
   {
     "name": "Seoul",
-    "value": [126.978, 37.5665, 1, 1]
+    "value": [126.978, 37.5665]
   },
   {
     "name": "Tokyo",
-    "value": [139.692, 35.6895, 6, 6]
+    "value": [139.692, 35.6895]
   },
   {
     "name": "Hong Kong",
-    "value": [114.109, 22.3964, 9, 9]
+    "value": [114.109, 22.3964]
   }
 ];
 
