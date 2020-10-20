@@ -235,6 +235,46 @@ class Wallet {
     return txHash;
   }
 
+  /// 签名转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
+  Future<String> signEthTransaction({
+    int id,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
+  }) async {
+    if (gasLimit == 0) {
+      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
+    }
+
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final rawTx = await client.signTransaction(
+      credentials,
+      web3.Transaction(
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        value: value == null ? null : web3.EtherAmount.inWei(value),
+        nonce: nonce,
+        type: type,
+        message: message,
+      ),
+      fetchChainIdFromNetworkId: type == null ? true : false,
+    );
+
+    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);;
+  }
+
   Future<String> sendErc20Transaction({
     int id,
     String contractAddress,
