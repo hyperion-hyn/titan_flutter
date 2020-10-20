@@ -408,7 +408,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
     // 记得清理
-    if (result != null && result is Map) {
+    /*if (result != null && result is Map) {
       var item = result["result"];
       if (item is ContractNodeItem) {
         // 3.push合约详情
@@ -416,11 +416,11 @@ class _Map3NodeState extends BaseState<Map3NodePage>
       }
 
       result["result"] = null;
-    }
+    }*/
   }
 
-  Future _pushContractDetail(ContractNodeItem contractNodeItem) async {
+  Future _pushContractDetail(String map3Address) async {
     Application.router.navigateTo(
-        context, Routes.map3node_contract_detail_page + "?contractId=2");
+        context, Routes.map3node_contract_detail_page + "?contractId=$map3Address");
   }
 }

@@ -57,7 +57,7 @@ import 'map3_node_public_widget.dart';
 import 'package:characters/characters.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
-  final int contractId;
+  final String contractId;
 
   Map3NodeDetailPage(this.contractId);
 
@@ -861,7 +861,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               } else {
                 var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
                 Application.router.navigateTo(
-                    context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
+                    context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeAddress");
               }
             },
             width: 120,
@@ -1813,10 +1813,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Future getContractDetailData() async {
-    try {
+//    try {
 
       // 0.
-      if (_isNoWallet) {
+      /*if (_isNoWallet) {
         _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
       } else {
         _isDelegated = await _nodeApi.checkIsDelegatedContractInstance(widget.contractId);
@@ -1828,14 +1828,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         } else {
           _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
         }
-      }
+      }*/
 
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
 
       // 1.
-      _contractState = _contractNodeItem.stateValue;
-      print(
-          '[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');
+      _contractState = ContractState.PENDING;
+      /*print(
+          '[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');*/
 
       // 2.
       await getJoinMemberData();
@@ -1852,7 +1852,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           });
         }
       });
-    } catch (e) {
+    /*} catch (e) {
       logger.e(e);
       LogUtil.toastException(e);
 
@@ -1865,7 +1865,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _isTransferring = false;
         });
       }
-    }
+    }*/
   }
 
   Future _collectAction() async {

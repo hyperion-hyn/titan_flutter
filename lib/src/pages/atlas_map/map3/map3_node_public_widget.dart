@@ -222,7 +222,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       onPressed: () {
                         Application.router.navigateTo(
-                            context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
+                            context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.address}");
                       },
                       child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
                           style: TextStyle(fontSize: 13, color: Colors.white)),
