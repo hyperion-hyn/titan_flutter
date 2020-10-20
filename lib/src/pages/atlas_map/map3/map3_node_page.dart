@@ -56,7 +56,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
     } else {
-      getNetworkData();
+      onLoadData();
     }
   }
 
@@ -80,7 +80,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
         bloc: loadDataBloc,
         onLoadData: () async {
-          getNetworkData();
+          onLoadData();
         },
         onRefresh: () {
           getNetworkData();
@@ -103,7 +103,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     );
   }
 
-  void getNetworkData() async {
+  void onLoadData() async {
+    _currentPage = 1;
+
     try {
       var requestList = await Future.wait([
         _atlasApi.getMap3Home(_address),
@@ -117,6 +119,29 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _lastActiveList = _map3homeEntity.newStartNodes;
         _myList = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
+
+        loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+      setState(() {});
+    } catch (e) {
+      print(e);
+
+      loadDataBloc.add(LoadMoreFailEvent());
+    }
+  }
+
+  void getNetworkData() async {
+    try {
+      Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
+
+      if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
+        List list = _map3stakingEntity.map3Nodes;
+
+        list.forEach((element) {
+          _pendingList.add(element);
+        });
 
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -254,7 +279,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           height: 162,
           child: Stack(
             children: <Widget>[
-              Map3NodesWidget(_map3homeEntity?.points??''),
+              Map3NodesWidget(_map3homeEntity?.points ?? ''),
               Positioned(
                 left: 16,
                 bottom: 32,
