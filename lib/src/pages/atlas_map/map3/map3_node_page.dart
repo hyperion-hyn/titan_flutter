@@ -11,7 +11,9 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -37,6 +39,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   List<Map3InfoEntity> _lastActiveList = [];
   List<Map3InfoEntity> _myList = [];
   List<Map3InfoEntity> _pendingList = [];
+  Map3HomeEntity _map3homeEntity;
+  Map3StakingEntity _map3stakingEntity;
 
   @override
   bool get wantKeepAlive => true;
@@ -110,16 +114,18 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   void getNetworkData() async {
     try {
-      List<Map3InfoEntity> contractNodeList = await _atlasApi.getMap3NodeList(
-        _address,
-        page: _currentPage,
-        size: 10,
-      );
+      var requestList = await Future.wait([
+        _atlasApi.getMap3Home(_address),
+        _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10),
+      ]);
 
-      if (contractNodeList.length > 0) {
-        _lastActiveList = contractNodeList;
-        _myList = contractNodeList;
-        _pendingList = contractNodeList;
+      _map3homeEntity = requestList[0];
+      _map3stakingEntity = requestList[1];
+
+      if (_map3stakingEntity != null) {
+        _lastActiveList = _map3homeEntity.newStartNodes;
+        _myList = _map3homeEntity.myNodes;
+        _pendingList = _map3stakingEntity.map3Nodes;
 
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -127,6 +133,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       }
       setState(() {});
     } catch (e) {
+      print(e);
+
       loadDataBloc.add(LoadMoreFailEvent());
     }
   }

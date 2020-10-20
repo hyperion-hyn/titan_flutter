@@ -130,7 +130,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
           ),
           rowTipsItem("创建7天内不可撤销", top: 0),
           rowTipsItem(
-              "需要总抵押满${_entity?.startMin ?? 0}万才能正式启动，你至少需要${(double.parse(_entity?.startMin ?? 0)) * (double.parse(_entity?.feeMin ?? 0))}万的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押${_entity?.startMin ?? 0}万即可启动节点"),
+              "需要总抵押满${_entity?.startMin ?? 0}才能正式启动，你至少需要${(double.parse(_entity?.startMin ?? 0)) * (double.parse(_entity?.feeMin ?? 0))}的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押${_entity?.startMin ?? 0}即可启动节点"),
           rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
           rowTipsItem(
             "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
@@ -189,8 +189,8 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
 
   Widget _delegateCountWidget() {
     var detail = FormatUtil.formatPrice(double.parse(_entity?.createMin ?? "0"));
-    var feeMin = 100 * double.parse(_entity?.feeMin ?? "10");
-    var feeMax = 100 * double.parse(_entity?.feeMax ?? "20");
+    var feeMin = (100 * double.parse(_entity?.feeMin ?? "10")).toInt();
+    var feeMax = (100 * double.parse(_entity?.feeMax ?? "20")).toInt();
     var fee = "$feeMin%-$feeMax%";
     var day = "${_entity?.days ?? 180}天";
     return Padding(

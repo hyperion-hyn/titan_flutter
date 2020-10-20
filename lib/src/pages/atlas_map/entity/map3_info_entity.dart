@@ -6,12 +6,16 @@ import 'user_map3_entity.dart';
 
 part 'map3_info_entity.g.dart';
 
-
 @JsonSerializable()
 class Map3InfoEntity extends Object {
-
   @JsonKey(name: 'address')
   String address;
+
+  @JsonKey(name: 'bls_key')
+  String blsKey;
+
+  @JsonKey(name: 'bls_sign')
+  String blsSign;
 
   @JsonKey(name: 'atlas')
   AtlasInfoEntity atlas;
@@ -28,8 +32,8 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'describe')
   String describe;
 
-  @JsonKey(name: 'end_time')
-  String endTime;
+  @JsonKey(name: 'end_block')
+  String endBlock;
 
   @JsonKey(name: 'fee_rate')
   String feeRate;
@@ -40,6 +44,9 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'id')
   int id;
 
+  @JsonKey(name: 'mod')
+  int mod;
+
   @JsonKey(name: 'mine')
   UserMap3Entity mine;
 
@@ -49,8 +56,8 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'node_id')
   String nodeId;
 
-  @JsonKey(name: 'parent_node_id')
-  String parentNodeId;
+  @JsonKey(name: 'parent_address')
+  String parentAddress;
 
   @JsonKey(name: 'pic')
   String pic;
@@ -73,8 +80,8 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'staking')
   String staking;
 
-  @JsonKey(name: 'start_time')
-  String startTime;
+  @JsonKey(name: 'start_block')
+  String startBlock;
 
   ///Map3InfoStatus
   @JsonKey(name: 'status')
@@ -83,12 +90,39 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
-  Map3InfoEntity(this.address,this.atlas,this.contact,this.createdAt,this.creator,this.describe,this.endTime,this.feeRate,this.home,this.id,this.mine,this.name,this.nodeId,this.parentNodeId,this.pic,this.provider,this.region,this.relative,this.rewardHistory,this.rewardRate,this.staking,this.startTime,this.status,this.updatedAt,);
+  Map3InfoEntity(
+    this.address,
+    this.blsKey,
+    this.blsSign,
+    this.atlas,
+    this.contact,
+    this.createdAt,
+    this.creator,
+    this.describe,
+    this.endBlock,
+    this.feeRate,
+    this.home,
+    this.id,
+    this.mod,
+    this.mine,
+    this.name,
+    this.nodeId,
+    this.parentAddress,
+    this.pic,
+    this.provider,
+    this.region,
+    this.relative,
+    this.rewardHistory,
+    this.rewardRate,
+    this.staking,
+    this.startBlock,
+    this.status,
+    this.updatedAt,
+  );
 
   Map3InfoEntity.onlyId(this.id);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3InfoEntityToJson(this);
-
 }

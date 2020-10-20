@@ -212,6 +212,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+    print("[object] --> 1");
 
     return Container(
       color: Colors.white,

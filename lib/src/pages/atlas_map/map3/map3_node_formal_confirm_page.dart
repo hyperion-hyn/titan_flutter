@@ -465,8 +465,13 @@ class _Map3NodeFormalConfirmState extends BaseState<Map3NodeFormalConfirmPage> {
             // todo: sign transfer
             switch (widget.actionEvent) {
               case Map3NodeActionEvent.MAP3_CREATE:
-                TxHashEntity txHashEntity = await _atlasApi.postCreateMap3Node(widget.createMap3Entity);
-                print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+                try {
+                  TxHashEntity txHashEntity = await _atlasApi.postCreateMap3Node(widget.createMap3Entity);
+                  print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+                } catch (e) {
+                   print(e);
+                }
+
                 break;
 
               case Map3NodeActionEvent.MAP3_DELEGATE:

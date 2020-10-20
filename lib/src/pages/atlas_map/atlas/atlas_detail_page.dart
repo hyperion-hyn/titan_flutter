@@ -5,7 +5,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
@@ -19,8 +18,6 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -99,6 +96,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity.myMap3 = [
       Map3InfoEntity(
         "this.address",
+        "this.blsKey",
+        "this.blsSign",
         AtlasInfoEntity.onlyId(1),
         "this.contact",
         "this.createdAt",
@@ -107,6 +106,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         "this.endTime",
         "this.feeRate",
         "this.home",
+        1,
         1,
         UserMap3Entity.onlyId(11),
         "this.name",

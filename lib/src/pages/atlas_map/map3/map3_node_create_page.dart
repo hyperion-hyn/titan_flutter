@@ -17,12 +17,11 @@ import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -69,10 +68,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   // 当前键盘是否是激活状态
   bool _isKeyboardActive = false;
 
-  var _localImagePath = "";
-  var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
-  List<String> _detailList = ["", "", "", "", "", ""];
-  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  // var _localImagePath = "";
+  // var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
+  // List<String> _detailList = ["", "", "", "", "", ""];
+  // List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+
+  var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
+  List<String> _detailList = ["", "", "", "", ""];
+  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   @override
   void initState() {
@@ -226,7 +229,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Expanded(child: Text(_introduceEntity?.name??"", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Expanded(
+                              child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
                             child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                             onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
@@ -238,7 +242,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("启动所需${_introduceEntity?.startMin??0}万  ", style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
+                            Text("启动所需" +
+                                "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
+                                S.of(context).ten_thousand,
+                                style: TextStyles.textC99000000S13, maxLines: 2, softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
@@ -248,7 +255,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                               child: Text("  |  ",
                                   style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(S.of(context).n_day("${_introduceEntity?.days??0}"), style: TextStyles.textC99000000S13)
+                            Text(S.of(context).n_day("${_introduceEntity?.days ?? 0}"),
+                                style: TextStyles.textC99000000S13)
                           ],
                         ),
                       ),
@@ -332,7 +340,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           _nodeServerWidget(),
           divider,
           getHoldInNum(context, null, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-              focusNode: _focusNode, suggestList: _reCreateList),
+              focusNode: _focusNode, suggestList: _reCreateList, createMin: _introduceEntity.createMin),
           divider,
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
@@ -362,7 +370,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 3 ? "" : "（选填）";
+          var subTitle = index < 2 ? "" : "（选填）";
           var title = _titleList[index];
           var detail = _detailList[index];
           //var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
@@ -370,32 +378,22 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           var keyboardType = TextInputType.text;
 
           switch (index) {
-            case 0:
-              detail = _localImagePath;
-              break;
-
-            case 3:
+            case 2:
               keyboardType = TextInputType.url;
               break;
 
-            case 4:
+            case 3:
               keyboardType = TextInputType.phone;
               break;
 
-            case 5:
+            case 4:
               break;
           }
 
           return editInfoItem(context, index, title, hint, detail, ({String value}) {
-            if (index == 0) {
-              setState(() {
-                _localImagePath = value;
-              });
-            } else {
-              setState(() {
-                _detailList[index] = value;
-              });
-            }
+            setState(() {
+              _detailList[index] = value;
+            });
           }, keyboardType: keyboardType, subtitle: subTitle);
         },
         separatorBuilder: (context, index) {
@@ -429,7 +427,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   void _confirmAction() async {
-    if (_localImagePath.isEmpty) {
+    if (_detailList[0].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[0]);
       return;
     }
@@ -439,25 +437,19 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
-    if (_detailList[2].isEmpty) {
-      Fluttertoast.showToast(msg: _hintList[2]);
-      return;
-    }
-
     for (var index = 0; index < _titleList.length; index++) {
       var title = _titleList[index];
-      if (title == "图标") {
-        _payload.pic = _localImagePath;
-      } else if (title == "名称") {
-        _payload.name = _detailList[1];
+
+      if (title == "名称") {
+        _payload.name = _detailList[0];
       } else if (title == "节点号") {
-        _payload.nodeId = _detailList[2];
+        _payload.nodeId = _detailList[1];
       } else if (title == "网址") {
-        _payload.home = _detailList[3];
+        _payload.home = _detailList[2];
       } else if (title == "安全联系") {
-        _payload.connect = _detailList[4];
+        _payload.connect = _detailList[3];
       } else if (title == "描述") {
-        _payload.describe = _detailList[5];
+        _payload.describe = _detailList[4];
       }
 
       var feeRate = _rateCoinController.text ?? "0";
@@ -564,9 +556,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       });
       return;
     }
-    double inputValue = double.parse(inputText);
-    //endProfit = Map3NodeUtil.getEndProfit(contractItem.contract, inputValue);
-    //spendManager = Map3NodeUtil.getManagerTip(contractItem.contract, inputValue);
 
     if (mounted) {
       setState(() {

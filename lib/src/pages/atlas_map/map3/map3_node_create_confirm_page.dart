@@ -224,11 +224,11 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
         S.of(context).submit,
         () async {
           // 1.上传图片 ---> 获取url
-          String result = await _atlasApi.postUploadImageFile(widget.entity.pic,
-              (count, total) {
-            print("[object] ---> count:$count, total:$total");
-          });
-          print("[object] ---> result:$result");
+          // String result = await _atlasApi.postUploadImageFile(widget.entity.pic,
+          //     (count, total) {
+          //   print("[object] ---> count:$count, total:$total");
+          // });
+          // print("[object] ---> result:$result");
 
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;

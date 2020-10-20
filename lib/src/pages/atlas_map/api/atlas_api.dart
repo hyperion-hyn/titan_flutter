@@ -12,8 +12,10 @@ import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
@@ -261,6 +263,24 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  // 查询查询Map3节点列表:查询查询待启动节点，未达到最小抵押量的
+  Future<Map3StakingEntity> getMap3StakingList(
+      String address, {
+        int page = 1,
+        int size = 0,
+      }) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/node_list",
+        EntityFactory<Map3StakingEntity>((json) => Map3StakingEntity.fromJson(json))
+            ,
+        params: {
+          "address": address,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
   // 抵押/撤销抵押/终止-map3节点
   Future<TxHashEntity> postPledgeMap3(PledgeMap3Entity entity) async {
     return AtlasHttpCore.instance.postEntity(
@@ -384,6 +404,7 @@ class AtlasApi {
     }
   }
 
+  // 获取节点创建的推荐抵押量
   Future<List<String>> getMap3RecCreate() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/rec_create",
@@ -393,4 +414,16 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  // 查询map3首页数据
+  Future<Map3HomeEntity> getMap3Home(String address) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/home",
+        EntityFactory<Map3HomeEntity>(
+              (json) => Map3HomeEntity.fromJson(json),
+        ),
+        params: {
+          "address": address,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
 }

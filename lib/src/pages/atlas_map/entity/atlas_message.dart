@@ -268,12 +268,22 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<bool> action(String password) async {
-    TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
-    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+    try {
+      print("[object] --> 2");
 
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transCreateMap3Node(this.entity, password, wallet);
-    return txHashEntity.txHash.isNotEmpty;
+      TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
+      print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+
+      var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+      HYNApi.transCreateMap3Node(this.entity, password, wallet);
+
+      return txHashEntity.txHash.isNotEmpty;
+
+    } catch (e) {
+      print(e);
+    }
+
+    return false;
   }
 
   /*

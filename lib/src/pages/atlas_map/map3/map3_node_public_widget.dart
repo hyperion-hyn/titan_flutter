@@ -342,13 +342,16 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
 
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
-    {bool isMyself = false, FocusNode focusNode, List<String> suggestList}) {
-  double minTotal = 5500;
+    {bool isMyself = false, FocusNode focusNode, List<String> suggestList, String createMin}) {
+  double minTotal = double.parse(createMin??"55000");
   double remainTotal = 50000;
 
+  var coinVo = WalletInheritedModel.of(
+    context,
+    aspect: WalletAspect.activatedWallet,
+  ).getCoinVoBySymbol('HYN');
 
-  var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
-  return Container(
+   return Container(
     color: Colors.white,
     padding: EdgeInsets.only(top: 16),
     child: Column(
@@ -508,12 +511,12 @@ Widget editInfoItem(
       child: InkWell(
         splashColor: Colors.blue,
         onTap: () async {
-          if (index == 0) {
+         /* if (index == 0) {
             editIconSheet(context, (path) {
               callback(value: path);
             });
             return;
-          }
+          }*/
 
           String text = await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => Map3NodePronouncePage(
@@ -553,13 +556,10 @@ Widget editInfoItem(
                             style: TextStyle(color: HexColor("#999999"), fontSize: 12),
                           ),
                   ),
-                (index == 0)
-                    ? Spacer()
-                    : SizedBox(
+                 SizedBox(
                         width: 12,
                       ),
-                index != 0
-                    ? Expanded(
+                 Expanded(
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
@@ -569,28 +569,8 @@ Widget editInfoItem(
                                 color: detail.isEmpty ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
                           ),
                         ),
-                      )
-                    : detail.isEmpty
-                        ? Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: HexColor('#FFDEDEDE'),
-                            ),
-                            child: Center(
-                              child: Text(
-                                "+",
-                                style: TextStyle(color: Colors.white, fontSize: 26),
-                              ),
-                            ),
-                          )
-                        : Image.asset(
-                            detail ?? "res/drawable/ic_map3_node_item_2.png",
-                            width: 36,
-                            height: 36,
-                            fit: BoxFit.cover,
-                          ),
+                      ),
+
                 Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: Icon(
