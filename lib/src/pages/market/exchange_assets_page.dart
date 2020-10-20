@@ -189,7 +189,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
               ],
             ),
           ),
-          left: 270,
+          left: 250,
           top: 66,
         ),
       ),
