@@ -18,7 +18,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['created_at'] as String,
     json['creator'] as String,
     json['describe'] as String,
-    json['end_block'] as String,
+    json['end_block'] as int,
     json['fee_rate'] as String,
     json['home'] as String,
     json['id'] as int,
@@ -38,7 +38,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['reward_history'] as String,
     json['reward_rate'] as String,
     json['staking'] as String,
-    json['start_block'] as String,
+    json['start_block'] as int,
     json['status'] as int,
     json['updated_at'] as String,
   );

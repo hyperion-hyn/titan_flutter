@@ -223,26 +223,30 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
+          /*
           // 1.上传图片 ---> 获取url
-          // String result = await _atlasApi.postUploadImageFile(widget.entity.pic,
-          //     (count, total) {
-          //   print("[object] ---> count:$count, total:$total");
-          // });
-          // print("[object] ---> result:$result");
+          String result = await _atlasApi.postUploadImageFile(widget.entity.pic,
+              (count, total) {
+            print("[object] ---> count:$count, total:$total");
+          });
+          print("[object] ---> result:$result");
+        */
 
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;
           if (!widget.entity.isEdit) {
             CreateMap3Entity map3entity =
                 CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+            map3entity.gasLimit = 600000;
             map3entity.payload = widget.entity;
+            map3entity.amount = widget.entity.staking;
             message = ConfirmCreateMap3NodeMessage(entity: map3entity);
           } else {
             CreateMap3Entity map3entity =
                 CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
             map3entity.payload = widget.entity;
             message = ConfirmEditMap3NodeMessage(
-                entity: map3entity, map3NodeAddress: "xxx");
+                entity: map3entity, map3NodeAddress: "");
           }
 
           Navigator.push(

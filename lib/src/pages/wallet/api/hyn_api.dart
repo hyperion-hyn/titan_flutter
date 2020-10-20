@@ -28,7 +28,9 @@ class HYNApi {
       value: amount,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
-      isAtlasTrans: isAtlasTrans
+      isAtlasTrans: isAtlasTrans,
+      // todo: 需要动态设置
+      gasLimit: 600000,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -152,7 +154,7 @@ class HYNApi {
     var payload = entity.payload;
     print(payload.toJson());
 
-    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.amount));
+    var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(payload.staking));
     var message = CreateMap3NodeMessage(
       amount: amount,
       //commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
@@ -167,8 +169,6 @@ class HYNApi {
       operatorAddress: wallet.getAtlasAccount().address,
       nodePubKey: payload.blsAddKey,
       nodeKeySig: payload.blsAddSign,
-      //nodePubKey: '5228b7f763038bb5b7638b624a56535a97b7e2cf6cba6e43d303d8919d7397fffd2eed7060bd29a13f5a9ab78994f614',
-      //nodeKeySig: 'eb88a3e92d7e6a8c1b356730cda4e6ef24dec89fd2d5279761c50e0f71c6597f06aec6c861c884ee5b3f311832a0f9026d3864b9c116294333301999737ff2a02331ee9bdde89e3963ba794ceaedd3bfbf39243405c1b2f99a52ccf5aca0f411',
     );
     print(message);
 

@@ -7,6 +7,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -342,9 +343,9 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
 
 Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
     TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
-    {bool isMyself = false, FocusNode focusNode, List<String> suggestList, String createMin}) {
-  double minTotal = double.parse(createMin??"55000");
-  double remainTotal = 50000;
+    {bool isMyself = false, FocusNode focusNode, List<String> suggestList, Map3IntroduceEntity map3introduceEntity}) {
+  double minTotal = double.parse(map3introduceEntity.createMin??"55000");
+  double remainTotal = double.parse(map3introduceEntity.startMin??"550000");;
 
   var coinVo = WalletInheritedModel.of(
     context,
