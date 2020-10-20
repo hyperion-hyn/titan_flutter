@@ -10,7 +10,7 @@ Map3StakingEntity _$Map3StakingEntityFromJson(Map<String, dynamic> json) {
   return Map3StakingEntity(
     json['map3_nodes'] == null
         ? []
-        : (json['my_nodes'] as List).map((item) => Map3InfoEntity.fromJson(item as Map<String, dynamic>)).toList(),
+        : (json['map3_nodes'] as List).map((item) => Map3InfoEntity.fromJson(item as Map<String, dynamic>)).toList(),
     json['can_staking_num'] as int,
   );
 }

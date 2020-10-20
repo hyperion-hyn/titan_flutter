@@ -649,7 +649,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _pageWidget(BuildContext context) {
-    if (_currentState != null || _contractNodeItem?.contract == null) {
+    if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
         //appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
         body: AllPageStateContainer(_currentState, () {

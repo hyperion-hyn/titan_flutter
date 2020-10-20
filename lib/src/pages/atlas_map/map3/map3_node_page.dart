@@ -87,10 +87,10 @@ class _Map3NodeState extends BaseState<Map3NodePage>
           onLoadData();
         },
         onRefresh: () {
-          getNetworkData();
+          onLoadData();
         },
         onLoadingMore: () {
-          getNetworkData();
+          onLoadingMore();
         },
         child: CustomScrollView(
           slivers: <Widget>[
@@ -138,7 +138,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     }
   }
 
-  void getNetworkData() async {
+  void onLoadingMore() async {
     try {
       Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 

@@ -10,6 +10,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -59,17 +60,17 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
       break;
   }
 
-  var nodeName = "天道酬勤唐唐";
-  var nodeAddress = "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address??"oxfdaf89fdaff", limitLength: 1)}";
+  var nodeName = contractNodeItem.name;
+  var nodeAddress = "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address??"", limitLength: 1)}";
   var nodeIdPre = "节点号";
-  var nodeId = " ${contractNodeItem.nodeId ?? "PB2020"}";
+  var nodeId = " ${contractNodeItem.nodeId ?? ""}";
   var feeRatePre = "管理费：";
-  var feeRate = contractNodeItem.feeRate ?? "10%";
+  var feeRate = contractNodeItem.feeRate ?? "--";
   var descPre = "描   述：";
   var desc = contractNodeItem.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
-  var remainDelegation = "${FormatUtil.formatNum(int.parse(contractNodeItem.staking ?? "10000"))}";
-  var date = "2020/12/12 12:12";
-  var times = "第一期";
+  var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractNodeItem?.staking??"0")).toString());
+  var date = contractNodeItem.createdAt;
+
 
   return InkWell(
     onTap: () async {
@@ -141,14 +142,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                             TextSpan(text: nodeId, style: TextStyle(fontSize: 13, color: HexColor("#333333")))
                           ]),
                     ),
-                    Container(
-                      height: 4,
-                    ),
-                    Container(
-                      color: HexColor("#1FB9C7").withOpacity(0.08),
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      child: Text(times, style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                    ),
+
                   ],
                 )
               ],
