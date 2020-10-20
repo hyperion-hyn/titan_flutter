@@ -12,7 +12,7 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
-  static Future transferHYN(
+  static Future<String> transferHYN(
     String password,
     localWallet.Wallet wallet, {
     String toAddress,
@@ -21,7 +21,7 @@ class HYNApi {
     bool isAtlasTrans = true
   }) async {
     var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI);
-    final txHash = await wallet.sendEthTransaction(
+    final txHash = await wallet.signEthTransaction(
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
@@ -37,7 +37,7 @@ class HYNApi {
     return txHash;
   }
 
-  static Future transCreateAtlasNode(
+  static Future<String> transCreateAtlasNode(
     CreateAtlasEntity createAtlasEntity,
     String password,
     localWallet.Wallet wallet,
@@ -60,10 +60,11 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
-  static Future transEditAtlasNode(
+  static Future<String> transEditAtlasNode(
     CreateAtlasEntity createAtlasEntity,
     String password,
     localWallet.Wallet wallet,
@@ -87,10 +88,11 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
-  static Future transAtlasReceiveReward(
+  static Future<String> transAtlasReceiveReward(
     PledgeAtlasEntity pledgeAtlasEntity,
     String password,
     localWallet.Wallet wallet,
@@ -100,10 +102,11 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
-  static Future transAtlasActive(
+  static Future<String> transAtlasActive(
     CreateAtlasEntity createAtlasEntity,
     String password,
     localWallet.Wallet wallet,
@@ -115,10 +118,11 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
-  static Future transAtlasStake(
+  static Future<String> transAtlasStake(
     PledgeAtlasEntity pledgeAtlasEntity,
     String password,
     localWallet.Wallet wallet,
@@ -128,10 +132,11 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
-  static Future transAtlasUnStake(
+  static Future<String> transAtlasUnStake(
       PledgeAtlasEntity pledgeAtlasEntity,
       String password,
       localWallet.Wallet wallet,
@@ -141,7 +146,8 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    return transferHYN(password, wallet, message: message);
+    var rawTx = await transferHYN(password, wallet, message: message);
+    return rawTx;
   }
 
   //==================================Atlas Message End==============================================
