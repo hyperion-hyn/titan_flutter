@@ -32,6 +32,7 @@ class HYNApi {
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
+    return txHash;
   }
 
   static Future transCreateAtlasNode(
@@ -57,7 +58,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transEditAtlasNode(
@@ -84,7 +85,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transAtlasReceiveReward(
@@ -97,7 +98,7 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transAtlasActive(
@@ -112,7 +113,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transAtlasStake(
@@ -125,7 +126,7 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transAtlasUnStake(
@@ -138,7 +139,7 @@ class HYNApi {
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
     print(message);
 
-    transferHYN(password, wallet, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   //==================================Atlas Message End==============================================
@@ -149,11 +150,13 @@ class HYNApi {
     localWallet.Wallet wallet,
   ) async {
     var payload = entity.payload;
+    print(payload.toJson());
+
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(entity.amount));
     var message = CreateMap3NodeMessage(
       amount: amount,
-      commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
-      //commission: BigInt.from(10).pow(17),
+      //commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
+      commission: BigInt.from(10).pow(17),
       // 0.1   10%手续费
       description: NodeDescription(
           name: payload.name,
@@ -169,7 +172,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: entity.to, message: message, amount: amount);
+    return transferHYN(password, wallet, toAddress: entity.to, message: message, amount: amount);
   }
 
   static Future transEditMap3Node(
@@ -195,7 +198,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: entity.to, message: message);
+    return transferHYN(password, wallet, toAddress: entity.to, message: message);
   }
 
   static Future transTerminateMap3Node(
@@ -210,7 +213,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: toAddress, message: message);
+    return transferHYN(password, wallet, toAddress: toAddress, message: message);
   }
 
   static Future transMicroMap3Node(
@@ -228,7 +231,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
+    return transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
   }
 
   static Future transUnMicroMap3Node(
@@ -246,7 +249,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
+    return transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
   }
 
   static Future transCollectMap3Node(
@@ -259,7 +262,7 @@ class HYNApi {
     );
     print(message);
 
-    transferHYN(password, wallet, toAddress: toAddress, message: message);
+    return transferHYN(password, wallet, toAddress: toAddress, message: message);
   }
 
   static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}){
