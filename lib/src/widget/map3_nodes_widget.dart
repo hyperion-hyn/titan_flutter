@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_echarts/flutter_echarts.dart';
 import 'package:titan/src/pages/global_data/echarts/world.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 
 class Map3NodesWidget extends StatefulWidget {
   Map3NodesWidget();
@@ -28,13 +29,13 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
       child: Echarts(
         option: _eChartOption,
         extensions: [worldScript],
-        captureAllGestures: true,
+        captureAllGestures: false,
       ),
     );
   }
 }
 
-var nodes = [
+var nodeCoordinates = [
   {
     "name": "Sydney",
     "value": [151.2002, -33.8591]
@@ -117,7 +118,7 @@ var _eChartOption = '''
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${jsonEncode(nodes)},
+        data: ${jsonEncode(nodeCoordinates)},
         symbolSize: 4,
         label: {
           normal: {

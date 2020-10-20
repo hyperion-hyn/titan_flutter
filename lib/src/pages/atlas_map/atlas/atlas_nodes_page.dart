@@ -7,6 +7,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
@@ -297,16 +298,20 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _atlasMap() {
-    var _remainTime = 15;
-    var _loopTime = 3600 * 24;
+    var _secPerBlock = _committeeInfo?.secPerBlock ?? 0;
+    var _blocksPerEpoch = _committeeInfo?.blockHeight ?? 0;
+    var _currentBlockNum = _committeeInfo?.blockNum ?? 0;
+    var _epochStartBlockNum = _committeeInfo?.blockNumStart ?? 0;
 
-//    var date = DateTime.parse('2020-05-05T20:17:22Z');
-//    var _ageStartTime =
-//        DateTime.parse(_committeeInfo.startTime).millisecondsSinceEpoch;
-//    var _ageEndTime =
-//        DateTime.parse(_committeeInfo.endTime).millisecondsSinceEpoch;
-//
-//    var _remainTimeMilliseconds = _ageEndTime - _ageStartTime;
+    ///total time of 1 epoch:  blocksPerEpoch * secPerBlock
+    ///
+    var _secPerEpoch = _blocksPerEpoch * _secPerBlock;
+
+    ///remain time: remainBlockCount * secPerBlock
+    ///remainBlockCount = blocksPerEpoch - (currentBlockNum - startBlockNum)
+    ///
+    var _remainTime = _secPerBlock *
+        (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
 
     return Container(
       width: double.infinity,
@@ -369,7 +374,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       ),
                       TimerTextWidget(
                         remainTime: _remainTime,
-                        loopTime: _loopTime,
+                        loopTime: _secPerEpoch,
                       ),
                     ],
                   )
@@ -521,7 +526,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       return SliverToBoxAdapter(
         child: Container(
           height: 200,
-          color: Colors.red,
+          child: Center(
+            child: Text(S.of(context).exchange_empty_list),
+          ),
         ),
       );
     }
@@ -610,14 +617,19 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     _atlasNodeList.clear();
     try {
       var _nodeList = await _atlasApi.postAtlasNodeList(
-        'address',
+        WalletInheritedModel.of(context)
+                ?.activatedWallet
+                ?.wallet
+                ?.getAtlasAccount()
+                ?.address ??
+            '',
         page: _currentPage,
         size: _pageSize,
       );
-      _atlasNodeList.addAll(_nodeList);
 
-      ///
-      _myAtlasNodeList.addAll(_nodeList);
+      if (_nodeList != null) {
+        _atlasNodeList.addAll(_nodeList);
+      }
 
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
@@ -630,20 +642,21 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   _loadMoreData() async {
     try {
       var _nodeList = await _atlasApi.postAtlasNodeList(
-        'address',
+        WalletInheritedModel.of(context)
+                ?.activatedWallet
+                ?.wallet
+                ?.getAtlasAccount()
+                ?.address ??
+            '',
         page: _currentPage + 1,
         size: _pageSize,
       );
 
-      _atlasNodeList.addAll(_nodeList);
+      if (_nodeList != null) {
+        _atlasNodeList.addAll(_nodeList);
+        _currentPage++;
+      }
 
-      ///
-      _myAtlasNodeList.addAll(_nodeList);
-
-      ///
-      _currentPage++;
-
-      ///
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
