@@ -61,6 +61,8 @@ enum AtlasNodeType {
 }
 
 String getAtlasNodeType(int atlasNodeType){
+  return "出块节点";
+  //todo
   AtlasNodeType nodeType = AtlasNodeType.values[atlasNodeType];
   switch(nodeType){
     case AtlasNodeType.CANDIDATE:

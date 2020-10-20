@@ -706,7 +706,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: Material(
                       color: Colors.white,
                       child: NodeJoinMemberWidget(
-                        "${widget.contractId}",
+                        _nodeAddress,
                         remainDay,
                         _contractNodeItem.ownerName,
                         _contractNodeItem.shareUrl,

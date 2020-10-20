@@ -12,12 +12,11 @@ import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
-class NodeJoinMemberWidget extends StatefulWidget {
+class AtlasJoinMap3Widget extends StatefulWidget {
   final String nodeAddress;
   final String remainDay;
   final String shareName;
@@ -25,16 +24,16 @@ class NodeJoinMemberWidget extends StatefulWidget {
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.nodeAddress, this.remainDay, this.shareName, this.shareUrl,
+  AtlasJoinMap3Widget(this.nodeAddress, this.remainDay, this.shareName, this.shareUrl,
       {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
-    return _NodeJoinMemberState();
+    return _AtlasJoinMap3State();
   }
 }
 
-class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
+class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   AtlasApi _atlasApi = AtlasApi();
@@ -65,7 +64,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberData() async {
     _currentPage = 0;
     List<Map3UserEntity> tempMemberList =
-    await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+        await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -83,7 +82,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     try {
       _currentPage++;
       List<Map3UserEntity> tempMemberList =
-      await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+          await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -112,7 +111,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                 children: <Widget>[
                   Expanded(
                       child:
-                      Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                          Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -238,9 +237,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
 }

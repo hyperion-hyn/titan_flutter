@@ -47,7 +47,8 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+    var rawTx = await HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+    entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postCreateAtlasNode(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -83,7 +84,8 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+    var rawTx = await HYNApi.transCreateAtlasNode(this.entity, password, wallet);
+    entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postEditAtlasNode(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -120,8 +122,9 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transAtlasReceiveReward(this.pledgeAtlasEntity, password, wallet);
-//
+    var rawTx = await HYNApi.transAtlasReceiveReward(this.pledgeAtlasEntity, password, wallet);
+    pledgeAtlasEntity.rawTx = rawTx;
+
     TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(this.pledgeAtlasEntity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
     return txHashEntity.txHash.isNotEmpty;
@@ -157,7 +160,8 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transAtlasActive(this.entity, password, wallet);
+    var rawTx = await HYNApi.transAtlasActive(this.entity, password, wallet);
+    entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().activeAtlasNode(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -194,7 +198,8 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transAtlasStake(this.pledgeAtlasEntity, password, wallet);
+    var rawTx = await HYNApi.transAtlasStake(this.pledgeAtlasEntity, password, wallet);
+    pledgeAtlasEntity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -231,7 +236,8 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   @override
   Future<bool> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
+    var rawTx = await HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
+    pledgeAtlasEntity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
