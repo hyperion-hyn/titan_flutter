@@ -58,15 +58,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     } else {
       getNetworkData();
     }
-
-    // todo: test_jison_0813
-    /*
-    for (int i = 0; i < 3; i++) {
-      Map3InfoEntity item = Map3InfoEntity.onlyId(i);
-      _myList.add(item);
-      _lastActiveList.add(item);
-      _pendingList.add(item);
-    }*/
   }
 
   @override
