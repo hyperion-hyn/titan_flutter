@@ -38,7 +38,7 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> {
       ),
       body: Column(
         children: <Widget>[
-          Map3NodesWidget(),
+          Map3NodesWidget('{\"p1\":[12,12.5],\"p2\":[12,12.5]}'),
           SizedBox(
             height: 16,
           ),

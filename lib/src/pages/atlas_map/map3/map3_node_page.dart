@@ -263,7 +263,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           height: 162,
           child: Stack(
             children: <Widget>[
-              Map3NodesWidget(),
+              Map3NodesWidget(_map3homeEntity?.points??''),
               Positioned(
                 left: 16,
                 bottom: 32,
