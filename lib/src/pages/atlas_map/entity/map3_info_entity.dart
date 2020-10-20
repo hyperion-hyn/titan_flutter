@@ -33,7 +33,7 @@ class Map3InfoEntity extends Object {
   String describe;
 
   @JsonKey(name: 'end_block')
-  String endBlock;
+  int endBlock;
 
   @JsonKey(name: 'fee_rate')
   String feeRate;
@@ -81,7 +81,7 @@ class Map3InfoEntity extends Object {
   String staking;
 
   @JsonKey(name: 'start_block')
-  String startBlock;
+  int startBlock;
 
   ///Map3InfoStatus
   @JsonKey(name: 'status')

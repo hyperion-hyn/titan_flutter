@@ -29,7 +29,7 @@ Map<String, dynamic> _$CreateMap3EntityToJson(CreateMap3Entity instance) => <Str
       'price': instance.price,
       'raw_tx': instance.rawTx,
       'to': instance.to,
-      'type': instance.type,
+      'type': instance.type.index,
     };
 
 CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {

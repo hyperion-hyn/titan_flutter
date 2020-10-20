@@ -340,7 +340,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           _nodeServerWidget(),
           divider,
           getHoldInNum(context, null, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-              focusNode: _focusNode, suggestList: _reCreateList, createMin: _introduceEntity.createMin),
+              focusNode: _focusNode, suggestList: _reCreateList, map3introduceEntity: _introduceEntity),
           divider,
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
