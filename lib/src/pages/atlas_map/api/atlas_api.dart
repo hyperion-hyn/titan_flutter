@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
@@ -353,12 +354,12 @@ class AtlasApi {
   }
 
   // 获取节点的抵押人地址列表
-  Future<List<UserMap3Entity>> getMap3UserList(String nodeAddress,
+  Future<List<Map3UserEntity>> getMap3UserList(String nodeAddress,
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/user_list",
-        EntityFactory<List<UserMap3Entity>>((list) => (list as List)
-            .map((item) => UserMap3Entity.fromJson(item))
+        EntityFactory<List<Map3UserEntity>>((list) => (list as List)
+            .map((item) => Map3UserEntity.fromJson(item))
             .toList()),
         params: {
           "node_address": nodeAddress,

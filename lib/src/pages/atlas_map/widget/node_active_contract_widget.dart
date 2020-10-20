@@ -70,7 +70,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = item.name;
     var nodeId = "节点号: ${item.nodeId}";
-    var contractId = item.id;
+    var contractId = item.address;
 
     return InkWell(
       onTap: () {

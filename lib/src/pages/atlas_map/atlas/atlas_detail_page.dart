@@ -18,6 +18,12 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/widget/atlas_join_map3_widget.dart';
+import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
+import 'package:titan/src/pages/atlas_map/widget/simple_line_chart.dart';
+import 'package:titan/src/pages/atlas_map/widget/sliding_viewport_on_selection.dart';
+import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -82,7 +88,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   Future _refreshData() async {
-    _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
+    //todo
+//    _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
+    _atlasInfoEntity = AtlasInfoEntity.onlyId(11);
     _atlasInfoEntity.name = "啦啦啦";
     _atlasInfoEntity.rank = 23;
     _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
@@ -208,6 +216,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
+                  _chartDetailWidget(),
+                  _joinMap3Widget(),
                   SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                     return _joinMap3Item(index);
@@ -925,6 +935,52 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           SizedBox(
             width: 15,
           )
+        ],
+      ),
+    );
+  }
+
+  _joinMap3Widget() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: <Widget>[
+          AtlasJoinMap3Widget(
+            "${_atlasInfoEntity.id}",
+            "",
+            "",
+            "",
+            isShowInviteItem: false,
+            loadDataBloc: _loadDataBloc,
+          ),
+          Container(
+            height: 10,
+            color: HexColor("#F2F2F2"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _chartDetailWidget() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: <Widget>[
+          Container(
+              height: 303,
+              padding: const EdgeInsets.only(left: 16.0, right: 16,top: 23,bottom: 23),
+              child: SlidingViewportOnSelection.withSampleData()),
+          Container(
+            height: 10,
+            color: HexColor("#F2F2F2"),
+          ),
+          Container(
+              height: 303,
+              padding: const EdgeInsets.only(left: 16.0, right: 16,top: 23,bottom: 23),
+              child: SimpleLineChart.withSampleData()),
+          Container(
+            height: 10,
+            color: HexColor("#F2F2F2"),
+          ),
         ],
       ),
     );

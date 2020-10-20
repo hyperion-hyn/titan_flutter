@@ -288,7 +288,7 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  return Map3NodeDetailPage(int.parse(params['contractId']?.first));
+  return Map3NodeDetailPage(params['contractId']?.first);
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {

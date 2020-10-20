@@ -426,7 +426,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         ),
                       ),
                       onTap: () {
-                        AtlasApi.goToAtlasMap3HelpPage(context);
+                        //todo
+                        Application.router.navigateTo(context, Routes.atlas_detail_page);
+
+//                        AtlasApi.goToAtlasMap3HelpPage(context);
                       },
                     ),
                   ),

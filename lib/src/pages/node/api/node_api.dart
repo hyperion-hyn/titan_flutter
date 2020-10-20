@@ -64,8 +64,8 @@ class NodeApi {
         options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
   }
 
-  Future<ContractDetailItem> getContractDetail(int contractId) async {
-    return await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId",
+  Future<ContractDetailItem> getContractDetail(String nodeAddress) async {
+    return await NodeHttpCore.instance.getEntity("/delegations/instance/$nodeAddress",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
         options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
   }
@@ -360,8 +360,8 @@ class NodeApi {
     return "success";
   }
 
-  Future<bool> checkIsDelegatedContractInstance(int contractId) async {
-    var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated",
+  Future<bool> checkIsDelegatedContractInstance(String nodeAddress) async {
+    var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$nodeAddress/isdelegated",
         EntityFactory<bool>((data) {
       return data;
     }), options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
