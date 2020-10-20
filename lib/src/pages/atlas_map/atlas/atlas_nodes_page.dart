@@ -383,48 +383,66 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _createNode() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 24.0, bottom: 0),
-      child: Container(
-        width: double.infinity,
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: ClickOvalButton(
-                S.of(context).atlas_create_node,
-                () {
-                  Application.router.navigateTo(
-                    context,
-                    Routes.atlas_create_node_page,
-                  );
-                },
-                fontSize: 16,
-              ),
-            ),
-            Positioned.fill(
-              child: Align(
-                alignment: Alignment.center,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 280.0),
-                  child: InkWell(
-                    child: Text(
-                      S.of(context).atlas_launch_tutorial,
-                      style: TextStyle(
-                        color: DefaultColors.color999,
-                        fontSize: 12,
-                      ),
-                    ),
-                    onTap: () {
-                      AtlasApi.goToAtlasMap3HelpPage(context);
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 24.0, bottom: 0),
+          child: Container(
+            width: double.infinity,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: ClickOvalButton(
+                    S.of(context).atlas_create_node,
+                    () {
+                      Application.router.navigateTo(
+                        context,
+                        Routes.atlas_create_node_page,
+                      );
                     },
+                    fontSize: 16,
+                    isLoading: true,
                   ),
                 ),
-              ),
-            )
-          ],
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: InkWell(
+                      child: Text(
+                        S.of(context).atlas_launch_tutorial,
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
+                      ),
+                      onTap: () {
+                        AtlasApi.goToAtlasMap3HelpPage(context);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              S.of(context).not_open_please_wait,
+              style: TextStyle(
+                fontSize: 12,
+                color: DefaultColors.color999,
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 

@@ -1023,5 +1023,6 @@
   "save": "保存",
   "create_atlas_node": "创建Atlas节点",
   "last_step": "上一步",
-  "next_step": "下一步"
+  "next_step": "下一步",
+  "not_open_please_wait": "待开放，敬请期待"
 }
