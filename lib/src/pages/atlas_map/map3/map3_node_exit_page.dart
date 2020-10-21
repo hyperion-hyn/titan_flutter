@@ -40,12 +40,22 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   AtlasApi _atlasApi = AtlasApi();
   var _address = "string";
   var _nodeId = "string";
+  var _walletName = "";
+  var _walletAddress = "";
 
   @override
   void onCreated() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getEthAccount().address;
     _nodeId = widget.map3infoEntity.nodeId;
+
+    var activatedWallet = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    _walletName = activatedWallet.wallet.keystore.name;
+    _walletAddress = activatedWallet.wallet.getEthAccount().address;
 
     getNetworkData();
 
@@ -105,14 +115,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       );
     }
 
-    var activatedWallet = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).activatedWallet;
-
-    var walletName = activatedWallet.wallet.keystore.name;
-    var walletAddress = activatedWallet.wallet.getEthAccount().address;
-    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(walletAddress ?? "***", limitLength: 9)}";
+    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var nodeYearOld = "   节龄: ***天";
@@ -218,14 +221,14 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
-                                    TextSpan(text: walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(
+                                        text: _walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                     TextSpan(text: "", style: TextStyles.textC333S14bold),
                                   ])),
                                   Container(
                                     height: 4,
                                   ),
-                                  Text(walletAddressStr,
-                                      style: TextStyles.textC9b9b9bS12),
+                                  Text(walletAddressStr, style: TextStyles.textC9b9b9bS12),
                                 ],
                               ),
                             ],
@@ -288,11 +291,17 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           child: ClickOvalButton(
             "确认终止",
             () {
-              var entity = PledgeMap3Entity(payload: Payload(userIdentity: widget.map3infoEntity.nodeId,));
+              var entity = PledgeMap3Entity(
+                  payload: Payload(
+                userName: _walletName,
+                userIdentity: widget.map3infoEntity.nodeId,
+              ));
+
               var message = ConfirmTerminateMap3NodeMessage(
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
               );
+
               Navigator.push(
                   context,
                   MaterialPageRoute(

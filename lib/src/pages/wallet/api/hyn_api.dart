@@ -26,7 +26,7 @@ class HYNApi {
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice),
-      value: message == null ? amount : 0,
+      value: amount,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
