@@ -216,7 +216,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
-                  _chartDetailWidget(),
+//                  _chartDetailWidget(),
                   _joinMap3Widget(),
                   SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {

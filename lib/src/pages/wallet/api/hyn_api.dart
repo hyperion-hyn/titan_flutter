@@ -18,13 +18,17 @@ class HYNApi {
     String toAddress,
     BigInt amount,
     IMessage message,
-    bool isAtlasTrans = true
+    bool isAtlasTrans = true,
+    String gasPrice,
+    int gasLimit
   }) async {
-    var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI);
+    if(gasPrice == null){
+      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
     final txHash = await wallet.signEthTransaction(
       password: password,
       toAddress: toAddress,
-      gasPrice: BigInt.parse(gasPrice.toStringAsFixed(0)),
+      gasPrice: BigInt.parse(gasPrice),
       value: amount,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
@@ -178,7 +182,7 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: entity.to, message: message, amount: amount);
+    return transferHYN(password, wallet, toAddress: entity.to, message: message, amount: amount, gasLimit: entity.gasLimit,gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -204,7 +208,7 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: entity.to, message: message);
+    return transferHYN(password, wallet, toAddress: entity.to, message: message, amount: BigInt.parse(entity.amount), gasLimit: entity.gasLimit,gasPrice: entity.price);
   }
 
   static Future transTerminateMap3Node(

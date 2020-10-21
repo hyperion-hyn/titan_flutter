@@ -51,7 +51,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   void getNetworkData() async {
     try {
       var requestList = await Future.wait([
-        _atlasApi.getMap3Introduce(),
+        AtlasApi.getIntroduceEntity(),
         _nodeApi.getNodeProviderList(),
       ]);
 

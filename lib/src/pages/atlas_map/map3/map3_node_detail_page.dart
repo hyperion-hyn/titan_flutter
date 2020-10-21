@@ -843,9 +843,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     Routes.map3node_create_wallet +
                         "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
               } else {
-                var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-                Application.router.navigateTo(context,
-                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(_nodeId)}");
+                if (_map3infoEntity != null) {
+                  var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+                  Application.router.navigateTo(context,
+                      Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+                }
               }
             },
             width: 120,

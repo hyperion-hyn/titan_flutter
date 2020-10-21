@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -265,8 +267,9 @@ var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  var nodeId = FluroConvertUtils.fluroCnParamsDecode(params['contractId']?.first);
-  return Map3NodeJoinPage(nodeId);
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['entityInfo']?.first));
+  return Map3NodeJoinPage(map3infoEntity,);
 });
 
 var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {

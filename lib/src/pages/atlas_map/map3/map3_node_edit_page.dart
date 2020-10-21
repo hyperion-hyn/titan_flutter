@@ -31,9 +31,9 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
 
   var _localImagePath = "";
-  var _titleList = ["图标", "名称", "节点号", "网址", "安全联系", "描述"];
-  List<String> _detailList = ["", "", "", "", "", ""];
-  List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
+  List<String> _detailList = ["", "", "", "", ""];
+  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   @override
   void initState() {
@@ -42,38 +42,26 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   }
 
   _setupData() {
-    _titleList = [];
-    _detailList = [];
-
     var entity = widget.entity;
-    if (entity.pic?.isNotEmpty ?? false) {
-      _titleList.add("图标");
-      _detailList.add(entity.pic);
-    }
 
     if (entity.name?.isNotEmpty ?? false) {
-      _titleList.add("名称");
-      _detailList.add(entity.name);
+      _detailList[0] = entity.name;
     }
 
     if (entity.nodeId?.isNotEmpty ?? false) {
-      _titleList.add("节点号");
-      _detailList.add(entity.nodeId);
+      _detailList[1] = entity.nodeId;
     }
 
     if (entity.home?.isNotEmpty ?? false) {
-      _titleList.add("网址");
-      _detailList.add(entity.home);
+      _detailList[2] = entity.home;
     }
 
     if (entity.contact?.isNotEmpty ?? false) {
-      _titleList.add("安全联系");
-      _detailList.add(entity.contact);
+      _detailList[3] = entity.contact;
     }
 
     if (entity.describe?.isNotEmpty ?? false) {
-      _titleList.add("描述");
-      _detailList.add(entity.describe);
+      _detailList[4] = entity.describe;
     }
   }
 
@@ -202,22 +190,22 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 3 ? "" : "（选填）";
+          var subTitle = index < 2 ? "" : "（选填）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
           var keyboardType = TextInputType.text;
 
           switch (index) {
-            case 3:
+            case 2:
               keyboardType = TextInputType.url;
               break;
 
-            case 4:
+            case 3:
               keyboardType = TextInputType.phone;
               break;
 
-            case 5:
+            case 4:
               break;
           }
 
@@ -254,7 +242,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       child: ClickOvalButton(
         S.of(context).submit,
         () async {
-          if (_localImagePath.isEmpty) {
+          if (_detailList[0].isEmpty) {
             Fluttertoast.showToast(msg: _hintList[0]);
             return;
           }
@@ -264,32 +252,25 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             return;
           }
 
-          if (_detailList[2].isEmpty) {
-            Fluttertoast.showToast(msg: _hintList[2]);
-            return;
-          }
-
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
-            if (title == "图标") {
-              _payload.pic = _localImagePath;
-            } else if (title == "名称") {
-              _payload.name = _detailList[1];
-            } else if (title == "节点号") {
-              _payload.nodeId = _detailList[2];
+            if (title == "名称") {
+              _payload.name = _detailList[0];
+            } else if (title == "节点号" && _detailList[1] != widget.entity.nodeId) {
+              _payload.nodeId = _detailList[1];
             } else if (title == "网址") {
-              _payload.home = _detailList[3];
+              _payload.home = _detailList[2];
             } else if (title == "安全联系") {
-              _payload.connect = _detailList[4];
+              _payload.connect = _detailList[3];
             } else if (title == "描述") {
-              _payload.describe = _detailList[5];
+              _payload.describe = _detailList[4];
             }
           }
           _payload.isEdit = true;
 
           CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
           map3entity.payload = _payload;
-          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: "xxx");
+          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: widget.entity.address);
 
           Navigator.push(
               context,
