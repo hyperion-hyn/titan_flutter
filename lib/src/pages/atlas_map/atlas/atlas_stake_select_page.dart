@@ -15,11 +15,13 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasStakeSelectPage extends StatefulWidget {
   final AtlasInfoEntity _atlasInfoEntity;
@@ -245,9 +247,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
     children: <Widget>[
       Padding(
         padding: const EdgeInsets.only(left: 14.0, right: 8),
-        child: ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: Image.network(atlasInfoEntity.pic, fit: BoxFit.cover, width: 44, height: 44)),
+        child: walletHeaderWidget(atlasInfoEntity.name, address: atlasInfoEntity.address),
       ),
       Expanded(
         child: Column(
@@ -276,7 +276,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
             ),
             Row(
               children: <Widget>[
-                Text(atlasInfoEntity.address, style: TextStyles.textC999S11),
+                Text(shortBlockChainAddress(atlasInfoEntity.address), style: TextStyles.textC999S11),
                 InkWell(
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: atlasInfoEntity.address));

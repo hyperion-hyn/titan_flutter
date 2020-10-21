@@ -402,7 +402,10 @@ var atlasBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 
 var atlasDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return AtlasDetailPage();
+  var atlasNodeId = FluroConvertUtils.fluroCnParamsDecode(
+    params['atlasNodeId']?.first,
+  );
+  return AtlasDetailPage(atlasNodeId);
 });
 
 //var demoRouteHandler = Handler(
