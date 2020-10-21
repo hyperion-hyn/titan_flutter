@@ -102,6 +102,9 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   Widget build(BuildContext context) {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
+        appBar: BaseAppBar(
+          baseTitle: '撤销抵押',
+        ),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();

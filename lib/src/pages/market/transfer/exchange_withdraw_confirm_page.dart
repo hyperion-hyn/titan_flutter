@@ -67,11 +67,11 @@ class _ExchangeWithdrawConfirmPageState
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .gasPriceRecommend;
+              .btcGasPriceRecommend;
     } else {
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .btcGasPriceRecommend;
+              .gasPriceRecommend;
     }
   }
 
@@ -82,6 +82,9 @@ class _ExchangeWithdrawConfirmPageState
   }
 
   Decimal get gasPrice {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      return Decimal.fromInt(1 * TokenUnit.G_WEI);
+    }
     switch (selectedPriceLevel) {
       case 0:
         return gasPriceRecommend.safeLow;
@@ -118,6 +121,23 @@ class _ExchangeWithdrawConfirmPageState
       _gasPriceEstimate = fees * Decimal.parse(_quotePrice.toString());
       _gasPriceEstimateStr =
           "$fees BTC (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
+    } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      var hynQuotePrice = QuotesInheritedModel.of(context)
+              .activatedQuoteVoAndSign('HYN')
+              ?.quoteVo
+              ?.price ??
+          0;
+      var gasLimit = SettingInheritedModel.ofConfig(context)
+          .systemConfigEntity
+          .ethTransferGasLimit;
+      var gasPriceEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      _gasPriceEstimate =
+          gasPriceEstimate * Decimal.parse(hynQuotePrice.toString());
+      _gasPriceEstimateStr =
+          '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $_quoteSign${FormatUtil.formatCoinNum(_gasPriceEstimate.toDouble())})';
     } else {
       var ethQuotePrice = QuotesInheritedModel.of(context)
               .activatedQuoteVoAndSign('ETH')
@@ -150,10 +170,10 @@ class _ExchangeWithdrawConfirmPageState
         Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
 
     var _gasPriceByToken = FormatUtil.truncateDoubleNum(
-        _gasPriceEstimate.toDouble() / _quotePrice, 4);
+        _gasPriceEstimate.toDouble() / _quotePrice, 8);
 
     _gasPriceEstimateStr =
-        " $_gasPriceByToken ${widget.coinVo.symbol} (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
+        " $_gasPriceByToken ${widget.coinVo.symbol} (≈ $_quoteSign${_gasPriceEstimate.toDouble()})";
 
     var _actualAmount = Decimal.parse(widget.amount) -
         Decimal.parse(_gasPriceByToken.toString());

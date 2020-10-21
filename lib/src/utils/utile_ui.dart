@@ -152,7 +152,7 @@ class UiUtil {
                                   decoration: TextDecoration.none)),
                         ),
                       Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        padding: EdgeInsets.only(top: 18, bottom: 18),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: actions,

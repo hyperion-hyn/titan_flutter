@@ -9,20 +9,37 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-class Map3NodeBroadcastSuccessPage extends StatelessWidget {
+class Map3NodeBroadcastSuccessPage extends StatefulWidget {
   final Map3NodeActionEvent actionEvent;
   final Map3InfoEntity infoEntity;
   Map3NodeBroadcastSuccessPage({this.actionEvent, this.infoEntity});
 
   @override
+  State<StatefulWidget> createState() {
+    return _Map3NodeBroadcastSuccessState();
+  }
+}
+
+class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage> {
+  var _map3introduceEntity;
+  
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+  }
+
+  @override
   Widget build(BuildContext context) {
     String action = "";
     String detail = "";
-    switch (actionEvent) {
+    switch (widget.actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
         action = "创建 Map3节点";
-        var startMin = double.parse(AtlasApi.map3introduceEntity.startMin);
-        var staking = double.parse(infoEntity.staking);
+
+        var startMin = double.parse(_map3introduceEntity.startMin);
+        var staking = double.parse(widget.infoEntity.staking);
         var remain = startMin - staking;
         detail = "距离节点启动还需${FormatUtil.formatPrice(remain)}HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
@@ -60,11 +77,10 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
         action = "编辑Map3节点";
         break;
 
- 
       case Map3NodeActionEvent.MAP3_PRE_EDIT:
         action = "修改预设";
         break;
- 
+
       case Map3NodeActionEvent.ATLAS_EDIT:
         action = "编辑Atlas节点";
         break;
@@ -213,22 +229,20 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
   }
 
   void _pop(BuildContext context) {
-    switch (actionEvent) {
+    switch (widget.actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
-        print("[pop] -----> _pop, contractNodeItem:${this.infoEntity.toJson()}");
+        print("[pop] -----> _pop, contractNodeItem:${widget.infoEntity.toJson()}");
 
-        Routes.popUntilCachedEntryRouteName(context, this.infoEntity);
+        Routes.popUntilCachedEntryRouteName(context, widget.infoEntity);
         break;
 
       case Map3NodeActionEvent.MAP3_EDIT:
       case Map3NodeActionEvent.MAP3_PRE_EDIT:
       case Map3NodeActionEvent.MAP3_CANCEL:
-
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
         Routes.popUntilCachedEntryRouteName(context);
         break;
-
 
       default:
         print("[pop] -----> _pop, contractNodeItem");

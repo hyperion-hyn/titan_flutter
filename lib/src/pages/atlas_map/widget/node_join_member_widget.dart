@@ -7,13 +7,11 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
@@ -150,7 +148,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                           scrollDirection: Axis.horizontal,
                         )),
                   )
-                : Expanded(child: emptyListWidget(title: "节点记录为空", isAdapter: false)),
+                : Expanded(child: emptyListWidget(title: "参与地址为空", isAdapter: false)),
           ],
         ),
       ),

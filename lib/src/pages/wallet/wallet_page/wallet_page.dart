@@ -33,6 +33,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -44,7 +45,8 @@ class WalletPage extends StatefulWidget {
   }
 }
 
-class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticKeepAliveClientMixin {
+class _WalletPageState extends BaseState<WalletPage>
+    with RouteAware, AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   final LocalAuthentication auth = LocalAuthentication();
@@ -63,13 +65,37 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _showAtlasExchangeAlert();
+    });
   }
 
   @override
   void didPopNext() async {
     callLater((_) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent());
     });
+  }
+
+  _showAtlasExchangeAlert() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).got_it,
+          () {
+            Navigator.pop(context);
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content:
+          S.of(context).wallet_show_atlas_alert,
+    );
   }
 
   @override
@@ -87,7 +113,9 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
 
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)?.activatedWallet;
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            ?.activatedWallet;
 
     if (activatedWalletVo == null) return;
 
@@ -95,17 +123,22 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
     int appType = 0;
     String email = "titan";
     String hynBalance = "0";
-    LogUtil.printMessage("[API] address:$address, hynBalance:$hynBalance, email:$email");
+    LogUtil.printMessage(
+        "[API] address:$address, hynBalance:$hynBalance, email:$email");
 
     // 同步用户钱包信息
     if (address.isNotEmpty) {
       var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
-      LogUtil.printMessage("object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
+      LogUtil.printMessage(
+          "object] balance1: ${hynCoinVo.balance}, decimal:${hynCoinVo.decimals}");
       var balance = FormatUtil.coinBalanceDouble(hynCoinVo);
       balance = 0;
       if (balance <= 0) {
-        var balanceValue = await activatedWalletVo.wallet.getErc20Balance(hynCoinVo.contractAddress);
-        balance = ConvertTokenUnit.weiToDecimal(balanceValue ?? 0, hynCoinVo?.decimals ?? 0).toDouble();
+        var balanceValue = await activatedWalletVo.wallet
+            .getErc20Balance(hynCoinVo.contractAddress);
+        balance = ConvertTokenUnit.weiToDecimal(
+                balanceValue ?? 0, hynCoinVo?.decimals ?? 0)
+            .toDouble();
         LogUtil.printMessage("object] balance2: $balance");
       }
       hynBalance = balance.toString();
@@ -148,7 +181,9 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
   }
 
   Widget _buildWalletView(BuildContext context) {
-    var activatedWalletVo = WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).activatedWallet;
+    var activatedWalletVo =
+        WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
+            .activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
         bloc: loadDataBloc,
@@ -184,13 +219,18 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   Future listLoadingData() async {
     //update quotes
-    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign =
-        quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+    var quoteSignStr =
+        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign = quoteSignStr != null
+        ? QuotesSign.fromJson(json.decode(quoteSignStr))
+        : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<QuotesCmpBloc>(context)
+        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
 
     await Future.delayed(Duration(milliseconds: 700));
 
@@ -201,7 +241,8 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
 
   Widget hynQuotesView() {
     //hyn quote
-    ActiveQuoteVoAndSign hynQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+    ActiveQuoteVoAndSign hynQuoteSign =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -230,7 +271,10 @@ class _WalletPageState extends BaseState<WalletPage> with RouteAware, AutomaticK
                 //quote
                 Text(
                   '${hynQuoteSign != null ? '${FormatUtil.formatPrice(hynQuoteSign.quoteVo.price)} ${hynQuoteSign.sign.quote}' : '--'}',
-                  style: TextStyle(color: HexColor('#333333'), fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(
+                      color: HexColor('#333333'),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
                 ),
               ],
             ),
