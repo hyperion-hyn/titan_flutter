@@ -385,11 +385,7 @@ Widget getHoldInNum(
   Map3IntroduceEntity map3introduceEntity,
 }) {
   
-  double minTotal = double.parse(map3introduceEntity?.createMin?? "55000");
-  double remainTotal = double.parse(map3introduceEntity?.startMin ?? "550000");
-
-  
-  
+  double minTotal = double.parse(map3introduceEntity?.delegateMin ?? "55000");
 
   var coinVo = WalletInheritedModel.of(
     context,
@@ -455,13 +451,9 @@ Widget getHoldInNum(
                           validator: (textStr) {
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;
-                            } else if (minTotal == 0) {
-                              return "抵押已满";
                             } else if (int.parse(textStr) < minTotal) {
                               return S.of(context).mintotal_hyn(
                                   FormatUtil.formatNumDecimal(minTotal));
-                            } else if (int.parse(textStr) > remainTotal) {
-                              return "不能超过剩余份额";
                             } else if (Decimal.parse(textStr) >
                                 Decimal.parse(
                                     FormatUtil.coinBalanceHumanRead(coinVo))) {
@@ -502,60 +494,6 @@ Widget getHoldInNum(
                       }).toList(),
                     ),
                   ),
-                Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 49,
-                    ),
-                    Flexible(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          if (isJoin)
-                            Row(
-                              children: <Widget>[
-                                RichText(
-                                  text: TextSpan(
-                                      text: S.of(context).balance_portion_hyn,
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor("#333333"),
-                                          fontWeight: FontWeight.bold),
-                                      children: [
-                                        TextSpan(
-                                          text: "12321",
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: HexColor("#333333"),
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      ]),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                SizedBox(
-                                    height: 22,
-                                    width: 70,
-                                    child: FlatButton(
-                                      padding: const EdgeInsets.all(0),
-                                      color: HexColor("#FFDE64"),
-                                      onPressed: () {
-                                        //textEditingController.text = contractNodeItem.remainDelegation;
-//                                        joinEnougnFunction();
-                                      },
-                                      child: Text(S.of(context).all_bug,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: HexColor("#5C4304"))),
-                                    )),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ],
             )),
       ],

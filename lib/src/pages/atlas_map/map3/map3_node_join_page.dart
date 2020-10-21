@@ -73,9 +73,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   @override
   void initState() {
-    //todo
-    widget.map3infoEntity.address = "0xe106d68990CB7153ff46F6428337C4d372729060";
-
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -131,7 +128,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       _suggestList = requestList[0];
       _map3nodeInformationEntity = requestList[1];
       _map3introduceEntity = requestList[2];
-      _map3introduceEntity.delegateMin = '10000';
 
       if (mounted) {
         setState(() {
