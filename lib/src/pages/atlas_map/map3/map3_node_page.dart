@@ -114,16 +114,12 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       var requestList = await Future.wait([
         _atlasApi.getMap3Home(_address),
         _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10),
-        _atlasApi.getMap3Introduce(),
+        AtlasApi.getIntroduceEntity(),
       ]);
 
       _map3homeEntity = requestList[0];
       _map3stakingEntity = requestList[1];
       _map3introduceEntity = requestList[2];
-
-      if (_map3introduceEntity != null) {
-        AtlasApi.map3introduceEntity = _map3introduceEntity;
-      }
 
       if (_map3stakingEntity != null) {
         _lastActiveList = _map3homeEntity.newStartNodes;

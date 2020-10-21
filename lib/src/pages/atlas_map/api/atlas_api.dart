@@ -32,6 +32,19 @@ import 'package:titan/src/utils/log_util.dart';
 import '../../../../config.dart';
 
 class AtlasApi {
+
+  static Map3IntroduceEntity map3introduceEntity;
+
+  static Future<Map3IntroduceEntity> getIntroduceEntity() async {
+    if(map3introduceEntity != null){
+      return map3introduceEntity;
+    }else{
+      var atlasApi = AtlasApi();
+      map3introduceEntity = await atlasApi._getMap3Introduce();
+      return map3introduceEntity;
+    }
+  }
+
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
         "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
@@ -306,7 +319,7 @@ class AtlasApi {
   }
 
   // 获取节点的简介
-  Future<Map3IntroduceEntity> getMap3Introduce() async {
+  Future<Map3IntroduceEntity> _getMap3Introduce() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/introduce",
         EntityFactory<Map3IntroduceEntity>(
@@ -441,5 +454,4 @@ class AtlasApi {
   }
 
 
-  static Map3IntroduceEntity map3introduceEntity;
 }

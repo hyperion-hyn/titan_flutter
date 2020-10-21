@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,9 +21,14 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:web3dart/crypto.dart';
+import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
@@ -31,11 +37,12 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart'
     as all_page_state;
+import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
-  final String contractId;
+  final Map3InfoEntity map3infoEntity;
 
-  Map3NodeJoinPage(this.contractId);
+  Map3NodeJoinPage(this.map3infoEntity);
 
   @override
   _Map3NodeJoinState createState() => new _Map3NodeJoinState();
@@ -47,7 +54,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   AllPageState _currentState = LoadingState();
-  Map3InfoEntity _map3infoEntity;
   AtlasApi _atlasApi = AtlasApi();
   var _address = "";
   var _nodeId = "";
@@ -60,8 +66,14 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   List<String> _suggestList = [];
   String originInputStr = "";
 
+  final client = WalletUtil.getWeb3Client(true);
+  Map3NodeInformationEntity _map3nodeInformationEntity;
+
   @override
   void initState() {
+    //todo
+    widget.map3infoEntity.address = "0xe106d68990CB7153ff46F6428337C4d372729060";
+
     _joinCoinController.addListener(textChangeListener);
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -88,7 +100,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         ?.wallet;
     _address = _wallet.getAtlasAccount().address;
     // todo: test_1007
-    _nodeId = widget.contractId.toString();
+    _nodeId = widget.map3infoEntity.nodeId;
 
     getNetworkData();
 
@@ -108,13 +120,15 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   Future getNetworkData() async {
     try {
+      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       var requestList = await Future.wait([
-        _atlasApi.getMap3Info(_address, _nodeId),
+//        _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.getMapRecStaking(),
+        client.getMap3NodeInformation(map3Address)
       ]);
 
-      _map3infoEntity = requestList[0];
-      _suggestList = requestList[1];
+      _suggestList = requestList[0];
+      _map3nodeInformationEntity = requestList[1];
       if (mounted) {
         setState(() {
           _currentState = null;
@@ -138,7 +152,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   void getCurrentSpend(String inputText) {
-    if (_map3infoEntity == null || !mounted || originInputStr == inputText) {
+    if (widget.map3infoEntity == null || !mounted || originInputStr == inputText) {
       return;
     }
 
@@ -169,7 +183,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (_currentState != null || _map3infoEntity == null) {
+    if (_currentState != null || widget.map3infoEntity == null) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -197,7 +211,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                     SizedBox(height: 8),
                     getHoldInNum(
                       context,
-                      _map3infoEntity,
+                      widget.map3infoEntity,
                       _joinCoinFormKey,
                       _joinCoinController,
                       endProfit,
@@ -266,8 +280,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
           const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
       child: profitListWidget(
         [
-          {"总抵押": _map3infoEntity.staking},
-          {"管理费": '${_map3infoEntity.feeRate}%'},
+          {"总抵押": widget.map3infoEntity.staking},
+          {"管理费": '${widget.map3infoEntity.feeRate}%'},
           {"最低抵押": ''}
         ],
       ),
@@ -339,17 +353,17 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             children: <Widget>[
               Text.rich(TextSpan(children: [
                 TextSpan(
-                    text: _map3infoEntity.name,
+                    text: widget.map3infoEntity.name,
                     style:
                         TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(
-                    text: "  编号 ${_map3infoEntity.nodeId}",
+                    text: "  币龄: ${FormatUtil.truncateDecimalNum(Decimal.parse(_map3nodeInformationEntity.map3Node.age), 0)}天",
                     style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
                 height: 4,
               ),
-              Text("节点地址 oxfdaf89fdaff", style: TextStyles.textC9b9b9bS12),
+              Text("节点地址 ${shortBlockChainAddress(widget.map3infoEntity.address)}", style: TextStyles.textC9b9b9bS12),
             ],
           ),
           Spacer(),

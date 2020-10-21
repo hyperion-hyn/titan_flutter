@@ -514,7 +514,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
     try {
       var requestList = await Future.wait([
         _nodeApi.getNodeProviderList(),
-        _atlasApi.getMap3Introduce(),
+        AtlasApi.getIntroduceEntity(),
         _atlasApi.getMap3Bls(),
         _atlasApi.getMap3RecCreate(),
       ]);
