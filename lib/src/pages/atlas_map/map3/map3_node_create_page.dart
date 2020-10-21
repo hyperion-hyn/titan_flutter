@@ -36,7 +36,8 @@ class Map3NodeCreatePage extends StatefulWidget {
   _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
+class _Map3NodeCreateState extends State<Map3NodeCreatePage>
+    with WidgetsBindingObserver {
   TextEditingController _joinCoinController = new TextEditingController();
   TextEditingController _rateCoinController = new TextEditingController();
 
@@ -59,6 +60,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   int _managerSpendCount = 20;
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
+
   // ignore: close_sinks
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
@@ -75,7 +77,13 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
   var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
   List<String> _detailList = ["", "", "", "", ""];
-  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  List<String> _hintList = [
+    "请输入节点名称",
+    "请输入节点号",
+    "请输入节点网址",
+    "请输入节点的联系方式",
+    "请输入节点描述"
+  ];
 
   @override
   void initState() {
@@ -230,10 +238,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
+                              child: Text(_introduceEntity?.name ?? "",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
-                            child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
+                            child: Text("详细介绍",
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#1F81FF"))),
+                            onTap: () =>
+                                AtlasApi.goToAtlasMap3HelpPage(context),
                           ),
                         ],
                       ),
@@ -242,20 +255,32 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("启动所需" +
-                                "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
-                                S.of(context).ten_thousand,
-                                style: TextStyles.textC99000000S13, maxLines: 2, softWrap: true),
+                            Text(
+                                "启动所需" +
+                                    "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
+                                    S.of(context).ten_thousand,
+                                style: TextStyles.textC99000000S13,
+                                maxLines: 2,
+                                softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                              child: Text(" (HYN) ",
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: HexColor("#999999"))),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text("  |  ",
-                                  style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(S.of(context).n_day("${_introduceEntity?.days ?? 0}"),
+                            Text(
+                                S
+                                    .of(context)
+                                    .n_day("${_introduceEntity?.days ?? 0}"),
                                 style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -273,7 +298,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                 Container(
                     width: 100,
                     child: Text(S.of(context).service_provider,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -304,8 +330,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               children: <Widget>[
                 Container(
                     width: 100,
-                    child:
-                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    child: Text(S.of(context).node_location,
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -339,8 +366,18 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           _nodeServerWidget(),
           divider,
-          getHoldInNum(context, null, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, false,
-              focusNode: _focusNode, suggestList: _reCreateList, map3introduceEntity: _introduceEntity),
+          getHoldInNum(
+            context,
+            null,
+            _joinCoinFormKey,
+            _joinCoinController,
+            endProfit,
+            spendManager,
+            false,
+            focusNode: _focusNode,
+            suggestList: _reCreateList,
+            map3introduceEntity: _introduceEntity,
+          ),
           divider,
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
@@ -390,7 +427,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, ({String value}) {
+          return editInfoItem(context, index, title, hint, detail, (
+              {String value}) {
             setState(() {
               _detailList[index] = value;
             });
@@ -468,7 +506,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     }
     _payload.isEdit = false;
     var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
-    Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
+    Application.router.navigateTo(
+        context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 
   void getNetworkData() async {
@@ -526,8 +565,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(regions.name, style: TextStyles.textC333S14));
       nodeList.add(item);
     }
     selectNodeItemValue = nodeList[regionIndex].value;
@@ -563,8 +603,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection: TextSelection.fromPosition(TextPosition(
+                affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
