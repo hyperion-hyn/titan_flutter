@@ -464,9 +464,7 @@ class _Map3NodeDivideAddState extends State<Map3NodeDivideAddPage> with WidgetsB
             }
 
             var amount = _textEditingController?.text ?? "200000";
-            var entity = PledgeMap3Entity.onlyType(AtlasActionType.SPLIT_MAP3_NODE);
-            entity.payload = PledgeMap3Payload("abc", amount);
-            entity.amount = amount;
+            var entity = PledgeMap3Entity(/*payload: Payload(userIdentity: widget.map3infoEntity.nodeId,)*/);
             var message = ConfirmDivideMap3NodeMessage(
               entity: entity,
               map3NodeAddress: "xxx",

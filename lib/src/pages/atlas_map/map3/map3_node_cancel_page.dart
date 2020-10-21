@@ -304,13 +304,13 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
               var amount = _textEditingController?.text ?? "200000";
 
-              var entity = PledgeMap3Entity.onlyType(AtlasActionType.CANCEL_MAP3_NODE);
-              entity.payload = PledgeMap3Payload("abc", amount);
-              entity.amount = amount;
+              var entity = PledgeMap3Entity(payload: Payload(userIdentity: widget.map3infoEntity.nodeId,));
               var message = ConfirmCancelMap3NodeMessage(
-                entity: entity,
-                map3NodeAddress: "xxx",
+                  entity: entity,
+                  map3NodeAddress: widget.map3infoEntity.address,
+                  amount: amount
               );
+
               Navigator.push(
                   context,
                   MaterialPageRoute(

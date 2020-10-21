@@ -15,6 +15,7 @@ Map3IntroduceEntity _$Map3IntroduceEntityFromJson(Map<String, dynamic> json) {
     json['start_min'] as String,
     json['title'] as String,
     json['version'] as String,
+    json['delegate_min'] as String,
   );
 }
 
@@ -28,4 +29,5 @@ Map<String, dynamic> _$Map3IntroduceEntityToJson(
       'start_min': instance.startMin,
       'title': instance.title,
       'version': instance.version,
+      'delegate_min': instance.delegateMin,
     };

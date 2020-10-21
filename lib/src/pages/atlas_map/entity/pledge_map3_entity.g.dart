@@ -8,42 +8,31 @@ part of 'pledge_map3_entity.dart';
 
 PledgeMap3Entity _$PledgeMap3EntityFromJson(Map<String, dynamic> json) {
   return PledgeMap3Entity(
-    json['amount'] as String,
-    json['from'] as String,
-    json['gas_limit'] as int,
-    json['nonce'] as int,
-    json['payload'] == null
+    payload: json['payload'] == null
         ? null
-        : PledgeMap3Payload.fromJson(json['payload'] as Map<String, dynamic>),
-    json['price'] as String,
-    json['raw_tx'] as String,
-    json['to'] as String,
-    AtlasActionType.values[json['type'] as int],
+        : Payload.fromJson(json['payload'] as Map<String, dynamic>),
+    rawTx: json['raw_tx'] as String,
   );
 }
 
 Map<String, dynamic> _$PledgeMap3EntityToJson(PledgeMap3Entity instance) =>
     <String, dynamic>{
-      'amount': instance.amount,
-      'from': instance.from,
-      'gas_limit': instance.gasLimit,
-      'nonce': instance.nonce,
       'payload': instance.payload,
-      'price': instance.price,
       'raw_tx': instance.rawTx,
-      'to': instance.to,
-      'type': instance.type,
     };
 
-PledgeMap3Payload _$PledgeMap3PayloadFromJson(Map<String, dynamic> json) {
-  return PledgeMap3Payload(
-    json['map3_node_id'] as String,
-    json['staking'] as String,
+Payload _$PayloadFromJson(Map<String, dynamic> json) {
+  return Payload(
+    userEmail: json['user_email'] as String,
+    userIdentity: json['user_identity'] as String,
+    userName: json['user_name'] as String,
+    userPic: json['user_pic'] as String,
   );
 }
 
-Map<String, dynamic> _$PledgeMap3PayloadToJson(PledgeMap3Payload instance) =>
-    <String, dynamic>{
-      'map3_node_id': instance.map3NodeId,
-      'staking': instance.staking,
+Map<String, dynamic> _$PayloadToJson(Payload instance) => <String, dynamic>{
+      'user_email': instance.userEmail,
+      'user_identity': instance.userIdentity,
+      'user_name': instance.userName,
+      'user_pic': instance.userPic,
     };

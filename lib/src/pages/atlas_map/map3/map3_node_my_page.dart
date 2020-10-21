@@ -288,9 +288,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             () {
               Navigator.pop(context);
 
-              var entity = PledgeMap3Entity.onlyType(AtlasActionType.COLLECT_MAP3_NODE);
-              entity.payload = PledgeMap3Payload("abc", "200000");
-              entity.amount = "200000";
+              var entity = PledgeMap3Entity();
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
               );

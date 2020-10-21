@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 
 import 'atlas_info_entity.dart';
 import 'map3_atlas_entity.dart';
@@ -119,6 +120,13 @@ class Map3InfoEntity extends Object {
     this.status,
     this.updatedAt,
   );
+
+  String getFeeRate(){
+    if(feeRate != null){
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate)).toString();
+    }
+    return feeRate;
+  }
 
   Map3InfoEntity.onlyNodeId(this.nodeId);
   Map3InfoEntity.onlyId(this.id);
