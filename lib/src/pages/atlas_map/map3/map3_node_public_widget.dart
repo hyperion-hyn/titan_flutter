@@ -246,10 +246,13 @@ Widget getMap3NodeWaitItem(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24)),
                       onPressed: () {
+
+
                         Application.router.navigateTo(
-                            context,
-                            Routes.map3node_contract_detail_page +
-                                "?contractId=${FluroConvertUtils.fluroCnParamsEncode(infoEntity.nodeId)}");
+                          context,
+                          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+                        );
+
                       },
                       child: Text(
                           isPending
@@ -934,3 +937,32 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
     },
   );
 }
+
+
+Widget emptyListWidget({String title = ""}) {
+  return SliverToBoxAdapter(
+    child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Image.asset(
+            'res/drawable/ic_empty_contract.png',
+            width: 120,
+            height: 120,
+          ),
+          SizedBox(height: 16),
+          SizedBox(
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
+            width: 160,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+

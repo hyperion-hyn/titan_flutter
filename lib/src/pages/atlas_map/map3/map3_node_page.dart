@@ -19,6 +19,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -163,7 +164,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return _emptyListWidget(title: "没有我的节点，您可以创建节点");
+      return emptyListWidget(title: "没有我的节点，您可以创建节点");
     }
 
     return SliverToBoxAdapter(
@@ -175,7 +176,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _lastActiveWidget() {
     if (_lastActiveList.isEmpty) {
-      return _emptyListWidget(title: "没有最新启动的节点，您可以创建节点");
+      return emptyListWidget(title: "没有最新启动的节点，您可以创建节点");
     }
 
     return SliverToBoxAdapter(
@@ -187,7 +188,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _pendingListWidget() {
     if (_pendingList.isEmpty) {
-      return _emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
+      return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
     }
 
     return SliverList(
@@ -237,33 +238,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _emptyListWidget({String title = ""}) {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24),
-        color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            Image.asset(
-              'res/drawable/ic_empty_contract.png',
-              width: 120,
-              height: 120,
-            ),
-            SizedBox(height: 8),
-            SizedBox(
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-                textAlign: TextAlign.center,
-              ),
-              width: 160,
-            ),
-          ],
         ),
       ),
     );
@@ -410,14 +384,19 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       var item = result["result"];
       if (item is String) {
         // 3.push合约详情
-        _pushContractDetail(item);
+        var entity = Map3InfoEntity.onlyNodeId(item);
+        _pushContractDetail(entity);
       }
 
       result["result"] = null;
     }
   }
 
-  Future _pushContractDetail(String nodeId) async {
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${Uri.encodeComponent(nodeId)}");
+  Future _pushContractDetail(Map3InfoEntity infoEntity) async {
+
+    Application.router.navigateTo(
+      context,
+      Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+    );
   }
 }

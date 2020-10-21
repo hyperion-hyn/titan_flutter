@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:titan/config.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -11,21 +8,16 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
-import 'package:titan/src/pages/node/api/node_api.dart';
-import 'package:titan/src/pages/node/model/contract_delegator_item.dart';
 import 'package:titan/src/pages/node/model/contract_detail_item.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -33,7 +25,6 @@ import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
-import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -44,22 +35,20 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/popup/bubble_widget.dart';
 import 'package:titan/src/widget/popup/pop_route.dart';
 import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
-import 'package:web3dart/json_rpc.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
 import 'package:characters/characters.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
-  final String nodeId;
+  final Map3InfoEntity map3infoEntity;
 
-  Map3NodeDetailPage(this.nodeId);
+  Map3NodeDetailPage(this.map3infoEntity);
 
   @override
   _Map3NodeDetailState createState() => new _Map3NodeDetailState();
@@ -86,7 +75,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
-  List<Map3StakingLogEntity> _delegateRecordList = [];
+  List<Map3TxLogEntity> _delegateRecordList = [];
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
@@ -552,12 +541,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   double _moreOffsetTop = 76;
   var _address = "";
   var _nodeId = "";
+  var _nodeAddress = "";
 
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getEthAccount().address;
-    _nodeId = widget.nodeId.toString();
+    _nodeId = widget.map3infoEntity?.nodeId??"";
+    _nodeAddress = widget.map3infoEntity?.address??"";
 
     getContractDetailData();
 
@@ -691,16 +682,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   // 3.1合约进度状态
                   SliverToBoxAdapter(child: _contractProgressWidget()),
                   _spacer(),
+                  */
 
                   // 4.参与人员列表信息
                   SliverToBoxAdapter(
                     child: Material(
                       color: Colors.white,
                       child: NodeJoinMemberWidget(
-                        _nodeAddress,
+                        _nodeId,
                         remainDay,
-                        _contractNodeItem.ownerName,
-                        _contractNodeItem.shareUrl,
+                        _contractNodeItem?.ownerName??"",
+                        _contractNodeItem?.shareUrl??"",
                         isShowInviteItem: false,
                         loadDataBloc: _loadDataBloc,
                       ),
@@ -711,15 +703,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   // 5.合约流水信息
 
                   SliverToBoxAdapter(
-                      child: Visibility(
-                    visible: _delegateRecordList.isNotEmpty,
-                    child: _delegateRecordHeaderWidget(),
-                  )),
-                  SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                    return _delegateRecordItemWidget(_delegateRecordList[index]);
-                  }, childCount: _delegateRecordList.length)),
-                  */
+                      child: _delegateRecordHeaderWidget()),
+
+                  _delegateRecordList.isNotEmpty?
+                    SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return _delegateRecordItemWidget(_delegateRecordList[index]);
+                        }, childCount: _delegateRecordList.length))
+
+                  : emptyListWidget(title: "节点记录为空"),
+
                 ],
               )),
         ),
@@ -1530,9 +1523,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _delegateRecordItemWidget(Map3StakingLogEntity item) {
+  Widget _delegateRecordItemWidget(Map3TxLogEntity item) {
     // todo: 缺少交易状态信息
-    String userAddress = shortBlockChainAddress(" ${item.userAddress}", limitCharsLength: 8);
+    String userAddress = shortBlockChainAddress(" ${item.map3Address}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString("DELEGATE");
     var recordState = enumBillsRecordStateFromString("PRE_CREATE");
     var isPending = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
@@ -1559,7 +1552,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: walletHeaderWidget(showName, address: item.userAddress),
+                    child: walletHeaderWidget(showName, address: item.contractAddress),
                   ),
                   Flexible(
                     flex: 4,
@@ -1600,7 +1593,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                isPending ? "*" : FormatUtil.amountToString(item.staking.toString()),
+                                isPending ? "*" : FormatUtil.amountToString(item.data),
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1634,7 +1627,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _billStateWidget(Map3StakingLogEntity item) {
+  Widget _billStateWidget(Map3TxLogEntity item) {
     // todo: 缺少交易状态信息
     var operaState = enumBillsOperaStateFromString("DELEGATE");
     var recordState = enumBillsRecordStateFromString("PRE_CREATE");
@@ -1705,33 +1698,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  Future getJoinMemberData() async {
-    try {
-      _currentPage = 0;
-      _delegateRecordList = [];
-
-      List<Map3StakingLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId);
-
-      if (tempMemberList.length > 0) {
-        _delegateRecordList.addAll(tempMemberList);
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-
-      //setState(() {});
-    } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
-
-      //setState(() {});
-    }
-  }
-
   Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
 
-      List<Map3StakingLogEntity> tempMemberList =
+      List<Map3TxLogEntity> tempMemberList =
           await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
@@ -1755,15 +1726,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Future getContractDetailData() async {
     try {
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
-      // 1.
-      _contractState = ContractState.PENDING;
-      /*print(
-          '[contract] getContractInstanceItem,_isDelegated:$_isDelegated, contractState:$_contractState, userDelegateState:$_userDelegateState');*/
+      var requestList = await Future.wait([
+        _atlasApi.getMap3Info(_address, _nodeId),
+        _atlasApi.getMap3StakingLogList(_nodeId),
+      ]);
 
-      // 2.
-      await getJoinMemberData();
+      _map3infoEntity = requestList[0];
+      List<Map3TxLogEntity> tempMemberList = requestList[1];
+      _delegateRecordList.addAll(tempMemberList);
+
       _initBottomButtonData();
 
       // 3.
@@ -1807,7 +1779,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  void _pushTransactionDetailAction(Map3StakingLogEntity item) {
+  void _pushTransactionDetailAction(Map3TxLogEntity item) {
     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
     var url = EtherscanApi.getTxDetailUrl(item.map3Address, isChinaMainland);
     if (url != null) {

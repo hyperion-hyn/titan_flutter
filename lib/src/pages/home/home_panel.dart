@@ -13,6 +13,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
@@ -846,8 +847,13 @@ class HomePanelState extends State<HomePanel> {
       if(idList.length < 1){
         return;
       }
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(idList[1])}");
+
+      Map3InfoEntity infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
+      Application.router.navigateTo(
+        context,
+        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+      );
+
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

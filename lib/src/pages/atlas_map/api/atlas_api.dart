@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
@@ -338,12 +339,12 @@ class AtlasApi {
   }
 
   // 获取节点的抵押流水
-  Future<List<Map3StakingLogEntity>> getMap3StakingLogList(String nodeAddress,
+  Future<List<Map3TxLogEntity>> getMap3StakingLogList(String nodeAddress,
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
-        "/v1/map3/staking_log",
-        EntityFactory<List<Map3StakingLogEntity>>((list) => (list as List)
-            .map((item) => Map3StakingLogEntity.fromJson(item))
+        "/v1/map3/tx_log",
+        EntityFactory<List<Map3TxLogEntity>>((list) => (list as List)
+            .map((item) => Map3TxLogEntity.fromJson(item))
             .toList()),
         params: {
           "node_address": nodeAddress,

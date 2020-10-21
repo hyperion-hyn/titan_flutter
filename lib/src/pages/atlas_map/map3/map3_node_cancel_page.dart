@@ -54,6 +54,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     _address = _wallet.getEthAccount().address;
     _nodeId = widget.map3infoEntity.nodeId;
 
+    print("_nodeId:${widget.map3infoEntity.toJson()}");
+
     getNetworkData();
 
     super.onCreated();

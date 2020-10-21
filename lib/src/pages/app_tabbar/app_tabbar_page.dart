@@ -20,6 +20,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
@@ -180,8 +181,14 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(nodeId)}");
-    } else if (type == "location" && subType == 'share') {
+
+      var item = Map3InfoEntity.onlyNodeId(nodeId);
+      Application.router.navigateTo(
+        context,
+        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
+      );
+
+     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
       UiUtil.showDecryptDialog(context, () async {

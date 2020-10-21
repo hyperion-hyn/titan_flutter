@@ -120,6 +120,7 @@ class Map3InfoEntity extends Object {
     this.updatedAt,
   );
 
+  Map3InfoEntity.onlyNodeId(this.nodeId);
   Map3InfoEntity.onlyId(this.id);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);

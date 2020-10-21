@@ -76,8 +76,13 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
 
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(item.nodeId)}");
-      },
+
+        Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
+        );
+
+       },
       child: Container(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),
         width: width,

@@ -34,6 +34,7 @@ class AtlasCreateNodePage extends StatefulWidget {
   }
 }
 
+
 class _AtlasCreateNodePageState extends BaseState<AtlasCreateNodePage> {
   var _currentStep = Step.launch;
 

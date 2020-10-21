@@ -289,9 +289,10 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  var nodeId = FluroConvertUtils.fluroCnParamsDecode(params['contractId']?.first);
+  Map3InfoEntity entity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['info']?.first));
 
-  return Map3NodeDetailPage(nodeId);
+  return Map3NodeDetailPage(entity);
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
