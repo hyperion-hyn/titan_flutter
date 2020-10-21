@@ -661,7 +661,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   ),
                   _spacer(),
                   /*
-                 
+
 
                   // 3.合约状态信息
                   // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益

@@ -259,12 +259,71 @@ class AtlasApi {
     }, options: RequestOptions(contentType: "application/json"));
   }
 
-  // 查询查询Map3节点列表
-  Future<List<Map3InfoEntity>> getMap3NodeList(
+  // 查询查询我创建的节点
+  Future<List<Map3InfoEntity>> getMap3NodeListByMyCreate(
     String address, {
     int page = 1,
-    int size = 0,
+    int size = 10,
   }) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/node_list_i_create",
+        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
+            .map((item) => Map3InfoEntity.fromJson(item))
+            .toList()),
+        params: {
+          "address": address,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 查询查询我创建的节点
+  Future<List<Map3InfoEntity>> getMap3NodeListByMyJoin(
+      String address, {
+        int page = 1,
+        int size = 10,
+      }) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/node_list_i_join",
+        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
+            .map((item) => Map3InfoEntity.fromJson(item))
+            .toList()),
+        params: {
+          "address": address,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 查询查询Map3节点列表
+  Future<List<Map3InfoEntity>> getMap3NodeListStarted(
+      String address, {
+        int page = 1,
+        int size = 10,
+      }) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/node_list_started",
+        EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
+            .map((item) => Map3InfoEntity.fromJson(item))
+            .toList()),
+        params: {
+          "address": address,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+
+
+  // 查询查询Map3节点列表
+  Future<List<Map3InfoEntity>> getMap3NodeList(
+      String address, {
+        int page = 1,
+        int size = 0,
+      }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
