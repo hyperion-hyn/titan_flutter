@@ -35,13 +35,23 @@ class NodeJoinMemberWidget extends StatefulWidget {
 
 class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
-  int _currentPage = 0;
+  int _currentPage = 1;
   AtlasApi _atlasApi = AtlasApi();
   List<Map3UserEntity> memberList = [];
 
   @override
   void initState() {
     super.initState();
+
+    if (widget.loadDataBloc != null) {
+      widget.loadDataBloc.listen((state){
+        if (state is RefreshSuccessState) {
+          getJoinMemberData();
+        }
+      });
+    } else {
+      getJoinMemberData();
+    }
   }
 
   @override
@@ -62,7 +72,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
   void getJoinMemberData() async {
-    _currentPage = 0;
+    _currentPage = 1;
     List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");

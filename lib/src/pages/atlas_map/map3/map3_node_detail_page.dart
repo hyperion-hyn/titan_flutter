@@ -689,7 +689,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: Material(
                       color: Colors.white,
                       child: NodeJoinMemberWidget(
-                        _nodeId,
+                        _nodeAddress,
                         remainDay,
                         _contractNodeItem?.ownerName??"",
                         _contractNodeItem?.shareUrl??"",
@@ -1031,7 +1031,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   height: 30,
                   child: InkWell(
                     onTap: () {
-                      Application.router.navigateTo(context, Routes.map3node_pre_edit_page);
+                      Application.router.navigateTo(context,
+                          Routes.map3node_pre_edit_page + "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
                     },
                     child: Center(child: Text("修改", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
                     //style: TextStyles.textC906b00S13),
@@ -1802,6 +1803,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(context,
         Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(_map3infoEntity.nodeId)}");
+
     _nextAction();
   }
 

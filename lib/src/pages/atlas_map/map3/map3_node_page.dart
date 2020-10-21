@@ -194,7 +194,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-      return Container(color: Colors.white, child: getMap3NodeWaitItem(context, _pendingList[index]));
+      return Container(
+        color: Colors.white,
+        child: getMap3NodeWaitItem(context, _pendingList[index]),
+      );
     }, childCount: _pendingList.length));
   }
 

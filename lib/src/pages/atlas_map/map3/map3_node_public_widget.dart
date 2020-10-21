@@ -68,13 +68,13 @@ Widget getMap3NodeWaitItem(
 
   var nodeName = infoEntity.name;
   var nodeAddress =
-      "节点地址  ${UiUtil.shortEthAddress(infoEntity?.atlas?.address ?? "", limitLength: 1)}";
+      "节点地址  ${UiUtil.shortEthAddress(infoEntity?.address ?? "", limitLength: 6)}";
   var nodeIdPre = "节点号";
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
-  var feeRate = infoEntity.feeRate ?? "--";
-  var descPre = "描   述：";
-  var desc = infoEntity.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
+  var feeRate = FormatUtil.formatPercent(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(infoEntity.feeRate)).toDouble());
+   var descPre = "描   述：";
+  var desc = (infoEntity?.describe??"").isEmpty? "大家快来参与我的节点吧，收益高高，收益真的很高，":infoEntity.describe;
   var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(infoEntity?.staking ?? "0"))
       .toString());

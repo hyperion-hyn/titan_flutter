@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodePreEditPage extends StatefulWidget {
-  Map3NodePreEditPage();
+  final Map3InfoEntity map3infoEntity;
+  Map3NodePreEditPage({this.map3infoEntity});
 
   @override
   _Map3NodePreEditState createState() => new _Map3NodePreEditState();
@@ -178,7 +177,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         () async {
           var message = ConfirmPreEditMap3NodeMessage(
             autoRenew: _isOpen,
-            feeRate: _rateCoinController?.text ?? "0",
+            feeRate: _rateCoinController?.text ?? "20",
+            map3NodeAddress: widget.map3infoEntity.address,
           );
           Navigator.push(
               context,
