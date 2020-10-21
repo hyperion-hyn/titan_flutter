@@ -205,48 +205,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return _contractStateDetail;
   }
 
-  void _initBottomButtonData() {
-    switch (_map3Status) {
-      case Map3InfoStatus.PENDING:
-        _visible = true;
-        break;
-
-      case Map3InfoStatus.CANCELLED:
-        _visible = _isDelegated;
-        break;
-
-      case Map3InfoStatus.DUE:
-        _visible = _isDelegated;
-        break;
-
-      default:
-        _visible = false;
-        break;
-    }
-
-    if (_visible) {
-      switch (_map3Status) {
-        case Map3InfoStatus.PENDING:
-          onPressed = () {
-            if (_isNoWallet) {
-              _pushWalletManagerAction();
-            } else {
-              _joinContractAction();
-            }
-          };
-          break;
-
-        default:
-          onPressed = () {
-            if (_isNoWallet) {
-              _pushWalletManagerAction();
-            }
-          };
-          break;
-      }
-    }
-  }
-
   var _moreKey = GlobalKey(debugLabel: '__more_global__');
   double _moreSizeHeight = 18;
   double _moreSizeWidth = 100;
@@ -321,13 +279,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   Icons.add,
                   color: Theme.of(context).primaryColor,
                 ),
-                /*child: Image.asset(
-                  //"res/drawable/node_share.png",
-                  "res/drawable/add_position_add.png",
-                  key: _moreKey,
-                  width: 15,
-                  height: _moreSizeHeight,
-                ),*/
               ),
             ),
           ],
@@ -452,6 +403,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         onPressed: () {
                           Navigator.of(context).pop();
 
+                          if (_isNoWallet) {
+                            _pushWalletManagerAction();
+                            return;
+                          }
+
                           if (index == 2) {
                             Application.router.navigateTo(context, Routes.map3node_divide_page);
                           } else if (index == 0) {
@@ -520,6 +476,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           ClickOvalButton(
             "撤销抵押",
             () {
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+                return;
+              }
+
               if (widget.map3infoEntity != null) {
                 Application.router.navigateTo(
                   context,
@@ -538,20 +499,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           ClickOvalButton(
             "抵押",
             () async {
-              var walletList = await WalletUtil.scanWallets();
-              if (walletList.length == 0) {
+              if (_isNoWallet) {
+                _pushWalletManagerAction();
+                return;
+              }
+
+              if (_map3infoEntity != null) {
+                var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
                 Application.router.navigateTo(
                     context,
-                    Routes.map3node_create_wallet +
-                        "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
-              } else {
-                if (_map3infoEntity != null) {
-                  var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-                  Application.router.navigateTo(
-                      context,
-                      Routes.map3node_join_contract_page +
-                          "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
-                }
+                    Routes.map3node_join_contract_page +
+                        "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
               }
             },
             width: 120,
@@ -1435,8 +1393,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         _delegateRecordList = tempMemberList;
       }
 
-      _initBottomButtonData();
-
       // 3.
       Future.delayed(Duration(milliseconds: 100), () {
         if (mounted) {
@@ -1504,20 +1460,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       MaterialPageRoute(builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
     );
-
-    /*
-    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
-    var url = EtherscanApi.getTxDetailUrl(item.map3Address, isChinaMainland);
-    if (url != null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => WebViewContainer(
-                    initUrl: url,
-                    title: "",
-                  )));
-    }
-    */
   }
 
   void _pushWalletManagerAction() {
