@@ -12,17 +12,14 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
-  static Future<String> signTransferHYN(
-    String password,
-    localWallet.Wallet wallet, {
-    String toAddress,
-    BigInt amount,
-    IMessage message,
-    bool isAtlasTrans = true,
-    String gasPrice,
-    int gasLimit
-  }) async {
-    if(gasPrice == null){
+  static Future<String> signTransferHYN(String password, localWallet.Wallet wallet,
+      {String toAddress,
+      BigInt amount,
+      IMessage message,
+      bool isAtlasTrans = true,
+      String gasPrice,
+      int gasLimit}) async {
+    if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
     final txHash = await wallet.signEthTransaction(
@@ -41,17 +38,14 @@ class HYNApi {
     return txHash;
   }
 
-  static Future<String> sendTransferHYN(
-      String password,
-      localWallet.Wallet wallet, {
-        String toAddress,
-        BigInt amount,
-        IMessage message,
-        bool isAtlasTrans = true,
-        String gasPrice,
-        int gasLimit
-      }) async {
-    if(gasPrice == null){
+  static Future<String> sendTransferHYN(String password, localWallet.Wallet wallet,
+      {String toAddress,
+      BigInt amount,
+      IMessage message,
+      bool isAtlasTrans = true,
+      String gasPrice,
+      int gasLimit}) async {
+    if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
     final txHash = await wallet.sendEthTransaction(
@@ -296,6 +290,26 @@ class HYNApi {
   ) async {
     var message = CollectMicroRewardsMessage(
       delegatorAddress: wallet.getAtlasAccount().address,
+    );
+    print(message);
+
+    return signTransferHYN(password, wallet, message: message);
+  }
+
+  static Future transPreEditMap3Node(
+    String password,
+    localWallet.Wallet wallet,
+    bool isRenew,
+    String feeRate,
+    String map3NodeAddress,
+  ) async {
+    var newCommissionRate = ConvertTokenUnit.decimalToWei(Decimal.parse(feeRate));
+
+    var message = RenewMap3NodeMessage(
+      isRenew: isRenew,
+      newCommissionRate: newCommissionRate,
+      delegatorAddress: wallet.getAtlasAccount().address,
+      map3NodeAddress: map3NodeAddress,
     );
     print(message);
 

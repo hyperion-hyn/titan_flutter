@@ -518,6 +518,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
       var walletName = activatedWallet.wallet.keystore.name;
       _payload.userName = walletName;
+
+      _payload.userIdentity = _payload.nodeId;
+      _payload.userEmail = "titan@163.com";
+      _payload.userPic = "http://www.baidu.com";
     }
     _payload.isEdit = false;
     var payloadJson = _payload.toJson();
