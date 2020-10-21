@@ -15,9 +15,9 @@ import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -44,6 +44,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
   List<Map3InfoEntity> _pendingList = [];
   Map3HomeEntity _map3homeEntity;
   Map3StakingEntity _map3stakingEntity;
+  Map3IntroduceEntity _map3introduceEntity;
 
   @override
   bool get wantKeepAlive => true;
@@ -116,10 +117,12 @@ class _Map3NodeState extends BaseState<Map3NodePage>
       var requestList = await Future.wait([
         _atlasApi.getMap3Home(_address),
         _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10),
+        _atlasApi.getMap3Introduce(),
       ]);
 
       _map3homeEntity = requestList[0];
       _map3stakingEntity = requestList[1];
+      _map3introduceEntity = requestList[1];
 
       if (_map3stakingEntity != null) {
         _lastActiveList = _map3homeEntity.newStartNodes;
@@ -144,6 +147,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
       if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
         List list = _map3stakingEntity.map3Nodes;
+        print("[Home] onLoadingMore:${list.length}");
 
         list.forEach((element) {
           _pendingList.add(element);
@@ -205,9 +209,6 @@ class _Map3NodeState extends BaseState<Map3NodePage>
       child: InkWell(
         onTap: () {
           if (isMine) {
-            // Application.router.navigateTo(context,
-            //     Routes.map3node_contract_detail_page + "?contractId=2");
-
             Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
             if (!hasMore) return;
@@ -324,8 +325,8 @@ class _Map3NodeState extends BaseState<Map3NodePage>
   }
 
   Widget _map3HeadWidget() {
-    // todo: test_jison
-    var title = "";
+
+    var title = _map3introduceEntity.name;
     var desc =
         "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
     var guideTitle = "开通教程";
@@ -408,10 +409,6 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void _pushWebViewAction() {
     AtlasApi.goToAtlasMap3HelpPage(context);
-
-    // String webUrl = FluroConvertUtils.fluroCnParamsEncode("http://baidu.com");
-    // String webTitle = FluroConvertUtils.fluroCnParamsEncode("如何新开Map3节点");
-    // Application.router.navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
 
   Future _pushCreateContractAction() async {
@@ -433,15 +430,15 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     final result = ModalRoute.of(context).settings?.arguments;
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
     // 记得清理
-    /*if (result != null && result is Map) {
+    if (result != null && result is Map) {
       var item = result["result"];
-      if (item is ContractNodeItem) {
+      if (item is String) {
         // 3.push合约详情
         _pushContractDetail(item);
       }
 
       result["result"] = null;
-    }*/
+    }
   }
 
   Future _pushContractDetail(String map3Address) async {

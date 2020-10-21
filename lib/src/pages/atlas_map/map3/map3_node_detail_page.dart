@@ -67,21 +67,19 @@ class Map3NodeDetailPage extends StatefulWidget {
 
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
-  NodeApi _nodeApi = NodeApi();
   AtlasApi _atlasApi = AtlasApi();
 
   ContractDetailItem _contractDetailItem;
-  UserDelegateState _userDelegateState;
+  UserDelegateState _userDelegateState = UserDelegateState.PENDING;
   ContractNodeItem _contractNodeItem;
-  ContractState _contractState;
+  ContractState _contractState = ContractState.PENDING;
   Map3InfoEntity _map3infoEntity;
 
   Wallet _wallet;
-  bool _haveNextEpisode = true;
+  bool _haveNextEpisode = false;
   bool _visible = false;
   bool _isTransferring = false;
-  String _lastActionTitle = "";
-  String _actingTitle = "";
+
   bool _isDelegated = false; // todo:判断当前(钱包=用户)是否参与抵押, 不一定是180天
   VoidCallback onPressed = () {};
   var _actionTitle = "";
@@ -92,13 +90,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _stateColor => Map3NodeUtil.stateColor(_contractState);
 
-  get _durationType => _contractNodeItem?.contract?.durationType ?? 0;
-
   get _isNoWallet => _wallet == null;
 
   get _isOwner => _contractDetailItem != null && _contractDetailItem.isOwner;
 
-  get _is180DaysContract => (_durationType == 2);
+  get _is180DaysContract => true;
 
   get _canGetPercent50Rewards => _isDelegated && _is180DaysContract;
 
@@ -531,7 +527,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             if (_isNoWallet) {
               _pushWalletManagerAction();
             } else {
-              _actingTitle = "进行中...";
               _joinContractAction();
             }
           };
@@ -541,23 +536,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           onPressed = () {
             if (_isNoWallet) {
               _pushWalletManagerAction();
-            } else {
-              _actingTitle = S.of(context).extracting;
-              _collectAction();
             }
           };
           break;
       }
-
-      _lastActionTitle = _actionTitle;
     } else {
       _actionTitle = "";
-      _lastActionTitle = "";
     }
   }
-
-  get _isShowLaunchDate =>
-      _contractState.index <= ContractState.PENDING.index && double.parse(_contractNodeItem.remainDelegation) > 0;
 
   var _moreKey = GlobalKey(debugLabel: '__more_global__');
   double _moreSizeHeight = 18;
@@ -571,7 +557,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void onCreated() {
     _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getEthAccount().address;
-    // todo: test_1007
     _nodeAddress = widget.contractId.toString();
 
     getContractDetailData();
@@ -661,7 +646,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       );
     }
 
-    var remainDay = S.of(context).left + FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft);
+    var remainDay =
+        S.of(context).left + FormatUtil.timeStringSimple(context, _contractNodeItem?.launcherSecondsLeft ?? 0);
 
     return Column(
       children: <Widget>[
@@ -676,9 +662,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   if (_haveNextEpisode) SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
                   // 0.合约介绍信息
                   SliverToBoxAdapter(
-                    child: _getMap3NodeInfoItem(context, _contractNodeItem),
+                    child: _getMap3NodeInfoItem(context),
                   ),
                   _spacer(),
+                  /*
                   SliverToBoxAdapter(
                     child: _nodeNextTimesWidget(),
                   ),
@@ -728,6 +715,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       delegate: SliverChildBuilderDelegate((context, index) {
                     return _delegateRecordItemWidget(_delegateRecordList[index]);
                   }, childCount: _delegateRecordList.length)),
+                  */
                 ],
               )),
         ),
@@ -837,8 +825,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               if (_map3infoEntity != null) {
                 Application.router.navigateTo(
                   context,
-                  Routes.map3node_cancel_page +
-                      '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+                  Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
                 );
               }
             },
@@ -860,8 +847,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
               } else {
                 var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-                Application.router.navigateTo(
-                    context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeAddress");
+                Application.router.navigateTo(context,
+                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeAddress");
               }
             },
             width: 120,
@@ -902,60 +889,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _getMap3NodeInfoItem(BuildContext context, ContractNodeItem contractNodeItem) {
-    if (contractNodeItem == null) return Container();
+  Widget _getMap3NodeInfoItem(BuildContext context) {
+    if (_map3infoEntity == null) return Container();
 
-    var state = contractNodeItem.stateValue;
-
-    var isNotFull = int.parse(contractNodeItem.remainDelegation) > 0;
-    var fullDesc = "";
     var dateDesc = "";
-    var isPending = false;
-    switch (state) {
-      case ContractState.PRE_CREATE:
-      case ContractState.PENDING:
-        dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
-        dateDesc = S.of(context).active + dateDesc;
-        fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
-        isPending = true;
-        break;
 
-      case ContractState.ACTIVE:
-        dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
-        dateDesc = S.of(context).expired + dateDesc;
-        break;
+    String desc = _map3infoEntity?.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……";
 
-      case ContractState.DUE:
-        dateDesc = S.of(context).contract_had_expired;
-        break;
-
-      case ContractState.CANCELLED:
-      case ContractState.CANCELLED_COMPLETED:
-      case ContractState.FAIL:
-        dateDesc = S.of(context).launch_fail;
-        break;
-
-      case ContractState.DUE_COMPLETED:
-        dateDesc = S.of(context).contract_had_stop;
-        break;
-
-      default:
-        break;
-    }
-
-    String _pronounceText = "";
-    _pronounceText = "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……";
-
-    var nodeName = "天道酬勤唐唐";
-    var nodeYearOld = "   节龄: 12天";
-    var nodeAddress = "节点地址 oxfdaf89fdaff ${UiUtil.shortEthAddress(contractNodeItem.owner, limitLength: 6)}";
+    var nodeName = _map3infoEntity?.name ?? "***";
+    var nodeYearOld = "   节龄: ***天";
+    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
-    var nodeId = " ${contractNodeItem.contractCode ?? "PB2020"}";
-
+    var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc = contractNodeItem.announcement ?? _pronounceText;
-
-    var times = "第一期";
 
     return Container(
       decoration: BoxDecoration(
@@ -1008,14 +954,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(dateDesc, style: TextStyle(color: Map3NodeUtil.stateColor(state), fontSize: 12)),
+                      Text(dateDesc, style: TextStyle(color: HexColor("#228BA1"), fontSize: 12)),
                       Container(
                         height: 4,
                       ),
                       Container(
                         color: HexColor("#1FB9C7").withOpacity(0.08),
                         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        child: Text(times, style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                        child: Text("times", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                       ),
                     ],
                   ),
@@ -1053,21 +999,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       //color: HexColor("#FF15B2D2"),
                       //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                       onTap: () {
-                        var _map3InfoEntity = Map3InfoEntity.onlyId(1);
-
-                        _map3InfoEntity.pic = "_localImagePath";
-
-                        _map3InfoEntity.name = "派大星";
-
-                        _map3InfoEntity.nodeId = "PB2020";
-
-                        _map3InfoEntity.home = "www.hyn.space";
-
-                        _map3InfoEntity.contact = "17876894078";
-
-                        _map3InfoEntity.describe = "大家快来参与我的节点吧…";
-
-                        var encodeEntity = FluroConvertUtils.object2string(_map3InfoEntity.toJson());
+                        var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
                         Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
                       },
                       child: Row(
@@ -1376,19 +1308,26 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
-//    if (!_isDelegated || _contractDetailItem == null || _userDelegateState == null) {
-//      return Container();
-//    }
+    // var amount = _contractDetailItem?.amountDelegation ?? "0";
+    //
+    // var total = double.parse(_contractDetailItem?.expectedYield ?? "0") + double.parse(amount);
+    // var expectedYield = FormatUtil.amountToString(total.toString());
+    // var commission = FormatUtil.amountToString(_contractDetailItem?.commission ?? "0");
+    //
+    // var withdrawn = FormatUtil.amountToString(_contractDetailItem?.withdrawn ?? "0") + "HYN";
+    // var managerTip = Map3NodeUtil.managerTip(_contractNodeItem.contract, double.parse(amount), isOwner: _isOwner);
+    // var endProfit = Map3NodeUtil.getEndProfit(_contractNodeItem.contract, double.parse(amount));
 
-    var amount = _contractDetailItem?.amountDelegation ?? "0";
-    var amountDelegation = FormatUtil.amountToString(amount);
-    var total = double.parse(_contractDetailItem?.expectedYield ?? "0") + double.parse(amount);
+    var amount = "55000";
+
+    var total = double.parse(amount);
     var expectedYield = FormatUtil.amountToString(total.toString());
     var commission = FormatUtil.amountToString(_contractDetailItem?.commission ?? "0");
-    var textColor = _userDelegateState == UserDelegateState.CANCELLED ? HexColor("#B51414") : HexColor("#5C4304");
-    var withdrawn = FormatUtil.amountToString(_contractDetailItem?.withdrawn ?? "0") + "HYN";
-    var managerTip = Map3NodeUtil.managerTip(_contractNodeItem.contract, double.parse(amount), isOwner: _isOwner);
-    var endProfit = Map3NodeUtil.getEndProfit(_contractNodeItem.contract, double.parse(amount));
+
+    var withdrawn = "0" + "HYN";
+    var managerTip = "0";
+    var endProfit = "0";
+
     print(
         '[Detail] commission:$commission vs $managerTip, expectedYield:$expectedYield vs $endProfit ,withdrawn: $withdrawn}');
 
@@ -1466,12 +1405,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
-                if (_isShowLaunchDate)
-                  Text(
-                    S.of(context).launcher_time_left(
-                        FormatUtil.timeStringSimple(context, _contractNodeItem.launcherSecondsLeft)),
-                    style: TextStyles.textC999S14,
-                  ),
+                Text(
+                  S.of(context).launcher_time_left(FormatUtil.timeStringSimple(context, 0)),
+                  style: TextStyles.textC999S14,
+                ),
               ],
             ),
           ),
@@ -1813,23 +1750,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Future getContractDetailData() async {
-//    try {
-
-      // 0.
-      /*if (_isNoWallet) {
-        _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
-      } else {
-        _isDelegated = await _nodeApi.checkIsDelegatedContractInstance(widget.contractId);
-        if (_isDelegated) {
-          _contractDetailItem = await _nodeApi.getContractDetail(widget.contractId);
-          _contractNodeItem = _contractDetailItem?.instance;
-
-          _userDelegateState = enumUserDelegateStateFromString(_contractDetailItem?.state ?? "");
-        } else {
-          _contractNodeItem = await _nodeApi.getContractInstanceItem("${widget.contractId}");
-        }
-      }*/
-
+    try {
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
 
       // 1.
@@ -1852,7 +1773,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           });
         }
       });
-    /*} catch (e) {
+    } catch (e) {
       logger.e(e);
       LogUtil.toastException(e);
 
@@ -1865,103 +1786,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _isTransferring = false;
         });
       }
-    }*/
-  }
-
-  Future _collectAction() async {
-    if (_wallet == null || _contractDetailItem == null) {
-      return;
     }
-
-    AppSource source;
-    if (Config.APP_SOURCE == 'TITAN') {
-      source = AppSource.TITAN;
-    } else {
-      source = AppSource.STARRICH;
-    }
-
-    if (_contractNodeItem.appSource != source.index) {
-      Fluttertoast.showToast(msg: "该节点并非创建于${S.of(context).app_name}，提取失败");
-      return;
-    }
-
-    showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return EnterWalletPasswordWidget();
-        }).then((walletPassword) async {
-      if (walletPassword == null) {
-        return;
-      }
-
-      try {
-        if (mounted) {
-          setState(() {
-            _lastActionTitle = _actionTitle;
-            _isTransferring = true;
-          });
-        }
-
-        var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-        var gasPrice = gasPriceRecommend.average.toInt();
-
-        var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;
-        if (_userDelegateState == UserDelegateState.HALFDUE) {
-          gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectHalfMap3NodeGasLimit;
-        } else {
-          if (_isOwner) {
-            int delegatorCount = _contractDetailItem.delegatorCount;
-            if (delegatorCount <= 21) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit21;
-            } else if (delegatorCount > 21 && delegatorCount <= 41) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit41;
-            } else if (delegatorCount > 41 && delegatorCount <= 61) {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit61;
-            } else {
-              gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit81;
-            }
-            print("[detail]  delegatorCount:$delegatorCount, gasLimit:$gasLimit");
-          } else {
-            gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodePartnerGasLimit;
-          }
-        }
-
-        var success = await _nodeApi.withdrawContractInstance(
-            _contractNodeItem, WalletVo(wallet: _wallet), walletPassword, gasPrice, gasLimit);
-        if (success == "success") {
-          _broadcastContractAction();
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-
-          if (mounted) {
-            setState(() {
-              _isTransferring = false;
-            });
-          }
-        }
-      } catch (_) {
-        logger.e(_);
-
-        if (mounted) {
-          setState(() {
-            _isTransferring = false;
-          });
-        }
-
-        if (_ is PlatformException) {
-          if (_.code == WalletError.PASSWORD_WRONG) {
-            Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-          } else {
-            Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-          }
-        } else if (_ is RPCError) {
-          Fluttertoast.showToast(msg: MemoryCache.contractErrorStr(_.message), toastLength: Toast.LENGTH_LONG);
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      }
-    });
   }
 
   void _pushNodeInfoAction() {
@@ -2000,7 +1825,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void _joinContractAction() async {
     if (mounted) {
       setState(() {
-        _lastActionTitle = _actionTitle;
         _isTransferring = true;
       });
     }

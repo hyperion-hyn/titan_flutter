@@ -81,7 +81,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
       } else {
         var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
         Application.router.navigateTo(
-            context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
+            context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${contractNodeItem.address}");
       }
     },
     child: Container(
