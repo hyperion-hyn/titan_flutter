@@ -417,7 +417,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     }
   }
 
-  Future _pushContractDetail(String map3Address) async {
-    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$map3Address");
+  Future _pushContractDetail(String nodeId) async {
+    Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${Uri.encodeComponent(nodeId)}");
   }
 }

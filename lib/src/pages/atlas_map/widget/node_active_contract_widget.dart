@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class NodeActiveContractWidget extends StatefulWidget {
@@ -70,11 +71,12 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
     var nodeName = item.name;
     var nodeId = "节点号: ${item.nodeId}";
-    var contractId = item.nodeId;
+
+    print("[object] item.nodeId:${item.nodeId}");
 
     return InkWell(
       onTap: () {
-        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+        Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(item.nodeId)}");
       },
       child: Container(
         padding: EdgeInsets.only(top: 4, bottom: 4.0),

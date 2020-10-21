@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -94,7 +95,7 @@ Widget getMap3NodeWaitItem(
  
             context,
             Routes.map3node_join_contract_page +
-                "?entryRouteName=$entryRouteName&contractId=${infoEntity.nodeId}");
+                "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(infoEntity.nodeId)}");
 
       }
     },
@@ -248,7 +249,7 @@ Widget getMap3NodeWaitItem(
                         Application.router.navigateTo(
                             context,
                             Routes.map3node_contract_detail_page +
-                                "?contractId=${infoEntity.nodeId}");
+                                "?contractId=${FluroConvertUtils.fluroCnParamsEncode(infoEntity.nodeId)}");
                       },
                       child: Text(
                           isPending

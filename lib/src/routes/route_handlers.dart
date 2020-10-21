@@ -265,7 +265,8 @@ var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeJoinPage(params['contractId']?.first);
+  var nodeId = FluroConvertUtils.fluroCnParamsDecode(params['contractId']?.first);
+  return Map3NodeJoinPage(nodeId);
 });
 
 var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
@@ -288,7 +289,9 @@ var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
 var map3NodeContractDetailHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  return Map3NodeDetailPage(params['contractId']?.first);
+  var nodeId = FluroConvertUtils.fluroCnParamsDecode(params['contractId']?.first);
+
+  return Map3NodeDetailPage(nodeId);
 });
 
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {

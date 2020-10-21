@@ -665,6 +665,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: _getMap3NodeInfoItem(context),
                   ),
                   _spacer(),
+                  SliverToBoxAdapter(
+                    child: _nodeNextTimesWidget(),
+                  ),
+                  _spacer(),
                   /*
                   SliverToBoxAdapter(
                     child: _nodeNextTimesWidget(),
@@ -848,7 +852,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               } else {
                 var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
                 Application.router.navigateTo(context,
-                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeId");
+                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(_nodeId)}");
               }
             },
             width: 120,
@@ -1831,7 +1835,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
     await Application.router.navigateTo(context,
-        Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${_contractNodeItem.id}");
+        Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(_map3infoEntity.nodeId)}");
     _nextAction();
   }
 

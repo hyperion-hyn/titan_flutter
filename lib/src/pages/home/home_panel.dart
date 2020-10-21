@@ -847,7 +847,7 @@ class HomePanelState extends State<HomePanel> {
         return;
       }
       Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + "?contractId=${idList[1]}");
+          Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(idList[1])}");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

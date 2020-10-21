@@ -29,6 +29,7 @@ import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -175,11 +176,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
     if (type == "contract" && subType == "detail") {
-      var contractId = content["contractId"];
+      var nodeId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=$contractId");
+      Application.router.navigateTo(context, Routes.map3node_contract_detail_page + "?contractId=${FluroConvertUtils.fluroCnParamsEncode(nodeId)}");
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
