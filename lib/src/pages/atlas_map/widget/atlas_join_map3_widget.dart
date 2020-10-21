@@ -63,8 +63,8 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
 
   void getJoinMemberData() async {
     _currentPage = 0;
-    List<Map3UserEntity> tempMemberList =
-        await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+
+    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -81,8 +81,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<Map3UserEntity> tempMemberList =
-          await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -199,7 +198,8 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
-                      Text("${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                      Text(
+                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),

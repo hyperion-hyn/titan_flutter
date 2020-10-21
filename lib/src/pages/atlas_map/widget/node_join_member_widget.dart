@@ -17,14 +17,14 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
-  final String nodeAddress;
+  final String nodeId;
   final String remainDay;
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.nodeAddress, this.remainDay, this.shareName, this.shareUrl,
+  NodeJoinMemberWidget(this.nodeId, this.remainDay, this.shareName, this.shareUrl,
       {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
@@ -73,7 +73,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   void getJoinMemberData() async {
     _currentPage = 1;
-    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeId, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -90,7 +90,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
