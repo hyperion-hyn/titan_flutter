@@ -71,9 +71,46 @@ Map<String, dynamic> _$Map3TxLogEntityToJson(Map3TxLogEntity instance) =>
       'value': instance.value,
     };
 
+
+
 DataDecoded _$DataDecodedFromJson(Map<String, dynamic> json) {
-  return DataDecoded();
+  return DataDecoded(
+    json['operatorAddress'] as String,
+    json['description'] == null
+        ? null
+        : Description.fromJson(json['description'] as Map<String, dynamic>),
+    json['commission'] as String,
+    json['nodePubKey'] as String,
+    json['nodeKeySig'] as String,
+    json['amount'] as String,
+  );
 }
 
 Map<String, dynamic> _$DataDecodedToJson(DataDecoded instance) =>
-    <String, dynamic>{};
+    <String, dynamic>{
+      'operatorAddress': instance.operatorAddress,
+      'description': instance.description,
+      'commission': instance.commission,
+      'nodePubKey': instance.nodePubKey,
+      'nodeKeySig': instance.nodeKeySig,
+      'amount': instance.amount,
+    };
+
+Description _$DescriptionFromJson(Map<String, dynamic> json) {
+  return Description(
+    json['name'] as String,
+    json['identity'] as String,
+    json['website'] as String,
+    json['securityContact'] as String,
+    json['details'] as String,
+  );
+}
+
+Map<String, dynamic> _$DescriptionToJson(Description instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'identity': instance.identity,
+      'website': instance.website,
+      'securityContact': instance.securityContact,
+      'details': instance.details,
+    };

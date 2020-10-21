@@ -144,12 +144,13 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
       if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
-        List list = _map3stakingEntity.map3Nodes;
-        print("[Home] onLoadingMore:${list.length}");
+        List<Map3InfoEntity> lastPendingList = List.from(_pendingList);
+        List<Map3InfoEntity> list = _map3stakingEntity.map3Nodes;
+        lastPendingList.addAll(list);
+        print("[Home] onLoadingMore,1:${_pendingList.length}");
+        _pendingList = lastPendingList;
+        print("[Home] onLoadingMore,2:${_pendingList.length}");
 
-        list.forEach((element) {
-          _pendingList.add(element);
-        });
 
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {

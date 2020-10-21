@@ -95,16 +95,64 @@ part 'map3_tx_log_entity.g.dart';
 
 }
 
-  
-@JsonSerializable()
-  class DataDecoded extends Object {
 
-  DataDecoded();
+@JsonSerializable()
+class DataDecoded extends Object {
+
+  @JsonKey(name: 'operatorAddress')
+  String operatorAddress;
+
+  @JsonKey(name: 'description')
+  Description description;
+
+  @JsonKey(name: 'commission')
+  String commission;
+
+  @JsonKey(name: 'nodePubKey')
+  String nodePubKey;
+
+  @JsonKey(name: 'nodeKeySig')
+  String nodeKeySig;
+
+  @JsonKey(name: 'amount')
+  String amount;
+
+  DataDecoded(this.operatorAddress,this.description,this.commission,this.nodePubKey,this.nodeKeySig,this.amount,);
 
   factory DataDecoded.fromJson(Map<String, dynamic> srcJson) => _$DataDecodedFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$DataDecodedToJson(this);
 
 }
+
+
+@JsonSerializable()
+class Description extends Object {
+
+  @JsonKey(name: 'name')
+  String name;
+
+  @JsonKey(name: 'identity')
+  String identity;
+
+  @JsonKey(name: 'website')
+  String website;
+
+  @JsonKey(name: 'securityContact')
+  String securityContact;
+
+  @JsonKey(name: 'details')
+  String details;
+
+  Description(this.name,this.identity,this.website,this.securityContact,this.details,);
+
+  factory Description.fromJson(Map<String, dynamic> srcJson) => _$DescriptionFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$DescriptionToJson(this);
+
+}
+
+
+
 
   

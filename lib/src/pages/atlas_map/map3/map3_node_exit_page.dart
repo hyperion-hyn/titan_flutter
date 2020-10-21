@@ -105,10 +105,14 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       );
     }
 
-    var wallet = WalletInheritedModel.of(
+    var activatedWallet = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
-    );
+    ).activatedWallet;
+
+    var walletName = activatedWallet.wallet.keystore.name;
+    var walletAddress = activatedWallet.wallet.getEthAccount().address;
+    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(walletAddress ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var nodeYearOld = "   节龄: ***天";
@@ -214,13 +218,13 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
-                                    TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(text: walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                     TextSpan(text: "", style: TextStyles.textC333S14bold),
                                   ])),
                                   Container(
                                     height: 4,
                                   ),
-                                  Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 18)}",
+                                  Text(walletAddressStr,
                                       style: TextStyles.textC9b9b9bS12),
                                 ],
                               ),
