@@ -230,7 +230,7 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<Map3InfoEntity> getMap3Info(String address, String nodeAddress) async {
+  Future<Map3InfoEntity> getMap3Info(String address, String nodeId) async {
     return AtlasHttpCore.instance.postEntity("/v1/map3/info",
         EntityFactory<Map3InfoEntity>(
       (json) {
@@ -241,7 +241,7 @@ class AtlasApi {
       },
     ), params: {
       "address": address,
-      "node_address": nodeAddress,
+      "node_id": nodeId,
     }, options: RequestOptions(contentType: "application/json"));
   }
 

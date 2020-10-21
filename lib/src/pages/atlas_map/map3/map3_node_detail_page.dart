@@ -57,9 +57,9 @@ import 'map3_node_public_widget.dart';
 import 'package:characters/characters.dart';
 
 class Map3NodeDetailPage extends StatefulWidget {
-  final String contractId;
+  final String nodeId;
 
-  Map3NodeDetailPage(this.contractId);
+  Map3NodeDetailPage(this.nodeId);
 
   @override
   _Map3NodeDetailState createState() => new _Map3NodeDetailState();
@@ -550,14 +550,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   double _moreSizeWidth = 100;
   double _moreOffsetLeft = 246;
   double _moreOffsetTop = 76;
-  var _address = "string";
-  var _nodeAddress = "string";
+  var _address = "";
+  var _nodeId = "";
 
   @override
   void onCreated() {
     _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getEthAccount().address;
-    _nodeAddress = widget.contractId.toString();
+    _nodeId = widget.nodeId.toString();
 
     getContractDetailData();
 
@@ -848,7 +848,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               } else {
                 var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
                 Application.router.navigateTo(context,
-                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeAddress");
+                    Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=$_nodeId");
               }
             },
             width: 120,
@@ -1706,7 +1706,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _currentPage = 0;
       _delegateRecordList = [];
 
-      List<Map3StakingLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+      List<Map3StakingLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1728,7 +1728,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _currentPage++;
 
       List<Map3StakingLogEntity> tempMemberList =
-          await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
+          await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1751,7 +1751,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Future getContractDetailData() async {
     try {
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
+      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
       // 1.
       _contractState = ContractState.PENDING;

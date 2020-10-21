@@ -46,13 +46,13 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   Map3InfoEntity _map3infoEntity;
   AtlasApi _atlasApi = AtlasApi();
   var _address = "string";
-  var _nodeAddress = "string";
+  var _nodeId = "string";
 
   @override
   void onCreated() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getEthAccount().address;
-    _nodeAddress = widget.map3infoEntity.nodeId;
+    _nodeId = widget.map3infoEntity.nodeId;
 
     getNetworkData();
 
@@ -76,7 +76,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     try {
       print("[${widget.runtimeType}] getNetworkData");
 
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeAddress);
+      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
       if (mounted) {
         setState(() {

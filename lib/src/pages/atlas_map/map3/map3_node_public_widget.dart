@@ -21,10 +21,10 @@ import 'map3_node_create_wallet_page.dart';
 import 'map3_node_pronounce_page.dart';
 
 Widget getMap3NodeWaitItem(
-    BuildContext context, Map3InfoEntity contractNodeItem) {
-  if (contractNodeItem == null) return Container();
+    BuildContext context, Map3InfoEntity infoEntity) {
+  if (infoEntity == null) return Container();
 
-  var state = ContractState.values[contractNodeItem?.status ?? 0];
+  var state = ContractState.values[infoEntity?.status ?? 0];
   var isNotFull = true;
   var fullDesc = "";
   var dateDesc = "";
@@ -34,7 +34,7 @@ Widget getMap3NodeWaitItem(
     case ContractState.PENDING:
       dateDesc = S.of(context).left +
           FormatUtil.timeStringSimple(
-              context, double.parse(contractNodeItem?.atlas?.staking ?? "0"));
+              context, double.parse(infoEntity?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).active + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
@@ -43,7 +43,7 @@ Widget getMap3NodeWaitItem(
     case ContractState.ACTIVE:
       dateDesc = S.of(context).left +
           FormatUtil.timeStringSimple(
-              context, double.parse(contractNodeItem?.atlas?.staking ?? "0"));
+              context, double.parse(infoEntity?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).expired + dateDesc;
       break;
 
@@ -65,19 +65,19 @@ Widget getMap3NodeWaitItem(
       break;
   }
 
-  var nodeName = contractNodeItem.name;
+  var nodeName = infoEntity.name;
   var nodeAddress =
-      "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address ?? "", limitLength: 1)}";
+      "节点地址  ${UiUtil.shortEthAddress(infoEntity?.atlas?.address ?? "", limitLength: 1)}";
   var nodeIdPre = "节点号";
-  var nodeId = " ${contractNodeItem.nodeId ?? ""}";
+  var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
-  var feeRate = contractNodeItem.feeRate ?? "--";
+  var feeRate = infoEntity.feeRate ?? "--";
   var descPre = "描   述：";
-  var desc = contractNodeItem.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
+  var desc = infoEntity.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
   var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(contractNodeItem?.staking ?? "0"))
+          weiBigInt: BigInt.parse(infoEntity?.staking ?? "0"))
       .toString());
-  var date = contractNodeItem.createdAt;
+  var date = infoEntity.createdAt;
 
   return InkWell(
     onTap: () async {
@@ -94,7 +94,7 @@ Widget getMap3NodeWaitItem(
  
             context,
             Routes.map3node_join_contract_page +
-                "?entryRouteName=$entryRouteName&contractId=${contractNodeItem.address}");
+                "?entryRouteName=$entryRouteName&contractId=${infoEntity.nodeId}");
 
       }
     },
@@ -248,7 +248,7 @@ Widget getMap3NodeWaitItem(
                         Application.router.navigateTo(
                             context,
                             Routes.map3node_contract_detail_page +
-                                "?contractId=${contractNodeItem.address}");
+                                "?contractId=${infoEntity.nodeId}");
                       },
                       child: Text(
                           isPending

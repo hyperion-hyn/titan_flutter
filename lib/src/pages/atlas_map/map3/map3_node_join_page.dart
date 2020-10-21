@@ -50,7 +50,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   Map3InfoEntity _map3infoEntity;
   AtlasApi _atlasApi = AtlasApi();
   var _address = "";
-  var _nodeAddress = "";
+  var _nodeId = "";
 
   //ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
@@ -88,7 +88,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         ?.wallet;
     _address = _wallet.getAtlasAccount().address;
     // todo: test_1007
-    _nodeAddress = widget.contractId.toString();
+    _nodeId = widget.contractId.toString();
 
     getNetworkData();
 
@@ -109,7 +109,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   Future getNetworkData() async {
     try {
       var requestList = await Future.wait([
-        _atlasApi.getMap3Info(_address, _nodeAddress),
+        _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.getMapRecStaking(),
       ]);
 
