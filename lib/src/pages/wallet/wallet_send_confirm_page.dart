@@ -73,9 +73,9 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
-    } else {
       gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).btcGasPriceRecommend;
+    } else {
+      gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
     }
     _speedOnTap(1);
 //    _updateSpeed(defaultSpeed, quotePrice);
