@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +18,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -68,6 +70,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   final client = WalletUtil.getWeb3Client(true);
   Map3NodeInformationEntity _map3nodeInformationEntity;
+  Map3IntroduceEntity _map3introduceEntity;
 
   @override
   void initState() {
@@ -124,11 +127,14 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       var requestList = await Future.wait([
 //        _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.getMapRecStaking(),
-        client.getMap3NodeInformation(map3Address)
+        client.getMap3NodeInformation(map3Address),
+        AtlasApi.getIntroduceEntity()
       ]);
 
       _suggestList = requestList[0];
       _map3nodeInformationEntity = requestList[1];
+      _map3introduceEntity = requestList[2];
+
       if (mounted) {
         setState(() {
           _currentState = null;
@@ -183,7 +189,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (_currentState != null || widget.map3infoEntity == null) {
+    if (_currentState != null || widget.map3infoEntity == null || _map3introduceEntity == null) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -280,9 +286,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
           const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
       child: profitListWidget(
         [
-          {"总抵押": widget.map3infoEntity.staking},
-          {"管理费": '${widget.map3infoEntity.feeRate}%'},
-          {"最低抵押": ''}
+          {"总抵押": _map3introduceEntity.createMin},
+          {"管理费": '${FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()))}'},
+          {"最低抵押": _map3introduceEntity.delegateMin}
         ],
       ),
     );
@@ -308,13 +314,11 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               }
 
               var amount = _joinCoinController?.text ?? "200000";
-              var entity =
-                  PledgeMap3Entity.onlyType(AtlasActionType.JOIN_DELEGATE_MAP3);
-              entity.payload = PledgeMap3Payload("abc", amount);
-              entity.amount = amount;
+              var entity = PledgeMap3Entity(payload: Payload(userIdentity: widget.map3infoEntity.nodeId,));
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,
-                map3NodeAddress: "xxx",
+                map3NodeAddress: widget.map3infoEntity.address,
+                amount: amount
               );
               Navigator.push(
                   context,

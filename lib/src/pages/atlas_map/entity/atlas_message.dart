@@ -393,7 +393,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transTerminateMap3Node(password, this.entity.to, this.map3NodeAddress, wallet);
+    var rawTx = await HYNApi.transTerminateMap3Node(password, this.map3NodeAddress, wallet);
     this.entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
@@ -414,8 +414,8 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       title: "确认终止节点",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
-      amount: entity?.payload?.staking ?? "0",
+      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      amount: "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.000021",
@@ -426,13 +426,14 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
 class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
-  ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress});
+  final String amount;
+  ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress,this.amount});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx =
-        await HYNApi.transUnMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
+        await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
     this.entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
@@ -454,8 +455,8 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       title: "确认撤销",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
-      amount: entity?.payload?.staking ?? "0",
+      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      amount: amount ?? "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.000021",
@@ -466,13 +467,14 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
 class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
-  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress});
+  final String amount;
+  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress,this.amount});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx =
-        await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
+        await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
 
     this.entity.rawTx = rawTx;
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
@@ -496,8 +498,8 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
-      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
-      amount: entity?.payload?.staking ?? "0",
+      toDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      amount: amount ?? "0",
       fee: "0.000021",
     );
   }
@@ -511,7 +513,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transCollectMap3Node(password, this.entity.to, wallet);
+    var rawTx = await HYNApi.transCollectMap3Node(password, wallet);
 
     this.entity.rawTx = rawTx;
     TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
@@ -533,8 +535,8 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       title: "提取奖励",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
-      amount: entity?.payload?.staking ?? "0",
+      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      amount: "0",
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.000021",
@@ -550,9 +552,9 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx =
-        await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
-    this.entity.rawTx = rawTx;
+//    var rawTx =
+//        await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
+//    this.entity.rawTx = rawTx;
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -575,8 +577,8 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: "$walletName ($address)",
       toName: "Map3节点",
-      toDetail: "节点号:${entity?.payload?.map3NodeId ?? ""}",
-      amount: entity?.payload?.staking ?? "0",
+      toDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      amount: "0",
       fee: "0.000021",
     );
   }

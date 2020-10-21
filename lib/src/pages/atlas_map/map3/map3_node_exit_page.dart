@@ -284,10 +284,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           child: ClickOvalButton(
             "确认终止",
             () {
-              var entity = PledgeMap3Entity.onlyType(AtlasActionType.CANCEL_MAP3_NODE);
+              var entity = PledgeMap3Entity(payload: Payload(userIdentity: widget.map3infoEntity.nodeId,));
               var message = ConfirmTerminateMap3NodeMessage(
                 entity: entity,
-                map3NodeAddress: "xxx",
+                map3NodeAddress: widget.map3infoEntity.address,
               );
               Navigator.push(
                   context,

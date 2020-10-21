@@ -213,7 +213,6 @@ class HYNApi {
 
   static Future transTerminateMap3Node(
     String password,
-    String toAddress,
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
@@ -223,13 +222,12 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: toAddress, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static Future transMicroMap3Node(
     String staking,
     String password,
-    String toAddress,
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
@@ -241,13 +239,12 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
+    return transferHYN(password, wallet, message: message, amount: amount);
   }
 
   static Future transUnMicroMap3Node(
     String staking,
     String password,
-    String toAddress,
     String map3NodeAddress,
     localWallet.Wallet wallet,
   ) async {
@@ -259,12 +256,11 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: toAddress, message: message, amount: amount);
+    return transferHYN(password, wallet, message: message, amount: amount);
   }
 
   static Future transCollectMap3Node(
     String password,
-    String toAddress,
     localWallet.Wallet wallet,
   ) async {
     var message = CollectMicroRewardsMessage(
@@ -272,7 +268,7 @@ class HYNApi {
     );
     print(message);
 
-    return transferHYN(password, wallet, toAddress: toAddress, message: message);
+    return transferHYN(password, wallet, message: message);
   }
 
   static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}){

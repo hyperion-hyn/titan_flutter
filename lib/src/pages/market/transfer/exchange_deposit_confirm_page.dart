@@ -16,7 +16,9 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -67,11 +69,11 @@ class _ExchangeDepositConfirmPageState
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .gasPriceRecommend;
+              .btcGasPriceRecommend;
     } else {
       gasPriceRecommend =
           QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
-              .btcGasPriceRecommend;
+              .gasPriceRecommend;
     }
     _speedOnTap(1);
   }
@@ -83,6 +85,9 @@ class _ExchangeDepositConfirmPageState
   }
 
   Decimal get gasPrice {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+      return Decimal.fromInt(1 * TokenUnit.G_WEI);
+    }
     switch (selectedPriceLevel) {
       case 0:
         return gasPriceRecommend.safeLow;
@@ -113,6 +118,23 @@ class _ExchangeDepositConfirmPageState
       var gasPriceEstimate = fees * Decimal.parse(quotePrice.toString());
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
+    } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+       //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      var hynQuotePrice = QuotesInheritedModel.of(context)
+              .activatedQuoteVoAndSign('HYN')
+              ?.quoteVo
+              ?.price ??
+          0;
+      var gasLimit = SettingInheritedModel.ofConfig(context)
+          .systemConfigEntity
+          .ethTransferGasLimit;
+      var gasEstimate = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+              (gasPrice * Decimal.fromInt(gasLimit)).toStringAsFixed(0)));
+      var gasPriceEstimate =
+          gasEstimate * Decimal.parse(hynQuotePrice.toString());
+      gasPriceEstimateStr =
+          '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $quoteSign${FormatUtil.formatCoinNum(gasPriceEstimate.toDouble())})';
     } else {
       var ethQuotePrice = QuotesInheritedModel.of(context)
               .activatedQuoteVoAndSign('ETH')
@@ -328,133 +350,134 @@ class _ExchangeDepositConfirmPageState
                       ],
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _speedOnTap(0);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 4),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 0
-                                      ? Colors.grey
-                                      : Colors.grey[200],
-                                  border: Border(),
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      bottomLeft: Radius.circular(30))),
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    S.of(context).speed_slow,
-                                    style: TextStyle(
-                                        color: selectedPriceLevel == 0
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 12),
-                                  ),
-                                  Text(
-                                    S.of(context).wait_min(gasPriceRecommend
-                                        .safeLowWait
-                                        .toString()),
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.black38),
-                                  )
-                                ],
+                  if(widget.coinVo.symbol != SupportedTokens.HYN_Atlas.symbol)
+                    Padding(
+                      padding:
+                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _speedOnTap(0);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 4),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: selectedPriceLevel == 0
+                                        ? Colors.grey
+                                        : Colors.grey[200],
+                                    border: Border(),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(30),
+                                        bottomLeft: Radius.circular(30))),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      S.of(context).speed_slow,
+                                      style: TextStyle(
+                                          color: selectedPriceLevel == 0
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 12),
+                                    ),
+                                    Text(
+                                      S.of(context).wait_min(gasPriceRecommend
+                                          .safeLowWait
+                                          .toString()),
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.black38),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        VerticalDivider(
-                          width: 1,
-                          thickness: 2,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _speedOnTap(1);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 4),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 1
-                                      ? Colors.grey
-                                      : Colors.grey[200],
-                                  border: Border(),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(0))),
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    S.of(context).speed_normal,
-                                    style: TextStyle(
-                                        color: selectedPriceLevel == 1
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 12),
-                                  ),
-                                  Text(
-                                    S.of(context).wait_min(
-                                        gasPriceRecommend.avgWait.toString()),
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.black38),
-                                  )
-                                ],
+                          VerticalDivider(
+                            width: 1,
+                            thickness: 2,
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _speedOnTap(1);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 4),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: selectedPriceLevel == 1
+                                        ? Colors.grey
+                                        : Colors.grey[200],
+                                    border: Border(),
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(0))),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      S.of(context).speed_normal,
+                                      style: TextStyle(
+                                          color: selectedPriceLevel == 1
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 12),
+                                    ),
+                                    Text(
+                                      S.of(context).wait_min(
+                                          gasPriceRecommend.avgWait.toString()),
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.black38),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        VerticalDivider(
-                          width: 1,
-                          thickness: 2,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _speedOnTap(2);
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 4),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  color: selectedPriceLevel == 2
-                                      ? Colors.grey
-                                      : Colors.grey[200],
-                                  border: Border(),
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(30),
-                                      bottomRight: Radius.circular(30))),
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    S.of(context).speed_fast,
-                                    style: TextStyle(
-                                        color: selectedPriceLevel == 2
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontSize: 12),
-                                  ),
-                                  Text(
-                                    S.of(context).wait_min(
-                                        gasPriceRecommend.fastWait.toString()),
-                                    style: TextStyle(
-                                        fontSize: 10, color: Colors.black38),
-                                  )
-                                ],
+                          VerticalDivider(
+                            width: 1,
+                            thickness: 2,
+                          ),
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                _speedOnTap(2);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 4),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    color: selectedPriceLevel == 2
+                                        ? Colors.grey
+                                        : Colors.grey[200],
+                                    border: Border(),
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(30),
+                                        bottomRight: Radius.circular(30))),
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      S.of(context).speed_fast,
+                                      style: TextStyle(
+                                          color: selectedPriceLevel == 2
+                                              ? Colors.white
+                                              : Colors.black,
+                                          fontSize: 12),
+                                    ),
+                                    Text(
+                                      S.of(context).wait_min(
+                                          gasPriceRecommend.fastWait.toString()),
+                                      style: TextStyle(
+                                          fontSize: 10, color: Colors.black38),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
+                        ],
+                      ),
+                    )
                 ],
               ),
             ),
@@ -545,6 +568,16 @@ class _ExchangeDepositConfirmPageState
               msg: "${transResult.toString()}", toastLength: Toast.LENGTH_LONG);
           return;
         }
+      } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+        await HYNApi.transferHYN(
+          walletPassword,
+          activatedWallet.wallet,
+          toAddress: widget.exchangeAddress,
+          amount: ConvertTokenUnit.strToBigInt(
+            widget.transferAmount,
+            widget.coinVo.decimals,
+          ),
+        );
       } else {
         await _transferErc20(
           walletPassword,

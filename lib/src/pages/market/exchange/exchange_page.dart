@@ -25,6 +25,7 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -173,17 +174,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
           );
         },
       ),
-    );
-  }
-
-  _contentView() {
-    return Column(
-      children: <Widget>[
-        _account(),
-        _exchange(),
-        _divider(),
-        _quotesTabs(),
-      ],
     );
   }
 
@@ -478,7 +468,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   if (_exchangeType == ExchangeType.SELL) Spacer(),
                   _coinItem(
                     'HYN',
-                    SupportedTokens.HYN_ERC20.logo,
+                    SupportedTokens.HYN_Atlas.logo,
                     false,
                   ),
                   if (_exchangeType == ExchangeType.SELL) Spacer(),
