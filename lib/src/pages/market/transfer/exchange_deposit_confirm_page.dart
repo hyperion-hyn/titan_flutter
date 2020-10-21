@@ -569,7 +569,7 @@ class _ExchangeDepositConfirmPageState
           return;
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        await HYNApi.transferHYN(
+        await HYNApi.sendTransferHYN(
           walletPassword,
           activatedWallet.wallet,
           toAddress: widget.exchangeAddress,

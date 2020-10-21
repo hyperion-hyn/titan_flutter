@@ -82,22 +82,10 @@ Widget getMap3NodeWaitItem(
 
   return InkWell(
     onTap: () async {
-      var walletList = await WalletUtil.scanWallets();
-      if (walletList.length == 0) {
-        Application.router.navigateTo(
-            context,
-            Routes.map3node_create_wallet +
-                "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
-      } else {
-        var entryRouteName =
-            Uri.encodeComponent(Routes.map3node_contract_detail_page);
-        Application.router.navigateTo(
- 
-            context,
-            Routes.map3node_join_contract_page +
-                "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(infoEntity.nodeId)}");
-
-      }
+      Application.router.navigateTo(
+        context,
+        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity)}',
+      );
     },
     child: Container(
       decoration: BoxDecoration(
