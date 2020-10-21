@@ -307,7 +307,7 @@ class HYNApi {
 
     var message = RenewMap3NodeMessage(
       isRenew: isRenew,
-      newCommissionRate: newCommissionRate,
+      newCommissionRate: newCommissionRate, // 非管理传：null, []
       delegatorAddress: wallet.getAtlasAccount().address,
       map3NodeAddress: map3NodeAddress,
     );

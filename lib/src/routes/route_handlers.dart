@@ -251,8 +251,9 @@ var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodePreEditHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-
-  return Map3NodePreEditPage();
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['info']?.first));
+  return Map3NodePreEditPage(map3infoEntity: map3infoEntity,);
 });
 
 var map3NodeFormalConfirmHandler = Handler(handlerFunc: (context, params) {
