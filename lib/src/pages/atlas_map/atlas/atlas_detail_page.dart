@@ -5,6 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_look_over_page.dart';
@@ -26,6 +27,7 @@ import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
@@ -35,7 +37,8 @@ import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class AtlasDetailPage extends StatefulWidget {
-  AtlasDetailPage();
+  String atlasNodeId;
+  AtlasDetailPage(this.atlasNodeId);
 
   @override
   State<StatefulWidget> createState() {
@@ -88,10 +91,50 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   Future _refreshData() async {
-    //todo
-//    _atlasInfoEntity = await _atlasApi.postAtlasInfo("", "");
-    _atlasInfoEntity = AtlasInfoEntity.onlyId(11);
-    _atlasInfoEntity.name = "啦啦啦";
+    infoContentList.clear();
+    _currentPage = 1;
+    _dataList.clear();
+
+//    try {
+      var resultList = await Future.wait([
+        _atlasApi.postAtlasInfo(widget.atlasNodeId),
+        _atlasApi.postAtlasMap3NodeList(widget.atlasNodeId, page: _currentPage)
+      ]);
+      _atlasInfoEntity = resultList[0];
+      _dataList = resultList[1];
+
+      infoContentList.add("${_atlasInfoEntity.maxStaking}");
+      infoContentList.add("${_atlasInfoEntity.home}");
+      infoContentList.add("${_atlasInfoEntity.contact}");
+      infoContentList.add("${_atlasInfoEntity.describe}");
+      infoContentList.add("${_atlasInfoEntity.feeRate}");
+      infoContentList.add("${_atlasInfoEntity.feeRateMax}");
+      infoContentList.add("${_atlasInfoEntity.feeRateTrim}");
+
+      _dataList.forEach((element) {
+        element.name = "haha";
+        element.address = "121112121";
+        element.rewardRate = "11%";
+        element.staking = "2313123";
+        element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
+        element.relative = Map3AtlasEntity.onlyId(11, 1);
+        element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
+      });
+
+      if (mounted)
+        setState(() {
+          _currentState = null;
+        });
+      _loadDataBloc.add(RefreshSuccessEvent());
+//    }catch(error){
+//      logger.e(error);
+//      setState(() {
+//        _currentState = all_page_state.LoadFailState();
+//      });
+//    }
+
+//    _atlasInfoEntity = AtlasInfoEntity.onlyId(11);
+    /*_atlasInfoEntity.name = "啦啦啦";
     _atlasInfoEntity.rank = 23;
     _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
     _atlasInfoEntity.nodeId = "PB20202";
@@ -131,36 +174,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         Map3AtlasStatus.JOIN_DELEGATE_ING.index,
         "this.updatedAt",
       ),
-    ];
-
-    infoContentList.clear();
-    infoContentList.add("${_atlasInfoEntity.maxStaking}");
-    infoContentList.add("${_atlasInfoEntity.home}");
-    infoContentList.add("${_atlasInfoEntity.contact}");
-    infoContentList.add("${_atlasInfoEntity.describe}");
-    infoContentList.add("${_atlasInfoEntity.feeRate}");
-    infoContentList.add("${_atlasInfoEntity.feeRateMax}");
-    infoContentList.add("${_atlasInfoEntity.feeRateTrim}");
-
-    _currentPage = 1;
-    _dataList.clear();
-
-    _dataList = await _atlasApi.postAtlasMap3NodeList(_atlasInfoEntity.nodeId, page: _currentPage);
-    _dataList.forEach((element) {
-      element.name = "haha";
-      element.address = "121112121";
-      element.rewardRate = "11%";
-      element.staking = "2313123";
-      element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11, 1);
-      element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
-    });
-
-    if (mounted)
-      setState(() {
-        _currentState = null;
-      });
-    _loadDataBloc.add(RefreshSuccessEvent());
+    ];*/
   }
 
   _loadMoreData() async {
@@ -232,7 +246,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
   _headerWidget() {
     bool showRemindBar = false;
-    if (_atlasInfoEntity.myMap3 != null) {
+    if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
       var status = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].status;
       if (status == Map3AtlasStatus.JOIN_DELEGATE_ING.index ||
           status == Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING.index) {
@@ -366,8 +380,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   _moneyWidget() {
+    var showMyMap3 = false;
+    if(_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0){
+      showMyMap3 = true;
+    }
+
     List<DropdownMenuItem> _map3NodeItems = List();
-    if (_atlasInfoEntity.myMap3.length > 0) {
+    if (showMyMap3) {
       _map3NodeItems.addAll(List.generate(_atlasInfoEntity.myMap3.length, (index) {
         Map3InfoEntity map3nodeEntity = _atlasInfoEntity.myMap3[index];
         return DropdownMenuItem(
@@ -378,8 +397,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ),
         );
       }).toList());
-    } else {
-      return Container();
     }
 
     return SliverToBoxAdapter(
@@ -617,71 +634,73 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         ),
                       ])),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 14, right: 14),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: HexColor('#F2F2F2'),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 13, right: 13),
-                        child: DropdownButtonFormField(
-                          icon: Image.asset(
-                            "res/drawable/ic_arrow_down.png",
-                            width: 14,
-                            height: 14,
+                    if(showMyMap3)
+                      Container(
+                        margin: const EdgeInsets.only(left: 14, right: 14),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: HexColor('#F2F2F2'),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 13, right: 13),
+                          child: DropdownButtonFormField(
+                            icon: Image.asset(
+                              "res/drawable/ic_arrow_down.png",
+                              width: 14,
+                              height: 14,
+                            ),
+                            decoration: InputDecoration(border: InputBorder.none),
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedMap3NodeValue = value;
+                              });
+                            },
+                            value: _selectedMap3NodeValue,
+                            items: _map3NodeItems,
                           ),
-                          decoration: InputDecoration(border: InputBorder.none),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedMap3NodeValue = value;
-                            });
-                          },
-                          value: _selectedMap3NodeValue,
-                          items: _map3NodeItems,
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 26, bottom: 18),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                    _atlasInfoEntity.myMap3.isEmpty
-                                        ? ""
-                                        : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
-                                    style: TextStyles.textC333S16),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("Map3已抵押", style: TextStyles.textC999S12)
-                              ],
+                    if(showMyMap3)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 26, bottom: 18),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                      _atlasInfoEntity.myMap3.isEmpty
+                                          ? ""
+                                          : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                      style: TextStyles.textC333S16),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text("Map3已抵押", style: TextStyles.textC999S12)
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            height: 20,
-                            width: 0.5,
-                            color: HexColor("#33000000"),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
-                                    style: TextStyles.textC333S16),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text("奖励", style: TextStyles.textC999S12)
-                              ],
+                            Container(
+                              height: 20,
+                              width: 0.5,
+                              color: HexColor("#33000000"),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
+                                      style: TextStyles.textC333S16),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text("奖励", style: TextStyles.textC999S12)
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
                   ],
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -22,7 +23,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          Application.router.navigateTo(context, Routes.atlas_detail_page);
+          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}', );
         },
         child: Container(
           decoration: BoxDecoration(

@@ -119,14 +119,13 @@ class AtlasApi {
   }
 
   // 查询atlas节点详情
-  Future<AtlasInfoEntity> postAtlasInfo(String address, String nodeId) async {
+  Future<AtlasInfoEntity> postAtlasInfo(String nodeId) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/info",
         EntityFactory<AtlasInfoEntity>(
           (json) => AtlasInfoEntity.fromJson(json),
         ),
         params: {
-          "address": address,
           "node_id": nodeId,
         },
         options: RequestOptions(contentType: "application/json"));

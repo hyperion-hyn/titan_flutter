@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:characters/characters.dart';
 
 Widget walletHeaderWidget(String shortName,
     {double size = 40, double fontSize = 15, bool isShowShape = true, String address = "#000000"}) {
+  if (shortName.isNotEmpty) {
+    shortName = shortName.characters.first;
+  }
   String hexColor = address;
   if (address.length > 6) {
     hexColor = "#" + address.substring(address.length - 6);
