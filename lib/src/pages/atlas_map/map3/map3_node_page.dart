@@ -126,20 +126,20 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _myList = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
 
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        loadDataBloc.add(RefreshSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        loadDataBloc.add(LoadEmptyEvent());
       }
       setState(() {});
     } catch (e) {
       print(e);
 
-      loadDataBloc.add(LoadMoreFailEvent());
+      loadDataBloc.add(RefreshFailEvent());
     }
   }
 
   void onLoadingMore() async {
-    _currentPage ++;
+    _currentPage++;
     try {
       Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
@@ -150,7 +150,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         print("[Home] onLoadingMore,1:${_pendingList.length}");
         _pendingList = lastPendingList;
         print("[Home] onLoadingMore,2:${_pendingList.length}");
-
 
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
