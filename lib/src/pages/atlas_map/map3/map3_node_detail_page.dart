@@ -1518,12 +1518,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _delegateRecordItemWidget(Map3TxLogEntity item) {
     // todo: 缺少交易状态信息
-    String userAddress = shortBlockChainAddress(" ${item.map3Address}", limitCharsLength: 8);
+    String userAddress = shortBlockChainAddress(" ${item.from}", limitCharsLength: 8);
     var operaState = enumBillsOperaStateFromString("DELEGATE");
     var recordState = enumBillsRecordStateFromString("PRE_CREATE");
     var isPending = operaState == BillsOperaState.WITHDRAW && recordState == BillsRecordState.PRE_CREATE;
 
-    String showName = item.id.toString();
+    String showName = item.name.toString();
     if (showName.isNotEmpty) {
       showName = showName.characters.first;
     }
@@ -1545,7 +1545,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SizedBox(
                     height: 40,
                     width: 40,
-                    child: walletHeaderWidget(showName, address: item.contractAddress),
+                    child: walletHeaderWidget(showName, address: item.from),
                   ),
                   Flexible(
                     flex: 4,
@@ -1556,7 +1556,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         children: <Widget>[
                           RichText(
                             text: TextSpan(
-                              text: "${item.id}",
+                              text: "${item.name}",
                               style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
                             ),
                           ),
@@ -1586,7 +1586,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                isPending ? "*" : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.value)).toString(),
+                                isPending ? "*" : ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.dataDecoded.amount)).toString(),
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
