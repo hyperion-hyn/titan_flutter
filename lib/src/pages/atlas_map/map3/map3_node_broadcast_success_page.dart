@@ -2,10 +2,12 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class Map3NodeBroadcastSuccessPage extends StatelessWidget {
   final Map3NodeActionEvent actionEvent;
@@ -19,7 +21,10 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
     switch (actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
         action = "创建 Map3节点";
-        detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
+        var startMin = double.parse(AtlasApi.map3introduceEntity.startMin);
+        var staking = double.parse(infoEntity.staking);
+        var remain = startMin - staking;
+        detail = "距离节点启动还需${FormatUtil.formatPrice(remain)}HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
 
       case Map3NodeActionEvent.MAP3_DELEGATE:

@@ -237,6 +237,10 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
             if (result is String) {
               Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
+              if (widget.message is ConfirmCreateMap3NodeMessage) {
+                var messageEntity = widget.message as ConfirmCreateMap3NodeMessage;
+                map3infoEntity.staking = messageEntity.entity.payload.staking;
+              }
               Application.router.navigateTo(
                   context,
                   Routes.map3node_broadcast_success_page +

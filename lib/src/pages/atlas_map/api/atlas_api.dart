@@ -439,4 +439,7 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
+
+  static Map3IntroduceEntity map3introduceEntity;
 }
