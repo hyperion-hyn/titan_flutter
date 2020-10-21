@@ -44,7 +44,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     super.initState();
 
     if (widget.loadDataBloc != null) {
-      widget.loadDataBloc.listen((state){
+      widget.loadDataBloc.listen((state) {
         if (state is RefreshSuccessState) {
           getJoinMemberData();
         }
@@ -197,7 +197,11 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        child: walletHeaderWidget(showName, isShowShape: false, address: entity.address),
+                        child: walletHeaderWidget(
+                          showName,
+                          isShowShape: false,
+                          address: entity.address,
+                        ),
                       ),
                       SizedBox(
                         height: 8,

@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -18,11 +19,12 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_pronounce_page.dart';
 
 Widget getMap3NodeWaitItem(
-    BuildContext context, Map3InfoEntity infoEntity) {
+    BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity) {
   if (infoEntity == null) return Container();
 
   var state = ContractState.values[infoEntity?.status ?? 0];
@@ -30,6 +32,13 @@ Widget getMap3NodeWaitItem(
   var fullDesc = "";
   var dateDesc = "";
   var isPending = false;
+
+  var startMin = double.parse(map3introduceEntity?.startMin??"0");
+  var staking = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(infoEntity.staking)).toDouble();
+  var remain = startMin - staking;
+  var remainDelegation = FormatUtil.formatPrice(remain);
+  isNotFull = remain > 0;
+
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
@@ -75,10 +84,7 @@ Widget getMap3NodeWaitItem(
   var feeRate = FormatUtil.formatPercent(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(infoEntity.feeRate)).toDouble());
    var descPre = "描   述：";
   var desc = (infoEntity?.describe??"").isEmpty? "大家快来参与我的节点吧，收益高高，收益真的很高，":infoEntity.describe;
-  var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(infoEntity?.staking ?? "0"))
-      .toString());
-  var date = infoEntity.createdAt;
+  var date = FormatUtil.formatDateStr(infoEntity.updatedAt);
 
   return InkWell(
     onTap: () async {
@@ -102,18 +108,27 @@ Widget getMap3NodeWaitItem(
       ),
       margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9, top: 20),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 16, top: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Row(
               children: <Widget>[
-                Image.asset(
+                SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: walletHeaderWidget(
+                    infoEntity.name,
+                    isShowShape: false,
+                    address: infoEntity.address,
+                  ),
+                ),
+               /* Image.asset(
                   "res/drawable/map3_node_default_avatar.png",
                   width: 42,
                   height: 42,
                   fit: BoxFit.cover,
-                ),
+                ),*/
                 SizedBox(
                   width: 6,
                 ),
@@ -151,6 +166,10 @@ Widget getMap3NodeWaitItem(
                                     fontSize: 13, color: HexColor("#333333")))
                           ]),
                     ),
+                    Container(
+                      height: 4,
+                    ),
+                    Text("", style: TextStyles.textC9b9b9bS12),
                   ],
                 )
               ],

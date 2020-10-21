@@ -888,13 +888,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _getMap3NodeInfoItem(BuildContext context) {
     if (_map3infoEntity == null) return Container();
 
-    String desc = _map3infoEntity?.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，大家相信我，不会错的，快投吧，一会儿没机会了……";
     var nodeName = _map3infoEntity?.name ?? "***";
     var nodeYearOld = "   节龄: ***天";
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号:";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
+    var desc = (_map3infoEntity?.describe??"").isEmpty? "大家快来参与我的节点吧，收益高高，收益真的很高，":_map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(

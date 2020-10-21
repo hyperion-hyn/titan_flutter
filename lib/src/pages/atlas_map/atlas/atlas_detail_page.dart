@@ -340,7 +340,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   break;
                 case NodeJoinType.CREATOR:
                   CreateAtlasEntity entity = CreateAtlasEntity.onlyType(AtlasActionType.ACTIVE_ATLAS_NODE);
-                  AtlasMessage message = ConfirmAtlasActiveMessage(nodeId: _atlasInfoEntity.nodeId,entity: entity);
+                  AtlasMessage message = ConfirmAtlasActiveMessage(nodeId: _atlasInfoEntity.nodeId, entity: entity);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -438,7 +438,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               "领取",
                               () {
                                 var entity = PledgeAtlasEntity.emptyEntity();
-                                AtlasMessage message = ConfirmAtlasReceiveAwardMessage(nodeId: _atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+                                AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
+                                    nodeId: _atlasInfoEntity.nodeId, pledgeAtlasEntity: entity);
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -801,7 +802,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   SizedBox(
                     height: 5,
                   ),
-                  Text("${FormatUtil.formatDateStr(map3InfoEntity.updatedAt)}", style: TextStyles.textC999S10)
+                  Text(
+                    FormatUtil.formatDateStr(map3InfoEntity.updatedAt),
+                    style: TextStyles.textC999S10,
+                  )
                 ],
               )
             ],
@@ -878,7 +882,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   actions: [
                     ClickOvalButton(
                       S.of(context).cancel,
-                          () {
+                      () {
                         Navigator.pop(context);
                       },
                       width: 120,
@@ -892,9 +896,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     ),
                     ClickOvalButton(
                       "确定",
-                          () {
+                      () {
                         var entity = PledgeAtlasEntity.emptyEntity();
-                        AtlasMessage message = ConfirmAtlasUnStakeMessage(nodeId: _atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+                        AtlasMessage message =
+                            ConfirmAtlasUnStakeMessage(nodeId: _atlasInfoEntity.nodeId, pledgeAtlasEntity: entity);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -967,7 +972,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         children: <Widget>[
           Container(
               height: 303,
-              padding: const EdgeInsets.only(left: 16.0, right: 16,top: 23,bottom: 23),
+              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 23, bottom: 23),
               child: SlidingViewportOnSelection.withSampleData()),
           Container(
             height: 10,
@@ -975,7 +980,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ),
           Container(
               height: 303,
-              padding: const EdgeInsets.only(left: 16.0, right: 16,top: 23,bottom: 23),
+              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 23, bottom: 23),
               child: SimpleLineChart.withSampleData()),
           Container(
             height: 10,

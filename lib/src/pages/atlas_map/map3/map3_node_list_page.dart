@@ -100,7 +100,7 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
         onLoadingMore: _loadMoreData,
         child: ListView.builder(
             itemBuilder: (context, index) {
-              return getMap3NodeWaitItem(context, _dataArray[index]);
+              return getMap3NodeWaitItem(context, _dataArray[index], AtlasApi.map3introduceEntity);
             },
             itemCount: _dataArray.length),
       ),
