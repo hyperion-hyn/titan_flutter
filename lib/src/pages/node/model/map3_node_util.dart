@@ -90,4 +90,33 @@ class Map3NodeUtil {
     return statusColor;
   }
 
+  static HexColor statusColor(Map3InfoStatus state) {
+    if (state == null) return HexColor('#1FB9C7');
+
+    Color statusColor = HexColor('#EED197');
+
+    switch (state) {
+      case Map3InfoStatus.PRE_CREATE:
+      case Map3InfoStatus.PENDING:
+        statusColor = HexColor('#EED197');
+        break;
+
+      case Map3InfoStatus.ACTIVE:
+      case Map3InfoStatus.DUE:
+        statusColor = HexColor('#1FB9C7');
+        break;
+
+      case Map3InfoStatus.CANCELLED:
+      case Map3InfoStatus.CANCELLED_COMPLETED:
+      case Map3InfoStatus.FAIL:
+        statusColor = HexColor('#F30202');
+        break;
+
+      default:
+        statusColor = HexColor('#999999');
+        break;
+    }
+    return statusColor;
+  }
+
 }
