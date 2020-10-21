@@ -143,6 +143,22 @@ class CreateMap3Payload extends Object {
   @JsonKey(name: 'is_edit')
   bool isEdit = false;
 
+  // 为掘金用户准备
+  @JsonKey(name: 'latlng')
+  String latLng;
+
+  @JsonKey(name: 'user_email')
+  String userEmail;
+
+  @JsonKey(name: 'user_name')
+  String userName;
+
+  @JsonKey(name: 'user_identity')
+  String userIdentity;
+
+  @JsonKey(name: 'user_pic')
+  String userPic;
+
   CreateMap3Payload(
     this.blsAddKey,
     this.blsAddSign,
@@ -160,6 +176,11 @@ class CreateMap3Payload extends Object {
     this.region,
     this.staking,
     this.isEdit,
+    this.latLng,
+    this.userEmail,
+    this.userName,
+    this.userIdentity,
+    this.userPic,
   );
   CreateMap3Payload.onlyNodeId(this.nodeId);
 

@@ -37,7 +37,7 @@ part 'map3_tx_log_entity.g.dart';
   int gasLimit;
 
   @JsonKey(name: 'gas_price')
-  int gasPrice;
+  String gasPrice;
 
   @JsonKey(name: 'gas_used')
   int gasUsed;
@@ -85,7 +85,7 @@ part 'map3_tx_log_entity.g.dart';
   String updatedAt;
 
   @JsonKey(name: 'value')
-  int value;
+  String value;
 
   Map3TxLogEntity(this.atlasAddress,this.blockHash,this.blockNum,this.contractAddress,this.createdAt,this.data,this.dataDecoded,this.epoch,this.from,this.gasLimit,this.gasPrice,this.gasUsed,this.handleStatus,this.id,this.map3Address,this.name,this.nonce,this.payload,this.pic,this.status,this.timestamp,this.to,this.transactionIndex,this.txHash,this.type,this.updatedAt,this.value,);
 
@@ -95,16 +95,64 @@ part 'map3_tx_log_entity.g.dart';
 
 }
 
-  
-@JsonSerializable()
-  class DataDecoded extends Object {
 
-  DataDecoded();
+@JsonSerializable()
+class DataDecoded extends Object {
+
+  @JsonKey(name: 'operatorAddress')
+  String operatorAddress;
+
+  @JsonKey(name: 'description')
+  Description description;
+
+  @JsonKey(name: 'commission')
+  String commission;
+
+  @JsonKey(name: 'nodePubKey')
+  String nodePubKey;
+
+  @JsonKey(name: 'nodeKeySig')
+  String nodeKeySig;
+
+  @JsonKey(name: 'amount')
+  String amount;
+
+  DataDecoded(this.operatorAddress,this.description,this.commission,this.nodePubKey,this.nodeKeySig,this.amount,);
 
   factory DataDecoded.fromJson(Map<String, dynamic> srcJson) => _$DataDecodedFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$DataDecodedToJson(this);
 
 }
+
+
+@JsonSerializable()
+class Description extends Object {
+
+  @JsonKey(name: 'name')
+  String name;
+
+  @JsonKey(name: 'identity')
+  String identity;
+
+  @JsonKey(name: 'website')
+  String website;
+
+  @JsonKey(name: 'securityContact')
+  String securityContact;
+
+  @JsonKey(name: 'details')
+  String details;
+
+  Description(this.name,this.identity,this.website,this.securityContact,this.details,);
+
+  factory Description.fromJson(Map<String, dynamic> srcJson) => _$DescriptionFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$DescriptionToJson(this);
+
+}
+
+
+
 
   

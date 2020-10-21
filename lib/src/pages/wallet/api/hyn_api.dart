@@ -29,7 +29,7 @@ class HYNApi {
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice),
-      value: amount,
+      value: message == null ? amount : 0,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
@@ -58,7 +58,7 @@ class HYNApi {
       password: password,
       toAddress: toAddress,
       gasPrice: BigInt.parse(gasPrice),
-      value: amount,
+      value: message == null ? amount : 0,
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
@@ -170,10 +170,10 @@ class HYNApi {
   }
 
   static Future<String> transAtlasUnStake(
-      PledgeAtlasEntity pledgeAtlasEntity,
-      String password,
-      localWallet.Wallet wallet,
-      ) async {
+    PledgeAtlasEntity pledgeAtlasEntity,
+    String password,
+    localWallet.Wallet wallet,
+  ) async {
     var message = UnReDelegateAtlasMessage(
         delegatorAddress: pledgeAtlasEntity.payload.map3Address,
         validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
@@ -211,7 +211,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, amount: amount, gasLimit: entity.gasLimit,gasPrice: entity.price);
+    return signTransferHYN(password, wallet,
+        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -237,7 +238,8 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, amount: BigInt.parse(entity.amount), gasLimit: entity.gasLimit,gasPrice: entity.price);
+    return signTransferHYN(password, wallet,
+        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
   }
 
   static Future transTerminateMap3Node(
@@ -268,7 +270,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message, amount: amount);
+    return signTransferHYN(password, wallet, message: message);
   }
 
   static Future transUnMicroMap3Node(
@@ -285,7 +287,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message, amount: amount);
+    return signTransferHYN(password, wallet, message: message);
   }
 
   static Future transCollectMap3Node(
@@ -300,9 +302,9 @@ class HYNApi {
     return signTransferHYN(password, wallet, message: message);
   }
 
-  static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}){
+  static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}) {
     String typeStr;
-    switch(hynMessageType){
+    switch (hynMessageType) {
       case MessageType.typeNormal:
         typeStr = "转账";
         break;
@@ -341,16 +343,16 @@ class HYNApi {
         break;
     }
 
-    if(getTypeStr){
+    if (getTypeStr) {
       return typeStr;
     }
 
     return "";
   }
 
-  static String getHynToAddress(TransactionDetailVo transactionDetailVo){
+  static String getHynToAddress(TransactionDetailVo transactionDetailVo) {
     String toAddressStr;
-    switch(transactionDetailVo.hynType) {
+    switch (transactionDetailVo.hynType) {
       case MessageType.typeNormal:
         toAddressStr = transactionDetailVo.toAddress;
         break;

@@ -231,7 +231,7 @@ var map3NodeCreateConfirmHandler = Handler(handlerFunc: (context, params) {
     entity = CreateMap3Payload.fromJson(FluroConvertUtils.string2map(item));
   }
   return Map3NodeCreateConfirmPage(
-    entity: entity,
+    payload: entity,
   );
 });
 

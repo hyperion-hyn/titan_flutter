@@ -50,6 +50,11 @@ CreateMap3Payload _$CreateMap3PayloadFromJson(Map<String, dynamic> json) {
     json['region'] as String,
     json['staking'] as String,
     json['is_edit'] as bool,
+    json['latlng'] as String,
+    json['user_email'] as String,
+    json['user_name'] as String,
+    json['user_identity'] as String,
+    json['user_pic'] as String,
   );
 }
 
@@ -70,4 +75,9 @@ Map<String, dynamic> _$CreateMap3PayloadToJson(CreateMap3Payload instance) => <S
       'region': instance.region,
       'staking': instance.staking,
       'is_edit': instance.isEdit,
+      'latlng': instance.latLng,
+      'user_email': instance.userEmail,
+      'user_name': instance.userName,
+      'user_identity': instance.userIdentity,
+      'user_pic': instance.userPic,
     };

@@ -96,7 +96,6 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         appBar: BaseAppBar(
           baseTitle: '终止节点',
         ),
-
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
@@ -105,6 +104,21 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         }),
       );
     }
+
+    var activatedWallet = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    var walletName = activatedWallet.wallet.keystore.name;
+    var walletAddress = activatedWallet.wallet.getEthAccount().address;
+    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(walletAddress ?? "***", limitLength: 9)}";
+
+    var nodeName = _map3infoEntity?.name ?? "***";
+    var nodeYearOld = "   节龄: ***天";
+    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 9)}";
+    var nodeIdPre = "节点号";
+    var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -145,28 +159,14 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
                                     TextSpan(
-                                        text: "天道酬勤唐唐", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                        text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                     TextSpan(
-                                        text: "  币龄: 12天", style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                                        text: nodeYearOld, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                                   ])),
                                   Container(
                                     height: 4,
                                   ),
-                                  Text("节点地址 oxfdaf89fda47sn43sf9sllsaFf", style: TextStyles.textC9b9b9bS12),
-                                ],
-                              ),
-                              Spacer(),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: <Widget>[
-                                  Container(
-                                    color: HexColor("#1FB9C7").withOpacity(0.08),
-                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    child: Text("第二期", style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-                                  ),
-                                  Container(
-                                    height: 4,
-                                  ),
+                                  Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
                                 ],
                               ),
                             ],
@@ -218,13 +218,13 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
-                                    TextSpan(text: "大道至简", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(text: walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                     TextSpan(text: "", style: TextStyles.textC333S14bold),
                                   ])),
                                   Container(
                                     height: 4,
                                   ),
-                                  Text("${UiUtil.shortEthAddress("钱包地址 oxfdaf89fda47sn43sff", limitLength: 18)}",
+                                  Text(walletAddressStr,
                                       style: TextStyles.textC9b9b9bS12),
                                 ],
                               ),
