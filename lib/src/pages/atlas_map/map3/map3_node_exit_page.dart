@@ -93,6 +93,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   Widget build(BuildContext context) {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
+        appBar: BaseAppBar(
+          baseTitle: '终止节点',
+        ),
+
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
