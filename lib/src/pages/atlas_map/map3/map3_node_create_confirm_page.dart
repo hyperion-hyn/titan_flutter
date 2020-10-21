@@ -11,9 +11,9 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_confirm_page.dart';
 
 class Map3NodeCreateConfirmPage extends StatefulWidget {
-  final CreateMap3Payload entity;
+  final CreateMap3Payload payload;
 
-  Map3NodeCreateConfirmPage({this.entity});
+  Map3NodeCreateConfirmPage({this.payload});
 
   @override
   _Map3NodeCreateConfirmState createState() =>
@@ -57,7 +57,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
     _titleList = [];
     _detailList = [];
 
-    var entity = widget.entity;
+    var entity = widget.payload;
     if (entity.pic?.isNotEmpty ?? false) {
       _titleList.add("图标");
       _detailList.add(entity.pic);
@@ -113,7 +113,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: widget.entity.isEdit ? '确认编辑节点' : '确认创建节点',
+        baseTitle: widget.payload.isEdit ? '确认编辑节点' : '确认创建节点',
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -149,7 +149,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              "你即将要${widget.entity.isEdit ? "编辑" : "创建"}如下Map3节点",
+              "你即将要${widget.payload.isEdit ? "编辑" : "创建"}如下Map3节点",
               style: TextStyle(
                 color: HexColor("#333333"),
                 fontSize: 16,
@@ -234,17 +234,17 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;
-          if (!widget.entity.isEdit) {
+          if (!widget.payload.isEdit) {
             CreateMap3Entity map3entity =
                 CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
             map3entity.gasLimit = 600000;
-            map3entity.payload = widget.entity;
-            map3entity.amount = widget.entity.staking;
+            map3entity.payload = widget.payload;
+            map3entity.amount = widget.payload.staking;
             message = ConfirmCreateMap3NodeMessage(entity: map3entity);
           } else {
             CreateMap3Entity map3entity =
                 CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
-            map3entity.payload = widget.entity;
+            map3entity.payload = widget.payload;
             message = ConfirmEditMap3NodeMessage(
                 entity: map3entity, map3NodeAddress: "");
           }

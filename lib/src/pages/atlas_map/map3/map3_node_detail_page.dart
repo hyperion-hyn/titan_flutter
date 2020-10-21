@@ -14,7 +14,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_staking_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
@@ -1595,7 +1594,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 6),
                               child: Text(
-                                isPending ? "*" : FormatUtil.amountToString(item.data),
+                                isPending ? "*" : FormatUtil.amountToString(item.value),
                                 style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -1731,7 +1730,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       var requestList = await Future.wait([
         _atlasApi.getMap3Info(_address, _nodeId),
-        _atlasApi.getMap3StakingLogList(_nodeId),
+        _atlasApi.getMap3StakingLogList(_nodeAddress),
       ]);
 
       _map3infoEntity = requestList[0];

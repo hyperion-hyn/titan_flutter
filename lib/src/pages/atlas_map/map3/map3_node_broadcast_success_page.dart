@@ -21,14 +21,6 @@ class Map3NodeBroadcastSuccessPage extends StatefulWidget {
 }
 
 class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage> {
-  var _map3introduceEntity;
-  
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-
-    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +30,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
       case Map3NodeActionEvent.MAP3_CREATE:
         action = "创建 Map3节点";
 
-        var startMin = double.parse(_map3introduceEntity.startMin);
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin??"0");
         var staking = double.parse(widget.infoEntity.staking);
         var remain = startMin - staking;
         detail = "距离节点启动还需${FormatUtil.formatPrice(remain)}HYN，你可以邀请 好友参与抵押加速节点启动吧~";

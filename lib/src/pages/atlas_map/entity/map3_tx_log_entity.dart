@@ -37,7 +37,7 @@ part 'map3_tx_log_entity.g.dart';
   int gasLimit;
 
   @JsonKey(name: 'gas_price')
-  int gasPrice;
+  String gasPrice;
 
   @JsonKey(name: 'gas_used')
   int gasUsed;
@@ -85,7 +85,7 @@ part 'map3_tx_log_entity.g.dart';
   String updatedAt;
 
   @JsonKey(name: 'value')
-  int value;
+  String value;
 
   Map3TxLogEntity(this.atlasAddress,this.blockHash,this.blockNum,this.contractAddress,this.createdAt,this.data,this.dataDecoded,this.epoch,this.from,this.gasLimit,this.gasPrice,this.gasUsed,this.handleStatus,this.id,this.map3Address,this.name,this.nonce,this.payload,this.pic,this.status,this.timestamp,this.to,this.transactionIndex,this.txHash,this.type,this.updatedAt,this.value,);
 

@@ -20,7 +20,7 @@ Map3TxLogEntity _$Map3TxLogEntityFromJson(Map<String, dynamic> json) {
     json['epoch'] as int,
     json['from'] as String,
     json['gas_limit'] as int,
-    json['gas_price'] as int,
+    json['gas_price'] as String,
     json['gas_used'] as int,
     json['handle_status'] as int,
     json['id'] as int,
@@ -36,7 +36,7 @@ Map3TxLogEntity _$Map3TxLogEntityFromJson(Map<String, dynamic> json) {
     json['tx_hash'] as String,
     json['type'] as int,
     json['updated_at'] as String,
-    json['value'] as int,
+    json['value'] as String,
   );
 }
 

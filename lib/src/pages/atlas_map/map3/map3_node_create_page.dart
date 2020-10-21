@@ -498,14 +498,31 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       _payload.staking = staking;
 
       _selectProviderEntity = providerList[0];
-      _payload.region = _selectProviderEntity.regions[selectNodeItemValue].name;
+
+      var region = _selectProviderEntity.regions[selectNodeItemValue];
+      _payload.region = region.name;
+      var latLng = region.location.coordinates.first.toString() + "," + region.location.coordinates.last.toString();
+      print("latLng:$latLng");
+      _payload.latLng = latLng;
+
       _payload.provider = _selectProviderEntity.name;
+
       _payload.blsAddKey = _blsKeySignEntity.blsKey;
       _payload.blsAddSign = _blsKeySignEntity.blsSign;
       _payload.blsRemoveKey = "";
+
+      var activatedWallet = WalletInheritedModel.of(
+        context,
+        aspect: WalletAspect.activatedWallet,
+      ).activatedWallet;
+
+      var walletName = activatedWallet.wallet.keystore.name;
+      _payload.userName = walletName;
     }
     _payload.isEdit = false;
-    var encodeEntity = FluroConvertUtils.object2string(_payload.toJson());
+    var payloadJson = _payload.toJson();
+    print("payloadJson: $payloadJson");
+    var encodeEntity = FluroConvertUtils.object2string(payloadJson);
     Application.router.navigateTo(
         context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
