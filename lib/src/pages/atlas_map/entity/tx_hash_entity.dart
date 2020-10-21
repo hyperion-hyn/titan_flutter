@@ -9,7 +9,10 @@ part 'tx_hash_entity.g.dart';
   @JsonKey(name: 'tx_hash')
   String txHash;
 
-  TxHashEntity(this.txHash,);
+  @JsonKey(name: 'node_id')
+  String nodeId;
+
+  TxHashEntity(this.txHash, this.nodeId);
 
   factory TxHashEntity.fromJson(Map<String, dynamic> srcJson) => _$TxHashEntityFromJson(srcJson);
 

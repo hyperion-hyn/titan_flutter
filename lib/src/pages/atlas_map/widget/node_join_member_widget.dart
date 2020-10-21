@@ -8,6 +8,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
@@ -64,8 +65,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   void getJoinMemberData() async {
     _currentPage = 0;
-    List<Map3UserEntity> tempMemberList =
-    await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
@@ -82,8 +82,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<Map3UserEntity> tempMemberList =
-      await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -101,7 +100,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
 
   Widget _getJoinMemberView() {
     return Container(
-      height: 160,
+      height: memberList.isNotEmpty ? 160 : 260,
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Column(
@@ -112,7 +111,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                 children: <Widget>[
                   Expanded(
                       child:
-                      Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                          Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -130,26 +129,28 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
             SizedBox(
               height: 12,
             ),
-            Expanded(
-              child: LoadDataContainer(
-                  bloc: loadDataBloc,
-                  enablePullDown: false,
-                  hasFootView: false,
-                  onLoadData: getJoinMemberData,
-                  onLoadingMore: () {
-                    getJoinMemberMoreData();
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    itemBuilder: (context, index) {
-                      var i = index;
-                      var model = memberList[i];
-                      return _itemBuilder(model);
-                    },
-                    itemCount: memberList.length,
-                    scrollDirection: Axis.horizontal,
-                  )),
-            ),
+            memberList.isNotEmpty
+                ? Expanded(
+                    child: LoadDataContainer(
+                        bloc: loadDataBloc,
+                        enablePullDown: false,
+                        hasFootView: false,
+                        onLoadData: getJoinMemberData,
+                        onLoadingMore: () {
+                          getJoinMemberMoreData();
+                        },
+                        child: ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          itemBuilder: (context, index) {
+                            var i = index;
+                            var model = memberList[i];
+                            return _itemBuilder(model);
+                          },
+                          itemCount: memberList.length,
+                          scrollDirection: Axis.horizontal,
+                        )),
+                  )
+                : Expanded(child: emptyListWidget(title: "节点记录为空", isAdapter: false)),
           ],
         ),
       ),
@@ -200,7 +201,8 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
-                      Text("${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                      Text(
+                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),
@@ -238,9 +240,9 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
           context,
           MaterialPageRoute(
               builder: (context) => WebViewContainer(
-                initUrl: url,
-                title: "",
-              )));
+                    initUrl: url,
+                    title: "",
+                  )));
     }
   }
 }

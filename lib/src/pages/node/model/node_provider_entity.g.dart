@@ -39,7 +39,7 @@ Map<String, dynamic> _$RegionsToJson(Regions instance) => <String, dynamic>{
     };
 
 Location _$LocationFromJson(Map<String, dynamic> json) {
-  print('_LocationFromJson ${(json['coordinates'])}');
+  //print('_LocationFromJson ${(json['coordinates'])}');
   return Location(
     (json['coordinates'] as List)?.map((e) => (e as num)?.toDouble())?.toList(),
     json['type'] as String,

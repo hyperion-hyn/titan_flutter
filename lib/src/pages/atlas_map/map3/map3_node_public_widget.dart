@@ -939,30 +939,32 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
 }
 
 
-Widget emptyListWidget({String title = ""}) {
-  return SliverToBoxAdapter(
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      color: Colors.white,
-      child: Column(
-        children: <Widget>[
-          Image.asset(
-            'res/drawable/ic_empty_contract.png',
-            width: 120,
-            height: 120,
+Widget emptyListWidget({String title = "", bool isAdapter = true}) {
+  var containerWidget = Container(
+    padding: const EdgeInsets.symmetric(vertical: 24),
+    color: Colors.white,
+    child: Column(
+      children: <Widget>[
+        Image.asset(
+          'res/drawable/ic_empty_contract.png',
+          width: 120,
+          height: 120,
+        ),
+        SizedBox(height: 16),
+        SizedBox(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            textAlign: TextAlign.center,
           ),
-          SizedBox(height: 16),
-          SizedBox(
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-            width: 160,
-          ),
-        ],
-      ),
+          width: 160,
+        ),
+      ],
     ),
   );
+
+  return isAdapter?SliverToBoxAdapter(
+    child: containerWidget,
+  ):containerWidget;
 }
 

@@ -139,6 +139,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   void onLoadingMore() async {
+    _currentPage ++;
     try {
       Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
@@ -289,7 +290,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Widget _map3HeadWidget() {
-    var title = _map3introduceEntity?.name??"";
+    var title = _map3introduceEntity?.name ?? "";
     var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
     var guideTitle = "开通教程";
     return SliverToBoxAdapter(
@@ -381,10 +382,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     print("[detail] -----> back, _broadcaseContractAction, result:$result");
     // 记得清理
     if (result != null && result is Map) {
-      var item = result["result"];
-      if (item is String) {
+      var entity = result["result"];
+      if (entity is Map3InfoEntity) {
         // 3.push合约详情
-        var entity = Map3InfoEntity.onlyNodeId(item);
         _pushContractDetail(entity);
       }
 
@@ -393,7 +393,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Future _pushContractDetail(Map3InfoEntity infoEntity) async {
-
     Application.router.navigateTo(
       context,
       Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',

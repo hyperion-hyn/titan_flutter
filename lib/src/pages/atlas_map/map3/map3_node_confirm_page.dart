@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -8,6 +9,7 @@ import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -42,7 +44,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -175,7 +176,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
-    var _amountValue = double.parse(_amount??'0');
+    var _amountValue = double.parse(_amount ?? '0');
     var _price = _amountValue * quotePrice;
     return Row(
       children: <Widget>[
@@ -212,7 +213,6 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
   Widget _confirmButtonWidget() {
     var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    print("[object] --> 1");
 
     return Container(
       color: Colors.white,
@@ -232,16 +232,26 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
               });
               return;
             }
-            bool isOK = await widget.message.action(password);
-            print("object --> isOK:$isOK");
-            if (isOK) {
-              // todo: test_jison
-              var contractNodeItem = ContractNodeItem.onlyNodeId(1);
+            var result = await widget.message.action(password);
+            print("object --> result:$result");
+
+            if (result is String) {
+              Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
               Application.router.navigateTo(
                   context,
                   Routes.map3node_broadcast_success_page +
                       "?actionEvent=${widget.message.type}" +
-                      "&contractNodeItem=${FluroConvertUtils.object2string(contractNodeItem.toJson())}");
+                      "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+            } else if (result is bool) {
+              var isOK = result;
+              if (isOK) {
+                Application.router.navigateTo(
+                    context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
+              } else {
+                Fluttertoast.showToast(msg: '操作失败');
+              }
+            } else {
+              Fluttertoast.showToast(msg: '操作失败');
             }
           } catch (error) {
             setState(() {

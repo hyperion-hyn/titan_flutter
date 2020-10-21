@@ -2,14 +2,15 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 
 class Map3NodeBroadcastSuccessPage extends StatelessWidget {
   final Map3NodeActionEvent actionEvent;
-  final ContractNodeItem contractNodeItem;
-  Map3NodeBroadcastSuccessPage({this.actionEvent, this.contractNodeItem});
+  final Map3InfoEntity infoEntity;
+  Map3NodeBroadcastSuccessPage({this.actionEvent, this.infoEntity});
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +210,9 @@ class Map3NodeBroadcastSuccessPage extends StatelessWidget {
   void _pop(BuildContext context) {
     switch (actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
-        print("[pop] -----> _pop, contractNodeItem:${this.contractNodeItem.toJson()}");
+        print("[pop] -----> _pop, contractNodeItem:${this.infoEntity.toJson()}");
 
-        Routes.popUntilCachedEntryRouteName(context, this.contractNodeItem);
+        Routes.popUntilCachedEntryRouteName(context, this.infoEntity);
         break;
 
       case Map3NodeActionEvent.MAP3_EDIT:

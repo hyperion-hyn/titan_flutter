@@ -271,18 +271,18 @@ var map3NodeJoinContractHandler = Handler(handlerFunc: (context, params) {
 
 var map3NodeBroadcastSuccessHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  ContractNodeItem contractNodeItem;
-  var item = params['contractNodeItem']?.first;
+  Map3InfoEntity map3infoEntity;
+  var item = params['info']?.first;
   if (item != null) {
-    contractNodeItem =
-        ContractNodeItem.fromJson(FluroConvertUtils.string2map(item));
+    map3infoEntity =
+        Map3InfoEntity.fromJson(FluroConvertUtils.string2map(item));
   }
 
   var actionEvent = params['actionEvent']?.first;
 
   return Map3NodeBroadcastSuccessPage(
     actionEvent: enumActionEventFromString(actionEvent),
-    contractNodeItem: contractNodeItem,
+    infoEntity: map3infoEntity,
   );
 });
 

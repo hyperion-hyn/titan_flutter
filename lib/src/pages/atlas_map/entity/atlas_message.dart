@@ -12,7 +12,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'create_atlas_entity.dart';
 
 abstract class AtlasMessage {
-  Future<bool> action(String password);
+  Future<dynamic>action(String password);
   Map3NodeActionEvent get type;
   ConfirmInfoDescription get description;
 }
@@ -45,7 +45,7 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
   ConfirmCreateAtlasNodeMessage({this.entity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transCreateAtlasNode(this.entity, password, wallet);
     entity.rawTx = rawTx;
@@ -82,7 +82,7 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
   ConfirmEditAtlasNodeMessage({this.entity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transCreateAtlasNode(this.entity, password, wallet);
     entity.rawTx = rawTx;
@@ -120,7 +120,7 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   ConfirmAtlasReceiveAwardMessage({this.nodeId, this.pledgeAtlasEntity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transAtlasReceiveReward(this.pledgeAtlasEntity, password, wallet);
     pledgeAtlasEntity.rawTx = rawTx;
@@ -158,7 +158,7 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
   ConfirmAtlasActiveMessage({this.nodeId, this.entity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transAtlasActive(this.entity, password, wallet);
     entity.rawTx = rawTx;
@@ -196,7 +196,7 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   ConfirmAtlasStakeMessage({this.nodeId, this.pledgeAtlasEntity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transAtlasStake(this.pledgeAtlasEntity, password, wallet);
     pledgeAtlasEntity.rawTx = rawTx;
@@ -234,7 +234,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   ConfirmAtlasUnStakeMessage({this.nodeId, this.pledgeAtlasEntity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
     pledgeAtlasEntity.rawTx = rawTx;
@@ -273,7 +273,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   ConfirmCreateMap3NodeMessage({this.entity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     try {
       print("[object] --> 2");
 
@@ -283,7 +283,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
       TxHashEntity txHashEntity = await AtlasApi().postCreateMap3Node(this.entity);
       print("[Confirm] rawTx:$rawTx, txHashEntity:${txHashEntity.txHash}");
 
-      return txHashEntity.txHash.isNotEmpty;
+      return txHashEntity.nodeId;
     } catch (e) {
       print(e);
     }
@@ -319,7 +319,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   ConfirmEditMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
     this.entity.rawTx = rawTx;
@@ -358,7 +358,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   ConfirmPreEditMap3NodeMessage({this.autoRenew, this.feeRate});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     print("[ConfirmPreEditMap3NodeMessage] action:$password");
     return password.isNotEmpty;
   }
@@ -391,7 +391,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   ConfirmTerminateMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transTerminateMap3Node(password, this.entity.to, this.map3NodeAddress, wallet);
     this.entity.rawTx = rawTx;
@@ -429,7 +429,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   ConfirmCancelMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx =
         await HYNApi.transUnMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
@@ -469,7 +469,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx =
         await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
@@ -509,7 +509,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   ConfirmCollectMap3NodeMessage({this.entity});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx = await HYNApi.transCollectMap3Node(password, this.entity.to, wallet);
 
@@ -548,7 +548,7 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   ConfirmDivideMap3NodeMessage({this.entity, this.map3NodeAddress});
 
   @override
-  Future<bool> action(String password) async {
+  Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
     var rawTx =
         await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
