@@ -20,10 +20,11 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_pronounce_page.dart';
 
-Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem) {
+Widget getMap3NodeWaitItem(
+    BuildContext context, Map3InfoEntity contractNodeItem) {
   if (contractNodeItem == null) return Container();
 
-  var state = ContractState.values[contractNodeItem?.status??0];
+  var state = ContractState.values[contractNodeItem?.status ?? 0];
   var isNotFull = true;
   var fullDesc = "";
   var dateDesc = "";
@@ -31,14 +32,18 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(contractNodeItem?.atlas?.staking??"0"));
+      dateDesc = S.of(context).left +
+          FormatUtil.timeStringSimple(
+              context, double.parse(contractNodeItem?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).active + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(contractNodeItem?.atlas?.staking??"0"));
+      dateDesc = S.of(context).left +
+          FormatUtil.timeStringSimple(
+              context, double.parse(contractNodeItem?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).expired + dateDesc;
       break;
 
@@ -61,27 +66,34 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
   }
 
   var nodeName = contractNodeItem.name;
-  var nodeAddress = "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address??"", limitLength: 1)}";
+  var nodeAddress =
+      "节点地址  ${UiUtil.shortEthAddress(contractNodeItem?.atlas?.address ?? "", limitLength: 1)}";
   var nodeIdPre = "节点号";
   var nodeId = " ${contractNodeItem.nodeId ?? ""}";
   var feeRatePre = "管理费：";
   var feeRate = contractNodeItem.feeRate ?? "--";
   var descPre = "描   述：";
   var desc = contractNodeItem.describe ?? "大家快来参与我的节点吧，收益高高，收益真的很高，";
-  var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractNodeItem?.staking??"0")).toString());
+  var remainDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(contractNodeItem?.staking ?? "0"))
+      .toString());
   var date = contractNodeItem.createdAt;
-
 
   return InkWell(
     onTap: () async {
       var walletList = await WalletUtil.scanWallets();
       if (walletList.length == 0) {
-        Application.router.navigateTo(context,
-            Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
-      } else {
-        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
         Application.router.navigateTo(
-            context, Routes.map3node_join_contract_page + "?entryRouteName=$entryRouteName&contractId=${1}");
+            context,
+            Routes.map3node_create_wallet +
+                "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      } else {
+        var entryRouteName =
+            Uri.encodeComponent(Routes.map3node_contract_detail_page);
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_join_contract_page +
+                "?entryRouteName=$entryRouteName&contractId=${contractNodeItem.address}");
       }
     },
     child: Container(
@@ -118,7 +130,10 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text.rich(TextSpan(children: [
-                      TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                      TextSpan(
+                          text: nodeName,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16)),
                       TextSpan(text: "", style: TextStyles.textC333S14bold),
                     ])),
                     Container(
@@ -139,10 +154,12 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                             fontSize: 12,
                           ),
                           children: [
-                            TextSpan(text: nodeId, style: TextStyle(fontSize: 13, color: HexColor("#333333")))
+                            TextSpan(
+                                text: nodeId,
+                                style: TextStyle(
+                                    fontSize: 13, color: HexColor("#333333")))
                           ]),
                     ),
-
                   ],
                 )
               ],
@@ -179,7 +196,8 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                       desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 11, color: HexColor("#333333")),
+                      style:
+                          TextStyle(fontSize: 11, color: HexColor("#333333")),
                     ),
                   ),
                 ],
@@ -193,14 +211,23 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
               children: <Widget>[
                 isNotFull
                     ? RichText(
-                        text:
-                            TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
-                          TextSpan(text: remainDelegation, style: TextStyles.textC7c5b00S12),
-                          TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
-                        ]),
+                        text: TextSpan(
+                            text: S.of(context).remain,
+                            style: TextStyles.textC9b9b9bS12,
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: remainDelegation,
+                                  style: TextStyles.textC7c5b00S12),
+                              TextSpan(
+                                  text: "HYN",
+                                  style: TextStyles.textC9b9b9bS12),
+                            ]),
                       )
                     : RichText(
-                        text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
+                        text: TextSpan(
+                            text: fullDesc,
+                            style: TextStyles.textC9b9b9bS12,
+                            children: <TextSpan>[]),
                       ),
                 Spacer(),
                 Text(
@@ -213,12 +240,18 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
                     height: 30,
                     child: FlatButton(
                       color: HexColor("#FF15B2D2"),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24)),
                       onPressed: () {
                         Application.router.navigateTo(
-                            context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.address}");
+                            context,
+                            Routes.map3node_contract_detail_page +
+                                "?contractId=${contractNodeItem.address}");
                       },
-                      child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
+                      child: Text(
+                          isPending
+                              ? S.of(context).check_join
+                              : S.of(context).detail,
                           style: TextStyle(fontSize: 13, color: Colors.white)),
                       //style: TextStyles.textC906b00S13),
                     ),
@@ -233,7 +266,8 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity contractNodeItem
   );
 }
 
-Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
+Widget managerSpendWidget(
+    BuildContext buildContext, TextEditingController _rateCoinController,
     {Function reduceFunc, Function addFunc}) {
   return Container(
     color: Colors.white,
@@ -245,11 +279,17 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
           child: RichText(
             text: TextSpan(
                 text: "管理费设置",
-                style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: HexColor("#333333"),
+                    fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
                     text: "（1%-20%）",
-                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: HexColor("#999999"),
+                        fontWeight: FontWeight.normal),
                   )
                 ]),
           ),
@@ -272,7 +312,8 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                     alignment: Alignment.center,
                     child: Text(
                       "-",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333")),
                     ),
                     decoration: BoxDecoration(
                       color: HexColor("#F2F2F2"),
@@ -318,7 +359,8 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                     alignment: Alignment.center,
                     child: Text(
                       "+",
-                      style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333")),
                     ),
                     decoration: BoxDecoration(
                       color: HexColor("#F2F2F2"),
@@ -335,18 +377,32 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
   );
 }
 
-Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, GlobalKey<FormState> formKey,
-    TextEditingController textEditingController, String endProfit, String spendManager, bool isJoin,
-    {bool isMyself = false, FocusNode focusNode, List<String> suggestList, Map3IntroduceEntity map3introduceEntity}) {
-  double minTotal = double.parse(map3introduceEntity.createMin??"55000");
-  double remainTotal = double.parse(map3introduceEntity.startMin??"550000");;
+Widget getHoldInNum(
+  BuildContext context,
+  Map3InfoEntity contractNodeItem,
+  GlobalKey<FormState> formKey,
+  TextEditingController textEditingController,
+  String endProfit,
+  String spendManager,
+  bool isJoin, {
+  bool isMyself = false,
+  FocusNode focusNode,
+  List<String> suggestList,
+  Map3IntroduceEntity map3introduceEntity,
+}) {
+  
+  double minTotal = double.parse(map3introduceEntity?.createMin?? "55000");
+  double remainTotal = double.parse(map3introduceEntity?.startMin ?? "550000");
+
+  
+  
 
   var coinVo = WalletInheritedModel.of(
     context,
     aspect: WalletAspect.activatedWallet,
   ).getCoinVoBySymbol('HYN');
 
-   return Container(
+  return Container(
     color: Colors.white,
     padding: EdgeInsets.only(top: 16),
     child: Column(
@@ -358,12 +414,17 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child:
-                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                child: Text(S.of(context).mortgage_hyn_num,
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
-                    style: TextStyle(color: Colors.grey[600])),
+                child: Text(
+                    S.of(context).mortgage_wallet_balance(
+                        FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    )),
               ),
             ],
           ),
@@ -381,7 +442,8 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                   children: <Widget>[
                     Text(
                       "HYN",
-                      style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                      style:
+                          TextStyle(fontSize: 18, color: HexColor("#35393E")),
                     ),
                     SizedBox(
                       width: 12,
@@ -394,17 +456,21 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                           focusNode: focusNode,
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
-                          hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
+                          hint: S.of(context).mintotal_buy(
+                              FormatUtil.formatNumDecimal(minTotal)),
                           validator: (textStr) {
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;
                             } else if (minTotal == 0) {
                               return "抵押已满";
                             } else if (int.parse(textStr) < minTotal) {
-                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
+                              return S.of(context).mintotal_hyn(
+                                  FormatUtil.formatNumDecimal(minTotal));
                             } else if (int.parse(textStr) > remainTotal) {
                               return "不能超过剩余份额";
-                            } else if (Decimal.parse(textStr) > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                            } else if (Decimal.parse(textStr) >
+                                Decimal.parse(
+                                    FormatUtil.coinBalanceHumanRead(coinVo))) {
                               return S.of(context).hyn_balance_no_enough;
                             } else {
                               return null;
@@ -426,13 +492,14 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                         if (value == 0.5) {
                           return SizedBox(width: 16);
                         }
-
                         return InkWell(
                           child: Container(
                             color: HexColor("#1FB9C7").withOpacity(0.08),
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             child: Text(suggestList[value],
-                                style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                style: TextStyle(
+                                    fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
                             textEditingController.text = suggestList[value];
@@ -457,12 +524,16 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                   text: TextSpan(
                                       text: S.of(context).balance_portion_hyn,
                                       style: TextStyle(
-                                          fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                          fontSize: 14,
+                                          color: HexColor("#333333"),
+                                          fontWeight: FontWeight.bold),
                                       children: [
                                         TextSpan(
-                                          text: "${FormatUtil.stringFormatNum(contractNodeItem.remainDelegation)}",
+                                          text: "12321",
                                           style: TextStyle(
-                                              fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                              fontSize: 14,
+                                              color: HexColor("#333333"),
+                                              fontWeight: FontWeight.bold),
                                         )
                                       ]),
                                 ),
@@ -476,11 +547,13 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
                                       padding: const EdgeInsets.all(0),
                                       color: HexColor("#FFDE64"),
                                       onPressed: () {
-                                        textEditingController.text = contractNodeItem.remainDelegation;
+                                        //textEditingController.text = contractNodeItem.remainDelegation;
 //                                        joinEnougnFunction();
                                       },
                                       child: Text(S.of(context).all_bug,
-                                          style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: HexColor("#5C4304"))),
                                     )),
                               ],
                             ),
@@ -498,15 +571,17 @@ Widget getHoldInNum(BuildContext context, ContractNodeItem contractNodeItem, Glo
 
 typedef NodePublicCallback = void Function({String value});
 
-Widget editInfoItem(
-    BuildContext context, int index, String title, String hint, String detail, NodePublicCallback callback,
-    {String subtitle = "", bool hasSubtitle = true, TextInputType keyboardType = TextInputType.text}) {
+Widget editInfoItem(BuildContext context, int index, String title, String hint,
+    String detail, NodePublicCallback callback,
+    {String subtitle = "",
+    bool hasSubtitle = true,
+    TextInputType keyboardType = TextInputType.text}) {
   return Material(
     child: Ink(
       child: InkWell(
         splashColor: Colors.blue,
         onTap: () async {
-         /* if (index == 0) {
+          /* if (index == 0) {
             editIconSheet(context, (path) {
               callback(value: path);
             });
@@ -527,7 +602,8 @@ Widget editInfoItem(
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+            padding: EdgeInsets.symmetric(
+                vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
             child: Row(
               children: <Widget>[
                 Text(
@@ -548,24 +624,27 @@ Widget editInfoItem(
                           )
                         : Text(
                             subtitle,
-                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
+                            style: TextStyle(
+                                color: HexColor("#999999"), fontSize: 12),
                           ),
                   ),
-                 SizedBox(
-                        width: 12,
-                      ),
-                 Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            detail.isEmpty ? hint : detail,
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: detail.isEmpty ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
-                          ),
-                        ),
-                      ),
-
+                SizedBox(
+                  width: 12,
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      detail.isEmpty ? hint : detail,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          color: detail.isEmpty
+                              ? HexColor("#999999")
+                              : HexColor("#333333"),
+                          fontSize: 14),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: Icon(
@@ -582,7 +661,8 @@ Widget editInfoItem(
   );
 }
 
-Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
+Widget rowTipsItem(String title,
+    {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
   var _nodeWidget = Padding(
     padding: const EdgeInsets.only(right: 10, top: 10),
     child: Container(
@@ -613,7 +693,8 @@ Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureT
                 )
               ],
               text: title,
-              style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+              style: TextStyle(
+                  height: 1.8, color: DefaultColors.color999, fontSize: 12),
             ),
           ),
         )),
@@ -627,11 +708,19 @@ Widget profitListWidget(List<Map> list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+        Text(detail,
+            style: TextStyle(
+                fontSize: 16,
+                color: HexColor("#333333"),
+                fontWeight: FontWeight.normal)),
         Container(
           height: 4,
         ),
-        Text(title, style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
+        Text(title,
+            style: TextStyle(
+                fontSize: 12,
+                color: HexColor("#999999"),
+                fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -645,11 +734,19 @@ Widget profitListBigWidget(List<Map> list) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(detail, style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+          Text(detail,
+              style: TextStyle(
+                  fontSize: 14,
+                  color: HexColor("#333333"),
+                  fontWeight: FontWeight.normal)),
           Container(
             height: 4,
           ),
-          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
+          Text(title,
+              style: TextStyle(
+                  fontSize: 10,
+                  color: HexColor("#999999"),
+                  fontWeight: FontWeight.normal)),
         ],
       ),
     );
@@ -664,11 +761,19 @@ Widget profitListLightWidget(List<Map> list) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+          Text(detail,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: HexColor("#333333"),
+                  fontWeight: FontWeight.normal)),
           Container(
             height: 4,
           ),
-          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+          Text(title,
+              style: TextStyle(
+                  fontSize: 10,
+                  color: HexColor("#333333"),
+                  fontWeight: FontWeight.normal)),
         ],
       ),
     );
@@ -682,11 +787,19 @@ Widget profitListBigLightWidget(List<Map> list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Text(detail, style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+        Text(detail,
+            style: TextStyle(
+                fontSize: 18,
+                color: HexColor("#333333"),
+                fontWeight: FontWeight.w600)),
         Container(
           height: 5,
         ),
-        Text(title, style: TextStyle(fontSize: 11, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
+        Text(title,
+            style: TextStyle(
+                fontSize: 11,
+                color: HexColor("#333333"),
+                fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -696,7 +809,8 @@ Widget profitListBigLightWidget(List<Map> list) {
 
 typedef ProfitBuildFunc = Widget Function({String title, String detail});
 
-Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFunc func}) {
+Widget _profitListWidget(List<Map> list,
+    {double horizontal = 10, ProfitBuildFunc func}) {
   _buildLine() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontal),
@@ -721,7 +835,8 @@ Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFun
     }
   }
 
-  MainAxisAlignment mainAxisAlignment = list.length == 2 ? MainAxisAlignment.start : MainAxisAlignment.center;
+  MainAxisAlignment mainAxisAlignment =
+      list.length == 2 ? MainAxisAlignment.start : MainAxisAlignment.center;
   return Row(
     mainAxisAlignment: mainAxisAlignment,
     children: children,
@@ -773,7 +888,8 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
             SizedBox(
               height: 54,
               child: ListTile(
-                title: Text("从相册选择", textAlign: TextAlign.center, style: TextStyles.textC333S18),
+                title: Text("从相册选择",
+                    textAlign: TextAlign.center, style: TextStyles.textC333S18),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext);
@@ -787,7 +903,8 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
+                  if (tempListImagePaths != null &&
+                      tempListImagePaths.length == 1) {
                     callback(tempListImagePaths[0].path);
                   }
                 },
@@ -798,15 +915,16 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
               color: DefaultColors.colorf4f4f4,
             ),
             ListTile(
-              title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
+              title: Text(S.of(context).cancel,
+                  textAlign: TextAlign.center, style: TextStyles.textC333S18),
               onTap: () {
                 Navigator.pop(context);
               },
             ),
             Expanded(
                 child: Container(
-                  color: DefaultColors.colorf4f4f4,
-                )),
+              color: DefaultColors.colorf4f4f4,
+            )),
           ],
         ),
       );

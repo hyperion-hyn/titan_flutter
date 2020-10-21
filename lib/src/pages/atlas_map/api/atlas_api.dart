@@ -415,6 +415,17 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  // 获取节点推荐抵押量
+  Future<List<String>> getMapRecStaking() async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/rec_staking",
+        EntityFactory<List<String>>((list) => (list as List)
+            .map((item) => "$item")
+            .toList()),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+
   // 查询map3首页数据
   Future<Map3HomeEntity> getMap3Home(String address) async {
     return AtlasHttpCore.instance.postEntity(
