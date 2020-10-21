@@ -170,7 +170,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3Status == null) {
       return S.of(context).wait_block_chain_verification;
     }
-    ;
 
     var _contractStateDetail = "";
     switch (_map3Status) {
