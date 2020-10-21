@@ -49,7 +49,7 @@ class Map3NodeDetailPage extends StatefulWidget {
   Map3NodeDetailPage(this.map3infoEntity);
 
   @override
-  _Map3NodeDetailState createState() => new _Map3NodeDetailState();
+  _Map3NodeDetailState createState() => _Map3NodeDetailState();
 }
 
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
@@ -66,7 +66,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   bool _isTransferring = false;
 
   bool _isDelegated = true; // todo:判断当前(钱包=用户)是否参与抵押, 不一定是180天
-  VoidCallback onPressed = () {};
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
@@ -138,7 +137,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3Status == null) {
       return S.of(context).wait_to_launch;
     }
-    ;
 
     var _contractStateDesc = "";
 
@@ -498,20 +496,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           Spacer(),
           ClickOvalButton(
             "抵押",
-            () async {
-              if (_isNoWallet) {
-                _pushWalletManagerAction();
-                return;
-              }
-
-              if (_map3infoEntity != null) {
-                var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-                Application.router.navigateTo(
-                    context,
-                    Routes.map3node_join_contract_page +
-                        "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
-              }
-            },
+            _joinContractAction,
             width: 120,
             height: 32,
             fontSize: 14,
@@ -1468,19 +1453,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   void _joinContractAction() async {
+    if (_isNoWallet) {
+      _pushWalletManagerAction();
+      return;
+    }
+
     if (mounted) {
       setState(() {
         _isTransferring = true;
       });
     }
 
-    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-    await Application.router.navigateTo(
-        context,
-        Routes.map3node_join_contract_page +
-            "?entryRouteName=$entryRouteName&contractId=${FluroConvertUtils.fluroCnParamsEncode(_map3infoEntity.nodeId)}");
-
-    _nextAction();
+    if (_map3infoEntity != null) {
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      await Application.router.navigateTo(
+          context,
+          Routes.map3node_join_contract_page +
+              "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+      _nextAction();
+    }
   }
 
   void _nextAction() {
