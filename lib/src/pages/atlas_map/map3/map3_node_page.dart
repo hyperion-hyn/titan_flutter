@@ -165,7 +165,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return emptyListWidget(title: "没有我的节点，您可以创建节点");
+      return emptyListWidget(title: _address.isEmpty?"请创建或导入钱包后查看":"没有我的节点，您可以创建节点");
     }
 
     return SliverToBoxAdapter(
@@ -196,7 +196,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
         color: Colors.white,
-        child: getMap3NodeWaitItem(context, _pendingList[index], _map3introduceEntity),
+        child: getMap3NodeWaitItem(context, _pendingList[index], _map3introduceEntity, canCheck: (index<_map3stakingEntity.canStakingNum)),
       );
     }, childCount: _pendingList.length));
   }

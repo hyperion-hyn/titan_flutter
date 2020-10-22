@@ -1,4 +1,6 @@
 // ContractState
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+
 ContractState enumContractStateFromString(String fruit) {
   fruit = 'ContractState.$fruit';
   return ContractState.values
@@ -15,6 +17,26 @@ enum ContractState {
   DUE_COMPLETED,
   FAIL
 }
+
+//0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
+// ContractState
+Map3InfoStatus enumMap3InfoStatusFromString(String fruit) {
+  fruit = 'Map3InfoStatus.$fruit';
+  return Map3InfoStatus.values
+      .firstWhere((f) => f.toString() == fruit, orElse: () => null);
+}
+
+/*
+enum Map3InfoStatus {
+  Map,
+  PRE_CREATE,
+  FAIL,
+  PENDING,
+  CANCELLED,
+  CANCELLED_COMPLETED,
+  ACTIVE,
+  DUE,
+}*/
 
 // UserDelegateState
 UserDelegateState enumUserDelegateStateFromString(String fruit) {

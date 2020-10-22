@@ -1,6 +1,7 @@
 // type
 
 /*
+ 0 映射中，
  1 创建提交中；
  2 创建失败;
  3 募资中,没在撤销节点;
@@ -10,6 +11,7 @@
  7 合约期满终止；
 */
 enum Map3InfoStatus {
+  MAP,
   CREATE_SUBMIT_ING,
   CREATE_FAIL,
   FUNDRAISING_NO_CANCEL,

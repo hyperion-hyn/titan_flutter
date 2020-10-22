@@ -12,9 +12,11 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_detail_item.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/webview/webview.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
@@ -41,10 +43,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 
   AnimationController _ageIconAnimationController;
 
-  CommitteeInfoEntity _committeeInfo = CommitteeInfoEntity.fromJson({});
-
   List<AtlasInfoEntity> _atlasNodeList = List();
-  List<AtlasInfoEntity> _myAtlasNodeList = List();
+
+  AtlasHomeEntity _atlasHomeEntity;
 
   ///load more for [_atlasNodeList]
   ///
@@ -73,62 +74,23 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _getData() async {
-    _getAtlasNodesCoordinates();
-    _getCommitteeInfo();
+    _getAtlasHome();
   }
 
-  _getCommitteeInfo() async {
+  _getAtlasHome() async {
     try {
-      _committeeInfo = await _atlasApi.postAtlasOverviewData();
+      _atlasHomeEntity = await _atlasApi.postAtlasHome(
+        WalletInheritedModel.of(context)
+                ?.activatedWallet
+                ?.wallet
+                ?.getAtlasAccount()
+                ?.address ??
+            '',
+      );
       setState(() {});
     } catch (e) {
       print('[_getCommitteeInfo]: $e');
     }
-  }
-
-  _getAtlasNodesCoordinates() {
-    _atlasNodeCoordinates = [
-      {
-        "name": "Sydney",
-        "value": [151.2002, -33.8591, 4, 4]
-      },
-      {
-        "name": "Singapore",
-        "value": [103.819836, 1.352083, 8, 8]
-      },
-      {
-        "name": "Paris",
-        "value": [2.35222, 48.8566, 10, 10]
-      },
-      {
-        "name": "Jakarta",
-        "value": [106.865, -6.17511, 1, 1]
-      },
-      {
-        "name": "San Jose",
-        "value": [-121.895, 37.3394, 2, 2]
-      },
-      {
-        "name": "Ashburn",
-        "value": [-77.4874, 39.0438, 114, 114]
-      },
-      {
-        "name": "Mumbai",
-        "value": [72.8777, 19.076, 6, 6]
-      },
-      {
-        "name": "Seoul",
-        "value": [126.978, 37.5665, 1, 1]
-      },
-      {
-        "name": "Tokyo",
-        "value": [139.692, 35.6895, 6, 6]
-      },
-      {
-        "name": "Hong Kong",
-        "value": [114.109, 22.3964, 9, 9]
-      },
-    ];
   }
 
   @override
@@ -214,7 +176,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_committeeInfo.epoch}',
+                      '${_atlasHomeEntity?.info?.epoch}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -237,7 +199,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     ),
                     InkWell(
                       child: Text(
-                        '#${_committeeInfo.blockNum}',
+                        '#${_atlasHomeEntity?.info?.blockNum}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -261,7 +223,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_committeeInfo.elected}',
+                      '${_atlasHomeEntity?.info?.elected}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -281,7 +243,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_committeeInfo.candidate}',
+                      '${_atlasHomeEntity?.info?.candidate}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -298,10 +260,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _atlasMap() {
-    var _secPerBlock = _committeeInfo?.secPerBlock ?? 0;
-    var _blocksPerEpoch = _committeeInfo?.blockHeight ?? 0;
-    var _currentBlockNum = _committeeInfo?.blockNum ?? 0;
-    var _epochStartBlockNum = _committeeInfo?.blockNumStart ?? 0;
+    var _secPerBlock = _atlasHomeEntity?.info?.secPerBlock ?? 0;
+    var _blocksPerEpoch = _atlasHomeEntity?.info?.blockHeight ?? 0;
+    var _currentBlockNum = _atlasHomeEntity?.info?.blockNum ?? 0;
+    var _epochStartBlockNum = _atlasHomeEntity?.info?.blockNumStart ?? 0;
 
     ///total time of 1 epoch:  blocksPerEpoch * secPerBlock
     ///
@@ -493,7 +455,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             ],
           ),
         ),
-        _myAtlasNodeList.isNotEmpty
+        _atlasHomeEntity?.atlasHomeNodeList?.isNotEmpty ?? false
             ? Container(
                 height: 150,
                 child: ListView.builder(
