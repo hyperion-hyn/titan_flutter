@@ -252,9 +252,15 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 Application.router.navigateTo(
                     context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
               } else {
+                setState(() {
+                  _isTransferring = false;
+                });
                 Fluttertoast.showToast(msg: '操作失败');
               }
             } else {
+              setState(() {
+                _isTransferring = false;
+              });
               Fluttertoast.showToast(msg: '操作失败');
             }
           } catch (error) {

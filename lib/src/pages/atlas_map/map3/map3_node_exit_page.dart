@@ -15,6 +15,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -148,11 +149,15 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                           padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18),
                           child: Row(
                             children: <Widget>[
-                              Image.asset(
-                                "res/drawable/map3_node_default_avatar.png",
+                              SizedBox(
                                 width: 42,
                                 height: 42,
-                                fit: BoxFit.cover,
+                                child: walletHeaderWidget(
+                                  _map3infoEntity.name,
+                                  isShowShape: false,
+                                  address: _map3infoEntity.address,
+                                  isCircle: false,
+                                ),
                               ),
                               SizedBox(
                                 width: 8,
@@ -208,11 +213,15 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                           padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
                           child: Row(
                             children: <Widget>[
-                              Image.asset(
-                                "res/drawable/map3_node_default_avatar.png",
+                              SizedBox(
                                 width: 42,
                                 height: 42,
-                                fit: BoxFit.cover,
+                                child: walletHeaderWidget(
+                                  _walletName,
+                                  isShowShape: false,
+                                  address: _walletAddress,
+                                  isCircle: true,
+                                ),
                               ),
                               SizedBox(
                                 width: 6,

@@ -13,6 +13,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 class Map3NodeCollectPage extends StatefulWidget {
   @override
@@ -68,11 +69,15 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
                         padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8),
                         child: Row(
                           children: <Widget>[
-                            Image.asset(
-                              "res/drawable/map3_node_default_avatar.png",
+                            SizedBox(
                               width: 42,
                               height: 42,
-                              fit: BoxFit.cover,
+                              child: walletHeaderWidget(
+                                "_map3infoEntity.name",
+                                isShowShape: false,
+                                address: "0xcccc",
+                                isCircle: false,
+                              ),
                             ),
                             SizedBox(
                               width: 6,

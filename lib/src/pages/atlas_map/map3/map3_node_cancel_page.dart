@@ -10,13 +10,13 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -47,6 +47,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   AtlasApi _atlasApi = AtlasApi();
   var _address = "string";
   var _nodeId = "string";
+  var _walletName = "";
+  var _walletAddress = "";
 
   @override
   void onCreated() {
@@ -55,6 +57,14 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     _nodeId = widget.map3infoEntity.nodeId;
 
     print("_nodeId:${widget.map3infoEntity.toJson()}");
+
+    var activatedWallet = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    _walletName = activatedWallet.wallet.keystore.name;
+    _walletAddress = activatedWallet.wallet.getEthAccount().address;
 
     getNetworkData();
 
@@ -145,11 +155,14 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                           padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
                           child: Row(
                             children: <Widget>[
-                              Image.asset(
-                                "res/drawable/map3_node_default_avatar.png",
+                              SizedBox(
                                 width: 42,
                                 height: 42,
-                                fit: BoxFit.cover,
+                                child: walletHeaderWidget(
+                                  _walletName,
+                                  isShowShape: false,
+                                  address: _walletAddress,
+                                ),
                               ),
                               SizedBox(
                                 width: 6,

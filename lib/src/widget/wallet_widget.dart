@@ -4,7 +4,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:characters/characters.dart';
 
 Widget walletHeaderWidget(String shortName,
-    {double size = 40, double fontSize = 15, bool isShowShape = true, String address = "#000000"}) {
+    {double size = 40, double fontSize = 15, bool isShowShape = true, String address = "#000000", bool isCircle = true}) {
   if (shortName.isNotEmpty) {
     shortName = shortName.characters.first;
   }
@@ -13,21 +13,37 @@ Widget walletHeaderWidget(String shortName,
     hexColor = "#" + address.substring(address.length - 6);
   }
   HexColor color = HexColor(hexColor);
+  var decoration = BoxDecoration(
+    color: color,
+    shape: BoxShape.circle,
+    boxShadow: isShowShape
+        ? [
+      BoxShadow(
+        color: Colors.grey[300],
+        blurRadius: 8.0,
+      ),
+    ]
+        : null,
+  );
+
+  if (!isCircle) {
+    decoration = BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(6),
+      boxShadow: isShowShape
+          ? [
+        BoxShadow(
+          color: Colors.grey[300],
+          blurRadius: 8.0,
+        ),
+      ]
+          : null,
+    );
+  }
   return Container(
     width: size,
     height: size,
-    decoration: BoxDecoration(
-      color: color,
-      shape: BoxShape.circle,
-      boxShadow: isShowShape
-          ? [
-              BoxShadow(
-                color: Colors.grey[300],
-                blurRadius: 8.0,
-              ),
-            ]
-          : null,
-    ),
+    decoration: decoration,
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Center(

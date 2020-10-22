@@ -24,7 +24,7 @@ import 'map3_node_create_wallet_page.dart';
 import 'map3_node_pronounce_page.dart';
 
 Widget getMap3NodeWaitItem(
-    BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity) {
+    BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity, {bool canCheck = true}) {
   if (infoEntity == null) return Container();
 
   var state = ContractState.values[infoEntity?.status ?? 0];
@@ -88,6 +88,8 @@ Widget getMap3NodeWaitItem(
 
   return InkWell(
     onTap: () async {
+      if (!canCheck) return;
+
       Application.router.navigateTo(
         context,
         Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity)}',
@@ -95,7 +97,7 @@ Widget getMap3NodeWaitItem(
     },
     child: Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: canCheck?Colors.white:HexColor("#000000").withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -119,16 +121,12 @@ Widget getMap3NodeWaitItem(
                   height: 42,
                   child: walletHeaderWidget(
                     infoEntity.name,
-                    isShowShape: false,
+                    isShowShape: true,
                     address: infoEntity.address,
+                    isCircle: false,
                   ),
                 ),
-               /* Image.asset(
-                  "res/drawable/map3_node_default_avatar.png",
-                  width: 42,
-                  height: 42,
-                  fit: BoxFit.cover,
-                ),*/
+
                 SizedBox(
                   width: 6,
                 ),
@@ -556,6 +554,7 @@ Widget editInfoItem(BuildContext context, int index, String title, String hint,
             padding: EdgeInsets.symmetric(
                 vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
                   title,
@@ -902,7 +901,7 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
             style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             textAlign: TextAlign.center,
           ),
-          width: 160,
+          //width: 200,
         ),
       ],
     ),

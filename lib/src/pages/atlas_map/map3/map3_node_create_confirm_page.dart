@@ -173,6 +173,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
               padding: EdgeInsets.symmetric(
                   vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SizedBox(
                     width: 100,

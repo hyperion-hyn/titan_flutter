@@ -89,7 +89,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-
         value = 0;
         break;
 
@@ -104,7 +103,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       default:
         break;
     }
-
 
     return value;
   }
@@ -550,7 +548,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var nodeName = _map3infoEntity?.name ?? "***";
     var nodeYearOld = "   节龄: ***天";
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
-    var nodeIdPre = "节点号:";
+    var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
@@ -567,25 +565,29 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Image.asset(
-                  "res/drawable/map3_node_default_avatar.png",
-                  width: 44,
-                  height: 44,
-                  fit: BoxFit.cover,
+                SizedBox(
+                  width: 42,
+                  height: 42,
+                  child: walletHeaderWidget(
+                    _map3infoEntity.name,
+                    isShowShape: false,
+                    address: _map3infoEntity.address,
+                    isCircle: false,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 2),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text.rich(TextSpan(children: [
                         TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                         TextSpan(text: nodeYearOld, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
                       ])),
                       Container(
-                        height: 8,
+                        height: 4,
                       ),
-                      Text(nodeAddress, style: TextStyles.textC9b9b9bS10),
+                      Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
                     ],
                   ),
                 ),
@@ -597,7 +599,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     children: <Widget>[
                       Text("待启动", style: TextStyle(color: HexColor("#228BA1"), fontSize: 12)),
                       Container(
-                        height: 8,
+                        height: 4,
                       ),
                       Text.rich(TextSpan(children: [
                         TextSpan(
@@ -791,11 +793,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Image.asset(
-                            "res/drawable/map3_node_default_avatar.png",
-                            width: 44,
-                            height: 44,
-                            fit: BoxFit.cover,
+                          SizedBox(
+                            width: 42,
+                            height: 42,
+                            child: walletHeaderWidget(
+                              "item.name",
+                              isShowShape: false,
+                              address: "0xkkkkkkkk",
+                              isCircle: false,
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
@@ -1148,11 +1154,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var isPending = item.status == 0 || item.status == 1;
     // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.dataDecoded.amount)).toString();
+    var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount??"0")).toDouble();
+    var amount = FormatUtil.formatPrice(amountValue);
     var detail = "";
     switch (item.type) {
       case 0:
-        detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.dataDecoded.amount)).toString();
+        detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount??"0")).toString();
         break;
 
       case 1:
@@ -1176,8 +1183,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case 6:
-        detail = "创建Map3节点";
-        // detail = "创建Map3节点" + " " + amount;
+        // detail = "创建Map3节点";
+        detail = "创建Map3节点" + " " + amount;
         break;
 
       case 7:
@@ -1193,7 +1200,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case 10:
-        detail = "撤销map3抵押";
+        detail = "取消Map3抵押" + " " + amount;
         break;
 
       case 11:
@@ -1235,52 +1242,53 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          RichText(
-                            text: TextSpan(
-                              text: item.name,
-                              style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
-                            ),
+                          Row(
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                  text: item.name,
+                                  style:
+                                      TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 6),
+                                    child: Text(
+                                      isPending ? "*" : detail,
+                                      style: TextStyle(
+                                          fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  _billStateWidget(item)
+                                ],
+                              ),
+                            ],
                           ),
                           Container(
                             height: 8.0,
                           ),
-                          Text(
-                            shortBlockChainAddress(" ${item.from}", limitCharsLength: 6),
-                            style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                shortBlockChainAddress(" ${item.from}", limitCharsLength: 8),
+                                style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                              ),
+                              Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(FormatUtil.formatDateStr(item.createdAt),
+                                      style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  //Spacer(),
-                  Container(
-                    width: 8,
-                  ),
-                  Flexible(
-                    flex: 6,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(right: 6),
-                              child: Text(
-                                isPending ? "*" : detail,
-                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            _billStateWidget(item)
-                          ],
-                        ),
-                        Container(
-                          height: 8.0,
-                        ),
-                        Text(
-                            FormatUtil.formatDateStr(item.createdAt),
-                            style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
-                      ],
                     ),
                   ),
                 ],
