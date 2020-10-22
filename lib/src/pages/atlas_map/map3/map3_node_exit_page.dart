@@ -8,14 +8,19 @@ import 'package:titan/src/config/consts.dart';
 
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
+import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -43,6 +48,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   var _nodeId = "string";
   var _walletName = "";
   var _walletAddress = "";
+  Microdelegations _microdelegations;
+  final _client = WalletUtil.getWeb3Client(true);
+  List<Map3UserEntity> _map3UserList = [];
 
   @override
   void onCreated() {
@@ -80,7 +88,18 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     try {
       print("[${widget.runtimeType}] getNetworkData");
 
+      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+      var walletAddress = EthereumAddress.fromHex(_address);
+
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+
+      print('map3: $map3Address wallet: $walletAddress');
+      _microdelegations = await _client.getMap3NodeDelegation(
+        map3Address,
+        walletAddress,
+      );
+
+      _map3UserList = await _atlasApi.getMap3UserList(widget.map3infoEntity.nodeId, size: 0);
 
       if (mounted) {
         setState(() {
@@ -341,23 +360,30 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           switch (value) {
             case 1:
               title = "创建日期";
-              detail = "2020.02.18";
-              subDetail = " (10天) ";
+              detail = FormatUtil.formatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: false);
+              //subDetail = " (10天) ";
               break;
 
             case 2:
               title = "参与地址";
-              detail = "12个";
+              detail = "${_map3UserList?.length ?? 0}个";
               break;
 
             case 3:
               title = "节点总抵押";
-              detail = "900,0000";
+              detail = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+                  weiBigInt: BigInt.parse(
+                widget.map3infoEntity?.staking ?? "0",
+              )).toString());
+
               break;
 
             case 4:
               title = "我的抵押";
-              detail = "500,0000";
+              detail = ConvertTokenUnit.weiToEther(
+                      weiBigInt: BigInt.parse(
+                          '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'))
+                  .toString();
               break;
 
             default:
