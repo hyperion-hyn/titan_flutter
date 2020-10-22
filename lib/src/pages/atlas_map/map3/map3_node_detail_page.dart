@@ -221,16 +221,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   @override
   void onCreated() {
+
+
+    super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
     _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
-    _address = _wallet.getEthAccount().address;
+    _address = _wallet?.getEthAccount()?.address??"";
     _nodeId = widget.map3infoEntity?.nodeId ?? "";
     _nodeAddress = widget.map3infoEntity?.address ?? "";
 
     getContractDetailData();
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
-
-    super.onCreated();
   }
 
   @override
@@ -1281,7 +1288,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
-                                  Text(FormatUtil.formatDateStr(item.createdAt),
+                                  Text(FormatUtil.formatUTCDateStr(item.createdAt),
                                       style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                                 ],
                               ),

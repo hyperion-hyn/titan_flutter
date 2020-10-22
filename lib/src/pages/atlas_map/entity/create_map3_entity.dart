@@ -134,8 +134,14 @@ class CreateMap3Payload extends Object {
   @JsonKey(name: 'provider')
   String provider;
 
+  @JsonKey(name: 'provider')
+  String providerName;
+
   @JsonKey(name: 'region')
   String region;
+
+  @JsonKey(name: 'region')
+  String regionName;
 
   @JsonKey(name: 'staking')
   String staking;
@@ -173,7 +179,9 @@ class CreateMap3Payload extends Object {
     this.pic,
     this.pledge,
     this.provider,
+    this.providerName,
     this.region,
+    this.regionName,
     this.staking,
     this.isEdit,
     this.latLng,

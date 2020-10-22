@@ -54,6 +54,13 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   void initState() {
     super.initState();
 
+  }
+
+  @override
+  void didChangeDependencies() {
+
+    super.didChangeDependencies();
+
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -62,11 +69,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     } else {
       onLoadData();
     }
-  }
-
-  @override
-  void onCreated() {
-    super.onCreated();
   }
 
   @override
@@ -192,6 +194,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
     }
 
+    //_map3stakingEntity.canStakingNum = 1;
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(

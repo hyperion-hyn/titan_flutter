@@ -25,9 +25,8 @@ class Map3NodeIntroductionPage extends StatefulWidget {
 
 class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   AllPageState currentState = LoadingState();
-  AtlasApi _atlasApi = AtlasApi();
   NodeApi _nodeApi = NodeApi();
-  Map3IntroduceEntity _entity;
+  Map3IntroduceEntity _introduceEntity;
   List<NodeProviderEntity> _providerList = [];
 
   @override
@@ -55,7 +54,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
         _nodeApi.getNodeProviderList(),
       ]);
 
-      _entity = requestList[0];
+      _introduceEntity = requestList[0];
       _providerList = requestList[1];
 
       setState(() {
@@ -75,7 +74,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _pageView(BuildContext context) {
-    if (currentState != null || _entity == null) {
+    if (currentState != null || _introduceEntity == null) {
       return Scaffold(
         body: AllPageStateContainer(currentState, () {
           setState(() {
@@ -117,6 +116,9 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       AtlasApi.goToAtlasMap3HelpPage(context);
     };
 
+    var startMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.startMin ?? "0"));
+    var createMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? 0));
+
     return Container(
       color: Colors.white,
       //height: MediaQuery.of(context).size.height-50,
@@ -130,7 +132,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
           ),
           rowTipsItem("创建7天内不可撤销", top: 0),
           rowTipsItem(
-              "需要总抵押满${_entity?.startMin ?? 0}才能正式启动，你至少需要${(double.parse(_entity?.startMin ?? 0)) * (double.parse(_entity?.feeMin ?? 0))}的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押${_entity?.startMin ?? 0}即可启动节点"),
+              "需要总抵押满$startMin才能正式启动，你至少需要$createMin的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押$startMin即可启动节点"),
           rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
           rowTipsItem(
             "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
@@ -188,11 +190,11 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _delegateCountWidget() {
-    var detail = FormatUtil.formatPrice(double.parse(_entity?.createMin ?? "0"));
-    var feeMin = (100 * double.parse(_entity?.feeMin ?? "10")).toInt();
-    var feeMax = (100 * double.parse(_entity?.feeMax ?? "20")).toInt();
+    var detail = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? "0"));
+    var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
+    var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
     var fee = "$feeMin%-$feeMax%";
-    var day = "${_entity?.days ?? 180}天";
+    var day = "${_introduceEntity?.days ?? 180}天";
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
       child: profitListLightWidget(
@@ -228,7 +230,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text(_entity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
                     InkWell(
                       child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
@@ -244,7 +246,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                     children: <Widget>[
                       Text(
                           "启动所需" +
-                              " ${FormatUtil.formatTenThousandNoUnit(_entity?.startMin?.toString() ?? "0")}" +
+                              " ${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
                               S.of(context).ten_thousand,
                           style: TextStyles.textC99000000S13,
                           maxLines: 1,

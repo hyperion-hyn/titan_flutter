@@ -11,9 +11,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['address'] as String,
     json['bls_key'] as String,
     json['bls_sign'] as String,
-    json['atlas'] == null
-        ? null
-        : AtlasInfoEntity.fromJson(json['atlas'] as Map<String, dynamic>),
+    json['atlas'] == null ? null : AtlasInfoEntity.fromJson(json['atlas'] as Map<String, dynamic>),
     json['contact'] as String,
     json['created_at'] as String,
     json['creator'] as String,
@@ -23,29 +21,25 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['home'] as String,
     json['id'] as int,
     json['mod'] as int,
-    json['mine'] == null
-        ? null
-        : UserMap3Entity.fromJson(json['mine'] as Map<String, dynamic>),
+    json['mine'] == null ? null : UserMap3Entity.fromJson(json['mine'] as Map<String, dynamic>),
     json['name'] as String,
     json['node_id'] as String,
     json['parentAddress'] as String,
     json['pic'] as String,
     json['provider'] as String,
     json['region'] as String,
-    json['relative'] == null
-        ? null
-        : Map3AtlasEntity.fromJson(json['relative'] as Map<String, dynamic>),
+    json['relative'] == null ? null : Map3AtlasEntity.fromJson(json['relative'] as Map<String, dynamic>),
     json['reward_history'] as String,
     json['reward_rate'] as String,
     json['staking'] as String,
+    json['total_pending_taking'] == null ? "0" : json['staking'] as String,
     json['start_block'] as int,
     json['status'] as int,
     json['updated_at'] as String,
   );
 }
 
-Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String, dynamic>{
       'address': instance.address,
       'bls_key': instance.blsKey,
       'bls_sign': instance.blsSign,
@@ -70,6 +64,7 @@ Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) =>
       'reward_history': instance.rewardHistory,
       'reward_rate': instance.rewardRate,
       'staking': instance.staking,
+      'total_pending_taking': instance.totalPendingStaking,
       'start_block': instance.startBlock,
       'status': instance.status,
       'updated_at': instance.updatedAt,

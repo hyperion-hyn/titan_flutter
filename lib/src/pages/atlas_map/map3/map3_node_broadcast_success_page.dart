@@ -21,7 +21,6 @@ class Map3NodeBroadcastSuccessPage extends StatefulWidget {
 }
 
 class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage> {
-
   @override
   Widget build(BuildContext context) {
     String action = "";
@@ -30,15 +29,25 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
       case Map3NodeActionEvent.MAP3_CREATE:
         action = "创建 Map3节点";
 
-        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin??"0");
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(widget.infoEntity.staking);
         var remain = startMin - staking;
+        if (remain < 0) {
+          remain = 0;
+        }
         detail = "距离节点启动还需${FormatUtil.formatPrice(remain)}HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
 
       case Map3NodeActionEvent.MAP3_DELEGATE:
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var staking = double.parse(widget.infoEntity.staking);
+        var pending = double.parse(widget.infoEntity.totalPendingStaking);
+        var remain = startMin - staking - pending;
+        if (remain < 0) {
+          remain = 0;
+        }
         action = "参与 Map3节点";
-        detail = "距离节点启动还需800000HYN，你可以邀请 好友参与抵押加速节点启动吧~";
+        detail = "距离节点启动还需${FormatUtil.formatPrice(remain)}HYN，你可以邀请 好友参与抵押加速节点启动吧~";
         break;
 
       case Map3NodeActionEvent.MAP3_COLLECT:

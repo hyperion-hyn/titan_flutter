@@ -98,14 +98,14 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
       _detailList.add(entity.describe);
     }
 
-    if (entity.provider?.isNotEmpty ?? false) {
+    if (entity.providerName?.isNotEmpty ?? false) {
       _titleList.add("云服务商");
-      _detailList.add(entity.provider);
+      _detailList.add(entity.providerName);
     }
 
-    if (entity.region?.isNotEmpty ?? false) {
+    if (entity.regionName?.isNotEmpty ?? false) {
       _titleList.add("节点选址");
-      _detailList.add(entity.region);
+      _detailList.add(entity.regionName);
     }
   }
 

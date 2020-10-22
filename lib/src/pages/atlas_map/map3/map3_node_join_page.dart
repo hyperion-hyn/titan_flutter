@@ -1,5 +1,4 @@
 import 'package:decimal/decimal.dart';
-import 'package:floor/floor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,20 +15,16 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
-import 'package:titan/src/pages/node/model/map3_node_util.dart';
-import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:web3dart/crypto.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
@@ -57,9 +52,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   AllPageState _currentState = LoadingState();
   AtlasApi _atlasApi = AtlasApi();
   var _address = "";
-  var _nodeId = "";
 
-  //ContractNodeItem contractItem;
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
@@ -79,7 +72,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       getCurrentSpend(text);
     });
 
-    // getNetworkData();
     super.initState();
   }
 
@@ -96,8 +88,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   void onCreated() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getAtlasAccount().address;
-    // todo: test_1007
-    _nodeId = widget.map3infoEntity.nodeId;
 
     getNetworkData();
 
@@ -118,12 +108,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   Future getNetworkData() async {
     try {
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-      var requestList = await Future.wait([
-//        _atlasApi.getMap3Info(_address, _nodeId),
-        _atlasApi.getMapRecStaking(),
-        client.getMap3NodeInformation(map3Address),
-        AtlasApi.getIntroduceEntity()
-      ]);
+      var requestList = await Future.wait(
+          [_atlasApi.getMapRecStaking(), client.getMap3NodeInformation(map3Address), AtlasApi.getIntroduceEntity()]);
 
       _suggestList = requestList[0];
       _map3nodeInformationEntity = requestList[1];
@@ -207,9 +193,17 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _nodeWidget(context),
                 SizedBox(height: 8),
-                getHoldInNum(context, widget.map3infoEntity, _joinCoinFormKey, _joinCoinController, endProfit,
-                    spendManager, false,
-                    suggestList: _suggestList, map3introduceEntity: _map3introduceEntity),
+                getHoldInNum(
+                  context,
+                  widget.map3infoEntity,
+                  _joinCoinFormKey,
+                  _joinCoinController,
+                  endProfit,
+                  spendManager,
+                  isJoin: true,
+                  suggestList: _suggestList,
+                  map3introduceEntity: _map3introduceEntity,
+                ),
                 SizedBox(height: 8),
                 _tipsWidget(),
               ])),
@@ -222,6 +216,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _tipsWidget() {
+    var startMin = FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin));
+    var delegateMin = FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin));
     return Container(
       color: Colors.white,
       //height: MediaQuery.of(context).size.height-50,
@@ -234,8 +230,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           rowTipsItem("抵押7天内不可撤销", top: 0),
-          rowTipsItem(
-              "需要总抵押满${_map3introduceEntity.startMin}HYN才能正式启动，每次参与抵押数额不少于${_map3introduceEntity.delegateMin}HYN"),
+          rowTipsItem("需要总抵押满${startMin}HYN才能正式启动，每次参与抵押数额不少于${delegateMin}HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
             AtlasApi.goToAtlasMap3HelpPage(context);
@@ -268,9 +263,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
       child: profitListWidget(
         [
-          {"总抵押": _map3introduceEntity.startMin},
+          {"总抵押": FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin))},
           {"管理费": '${FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()))}'},
-          {"最低抵押": _map3introduceEntity.delegateMin}
+          {"最低抵押": FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin))}
         ],
       ),
     );
@@ -294,13 +289,17 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var amount = _joinCoinController?.text ?? "200000";
+              var amount = _joinCoinController?.text;
               var entity = PledgeMap3Entity(
                   payload: Payload(
                 userIdentity: widget.map3infoEntity.nodeId,
               ));
               var message = ConfirmDelegateMap3NodeMessage(
-                  entity: entity, map3NodeAddress: widget.map3infoEntity.address, amount: amount);
+                entity: entity,
+                map3NodeAddress: widget.map3infoEntity.address,
+                amount: amount,
+                pendingAmount: _map3nodeInformationEntity.totalPendingDelegation.toString(),
+              );
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -323,11 +322,15 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
-          Image.asset(
-            "res/drawable/ic_map3_node_default_icon.png",
+          SizedBox(
             width: 42,
             height: 42,
-            fit: BoxFit.cover,
+            child: walletHeaderWidget(
+              _map3nodeInformationEntity.map3Node.description.name ?? widget.map3infoEntity.name,
+              isShowShape: false,
+              address: _map3nodeInformationEntity.map3Node.map3Address,
+              isCircle: true,
+            ),
           ),
           SizedBox(
             width: 10,
@@ -349,20 +352,6 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             ],
           ),
           Spacer(),
-//          Column(
-//            crossAxisAlignment: CrossAxisAlignment.end,
-//            children: <Widget>[
-//              Container(
-//                color: HexColor("#1FB9C7").withOpacity(0.08),
-//                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-//                child: Text("第一期",
-//                    style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
-//              ),
-//              Container(
-//                height: 4,
-//              ),
-//            ],
-//          ),
         ],
       ),
     );
