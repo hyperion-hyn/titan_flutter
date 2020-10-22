@@ -18,6 +18,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -259,11 +260,18 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _delegateCountWidget() {
+    var totalPendingDelegation = _map3nodeInformationEntity.totalPendingDelegation.toDouble();
+    print("totalPendingDelegation: $totalPendingDelegation");
+
+
+    var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(totalPendingDelegation)}')).toDouble();
+
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
-      child: profitListWidget(
+      child: profitListBigWidget(
         [
           {"总抵押": FormatUtil.formatPrice(double.parse(_map3introduceEntity.startMin))},
+          {"当前抵押": FormatUtil.formatPrice(totalPendingDelegationValue)},
           {"管理费": '${FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()))}'},
           {"最低抵押": FormatUtil.formatPrice(double.parse(_map3introduceEntity.delegateMin))}
         ],
