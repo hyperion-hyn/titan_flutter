@@ -128,6 +128,10 @@ class Map3InfoEntity extends Object {
     return feeRate;
   }
 
+  bool isCreator(){
+    return mine?.creator == 1;
+  }
+  
   Map3InfoEntity.onlyNodeId(this.nodeId);
   Map3InfoEntity.onlyId(this.id);
 
