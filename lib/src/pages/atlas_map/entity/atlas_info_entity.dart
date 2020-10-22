@@ -127,25 +127,40 @@ class AtlasInfoEntity extends Object {
   AtlasInfoEntity.onlyId(this.id);
 
   String getFeeRate() {
-    if (feeRate != null) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate))
-          .toString();
-    }
-    return feeRate;
+    return weiToEtherStr(feeRate);
+  }
+
+  String getFeeRateMax(){
+    return weiToEtherStr(feeRateMax);
+  }
+
+  String getFeeRateTrim(){
+    return weiToEtherStr(feeRateTrim);
+  }
+
+  String getMaxStaking(){
+    return weiToEtherStr(maxStaking);
   }
 
   String getTotalStaking(){
-    if(staking != null){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(staking)).toString();
-    }
-    return staking;
+    return weiToEtherStr(staking);
   }
 
-  String getRewardRate(){
-    if(rewardRate != null){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(rewardRate)).toString();
+  String getStakingCreator(){
+    return weiToEtherStr(stakingCreator);
+  }
+
+  String weiToEtherStr(dynamic entityParam){
+    if(entityParam == null){
+      return entityParam;
     }
-    return rewardRate;
+    if(entityParam is String){
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
+    }else if(entityParam is int){
+      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
+    }else{
+      return "";
+    }
   }
 
   factory AtlasInfoEntity.fromJson(Map<String, dynamic> srcJson) =>

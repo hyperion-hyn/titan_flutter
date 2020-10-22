@@ -230,14 +230,14 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 
 class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   final String nodeId;
-  final PledgeAtlasEntity pledgeAtlasEntity;
-  ConfirmAtlasUnStakeMessage({this.nodeId, this.pledgeAtlasEntity});
+  final String map3Address;
+  final String atlasAddress;
+  ConfirmAtlasUnStakeMessage({this.nodeId, this.map3Address,this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
-    pledgeAtlasEntity.rawTx = rawTx;
+    var rawTx = await HYNApi.transAtlasUnStake(map3Address,atlasAddress, password, wallet);
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");

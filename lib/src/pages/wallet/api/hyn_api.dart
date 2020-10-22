@@ -155,9 +155,7 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = ReDelegateAtlasMessage(
-        delegatorAddress: map3Address,
-        validatorAddress: atlasAddress);
+    var message = ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -165,13 +163,14 @@ class HYNApi {
   }
 
   static Future<String> transAtlasUnStake(
-    PledgeAtlasEntity pledgeAtlasEntity,
+    String map3Address,
+    String atlasAddress,
     String password,
     localWallet.Wallet wallet,
   ) async {
     var message = UnReDelegateAtlasMessage(
-        delegatorAddress: pledgeAtlasEntity.payload.map3Address,
-        validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
+        delegatorAddress: map3Address,
+        validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);

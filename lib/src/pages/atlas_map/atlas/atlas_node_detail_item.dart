@@ -126,7 +126,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.getRewardRate() ?? '0'))}',
+                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))

@@ -16,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -192,16 +193,16 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   _refreshData() async {
     var atlasInfo = widget._atlasInfoEntity;
     infoContentList = [
-      "${atlasInfo.staking}",
+      "${atlasInfo.getTotalStaking()}",
       "${atlasInfo.signRate}",
       "${atlasInfo.rewardRate}",
-      "${atlasInfo.maxStaking}",
+      "${atlasInfo.getMaxStaking()}",
       "${atlasInfo.home}",
       "${atlasInfo.contact}",
       "${atlasInfo.describe}",
-      "${atlasInfo.feeRate}",
-      "${atlasInfo.feeRateMax}",
-      "${atlasInfo.feeRateTrim}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRate()))}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateMax()))}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateTrim()))}",
       "${atlasInfo.blsKey}",
       "${atlasInfo.blsSign}"
     ];
@@ -280,10 +281,10 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 SizedBox(
                   width: 6,
                 ),
-                Text(
+                /*Text(
                   '${atlasInfoEntity.rank}',
                   style: TextStyle(color: HexColor("#228BA1"), fontSize: 16),
-                ),
+                ),*/
                 Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2.0),
