@@ -109,8 +109,11 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   Future getNetworkData() async {
     try {
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-      var requestList = await Future.wait(
-          [_atlasApi.getMapRecStaking(), client.getMap3NodeInformation(map3Address), AtlasApi.getIntroduceEntity()]);
+      var requestList = await Future.wait([
+        _atlasApi.getMapRecStaking(),
+        client.getMap3NodeInformation(map3Address),
+        AtlasApi.getIntroduceEntity(),
+      ]);
 
       _suggestList = requestList[0];
       _map3nodeInformationEntity = requestList[1];
@@ -263,8 +266,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     var totalPendingDelegation = _map3nodeInformationEntity.totalPendingDelegation.toDouble();
     print("totalPendingDelegation: $totalPendingDelegation");
 
-
-    var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(totalPendingDelegation)}')).toDouble();
+    var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(totalPendingDelegation)}'))
+        .toDouble();
 
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 16, right: 16),
