@@ -7,6 +7,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
@@ -32,13 +33,12 @@ import 'package:titan/src/utils/log_util.dart';
 import '../../../../config.dart';
 
 class AtlasApi {
-
   static Map3IntroduceEntity map3introduceEntity;
 
   static Future<Map3IntroduceEntity> getIntroduceEntity() async {
-    if(map3introduceEntity != null){
+    if (map3introduceEntity != null) {
       return map3introduceEntity;
-    }else{
+    } else {
       var atlasApi = AtlasApi();
       map3introduceEntity = await atlasApi._getMap3Introduce();
       return map3introduceEntity;
@@ -164,6 +164,19 @@ class AtlasApi {
   }
 
   // 查询atlas概览数据
+  Future<AtlasHomeEntity> postAtlasHome(String address) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/home",
+        EntityFactory<AtlasHomeEntity>(
+          (json) => AtlasHomeEntity.fromJson(json),
+        ),
+        params: {
+          "address": address,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 查询atlas概览数据
   Future<CommitteeInfoEntity> postAtlasOverviewData() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/outline",
@@ -279,10 +292,10 @@ class AtlasApi {
 
   // 查询查询我创建的节点
   Future<List<Map3InfoEntity>> getMap3NodeListByMyJoin(
-      String address, {
-        int page = 1,
-        int size = 10,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 10,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_i_join",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -298,10 +311,10 @@ class AtlasApi {
 
   // 查询查询Map3节点列表
   Future<List<Map3InfoEntity>> getMap3NodeListStarted(
-      String address, {
-        int page = 1,
-        int size = 10,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 10,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_started",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -315,14 +328,12 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-
-
   // 查询查询Map3节点列表
   Future<List<Map3InfoEntity>> getMap3NodeList(
-      String address, {
-        int page = 1,
-        int size = 0,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 0,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -338,14 +349,14 @@ class AtlasApi {
 
   // 查询查询Map3节点列表:查询查询待启动节点，未达到最小抵押量的
   Future<Map3StakingEntity> getMap3StakingList(
-      String address, {
-        int page = 1,
-        int size = 0,
-      }) async {
+    String address, {
+    int page = 1,
+    int size = 0,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list",
-        EntityFactory<Map3StakingEntity>((json) => Map3StakingEntity.fromJson(json))
-            ,
+        EntityFactory<Map3StakingEntity>(
+            (json) => Map3StakingEntity.fromJson(json)),
         params: {
           "address": address,
           "page": page,
@@ -481,9 +492,8 @@ class AtlasApi {
   Future<List<String>> getMap3RecCreate() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/rec_create",
-        EntityFactory<List<String>>((list) => (list as List)
-            .map((item) => "$item")
-            .toList()),
+        EntityFactory<List<String>>(
+            (list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
 
@@ -491,25 +501,21 @@ class AtlasApi {
   Future<List<String>> getMapRecStaking() async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/rec_staking",
-        EntityFactory<List<String>>((list) => (list as List)
-            .map((item) => "$item")
-            .toList()),
+        EntityFactory<List<String>>(
+            (list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
-
 
   // 查询map3首页数据
   Future<Map3HomeEntity> getMap3Home(String address) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/home",
         EntityFactory<Map3HomeEntity>(
-              (json) => Map3HomeEntity.fromJson(json),
+          (json) => Map3HomeEntity.fromJson(json),
         ),
         params: {
           "address": address,
         },
         options: RequestOptions(contentType: "application/json"));
   }
-
-
 }

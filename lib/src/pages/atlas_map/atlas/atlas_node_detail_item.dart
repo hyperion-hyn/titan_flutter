@@ -23,7 +23,11 @@ class AtlasNodeDetailItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}', );
+          Application.router.navigateTo(
+            context,
+            Routes.atlas_detail_page +
+                '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}',
+          );
         },
         child: Container(
           decoration: BoxDecoration(
@@ -39,9 +43,9 @@ class AtlasNodeDetailItem extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Image.asset(
                       "res/drawable/map3_node_default_avatar.png",
@@ -86,7 +90,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
                           child: Text(
                             '节点号：${_atlasInfo.nodeId}',
                             style: TextStyle(
@@ -95,7 +99,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          height: 4,
+                          height: 8,
                         ),
                         Container(
                           color: HexColor("#1FB9C7").withOpacity(0.08),
@@ -126,7 +130,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: _atlasInfo.rewardRate,
+                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.getRewardRate() ?? '0'))}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
@@ -141,7 +145,8 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: _atlasInfo.staking,
+                                  text:
+                                      '${FormatUtil.stringFormatNum(_atlasInfo.getTotalStaking())}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
@@ -161,33 +166,48 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                     color: Colors.grey, fontSize: 12)),
                             TextSpan(text: ' '),
                             TextSpan(
-                                text: _atlasInfo.feeRate,
+                                text:
+                                    '${FormatUtil.formatPercent(double.parse(_atlasInfo.getFeeRate() ?? '0'))}',
                                 style: TextStyle(
                                   fontSize: 12,
                                 ))
                           ])),
                         ),
-                        Expanded(
-                          child: Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: '状态: ',
-                                style: TextStyle(
-                                    color: Colors.grey, fontSize: 12)),
-                            TextSpan(text: ' '),
-                            TextSpan(
-                                text: '正常',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                ))
-                          ])),
-                        )
+//                        Expanded(
+//                          child: Text.rich(TextSpan(children: [
+//                            TextSpan(
+//                                text: '状态: ',
+//                                style: TextStyle(
+//                                    color: Colors.grey, fontSize: 12)),
+//                            TextSpan(text: ' '),
+//                            TextSpan(
+//                                text: '正常',
+//                                style: TextStyle(
+//                                  fontSize: 12,
+//                                ))
+//                          ])),
+//                        )
                       ],
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 8.0,
-                ),
+                Row(children: [
+                  Spacer(),
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      vertical: 0.0,
+                      horizontal: 8.0,
+                    ),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: HexColor('#FF00E4A1'),
+                      borderRadius: BorderRadius.circular(
+                        16.0,
+                      ),
+                    ),
+                  ),
+                ]),
               ],
             ),
           ),

@@ -1,12 +1,33 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 
-import 'map3_info_entity.dart';
-
-part 'atlas_info_entity.g.dart';
+part 'atlas_home_entity.g.dart';
 
 @JsonSerializable()
-class AtlasInfoEntity extends Object {
+class AtlasHomeEntity extends Object {
+  @JsonKey(name: 'info')
+  CommitteeInfoEntity info;
+
+  @JsonKey(name: 'my_nodes')
+  List<AtlasHomeNode> atlasHomeNodeList;
+
+  @JsonKey(name: 'points')
+  String points;
+
+  AtlasHomeEntity(
+    this.info,
+    this.atlasHomeNodeList,
+    this.points,
+  );
+
+  factory AtlasHomeEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$AtlasHomeEntityFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$AtlasHomeEntityToJson(this);
+}
+
+@JsonSerializable()
+class AtlasHomeNode extends Object {
   @JsonKey(name: 'address')
   String address;
 
@@ -32,13 +53,13 @@ class AtlasInfoEntity extends Object {
   String describe;
 
   @JsonKey(name: 'fee_rate')
-  String feeRate;
+  int feeRate;
 
   @JsonKey(name: 'fee_rate_max')
-  String feeRateMax;
+  int feeRateMax;
 
   @JsonKey(name: 'fee_rate_trim')
-  String feeRateTrim;
+  int feeRateTrim;
 
   @JsonKey(name: 'home')
   String home;
@@ -47,10 +68,10 @@ class AtlasInfoEntity extends Object {
   int id;
 
   @JsonKey(name: 'max_staking')
-  String maxStaking;
+  int maxStaking;
 
-  @JsonKey(name: 'my_map3')
-  List<Map3InfoEntity> myMap3;
+  @JsonKey(name: 'mod')
+  int mod;
 
   @JsonKey(name: 'name')
   String name;
@@ -61,39 +82,28 @@ class AtlasInfoEntity extends Object {
   @JsonKey(name: 'pic')
   String pic;
 
-  @JsonKey(name: 'rank')
-  int rank;
-
   @JsonKey(name: 'reward')
-  String reward;
+  int reward;
 
   @JsonKey(name: 'reward_history')
-  String rewardHistory;
+  int rewardHistory;
 
   @JsonKey(name: 'reward_rate')
-  String rewardRate;
+  int rewardRate;
 
   @JsonKey(name: 'sign_rate')
-  String signRate;
+  int signRate;
 
   @JsonKey(name: 'staking')
-  String staking;
+  int staking;
 
-  @JsonKey(name: 'staking_creator')
-  String stakingCreator;
-
-  ///AtlasInfoStatus
   @JsonKey(name: 'status')
   int status;
-
-  ///AtlasNodeType
-  @JsonKey(name: 'type')
-  int type;
 
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
-  AtlasInfoEntity(
+  AtlasHomeNode(
     this.address,
     this.blockNum,
     this.blsKey,
@@ -108,48 +118,21 @@ class AtlasInfoEntity extends Object {
     this.home,
     this.id,
     this.maxStaking,
-    this.myMap3,
+    this.mod,
     this.name,
     this.nodeId,
     this.pic,
-    this.rank,
     this.reward,
     this.rewardHistory,
     this.rewardRate,
     this.signRate,
     this.staking,
-    this.stakingCreator,
     this.status,
-    this.type,
     this.updatedAt,
   );
 
-  AtlasInfoEntity.onlyId(this.id);
+  factory AtlasHomeNode.fromJson(Map<String, dynamic> srcJson) =>
+      _$AtlasHomeNodeFromJson(srcJson);
 
-  String getFeeRate() {
-    if (feeRate != null) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate))
-          .toString();
-    }
-    return feeRate;
-  }
-
-  String getTotalStaking(){
-    if(staking != null){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(staking)).toString();
-    }
-    return staking;
-  }
-
-  String getRewardRate(){
-    if(rewardRate != null){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(rewardRate)).toString();
-    }
-    return rewardRate;
-  }
-
-  factory AtlasInfoEntity.fromJson(Map<String, dynamic> srcJson) =>
-      _$AtlasInfoEntityFromJson(srcJson);
-
-  Map<String, dynamic> toJson() => _$AtlasInfoEntityToJson(this);
+  Map<String, dynamic> toJson() => _$AtlasHomeNodeToJson(this);
 }
