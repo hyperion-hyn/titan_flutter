@@ -201,13 +201,15 @@ class AtlasApi {
   }
 
   // 领取atlas奖励
-  Future<TxHashEntity> getAtlasReward(PledgeAtlasEntity entity) async {
+  Future<TxHashEntity> getAtlasReward(String rawTx) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward",
         EntityFactory<TxHashEntity>(
           (json) => TxHashEntity.fromJson(json),
         ),
-        data: entity.toJson(),
+        params: {
+          "raw_tx": rawTx,
+        },
         options: RequestOptions(contentType: "application/json"));
   }
 

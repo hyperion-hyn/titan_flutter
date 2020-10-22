@@ -120,13 +120,14 @@ class HYNApi {
   }
 
   static Future<String> transAtlasReceiveReward(
-    PledgeAtlasEntity pledgeAtlasEntity,
+      String map3Address,
+      String atlasAddress,
     String password,
     localWallet.Wallet wallet,
   ) async {
     var message = CollectAtlasRewardMessage(
-        delegatorAddress: pledgeAtlasEntity.payload.map3Address,
-        validatorAddress: pledgeAtlasEntity.payload.atlasAddress);
+        delegatorAddress: map3Address,
+        validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);

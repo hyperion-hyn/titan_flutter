@@ -7,9 +7,11 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
@@ -47,6 +49,16 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.loadDataBloc != null) {
+      widget.loadDataBloc.listen((state) {
+        if (state is RefreshSuccessState) {
+          getJoinMemberData();
+        }
+      });
+    } else {
+      getJoinMemberData();
+    }
   }
 
   @override
@@ -109,13 +121,8 @@ print("!!!!!getJoin");
   }
 
   Widget _getJoinMemberView() {
-    if(isRefreshed && memberList.length == 0){
-      print("!!!!!build empty  123 ${memberList.length}");
-      return Container();
-    }
-    print("!!!!!build no null");
     return Container(
-      height: 160,
+      height: memberList.isNotEmpty ? 192 : 292,
       child: Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 8),
         child: Column(
@@ -126,7 +133,7 @@ print("!!!!!getJoin");
                 children: <Widget>[
                   Expanded(
                       child:
-                          Text("参与的Map3", style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                      Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -144,7 +151,8 @@ print("!!!!!getJoin");
             SizedBox(
               height: 12,
             ),
-            Expanded(
+            memberList.isNotEmpty
+                ? Expanded(
               child: LoadDataContainer(
                   bloc: loadDataBloc,
                   enablePullDown: false,
@@ -163,7 +171,9 @@ print("!!!!!getJoin");
                     itemCount: memberList.length,
                     scrollDirection: Axis.horizontal,
                   )),
-            ),
+            )
+                : Expanded(child: emptyListWidget(title: "参与的Map3为空", isAdapter: false)),
+            SizedBox(height: 22,),
             Container(
               height: 10,
               color: HexColor("#F2F2F2"),
@@ -220,7 +230,7 @@ print("!!!!!getJoin");
                     ],
                   ),
                 ),
-                if (entity.creator == 1)
+                if (entity.isCreator())
                   Positioned(
                     top: 15,
                     right: 4,

@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
 import 'atlas_info_entity.dart';
+import 'enum_atlas_type.dart';
 import 'map3_atlas_entity.dart';
 import 'user_map3_entity.dart';
 
@@ -133,7 +134,7 @@ class Map3InfoEntity extends Object {
   }
 
   bool isCreator(){
-    return mine?.creator == 1;
+    return mine?.creator == NodeJoinType.CREATOR.index;
   }
   
   Map3InfoEntity.onlyNodeId(this.nodeId);
