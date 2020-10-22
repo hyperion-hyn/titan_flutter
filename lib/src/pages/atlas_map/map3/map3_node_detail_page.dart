@@ -12,6 +12,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
@@ -57,7 +58,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   AtlasApi _atlasApi = AtlasApi();
 
   //0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
-  Map3InfoStatus _map3Status = Map3InfoStatus.PENDING;
+  Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
 
   Wallet _wallet;
@@ -83,25 +84,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     int value = 0;
 
     switch (_map3Status) {
-      case Map3InfoStatus.PRE_CREATE:
-      case Map3InfoStatus.PENDING:
-      case Map3InfoStatus.CANCELLED:
-      case Map3InfoStatus.CANCELLED_COMPLETED:
-      case Map3InfoStatus.FAIL:
+      case Map3InfoStatus.MAP:
+      case Map3InfoStatus.CREATE_SUBMIT_ING:
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+
         value = 0;
         break;
 
-      case Map3InfoStatus.ACTIVE:
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
         value = 1;
         break;
 
-      case Map3InfoStatus.DUE:
+      case Map3InfoStatus.CONTRACT_IS_END:
         value = 2;
         break;
 
       default:
         break;
     }
+
 
     return value;
   }
@@ -111,6 +114,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     double value = 0.0;
 
+    /*
     switch (_map3Status) {
       case Map3InfoStatus.PRE_CREATE:
       case Map3InfoStatus.PENDING:
@@ -129,6 +133,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       default:
         break;
     }
+    */
 
     return value;
   }
@@ -140,6 +145,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _contractStateDesc = "";
 
+    /*
     switch (_map3Status) {
       case Map3InfoStatus.PRE_CREATE:
       case Map3InfoStatus.PENDING:
@@ -163,6 +169,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       default:
         break;
     }
+    */
+
     return _contractStateDesc;
   }
 
@@ -172,6 +180,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     var _contractStateDetail = "";
+    /*
     switch (_map3Status) {
       case Map3InfoStatus.PRE_CREATE:
       case Map3InfoStatus.PENDING:
@@ -198,6 +207,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       default:
         break;
     }
+    */
 
     return _contractStateDetail;
   }
@@ -1077,7 +1087,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       steps: titles.map(
         (title) {
           var index = titles.indexOf(title);
-          var subtitle = subtitles[index] > 0 ? FormatUtil.formatDate(subtitles[index]) : "";
+          //var subtitle = FormatUtil.formatDate(subtitles[index]);
+          var subtitle = "";
           var date = progressHints[index];
           var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 

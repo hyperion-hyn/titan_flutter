@@ -26,6 +26,7 @@ Map3InfoStatus enumMap3InfoStatusFromString(String fruit) {
       .firstWhere((f) => f.toString() == fruit, orElse: () => null);
 }
 
+/*
 enum Map3InfoStatus {
   Map,
   PRE_CREATE,
@@ -35,7 +36,7 @@ enum Map3InfoStatus {
   CANCELLED_COMPLETED,
   ACTIVE,
   DUE,
-}
+}*/
 
 // UserDelegateState
 UserDelegateState enumUserDelegateStateFromString(String fruit) {
