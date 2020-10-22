@@ -1176,7 +1176,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case 6:
-        detail = "创建Map3节点" + " " + amount;
+        detail = "创建Map3节点";
+        // detail = "创建Map3节点" + " " + amount;
         break;
 
       case 7:
@@ -1244,7 +1245,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             height: 8.0,
                           ),
                           Text(
-                            shortBlockChainAddress(" ${item.from}", limitCharsLength: 8),
+                            shortBlockChainAddress(" ${item.from}", limitCharsLength: 6),
                             style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                           ),
                         ],
@@ -1256,7 +1257,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     width: 8,
                   ),
                   Flexible(
-                    flex: 4,
+                    flex: 6,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
@@ -1276,8 +1277,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         Container(
                           height: 8.0,
                         ),
-                        Text(item.createdAt,
-                            // Text(FormatUtil.formatDate(item.createdAt, isSecond: true),
+                        Text(
+                            FormatUtil.formatDateStr(item.createdAt),
                             style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                       ],
                     ),
