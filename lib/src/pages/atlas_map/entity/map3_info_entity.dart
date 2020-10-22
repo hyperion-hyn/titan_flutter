@@ -81,6 +81,9 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'staking')
   String staking;
 
+  @JsonKey(name: 'total_pending_taking')
+  String totalPendingStaking;
+
   @JsonKey(name: 'start_block')
   int startBlock;
 
@@ -116,6 +119,7 @@ class Map3InfoEntity extends Object {
     this.rewardHistory,
     this.rewardRate,
     this.staking,
+    this.totalPendingStaking,
     this.startBlock,
     this.status,
     this.updatedAt,
@@ -136,6 +140,7 @@ class Map3InfoEntity extends Object {
   Map3InfoEntity.onlyNodeId(this.nodeId);
 
   Map3InfoEntity.onlyId(this.id);
+  Map3InfoEntity.onlyStaking(this.staking, this.totalPendingStaking);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) =>
       _$Map3InfoEntityFromJson(srcJson);

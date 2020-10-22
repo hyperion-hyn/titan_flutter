@@ -246,7 +246,18 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   Routes.map3node_broadcast_success_page +
                       "?actionEvent=${widget.message.type}" +
                       "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
-            } else if (result is bool) {
+            }
+            else if (result is List) {
+              Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
+
+              Application.router.navigateTo(
+                  context,
+                  Routes.map3node_broadcast_success_page +
+                      "?actionEvent=${widget.message.type}" +
+                      "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+            }
+
+            else if (result is bool) {
               var isOK = result;
               if (isOK) {
                 Application.router.navigateTo(

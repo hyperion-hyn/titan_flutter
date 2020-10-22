@@ -223,18 +223,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   @override
   void onCreated() {
-    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
-        .activatedWallet
-        ?.wallet;
-    _address = _wallet.getEthAccount().address;
+
+
+    super.onCreated();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet?.getEthAccount()?.address??"";
     _nodeId = widget.map3infoEntity?.nodeId ?? "";
     _nodeAddress = widget.map3infoEntity?.address ?? "";
 
     getContractDetailData();
 
     BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
-
-    super.onCreated();
   }
 
   @override

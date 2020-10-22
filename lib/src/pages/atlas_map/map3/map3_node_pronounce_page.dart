@@ -65,7 +65,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
             autofocus: true,
             controller: _controller,
             keyboardType: widget.keyboardType ?? TextInputType.text,
-            maxLength: 200,
+            maxLength: 60,
             maxLines: 7,
             style: TextStyle(color: HexColor("#333333"), fontSize: 14),
             decoration: InputDecoration(

@@ -496,18 +496,25 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
   final String map3NodeAddress;
   final String amount;
-  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount});
+  final String pendingAmount;
+  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount,this.pendingAmount});
 
   @override
   Future<dynamic> action(String password) async {
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
+    try {
+      var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+      var rawTx = await HYNApi.transMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
 
-    this.entity.rawTx = rawTx;
-    TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
-    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+      this.entity.rawTx = rawTx;
+      TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
+      print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
-    return txHashEntity.txHash.isNotEmpty;
+      return [amount, pendingAmount];
+    } catch(e) {
+      print(e);
+    }
+
+    return false;
   }
 
   @override

@@ -373,7 +373,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
             _joinCoinController,
             endProfit,
             spendManager,
-            false,
             focusNode: _focusNode,
             suggestList: _reCreateList,
             map3introduceEntity: _introduceEntity,
@@ -500,12 +499,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       _selectProviderEntity = providerList[0];
 
       var region = _selectProviderEntity.regions[selectNodeItemValue];
-      _payload.region = region.name;
-      var latLng = region.location.coordinates.first.toString() + "," + region.location.coordinates.last.toString();
-      print("latLng:$latLng");
-      _payload.latLng = latLng;
+      _payload.regionName = region.name;
+      _payload.region = region.id;
+      // var latLng = region.location.coordinates.first.toString() + "," + region.location.coordinates.last.toString();
+      // print("latLng:$latLng");
+      // _payload.latLng = latLng;
 
-      _payload.provider = _selectProviderEntity.name;
+      _payload.provider = _selectProviderEntity.id;
+      _payload.providerName = _selectProviderEntity.name;
 
       _payload.blsAddKey = _blsKeySignEntity.blsKey;
       _payload.blsAddSign = _blsKeySignEntity.blsSign;
