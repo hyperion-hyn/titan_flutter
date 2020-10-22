@@ -116,16 +116,16 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
 
 class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   final String nodeId;
-  final PledgeAtlasEntity pledgeAtlasEntity;
-  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.pledgeAtlasEntity});
+  final String map3Address;
+  final String atlasAddress;
+  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.map3Address,this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasReceiveReward(this.pledgeAtlasEntity, password, wallet);
-    pledgeAtlasEntity.rawTx = rawTx;
+    var rawTx = await HYNApi.transAtlasReceiveReward(map3Address,atlasAddress, password, wallet);
 
-    TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(this.pledgeAtlasEntity);
+    TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
     return txHashEntity.txHash.isNotEmpty;
   }

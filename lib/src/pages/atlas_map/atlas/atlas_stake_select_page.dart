@@ -28,8 +28,9 @@ import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasStakeSelectPage extends StatefulWidget {
   final AtlasInfoEntity _atlasInfoEntity;
+  final List<Map3InfoEntity> myMap3List;
 
-  AtlasStakeSelectPage(this._atlasInfoEntity);
+  AtlasStakeSelectPage(this._atlasInfoEntity,this.myMap3List);
 
   @override
   State<StatefulWidget> createState() {
@@ -47,7 +48,6 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var _selectedMap3NodeValue = 0;
   AtlasApi _atlasApi = AtlasApi();
   var _address;
-  List<Map3InfoEntity> myMap3List = [];
 
   @override
   void initState() {
@@ -117,9 +117,9 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
 
   _map3NodeSelection() {
     List<DropdownMenuItem> _map3NodeItems = List();
-    if (myMap3List.length > 0) {
-      _map3NodeItems.addAll(List.generate(myMap3List.length, (index) {
-        Map3InfoEntity map3nodeEntity = myMap3List[index];
+    if (widget.myMap3List.length > 0) {
+      _map3NodeItems.addAll(List.generate(widget.myMap3List.length, (index) {
+        Map3InfoEntity map3nodeEntity = widget.myMap3List[index];
         return DropdownMenuItem(
           value: index,
           child: Text(
@@ -207,15 +207,10 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       "${atlasInfo.blsSign}"
     ];
 
-    var resultList = await Future.wait([_atlasApi.getMap3NodeListByMyCreate(_address, size: 10000)]);
-    myMap3List = resultList[0];
-
-    Future.delayed(Duration(milliseconds: 2000), () {
-      if (mounted)
-        setState(() {
-          _currentState = null;
-        });
-    });
+    if (mounted)
+      setState(() {
+        _currentState = null;
+      });
   }
 
   _bottomBtn() {
@@ -224,13 +219,13 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
-          if(myMap3List.length == 0){
+          if(widget.myMap3List.length == 0){
             return;
           }
           AtlasMessage message = ConfirmAtlasStakeMessage(
             nodeId: widget._atlasInfoEntity.nodeId,
             atlasAddress: widget._atlasInfoEntity.address,
-            map3Address: myMap3List[_selectedMap3NodeValue].address,
+            map3Address: widget.myMap3List[_selectedMap3NodeValue].address,
           );
           Navigator.push(
               context,
