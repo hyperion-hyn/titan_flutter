@@ -17,7 +17,9 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
+import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
+import 'package:titan/src/pages/node/model/node_provider_entity.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
@@ -61,7 +63,21 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
 
-  bool _haveNextEpisode = false;
+  get _isVisibleNotification {
+    var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+    var staking = ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse(
+      widget.map3infoEntity?.staking ?? "0",
+    )).toDouble();
+    var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
+    var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
+
+    var condition1 =
+        (_map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status == Map3InfoStatus.CONTRACT_IS_END);
+
+    return condition0 || condition1;
+  }
+
   bool _visible = false;
   bool _isTransferring = false;
 
@@ -222,6 +238,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   final client = WalletUtil.getWeb3Client(true);
   Map3NodeInformationEntity _map3nodeInformationEntity;
 
+  NodeApi _nodeApi = NodeApi();
+  NodeProviderEntity _selectProviderEntity;
+  Regions _selectedRegion;
+
   @override
   void onCreated() {
     super.onCreated();
@@ -237,8 +257,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _nodeAddress = widget.map3infoEntity?.address ?? "";
 
     getContractDetailData();
-
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
   }
 
   @override
@@ -304,7 +322,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
-        //appBar: AppBar(centerTitle: true, title: Text(S.of(context).node_contract_detail)),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
@@ -324,22 +341,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               onLoadingMore: getJoinMemberMoreData,
               child: CustomScrollView(
                 slivers: <Widget>[
-                  if (_haveNextEpisode) SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
-                  // 0.合约介绍信息
+                  // 0.通知
+                  SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
 
+                  // 1.合约介绍信息
                   SliverToBoxAdapter(
-                    child: _getMap3NodeInfoItem(context),
+                    child: _map3NodeInfoItem(context),
                   ),
                   _spacer(),
+
+                  // 2
                   SliverToBoxAdapter(
                     child: _nodeNextTimesWidget(),
                   ),
                   _spacer(isVisible: _canPreEdit),
+
                   // 3.合约状态信息
                   // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益
                   SliverToBoxAdapter(child: _contractProfitWidget()),
                   _spacer(),
 
+                  // 3.2服务器
                   SliverToBoxAdapter(child: _nodeServerWidget()),
                   _spacer(),
 
@@ -348,7 +370,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(child: _lineSpacer()),
                   _spacer(),
 
-                  // 3.1合约进度状态
+                  // 3.2合约进度状态
                   SliverToBoxAdapter(child: _contractProgressWidget()),
                   _spacer(),
 
@@ -369,7 +391,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _spacer(),
 
                   // 5.合约流水信息
-
                   SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
 
                   _delegateRecordList.isNotEmpty
@@ -523,9 +544,29 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _topNextEpisodeNotifyWidget() {
+    if (!_isVisibleNotification) return Container();
+
+    var notification = "";
+    switch (_map3Status) {
+      case Map3InfoStatus.CONTRACT_IS_END:
+        // "第二期已经开启，前往查看  >>"
+        notification = "节点已到期，将在下个纪元结算……";
+        break;
+
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        notification = "节点已终止，抵押金额已返回您的钱包……";
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        notification = "抵押已满100W，将在下个纪元启动……";
+        break;
+
+      default:
+        break;
+    }
+
     return Container(
       color: HexColor("#1FB9C7").withOpacity(0.08),
-      //margin: const EdgeInsets.only(top: 8.0),
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
       child: Row(
         children: <Widget>[
@@ -538,9 +579,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Text(
-                //"第二期已经开启，前往查看  >>",
-                //style: TextStyle(fontSize: 12, color: HexColor("#5C4304")),
-                "你的最新抵押：60,000HYN，待处理中…",
+                notification,
                 style: TextStyle(fontSize: 12, color: HexColor("#333333")),
               ),
             ),
@@ -550,7 +589,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _getMap3NodeInfoItem(BuildContext context) {
+  Widget _map3NodeInfoItem(BuildContext context) {
     if (_map3infoEntity == null) return Container();
 
     var nodeName = _map3infoEntity?.name ?? "***";
@@ -566,7 +605,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        //_map3StatusDesc = "映射中";
         _map3StatusDesc = "待启动";
         _map3StatusColor = HexColor("#228BA1");
         break;
@@ -578,7 +616,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         _map3StatusDesc = "启动中";
-        var _map3StatusColor = HexColor("#228BA1");
+        _map3StatusColor = HexColor("#228BA1");
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
@@ -593,6 +631,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
         _map3StatusDesc = "撤销中";
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+
+      default:
+        _map3StatusDesc = "映射中";
         _map3StatusColor = HexColor("#228BA1");
         break;
     }
@@ -717,6 +760,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _nodeNextTimesWidget() {
     if (!_canPreEdit) return Container();
 
+    // todo
+    var haveEdit = false;
+    var newFeeRate = "10%";
+    bool autoRenew = false;
+
+    var lastFeeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
+    var feeRate = haveEdit?newFeeRate:lastFeeRate;
+    var statusDesc = autoRenew?"已开启":"未开启";
+    var editDateLimit = "（请在纪元${_map3infoEntity.startBlock} - 纪元${_map3infoEntity.endBlock}之前修改）";
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -727,20 +780,28 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               children: <Widget>[
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(text: "（请在 2020.8.29 之前修改）", style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 SizedBox(
                   height: 30,
                   child: InkWell(
                     onTap: () {
+                      if (haveEdit) return;
+
                       Application.router.navigateTo(
                           context,
                           Routes.map3node_pre_edit_page +
                               "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
                     },
-                    child: Center(child: Text("修改", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
-                    //style: TextStyles.textC906b00S13),
+                    child: Center(
+                        child: Text(
+                      "修改",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: haveEdit ? HexColor("#999999") : HexColor("#1F81FF"),
+                      ),
+                    )),
                   ),
                 ),
               ],
@@ -761,7 +822,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      "已开启",
+                      statusDesc,
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
@@ -787,7 +848,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      "20%",
+                      feeRate,
                       style: TextStyle(
                         color: HexColor("#333333"),
                         fontSize: 14,
@@ -1028,8 +1089,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var totalDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
-          widget.map3infoEntity?.staking ?? "0",
-        )).toString());
+      widget.map3infoEntity?.staking ?? "0",
+    )).toString());
     var feeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
 
     return Container(
@@ -1489,6 +1550,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+
+      var providerList = await _nodeApi.getNodeProviderList();
+      if (providerList.isNotEmpty) {
+        _selectProviderEntity = providerList[0];
+
+        for (var region in _selectProviderEntity.regions) {
+          if (region.id == _map3infoEntity.region) {
+            _selectedRegion = region;
+            break;
+          }
+        }
+      }
 
       // 3.
       Future.delayed(Duration(milliseconds: 100), () {
