@@ -8,7 +8,7 @@ import 'package:titan/src/config/consts.dart';
 
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -50,7 +50,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   var _walletAddress = "";
   Microdelegations _microdelegations;
   final _client = WalletUtil.getWeb3Client(true);
-  List<Map3TxLogEntity> _map3TxLogEntityList = [];
+  List<Map3UserEntity> _map3UserList = [];
 
   @override
   void onCreated() {
@@ -99,7 +99,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         walletAddress,
       );
 
-      _map3TxLogEntityList = await _atlasApi.getMap3StakingLogList(widget.map3infoEntity.address, size: 0);
+      _map3UserList = await _atlasApi.getMap3UserList(widget.map3infoEntity.nodeId, size: 0);
 
       if (mounted) {
         setState(() {
@@ -366,12 +366,13 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 2:
               title = "参与地址";
-              detail = "${_map3TxLogEntityList?.length??0}个";
+              detail = "${_map3UserList?.length ?? 0}个";
               break;
 
             case 3:
               title = "节点总抵押";
-              detail = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(
+              detail = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+                  weiBigInt: BigInt.parse(
                 widget.map3infoEntity?.staking ?? "0",
               )).toString());
 
@@ -379,7 +380,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 4:
               title = "我的抵押";
-              detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}')).toString();
+              detail = ConvertTokenUnit.weiToEther(
+                      weiBigInt: BigInt.parse(
+                          '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'))
+                  .toString();
               break;
 
             default:

@@ -1074,25 +1074,59 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: Text(
-              "800,000",
-              style: TextStyle(
-                  fontSize: 22,
-                  color: HexColor("#BF8D2A"),
-                  fontWeight: FontWeight.w600),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              "总抵押",
-              style: TextStyle(
-                  fontSize: 14,
-                  color: HexColor("#333333"),
-                  fontWeight: FontWeight.normal),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      "800,000",
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#228BA1"),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      "总抵押",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(width: 60,),
+              Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      "100,000",
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#BF8D2A"),
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      "我的奖励",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           Padding(
             padding:
@@ -1100,9 +1134,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             child: profitListBigWidget(
               [
                 {"管理费": "20%"},
-                {"预期年化": "10.3%"},
                 {"我的抵押": "110，000"},
-                {"奖励": "1，000"},
+                {"总奖励": "800，000"},
               ],
             ),
           ),
