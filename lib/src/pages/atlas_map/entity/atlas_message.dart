@@ -192,16 +192,16 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
 
 class ConfirmAtlasStakeMessage implements AtlasMessage {
   final String nodeId;
-  final PledgeAtlasEntity pledgeAtlasEntity;
-  ConfirmAtlasStakeMessage({this.nodeId, this.pledgeAtlasEntity});
+  final String map3Address;
+  final String atlasAddress;
+  ConfirmAtlasStakeMessage({this.nodeId, this.map3Address,this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasStake(this.pledgeAtlasEntity, password, wallet);
-    pledgeAtlasEntity.rawTx = rawTx;
+    var rawTx = await HYNApi.transAtlasStake(map3Address,atlasAddress, password, wallet);
 
-    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
     return txHashEntity.txHash.isNotEmpty;
   }
@@ -213,7 +213,7 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var address = shortBlockChainAddress(activatedWallet.wallet.getAtlasAccount().address);
 
     return ConfirmInfoDescription(
       title: "抵押Atlas节点",
@@ -230,16 +230,16 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 
 class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   final String nodeId;
-  final PledgeAtlasEntity pledgeAtlasEntity;
-  ConfirmAtlasUnStakeMessage({this.nodeId, this.pledgeAtlasEntity});
+  final String map3Address;
+  final String atlasAddress;
+  ConfirmAtlasUnStakeMessage({this.nodeId, this.map3Address,this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasUnStake(this.pledgeAtlasEntity, password, wallet);
-    pledgeAtlasEntity.rawTx = rawTx;
+    var rawTx = await HYNApi.transAtlasUnStake(map3Address,atlasAddress, password, wallet);
 
-    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(this.pledgeAtlasEntity);
+    TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
     return txHashEntity.txHash.isNotEmpty;
   }

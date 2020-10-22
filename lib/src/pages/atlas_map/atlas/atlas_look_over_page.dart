@@ -6,6 +6,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
@@ -99,7 +100,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                           padding: const EdgeInsets.only(top: 28, bottom: 10),
                           child: Text("1、创建并启动一个Map3节点，然后抵押到Atlas节点并享受节点出块奖励", style: TextStyles.textC333S12),
                         ),
-                        Text("马上创建Map3节点", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12)),
+                        Text("", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12)),
                         Padding(
                           padding: const EdgeInsets.only(top: 20, bottom: 10),
                           child: Text("2、抵押一个已经抵押到Atlas节点的Map3节点，这样也能享受到Atlas区块出块的奖励", style: TextStyles.textC333S12),
@@ -111,7 +112,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                                   MaterialPageRoute(
                                       builder: (context) => AtlasStakeListPage(widget._atlasInfoEntity)));
                             },
-                            child: Text("查看当前Atlas的Map3抵押节点", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12))),
+                            child: Text("", style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12))),
                       ],
                     ),
                   ),
@@ -136,16 +137,16 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
   _refreshData() async {
     var atlasInfo = widget._atlasInfoEntity;
     infoContentList = [
-      "${atlasInfo.staking}",
+      "${atlasInfo.getTotalStaking()}",
       "${atlasInfo.signRate}",
       "${atlasInfo.rewardRate}",
-      "${atlasInfo.maxStaking}",
+      "${atlasInfo.getMaxStaking()}",
       "${atlasInfo.home}",
       "${atlasInfo.contact}",
       "${atlasInfo.describe}",
-      "${atlasInfo.feeRate}",
-      "${atlasInfo.feeRateMax}",
-      "${atlasInfo.feeRateTrim}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRate()))}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateMax()))}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateTrim()))}",
       "${atlasInfo.blsKey}",
       "${atlasInfo.blsSign}"];
 

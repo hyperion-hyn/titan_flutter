@@ -23,11 +23,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          Application.router.navigateTo(
-            context,
-            Routes.atlas_detail_page +
-                '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}',
-          );
+          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.address)}', );
         },
         child: Container(
           decoration: BoxDecoration(
@@ -130,7 +126,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.getRewardRate() ?? '0'))}',
+                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))

@@ -5,6 +5,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_detail_edit_page.dart';
@@ -16,29 +19,39 @@ import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/atlas_join_map3_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/simple_line_chart.dart';
 import 'package:titan/src/pages/atlas_map/widget/sliding_viewport_on_selection.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/animation/shake_animation_controller.dart';
 import 'package:titan/src/widget/animation/shake_animation_type.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/animation/custom_shake_animation_widget.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/wallet_widget.dart';
+import 'package:web3dart/src/models/validator_information_entity.dart';
+import 'package:web3dart/web3dart.dart';
 
 class AtlasDetailPage extends StatefulWidget {
   String atlasNodeId;
-  AtlasDetailPage(this.atlasNodeId);
+  String atlasNodeAddress;
+  AtlasDetailPage(this.atlasNodeId,this.atlasNodeAddress);
 
   @override
   State<StatefulWidget> createState() {
@@ -48,7 +61,9 @@ class AtlasDetailPage extends StatefulWidget {
 
 class AtlasDetailPageState extends State<AtlasDetailPage> {
   AtlasApi _atlasApi = AtlasApi();
-  List<Map3InfoEntity> _dataList = List();
+  final _client = WalletUtil.getWeb3Client(true);
+  List<Map3TxLogEntity> _delegateRecordList = List();
+  ValidatorInformationEntity _validatorInformationEntity;
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;
   int _pageSize = 30;
@@ -62,10 +77,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   AtlasInfoEntity _atlasInfoEntity;
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   var _selectedMap3NodeValue = 0;
+  WalletVo _activatedWallet;
 
   @override
   void initState() {
     super.initState();
+    _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     _refreshData();
     _shakeAnimationController = new ShakeAnimationController();
     _leftTextAnimationController = new ShakeAnimationController();
@@ -93,25 +110,28 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   Future _refreshData() async {
     infoContentList.clear();
     _currentPage = 1;
-    _dataList.clear();
+    _delegateRecordList.clear();
 
 //    try {
       var resultList = await Future.wait([
-        _atlasApi.postAtlasInfo(widget.atlasNodeId),
-        _atlasApi.postAtlasMap3NodeList(widget.atlasNodeId, page: _currentPage)
+        _atlasApi.postAtlasInfo(_activatedWallet.wallet.getAtlasAccount().address ,widget.atlasNodeId),
+        _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
+        _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress))
+//        _atlasApi.postAtlasMap3NodeList(widget.atlasNodeId, page: _currentPage)
       ]);
       _atlasInfoEntity = resultList[0];
-      _dataList = resultList[1];
+    _delegateRecordList = resultList[1];
+    _validatorInformationEntity = resultList[2];
 
-      infoContentList.add("${_atlasInfoEntity.maxStaking}");
+      infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
       infoContentList.add("${_atlasInfoEntity.home}");
       infoContentList.add("${_atlasInfoEntity.contact}");
       infoContentList.add("${_atlasInfoEntity.describe}");
-      infoContentList.add("${_atlasInfoEntity.feeRate}");
-      infoContentList.add("${_atlasInfoEntity.feeRateMax}");
-      infoContentList.add("${_atlasInfoEntity.feeRateTrim}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
 
-      _dataList.forEach((element) {
+      /*_dataList.forEach((element) {
         element.name = "haha";
         element.address = "121112121";
         element.rewardRate = "11%";
@@ -119,7 +139,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
         element.relative = Map3AtlasEntity.onlyId(11, 1);
         element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
-      });
+      });*/
 
       if (mounted)
         setState(() {
@@ -180,9 +200,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   _loadMoreData() async {
     _currentPage++;
 
-    var _netDataList = await _atlasApi.postAtlasMap3NodeList(_atlasInfoEntity.nodeId, page: _currentPage);
+    var _netDataList = await _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress,page: _currentPage);
 
-    _netDataList.forEach((element) {
+    /*_netDataList.forEach((element) {
       element.name = "haha";
       element.address = "121112121";
       element.rewardRate = "11%";
@@ -190,10 +210,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
       element.relative = Map3AtlasEntity.onlyId(11, 1);
       element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
-    });
+    });*/
 
     if (_netDataList != null) {
-      _dataList.addAll(_netDataList);
+      _delegateRecordList.addAll(_netDataList);
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } else {
       _loadDataBloc.add(LoadMoreEmptyEvent());
@@ -232,10 +252,17 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   _nodeInfoWidget(),
 //                  _chartDetailWidget(),
                   _joinMap3Widget(),
+                  _delegateRecordList.isNotEmpty?
                   SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
+                        return delegateRecordItemWidget(_delegateRecordList[index]);
+                      }, childCount: _delegateRecordList.length))
+
+                      : emptyListWidget(title: "节点记录为空"),
+                  /*SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
                     return _joinMap3Item(index);
-                  }, childCount: _dataList.length + 1))
+                  }, childCount: _stackMap3List.length + 1))*/
                 ],
               )),
         ),
@@ -399,15 +426,27 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       }).toList());
     }
 
+    var leftReward = 0;
+    var historyReward = 0;
+    if(_validatorInformationEntity != null && _validatorInformationEntity.redelegations != null){
+      _validatorInformationEntity.redelegations.forEach((element) {
+        leftReward = leftReward + ConvertTokenUnit.weiToEther(weiInt:element.reward.toInt()).toInt();
+      });
+      historyReward = ConvertTokenUnit.weiToEther(weiInt:_validatorInformationEntity.blockReward.toInt()).toInt();
+    }
+
     return SliverToBoxAdapter(
       child: Stack(
-        alignment: Alignment.bottomCenter,
         children: <Widget>[
-          Container(
-              width: double.infinity,
-              child: Image.asset("res/drawable/bg_atlas_get_money.png", width: double.infinity)),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+                width: double.infinity,
+                child: Image.asset("res/drawable/bg_atlas_get_money.png", width: double.infinity)),
+          ),
           Column(
             children: <Widget>[
+              SizedBox(height: 40,),
               InkWell(
                 onTap: () {
                   var nodeJoinType;
@@ -491,7 +530,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           ],
                           content: "你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。",
                         );
-
                         break;
                     }
                   }
@@ -499,34 +537,43 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: CustomShakeAnimationWidget(
-                          shakeAnimationController: _leftTextAnimationController,
-                          shakeAnimationType: ShakeAnimationType.TopBottomShake,
-                          shakeRange: 0.3,
-                          child: Text(
-                            "点击领取",
-                            style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
-                          )),
-                    ),
+                    if(showMyMap3)
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 20.0),
+                            child: CustomShakeAnimationWidget(
+                                shakeAnimationController: _leftTextAnimationController,
+                                shakeAnimationType: ShakeAnimationType.TopBottomShake,
+                                shakeRange: 0.3,
+                                child: Text(
+                                  "领取奖励",
+                                  style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                                )),
+                          ),
+                        ),
+                      ),
                     CustomShakeAnimationWidget(
                         shakeAnimationController: _shakeAnimationController,
                         shakeAnimationType: ShakeAnimationType.RoateShake,
                         child:
                             Image.asset("res/drawable/ic_atlas_get_money_wallet.png", width: 86, fit: BoxFit.contain)),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: CustomShakeAnimationWidget(
-                          shakeAnimationController: _rightTextAnimationController,
-                          shakeAnimationType: ShakeAnimationType.TopBottomShake,
-                          shakeRange: 0.3,
-                          delayForward: 1000,
-                          child: Text(
-                            "${_atlasInfoEntity.reward}",
-                            style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
-                          )),
-                    ),
+                    if(showMyMap3)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: CustomShakeAnimationWidget(
+                              shakeAnimationController: _rightTextAnimationController,
+                              shakeAnimationType: ShakeAnimationType.TopBottomShake,
+                              shakeRange: 0.3,
+                              delayForward: 1000,
+                              child: Text(
+                                "+$leftReward",
+                                style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
+                              )),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -539,7 +586,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(text: "已产生奖励  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
-                        text: "${_atlasInfoEntity.rewardHistory}",
+                        text: "$historyReward",
                         style: TextStyles.textC333S12,
                       ),
                     ])),
@@ -559,7 +606,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${_atlasInfoEntity.staking}", style: TextStyles.textC333S14),
+                                Text("${_atlasInfoEntity.getTotalStaking()}", style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -575,27 +622,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${_atlasInfoEntity.stakingCreator}", style: TextStyles.textC333S14),
+                                Text("${_atlasInfoEntity.getStakingCreator()}", style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
                                 Text("管理节点抵押", style: TextStyles.textC999S10)
-                              ],
-                            ),
-                          ),
-                          Container(
-                            height: 20,
-                            width: 0.5,
-                            color: DefaultColors.colorf2f2f2,
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text("${_atlasInfoEntity.signRate}", style: TextStyles.textC333S14),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text("签名率", style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
@@ -618,89 +649,92 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         ],
                       ),
                     ),
-                    Divider(
-                      height: 1,
-                      indent: 15,
-                      endIndent: 15,
-                      color: DefaultColors.colorf2f2f2,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 14, top: 24.0, bottom: 22),
-                      child: RichText(
-                          text: TextSpan(text: "我的Map3  ", style: TextStyles.textC333S16, children: [
-                        TextSpan(
-                          text: "(切换查看不同Map3节点抵押情况)",
-                          style: TextStyles.textC999S12,
-                        ),
-                      ])),
-                    ),
                     if(showMyMap3)
-                      Container(
-                        margin: const EdgeInsets.only(left: 14, right: 14),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: HexColor('#F2F2F2'),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 13, right: 13),
-                          child: DropdownButtonFormField(
-                            icon: Image.asset(
-                              "res/drawable/ic_arrow_down.png",
-                              width: 14,
-                              height: 14,
-                            ),
-                            decoration: InputDecoration(border: InputBorder.none),
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedMap3NodeValue = value;
-                              });
-                            },
-                            value: _selectedMap3NodeValue,
-                            items: _map3NodeItems,
+                      Column(
+                        children: <Widget>[
+                          Divider(
+                            height: 1,
+                            indent: 15,
+                            endIndent: 15,
+                            color: DefaultColors.colorf2f2f2,
                           ),
-                        ),
-                      ),
-                    if(showMyMap3)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 26, bottom: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                      _atlasInfoEntity.myMap3.isEmpty
-                                          ? ""
-                                          : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
-                                      style: TextStyles.textC333S16),
-                                  SizedBox(
-                                    height: 5,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 14, top: 24.0, bottom: 22),
+                            child: RichText(
+                                text: TextSpan(text: "我的Map3  ", style: TextStyles.textC333S16, children: [
+                                  TextSpan(
+                                    text: "(切换查看不同Map3节点抵押情况)",
+                                    style: TextStyles.textC999S12,
                                   ),
-                                  Text("Map3已抵押", style: TextStyles.textC999S12)
-                                ],
+                                ])),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 14, right: 14),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: HexColor('#F2F2F2'),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 13, right: 13),
+                              child: DropdownButtonFormField(
+                                icon: Image.asset(
+                                  "res/drawable/ic_arrow_down.png",
+                                  width: 14,
+                                  height: 14,
+                                ),
+                                decoration: InputDecoration(border: InputBorder.none),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedMap3NodeValue = value;
+                                  });
+                                },
+                                value: _selectedMap3NodeValue,
+                                items: _map3NodeItems,
                               ),
                             ),
-                            Container(
-                              height: 20,
-                              width: 0.5,
-                              color: HexColor("#33000000"),
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: <Widget>[
-                                  Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
-                                      style: TextStyles.textC333S16),
-                                  SizedBox(
-                                    height: 5,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 26, bottom: 18),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text(
+                                          _atlasInfoEntity.myMap3.isEmpty
+                                              ? ""
+                                              : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                          style: TextStyles.textC333S16),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text("Map3已抵押", style: TextStyles.textC999S12)
+                                    ],
                                   ),
-                                  Text("奖励", style: TextStyles.textC999S12)
-                                ],
-                              ),
+                                ),
+                                Container(
+                                  height: 20,
+                                  width: 0.5,
+                                  color: HexColor("#33000000"),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
+                                          style: TextStyles.textC333S16),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Text("奖励", style: TextStyles.textC999S12)
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
+                          )
+                        ],
+                    ),
                   ],
                 ),
               ),
@@ -730,7 +764,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   style: TextStyles.textC333S16,
                 ),
                 Spacer(),
-                InkWell(
+                /*InkWell(
                   onTap: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (BuildContext context) => AtlasDetailEditPage(_atlasInfoEntity)));
@@ -749,7 +783,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -759,123 +793,125 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     );
   }
 
-  _joinMap3Item(int index) {
-    if (index == 0) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 14, right: 14, top: 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              "参与的Map3",
-              style: TextStyles.textC333S16,
-            ),
-            Spacer(),
-            Text("共${_dataList.length}个节点", style: TextStyles.textC999S12)
-          ],
-        ),
-      );
-    }
+//  _joinMap3Item(int index) {
+//    if (index == 0) {
+//      return Padding(
+//        padding: const EdgeInsets.only(left: 14, right: 14, top: 16),
+//        child: Row(
+//          crossAxisAlignment: CrossAxisAlignment.end,
+//          children: <Widget>[
+//            Text(
+//              "节点记录",
+//              style: TextStyles.textC333S16,
+//            ),
+//            Spacer(),
+//            Text("共${_map3TxLogList.length}个节点", style: TextStyles.textC999S12)
+//          ],
+//        ),
+//      );
+//    }
+//
+//    var map3TxLogEntity = _map3TxLogList[index - 1];
+//    return Column(
+//      children: <Widget>[
+//        SizedBox(
+//          height: 17,
+//        ),
+//        Padding(
+//          padding: const EdgeInsets.only(left: 26.0, right: 24),
+//          child: Row(
+//            crossAxisAlignment: CrossAxisAlignment.start,
+//            children: <Widget>[
+//              Padding(
+//                padding: const EdgeInsets.only(right: 10),
+//                child: walletHeaderWidget(map3TxLogEntity.name, isShowShape: false, address: map3TxLogEntity.map3Address),
+//              ),
+//              Expanded(
+//                child: Column(
+//                  crossAxisAlignment: CrossAxisAlignment.start,
+//                  children: <Widget>[
+//                    Row(
+//                      children: <Widget>[
+//                        Text("${map3TxLogEntity.name}", style: TextStyles.textC000S14),
+//                        //todo
+//                        if (map3TxLogEntity.map3Address == _atlasInfoEntity.creator)
+//                          Text("（创建者）", style: TextStyles.textC999S12)
+//                      ],
+//                    ),
+//                    Padding(
+//                      padding: const EdgeInsets.only(top: 5.0),
+//                      child: Text("${shortBlockChainAddress(map3TxLogEntity.map3Address)}", style: TextStyles.textC999S12),
+//                    ),
+//                  ],
+//                ),
+//              ),
+//              Column(
+//                children: <Widget>[
+//                  Row(
+//                    children: <Widget>[
+//                      Text("${HYNApi.getValueByHynType(map3TxLogEntity.type)}", style: TextStyles.textC333S14),
+//                      map3StatusText(map3TxLogEntity)
+//                    ],
+//                  ),
+//                  SizedBox(
+//                    height: 5,
+//                  ),
+//                  Text(
+//                    FormatUtil.formatDateStr(map3TxLogEntity.updatedAt),
+//                    style: TextStyles.textC999S10,
+//                  )
+//                ],
+//              )
+//            ],
+//          ),
+//        ),
+//        SizedBox(
+//          height: 15,
+//        ),
+//        Divider(
+//          color: DefaultColors.colorf2f2f2,
+//          indent: 26,
+//          endIndent: 24,
+//        )
+//      ],
+//    );
+//  }
 
-    var map3InfoEntity = _dataList[index - 1];
-    return Column(
-      children: <Widget>[
-        SizedBox(
-          height: 17,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 26.0, right: 24),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: ClipOval(child: Image.network(map3InfoEntity.home, fit: BoxFit.cover, width: 40, height: 40)),
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text("${map3InfoEntity.name}", style: TextStyles.textC000S14),
-                        if (NodeJoinType.values[map3InfoEntity.relative.creator] == NodeJoinType.CREATOR)
-                          Text("（创建者）", style: TextStyles.textC999S12)
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text("${map3InfoEntity.address}", style: TextStyles.textC999S12),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text("${map3InfoEntity.staking}", style: TextStyles.textC333S14),
-                      map3StatusText(map3InfoEntity)
-                    ],
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    FormatUtil.formatDateStr(map3InfoEntity.updatedAt),
-                    style: TextStyles.textC999S10,
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        Divider(
-          color: DefaultColors.colorf2f2f2,
-          indent: 26,
-          endIndent: 24,
-        )
-      ],
-    );
-  }
-
-  Widget map3StatusText(Map3InfoEntity map3InfoEntity) {
-    var statusText = "";
-    var statuBgColor = "#228BA1";
-    var statuTextColor = "#FFFFFF";
-    switch (Map3AtlasStatus.values[map3InfoEntity.relative.status]) {
-      case Map3AtlasStatus.JOIN_DELEGATE_ING:
-        statusText = "新抵押";
-        statuBgColor = "#228BA1";
-        statuTextColor = "#FFFFFF";
-        break;
-      case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
-        statusText = "撤销中";
-        statuBgColor = "#F2F2F2";
-        statuTextColor = "#CC2D1E";
-        break;
-      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL: //todo 在已抵押中，如果大于起始块高则是新抵押
-        statusText = "已抵押";
-        statuBgColor = "#F2F2F2";
-        statuTextColor = "#999999";
-        break;
-      default:
-        return null;
-    }
-
-    return Container(
-      padding: const EdgeInsets.only(top: 2.0, bottom: 2, left: 7, right: 7),
-      margin: EdgeInsets.only(left: 6),
-      decoration: BoxDecoration(color: HexColor(statuBgColor), borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Text(
-        statusText,
-        style: TextStyle(fontSize: 6, color: HexColor(statuTextColor)),
-      ),
-    );
-  }
+//  Widget map3StatusText(Map3TxLogEntity map3txLogEntity) {
+//    var statusText = "";
+//    var statuBgColor = "#228BA1";
+//    var statuTextColor = "#FFFFFF";
+//    switch (map3txLogEntity.status) {
+//      case 1:
+//      case 2:
+//        statusText = "进行中";
+//        statuBgColor = "#228BA1";
+//        statuTextColor = "#FFFFFF";
+//        break;
+//      case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
+//        statusText = "撤销中";
+//        statuBgColor = "#F2F2F2";
+//        statuTextColor = "#CC2D1E";
+//        break;
+//      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL: //todo 在已抵押中，如果大于起始块高则是新抵押
+//        statusText = "已抵押";
+//        statuBgColor = "#F2F2F2";
+//        statuTextColor = "#999999";
+//        break;
+//      default:
+//        return null;
+//    }
+//
+//    return Container(
+//      padding: const EdgeInsets.only(top: 2.0, bottom: 2, left: 7, right: 7),
+//      margin: EdgeInsets.only(left: 6),
+//      decoration: BoxDecoration(color: HexColor(statuBgColor), borderRadius: BorderRadius.all(Radius.circular(10))),
+//      child: Text(
+//        statusText,
+//        style: TextStyle(fontSize: 6, color: HexColor(statuTextColor)),
+//      ),
+//    );
+//  }
 
   _bottomBtnBar() {
     return Container(
@@ -918,7 +954,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       () {
                         var entity = PledgeAtlasEntity.emptyEntity();
                         AtlasMessage message =
-                            ConfirmAtlasUnStakeMessage(nodeId: _atlasInfoEntity.nodeId, pledgeAtlasEntity: entity);
+                            ConfirmAtlasUnStakeMessage(nodeId: _atlasInfoEntity.nodeId, atlasAddress: widget.atlasNodeAddress,
+                              map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -945,7 +982,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "抵押",
             () {
-              if (_atlasInfoEntity.myMap3 == null) {
+              if (_atlasInfoEntity.myMap3 == null || _atlasInfoEntity.myMap3.isEmpty) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
               } else {
                 Navigator.push(
@@ -969,16 +1006,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       child: Column(
         children: <Widget>[
           AtlasJoinMap3Widget(
-            "${_atlasInfoEntity.id}",
+            "${_atlasInfoEntity.nodeId}",
             "",
             "",
             "",
             isShowInviteItem: false,
             loadDataBloc: _loadDataBloc,
-          ),
-          Container(
-            height: 10,
-            color: HexColor("#F2F2F2"),
           ),
         ],
       ),
