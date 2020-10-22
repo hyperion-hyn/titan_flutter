@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -43,9 +45,13 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   all_page_state.AllPageState _currentState;
   var _selectedMap3NodeValue = 0;
   AtlasApi _atlasApi = AtlasApi();
+  var _address;
+  List<Map3InfoEntity> myMap3List = [];
 
   @override
   void initState() {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
     _refreshData();
     super.initState();
   }
@@ -110,9 +116,9 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
 
   _map3NodeSelection() {
     List<DropdownMenuItem> _map3NodeItems = List();
-    if (widget._atlasInfoEntity.myMap3.length > 0) {
-      _map3NodeItems.addAll(List.generate(widget._atlasInfoEntity.myMap3.length, (index) {
-        Map3InfoEntity map3nodeEntity = widget._atlasInfoEntity.myMap3[index];
+    if (myMap3List.length > 0) {
+      _map3NodeItems.addAll(List.generate(myMap3List.length, (index) {
+        Map3InfoEntity map3nodeEntity = myMap3List[index];
         return DropdownMenuItem(
           value: index,
           child: Text(
@@ -121,6 +127,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
           ),
         );
       }).toList());
+    } else {
+      return Container();
     }
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -197,6 +205,10 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       "${atlasInfo.blsKey}",
       "${atlasInfo.blsSign}"
     ];
+
+    var resultList = await Future.wait([_atlasApi.getMap3NodeListByMyCreate(_address, size: 10000)]);
+    myMap3List = resultList[0];
+
     Future.delayed(Duration(milliseconds: 2000), () {
       if (mounted)
         setState(() {
@@ -211,8 +223,14 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
-          var entity = PledgeAtlasEntity.emptyEntity();
-          AtlasMessage message = ConfirmAtlasStakeMessage(nodeId: widget._atlasInfoEntity.nodeId,pledgeAtlasEntity: entity);
+          if(myMap3List.length == 0){
+            return;
+          }
+          AtlasMessage message = ConfirmAtlasStakeMessage(
+            nodeId: widget._atlasInfoEntity.nodeId,
+            atlasAddress: widget._atlasInfoEntity.address,
+            map3Address: myMap3List[_selectedMap3NodeValue].address,
+          );
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -259,14 +277,16 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                   atlasInfoEntity.name,
                   style: TextStyles.textC333S16,
                 ),
-                SizedBox(width: 6,),
+                SizedBox(
+                  width: 6,
+                ),
                 Text(
                   '${atlasInfoEntity.rank}',
-                  style: TextStyle(color: HexColor("#228BA1"),fontSize: 16),
+                  style: TextStyle(color: HexColor("#228BA1"), fontSize: 16),
                 ),
                 Spacer(),
                 Padding(
-                  padding: const EdgeInsets.only(bottom:2.0),
+                  padding: const EdgeInsets.only(bottom: 2.0),
                   child: Text(
                     "节点号：${atlasInfoEntity.nodeId}",
                     style: TextStyles.textC333S12,

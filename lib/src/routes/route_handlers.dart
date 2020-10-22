@@ -405,7 +405,10 @@ var atlasDetailHandler = Handler(handlerFunc: (context, params) {
   var atlasNodeId = FluroConvertUtils.fluroCnParamsDecode(
     params['atlasNodeId']?.first,
   );
-  return AtlasDetailPage(atlasNodeId);
+  var atlasNodeAddress = FluroConvertUtils.fluroCnParamsDecode(
+    params['atlasNodeAddress']?.first,
+  );
+  return AtlasDetailPage(atlasNodeId,atlasNodeAddress);
 });
 
 //var demoRouteHandler = Handler(

@@ -163,6 +163,21 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  Future<List<Map3TxLogEntity>> getAtlasStakingLogList(String nodeAddress,
+      {int page = 1, int size = 10}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/tx_log",
+        EntityFactory<List<Map3TxLogEntity>>((list) => (list as List)
+            .map((item) => Map3TxLogEntity.fromJson(item))
+            .toList()),
+        params: {
+          "node_address": nodeAddress,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
   // 查询atlas概览数据
   Future<CommitteeInfoEntity> postAtlasOverviewData() async {
     return AtlasHttpCore.instance.postEntity(
@@ -196,13 +211,15 @@ class AtlasApi {
   }
 
   // 抵押atlas节点
-  Future<TxHashEntity> postPledgeAtlas(PledgeAtlasEntity entity) async {
+  Future<TxHashEntity> postPledgeAtlas(String rawTx) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/pledge",
         EntityFactory<TxHashEntity>(
           (json) => TxHashEntity.fromJson(json),
         ),
-        data: entity.toJson(),
+        params: {
+          "raw_tx": rawTx,
+        },
         options: RequestOptions(contentType: "application/json"));
   }
 

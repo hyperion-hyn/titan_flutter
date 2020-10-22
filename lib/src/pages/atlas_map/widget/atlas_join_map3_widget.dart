@@ -5,26 +5,30 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:characters/characters.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasJoinMap3Widget extends StatefulWidget {
-  final String nodeAddress;
+  final String nodeId;
   final String remainDay;
   final String shareName;
   final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  AtlasJoinMap3Widget(this.nodeAddress, this.remainDay, this.shareName, this.shareUrl,
+  AtlasJoinMap3Widget(this.nodeId, this.remainDay, this.shareName, this.shareUrl,
       {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
@@ -35,9 +39,10 @@ class AtlasJoinMap3Widget extends StatefulWidget {
 
 class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
-  int _currentPage = 0;
+  int _currentPage = 1;
   AtlasApi _atlasApi = AtlasApi();
-  List<Map3UserEntity> memberList = [];
+  List<Map3InfoEntity> memberList = [];
+  bool isRefreshed = false;
 
   @override
   void initState() {
@@ -62,17 +67,23 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   }
 
   void getJoinMemberData() async {
-    _currentPage = 0;
+    isRefreshed = false;
+    print("!!!!!getJoin  1111331");
+    _currentPage = 1;
 
-    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
-
+    List<Map3InfoEntity> tempMemberList = await _atlasApi.postAtlasMap3NodeList(widget.nodeId, page: _currentPage);
+print("!!!!!getJoin");
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
+      print("!!!!!build empty  444 ${memberList.length}");
       setState(() {
         if (tempMemberList.length > 0) {
           memberList = [];
         }
+        print("!!!!!build empty  555 ${memberList.length}");
         memberList.addAll(tempMemberList);
+        isRefreshed = true;
+        print("!!!!!build empty  666 ${memberList.length}");
         loadDataBloc.add(RefreshSuccessEvent());
       });
     }
@@ -81,7 +92,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   void getJoinMemberMoreData() async {
     try {
       _currentPage++;
-      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeAddress, page: _currentPage);
+      List<Map3InfoEntity> tempMemberList = await _atlasApi.postAtlasMap3NodeList(widget.nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -98,6 +109,11 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
   }
 
   Widget _getJoinMemberView() {
+    if(isRefreshed && memberList.length == 0){
+      print("!!!!!build empty  123 ${memberList.length}");
+      return Container();
+    }
+    print("!!!!!build no null");
     return Container(
       height: 160,
       child: Padding(
@@ -110,7 +126,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                 children: <Widget>[
                   Expanded(
                       child:
-                          Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                          Text("参与的Map3", style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -148,17 +164,17 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     scrollDirection: Axis.horizontal,
                   )),
             ),
+            Container(
+              height: 10,
+              color: HexColor("#F2F2F2"),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _itemBuilder(Map3UserEntity entity) {
-    String showName = entity.name;
-    if (showName.isNotEmpty) {
-      showName = showName.characters.first;
-    }
+  Widget _itemBuilder(Map3InfoEntity entity) {
     return InkWell(
       onTap: () => _pushTransactionDetailAction(entity),
       child: Padding(
@@ -186,7 +202,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        child: walletHeaderWidget(showName, isShowShape: false, address: entity.address),
+                        child: walletHeaderWidget(entity.name, isShowShape: false, address: entity.address),
                       ),
                       SizedBox(
                         height: 8,
@@ -224,14 +240,19 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
     );
   }
 
-  void _pushTransactionDetailAction(Map3UserEntity item) {
-    var url = EtherscanApi.getAddressDetailUrl(
+  void _pushTransactionDetailAction(Map3InfoEntity item) {
+    Application.router.navigateTo(
+      context,
+      Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
+    );
+
+    /*var url = EtherscanApi.getAddressDetailUrl(
         item.address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
     if (url != null) {
-      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
+      *//* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
       String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
       Application.router.navigateTo(context, Routes.toolspage_webview_page
-          + '?initUrl=$webUrl&title=$webTitle');*/
+          + '?initUrl=$webUrl&title=$webTitle');*//*
 
       Navigator.push(
           context,
@@ -240,6 +261,6 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     initUrl: url,
                     title: "",
                   )));
-    }
+    }*/
   }
 }

@@ -23,7 +23,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}', );
+          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.address)}', );
         },
         child: Container(
           decoration: BoxDecoration(
