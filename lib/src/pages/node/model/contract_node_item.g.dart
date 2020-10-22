@@ -10,9 +10,7 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
   return ContractNodeItem(
     json['id'] as int,
     json['contractCode'] as String,
-    json['contract'] == null
-        ? null
-        : NodeItem.fromJson(json['contract'] as Map<String, dynamic>),
+    json['contract'] == null ? null : NodeItem.fromJson(json['contract'] as Map<String, dynamic>),
     json['owner'] as String,
     json['ownerName'] as String,
     json['amountDelegation'] as String,
@@ -31,11 +29,11 @@ ContractNodeItem _$ContractNodeItemFromJson(Map<String, dynamic> json) {
     json['remoteNodeUrl'] as String,
     json['appSource'] as int,
     json['state'] as String,
+    json['migrate'] == null ? 0 : json['migrate'] as int,
   )..nodeProviderName = json['nodeProviderName'] as String;
 }
 
-Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) => <String, dynamic>{
       'id': instance.id,
       'contractCode': instance.contractCode,
       'contract': instance.contract,
@@ -58,4 +56,5 @@ Map<String, dynamic> _$ContractNodeItemToJson(ContractNodeItem instance) =>
       'remoteNodeUrl': instance.remoteNodeUrl,
       'appSource': instance.appSource,
       'state': instance.state,
+      'migrate': instance.migrate,
     };

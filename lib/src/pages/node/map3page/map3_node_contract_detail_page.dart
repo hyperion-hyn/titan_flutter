@@ -298,7 +298,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_userDelegateState == null) {
       return S.of(context).wait_block_chain_verification;
     }
-    ;
 
     var _contractNotifyDetail = "";
 
@@ -342,12 +341,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
         break;
 
       case UserDelegateState.DUE_COLLECTED:
-        /*if (double.parse(_contractDetailItem?.withdrawn??"0") == 0) {
-          _contractNotifyDetail = "";
-        } else {
-          var output = "${FormatUtil.amountToString(_contractDetailItem.withdrawn)}HYN";
-          _contractNotifyDetail = S.of(context).your_last_output_to_contract_func(output, S.of(context).task_finished);
-        }*/
 
         if (double.parse(_contractDetailItem.lastRecord.amount) == 0) {
           _contractNotifyDetail = "";
@@ -376,7 +369,6 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
     if (_contractState == null) {
       return S.of(context).wait_block_chain_verification;
     }
-    ;
 
     var _contractStateDetail = "";
     switch (_contractState) {
@@ -421,6 +413,7 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
 
     if (_userDelegateState != null && _is180DaysContract) {
       switch (_userDelegateState) {
+
         case UserDelegateState.ACTIVE:
           var pre = S.of(context).left;
           var suffix = "，${S.of(context).can_withdraw_fifty_reward}";
@@ -428,9 +421,12 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
               pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
 
+
         case UserDelegateState.HALFDUE:
           _contractStateDetail = S.of(context).can_withdraw_fifty_reward;
           break;
+
+/*
 
         case UserDelegateState.PRE_HALFDUE_COLLECTED:
         case UserDelegateState.HALFDUE_COLLECTED:
@@ -439,6 +435,8 @@ class _Map3NodeContractDetailState extends BaseState<Map3NodeContractDetailPage>
           _contractStateDetail =
               pre + FormatUtil.timeStringSimple(context, _contractNodeItem.halfCompleteSecondsLeft) + suffix;
           break;
+*/
+
 
         default:
           break;

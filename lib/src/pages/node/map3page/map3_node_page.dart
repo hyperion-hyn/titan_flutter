@@ -8,7 +8,9 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -370,6 +372,27 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   var fullDesc = "";
   var dateDesc = "";
   var isPending = false;
+  var address =
+      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  bool isMine = contractNodeItem.owner == address;
+  var fullStyle = TextStyles.textC9b9b9bS12;
+
+  setFullDesc() {
+    if (isMine) {
+      if (contractNodeItem.migrate == 0) {
+        fullDesc = "未映射";
+      } else if (contractNodeItem.migrate == 1) {
+        fullDesc = "映射中";
+        fullStyle = TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).primaryColor,
+        );
+      } else if (contractNodeItem.migrate == 2) {
+        fullDesc = "映射完成";
+      }
+    }
+  }
+
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
@@ -382,10 +405,16 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
     case ContractState.ACTIVE:
       dateDesc = S.of(context).left + " " + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
       dateDesc = S.of(context).expired + " " + dateDesc;
+
+      setFullDesc();
+
       break;
 
     case ContractState.DUE:
       dateDesc = S.of(context).contract_had_expired;
+
+      setFullDesc();
+
       break;
 
     case ContractState.CANCELLED:
@@ -541,7 +570,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     )
                   : Expanded(
                       child: RichText(
-                        text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
+                        text: TextSpan(text: fullDesc, style: fullStyle, children: <TextSpan>[]),
                       ),
                     ),
               Visibility(

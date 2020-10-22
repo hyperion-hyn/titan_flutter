@@ -74,6 +74,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'state')
   String state;
 
+  @JsonKey(name: 'migrate')
+  int migrate;
+
   ContractNodeItem(
     this.id,
     this.contractCode,
@@ -96,6 +99,7 @@ class ContractNodeItem extends Object {
     this.remoteNodeUrl,
     this.appSource,
     this.state,
+    this.migrate,
   );
 
   ContractNodeItem.onlyNodeItem(this.contract);
@@ -140,7 +144,7 @@ class ContractNodeItem extends Object {
   double get completeSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int timeLeft = expectDueTime - now;
-    var left =  timeLeft > 0 ? timeLeft : 0;
+    var left = timeLeft > 0 ? timeLeft : 0;
     return left.toDouble();
   }
 
@@ -167,7 +171,7 @@ class ContractNodeItem extends Object {
     return timeLeft > 0 ? timeLeft : 0;
   }*/
 
-/// 对
+  /// 对
   double get halfCompleteSecondsLeft {
     double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
     double totalDue = expectDueTime.toDouble() - instanceActiveTime;
@@ -187,7 +191,6 @@ class ContractNodeItem extends Object {
     double timeLeft = halfTotalDue - overDue;
     return timeLeft <= 0;
   }
-
 
   double get expectHalfDueProgress {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
@@ -221,5 +224,4 @@ class ContractNodeItem extends Object {
   }
 
   ContractState get stateValue => enumContractStateFromString(state);
-
 }
