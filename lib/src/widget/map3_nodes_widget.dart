@@ -20,6 +20,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    print('[Map3NodesWidget] points: ${widget.points}');
   }
 
   @override
@@ -64,7 +65,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${widget.points},
+        data: ${widget.points ?? json.encode({})},
         symbolSize: 4,
         label: {
           normal: {

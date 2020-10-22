@@ -121,21 +121,24 @@ class Map3InfoEntity extends Object {
     this.updatedAt,
   );
 
-  String getFeeRate(){
-    if(feeRate != null){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate)).toString();
+  String getFeeRate() {
+    if (feeRate != null) {
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate))
+          .toString();
     }
     return feeRate;
   }
 
-  bool isCreator(){
+  bool isCreator() {
     return mine?.creator == 1;
   }
-  
+
   Map3InfoEntity.onlyNodeId(this.nodeId);
+
   Map3InfoEntity.onlyId(this.id);
 
-  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);
+  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) =>
+      _$Map3InfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3InfoEntityToJson(this);
 }

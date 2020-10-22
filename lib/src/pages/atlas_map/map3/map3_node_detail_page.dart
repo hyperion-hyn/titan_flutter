@@ -33,9 +33,11 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:titan/src/widget/popup/bubble_widget.dart';
 import 'package:titan/src/widget/popup/pop_route.dart';
 import 'package:titan/src/widget/popup/pop_widget.dart';
@@ -221,7 +223,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   @override
   void onCreated() {
-    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
+        .activatedWallet
+        ?.wallet;
     _address = _wallet.getEthAccount().address;
     _nodeId = widget.map3infoEntity?.nodeId ?? "";
     _nodeAddress = widget.map3infoEntity?.address ?? "";
@@ -316,8 +320,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               onLoadingMore: getJoinMemberMoreData,
               child: CustomScrollView(
                 slivers: <Widget>[
-                  if (_haveNextEpisode) SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
+                  if (_haveNextEpisode)
+                    SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
                   // 0.合约介绍信息
+
                   SliverToBoxAdapter(
                     child: _getMap3NodeInfoItem(context),
                   ),
@@ -326,16 +332,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: _nodeNextTimesWidget(),
                   ),
                   _spacer(),
-
                   // 3.合约状态信息
                   // 3.1最近已操作状态通知 + 总参与抵押金额及期望收益
                   SliverToBoxAdapter(child: _contractProfitWidget()),
                   _spacer(),
 
-                  SliverToBoxAdapter(child: _remortgageWidget()),
+                  SliverToBoxAdapter(child: _nodeServerWidget()),
                   _spacer(),
 
-                  SliverToBoxAdapter(child: _nodeServerWidget()),
+                  SliverToBoxAdapter(child: _remortgageWidget()),
 
                   SliverToBoxAdapter(child: _lineSpacer()),
                   _spacer(),
@@ -366,8 +371,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
+                          return _delegateRecordItemWidget(
+                              _delegateRecordList[index]);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -384,7 +391,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(_moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(
+              _moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -414,7 +422,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                           }
 
                           if (index == 2) {
-                            Application.router.navigateTo(context, Routes.map3node_divide_page);
+                            Application.router.navigateTo(
+                                context, Routes.map3node_divide_page);
                           } else if (index == 0) {
                             if (widget.map3infoEntity != null) {
                               Application.router.navigateTo(
@@ -440,7 +449,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, index == 0 ? 12 : 8, 8, 8),
+                              padding: EdgeInsets.fromLTRB(
+                                  8, index == 0 ? 12 : 8, 8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(
@@ -547,18 +557,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var nodeYearOld = "   节龄: ***天";
-    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
+    var nodeAddress =
+        "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+    var desc = (_map3infoEntity?.describe ?? "").isEmpty
+        ? "大家快来参与我的节点吧，收益高高，收益真的很高，"
+        : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
+        padding:
+            const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -581,8 +595,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text.rich(TextSpan(children: [
-                        TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                        TextSpan(text: nodeYearOld, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                        TextSpan(
+                            text: nodeName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16)),
+                        TextSpan(
+                            text: nodeYearOld,
+                            style: TextStyle(
+                                fontSize: 13, color: HexColor("#333333"))),
                       ])),
                       Container(
                         height: 4,
@@ -597,17 +617,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text("待启动", style: TextStyle(color: HexColor("#228BA1"), fontSize: 12)),
+                      Text("待启动",
+                          style: TextStyle(
+                              color: HexColor("#228BA1"), fontSize: 12)),
                       Container(
                         height: 4,
                       ),
                       Text.rich(TextSpan(children: [
                         TextSpan(
                             text: nodeIdPre,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                color: HexColor("#333333"))),
                         TextSpan(
                             text: nodeId,
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: HexColor("#333333"))),
                       ])),
                     ],
                   ),
@@ -623,7 +651,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     children: <Widget>[
                       Text(
                         descPre,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                        style:
+                            TextStyle(fontSize: 12, color: HexColor("#999999")),
                       ),
                       Flexible(
                         child: Padding(
@@ -633,7 +662,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             maxLines: 3,
                             textAlign: TextAlign.justify,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                            style: TextStyle(
+                                fontSize: 13, color: HexColor("#333333")),
                           ),
                         ),
                       ),
@@ -647,14 +677,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         //color: HexColor("#FF15B2D2"),
                         //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         onTap: () {
-                          var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
-                          Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                          var encodeEntity = FluroConvertUtils.object2string(
+                              _map3infoEntity.toJson());
+                          Application.router.navigateTo(
+                              context,
+                              Routes.map3node_edit_page +
+                                  "?entity=$encodeEntity");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Spacer(),
-                            Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            Text("编辑节点",
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#1F81FF"))),
                           ],
                         ),
                         //style: TextStyles.textC906b00S13),
@@ -674,14 +710,21 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(text: "（请在 2020.8.29 之前修改）", style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: "下期预设",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: "（请在 2020.8.29 之前修改）",
+                      style:
+                          TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 SizedBox(
@@ -693,7 +736,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                           Routes.map3node_pre_edit_page +
                               "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
                     },
-                    child: Center(child: Text("修改", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                    child: Center(
+                        child: Text("修改",
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#1F81FF")))),
                     //style: TextStyles.textC906b00S13),
                   ),
                 ),
@@ -757,118 +803,147 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  Widget _remortgageTitle() {}
+
   Widget _remortgageWidget() {
     Widget _item(String title, String detail) {
       return Text.rich(TextSpan(children: [
         TextSpan(
-            text: title, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
-        TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+            text: title,
+            style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+                color: HexColor("#999999"))),
+        TextSpan(
+            text: detail,
+            style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: HexColor("#333333"))),
       ]));
     }
 
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Text.rich(TextSpan(children: [
-                  TextSpan(text: "复投Atlas共识节点", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                ])),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: HexColor("#F8F8F8"),
-                  borderRadius: BorderRadius.circular(14),
-                ),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text.rich(TextSpan(children: [
+                    TextSpan(
+                        text: "复投Atlas共识节点",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: HexColor("#333333"),
+                        )),
+                  ])),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 42,
-                            height: 42,
-                            child: walletHeaderWidget(
-                              "item.name",
-                              isShowShape: false,
-                              address: "0xkkkkkkkk",
-                              isCircle: false,
+                  decoration: BoxDecoration(
+                    color: HexColor("#F8F8F8"),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 42,
+                              height: 42,
+                              child: walletHeaderWidget(
+                                "item.name",
+                                isShowShape: false,
+                                address: "0xkkkkkkkk",
+                                isCircle: false,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(
+                                        text: "山哥",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16)),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  _item("节点排名：", "2"),
+                                ],
+                              ),
+                            ),
+                            Spacer(),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
-                                Text.rich(TextSpan(children: [
-                                  TextSpan(text: "山哥", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                                ])),
+                                Text("2020/12/12 12:12",
+                                    style: TextStyle(
+                                        color: HexColor("#9B9B9B"),
+                                        fontSize: 12)),
                                 Container(
                                   height: 4,
                                 ),
-                                _item("节点排名：", "2"),
+                                Container(
+                                  color: HexColor("#E3FAFB"),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: Text("出块节点",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: HexColor("#333333"))),
+                                ),
                               ],
-                            ),
-                          ),
-                          Spacer(),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            )
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 18),
+                          child: Row(
                             children: <Widget>[
-                              Text("2020/12/12 12:12", style: TextStyle(color: HexColor("#9B9B9B"), fontSize: 12)),
-                              Container(
-                                height: 4,
+                              Expanded(
+                                child: _item("预期收益：", "12%"),
                               ),
-                              Container(
-                                color: HexColor("#E3FAFB"),
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                child: Text("出块节点",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+                              Expanded(
+                                child: _item("总抵押：", "11,490,490"),
                               ),
                             ],
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 18),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: _item("预期收益：", "12%"),
-                            ),
-                            Expanded(
-                              child: _item("总抵押：", "11,490,490"),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: _item("管理费：", "9%"),
-                            ),
-                            Expanded(
-                              child: _item("签名率：", "98%"),
-                            ),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: _item("管理费：", "9%"),
+                              ),
+                              Expanded(
+                                child: _item("签名率：", "98%"),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -878,20 +953,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: "节点服务",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
                 SizedBox(
                   height: 30,
                   child: InkWell(
                     onTap: _pushNodeInfoAction,
-                    child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                    child: Center(
+                        child: Text("访问节点",
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#1F81FF")))),
                     //style: TextStyles.textC906b00S13),
                   ),
                 ),
@@ -903,55 +985,52 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 20, 6),
-                        child: Image.asset(
-                          "res/drawable/node_server_map.png",
-                          fit: BoxFit.cover,
-                        ),
+                    flex: 1,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Container(
+                        height: 100,
+                        child: Map3NodesWidget(
+                            '[{\"name\":\"${_map3infoEntity.name}\",\"value\":[151.2002,-33.8591]}]'),
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 24,
-                  ),
                   Expanded(
-                    child: Column(
-                      children: [0, 1, 2].map((index) {
-                        var titles = ["API调用", "设备", "位置"];
-                        var details = ["1000万/日", "阿里云机器", "中国香港"];
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Column(
+                        children: [0, 1, 2].map((index) {
+                          var titles = ["API调用", "设备", "位置"];
+                          var details = ["1000万/日", "阿里云机器", "中国香港"];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                  titles[index],
-                                  style: TextStyle(
-                                    color: HexColor("#92979A"),
-                                    fontSize: 14,
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    titles[index],
+                                    style: TextStyle(
+                                      color: HexColor("#92979A"),
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  details[index],
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
+                                Expanded(
+                                  child: Text(
+                                    details[index],
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   )
                 ],
@@ -986,7 +1065,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 18, top: 16),
-                child: Text("节点金额", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                child: Text("节点金额",
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
               ),
             ],
           ),
@@ -994,18 +1074,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             padding: const EdgeInsets.only(top: 12),
             child: Text(
               "800,000",
-              style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 22,
+                  color: HexColor("#BF8D2A"),
+                  fontWeight: FontWeight.w600),
             ),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 6),
             child: Text(
               "总抵押",
-              style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 14,
+                  color: HexColor("#333333"),
+                  fontWeight: FontWeight.normal),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
+            padding:
+                const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
             child: profitListBigWidget(
               [
                 {"管理费": "20%"},
@@ -1030,7 +1117,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
-            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            child: Text("节点进度",
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
@@ -1043,15 +1131,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     height: 10,
                     //color: Colors.red,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
+                        shape: BoxShape.circle,
+                        color: _stateColor,
+                        border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                  TextSpan(
+                      text: _contractStateDesc,
+                      style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
                 Spacer(),
                 Text(
-                  S.of(context).launcher_time_left(FormatUtil.timeStringSimple(context, 0)),
+                  S.of(context).launcher_time_left(
+                      FormatUtil.timeStringSimple(context, 0)),
                   style: TextStyles.textC999S14,
                 ),
               ],
@@ -1096,20 +1189,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           //var subtitle = FormatUtil.formatDate(subtitles[index]);
           var subtitle = "";
           var date = progressHints[index];
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor =
+              _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           return CustomStep(
             title: Text(
               title,
-              style: TextStyle(fontSize: 12, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             progressHint: Text(
               date,
-              style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: HexColor("#4B4B4B"),
+                  fontWeight: FontWeight.normal),
             ),
             subtitle: Text(
               subtitle,
-              style: TextStyle(fontSize: 10, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 10,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             content: Container(),
             isActive: true,
@@ -1143,18 +1246,257 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            Text(S.of(context).account_flow,
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ],
         ),
       ),
     );
   }
 
+  Widget _delegateRecordItemWidget(Map3TxLogEntity item) {
+    var isPending = item.status == 0 || item.status == 1;
+    // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
+
+    var amountValue = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0"))
+        .toDouble();
+    var amount = FormatUtil.formatPrice(amountValue);
+    var detail = "";
+    switch (item.type) {
+      case 0:
+        detail = ConvertTokenUnit.weiToEther(
+                weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0"))
+            .toString();
+        break;
+
+      case 1:
+        detail = "创建atlas节点";
+        break;
+
+      case 2:
+        detail = "修改atlas节点/重新激活Atlas";
+        break;
+
+      case 3:
+        detail = "参与atlas节点抵押";
+        break;
+
+      case 4:
+        detail = "撤销atlas节点抵押";
+        break;
+
+      case 5:
+        detail = "领取atlas奖励";
+        break;
+
+      case 6:
+        // detail = "创建Map3节点";
+        detail = "创建Map3节点" + " " + amount;
+        break;
+
+      case 7:
+        detail = "编辑Map3节点";
+        break;
+
+      case 8:
+        detail = "终止Map3节点";
+        break;
+
+      case 9:
+        detail = "微抵押" + " " + amount;
+        break;
+
+      case 10:
+        detail = "取消Map3抵押" + " " + amount;
+        break;
+
+      case 11:
+        detail = "提取奖励" + " " + amount;
+        break;
+
+      case 12:
+        detail = "续期map3";
+        break;
+
+      case 13:
+        detail = "裂变map3节点";
+        break;
+    }
+
+    return Container(
+      color: Colors.white,
+      child: Stack(
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              _pushTransactionDetailAction(item);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: walletHeaderWidget(item.name, address: item.from),
+                  ),
+                  Flexible(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              RichText(
+                                text: TextSpan(
+                                  text: item.name,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: HexColor("#000000"),
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                              Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 6),
+                                    child: Text(
+                                      isPending ? "*" : detail,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: HexColor("#333333"),
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  _billStateWidget(item)
+                                ],
+                              ),
+                            ],
+                          ),
+                          Container(
+                            height: 8.0,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                shortBlockChainAddress(" ${item.from}",
+                                    limitCharsLength: 8),
+                                style: TextStyle(
+                                    fontSize: 12, color: HexColor("#999999")),
+                              ),
+                              Spacer(),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Text(FormatUtil.formatDateStr(item.createdAt),
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color: HexColor("#999999"))),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 40,
+            right: 8,
+            child: Container(
+              height: 0.5,
+              color: DefaultColors.colorf5f5f5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _billStateWidget(Map3TxLogEntity item) {
+    // status 自定义： 1.pending；2.wait receipt; 3success; 4.fail;5.drop fail see TransactionXXX
+
+    switch (item.status) {
+      case 1:
+      case 2:
+        return Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [HexColor("#E0B102"), HexColor("#F3D35D")],
+                  begin: FractionalOffset(1, 0.5),
+                  end: FractionalOffset(0, 0.5)),
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              "进行中",
+              style: TextStyle(
+                  fontSize: 6,
+                  color: HexColor("#FFFFFF"),
+                  fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
+
+      case 4:
+      case 5:
+        return Container(
+          decoration: BoxDecoration(
+              color: HexColor("#FF4C3B"),
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              "失败了",
+              style: TextStyle(
+                  fontSize: 6,
+                  color: HexColor("#FFFFFF"),
+                  fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+        break;
+
+      default:
+        return Container(
+          decoration: BoxDecoration(
+              color: HexColor("#F2F2F2"),
+              borderRadius: BorderRadius.all(Radius.circular(12.0))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
+            child: Text(
+              "已完成",
+              style: TextStyle(
+                  fontSize: 6,
+                  color: HexColor("#999999"),
+                  fontWeight: FontWeight.normal),
+            ),
+          ),
+        );
+
+        break;
+    }
+  }
+
   Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
 
-      List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
+      List<Map3TxLogEntity> tempMemberList =
+          await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1181,7 +1523,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
-        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        List<Map3TxLogEntity> tempMemberList =
+            await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
       }
 
@@ -1224,9 +1567,45 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
+  void _pushTransactionDetailAction(Map3TxLogEntity item) {
+    TransactionDetailVo transactionDetail = TransactionDetailVo(
+      id: item.id,
+      contractAddress: item.contractAddress,
+      state: 1,
+      //1 success, 0 pending, -1 failed
+      amount: ConvertTokenUnit.weiToEther(
+              weiBigInt: BigInt.parse(item.dataDecoded.amount))
+          .toDouble(),
+      symbol: "HYN",
+      fromAddress: item.from,
+      toAddress: item.to,
+      time: item.timestamp,
+      nonce: item.nonce.toString(),
+      gasPrice: item.gasPrice,
+      gas: item.gasLimit.toString(),
+      gasUsed: item.gasUsed.toString(),
+      describe: item.dataDecoded.description.details,
+      data: item.data,
+      dataDecoded: item.dataDecoded.toJson(),
+      blockHash: item.blockHash,
+      blockNum: item.blockNum,
+      epoch: item.epoch,
+      transactionIndex: item.transactionIndex,
+      type: item.type, //1、转出 2、转入
+    );
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
+    );
+  }
+
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _joinContractAction() async {
@@ -1242,7 +1621,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     if (_map3infoEntity != null) {
-      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      var entryRouteName =
+          Uri.encodeComponent(Routes.map3node_contract_detail_page);
       await Application.router.navigateTo(
           context,
           Routes.map3node_join_contract_page +
