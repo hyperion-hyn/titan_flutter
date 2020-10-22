@@ -808,7 +808,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _remortgageTitle() {}
 
   Widget _remortgageWidget() {
     Widget _item(String title, String detail) {
