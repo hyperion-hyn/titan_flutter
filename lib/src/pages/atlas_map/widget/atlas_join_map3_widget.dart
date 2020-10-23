@@ -128,7 +128,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                 children: <Widget>[
                   Expanded(
                       child:
-                      Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
+                      Text("参与的Map3", style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
                   /*Text(
                     "剩余时间：${widget.remainDay}天",
                     style: TextStyles.textC999S14,
@@ -207,7 +207,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        child: walletHeaderWidget(entity.name, isShowShape: false, address: entity.address),
+                        child: iconMap3Widget(entity,isCircle: true),
                       ),
                       SizedBox(
                         height: 8,
