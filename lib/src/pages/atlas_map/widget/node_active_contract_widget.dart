@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
@@ -101,23 +102,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              width: 42,
-              height: 42,
-              child: walletHeaderWidget(
-                item.name,
-                isShowShape: false,
-                address: item.address,
-                isCircle: false,
-              ),
-            ),
-            /*Image.asset(
-              "res/drawable/map3_node_default_avatar.png",
-              //"res/drawable/ic_map3_node_item_contract.png",
-              width: 42,
-              height: 42,
-              fit: BoxFit.cover,
-            ),*/
+            iconWidget(item),
             SizedBox(
               height: 12,
             ),
