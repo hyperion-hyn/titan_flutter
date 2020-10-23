@@ -7,15 +7,11 @@ import 'package:titan/src/utils/format_util.dart';
 class TimerTextWidget extends StatefulWidget {
   final int remainTime;
   final int loopTime;
-  final Function loopFunc;
-  final bool isLoopFunc;
 
   TimerTextWidget({
     @required this.remainTime,
     @required this.loopTime,
     bool isSeconds,
-    this.loopFunc,
-    this.isLoopFunc,
   });
 
   @override
@@ -60,13 +56,9 @@ class TimerTextState extends State<TimerTextWidget> {
       setState(() {
         if (_remainTime == 0) {
           _remainTime = widget.loopTime;
-          if (widget.isLoopFunc) {
-            widget.loopFunc();
-          }
         } else {
           _remainTime--;
         }
-
       });
     });
   }

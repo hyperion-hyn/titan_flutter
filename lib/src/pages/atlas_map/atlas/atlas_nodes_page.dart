@@ -60,6 +60,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   bool get wantKeepAlive => true;
 
+  Timer _timer;
+
   @override
   void initState() {
     super.initState();
@@ -68,10 +70,26 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       vsync: this,
       duration: Duration(seconds: 10),
     )..repeat();
+
+    _initTimer();
+  }
+
+  _initTimer() {
+    ///refresh epoch
+    ///
+    _timer = Timer.periodic(Duration(seconds: 7), (t) {
+      print('[AtlasNodePage] refresh epoch');
+      _getData();
+    });
   }
 
   @override
   void dispose() {
+    if (_timer != null) {
+      if (_timer.isActive) {
+        _timer.cancel();
+      }
+    }
     super.dispose();
     _loadDataBloc.close();
   }
@@ -345,10 +363,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       TimerTextWidget(
                         remainTime: _remainTime,
                         loopTime: _secPerEpoch,
-                        isLoopFunc: _isAutoRefresh,
-                        loopFunc: () {
-                          _getData();
-                        },
                       ),
                     ],
                   )
