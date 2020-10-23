@@ -355,27 +355,31 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }else{
       amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
     }
+
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+      if (transactionDetail.amount > 0) {
+        amountColor = HexColor("#FF259B24");
+        amountText = '+$amountText';
+      }
+    } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
+      if (transactionDetail.amount > 0) {
+        amountColor = HexColor("#FFE51C23");
+        amountText = '-$amountText';
+      }
+    }
+
     var isPending = transactionDetail.state == null;
     var limitLength = isPending ? 4 : 6;
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
       describe = "From: " + shortBlockChainAddress(transactionDetail.fromAddress, limitCharsLength: limitLength);
-      if (transactionDetail.amount > 0) {
-        amountColor = HexColor("#FF259B24");
-        amountText = '+$amountText';
-      }
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
       if(widget.coinVo.coinType == CoinType.HYN_ATLAS){
         describe = "To: " + shortBlockChainAddress(HYNApi.getHynToAddress(transactionDetail), limitCharsLength: limitLength);
       }else{
         describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);
-      }
-
-      if (transactionDetail.amount > 0) {
-        amountColor = HexColor("#FFE51C23");
-        amountText = '-$amountText';
       }
     }
 

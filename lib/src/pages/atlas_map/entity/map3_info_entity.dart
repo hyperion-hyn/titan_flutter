@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'atlas_info_entity.dart';
 import 'enum_atlas_type.dart';
@@ -135,11 +136,11 @@ class Map3InfoEntity extends Object {
   );
 
   String getFeeRate() {
-    if (feeRate != null) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(feeRate))
-          .toString();
-    }
-    return feeRate;
+    return FormatUtil.weiToEtherStr(feeRate);
+  }
+
+  String getStaking() {
+    return FormatUtil.weiToEtherStr(staking);
   }
 
   bool isCreator() {

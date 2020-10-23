@@ -577,6 +577,32 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         children: <Widget>[
           Text('Ropsten环境测试'),
           RaisedButton(
+            child: Text('-测试申请1000万主链HYN'),
+            onPressed: () async {
+              var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+              final client = WalletUtil.getWeb3Client(true);
+              String privateKey = "0x80dd5684b4c5a7218cd97415ec652ed1f11b5b0734f46985b8ed15d3fe91fd33";
+              final credentials = await client.credentialsFromPrivateKey(privateKey);
+              if (activeWallet != null) {
+                var toAddress = activeWallet.getAtlasAccount().address;
+                var amount = ConvertTokenUnit.etherToWei(etherDouble: 10000000);
+                var txHash = await client.sendTransaction(
+                  credentials,
+                  Transaction(
+                    to: EthereumAddress.fromHex(toAddress),
+                    value: EtherAmount.inWei(amount),
+                    gasPrice: EtherAmount.inWei(BigInt.one * BigInt.from(TokenUnit.G_WEI)),
+//                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
+                    maxGas: 21000,
+                    type: MessageType.typeNormal,
+                  ),
+                );
+                logger.i('has is $txHash');
+                UiUtil.toast('-申请HYN成功,请等待6秒');
+              }
+            },
+          ),
+          RaisedButton(
             child: Text('-测试申请0.05ETH'),
             onPressed: () {
               debounce(() async {

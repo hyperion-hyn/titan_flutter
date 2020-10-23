@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'map3_info_entity.dart';
 
@@ -127,7 +128,7 @@ class AtlasInfoEntity extends Object {
   AtlasInfoEntity.onlyId(this.id);
 
   String getFeeRate() {
-    return weiToEtherStr(feeRate);
+    return FormatUtil.weiToEtherStr(feeRate);
   }
 
   String getRewardRate() {
@@ -135,37 +136,26 @@ class AtlasInfoEntity extends Object {
   }
 
   String getFeeRateMax(){
-    return weiToEtherStr(feeRateMax);
+    return FormatUtil.weiToEtherStr(feeRateMax);
   }
 
   String getFeeRateTrim(){
-    return weiToEtherStr(feeRateTrim);
+    return FormatUtil.weiToEtherStr(feeRateTrim);
   }
 
   String getMaxStaking(){
-    return weiToEtherStr(maxStaking);
+    return FormatUtil.weiToEtherStr(maxStaking);
   }
 
   String getTotalStaking(){
-    return weiToEtherStr(staking);
+    return FormatUtil.weiToEtherStr(staking);
   }
 
   String getStakingCreator(){
-    return weiToEtherStr(stakingCreator);
+    return FormatUtil.weiToEtherStr(stakingCreator);
   }
 
-  String weiToEtherStr(dynamic entityParam){
-    if(entityParam == null){
-      return entityParam;
-    }
-    if(entityParam is String){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
-    }else if(entityParam is int){
-      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
-    }else{
-      return "";
-    }
-  }
+
 
   factory AtlasInfoEntity.fromJson(Map<String, dynamic> srcJson) =>
       _$AtlasInfoEntityFromJson(srcJson);
