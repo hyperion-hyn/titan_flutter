@@ -47,6 +47,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   @override
   void initState() {
     super.initState();
+
+    client.printErrors = true;
   }
 
   @override
@@ -85,7 +87,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: BaseAppBar(
-        baseTitle: S.of(context).my_contract,
+        baseTitle: "我的节点",
       ),
       body: _pageView(context),
     );
@@ -121,21 +123,17 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
   void getNetworkData() async {
     try {
-      var requestList = await Future.wait([
-        _atlasApi.getRewardInfo(_address),
-        client.getAllMap3RewardByDelegatorAddress(
-          EthereumAddress.fromHex(_address),
-        ),
-      ]);
+      _rewardEntity = await _atlasApi.getRewardInfo(_address);
+      print("_address:$_address");
 
-      _rewardEntity = requestList[0];
+      _rewardMap = await client.getAllMap3RewardByDelegatorAddress(
+        EthereumAddress.fromHex(_address),
+      );
+      print("_rewardMap:$_rewardMap");
 
-      _rewardMap = requestList[1] ;
-      var value = ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(_rewardMap.values.last));
+      var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(_rewardMap?.values?.last ?? "0"));
       _balance = "${FormatUtil.formatPrice(value.toDouble())}";
-
-      //_balance = "${FormatUtil.formatPrice(double.parse(_rewardEntity?.reward ?? "0"))}";
+      print(_rewardMap);
 
       if (mounted) {
         setState(() {
@@ -296,8 +294,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   }
 
   _showAlertView() {
-    var count = _rewardMap?.values?.length??0;
-    if (count ==0) {
+    var count = _rewardMap?.values?.length ?? 0;
+    if (count == 0) {
       Fluttertoast.showToast(msg: "当期奖励为零哟！");
       return;
     }
@@ -314,7 +312,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
                 amount: _balance,
-                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList()??[],
+                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
               );
               Navigator.push(
                   context,

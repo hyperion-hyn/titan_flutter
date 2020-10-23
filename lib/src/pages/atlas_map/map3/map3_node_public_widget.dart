@@ -151,10 +151,10 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                     Row(
                       children: <Widget>[
                         Text(
-                          shortName(nodeName, limitCharsLength: 5),
+                          shortName(nodeName, limitCharsLength: 8),
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                         ),
-                        SizedBox(width: 16,),
+                        SizedBox(width: 12,),
 
                         RichText(
                           textAlign: TextAlign.end,

@@ -75,10 +75,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _visibleNotify {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
-    var staking = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-      _map3infoEntity?.staking ?? "0",
-    )).toDouble();
+    var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
 
@@ -274,7 +271,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt())>0?_endRemainEpoch:0}纪元";
+        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt()) > 0 ? _endRemainEpoch : 0}纪元";
 
         break;
 
@@ -295,7 +292,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
-        var staking = double.parse(_map3infoEntity?.getStaking()??"0");
+        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
         var remain = startMin - staking;
         var remainDelegation = FormatUtil.formatPrice(remain);
         _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
@@ -1096,11 +1093,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                   ),
                                 ),
                                 Expanded(
+                                  flex: 2,
                                   child: Text(
                                     details[index],
                                     style: TextStyle(
                                       color: HexColor("#333333"),
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -1121,12 +1119,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
-    if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
+    if (_map3infoEntity == null) return Container();
 
     var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
     var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
 
-    var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
+    var totalReward =
+        FormatUtil.clearScientificCounting(_map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
     var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
@@ -1225,7 +1224,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
             child: profitListBigWidget(
               [
-                {"总奖励": totalRewardString},
+                {"累积产生": totalRewardString},
                 {"管理费": feeRate},
                 {"我的抵押": myDelegationString},
               ],
@@ -1280,9 +1279,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _customStepperWidget() {
     var titles = [
-      S.of(context).create_time,
+      "创建",
       S.of(context).launch_success,
-      "到期时间",
+      "到期",
     ];
     var subtitles = [
       _map3infoEntity.startBlock,
@@ -1291,7 +1290,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ];
     var progressHints = [
       "",
-      S.of(context).n_day(90.toString()),
+      "180纪元",
       "",
     ];
 
