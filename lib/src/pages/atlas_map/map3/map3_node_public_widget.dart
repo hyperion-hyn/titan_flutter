@@ -28,10 +28,34 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
 
 Widget iconAtlasWidget(AtlasInfoEntity infoEntity,{bool isCircle = false}) {
+  if(infoEntity == null){
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4.0),
+      child: FadeInImage.assetNetwork(
+        image: "",
+        placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
   return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address,isCircle: isCircle);
 }
 
 Widget iconMap3Widget(Map3InfoEntity infoEntity,{bool isCircle = false}) {
+  if(infoEntity == null){
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4.0),
+      child: FadeInImage.assetNetwork(
+        image: "",
+        placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
   return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address,isCircle: isCircle);
 }
 
@@ -881,7 +905,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = fals
                 SizedBox(
                   height: 40,
                   width: 40,
-                  child: walletHeaderWidget(item.name, address: item.from),
+                  child: iconWidget("",item.name,item.from,isCircle: true),
                 ),
                 Flexible(
                   flex: 4,
