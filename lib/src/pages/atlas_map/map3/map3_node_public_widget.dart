@@ -66,7 +66,16 @@ Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
 Widget iconWidget(String picture, String name, String address,
     {bool isCircle = false}) {
   if (picture.isNotEmpty) {
-    return iconEmptyDefault();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4.0),
+      child: FadeInImage.assetNetwork(
+        image: picture,
+        placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
+    );
   }
 
   return SizedBox(
