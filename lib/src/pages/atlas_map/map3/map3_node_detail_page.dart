@@ -11,6 +11,8 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
@@ -61,6 +63,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   //0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
+  get _atlasInfoEntity => _map3infoEntity.atlas;
+
   Microdelegations _microDelegations;
   var _currentEpoch;
   var _unlockEpoch;
@@ -121,7 +125,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canJoin => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  get _isCreator => _map3infoEntity.address == _address;
+  get _isCreator => widget.map3infoEntity.address == _address;
   get _isJoiner => !widget.map3infoEntity.isCreator();
 
   get _currentStep {
@@ -351,12 +355,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
             InkWell(
-              onTap: !_canExitAndCancel ? _showMoreAlertView : _shareAction,
+              onTap: _canExitAndCancel ? _showMoreAlertView : _shareAction,
               borderRadius: BorderRadius.circular(60),
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 35),
                 child: Icon(
-                  !_canExitAndCancel ? Icons.share : Icons.add,
+                  _canExitAndCancel ? Icons.add : Icons.share,
                   color: Theme.of(context).primaryColor,
                 ),
               ),
@@ -856,8 +860,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _reDelegationWidget() {
     if (!_visibleReDelegation) return Container();
 
-    // todo: 是否复投过， 缺少Atlas信息
-    bool isReDelegation = false;
+    bool isReDelegation = _atlasInfoEntity != null;
 
     if (!isReDelegation) {
       return Container(
@@ -880,14 +883,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 SizedBox(
                   height: 24,
                 ),
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: "复投Atlas节点",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: HexColor("#1F81FF"),
-                      )),
-                ])),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(
+                        text: "复投Atlas节点",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#1F81FF"),
+                        )),
+                  ])),
+                ),
               ],
             ),
           ),
@@ -1078,6 +1086,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
+    if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
+
     var totalDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
       widget.map3infoEntity?.staking ?? "0",
@@ -1085,26 +1095,41 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var feeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
 
-    var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount);
-    var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
-    var myDelegationString = FormatUtil.formatPrice(myDelegationValue);
-
     var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
     var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
-    Microdelegations microdelegations;
-    for (var item in _map3nodeInformationEntity.microdelegations) {
-      if (item.delegatorAddress == _address) {
-        microdelegations = item;
-        break;
-      }
-    }
+    var myDelegationString = "0";
     var myRewardString = "0";
-    if (microdelegations != null) {
-      var myReward = FormatUtil.clearScientificCounting(microdelegations.reward.toDouble());
-      var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
-      myRewardString = FormatUtil.formatPrice(myRewardValue);
+    if (_map3infoEntity.mine != null) {
+      /*
+      var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount);
+      var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
+      myDelegationString = FormatUtil.formatPrice(myDelegationValue);
+
+      Microdelegations microdelegations;
+      for (var item in _map3nodeInformationEntity.microdelegations) {
+        if (item.delegatorAddress == _address) {
+          microdelegations = item;
+          break;
+        }
+      }
+      if (microdelegations != null) {
+        var myReward = FormatUtil.clearScientificCounting(microdelegations.reward.toDouble());
+        var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
+        myRewardString = FormatUtil.formatPrice(myRewardValue);
+      }
+      */
+
+      myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+        _map3infoEntity.mine.staking ?? "0",
+      )).toString());
+
+      myRewardString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(
+        _map3infoEntity.mine.reward ?? "0",
+      )).toString());
     }
 
     return Container(
@@ -1346,6 +1371,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
+      /*
       var walletAddress = EthereumAddress.fromHex(_address);
       _microDelegations = await client.getMap3NodeDelegation(
         map3Address,
@@ -1354,6 +1380,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       _currentEpoch = 1;
       _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
+     */
 
       var providerList = await _nodeApi.getNodeProviderList();
       if (providerList.isNotEmpty) {
