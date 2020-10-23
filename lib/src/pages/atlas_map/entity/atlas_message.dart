@@ -27,7 +27,7 @@ class ConfirmInfoDescription {
   final String toName;
   final String toDetail;
   final String fee;
-  final List<String> addressList;
+  final List<dynamic> addressList;
 
   ConfirmInfoDescription({
     this.title,

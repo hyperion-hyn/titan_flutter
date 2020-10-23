@@ -42,9 +42,12 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   String _amount = "0";
   String _amountDirection = "0";
 
+  List<dynamic> _addressList = [];
   @override
   void initState() {
     super.initState();
+
+    _addressList = widget?.message?.description?.addressList ?? [];
   }
 
   @override
@@ -165,17 +168,20 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                     ),
                   ],
                 ),
-                if (widget?.message?.description?.addressList?.isNotEmpty ?? false)
+                if ((_addressList?.isNotEmpty ?? false) && index == 0)
                   Container(
-                    child: ListView.builder(
-                      itemBuilder: (BuildContext context, int index) => Text(
-                        widget.message.description.addressList[index],
-                        style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                        ),
-                      ),
-                      itemCount: widget.message.description.addressList.length,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: _addressList
+                          .map((e) => Padding(
+                                padding: const EdgeInsets.only(top: 8, bottom: 4),
+                                child: Text(e,
+                                    style: TextStyle(
+                                      color: HexColor("#999999"),
+                                      fontSize: 12,
+                                    )),
+                              ))
+                          .toList(),
                     ),
                   )
               ],
@@ -188,14 +194,14 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
   Widget _headerWidget() {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
-    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
+    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var amountValue = double.parse(_amount ?? '0');
     var price = amountValue * quotePrice;
     var priceFormat = FormatUtil.formatPrice(price);
     var priceValue = "≈ $quoteSign$priceFormat";
 
-    print("[confirm] amountValue:$amountValue, priceValue:$priceValue");
+    //print("[confirm] amountValue:$amountValue, priceValue:$priceValue");
 
     return Row(
       children: <Widget>[
