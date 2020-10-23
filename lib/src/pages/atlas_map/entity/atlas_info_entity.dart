@@ -132,7 +132,7 @@ class AtlasInfoEntity extends Object {
   }
 
   String getRewardRate() {
-    return weiToEtherStr(rewardRate);
+    return FormatUtil.weiToEtherStr(rewardRate);
   }
 
   String getFeeRateMax(){
