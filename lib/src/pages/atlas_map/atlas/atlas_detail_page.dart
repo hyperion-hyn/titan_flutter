@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -80,7 +81,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   var _selectedMap3NodeValue = 0;
   WalletVo _activatedWallet;
   var showMyMap3 = false;
-  List<Map3InfoEntity> myMap3List = [];
+  List<Map3InfoEntity> showMap3List = [];
 
   @override
   void initState() {
@@ -126,11 +127,25 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _atlasInfoEntity = resultList[0];
     _delegateRecordList = resultList[1];
     _validatorInformationEntity = resultList[2];
-    myMap3List = resultList[3];
+    List<Map3InfoEntity> myMap3List = resultList[3];
 
     if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
       showMyMap3 = true;
     }
+
+    myMap3List.forEach((myElement) {
+      bool isShowMap3 = true;
+      if(_atlasInfoEntity.myMap3 != null){
+        _atlasInfoEntity.myMap3.forEach((atlasElement) {
+          if(myElement.address == atlasElement.address){
+            isShowMap3 = false;
+          }
+        });
+      }
+      if(isShowMap3){
+        showMap3List.add(myElement);
+      }
+    });
 
     infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
     infoContentList.add("${_atlasInfoEntity.home}");
@@ -429,20 +444,20 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       }).toList());
     }
 
-    var leftReward = 0;
-    var historyReward = 0;
+    Decimal leftReward = Decimal.fromInt(0);
+    Decimal historyReward = Decimal.fromInt(0);
     if (_validatorInformationEntity != null && _validatorInformationEntity.redelegations != null) {
       if(showMyMap3){
         _validatorInformationEntity.redelegations.forEach((element) {
-          if(_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address == element.delegatorAddress){
-            leftReward = leftReward + ConvertTokenUnit.weiToEther(weiInt: element.reward.toInt()).toInt();
+          if(_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address.toLowerCase() == element.delegatorAddress){
+            leftReward = leftReward + ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(element.reward));
           }
         });
       }
     }
 
     if(_validatorInformationEntity != null){
-      historyReward = ConvertTokenUnit.weiToEther(weiInt: _validatorInformationEntity.blockReward.toInt()).toInt();
+      historyReward = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(_validatorInformationEntity.blockReward));
     }
 
     return SliverToBoxAdapter(
@@ -523,7 +538,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               fontSize: 16,
                             ),
                           ],
-                          content: "你将领取当前节点奖励，奖励会按抵押比例分配到参与抵押的每个map3节点，当然你会获得额外的管理费奖励。",
+                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率扣除管理费后分配到你的Map3节点抵押者。",
                         );
 
                         break;
@@ -583,7 +598,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               shakeRange: 0.3,
                               delayForward: 1000,
                               child: Text(
-                                "+$leftReward",
+                                "+${FormatUtil.truncateDecimalNum(leftReward, 0)}",
                                 style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                               )),
                         ),
@@ -600,7 +615,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     textAlign: TextAlign.center,
                     text: TextSpan(text: "已产生奖励  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
-                        text: "$historyReward",
+                        text: "${FormatUtil.truncateDecimalNum(historyReward, 0)}",
                         style: TextStyles.textC333S12,
                       ),
                     ])),
@@ -666,6 +681,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     ),
                     if (showMyMap3)
                       Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Divider(
                             height: 1,
@@ -719,7 +735,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       Text(
                                           _atlasInfoEntity.myMap3.isEmpty
                                               ? ""
-                                              : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].staking}",
+                                              : "${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].getStaking()}",
                                           style: TextStyles.textC333S16),
                                       SizedBox(
                                         height: 5,
@@ -728,7 +744,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                     ],
                                   ),
                                 ),
-                                Container(
+                                Expanded(
+                                  child: Container(),
+                                )
+                                /*Container(
                                   height: 20,
                                   width: 0.5,
                                   color: HexColor("#33000000"),
@@ -736,7 +755,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 Expanded(
                                   child: Column(
                                     children: <Widget>[
-                                      Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].relative.reward}",
+                                      Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].rewardHistory}",
                                           style: TextStyles.textC333S16),
                                       SizedBox(
                                         height: 5,
@@ -744,7 +763,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       Text("奖励", style: TextStyles.textC999S12)
                                     ],
                                   ),
-                                ),
+                                ),*/
                               ],
                             ),
                           )
@@ -1000,11 +1019,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "抵押",
             () {
-              if (myMap3List.isEmpty) {
+              if (showMap3List.isEmpty) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
               } else {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity,myMap3List)));
+                    context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity,showMap3List)));
               }
             },
             width: 90,

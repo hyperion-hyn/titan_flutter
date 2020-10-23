@@ -278,4 +278,17 @@ class FormatUtil {
     }
     return Decimal.parse(value.toString()).toString();
   }
+
+  static String weiToEtherStr(dynamic entityParam){
+    if(entityParam == null){
+      return entityParam;
+    }
+    if(entityParam is String){
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
+    }else if(entityParam is int){
+      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
+    }else{
+      return "";
+    }
+  }
 }

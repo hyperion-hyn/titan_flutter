@@ -53,6 +53,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   void initState() {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
+
     _refreshData();
     super.initState();
   }
@@ -219,9 +220,6 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
-          if(widget.myMap3List.length == 0){
-            return;
-          }
           AtlasMessage message = ConfirmAtlasStakeMessage(
             nodeId: widget._atlasInfoEntity.nodeId,
             atlasAddress: widget._atlasInfoEntity.address,
