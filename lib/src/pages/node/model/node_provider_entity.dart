@@ -63,6 +63,13 @@ class Location extends Object {
     this.type,
   );
 
+  List<double> getCoordinatesAfterSwap() {
+    List<double> ret = List<double>();
+    ret.add(this.coordinates[1] ?? 0);
+    ret.add(this.coordinates[0] ?? 0);
+    return ret;
+  }
+
   factory Location.fromJson(Map<String, dynamic> srcJson) =>
       _$LocationFromJson(srcJson);
 

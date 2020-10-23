@@ -35,7 +35,8 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
@@ -79,10 +80,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _map3infoEntity?.staking ?? "0",
     )).toDouble();
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
-    var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
+    var condition0 =
+        (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
 
-    var condition1 =
-        (_map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status == Map3InfoStatus.CONTRACT_IS_END);
+    var condition1 = (_map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS ||
+        _map3Status == Map3InfoStatus.CONTRACT_IS_END);
 
     return (condition0 || condition1) && _isCreator;
   }
@@ -102,19 +104,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _isNoWallet => _address.isEmpty;
 
-  get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  get _unlockRemainEpoch =>
+      Decimal.parse('${_unlockEpoch ?? 0}') -
+      Decimal.parse('${_currentEpoch ?? 0}');
 
-  get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  get _endRemainEpoch =>
+      Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') -
+      Decimal.parse('${_currentEpoch ?? 0}');
 
   get _canPreEdit {
     var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
 
     // todo:
     //  创建者
-    var condition1 = (_unlockRemainEpoch.toDouble() > 14) && _isCreator && condition0;
+    var condition1 =
+        (_unlockRemainEpoch.toDouble() > 14) && _isCreator && condition0;
 
     // 参与者
-    var condition2 = (_unlockRemainEpoch.toDouble() > 7) && !_isCreator && condition0;
+    var condition2 =
+        (_unlockRemainEpoch.toDouble() > 7) && !_isCreator && condition0;
 
     return condition1 || condition2;
   }
@@ -324,7 +332,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
+        .activatedWallet
+        ?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
     _map3infoEntity = widget.map3infoEntity;
 
@@ -470,8 +480,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
+                          return delegateRecordItemWidget(
+                              _delegateRecordList[index]);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -487,7 +499,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(_moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(
+              _moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -529,7 +542,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, index == 0 ? 12 : 8, 8, 8),
+                              padding: EdgeInsets.fromLTRB(
+                                  8, index == 0 ? 12 : 8, 8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(
@@ -652,18 +666,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var nodeName = _map3infoEntity?.name ?? "***";
     //var nodeYearOld = "   节龄: ***天";
     var nodeYearOld = "";
-    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
+    var nodeAddress =
+        "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+    var desc = (_map3infoEntity?.describe ?? "").isEmpty
+        ? "大家快来参与我的节点吧，收益高高，收益真的很高，"
+        : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
+        padding:
+            const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -677,8 +695,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text.rich(TextSpan(children: [
-                        TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                        TextSpan(text: nodeYearOld, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                        TextSpan(
+                            text: nodeName,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16)),
+                        TextSpan(
+                            text: nodeYearOld,
+                            style: TextStyle(
+                                fontSize: 13, color: HexColor("#333333"))),
                       ])),
                       Container(
                         height: 4,
@@ -693,17 +717,24 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
+                      Text(_contractStateDesc,
+                          style: TextStyle(color: _stateColor, fontSize: 12)),
                       Container(
                         height: 4,
                       ),
                       Text.rich(TextSpan(children: [
                         TextSpan(
                             text: nodeIdPre,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                color: HexColor("#333333"))),
                         TextSpan(
                             text: nodeId,
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: HexColor("#333333"))),
                       ])),
                     ],
                   ),
@@ -719,7 +750,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     children: <Widget>[
                       Text(
                         descPre,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                        style:
+                            TextStyle(fontSize: 12, color: HexColor("#999999")),
                       ),
                       Flexible(
                         child: Padding(
@@ -729,7 +761,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                             maxLines: 3,
                             textAlign: TextAlign.justify,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                            style: TextStyle(
+                                fontSize: 13, color: HexColor("#333333")),
                           ),
                         ),
                       ),
@@ -743,14 +776,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         //color: HexColor("#FF15B2D2"),
                         //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         onTap: () {
-                          var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
-                          Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                          var encodeEntity = FluroConvertUtils.object2string(
+                              _map3infoEntity.toJson());
+                          Application.router.navigateTo(
+                              context,
+                              Routes.map3node_edit_page +
+                                  "?entity=$encodeEntity");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Spacer(),
-                            Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            Text("编辑节点",
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#1F81FF"))),
                           ],
                         ),
                         //style: TextStyles.textC906b00S13),
@@ -774,22 +813,31 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var newFeeRate = "10%";
     bool autoRenew = false;
 
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
+    var lastFeeRate =
+        FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
     var feeRate = haveEdit ? newFeeRate : lastFeeRate;
     var statusDesc = autoRenew ? "已开启" : "未开启";
-    var editDateLimit = "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
+    var editDateLimit =
+        "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
 
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: "下期预设",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: editDateLimit,
+                      style:
+                          TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 SizedBox(
@@ -808,7 +856,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       "修改",
                       style: TextStyle(
                         fontSize: 14,
-                        color: haveEdit ? HexColor("#999999") : HexColor("#1F81FF"),
+                        color: haveEdit
+                            ? HexColor("#999999")
+                            : HexColor("#1F81FF"),
                       ),
                     )),
                   ),
@@ -882,7 +932,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+          padding:
+              const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -922,8 +973,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     Widget _item(String title, String detail) {
       return Text.rich(TextSpan(children: [
         TextSpan(
-            text: title, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
-        TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+            text: title,
+            style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+                color: HexColor("#999999"))),
+        TextSpan(
+            text: detail,
+            style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: HexColor("#333333"))),
       ]));
     }
 
@@ -932,7 +992,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Container(
           child: Column(
             children: <Widget>[
@@ -978,7 +1039,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                               Text.rich(TextSpan(children: [
                                 TextSpan(
                                     text: atlasEntity.name,
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16)),
                               ])),
                               Container(
                                 height: 4,
@@ -1021,25 +1084,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _nodeServerWidget() {
     List points = [];
-    var point = {'name': _map3infoEntity.name, 'value': _selectedRegion?.location?.coordinates ?? []};
+    var point = {
+      'name': _map3infoEntity.name,
+      'value': _selectedRegion?.location?.getCoordinatesAfterSwap() ?? []
+    };
     points.add(point);
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: "节点服务",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
                 SizedBox(
                   height: 30,
                   child: InkWell(
                     onTap: _pushNodeInfoAction,
-                    child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                    child: Center(
+                        child: Text("访问节点",
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#1F81FF")))),
                     //style: TextStyles.textC906b00S13),
                   ),
                 ),
@@ -1069,7 +1142,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       child: Column(
                         children: [0, 1].map((index) {
                           var titles = ["设备", "位置"];
-                          var details = [_selectProviderEntity?.name ?? "亚马逊云", _selectedRegion?.name ?? ""];
+                          var details = [
+                            _selectProviderEntity?.name ?? "亚马逊云",
+                            _selectedRegion?.name ?? ""
+                          ];
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
@@ -1110,13 +1186,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
-    if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
+    if (_map3infoEntity == null || _map3nodeInformationEntity == null)
+      return Container();
 
-    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
-    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
+    var totalDelegation =
+        FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
+    var feeRate =
+        FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
 
-    var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
-    var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
+    var totalReward = FormatUtil.clearScientificCounting(
+        _map3nodeInformationEntity.accumulatedReward.toDouble());
+    var totalRewardValue =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward))
+            .toDouble();
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
     var myDelegationString = "0";
@@ -1141,8 +1223,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       }
       */
 
-      myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
+      myDelegationString =
+          FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+              weiBigInt: BigInt.parse(
         _map3infoEntity.mine.staking ?? "0",
       )).toString());
 
@@ -1162,7 +1245,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 18, top: 16),
-                child: Text("节点金额", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                child: Text("节点金额",
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
               ),
             ],
           ),
@@ -1175,14 +1259,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
                       totalDelegation,
-                      style: TextStyle(fontSize: 22, color: HexColor("#228BA1"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#228BA1"),
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "总抵押",
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1196,14 +1286,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(
                       myRewardString,
-                      style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#BF8D2A"),
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "我的奖励",
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1211,7 +1307,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
+            padding:
+                const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
             child: profitListBigWidget(
               [
                 {"总奖励": totalRewardString},
@@ -1235,7 +1332,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
-            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            child: Text("节点进度",
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
@@ -1248,11 +1346,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     height: 10,
                     //color: Colors.red,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
+                        shape: BoxShape.circle,
+                        color: _stateColor,
+                        border: Border.all(color: Colors.grey, width: 1.0)),
                   ),
                 ),
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                  TextSpan(
+                      text: _contractStateDesc,
+                      style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
               ],
             ),
@@ -1296,20 +1398,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           //var subtitle = FormatUtil.formatDate(subtitles[index]);
           var subtitle = "";
           var date = progressHints[index];
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor =
+              _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           return CustomStep(
             title: Text(
               title,
-              style: TextStyle(fontSize: 12, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             progressHint: Text(
               date,
-              style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: HexColor("#4B4B4B"),
+                  fontWeight: FontWeight.normal),
             ),
             subtitle: Text(
               subtitle,
-              style: TextStyle(fontSize: 10, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 10,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             content: Container(),
             isActive: true,
@@ -1344,7 +1456,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            Text(S.of(context).account_flow,
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ],
         ),
       ),
@@ -1355,7 +1468,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     try {
       _currentPage++;
 
-      List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
+      List<Map3TxLogEntity> tempMemberList =
+          await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1384,7 +1498,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
-        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        List<Map3TxLogEntity> tempMemberList =
+            await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
@@ -1456,7 +1571,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _cancelAction() {
@@ -1470,14 +1587,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_cancel_page +
+            '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
 
   void _shareAction() {
-    Application.router.navigateTo(context,
-        Routes.map3node_share_page + "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_share_page +
+            "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
 
   void _divideAction() {
@@ -1496,7 +1616,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_exit_page +
+            '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
@@ -1525,7 +1646,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     if (_map3infoEntity != null) {
-      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      var entryRouteName =
+          Uri.encodeComponent(Routes.map3node_contract_detail_page);
       await Application.router.navigateTo(
           context,
           Routes.map3node_join_contract_page +
