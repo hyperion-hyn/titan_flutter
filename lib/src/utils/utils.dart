@@ -31,10 +31,20 @@ String shortBlockChainAddress(String address, {int limitCharsLength=9}) {
   if (address == null || address == "") {
     return "";
   }
-  if (address.length < limitCharsLength) {
+  if (address.length <= limitCharsLength) {
     return address;
   }
   return address.substring(0, limitCharsLength) + "..." + address.substring(address.length - limitCharsLength, address.length);
+}
+
+String shortName(String name, {int limitCharsLength=9}) {
+  if (name == null || name == "") {
+    return "";
+  }
+  if (name.length < limitCharsLength) {
+    return name;
+  }
+  return name.substring(0, limitCharsLength) + "..." ;
 }
 
 String shortEmail(String email) {

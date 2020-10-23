@@ -151,7 +151,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                     Row(
                       children: <Widget>[
                         Text(
-                          shortBlockChainAddress(nodeName, limitCharsLength: 5),
+                          shortName(nodeName, limitCharsLength: 5),
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                         ),
                         SizedBox(width: 16,),
