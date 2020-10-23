@@ -340,6 +340,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       TimerTextWidget(
                         remainTime: _remainTime,
                         loopTime: _secPerEpoch,
+                        loopFunc: () {
+                          _getData();
+                        },
                       ),
                     ],
                   )
