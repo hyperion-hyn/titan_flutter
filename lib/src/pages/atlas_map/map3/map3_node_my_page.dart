@@ -129,9 +129,13 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       _rewardMap = await client.getAllMap3RewardByDelegatorAddress(
         EthereumAddress.fromHex(_address),
       );
-      print("_rewardMap:$_rewardMap");
 
-      var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(_rewardMap?.values?.last ?? "0"));
+      var parse = "0";
+      if (_rewardMap.isNotEmpty) {
+        parse = _rewardMap?.values?.last ?? "0";
+      }
+
+      var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(parse));
       _balance = "${FormatUtil.formatPrice(value.toDouble())}";
       print(_rewardMap);
 
