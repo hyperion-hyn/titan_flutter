@@ -70,7 +70,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _atlasInfoEntity => _map3infoEntity.atlas;
 
   Microdelegations _microDelegations;
-  var _currentEpoch;
+  var _currentEpoch = 0;
   var _unlockEpoch;
 
   get _visibleNotify {
@@ -104,8 +104,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _isNoWallet => _address.isEmpty;
 
-  get _remainEpoch =>
+  get _unlockRemainEpoch =>
       Decimal.parse('${_unlockEpoch ?? 0}') -
+      Decimal.parse('${_currentEpoch ?? 0}');
+
+  get _endRemainEpoch =>
+      Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') -
       Decimal.parse('${_currentEpoch ?? 0}');
 
   get _canPreEdit {
@@ -113,10 +117,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     // todo:
     //  创建者
-    var condition1 = (_remainEpoch.toDouble() > 14) && _isCreator && condition0;
+    var condition1 =
+        (_unlockRemainEpoch.toDouble() > 14) && _isCreator && condition0;
 
     // 参与者
-    var condition2 = (_remainEpoch.toDouble() > 7) && !_isCreator && condition0;
+    var condition2 =
+        (_unlockRemainEpoch.toDouble() > 7) && !_isCreator && condition0;
 
     return condition1 || condition2;
   }
@@ -126,7 +132,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var condition0 = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
     // 1.纪元已经过7天；
-    var condition1 = _remainEpoch.toDouble() > 7;
+    var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
     return _isCreator && condition0 && condition1;
   }
 
@@ -803,7 +809,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var feeRate = haveEdit ? newFeeRate : lastFeeRate;
     var statusDesc = autoRenew ? "已开启" : "未开启";
     var editDateLimit =
-        "（请在纪元${_map3infoEntity.startBlock} - 纪元${_map3infoEntity.endBlock}之前修改）";
+        "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
 
     return Container(
       color: Colors.white,
@@ -1490,7 +1496,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
-      /*
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       _map3nodeInformationEntity =
           await client.getMap3NodeInformation(map3Address);
@@ -1501,9 +1506,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         walletAddress,
       );
 
-      _currentEpoch = 1;
+      var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);
+
+      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
+
       _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
-     */
 
       var providerList = await _nodeApi.getNodeProviderList();
       if (providerList.isNotEmpty) {

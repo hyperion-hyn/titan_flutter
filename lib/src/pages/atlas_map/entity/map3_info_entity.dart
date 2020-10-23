@@ -89,6 +89,12 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'start_block')
   int startBlock;
 
+  @JsonKey(name: 'start_epoch')
+  int startEpoch;
+
+  @JsonKey(name: 'end_epoch')
+  int endEpoch;
+
   ///Map3InfoStatus
   @JsonKey(name: 'status')
   int status;
@@ -125,6 +131,8 @@ class Map3InfoEntity extends Object {
     this.startBlock,
     this.status,
     this.updatedAt,
+    this.startEpoch,
+    this.endEpoch,
   );
 
   String getFeeRate() {
@@ -135,13 +143,14 @@ class Map3InfoEntity extends Object {
     return FormatUtil.weiToEtherStr(staking);
   }
 
-  bool isCreator(){
+  bool isCreator() {
     return mine?.creator == NodeJoinType.CREATOR.index;
   }
 
   Map3InfoEntity.onlyNodeId(this.nodeId);
 
   Map3InfoEntity.onlyId(this.id);
+
   Map3InfoEntity.onlyStaking(this.staking, this.totalPendingStaking);
 
   factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) =>

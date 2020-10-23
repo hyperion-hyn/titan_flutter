@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -11,9 +12,12 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:web3dart/web3dart.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_list_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -33,9 +37,12 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   AtlasApi _atlasApi = AtlasApi();
   AllPageState currentState = LoadingState();
 
-  var walletName = "";
-  var address = "";
+  var _walletName = "";
+  var _address = "";
   var _balance = "0";
+  Map<String, dynamic> _rewardMap = {};
+
+  final client = WalletUtil.getWeb3Client(true);
 
   @override
   void initState() {
@@ -67,8 +74,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
     }
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    walletName = activatedWallet.wallet.keystore.name;
-    address = activatedWallet.wallet.getEthAccount().address;
+    _walletName = activatedWallet.wallet.keystore.name;
+    _address = activatedWallet.wallet.getEthAccount().address;
 
     getNetworkData();
   }
@@ -114,11 +121,21 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
   void getNetworkData() async {
     try {
-      var requestList = await Future.wait([_atlasApi.getRewardInfo(address)]);
+      var requestList = await Future.wait([
+        _atlasApi.getRewardInfo(_address),
+        client.getAllMap3RewardByDelegatorAddress(
+          EthereumAddress.fromHex(_address),
+        ),
+      ]);
 
       _rewardEntity = requestList[0];
 
-      _balance = "${FormatUtil.formatPrice(double.parse(_rewardEntity?.reward ?? "0"))}";
+      _rewardMap = requestList[1] ;
+      var value = ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(_rewardMap.values.last));
+      _balance = "${FormatUtil.formatPrice(value.toDouble())}";
+
+      //_balance = "${FormatUtil.formatPrice(double.parse(_rewardEntity?.reward ?? "0"))}";
 
       if (mounted) {
         setState(() {
@@ -279,6 +296,12 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   }
 
   _showAlertView() {
+    var count = _rewardMap?.values?.length??0;
+    if (count ==0) {
+      Fluttertoast.showToast(msg: "当期奖励为零哟！");
+      return;
+    }
+
     UiUtil.showAlertView(context,
         title: "提取奖励",
         actions: [
@@ -290,6 +313,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               var entity = PledgeMap3Entity();
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
+                amount: _balance,
+                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList()??[],
               );
               Navigator.push(
                   context,
@@ -304,8 +329,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             fontSize: 16,
           ),
         ],
-        content: "您一共创建或参与了${_rewardEntity?.nodeNum ?? 0}个Map3节点，截止昨日可提奖励为: $_balance HYN 确定全部提取到钱包",
-        boldContent: "($walletName)",
+        content: "您一共创建或参与了${_rewardMap.values.length ?? 0}个Map3节点，截止昨日可提奖励为: $_balance HYN 确定全部提取到钱包",
+        boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),
           fontSize: 12,
