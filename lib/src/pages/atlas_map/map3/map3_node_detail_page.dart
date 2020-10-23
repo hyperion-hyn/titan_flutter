@@ -61,7 +61,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   //0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
-  Microdelegations _microdelegations;
+  Microdelegations _microDelegations;
   var _currentEpoch;
   var _unlockEpoch;
 
@@ -100,7 +100,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _canPreEdit {
     var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
 
-    // todo: 创建者
+    // todo:
+    //  创建者
     var condition1 = (_remainEpoch.toDouble() > 14) && _isCreator && condition0;
 
     // 参与者
@@ -415,8 +416,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(child: _nodeServerWidget()),
                   _spacer(),
 
-                  //SliverToBoxAdapter(child: _lineSpacer()),
-                  _spacer(),
+                  // SliverToBoxAdapter(child: _lineSpacer()),
+                  // _spacer(),
 
                   // 3.2合约进度状态
                   SliverToBoxAdapter(child: _contractProgressWidget()),
@@ -444,7 +445,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return _delegateRecordItemWidget(_delegateRecordList[index]);
+                          return delegateRecordItemWidget(_delegateRecordList[index]);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -1084,7 +1085,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var feeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
 
-    var myDelegation = FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount);
+    var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount);
     var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
     var myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
@@ -1305,218 +1306,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _delegateRecordItemWidget(Map3TxLogEntity item) {
-    var isPending = item.status == 0 || item.status == 1;
-    // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
-
-    var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
-    var amount = FormatUtil.formatPrice(amountValue);
-    var detail = "";
-    switch (item.type) {
-      case 0:
-        detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toString();
-        break;
-
-      case 1:
-        detail = "创建atlas节点";
-        break;
-
-      case 2:
-        detail = "修改atlas节点/重新激活Atlas";
-        break;
-
-      case 3:
-        detail = "参与atlas节点抵押";
-        break;
-
-      case 4:
-        detail = "撤销atlas节点抵押";
-        break;
-
-      case 5:
-        detail = "领取atlas奖励";
-        break;
-
-      case 6:
-        // detail = "创建Map3节点";
-        detail = "创建Map3节点" + " " + amount;
-        break;
-
-      case 7:
-        detail = "编辑Map3节点";
-        break;
-
-      case 8:
-        detail = "终止Map3节点";
-        break;
-
-      case 9:
-        detail = "微抵押" + " " + amount;
-        break;
-
-      case 10:
-        detail = "取消Map3抵押" + " " + amount;
-        break;
-
-      case 11:
-        detail = "提取奖励" + " " + amount;
-        break;
-
-      case 12:
-        detail = "续期map3";
-        break;
-
-      case 13:
-        detail = "裂变map3节点";
-        break;
-    }
-
-    return Container(
-      color: Colors.white,
-      child: Stack(
-        children: <Widget>[
-          InkWell(
-            onTap: () {
-              _pushTransactionDetailAction(item);
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    height: 40,
-                    width: 40,
-                    child: walletHeaderWidget(item.name, address: item.from),
-                  ),
-                  Flexible(
-                    flex: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              RichText(
-                                text: TextSpan(
-                                  text: item.name,
-                                  style:
-                                      TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
-                                ),
-                              ),
-                              Spacer(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 6),
-                                    child: Text(
-                                      isPending ? "*" : detail,
-                                      style: TextStyle(
-                                          fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  _billStateWidget(item)
-                                ],
-                              ),
-                            ],
-                          ),
-                          Container(
-                            height: 8.0,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                shortBlockChainAddress(" ${item.from}", limitCharsLength: 8),
-                                style: TextStyle(fontSize: 12, color: HexColor("#999999")),
-                              ),
-                              Spacer(),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(FormatUtil.formatDateStr(item.createdAt),
-                                      style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 40,
-            right: 8,
-            child: Container(
-              height: 0.5,
-              color: DefaultColors.colorf5f5f5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _billStateWidget(Map3TxLogEntity item) {
-    // status 自定义： 1.pending；2.wait receipt; 3success; 4.fail;5.drop fail see TransactionXXX
-
-    switch (item.status) {
-      case 1:
-      case 2:
-        return Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [HexColor("#E0B102"), HexColor("#F3D35D")],
-                  begin: FractionalOffset(1, 0.5),
-                  end: FractionalOffset(0, 0.5)),
-              borderRadius: BorderRadius.all(Radius.circular(12.0))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-            child: Text(
-              "进行中",
-              style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-            ),
-          ),
-        );
-        break;
-
-      case 4:
-      case 5:
-        return Container(
-          decoration: BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-            child: Text(
-              "失败了",
-              style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
-            ),
-          ),
-        );
-        break;
-
-      default:
-        return Container(
-          decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
-            child: Text(
-              "已完成",
-              style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-            ),
-          ),
-        );
-
-        break;
-    }
-  }
-
   Future getJoinMemberMoreData() async {
     try {
       _currentPage++;
@@ -1558,13 +1347,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
       var walletAddress = EthereumAddress.fromHex(_address);
-      _microdelegations = await client.getMap3NodeDelegation(
+      _microDelegations = await client.getMap3NodeDelegation(
         map3Address,
         walletAddress,
       );
 
       _currentEpoch = 1;
-      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch;
+      _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
 
       var providerList = await _nodeApi.getNodeProviderList();
       if (providerList.isNotEmpty) {
@@ -1614,37 +1403,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     title: "",
                   )));
     }
-  }
-
-  void _pushTransactionDetailAction(Map3TxLogEntity item) {
-    TransactionDetailVo transactionDetail = TransactionDetailVo(
-      id: item.id,
-      contractAddress: item.contractAddress,
-      state: 1,
-      //1 success, 0 pending, -1 failed
-      amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.dataDecoded.amount)).toDouble(),
-      symbol: "HYN",
-      fromAddress: item.from,
-      toAddress: item.to,
-      time: item.timestamp,
-      nonce: item.nonce.toString(),
-      gasPrice: item.gasPrice,
-      gas: item.gasLimit.toString(),
-      gasUsed: item.gasUsed.toString(),
-      describe: item.dataDecoded.description.details,
-      data: item.data,
-      dataDecoded: item.dataDecoded.toJson(),
-      blockHash: item.blockHash,
-      blockNum: item.blockNum,
-      epoch: item.epoch,
-      transactionIndex: item.transactionIndex,
-      type: item.type, //1、转出 2、转入
-    );
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
-    );
   }
 
   void _pushWalletManagerAction() {
