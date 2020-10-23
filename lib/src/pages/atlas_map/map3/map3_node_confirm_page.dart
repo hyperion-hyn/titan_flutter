@@ -195,7 +195,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   Widget _headerWidget() {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
-    var quoteSign = activatedQuoteSign?.sign?.sign;
+    var quoteSign = activatedQuoteSign?.sign?.sign??"￥";
     var amountValue = double.parse(_amount ?? '0');
     var price = amountValue * quotePrice;
     var priceFormat = FormatUtil.formatPrice(price);
