@@ -1031,5 +1031,5 @@
   "not_open_please_wait": "待开放，敬请期待",
   "important_hint": "重要提示",
   "got_it": "知道了",
-  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于一周之内（2020.11.11之前）映射为主链币，一周之后HYN ERC20变为无效币！"
+  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于一周之内（2020.11.04之前）映射为主链币，一周之后HYN ERC20变为无效币！"
 }
