@@ -471,7 +471,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
+                          return delegateRecordItemWidget(_delegateRecordList[index],map3CreatorAddress: _map3nodeInformationEntity.map3Node.operatorAddress);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],

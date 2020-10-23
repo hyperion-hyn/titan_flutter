@@ -351,7 +351,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     var amountColor;
     var amountText = "";
     if(widget.coinVo.coinType == CoinType.HYN_ATLAS){
-      amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} (${HYNApi.getValueByHynType(transactionDetail.hynType,getTypeStr: true)})";
+      amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} (${HYNApi.getValueByHynType(transactionDetail.hynType)})";
     }else{
       amountText = "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
     }

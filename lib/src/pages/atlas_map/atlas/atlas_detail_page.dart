@@ -165,11 +165,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
       });*/
 
-    if (mounted)
+    if (mounted) {
       setState(() {
         _currentState = null;
       });
-    _loadDataBloc.add(RefreshSuccessEvent());
+      _loadDataBloc.add(RefreshSuccessEvent());
+    }
 //    }catch(error){
 //      logger.e(error);
 //      setState(() {
@@ -276,10 +277,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   _nodeInfoWidget(),
 //                  _chartDetailWidget(),
                   _joinMap3Widget(),
+                  _nodeRecordHeader(),
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
+                          return delegateRecordItemWidget(_delegateRecordList[index],isAtlasDetail: true);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                   /*SliverList(
@@ -598,7 +600,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               shakeRange: 0.3,
                               delayForward: 1000,
                               child: Text(
-                                "+${FormatUtil.truncateDecimalNum(leftReward, 0)}",
+                                "+${FormatUtil.truncateDecimalNum(leftReward, 2)}",
                                 style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                               )),
                         ),
@@ -744,10 +746,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(),
-                                )
-                                /*Container(
+                                Container(
                                   height: 20,
                                   width: 0.5,
                                   color: HexColor("#33000000"),
@@ -755,15 +754,15 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 Expanded(
                                   child: Column(
                                     children: <Widget>[
-                                      Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].rewardHistory}",
+                                      Text("${FormatUtil.truncateDecimalNum(leftReward, 2)}",
                                           style: TextStyles.textC333S16),
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("奖励", style: TextStyles.textC999S12)
+                                      Text("待领取奖励", style: TextStyles.textC999S12)
                                     ],
                                   ),
-                                ),*/
+                                ),
                               ],
                             ),
                           )
@@ -1076,6 +1075,22 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             color: HexColor("#F2F2F2"),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _nodeRecordHeader() {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          child: Row(
+            children: <Widget>[
+              Text("节点记录", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            ],
+          ),
+        ),
       ),
     );
   }

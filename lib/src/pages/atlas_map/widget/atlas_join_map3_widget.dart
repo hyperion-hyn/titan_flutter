@@ -80,22 +80,17 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
 
   void getJoinMemberData() async {
     isRefreshed = false;
-    print("!!!!!getJoin  1111331");
     _currentPage = 1;
 
     List<Map3InfoEntity> tempMemberList = await _atlasApi.postAtlasMap3NodeList(widget.nodeId, page: _currentPage);
-print("!!!!!getJoin");
     // print("[widget] --> build, length:${tempMemberList.length}");
     if (mounted) {
-      print("!!!!!build empty  444 ${memberList.length}");
       setState(() {
         if (tempMemberList.length > 0) {
           memberList = [];
         }
-        print("!!!!!build empty  555 ${memberList.length}");
         memberList.addAll(tempMemberList);
         isRefreshed = true;
-        print("!!!!!build empty  666 ${memberList.length}");
         loadDataBloc.add(RefreshSuccessEvent());
       });
     }

@@ -4,6 +4,7 @@ import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -821,71 +823,19 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
       : containerWidget;
 }
 
-Widget delegateRecordItemWidget(Map3TxLogEntity item) {
+Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = false,String map3CreatorAddress = ""}) {
   var isPending = item.status == 0 || item.status == 1;
   // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
   var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
-  var detail = "";
-  switch (item.type) {
-    case 0:
-      detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toString();
-      break;
+  var detail = HYNApi.getValueByHynType(item.type);
 
-    case 1:
-      detail = "创建atlas节点";
-      break;
+  WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+  var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
-    case 2:
-      detail = "修改atlas节点/重新激活Atlas";
-      break;
-
-    case 3:
-      detail = "参与atlas节点抵押";
-      break;
-
-    case 4:
-      detail = "撤销atlas节点抵押";
-      break;
-
-    case 5:
-      detail = "领取atlas奖励";
-      break;
-
-    case 6:
-      // detail = "创建Map3节点";
-      detail = "创建Map3节点" + " " + amount;
-      break;
-
-    case 7:
-      detail = "编辑Map3节点";
-      break;
-
-    case 8:
-      detail = "终止Map3节点";
-      break;
-
-    case 9:
-      detail = "微抵押" + " " + amount;
-      break;
-
-    case 10:
-      detail = "取消Map3抵押" + " " + amount;
-      break;
-
-    case 11:
-      detail = "提取奖励" + " " + amount;
-      break;
-
-    case 12:
-      detail = "续期map3";
-      break;
-
-    case 13:
-      detail = "裂变map3节点";
-      break;
-  }
+  var recordName = isAtlasDetail ? " ${item.from == walletAddress ? "(你)" : ""}"
+      : "${map3CreatorAddress == walletAddress ? "(创建者) " : ""} ${item.from == walletAddress ? "(你)" : ""}";
 
   return Container(
     color: Colors.white,
@@ -919,6 +869,12 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item) {
                               text: TextSpan(
                                 text: item.name,
                                 style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                children: [
+                                  TextSpan(
+                                    text: recordName,
+                                    style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
+                                  )
+                                ],
                               ),
                             ),
                             Spacer(),
@@ -944,7 +900,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item) {
                         Row(
                           children: <Widget>[
                             Text(
-                              shortBlockChainAddress(" ${item.from}", limitCharsLength: 8),
+                              shortBlockChainAddress("${item.from}", limitCharsLength: 8),
                               style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                             ),
                             Spacer(),

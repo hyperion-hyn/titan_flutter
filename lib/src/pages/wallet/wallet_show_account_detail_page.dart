@@ -91,7 +91,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var hynPriceStr = "\$0 / HYN";
     var gasUsedStr = "${transDetail.gasUsed} (${FormatUtil.formatPercent(
         (Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
-    var typeStr = HYNApi.getValueByHynType(transDetail.hynType,getTypeStr: true);
+    var typeStr = HYNApi.getValueByHynType(transDetail.hynType);
 
     _dataInfoList = [
       transDetail.hash,
