@@ -1040,4 +1040,5 @@
   "exchange_withdraw_status_9": "提幣賬單異常",
   "wallet_send_fix_dex_account": "你的dex賬戶數據異常，請先修復！",
   "dex_fix_account_contact_us": "如有疑問，請聯繫客服"
+  "wallet_show_atlas_alert": "HYN主鏈幣已上線，請將HYN ERC20於一周之內（2020.11.04之前）映射為主鏈幣，一周之後HYN ERC20變為無效幣！"
 }
