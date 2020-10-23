@@ -330,20 +330,13 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _nodeOwnerWidget() {
+    var oldYear = Decimal.parse(_map3nodeInformationEntity.map3Node.age).toDouble();
+
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
-          SizedBox(
-            width: 42,
-            height: 42,
-            child: walletHeaderWidget(
-              _map3nodeInformationEntity.map3Node.description.name ?? widget.map3infoEntity.name,
-              isShowShape: false,
-              address: _map3nodeInformationEntity.map3Node.map3Address,
-              isCircle: true,
-            ),
-          ),
+          iconWidget(widget.map3infoEntity),
           SizedBox(
             width: 10,
           ),
@@ -353,8 +346,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               Text.rich(TextSpan(children: [
                 TextSpan(text: widget.map3infoEntity.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(
-                    text:
-                        "  币龄: ${FormatUtil.truncateDecimalNum(Decimal.parse(_map3nodeInformationEntity.map3Node.age), 0)}天",
+                    text: oldYear > 0 ? "  币龄: ${FormatUtil.formatPrice(oldYear)}天" : "",
                     style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(

@@ -15,6 +15,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -128,9 +129,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canJoin => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  get _isCreator => _map3infoEntity.address == _address;
+  //get _isCreator => _map3infoEntity.address == _address;
+  //get _isJoiner => !_map3infoEntity.isCreator();
+  get _isCreator => !_map3infoEntity.isCreator();
 
-  get _isJoiner => !_map3infoEntity.isCreator();
+  get _isDelegate => _map3infoEntity?.mine != null;
 
   get _currentStep {
     if (_map3Status == null) return 0;
@@ -200,17 +203,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         _map3StatusDesc = "待启动";
 
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
         _map3StatusDesc = "启动失败";
-
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        _map3StatusDesc = "募集中";
 
         break;
 
@@ -444,9 +443,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _spacer(isVisible: _canPreEdit),
 
                   // 3.2服务器
-                  SliverToBoxAdapter(child: _nodeServerWidget()),
-
                   SliverToBoxAdapter(child: _reDelegationWidget()),
+
+                  _spacer(),
+
+                  SliverToBoxAdapter(child: _nodeServerWidget()),
 
                   _spacer(),
 
@@ -479,10 +480,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
+                          return delegateRecordItemWidget(_delegateRecordList[index]);
+/*
                           return delegateRecordItemWidget(
                             _delegateRecordList[index],
                             map3CreatorAddress: _map3nodeInformationEntity?.map3Node?.operatorAddress ?? "",
                           );
+*/
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -565,7 +569,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
-    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) return Container();
+    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED && !_isDelegate) return Container();
 
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -582,28 +586,32 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           Spacer(),
           ClickOvalButton(
             "撤销抵押",
-            _cancelAction,
-            width: 120,
+            _canExitAndCancel ? _cancelAction : null,
+            width: 100,
             height: 32,
             fontSize: 14,
-            fontColor: DefaultColors.color999,
-            btnColor: Colors.transparent,
+            fontColor: _canExitAndCancel ? Colors.white : DefaultColors.color999,
+            btnColor: _canExitAndCancel ? null : Colors.transparent,
           ),
           Spacer(),
           ClickOvalButton(
             "提取奖励",
             _collectAction,
-            width: 120,
+            width: 100,
             height: 32,
             fontSize: 14,
+            fontColor: _isDelegate ? Colors.white : DefaultColors.color999,
+            btnColor: _isDelegate ? null : Colors.transparent,
           ),
           Spacer(),
           ClickOvalButton(
             "抵押",
-            _joinAction,
-            width: 120,
+            _canJoin ? _joinAction : null,
+            width: 100,
             height: 32,
             fontSize: 14,
+            fontColor: _canJoin ? Colors.white : DefaultColors.color999,
+            btnColor: _canJoin ? null : Colors.transparent,
           ),
           Spacer(),
         ],
@@ -899,16 +907,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: "暂未复投Atlas节点，复投Atlas节点可以获得出块奖励",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: HexColor("#333333"),
-                      )),
-                ])),
-                SizedBox(
-                  height: 24,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
+                  child: Text.rich(
+                    TextSpan(children: [
+                      TextSpan(
+                          text: "暂未复投Atlas节点，复投Atlas节点可以获得出块奖励",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: HexColor("#333333"),
+                          )),
+                    ]),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 InkWell(
                   onTap: () {
@@ -939,6 +950,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     var atlasEntity = _atlasInfoEntity as AtlasInfoEntity;
+
+    Decimal rewardDecimal = Decimal.parse(atlasEntity.rewardRate);
+    var rewardValueString = FormatUtil.truncateDecimalNum(rewardDecimal, 4);
+    var rewardValue = double.parse(rewardValueString);
+    var rewardRate = FormatUtil.formatPercent(rewardValue);
+    //print("rank:${atlasEntity.rank},atlasEntity.reward:${atlasEntity.rewardRate}, rewardValueString:$rewardValueString");
 
     return Container(
       color: Colors.white,
@@ -1002,7 +1019,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
-                            Text(atlasEntity.getRewardRate(),
+                            Text(rewardRate,
                                 style: TextStyle(
                                   color: HexColor("#9B9B9B"),
                                   fontSize: 14,
@@ -1227,7 +1244,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      "我的奖励",
+                      "可提奖励",
+ 
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1260,6 +1278,31 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+
+            child: Row(
+              children: <Widget>[
+                Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                Spacer(),
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18, right: 8.0),
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        //color: Colors.red,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _stateColor,
+                            border: Border.all(color: Colors.grey, width: 1.0)),
+                      ),
+                    ),
+                    Text.rich(TextSpan(children: [
+                      TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                    ])),
+                  ],
+                ),
+/*
             child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ),
           Padding(
@@ -1279,6 +1322,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 Text.rich(TextSpan(children: [
                   TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
                 ])),
+*/
               ],
             ),
           ),
@@ -1404,32 +1448,59 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   // todo: test_detail
   Future getContractDetailData() async {
     try {
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+      print(DateTime.now());
+
+      var requestList = await Future.wait([
+        _atlasApi.getMap3Info(_address, _nodeId),
+        _atlasApi.postAtlasHome(_address),
+        _nodeApi.getNodeProviderList(),
+        _atlasApi.getMap3StakingLogList(_nodeAddress),
+      ]);
+
+      print(DateTime.now());
+
+      _map3infoEntity = requestList[0];
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
+ 
         List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
+
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         var walletAddress = EthereumAddress.fromHex(_address);
 
-        //_map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        print("----1:" + DateTime.now().toString());
+        var newRequestList = await Future.wait([
+          client.getMap3NodeInformation(map3Address),
+        ]);
+        print("----2:" + DateTime.now().toString());
 
-        /*_microDelegations = await client.getMap3NodeDelegation(
-          map3Address,
-          walletAddress,
-        );*/
+        _map3nodeInformationEntity = newRequestList[0];
+
+        if (_isDelegate) {
+          print("----3:" + DateTime.now().toString());
+
+          _microDelegations = await client.getMap3NodeDelegation(
+            map3Address,
+            walletAddress,
+          );
+          _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
+          print("----4:" + DateTime.now().toString());
+
+        }
       }
+      print(DateTime.now());
 
-      var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);
+      List<Map3TxLogEntity> tempMemberList = requestList[3];
+      _delegateRecordList = tempMemberList;
 
+      AtlasHomeEntity _atlasHomeEntity = requestList[1];
       _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
 
-      _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
-
-      var providerList = await _nodeApi.getNodeProviderList();
+      var providerList = requestList[2] as List;
       if (providerList.isNotEmpty) {
         _selectProviderEntity = providerList[0];
 
@@ -1440,18 +1511,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
       }
+      print(DateTime.now());
 
       // 3.
-      Future.delayed(Duration(milliseconds: 100), () {
-        if (mounted) {
-          setState(() {
-            _currentState = null;
-            _loadDataBloc.add(RefreshSuccessEvent());
 
-            _isTransferring = false;
-          });
-        }
-      });
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+
+          _isTransferring = false;
+        });
+      }
+      print(DateTime.now());
+
     } catch (e) {
       logger.e(e);
       LogUtil.toastException(e);
