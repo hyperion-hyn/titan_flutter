@@ -8,10 +8,11 @@ class ClickOvalButton extends StatefulWidget {
   double width;
   double fontSize;
   Function onTap;
-  bool isLoading = false;
+  bool isLoading;
   Color btnColor;
   Color fontColor;
   double radius;
+  String loadingText;
 
   ClickOvalButton(
     this.text,
@@ -22,6 +23,8 @@ class ClickOvalButton extends StatefulWidget {
     this.fontColor,
     this.btnColor,
     this.radius,
+    this.isLoading = false,
+    this.loadingText,
   });
 
   @override
@@ -43,10 +46,13 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       ),
       child: FlatButton(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(22.0)),
+            borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
           ),
           padding: const EdgeInsets.all(0.0),
-          child: Text(widget.text,
+          child: Text(
+              widget.isLoading
+                  ? widget.loadingText ?? widget.text
+                  : widget.text,
               style: TextStyle(
                 fontSize: widget.fontSize,
                 color: widget.isLoading

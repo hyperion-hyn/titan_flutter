@@ -11,6 +11,10 @@ class Const {
     return 'https://api.hyn.space/';
   }
 
+  static String get LOCAL_DOMAIN {
+    return Config.ATLAS_API_URL_TEST + "/";
+  }
+
   static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
 
   static String get NODE_DOMAIN {
@@ -36,6 +40,15 @@ class Const {
       return Config.WS_DOMAIN;
     }
   }
+
+  static String get ATLAS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.ATLAS_API_URL_TEST;
+    } else {
+      return Config.ATLAS_API_URL;
+    }
+  }
+
 
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =

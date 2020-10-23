@@ -4,30 +4,20 @@ import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_event.dart';
-import 'package:titan/src/components/exchange/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/auth_util.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -49,20 +39,17 @@ class UiUtil {
   }
 
   static toast(String message) {
-    Fluttertoast.showToast(
-        msg: message, backgroundColor: Colors.black, textColor: Colors.white);
+    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white);
   }
 
-  static String shortEthAddress(String address) {
+  static String shortEthAddress(String address, {int limitLength = 9}) {
     if (address == null || address == "") {
       return "";
     }
-    if (address.length < 9) {
+    if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, 9) +
-        "..." +
-        address.substring(address.length - 9, address.length);
+    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -94,6 +81,7 @@ class UiUtil {
       String content,
       String detail = "",
       String boldContent = "",
+      TextStyle boldStyle,
       String suffixContent = ""}) {
     return showDialog<bool>(
       barrierDismissible: true,
@@ -108,8 +96,7 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   Positioned(
@@ -141,24 +128,15 @@ class UiUtil {
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#FF4C3B"),
-                                    height: 1.8),
+                                style: boldStyle ?? TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
                               ),
                             ])),
                       ),
@@ -174,7 +152,7 @@ class UiUtil {
                                   decoration: TextDecoration.none)),
                         ),
                       Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        padding: EdgeInsets.only(top: 18, bottom: 18),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: actions,
@@ -215,8 +193,7 @@ class UiUtil {
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
-      {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -244,16 +221,11 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(
-      BuildContext context, bool isServiceTurnOff) {
+  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context,
-      isServiceTurnOff == true
-          ? S.of(context).open_location_service
-          : S.of(context).require_location,
-      isServiceTurnOff == true
-          ? S.of(context).open_location_service_message
-          : S.of(context).require_location_message,
+      isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
       () => openSettingLocation(isServiceTurnOff),
     );
   }
@@ -273,8 +245,7 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(
-      BuildContext context, String title, String content, Function func) {
+  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -576,10 +547,7 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],

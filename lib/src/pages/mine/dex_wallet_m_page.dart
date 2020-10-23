@@ -447,7 +447,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       decimals = SupportedTokens.USDT_ERC20.decimals;
                                     } else if (type == AddressIndex.C_HYN) {
                                       contract = WalletUtil.getHynErc20Contract(WalletConfig.getHynErc20Address());
-                                      decimals = SupportedTokens.HYN.decimals;
+                                      decimals = SupportedTokens.HYN_ERC20.decimals;
                                     } else {
                                       UiUtil.toast('错误的类型 $type');
                                       return;

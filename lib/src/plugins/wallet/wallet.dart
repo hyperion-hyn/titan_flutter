@@ -52,6 +52,15 @@ class Wallet {
     return null;
   }
 
+  Account getAtlasAccount() {
+    for (var account in accounts) {
+      if (account.coinType == CoinType.HYN_ATLAS) {
+        return account;
+      }
+    }
+    return null;
+  }
+
   Account getBitcoinAccount() {
     for (var account in accounts) {
       if (account.coinType == CoinType.BITCOIN) {
@@ -178,6 +187,10 @@ class Wallet {
     return nonce;
   }
 
+  /// 发送转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendEthTransaction({
     int id,
     String password,
@@ -186,6 +199,9 @@ class Wallet {
     BigInt gasPrice,
     int nonce,
     int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
   }) async {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
@@ -193,25 +209,70 @@ class Wallet {
 //    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction(
-        to: web3.EthereumAddress.fromHex(toAddress),
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
-        value: web3.EtherAmount.inWei(value),
+        value: value == null ? null : web3.EtherAmount.inWei(value),
         nonce: nonce,
+        type: type,
+        message: message,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: type == null ? true : false,
     );
 
-    nonce = await getCurrentWalletNonce();
-    await transactionInteractor.insertTransactionDB(
-        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce, id: id);
+    if (type == null) {
+      nonce = await getCurrentWalletNonce();
+      await transactionInteractor.insertTransactionDB(
+          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+          id: id);
+    }
 
     return txHash;
+  }
+
+  /// 签名转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
+  Future<String> signEthTransaction({
+    int id,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
+  }) async {
+    if (gasLimit == 0) {
+      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
+    }
+
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final rawTx = await client.signTransaction(
+      credentials,
+      web3.Transaction(
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        value: value == null ? null : web3.EtherAmount.inWei(value),
+        nonce: nonce,
+        type: type,
+        message: message,
+      ),
+      fetchChainIdFromNetworkId: type == null ? true : false,
+    );
+
+    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);;
   }
 
   Future<String> sendErc20Transaction({

@@ -16,6 +16,8 @@ class LoadDataContainer extends StatefulWidget {
   final bool enablePullUp;
   final bool enablePullDown;
   final bool hasFootView;
+  final bool isStartLoading;
+  final bool showLoadingWidget;
   final VoidCallback onLoadData;
   final VoidCallback onRefresh;
   final VoidCallback onLoadingMore;
@@ -27,6 +29,8 @@ class LoadDataContainer extends StatefulWidget {
     this.enablePullDown = true,
     this.enablePullUp = true,
     this.hasFootView = true,
+    this.isStartLoading = true,
+    this.showLoadingWidget = true,
     this.onLoadData,
     this.onRefresh,
     this.onLoadingMore,
@@ -52,6 +56,12 @@ class LoadDataContainerState extends State<LoadDataContainer> {
     return BlocBuilder<LoadDataBloc, LoadDataState>(
       bloc: widget.bloc,
       builder: (context, state) {
+        if(state is InitialLoadDataState){
+          if(widget.isStartLoading){
+            widget.bloc.add(LoadingEvent());
+          }
+          return Container();
+        }
         if (state is LoadingState) {
           widget.onLoadData();
         }
@@ -60,8 +70,8 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           fit: StackFit.expand,
           children: <Widget>[
             //loading\empty\fail
-            if (state is LoadingState /*|| state is InitialLoadDataState*/)
-              buildLoading(context)
+            if (state is LoadingState && widget.showLoadingWidget)
+                buildLoading(context)
             else if (state is LoadEmptyState)
               buildEmpty(context)
             else if (state is LoadFailState)

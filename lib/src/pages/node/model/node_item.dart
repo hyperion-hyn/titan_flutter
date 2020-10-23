@@ -54,6 +54,10 @@ part 'node_item.g.dart';
 
   Map<String, dynamic> toJson() => _$NodeItemToJson(this);
 
+  get name {
+    return "${this.nodeName??"Map3云节点（V1.0）"}";
+  }
+
 }
 
   

@@ -150,6 +150,19 @@ dependencies {
     implementation('com.trustwallet:wallet-core:2.0.15') {
         exclude group: 'com.google.guava'
     }
+
+    // 1. Use Guava in your implementation only:
+    implementation("com.google.guava:guava:30.0-jre")
+
+    // 2. Use Guava types in your public API:
+//    api("com.google.guava:guava:30.0-jre")
+//
+//    // 3. Android - Use Guava in your implementation only:
+//    implementation("com.google.guava:guava:30.0-android")
+//
+//    // 4. Android - Use Guava types in your public API:
+//    api("com.google.guava:guava:30.0-android")
+
     //web3j
     implementation 'org.web3j:core:5.0.0'
 //    implementation('org.bitcoinj:bitcoinj-core:0.15.8') {

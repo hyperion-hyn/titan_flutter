@@ -2,9 +2,11 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
+import 'package:titan/src/basic/http/test_http.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class EtherscanApi {
@@ -45,6 +47,22 @@ class EtherscanApi {
 
   static String getAddressDetailUrl(String address, bool isChinaMainland) {
     return '${getWebHost(isChinaMainland)}/address/$address';
+  }
+
+  Future<List<HynTransferHistory>> queryHYNHistory(String address, int page) async {
+    Map result = await TestHttpCore.instance.post("v1/wallet/account_txs", data:
+      "{\"address\": \"$address\",\"page\": $page,\"size\": 20}");
+
+    if (result["code"] == 0) {
+      var dataList = result["data"]["data"];
+      if(dataList == null || (dataList as List).length == 0){
+        return [];
+      }
+      List resultList = dataList as List;
+      return resultList.map((json) => HynTransferHistory.fromJson(json)).toList();
+    } else {
+      throw new Exception();
+    }
   }
 
   Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {

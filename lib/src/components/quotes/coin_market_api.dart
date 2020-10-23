@@ -1,43 +1,45 @@
 import 'package:dio/dio.dart';
 import 'package:titan/config.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/basic/http/test_http.dart';
 
+import 'vo/symbol_quote_entity.dart';
 import 'vo/symbol_quote_vo.dart';
 
 class CoinMarketApi {
-  Future<List<SymbolQuoteVo>> quotes(List<String> symbols, List<String> quoteConverts) async {
-    /*
-    final symbolString = symbols.reduce((value, element) => value + ',' + element);
-    final convert = quoteConverts.reduce((value, element) => value + ',' + element);
-    var response = await HttpCore.instance.get('${Config.COINMARKETCAP_API_URL}/v1/cryptocurrency/quotes/latest',
-        params: {"symbol": symbolString, "convert": convert},
-        options: RequestOptions(
-            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
-*/
-    var response = await HttpCore.instance.get('api/v1/market/prices/latest',
-        options: RequestOptions(
-            headers: {"X-CMC_PRO_API_KEY": Config.COINMARKETCAP_PRVKEY, "Accept": "application/json"})) as Map;
+  Future<List<SymbolQuoteVo>> quotes(int timestamp) async {
+    var response = await TestHttpCore.instance.postEntity('v1/wallet/quotes',
+        EntityFactory<SymbolQuoteEntity>(
+              (json) => SymbolQuoteEntity.fromJson(json),
+        ),
+        params: {
+          "ts": timestamp,
+        },
+        options: RequestOptions(contentType: "application/json"));
 
-    var status = response['state'];
-    //print("[coin] ---> status:$status");
+    List<SymbolQuoteVo> list = [];
+    var btcVo1 = SymbolQuoteVo(symbol: "BTC", quote: "CNY", price: response.btcCnyPrice, percentChange24h: response.btcPercentChangeCny24h);
+    list.add(btcVo1);
+    var btcVo2 = SymbolQuoteVo(symbol: "BTC", quote: "USD", price: response.btcUsdPrice, percentChange24h: response.btcPercentChangeUsd24h);
+    list.add(btcVo2);
 
-    if (status['error_code'] == 0) {
+    var ethVo1 = SymbolQuoteVo(symbol: "ETH", quote: "CNY", price: response.ethCnyPrice, percentChange24h: response.ethPercentChangeCny24h);
+    list.add(ethVo1);
+    var ethVo2 = SymbolQuoteVo(symbol: "ETH", quote: "USD", price: response.ethUsdPrice, percentChange24h: response.ethPercentChangeUsd24h);
+    list.add(ethVo2);
 
-      List<SymbolQuoteVo> list = [];
-      var datas = response["data"] as Map;
-      var keys = datas.keys;
-      for (var key in keys) {
-        for (var convert in quoteConverts) {
-          var price = datas[key]["quote"][convert]["price"];
-          var percentChange24h = datas[key]["quote"][convert]["percent_change_24h"];
-          var vo = SymbolQuoteVo(symbol: key, quote: convert, price: price, percentChange24h: percentChange24h);
-          list.add(vo);
-        }
-      }
-      return list;
-    }
+    var hynVo1 = SymbolQuoteVo(symbol: "HYN", quote: "CNY", price: response.hynCnyPrice, percentChange24h: response.hynPercentChangeCny24h);
+    list.add(hynVo1);
+    var hynVo2 = SymbolQuoteVo(symbol: "HYN", quote: "USD", price: response.hynUsdPrice, percentChange24h: response.hynPercentChangeUsd24h);
+    list.add(hynVo2);
 
-    throw HttpResponseCodeNotSuccess(status['error_code'], status['error_message']);
+    var usdtVo1 = SymbolQuoteVo(symbol: "USDT", quote: "CNY", price: response.usdtCnyPrice, percentChange24h: response.usdtPercentChangeCny24h);
+    list.add(usdtVo1);
+    var usdtVo2 = SymbolQuoteVo(symbol: "USDT", quote: "USD", price: response.usdtUsdPrice, percentChange24h: response.usdtPercentChangeUsd24h);
+    list.add(usdtVo2);
+
+    return list;
   }
 }

@@ -70,6 +70,15 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'appSource')
   int appSource;
 
+  @JsonKey(name: 'renew')
+  bool renew;
+
+  @JsonKey(name: 'announcement')
+  String announcement;
+
+  @JsonKey(name: 'commission')
+  double commission;
+
 //  enum ContractState { PRE_CREATE, PENDING, CANCELLED, CANCELLED_COMPLETED, ACTIVE, DUE, DUE_COMPLETED, FAIL}
   @JsonKey(name: 'state')
   String state;
@@ -78,29 +87,32 @@ class ContractNodeItem extends Object {
   int migrate;
 
   ContractNodeItem(
-    this.id,
-    this.contractCode,
-    this.contract,
-    this.owner,
-    this.ownerName,
-    this.amountDelegation,
-    this.remainDelegation,
-    this.nodeProvider,
-    this.nodeRegion,
-    this.nodeRegionName,
-    this.expectDueTime,
-    this.expectCancelTime,
-    this.instanceStartTime,
-    this.instanceActiveTime,
-    this.instanceDueTime,
-    this.instanceCancelTime,
-    this.instanceFinishTime,
-    this.shareUrl,
-    this.remoteNodeUrl,
-    this.appSource,
-    this.state,
-    this.migrate,
-  );
+      this.id,
+      this.contractCode,
+      this.contract,
+      this.owner,
+      this.ownerName,
+      this.amountDelegation,
+      this.remainDelegation,
+      this.nodeProvider,
+      this.nodeRegion,
+      this.nodeRegionName,
+      this.expectDueTime,
+      this.expectCancelTime,
+      this.instanceStartTime,
+      this.instanceActiveTime,
+      this.instanceDueTime,
+      this.instanceCancelTime,
+      this.instanceFinishTime,
+      this.shareUrl,
+      this.remoteNodeUrl,
+      this.appSource,
+      this.renew,
+      this.announcement,
+      this.commission,
+      this.state,
+      this.migrate,
+      );
 
   ContractNodeItem.onlyNodeItem(this.contract);
 
@@ -140,6 +152,8 @@ class ContractNodeItem extends Object {
 //    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
 //  }
 
+  bool get isHalfCompleteSecondsLeft => true;
+
   ///从启动到期满剩余时间
   double get completeSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
@@ -173,23 +187,9 @@ class ContractNodeItem extends Object {
 
   /// 对
   double get halfCompleteSecondsLeft {
-    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
-    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
-    double halfTotalDue = totalDue / 2;
-    double overDue = (now - instanceActiveTime);
-    double timeLeft = halfTotalDue - overDue;
-    //double timeLeft = (expectDueTime.toDouble() - instanceActiveTime) / 2 - now + instanceActiveTime;
-    //timeLeft = (expectDueTime.toDouble() + instanceActiveTime) / 2 - now;
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    double timeLeft = (expectDueTime - now.toDouble()) / 2;
     return timeLeft > 0 ? timeLeft : 0;
-  }
-
-  bool get isHalfCompleteSecondsLeft {
-    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
-    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
-    double halfTotalDue = totalDue / 2;
-    double overDue = (now - instanceActiveTime);
-    double timeLeft = halfTotalDue - overDue;
-    return timeLeft <= 0;
   }
 
   double get expectHalfDueProgress {

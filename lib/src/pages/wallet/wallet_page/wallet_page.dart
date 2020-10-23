@@ -37,6 +37,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -66,6 +67,8 @@ class _WalletPageState extends BaseState<WalletPage>
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
+    _postWalletBalance();
+
     ///check dex account is abnormal
     _checkDexAccount();
   }
@@ -73,6 +76,9 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _showAtlasExchangeAlert();
+    });
   }
 
   @override
@@ -83,6 +89,26 @@ class _WalletPageState extends BaseState<WalletPage>
     });
   }
 
+  _showAtlasExchangeAlert() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).got_it,
+          () {
+            Navigator.pop(context);
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content:
+          S.of(context).wallet_show_atlas_alert,
+    );
+  }
+
   @override
   Future<void> onCreated() async {
     //update quotes
@@ -91,9 +117,6 @@ class _WalletPageState extends BaseState<WalletPage>
     //update all coin balance
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
-    Future.delayed(Duration(milliseconds: 3000), () {
-      _postWalletBalance();
-    });
 
     listLoadingData();
   }
@@ -137,7 +160,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+            ?.activatedWallet;
 
     if (activatedWalletVo == null) return;
 
@@ -279,22 +302,22 @@ class _WalletPageState extends BaseState<WalletPage>
             .activatedWallet;
     if (activatedWalletVo != null) {
       return LoadDataContainer(
-          bloc: loadDataBloc,
-          enablePullUp: false,
-          onLoadData: () {
-            _checkDexAccount();
-            listLoadingData();
-          },
-          onRefresh: () async {
-            _checkDexAccount();
-            listLoadingData();
-          },
-          child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: ShowWalletView(
-                activatedWalletVo,
-                loadDataBloc,
-              )));
+        bloc: loadDataBloc,
+        enablePullUp: false,
+        showLoadingWidget: false,
+        onLoadData: () {
+          _checkDexAccount();
+          listLoadingData();
+        },
+        onRefresh: () async {
+          _checkDexAccount();
+          listLoadingData();
+        },
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: ShowWalletView(activatedWalletVo, loadDataBloc),
+        ),
+      );
     }
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(

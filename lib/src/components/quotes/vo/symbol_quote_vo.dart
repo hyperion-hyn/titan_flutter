@@ -6,7 +6,7 @@ part 'symbol_quote_vo.g.dart';
 @JsonSerializable()
 class SymbolQuoteVo extends Equatable {
   ///ETH, HYN etc..
-  final String symbol;
+  String symbol;
 
   ///USD, CNY etc..
   final String quote;
@@ -21,6 +21,15 @@ class SymbolQuoteVo extends Equatable {
   factory SymbolQuoteVo.fromJson(Map<String, dynamic> json) => _$SymbolQuoteVoFromJson(json);
 
   Map<String, dynamic> toJson() => _$SymbolQuoteVoToJson(this);
+
+  factory SymbolQuoteVo.clone(SymbolQuoteVo obj) {
+    return SymbolQuoteVo(
+      price: obj.price,
+      percentChange24h: obj.percentChange24h,
+      quote: obj.quote,
+      symbol: obj.symbol,
+    );
+  }
 
   @override
   String toString() {

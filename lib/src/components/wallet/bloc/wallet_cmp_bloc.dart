@@ -15,6 +15,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/start_join_instance.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
@@ -23,6 +24,7 @@ import '../../../global.dart';
 import '../wallet_repository.dart';
 import '../vo/wallet_vo.dart';
 import '../vo/coin_vo.dart';
+import 'package:rxdart/rxdart.dart';
 
 class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   final WalletRepository walletRepository;
@@ -37,6 +39,12 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   NodeApi _nodeApi = NodeApi();
 
   int _lastUpdateBalanceTime = 0;
+
+  @override
+  Stream<Transition<WalletCmpEvent, WalletCmpState>> transformEvents(
+      Stream<WalletCmpEvent> events, transitionFn) {
+    return events.switchMap(transitionFn);
+  }
 
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
@@ -83,7 +91,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         try {
           await walletRepository.updateWalletVoBalance(
-              _activatedWalletVo, event.symbol);
+              _activatedWalletVo, event.symbol, event.contractAddress);
           _saveWalletVoBalanceToDisk(
               _activatedWalletVo); //save balance data to disk;
           yield UpdatedWalletBalanceState(
@@ -114,6 +122,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   /// flat wallet accounts
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
+    var hynContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -141,8 +150,15 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        coins.add(contractCoin);
+        if(contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol){
+          hynContractCoin = contractCoin;
+        }else{
+          coins.add(contractCoin);
+        }
       }
+    }
+    if(hynContractCoin != null){
+      coins.add(hynContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
@@ -161,7 +177,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var deList = decoded.map((item) => CoinVo.fromJson(item)).toList();
       for (var cVo in vo.coins) {
         for (var dVO in deList) {
-          if (cVo.symbol == dVO.symbol) {
+          if (cVo.symbol == dVO.symbol && cVo.contractAddress == dVO.contractAddress) {
             cVo.balance = dVO.balance;
             break;
           }

@@ -39,8 +39,7 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp,
-      {bool isSecond = false, bool isMillisecond = false}) {
+  static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
       timestamp = timestamp * 1000;
@@ -61,27 +60,56 @@ class FormatUtil {
     return DateFormat(format).format(date) ?? "";
   }
 
+  static String formatDateStr(String utcStr, {bool isSecond = true}) {
+    var date = DateTime.parse(utcStr);
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+    return DateFormat(format).format(date) ?? "";
+  }
+
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
-    return DateFormat("yyyy.MM.dd")
-            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
-        "";
+    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    var utc = DateTime.parse(utcStr);
+
+    var utcLocal = utc.toLocal();
+
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+
+    var formatDate = DateFormat(format).format(utcLocal);
+    print("[time] formatDate:$formatDate");
+
+    /*
     var dateTime = DateFormat(format).parse(utcStr, true);
+    print("[time] dateTime:$dateTime");
+
     var dateLocal = dateTime.toLocal();
-    return DateFormat(format).format(dateLocal) ?? "";
+    print("[time] dateLocal:$dateLocal");
+
+    var local = DateFormat(format).format(dateLocal) ?? "";
+    print("[time] dateLocal:$dateLocal");
+    */
+
+    return formatDate;
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
-    return DateFormat("HH:mm MM/dd")
-            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
-        "";
+    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
-  static String amountToString(String amount) =>
-      FormatUtil.formatNum(double.parse(amount).toInt());
+  static String formatTimer(int seconds) {
+    int hour = seconds ~/ 3600;
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTimeNum(hour) + ":" + formatTimeNum(minute) + ":" + formatTimeNum(second);
+  }
+
+  static String formatTimeNum(int timeNum) {
+    return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
+  }
+
+  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
@@ -94,21 +122,16 @@ class FormatUtil {
   }
 
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
-        .toDouble();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
-        .toString();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
   }
 
   static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
     return truncateDecimalNum(
-      ConvertTokenUnit.weiToDecimal(
-          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
       decimal,
     );
   }
@@ -219,19 +242,13 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
-        decimal) {
-      var result = number
-          .toStringAsFixed(decimal)
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
+      var result =
+          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       result = FormatUtil.strClearZero(result);
       return result;
     } else {
-      var result = number
-          .toString()
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       result = FormatUtil.strClearZero(result);
       return result;
     }
@@ -241,18 +258,12 @@ class FormatUtil {
     if (number == null) {
       return null;
     }
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
-        decimal) {
-      var result = number
-          .toStringAsFixed(decimal)
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
+      var result =
+          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       return result;
     } else {
-      var result = number
-          .toString()
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       return result;
     }
   }
@@ -266,5 +277,18 @@ class FormatUtil {
       return "";
     }
     return Decimal.parse(value.toString()).toString();
+  }
+
+  static String weiToEtherStr(dynamic entityParam){
+    if(entityParam == null){
+      return entityParam;
+    }
+    if(entityParam is String){
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
+    }else if(entityParam is int){
+      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
+    }else{
+      return "0";
+    }
   }
 }

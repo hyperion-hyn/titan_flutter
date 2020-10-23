@@ -16,6 +16,7 @@ class LoadLocalDiskWalletAndActiveEvent extends WalletCmpEvent {}
 class UpdateActivatedWalletBalanceEvent extends WalletCmpEvent {
   ///only update the symbol balance? or null for all coin balance.
   final String symbol;
+  final String contractAddress;
 
-  UpdateActivatedWalletBalanceEvent({this.symbol});
+  UpdateActivatedWalletBalanceEvent({this.symbol, this.contractAddress});
 }

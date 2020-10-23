@@ -540,7 +540,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     var hynAddress;
     if (activatedWalletVo != null) {
       for (var coin in activatedWalletVo?.coins) {
-        if (coin.symbol == SupportedTokens.HYN.symbol) {
+        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           hynAddress = coin.address;
           break;
         }

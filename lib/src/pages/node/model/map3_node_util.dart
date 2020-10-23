@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -88,6 +89,54 @@ class Map3NodeUtil {
         break;
     }
     return statusColor;
+  }
+
+  /*
+  MAP,
+  CREATE_SUBMIT_ING,
+  CREATE_FAIL,
+  FUNDRAISING_NO_CANCEL,
+  FUNDRAISING_CANCEL_SUBMIT,
+  CANCEL_NODE_SUCCESS,
+  CONTRACT_HAS_STARTED,
+  CONTRACT_IS_END,
+  */
+  static HexColor statusColor(Map3InfoStatus state) {
+    if (state == null) return HexColor('#1FB9C7');
+
+    var _map3StatusColor = HexColor("#228BA1");
+    switch (state) {
+      case Map3InfoStatus.MAP:
+      case Map3InfoStatus.CREATE_SUBMIT_ING:
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+
+      case Map3InfoStatus.CREATE_FAIL:
+        _map3StatusColor = HexColor("#FF4C3B");
+        break;
+
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+
+      case Map3InfoStatus.CONTRACT_IS_END:
+        _map3StatusColor = HexColor("#FF4C3B");
+        break;
+
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        _map3StatusColor = HexColor("#FF4C3B");
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+
+      default:
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+    }
+
+    return _map3StatusColor;
   }
 
 }

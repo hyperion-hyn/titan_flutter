@@ -85,6 +85,10 @@ class WalletConfig {
 
   static String get WALLET_ADDRESS_API => 'https://api.wallet.hyn.space/wallet/address';
 
+  static String get ATLAS_API => Config.ATLAS_API;
+
+  static String get ATLAS_API_TEST => Config.ATLAS_API_TEST;
+
 //  static String get BITCOIN_LOCAL_API => 'http://10.10.1.134/wallet/btc/';
 
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
@@ -111,7 +115,7 @@ class WalletConfig {
   static String getHynErc20Address() {
     switch (netType) {
       case EthereumNetType.main:
-        return SupportedTokens.HYN.contractAddress;
+        return SupportedTokens.HYN_ERC20.contractAddress;
       case EthereumNetType.ropsten:
         return SupportedTokens.HYN_ROPSTEN.contractAddress;
       case EthereumNetType.rinkeby:
@@ -151,6 +155,23 @@ class WalletConfig {
       //return LOCAL_API;
     }
     return '';
+  }
+
+  static String getAtlasApi() {
+    switch (netType) {
+      case EthereumNetType.main:
+        return ATLAS_API;
+      case EthereumNetType.ropsten:
+        return ATLAS_API_TEST;
+        break;
+      case EthereumNetType.rinkeby:
+        return ATLAS_API_TEST;
+        break;
+      case EthereumNetType.local:
+        return ATLAS_API_TEST;
+        break;
+    }
+    return ATLAS_API;
   }
 
   static String getBitcoinApi() {

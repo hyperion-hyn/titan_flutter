@@ -24,6 +24,13 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     gasPrice: json['gasPrice'] as String,
     gasUsed: json['gasUsed'] as String,
     describe: json['describe'] as String,
+    data: json['data'] as String,
+    dataDecoded: json['dataDecoded'],
+    blockHash: json['blockHash'] as String,
+    blockNum: json['blockNum'] as int,
+    epoch: json['epoch'] as int,
+    transactionIndex: json['transactionIndex'] as int,
+    hynType: json['hynType'] as int,
   );
 }
 
@@ -46,4 +53,11 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'gasPrice': instance.gasPrice,
       'gasUsed': instance.gasUsed,
       'describe': instance.describe,
+      'data': instance.data,
+      'dataDecoded': instance.dataDecoded,
+      'blockHash': instance.blockHash,
+      'blockNum': instance.blockNum,
+      'epoch': instance.epoch,
+      'transactionIndex': instance.transactionIndex,
+      'hynType': instance.hynType,
     };

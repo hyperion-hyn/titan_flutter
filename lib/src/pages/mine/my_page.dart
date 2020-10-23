@@ -8,7 +8,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
-import 'package:titan/src/pages/node/map3page/my_map3_contracts_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -17,7 +16,6 @@ import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
-
 import 'map3_contract_control.dart';
 import 'package:characters/characters.dart';
 
@@ -76,7 +74,8 @@ class _MyPageState extends State<MyPage> {
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(216), bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
+                              topRight: Radius.circular(216),
+                              bottomRight: Radius.circular(216)), // 也可控件一边圆角大小
                         ),
                       ),
                       Container(
@@ -86,7 +85,8 @@ class _MyPageState extends State<MyPage> {
                         decoration: BoxDecoration(
                           color: HexColor("#D8D8D8").withOpacity(0.1),
                           shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(289.39)), // 也可控件一边圆角大小
                         ),
                       ),
                       Padding(
@@ -96,7 +96,9 @@ class _MyPageState extends State<MyPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(height: 16),
-                            _wallet == null ? _buildWalletCreateRow() : _buildWalletDetailRow(_wallet),
+                            _wallet == null
+                                ? _buildWalletCreateRow()
+                                : _buildWalletDetailRow(_wallet),
                             SizedBox(height: 16),
                             _buildSloganRow(),
                           ],
@@ -116,34 +118,30 @@ class _MyPageState extends State<MyPage> {
                     height: 10,
                     color: HexColor('#F1EFF2'),
                   ),
-                  _buildMenuBar(S.of(context).my_contract, Icons.menu, () {
-                    if (_wallet != null) {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyContractsPage()));
-                    } else {
-                      var tips =
-                          FluroConvertUtils.fluroCnParamsEncode(S.of(context).create_wallet_account_check_contract);
-                      Application.router.navigateTo(context, Routes.wallet_manager + '?tips=$tips');
-                    }
-                  },
-                      imageName: "ic_map3_node_item_contract",
-                      subText: _wallet == null ? S.of(context).create_or_import_wallet_first : null),
-                  Container(
-                    height: 10,
-                    color: HexColor('#F1EFF2'),
-                  ),
-                  _buildMenuBar(S.of(context).share_app, Icons.share, () => shareApp()),
+                  _buildMenuBar(
+                      S.of(context).share_app, Icons.share, () => shareApp()),
                   Padding(
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
                   ),
-                  _buildMenuBar(S.of(context).about_us, Icons.info,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => AboutMePage()))),
+                  _buildMenuBar(
+                      S.of(context).about_us,
+                      Icons.info,
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AboutMePage()))),
                   Padding(
                     padding: const EdgeInsets.only(left: 56.0),
                     child: Divider(height: 0),
                   ),
-                  _buildMenuBar(S.of(context).setting, Icons.settings,
-                      () => Navigator.push(context, MaterialPageRoute(builder: (context) => MeSettingPage()))),
+                  _buildMenuBar(
+                      S.of(context).setting,
+                      Icons.settings,
+                      () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MeSettingPage()))),
                   Divider(
                     height: 0,
                   ),
@@ -174,7 +172,8 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  Widget _buildMenuBar(String title, IconData iconData, Function onTap, {String imageName = "", String subText}) {
+  Widget _buildMenuBar(String title, IconData iconData, Function onTap,
+      {String imageName = "", String subText}) {
     Widget iconWidget;
     if (imageName.length <= 0) {
       iconWidget = Icon(
@@ -229,7 +228,8 @@ class _MyPageState extends State<MyPage> {
           alignment: Alignment.center,
           width: 52,
           height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {},
             child: Stack(
@@ -266,7 +266,8 @@ class _MyPageState extends State<MyPage> {
   Widget _buildWalletDetailRow(Wallet wallet) {
     KeyStore walletKeyStore = wallet.keystore;
     Account ethAccount = wallet.getEthAccount();
-    String walletName = walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
+    String walletName =
+        walletKeyStore.name[0].toUpperCase() + walletKeyStore.name.substring(1);
 
     return Row(
       children: <Widget>[
@@ -274,7 +275,8 @@ class _MyPageState extends State<MyPage> {
           alignment: Alignment.center,
 //          width: 52,
 //          height: 52,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: Theme.of(context).primaryColor),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle, color: Theme.of(context).primaryColor),
           child: InkWell(
             onTap: () {
               goSetWallet(wallet);
@@ -309,7 +311,10 @@ class _MyPageState extends State<MyPage> {
               children: <Widget>[
                 Text(
                   walletName,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 SizedBox(
                   height: 4,
@@ -317,7 +322,8 @@ class _MyPageState extends State<MyPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    shortBlockChainAddress(ethAccount.address, limitCharsLength: 13),
+                    shortBlockChainAddress(ethAccount.address,
+                        limitCharsLength: 13),
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                 ),
@@ -334,8 +340,10 @@ class _MyPageState extends State<MyPage> {
     var walletStr = FluroConvertUtils.object2string(wallet.toJson());
     var currentRouteName = RouteUtil.encodeRouteNameWithoutParams(context);
 //    print(currentRouteName);
-    Application.router
-        .navigateTo(context, Routes.wallet_setting + '?entryRouteName=$currentRouteName&walletStr=$walletStr');
+    Application.router.navigateTo(
+        context,
+        Routes.wallet_setting +
+            '?entryRouteName=$currentRouteName&walletStr=$walletStr');
   }
 
   Widget _buildSloganRow() {
@@ -350,7 +358,8 @@ class _MyPageState extends State<MyPage> {
             height: 36,
           ),
           SizedBox(width: 16),
-          Text(S.of(context).titan_encrypted_map_ecology, style: TextStyle(color: Colors.white70))
+          Text(S.of(context).titan_encrypted_map_ecology,
+              style: TextStyle(color: Colors.white70))
         ],
       ),
     );
@@ -367,6 +376,7 @@ class _MyPageState extends State<MyPage> {
     }
 
     final ByteData imageByte = await rootBundle.load(shareAppImage);
-    await Share.file(S.of(context).nav_share_app, 'app.png', imageByte.buffer.asUint8List(), 'image/jpeg');
+    await Share.file(S.of(context).nav_share_app, 'app.png',
+        imageByte.buffer.asUint8List(), 'image/jpeg');
   }
 }
