@@ -332,9 +332,8 @@ class HYNApi {
     return sendTransferHYN(password, wallet, message: message);
   }
 
-  static String getValueByHynType(int hynMessageType,
-      {bool getTypeStr = false}) {
-    String typeStr;
+  static String getValueByHynType(int hynMessageType,) {
+    String typeStr = "";
     switch (hynMessageType) {
       case MessageType.typeNormal:
         typeStr = "转账";
@@ -374,11 +373,7 @@ class HYNApi {
         break;
     }
 
-    if (getTypeStr) {
-      return typeStr;
-    }
-
-    return "";
+    return typeStr;
   }
 
   static String getHynToAddress(TransactionDetailVo transactionDetailVo) {

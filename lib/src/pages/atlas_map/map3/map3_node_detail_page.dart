@@ -481,6 +481,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
                           return delegateRecordItemWidget(_delegateRecordList[index]);
+/*
+                          return delegateRecordItemWidget(
+                            _delegateRecordList[index],
+                            map3CreatorAddress: _map3nodeInformationEntity?.map3Node?.operatorAddress ?? "",
+                          );
+*/
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -683,7 +689,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                iconWidget(_map3infoEntity),
+                iconMap3Widget(_map3infoEntity),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 2),
                   child: Column(
@@ -1239,6 +1245,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "可提奖励",
+ 
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1271,6 +1278,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+
             child: Row(
               children: <Widget>[
                 Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
@@ -1294,6 +1302,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     ])),
                   ],
                 ),
+/*
+            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
+            child: Row(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 18, right: 8.0),
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    //color: Colors.red,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
+                  ),
+                ),
+                Text.rich(TextSpan(children: [
+                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
+                ])),
+*/
               ],
             ),
           ),
@@ -1435,6 +1464,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
+ 
+        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        _delegateRecordList = tempMemberList;
+
+
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         var walletAddress = EthereumAddress.fromHex(_address);
 

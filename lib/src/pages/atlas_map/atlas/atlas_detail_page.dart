@@ -116,41 +116,42 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _currentPage = 1;
     _delegateRecordList.clear();
 
+    var hasWallet = _activatedWallet != null;
 //    try {
     var resultList = await Future.wait([
-      _atlasApi.postAtlasInfo(_activatedWallet.wallet.getAtlasAccount().address, widget.atlasNodeId),
+      _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
       _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
       _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
-      _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
-//        _atlasApi.postAtlasMap3NodeList(widget.atlasNodeId, page: _currentPage)
+      hasWallet ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000) : Future.delayed(Duration())
     ]);
     _atlasInfoEntity = resultList[0];
     _delegateRecordList = resultList[1];
     _validatorInformationEntity = resultList[2];
-    List<Map3InfoEntity> myMap3List = resultList[3];
+    List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
 
     if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
       showMyMap3 = true;
     }
 
-    myMap3List.forEach((myElement) {
-      bool isShowMap3 = true;
-      if(_atlasInfoEntity.myMap3 != null){
-        _atlasInfoEntity.myMap3.forEach((atlasElement) {
-          if(myElement.address == atlasElement.address){
-            isShowMap3 = false;
-          }
-        });
-      }
-      if(isShowMap3){
-        showMap3List.add(myElement);
-      }
-    });
+    if(hasWallet)
+      myMap3List.forEach((myElement) {
+        bool isShowMap3 = true;
+        if(_atlasInfoEntity.myMap3 != null){
+          _atlasInfoEntity.myMap3.forEach((atlasElement) {
+            if(myElement.address == atlasElement.address){
+              isShowMap3 = false;
+            }
+          });
+        }
+        if(isShowMap3){
+          showMap3List.add(myElement);
+        }
+      });
 
     infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
-    infoContentList.add("${_atlasInfoEntity.home}");
-    infoContentList.add("${_atlasInfoEntity.contact}");
-    infoContentList.add("${_atlasInfoEntity.describe}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.home)}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.contact)}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.describe)}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
@@ -165,11 +166,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
       });*/
 
-    if (mounted)
+    if (mounted) {
       setState(() {
         _currentState = null;
       });
-    _loadDataBloc.add(RefreshSuccessEvent());
+      _loadDataBloc.add(RefreshSuccessEvent());
+    }
 //    }catch(error){
 //      logger.e(error);
 //      setState(() {
@@ -177,48 +179,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 //      });
 //    }
 
-//    _atlasInfoEntity = AtlasInfoEntity.onlyId(11);
-    /*_atlasInfoEntity.name = "啦啦啦";
-    _atlasInfoEntity.rank = 23;
-    _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-    _atlasInfoEntity.nodeId = "PB20202";
-    _atlasInfoEntity.address = "0xsfasdasgadgas";
-    _atlasInfoEntity.reward = "111111";
-    _atlasInfoEntity.staking = "20000000";
-    _atlasInfoEntity.signRate = "98%";
-    _atlasInfoEntity.rewardRate = "98%";
-    _atlasInfoEntity.status = AtlasInfoStatus.CREATE_SUCCESS_CANCEL_NODE_ING.index;
-    _atlasInfoEntity.myMap3 = [
-      Map3InfoEntity(
-        "this.address",
-        "this.blsKey",
-        "this.blsSign",
-        AtlasInfoEntity.onlyId(1),
-        "this.contact",
-        "this.createdAt",
-        "this.creator",
-        "this.describe",
-        0,
-        "this.feeRate",
-        "this.home",
-        1,
-        1,
-        UserMap3Entity.onlyId(11),
-        "this.name",
-        "this.nodeId",
-        "this.parentNodeId",
-        "this.pic",
-        "this.provider",
-        "this.region",
-        Map3AtlasEntity.onlyId(1, 1),
-        "this.rewardHistory",
-        "this.rewardRate",
-        "this.staking",
-        0,
-        Map3AtlasStatus.JOIN_DELEGATE_ING.index,
-        "this.updatedAt",
-      ),
-    ];*/
+  }
+
+  String getContentStr(String contentStr){
+    if(contentStr == null || contentStr.isEmpty){
+      return "暂无";
+    }else{
+      return contentStr;
+    }
   }
 
   _loadMoreData() async {
@@ -276,10 +244,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   _nodeInfoWidget(),
 //                  _chartDetailWidget(),
                   _joinMap3Widget(),
+                  _nodeRecordHeader(),
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
+                          return delegateRecordItemWidget(_delegateRecordList[index],isAtlasDetail: true);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                   /*SliverList(
@@ -577,7 +546,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 shakeAnimationType: ShakeAnimationType.TopBottomShake,
                                 shakeRange: 0.3,
                                 child: Text(
-                                  "领取奖励",
+                                  "点击领取",
                                   style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                                 )),
                           ),
@@ -598,7 +567,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               shakeRange: 0.3,
                               delayForward: 1000,
                               child: Text(
-                                "+${FormatUtil.truncateDecimalNum(leftReward, 0)}",
+                                "+${FormatUtil.truncateDecimalNum(leftReward, 2)}",
                                 style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                               )),
                         ),
@@ -744,10 +713,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                     ],
                                   ),
                                 ),
-                                Expanded(
-                                  child: Container(),
-                                )
-                                /*Container(
+                                Container(
                                   height: 20,
                                   width: 0.5,
                                   color: HexColor("#33000000"),
@@ -755,15 +721,15 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 Expanded(
                                   child: Column(
                                     children: <Widget>[
-                                      Text("${_atlasInfoEntity.myMap3[_selectedMap3NodeValue].rewardHistory}",
+                                      Text("${FormatUtil.truncateDecimalNum(leftReward, 2)}",
                                           style: TextStyles.textC333S16),
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("奖励", style: TextStyles.textC999S12)
+                                      Text("可提奖励", style: TextStyles.textC999S12)
                                     ],
                                   ),
-                                ),*/
+                                ),
                               ],
                             ),
                           )
@@ -1076,6 +1042,22 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             color: HexColor("#F2F2F2"),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _nodeRecordHeader() {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+          child: Row(
+            children: <Widget>[
+              Text("节点记录", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            ],
+          ),
+        ),
       ),
     );
   }

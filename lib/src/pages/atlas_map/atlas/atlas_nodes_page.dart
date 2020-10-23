@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -25,6 +26,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/timer_text.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'atlas_my_node_page.dart';
 
@@ -562,12 +564,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(
-                    "res/drawable/map3_node_default_avatar.png",
-                    width: 42,
-                    height: 42,
-                    fit: BoxFit.cover,
-                  ),
+                  iconAtlasHomeNodeWidget(
+                      _atlasHomeEntity?.atlasHomeNodeList[index]),
                   SizedBox(
                     height: 12,
                   ),
