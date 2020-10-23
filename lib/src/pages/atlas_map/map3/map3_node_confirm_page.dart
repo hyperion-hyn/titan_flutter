@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -189,8 +190,13 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
-    var _amountValue = double.parse(_amount ?? '0');
-    var _price = _amountValue * quotePrice;
+    var amountValue = double.parse(_amount ?? '0');
+    var price = amountValue * quotePrice;
+    var priceFormat = FormatUtil.formatPrice(price);
+    var priceValue = "≈ $quoteSign$priceFormat";
+
+    print("[confirm] amountValue:$amountValue, priceValue:$priceValue");
+
     return Row(
       children: <Widget>[
         Expanded(
@@ -213,7 +219,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   ),
                 ),
                 Text(
-                  "≈ $quoteSign${FormatUtil.formatPrice(_price)}",
+                  priceValue,
                   style: TextStyle(color: Color(0xFF9B9B9B), fontSize: 14),
                 ),
               ],
