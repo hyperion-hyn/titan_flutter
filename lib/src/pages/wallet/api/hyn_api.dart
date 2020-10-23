@@ -12,7 +12,8 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
-  static Future<String> signTransferHYN(String password, localWallet.Wallet wallet,
+  static Future<String> signTransferHYN(
+      String password, localWallet.Wallet wallet,
       {String toAddress,
       BigInt amount,
       IMessage message,
@@ -38,7 +39,8 @@ class HYNApi {
     return txHash;
   }
 
-  static Future<String> sendTransferHYN(String password, localWallet.Wallet wallet,
+  static Future<String> sendTransferHYN(
+      String password, localWallet.Wallet wallet,
       {String toAddress,
       BigInt amount,
       IMessage message,
@@ -70,10 +72,13 @@ class HYNApi {
     localWallet.Wallet wallet,
   ) async {
     var message = CreateAtlasNodeMessage(
-      maxChangeRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateTrim),
-      maxRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateMax),
+      maxChangeRate:
+          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateTrim),
+      maxRate:
+          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateMax),
       rate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
-      maxTotalDelegation: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
+      maxTotalDelegation:
+          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
       description: NodeDescription(
           name: createAtlasEntity.payload.name,
           details: createAtlasEntity.payload.describe,
@@ -81,7 +86,8 @@ class HYNApi {
           securityContact: createAtlasEntity.payload.contact,
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
-      slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotPubKey:
+          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
     );
@@ -98,8 +104,10 @@ class HYNApi {
   ) async {
     var message = EditAtlasNodeMessage(
       validatorAddress: createAtlasEntity.payload.atlasAddress,
-      commissionRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
-      maxTotalDelegation: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
+      commissionRate:
+          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
+      maxTotalDelegation:
+          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
       description: NodeDescription(
           name: createAtlasEntity.payload.name,
           details: createAtlasEntity.payload.describe,
@@ -108,7 +116,8 @@ class HYNApi {
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
       slotKeyToRemove: "",
-      slotKeyToAdd: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotKeyToAdd:
+          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeyToAddSig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
       eposStatus: 0, //0、 Active 1、Inactive 2、Banned
@@ -120,14 +129,13 @@ class HYNApi {
   }
 
   static Future<String> transAtlasReceiveReward(
-      String map3Address,
-      String atlasAddress,
+    String map3Address,
+    String atlasAddress,
     String password,
     localWallet.Wallet wallet,
   ) async {
     var message = CollectAtlasRewardMessage(
-        delegatorAddress: map3Address,
-        validatorAddress: atlasAddress);
+        delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -156,7 +164,8 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message = ReDelegateAtlasMessage(
+        delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -170,8 +179,7 @@ class HYNApi {
     localWallet.Wallet wallet,
   ) async {
     var message = UnReDelegateAtlasMessage(
-        delegatorAddress: map3Address,
-        validatorAddress: atlasAddress);
+        delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -189,11 +197,11 @@ class HYNApi {
     print(payload.toJson());
 
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(payload.staking));
+    var feeRate = ConvertTokenUnit.strToBigInt(entity.payload.feeRate) /
+        BigInt.parse('100');
     var message = CreateMap3NodeMessage(
       amount: amount,
-      //commission: ConvertTokenUnit.strToBigInt(entity.payload.feeRate),
-      commission: BigInt.from(10).pow(17),
-      // 0.1   10%手续费
+      commission: BigInt.from(feeRate),
       description: NodeDescription(
           name: payload.name,
           details: payload.describe,
@@ -207,7 +215,10 @@ class HYNApi {
     print(message);
 
     return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
+        toAddress: entity.to,
+        message: message,
+        gasLimit: entity.gasLimit,
+        gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -234,7 +245,10 @@ class HYNApi {
     print(message);
 
     return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
+        toAddress: entity.to,
+        message: message,
+        gasLimit: entity.gasLimit,
+        gasPrice: entity.price);
   }
 
   static Future transTerminateMap3Node(
@@ -304,7 +318,8 @@ class HYNApi {
     String feeRate,
     String map3NodeAddress,
   ) async {
-    var newCommissionRate = ConvertTokenUnit.decimalToWei(Decimal.parse(feeRate));
+    var newCommissionRate =
+        ConvertTokenUnit.decimalToWei(Decimal.parse(feeRate));
 
     var message = RenewMap3NodeMessage(
       isRenew: isRenew,
@@ -317,7 +332,8 @@ class HYNApi {
     return sendTransferHYN(password, wallet, message: message);
   }
 
-  static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}) {
+  static String getValueByHynType(int hynMessageType,
+      {bool getTypeStr = false}) {
     String typeStr;
     switch (hynMessageType) {
       case MessageType.typeNormal:

@@ -165,7 +165,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                     ),
                   ],
                 ),
-                if (widget.message.description.addressList.isNotEmpty)
+                if (widget?.message?.description?.addressList?.isNotEmpty ?? false)
                   Container(
                     child: ListView.builder(
                       itemBuilder: (BuildContext context, int index) => Text(

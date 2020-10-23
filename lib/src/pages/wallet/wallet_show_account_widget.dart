@@ -392,12 +392,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
             transactionDetail.state == 0 &&
             widget.coinVo.coinType == CoinType.ETHEREUM) ||
         (transactionDetail.state != null &&
-            transactionDetail.state == 1 &&
+            (transactionDetail.state == 1 || transactionDetail.state == 2) &&
             widget.coinVo.coinType == CoinType.HYN_ATLAS)) {
       title = S.of(context).pending;
     } else if (((widget.coinVo.coinType == CoinType.ETHEREUM) && transactionDetail.state == 1)
         || (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6)
-        || (widget.coinVo.coinType == CoinType.HYN_ATLAS && (transactionDetail.state == 2 || transactionDetail.state == 3))) {
+        || (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
       if (SupportedTokens.allContractTokens(WalletConfig.netType)
           .map((token) => token.contractAddress.toLowerCase())
