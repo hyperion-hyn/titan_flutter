@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -74,10 +75,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _visibleNotify {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
-    var staking = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-      _map3infoEntity?.staking ?? "0",
-    )).toDouble();
+    var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
 
@@ -259,6 +257,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _map3StatusDesc = "";
 
+    //_map3Status = Map3InfoStatus.CONTRACT_HAS_STARTED;
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
@@ -272,7 +271,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "启动中";
+        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt()) > 0 ? _endRemainEpoch : 0}纪元";
 
         break;
 
@@ -288,6 +287,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
         _map3StatusDesc = "撤销中";
+
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
+        var remain = startMin - staking;
+        var remainDelegation = FormatUtil.formatPrice(remain);
+        _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
 
         break;
 
@@ -471,7 +479,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index],map3CreatorAddress: _map3nodeInformationEntity.map3Node.operatorAddress);
+                          return delegateRecordItemWidget(
+                            _delegateRecordList[index],
+                            map3CreatorAddress: _map3nodeInformationEntity.map3Node.operatorAddress,
+                          );
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -554,6 +565,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
+    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) return Container();
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -648,7 +661,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3infoEntity == null) return Container();
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    var nodeYearOld = "   节龄: ***天";
+    //var nodeYearOld = "   节龄: ***天";
+    var nodeYearOld = "";
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
@@ -667,16 +681,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  width: 42,
-                  height: 42,
-                  child: walletHeaderWidget(
-                    _map3infoEntity.name,
-                    isShowShape: false,
-                    address: _map3infoEntity.address,
-                    isCircle: false,
-                  ),
-                ),
+                iconWidget(_map3infoEntity),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 2),
                   child: Column(
@@ -1027,7 +1032,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _nodeServerWidget() {
     List points = [];
-    var point = {'name': _map3infoEntity.name, 'value': _selectedRegion?.location?.coordinates ?? []};
+    var point = {'name': _map3infoEntity.name, 'value': _selectedRegion?.location?.getCoordinatesAfterSwap() ?? []};
     points.add(point);
     return Container(
       color: Colors.white,
@@ -1091,11 +1096,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                   ),
                                 ),
                                 Expanded(
+                                  flex: 2,
                                   child: Text(
                                     details[index],
                                     style: TextStyle(
                                       color: HexColor("#333333"),
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
@@ -1116,6 +1122,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
+    /*
+
+    if (_map3infoEntity == null) return Container();
+
+    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
+    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
+
+    var totalReward =
+        FormatUtil.clearScientificCounting(_map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
+    var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
+
+*/
     if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
 
     var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
@@ -1123,6 +1141,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
     var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
+
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
     var myDelegationString = "0";
@@ -1220,7 +1239,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
             child: profitListBigWidget(
               [
-                {"总奖励": totalRewardString},
+                {"累积产生": totalRewardString},
                 {"管理费": feeRate},
                 {"我的抵押": myDelegationString},
               ],
@@ -1275,9 +1294,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _customStepperWidget() {
     var titles = [
-      S.of(context).create_time,
+      "创建",
       S.of(context).launch_success,
-      "到期时间",
+      "到期",
     ];
     var subtitles = [
       _map3infoEntity.startBlock,
@@ -1286,7 +1305,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ];
     var progressHints = [
       "",
-      S.of(context).n_day(90.toString()),
+      "180纪元",
       "",
     ];
 
@@ -1396,12 +1415,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         var walletAddress = EthereumAddress.fromHex(_address);
 
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        //_map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
-        _microDelegations = await client.getMap3NodeDelegation(
+        /*_microDelegations = await client.getMap3NodeDelegation(
           map3Address,
           walletAddress,
-        );
+        );*/
       }
 
       var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);

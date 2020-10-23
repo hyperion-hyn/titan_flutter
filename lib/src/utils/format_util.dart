@@ -288,7 +288,7 @@ class FormatUtil {
     }else if(entityParam is int){
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
     }else{
-      return "";
+      return "0";
     }
   }
 }
