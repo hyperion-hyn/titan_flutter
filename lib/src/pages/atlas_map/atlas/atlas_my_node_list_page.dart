@@ -117,12 +117,13 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
     _currentPage = 1;
     _atlasNodeList.clear();
     try {
-      var _nodeList = await _atlasApi.postAtlasNodeList(
+      var _nodeList = await _atlasApi.postUserAtlasNodeList(
         WalletInheritedModel.of(context)
             ?.activatedWallet
             ?.wallet
             ?.getAtlasAccount()
             ?.address,
+        widget._nodeJoinType,
         page: _currentPage,
         size: _pageSize,
       );
@@ -136,12 +137,13 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
 
   _loadMoreData() async {
     try {
-      var _nodeList = await _atlasApi.postAtlasNodeList(
+      var _nodeList = await _atlasApi.postUserAtlasNodeList(
         WalletInheritedModel.of(context)
             ?.activatedWallet
             ?.wallet
             ?.getAtlasAccount()
             ?.address,
+        widget._nodeJoinType,
         page: _currentPage + 1,
         size: _pageSize,
       );

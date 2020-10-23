@@ -53,13 +53,13 @@ class AtlasHomeNode extends Object {
   String describe;
 
   @JsonKey(name: 'fee_rate')
-  int feeRate;
+  String feeRate;
 
   @JsonKey(name: 'fee_rate_max')
-  int feeRateMax;
+  String feeRateMax;
 
   @JsonKey(name: 'fee_rate_trim')
-  int feeRateTrim;
+  String feeRateTrim;
 
   @JsonKey(name: 'home')
   String home;
@@ -68,7 +68,7 @@ class AtlasHomeNode extends Object {
   int id;
 
   @JsonKey(name: 'max_staking')
-  int maxStaking;
+  String maxStaking;
 
   @JsonKey(name: 'mod')
   int mod;
@@ -83,19 +83,19 @@ class AtlasHomeNode extends Object {
   String pic;
 
   @JsonKey(name: 'reward')
-  int reward;
+  String reward;
 
   @JsonKey(name: 'reward_history')
-  int rewardHistory;
+  String rewardHistory;
 
   @JsonKey(name: 'reward_rate')
-  int rewardRate;
+  String rewardRate;
 
   @JsonKey(name: 'sign_rate')
-  int signRate;
+  String signRate;
 
   @JsonKey(name: 'staking')
-  int staking;
+  String staking;
 
   @JsonKey(name: 'status')
   int status;
