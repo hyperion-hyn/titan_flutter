@@ -1019,5 +1019,5 @@
   "not_open_please_wait": "待開放，敬請期待",
   "important_hint": "重要提示",
   "got_it": "知道了",
-  "wallet_show_atlas_alert": "HYN主鏈幣已上線，請將HYN ERC20於一周之內（2020.11.11之前）映射為主鏈幣，一周之後HYN ERC20變為無效幣！"
+  "wallet_show_atlas_alert": "HYN主鏈幣已上線，請將HYN ERC20於一周之內（2020.11.04之前）映射為主鏈幣，一周之後HYN ERC20變為無效幣！"
 }
