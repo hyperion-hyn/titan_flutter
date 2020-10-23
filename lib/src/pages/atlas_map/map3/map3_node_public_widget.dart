@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -26,6 +27,10 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
+
+Widget iconAtlasHomeNodeWidget(AtlasHomeNode atlasHomeNode) {
+  return iconWidget(atlasHomeNode?.pic,atlasHomeNode?.name,atlasHomeNode?.address);
+}
 
 Widget iconAtlasWidget(AtlasInfoEntity infoEntity) {
   return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
