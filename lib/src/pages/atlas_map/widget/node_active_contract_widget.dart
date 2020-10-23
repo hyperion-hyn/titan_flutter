@@ -102,7 +102,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            iconWidget(item),
+            iconMap3Widget(item),
             SizedBox(
               height: 12,
             ),

@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
@@ -26,15 +27,25 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
 
+Widget iconAtlasWidget(AtlasInfoEntity infoEntity) {
+  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
+}
 
-Widget iconWidget(Map3InfoEntity infoEntity) {
-  if (infoEntity.pic.isNotEmpty) {
-    return FadeInImage.assetNetwork(
-      image: infoEntity.pic,
-      placeholder: 'res/drawable/img_placeholder.jpg',
-      width: 42,
-      height: 42,
-      fit: BoxFit.cover,
+Widget iconMap3Widget(Map3InfoEntity infoEntity) {
+  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
+}
+
+Widget iconWidget(String picture,String name,String address) {
+  if (picture.isNotEmpty) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(4.0),
+      child: FadeInImage.assetNetwork(
+        image: picture,
+        placeholder: 'res/drawable/img_placeholder.jpg',
+        width: 42,
+        height: 42,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
@@ -42,9 +53,9 @@ Widget iconWidget(Map3InfoEntity infoEntity) {
     width: 42,
     height: 42,
     child: walletHeaderWidget(
-      infoEntity.name,
+      name,
       isShowShape: true,
-      address: infoEntity.address,
+      address: address,
       isCircle: false,
     ),
   );
@@ -143,7 +154,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
             Row(
               children: <Widget>[
 
-                iconWidget(infoEntity),
+                iconMap3Widget(infoEntity),
                 SizedBox(
                   width: 8,
                 ),

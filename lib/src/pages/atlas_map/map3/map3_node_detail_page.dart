@@ -681,7 +681,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                iconWidget(_map3infoEntity),
+                iconMap3Widget(_map3infoEntity),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 2),
                   child: Column(

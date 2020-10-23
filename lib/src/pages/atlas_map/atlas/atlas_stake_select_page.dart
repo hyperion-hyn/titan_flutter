@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_node_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -259,7 +260,7 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
     children: <Widget>[
       Padding(
         padding: const EdgeInsets.only(left: 14.0, right: 8),
-        child: walletHeaderWidget(atlasInfoEntity.name, address: atlasInfoEntity.address),
+        child: iconAtlasWidget(atlasInfoEntity),
       ),
       Expanded(
         child: Column(

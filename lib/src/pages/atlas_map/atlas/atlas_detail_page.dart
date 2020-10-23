@@ -149,9 +149,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       });
 
     infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
-    infoContentList.add("${_atlasInfoEntity.home}");
-    infoContentList.add("${_atlasInfoEntity.contact}");
-    infoContentList.add("${_atlasInfoEntity.describe}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.home)}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.contact)}");
+    infoContentList.add("${getContentStr(_atlasInfoEntity.describe)}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
     infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
@@ -179,6 +179,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 //      });
 //    }
 
+  }
+
+  String getContentStr(String contentStr){
+    if(contentStr == null || contentStr.isEmpty){
+      return "暂无";
+    }else{
+      return contentStr;
+    }
   }
 
   _loadMoreData() async {
@@ -538,7 +546,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 shakeAnimationType: ShakeAnimationType.TopBottomShake,
                                 shakeRange: 0.3,
                                 child: Text(
-                                  "领取奖励",
+                                  "点击领取",
                                   style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                                 )),
                           ),
@@ -718,7 +726,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("待领取奖励", style: TextStyles.textC999S12)
+                                      Text("可提奖励", style: TextStyles.textC999S12)
                                     ],
                                   ),
                                 ),
