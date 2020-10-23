@@ -27,15 +27,15 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
 
-Widget iconAtlasWidget(AtlasInfoEntity infoEntity) {
-  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
+Widget iconAtlasWidget(AtlasInfoEntity infoEntity,{bool isCircle = false}) {
+  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address,isCircle: isCircle);
 }
 
-Widget iconMap3Widget(Map3InfoEntity infoEntity) {
-  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
+Widget iconMap3Widget(Map3InfoEntity infoEntity,{bool isCircle = false}) {
+  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address,isCircle: isCircle);
 }
 
-Widget iconWidget(String picture,String name,String address) {
+Widget iconWidget(String picture,String name,String address, {bool isCircle = false}) {
   if (picture.isNotEmpty) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.0),
@@ -56,7 +56,7 @@ Widget iconWidget(String picture,String name,String address) {
       name,
       isShowShape: true,
       address: address,
-      isCircle: false,
+      isCircle: isCircle,
     ),
   );
 }
