@@ -75,17 +75,42 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
 
   Widget _pageWidget(BuildContext context) {
     return CustomScrollView(
-      slivers: <Widget>[
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return AtlasNodeDetailItem(_atlasNodeList[index]);
-            },
-            childCount: _atlasNodeList.length,
+      slivers: <Widget>[_content()],
+    );
+  }
+
+  _content() {
+    if (_atlasNodeList.isNotEmpty) {
+      return SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return AtlasNodeDetailItem(_atlasNodeList[index]);
+          },
+          childCount: _atlasNodeList.length,
+        ),
+      );
+    } else {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 32,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  'res/drawable/ic_empty_contract.png',
+                  width: 100,
+                  height: 100,
+                ),
+              ),
+              Text('暂无记录'),
+            ],
           ),
         ),
-      ],
-    );
+      );
+    }
   }
 
   _refreshData() async {
