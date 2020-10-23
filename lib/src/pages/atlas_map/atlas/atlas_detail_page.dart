@@ -116,36 +116,37 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _currentPage = 1;
     _delegateRecordList.clear();
 
+    var hasWallet = _activatedWallet != null;
 //    try {
     var resultList = await Future.wait([
-      _atlasApi.postAtlasInfo(_activatedWallet.wallet.getAtlasAccount().address, widget.atlasNodeId),
+      _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
       _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
       _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
-      _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
-//        _atlasApi.postAtlasMap3NodeList(widget.atlasNodeId, page: _currentPage)
+      hasWallet ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000) : Future.delayed(Duration())
     ]);
     _atlasInfoEntity = resultList[0];
     _delegateRecordList = resultList[1];
     _validatorInformationEntity = resultList[2];
-    List<Map3InfoEntity> myMap3List = resultList[3];
+    List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
 
     if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
       showMyMap3 = true;
     }
 
-    myMap3List.forEach((myElement) {
-      bool isShowMap3 = true;
-      if(_atlasInfoEntity.myMap3 != null){
-        _atlasInfoEntity.myMap3.forEach((atlasElement) {
-          if(myElement.address == atlasElement.address){
-            isShowMap3 = false;
-          }
-        });
-      }
-      if(isShowMap3){
-        showMap3List.add(myElement);
-      }
-    });
+    if(hasWallet)
+      myMap3List.forEach((myElement) {
+        bool isShowMap3 = true;
+        if(_atlasInfoEntity.myMap3 != null){
+          _atlasInfoEntity.myMap3.forEach((atlasElement) {
+            if(myElement.address == atlasElement.address){
+              isShowMap3 = false;
+            }
+          });
+        }
+        if(isShowMap3){
+          showMap3List.add(myElement);
+        }
+      });
 
     infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
     infoContentList.add("${_atlasInfoEntity.home}");
@@ -178,48 +179,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 //      });
 //    }
 
-//    _atlasInfoEntity = AtlasInfoEntity.onlyId(11);
-    /*_atlasInfoEntity.name = "啦啦啦";
-    _atlasInfoEntity.rank = 23;
-    _atlasInfoEntity.pic = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-    _atlasInfoEntity.nodeId = "PB20202";
-    _atlasInfoEntity.address = "0xsfasdasgadgas";
-    _atlasInfoEntity.reward = "111111";
-    _atlasInfoEntity.staking = "20000000";
-    _atlasInfoEntity.signRate = "98%";
-    _atlasInfoEntity.rewardRate = "98%";
-    _atlasInfoEntity.status = AtlasInfoStatus.CREATE_SUCCESS_CANCEL_NODE_ING.index;
-    _atlasInfoEntity.myMap3 = [
-      Map3InfoEntity(
-        "this.address",
-        "this.blsKey",
-        "this.blsSign",
-        AtlasInfoEntity.onlyId(1),
-        "this.contact",
-        "this.createdAt",
-        "this.creator",
-        "this.describe",
-        0,
-        "this.feeRate",
-        "this.home",
-        1,
-        1,
-        UserMap3Entity.onlyId(11),
-        "this.name",
-        "this.nodeId",
-        "this.parentNodeId",
-        "this.pic",
-        "this.provider",
-        "this.region",
-        Map3AtlasEntity.onlyId(1, 1),
-        "this.rewardHistory",
-        "this.rewardRate",
-        "this.staking",
-        0,
-        Map3AtlasStatus.JOIN_DELEGATE_ING.index,
-        "this.updatedAt",
-      ),
-    ];*/
   }
 
   _loadMoreData() async {
