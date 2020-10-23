@@ -276,6 +276,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     var _remainTime = _secPerBlock *
         (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
 
+    var points = json.decode(_atlasHomeEntity?.points ?? '{}');
+
     return Container(
       width: double.infinity,
       height: 162,
@@ -283,7 +285,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         borderRadius: BorderRadius.circular(16.0),
         child: Stack(
           children: <Widget>[
-            AtlasMapWidget(_atlasNodeCoordinates),
+            AtlasMapWidget(points),
             Positioned(
               left: 16,
               bottom: 32,
