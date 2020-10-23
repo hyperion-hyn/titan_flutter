@@ -471,10 +471,19 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       return _nodeInfoItem(index);
                     }),
               )
-            : Container(
-                height: 150,
-                child: Center(
-                  child: Text('暂无记录'),
+            : Center(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Image.asset(
+                        'res/drawable/ic_empty_contract.png',
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                    Text('暂无记录'),
+                  ],
                 ),
               ),
       ],
