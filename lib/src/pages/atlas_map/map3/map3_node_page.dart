@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:sprintf/sprintf.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -45,20 +42,18 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Map3HomeEntity _map3homeEntity;
   Map3StakingEntity _map3stakingEntity;
   Map3IntroduceEntity _map3introduceEntity;
+  var _address = "";
 
   @override
   bool get wantKeepAlive => true;
-  var _address = "";
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   void didChangeDependencies() {
-
     super.didChangeDependencies();
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
@@ -167,7 +162,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return emptyListWidget(title: _address.isEmpty?"请创建或导入钱包后查看":"没有我的节点，您可以创建节点");
+      return emptyListWidget(title: _address.isEmpty ? "请创建或导入钱包后查看" : "没有我的节点，您可以创建节点");
     }
 
     return SliverToBoxAdapter(
@@ -199,7 +194,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
         color: Colors.white,
-        child: getMap3NodeWaitItem(context, _pendingList[index], _map3introduceEntity, canCheck: (index<_map3stakingEntity.canStakingNum)),
+        child: getMap3NodeWaitItem(context, _pendingList[index], _map3introduceEntity,
+            canCheck: (index < _map3stakingEntity.canStakingNum)),
       );
     }, childCount: _pendingList.length));
   }
@@ -251,10 +247,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   Widget _nodesMapWidget() {
-    // todo: test_jison
-    int instanceCount = 10;
-    var points = _map3homeEntity?.points ?? '';
-    print('points: $points');
+    // var points = _map3homeEntity?.points ?? '';
+    // print('points: $points');
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ClipRRect(
@@ -264,7 +259,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           height: 162,
           child: Stack(
             children: <Widget>[
-              Map3NodesWidget(_map3homeEntity?.points ),
+              Map3NodesWidget(_map3homeEntity?.points),
               Positioned(
                 left: 16,
                 bottom: 32,
@@ -272,7 +267,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      sprintf(S.of(context).earth_outpace_server_node, [instanceCount]),
+                      "Map3地图服务节点",
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -295,10 +290,66 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     );
   }
 
-  Widget _map3HeadWidget() {
-    var title = _map3introduceEntity?.name ?? "";
+  _nodeIntroduceWidget() {
+    var title = _map3introduceEntity?.name ?? "Map3节点（v1.0）";
     var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
     var guideTitle = "开通教程";
+    return Container(
+      color: Colors.white24,
+      margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(title,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
+                Spacer(),
+                InkWell(
+                  onTap: _pushWebViewAction,
+                  child: Text(guideTitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DefaultColors.color66000000,
+                      )),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: ClipRRect(
+                    child:
+                        Image.asset("res/drawable/ic_map3_node_item_2.png", width: 80, height: 80, fit: BoxFit.cover),
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Flexible(
+                  child: Text(desc, style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: ClickOvalButton(S.of(context).create_contract, () {
+              _pushCreateContractAction();
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _map3HeadWidget() {
     return SliverToBoxAdapter(
       child: Container(
         //color: Color(0xfff4f4f4),
@@ -306,61 +357,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         child: Column(
           children: <Widget>[
             _nodesMapWidget(),
-            Container(
-              color: Colors.white24,
-              margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(title,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
-                        Spacer(),
-                        InkWell(
-                          onTap: _pushWebViewAction,
-                          child: Text(guideTitle,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DefaultColors.color66000000,
-                              )),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: ClipRRect(
-                            child: Image.asset("res/drawable/ic_map3_node_item_2.png",
-                                width: 80, height: 80, fit: BoxFit.cover),
-                            borderRadius: BorderRadius.circular(4.0),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Flexible(
-                          child: Text(desc,
-                              style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: ClickOvalButton(S.of(context).create_contract, () {
-                      _pushCreateContractAction();
-                    }),
-                  ),
-                ],
-              ),
-            )
+            _nodeIntroduceWidget(),
           ],
         ),
       ),

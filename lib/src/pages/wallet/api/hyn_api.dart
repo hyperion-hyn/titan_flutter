@@ -314,7 +314,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, message: message);
+    return sendTransferHYN(password, wallet, message: message);
   }
 
   static String getValueByHynType(int hynMessageType, {bool getTypeStr = false}) {

@@ -104,30 +104,39 @@ class Map3NodeUtil {
   static HexColor statusColor(Map3InfoStatus state) {
     if (state == null) return HexColor('#1FB9C7');
 
-    Color statusColor = HexColor('#EED197');
-
+    var _map3StatusColor = HexColor("#228BA1");
     switch (state) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        statusColor = HexColor('#EED197');
+        _map3StatusColor = HexColor("#228BA1");
+        break;
+
+      case Map3InfoStatus.CREATE_FAIL:
+        _map3StatusColor = HexColor("#FF4C3B");
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        statusColor = HexColor('#1FB9C7');
+        _map3StatusColor = HexColor("#228BA1");
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        statusColor = HexColor('#F30202');
+        _map3StatusColor = HexColor("#FF4C3B");
+        break;
+
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        _map3StatusColor = HexColor("#FF4C3B");
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#228BA1");
         break;
 
       default:
-        statusColor = HexColor('#999999');
+        _map3StatusColor = HexColor("#228BA1");
         break;
     }
-    return statusColor;
+
+    return _map3StatusColor;
   }
 
 }
