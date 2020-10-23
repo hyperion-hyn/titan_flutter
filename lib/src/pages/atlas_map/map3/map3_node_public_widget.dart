@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -41,6 +42,12 @@ Widget iconAtlasWidget(AtlasInfoEntity infoEntity,{bool isCircle = false}) {
     );
   }
   return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address,isCircle: isCircle);
+Widget iconAtlasHomeNodeWidget(AtlasHomeNode atlasHomeNode) {
+  return iconWidget(atlasHomeNode?.pic,atlasHomeNode?.name,atlasHomeNode?.address);
+}
+
+Widget iconAtlasWidget(AtlasInfoEntity infoEntity) {
+  return iconWidget(infoEntity.pic,infoEntity.name,infoEntity.address);
 }
 
 Widget iconMap3Widget(Map3InfoEntity infoEntity,{bool isCircle = false}) {

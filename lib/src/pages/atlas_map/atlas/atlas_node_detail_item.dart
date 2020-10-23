@@ -4,10 +4,12 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasNodeDetailItem extends StatelessWidget {
   final AtlasInfoEntity _atlasInfo;
@@ -47,34 +49,27 @@ class AtlasNodeDetailItem extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4.0),
-                      child: FadeInImage.assetNetwork(
-                        image: _atlasInfo?.pic,
-                        placeholder: 'res/drawable/img_placeholder.jpg',
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    iconAtlasWidget(_atlasInfo),
                     SizedBox(
                       width: 8,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text.rich(TextSpan(children: [
-                          TextSpan(
-                              text: _atlasInfo.name ?? 'node name',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              )),
-                          TextSpan(text: "", style: TextStyles.textC333S14bold),
-                        ])),
-                        Container(
-                          height: 4,
-                        ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text: _atlasInfo.name ?? 'node name',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                )),
+                            TextSpan(
+                                text: "", style: TextStyles.textC333S14bold),
+                          ])),
+                          Container(
+                            height: 4,
+                          ),
 //                        Row(
 //                          children: <Widget>[
 //                            Text(
@@ -87,9 +82,9 @@ class AtlasNodeDetailItem extends StatelessWidget {
 //                            ),
 //                          ],
 //                        )
-                      ],
+                        ],
+                      ),
                     ),
-                    Spacer(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
