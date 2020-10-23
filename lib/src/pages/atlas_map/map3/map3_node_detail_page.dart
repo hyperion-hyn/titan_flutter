@@ -554,6 +554,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
+    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) return Container();
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -648,7 +650,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3infoEntity == null) return Container();
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    var nodeYearOld = "   节龄: ***天";
+    //var nodeYearOld = "   节龄: ***天";
+    var nodeYearOld = "";
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
@@ -667,16 +670,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                SizedBox(
-                  width: 42,
-                  height: 42,
-                  child: walletHeaderWidget(
-                    _map3infoEntity.name,
-                    isShowShape: false,
-                    address: _map3infoEntity.address,
-                    isCircle: false,
-                  ),
-                ),
+                iconWidget(_map3infoEntity),
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 2),
                   child: Column(
@@ -1396,12 +1390,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         var walletAddress = EthereumAddress.fromHex(_address);
 
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        //_map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
-        _microDelegations = await client.getMap3NodeDelegation(
+        /*_microDelegations = await client.getMap3NodeDelegation(
           map3Address,
           walletAddress,
-        );
+        );*/
       }
 
       var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);

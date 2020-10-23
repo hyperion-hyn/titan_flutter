@@ -24,6 +24,30 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
 
+
+Widget iconWidget(Map3InfoEntity infoEntity) {
+  if (infoEntity.pic.isNotEmpty) {
+    return FadeInImage.assetNetwork(
+      image: infoEntity.pic,
+      placeholder: 'res/drawable/img_placeholder.jpg',
+      width: 42,
+      height: 42,
+      fit: BoxFit.cover,
+    );
+  }
+
+  return SizedBox(
+    width: 42,
+    height: 42,
+    child: walletHeaderWidget(
+      infoEntity.name,
+      isShowShape: true,
+      address: infoEntity.address,
+      isCircle: false,
+    ),
+  );
+}
+
 Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity,
     {bool canCheck = true}) {
   if (infoEntity == null) return Container();
@@ -116,16 +140,8 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
           children: <Widget>[
             Row(
               children: <Widget>[
-                SizedBox(
-                  width: 42,
-                  height: 42,
-                  child: walletHeaderWidget(
-                    infoEntity.name,
-                    isShowShape: true,
-                    address: infoEntity.address,
-                    isCircle: false,
-                  ),
-                ),
+
+                iconWidget(infoEntity),
                 SizedBox(
                   width: 8,
                 ),
@@ -135,10 +151,10 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                     Row(
                       children: <Widget>[
                         Text(
-                          nodeName,
+                          shortName(nodeName, limitCharsLength: 5),
                           style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                         ),
-                        SizedBox(width: 32,),
+                        SizedBox(width: 16,),
 
                         RichText(
                           textAlign: TextAlign.end,
