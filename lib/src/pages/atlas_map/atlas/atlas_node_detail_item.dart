@@ -23,7 +23,11 @@ class AtlasNodeDetailItem extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () async {
-          Application.router.navigateTo(context, Routes.atlas_detail_page + '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.address)}', );
+          Application.router.navigateTo(
+            context,
+            Routes.atlas_detail_page +
+                '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(_atlasInfo.address)}',
+          );
         },
         child: Container(
           decoration: BoxDecoration(
@@ -43,11 +47,15 @@ class AtlasNodeDetailItem extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Image.asset(
-                      "res/drawable/map3_node_default_avatar.png",
-                      width: 42,
-                      height: 42,
-                      fit: BoxFit.cover,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4.0),
+                      child: FadeInImage.assetNetwork(
+                        image: _atlasInfo?.pic,
+                        placeholder: 'res/drawable/img_placeholder.jpg',
+                        width: 42,
+                        height: 42,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     SizedBox(
                       width: 8,
@@ -126,7 +134,8 @@ class AtlasNodeDetailItem extends StatelessWidget {
                                       color: Colors.grey, fontSize: 12)),
                               TextSpan(text: ' '),
                               TextSpan(
-                                  text: '${FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
+                                  text:
+                                      '${FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))

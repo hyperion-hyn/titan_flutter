@@ -562,11 +562,15 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(
-                    "res/drawable/map3_node_default_avatar.png",
-                    width: 42,
-                    height: 42,
-                    fit: BoxFit.cover,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: FadeInImage.assetNetwork(
+                      image: _atlasHomeEntity?.atlasHomeNodeList[index]?.pic,
+                      placeholder: 'res/drawable/img_placeholder.jpg',
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   SizedBox(
                     height: 12,
