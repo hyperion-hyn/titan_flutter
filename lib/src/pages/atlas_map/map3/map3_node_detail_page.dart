@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
@@ -259,6 +260,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _map3StatusDesc = "";
 
+    //_map3Status = Map3InfoStatus.CONTRACT_HAS_STARTED;
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
@@ -272,7 +274,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "启动中";
+        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt())>0?_endRemainEpoch:0}纪元";
 
         break;
 
@@ -288,6 +290,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
         _map3StatusDesc = "撤销中";
+
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var staking = double.parse(_map3infoEntity?.getStaking()??"0");
+        var remain = startMin - staking;
+        var remainDelegation = FormatUtil.formatPrice(remain);
+        _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
 
         break;
 

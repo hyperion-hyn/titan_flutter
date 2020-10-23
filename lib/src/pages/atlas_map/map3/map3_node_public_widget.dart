@@ -59,7 +59,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   var isPending = false;
 
   var startMin = double.parse(map3introduceEntity?.startMin ?? "0");
-  var staking = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(infoEntity.staking)).toDouble();
+  var staking = double.parse(infoEntity?.getStaking()??"0");
   var remain = startMin - staking;
   var remainDelegation = FormatUtil.formatPrice(remain);
   isNotFull = remain > 0;
@@ -1000,7 +1000,7 @@ void _pushTransactionDetailAction(Map3TxLogEntity item) {
     id: item.id,
     contractAddress: item.contractAddress,
     state: 1, //1 success, 0 pending, -1 failed
-    amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.dataDecoded.amount)).toDouble(),
+    amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount??"0")).toDouble(),
     symbol: "HYN",
     fromAddress: item.from,
     toAddress: item.to,
@@ -1009,8 +1009,8 @@ void _pushTransactionDetailAction(Map3TxLogEntity item) {
     gasPrice: item.gasPrice,
     gas: item.gasLimit.toString(),
     gasUsed: item.gasUsed.toString(),
-    describe: item.dataDecoded.description.details,
-    data: item.data,
+    describe: item?.dataDecoded?.description?.details??"",
+    data: item?.data??"很棒",
     dataDecoded: item.dataDecoded.toJson(),
     blockHash: item.blockHash,
     blockNum: item.blockNum,

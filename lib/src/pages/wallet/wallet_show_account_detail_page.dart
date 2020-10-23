@@ -291,7 +291,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                         children: <Widget>[
                           Expanded(
                             child: Text(
-                              rightText,
+                              rightText??"",
                               style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.end,
                             ),

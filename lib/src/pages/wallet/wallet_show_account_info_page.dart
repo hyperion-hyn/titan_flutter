@@ -179,7 +179,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        rightText,
+                        rightText??"",
                         style: TextStyles.textC333S13,
                         textAlign: TextAlign.end,
                       ),
