@@ -1490,11 +1490,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
+      /*
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       _map3nodeInformationEntity =
           await client.getMap3NodeInformation(map3Address);
 
-      /*
       var walletAddress = EthereumAddress.fromHex(_address);
       _microDelegations = await client.getMap3NodeDelegation(
         map3Address,
