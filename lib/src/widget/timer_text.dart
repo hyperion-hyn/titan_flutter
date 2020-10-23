@@ -30,7 +30,7 @@ class TimerTextState extends State<TimerTextWidget> {
   @override
   void initState() {
     super.initState();
-    _remainTime = widget.remainTime;
+    _remainTime = widget.remainTime >= 0 ? widget.remainTime : 0;
     _setUpTimer();
   }
 
@@ -66,6 +66,7 @@ class TimerTextState extends State<TimerTextWidget> {
         } else {
           _remainTime--;
         }
+
       });
     });
   }
