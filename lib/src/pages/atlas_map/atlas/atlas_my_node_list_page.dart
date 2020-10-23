@@ -5,6 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_detail_item.dart';
@@ -90,18 +91,19 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
   _refreshData() async {
     _currentPage = 1;
     _atlasNodeList.clear();
-    print('[atlas] _refreshData');
     try {
       var _nodeList = await _atlasApi.postAtlasNodeList(
-        'address',
+        WalletInheritedModel.of(context)
+            ?.activatedWallet
+            ?.wallet
+            ?.getAtlasAccount()
+            ?.address,
         page: _currentPage,
         size: _pageSize,
       );
-      print('[atlas]: _nodeList: $_nodeList');
       _atlasNodeList.addAll(_nodeList);
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
-      print('[atlas]: _nodeList: failed');
       _loadDataBloc.add(RefreshSuccessEvent());
     }
     if (mounted) setState(() {});
@@ -110,20 +112,21 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
   _loadMoreData() async {
     try {
       var _nodeList = await _atlasApi.postAtlasNodeList(
-        'address',
+        WalletInheritedModel.of(context)
+            ?.activatedWallet
+            ?.wallet
+            ?.getAtlasAccount()
+            ?.address,
         page: _currentPage + 1,
         size: _pageSize,
       );
 
-      _atlasNodeList.addAll(_nodeList);
-
-      ///
-      _currentPage++;
-
-      ///
+      if (_nodeList != null && _nodeList.length > 0) {
+        _atlasNodeList.addAll(_nodeList);
+        _currentPage++;
+      }
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
-      print('[atlas]: _nodeList: failed');
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
