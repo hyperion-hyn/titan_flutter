@@ -131,7 +131,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   //get _isCreator => _map3infoEntity.address == _address;
   //get _isJoiner => !_map3infoEntity.isCreator();
-  get _isCreator => !_map3infoEntity.isCreator();
+  get _isCreator => _map3infoEntity.isCreator();
 
   get _isDelegate => _map3infoEntity?.mine != null;
 
@@ -571,6 +571,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _bottomBtnBarWidget() {
     if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED && !_isDelegate) return Container();
 
+    print("_canExitAndCancel:$_canExitAndCancel");
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -596,7 +598,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           Spacer(),
           ClickOvalButton(
             "提取奖励",
-            _collectAction,
+            _isDelegate?_collectAction:null,
             width: 100,
             height: 32,
             fontSize: 14,
@@ -1063,12 +1065,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
-                SizedBox(
-                  height: 30,
-                  child: InkWell(
-                    onTap: _pushNodeInfoAction,
-                    child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
-                    //style: TextStyles.textC906b00S13),
+                Visibility(
+                  visible: false,
+                  child: SizedBox(
+                    height: 30,
+                    child: InkWell(
+                      onTap: _pushNodeInfoAction,
+                      child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                      //style: TextStyles.textC906b00S13),
+                    ),
                   ),
                 ),
               ],

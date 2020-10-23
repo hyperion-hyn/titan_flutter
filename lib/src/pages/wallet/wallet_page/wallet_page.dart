@@ -173,7 +173,7 @@ class _WalletPageState extends BaseState<WalletPage>
             Expanded(child: _buildWalletView(context)),
             //hyn quotes view
             // hynQuotesView(),
-            _authorizedView(),
+            //_authorizedView(),
           ],
         ),
       ),

@@ -61,7 +61,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
                         ? widget.fontColor
                         : Colors.white,
               )),
-          onPressed: widget.isLoading
+          onPressed: (widget.onTap == null || widget.isLoading)
               ? null
               : () async {
                   setState(() {

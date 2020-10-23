@@ -336,7 +336,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
         children: <Widget>[
-          iconWidget(widget.map3infoEntity),
+          iconMap3Widget(widget.map3infoEntity),
           SizedBox(
             width: 10,
           ),

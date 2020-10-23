@@ -201,7 +201,9 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
                     Row(
                       children: <Widget>[
                         Text(
-                          shortName(nodeName, limitCharsLength: 8),
+                          //shortName(nodeName, limitCharsLength: 8),
+                          nodeName,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16),
                         ),
@@ -984,7 +986,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item,
           weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0"))
       .toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
-  var detail = HYNApi.getValueByHynType(item.type);
+  var detail = HYNApi.getValueByHynType(item.type, amount: isAtlasDetail?"":amount);
 
   WalletVo _activatedWallet =
       WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;

@@ -142,6 +142,7 @@ class _ApiDemoState extends State {
             },
             child: Text('清除当前交易账户登录记录'),
           ),
+          /*
           RaisedButton(
             child: Text('-测试申请0.05ETH'),
             onPressed: () async {
@@ -266,6 +267,8 @@ class _ApiDemoState extends State {
               }
             },
           ),
+
+           */
           RaisedButton(
             child: Text('Map3 providers'),
             onPressed: () async {
