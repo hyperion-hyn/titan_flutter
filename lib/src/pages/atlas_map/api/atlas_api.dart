@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -151,6 +152,28 @@ class AtlasApi {
       {int page = 1, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/node_list",
+        EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
+            .map((item) => AtlasInfoEntity.fromJson(item))
+            .toList()),
+        params: {
+          "address": address,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 查询Atlas节点列表
+  Future<List<AtlasInfoEntity>> postUserAtlasNodeList(
+    String address,
+    NodeJoinType nodeJoinType, {
+    int page = 1,
+    int size = 0,
+  }) async {
+    return AtlasHttpCore.instance.postEntity(
+        nodeJoinType == NodeJoinType.CREATOR
+            ? "/v1/atlas/node_list_i_create"
+            : "/v1/atlas/node_list_i_join",
         EntityFactory<List<AtlasInfoEntity>>((list) => (list as List)
             .map((item) => AtlasInfoEntity.fromJson(item))
             .toList()),
