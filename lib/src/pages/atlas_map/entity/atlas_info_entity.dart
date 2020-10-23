@@ -130,6 +130,10 @@ class AtlasInfoEntity extends Object {
     return weiToEtherStr(feeRate);
   }
 
+  String getRewardRate() {
+    return weiToEtherStr(rewardRate);
+  }
+
   String getFeeRateMax(){
     return weiToEtherStr(feeRateMax);
   }

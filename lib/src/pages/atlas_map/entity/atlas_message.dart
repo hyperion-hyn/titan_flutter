@@ -7,6 +7,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
 import 'create_atlas_entity.dart';
@@ -26,16 +27,19 @@ class ConfirmInfoDescription {
   final String toName;
   final String toDetail;
   final String fee;
+  final List<String> addressList;
 
-  ConfirmInfoDescription(
-      {this.title,
-      this.amountDirection,
-      this.amount,
-      this.fromName,
-      this.fromDetail,
-      this.toName,
-      this.toDetail,
-      this.fee});
+  ConfirmInfoDescription({
+    this.title,
+    this.amountDirection,
+    this.amount,
+    this.fromName,
+    this.fromDetail,
+    this.toName,
+    this.toDetail,
+    this.fee,
+    this.addressList,
+  });
 }
 
 //==================================Atlas Message Begin==============================================
@@ -118,12 +122,12 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.map3Address,this.atlasAddress});
+  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasReceiveReward(map3Address,atlasAddress, password, wallet);
+    var rawTx = await HYNApi.transAtlasReceiveReward(map3Address, atlasAddress, password, wallet);
 
     TxHashEntity txHashEntity = await AtlasApi().getAtlasReward(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -194,12 +198,12 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasStakeMessage({this.nodeId, this.map3Address,this.atlasAddress});
+  ConfirmAtlasStakeMessage({this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasStake(map3Address,atlasAddress, password, wallet);
+    var rawTx = await HYNApi.transAtlasStake(map3Address, atlasAddress, password, wallet);
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -232,12 +236,12 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasUnStakeMessage({this.nodeId, this.map3Address,this.atlasAddress});
+  ConfirmAtlasUnStakeMessage({this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
     var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transAtlasUnStake(map3Address,atlasAddress, password, wallet);
+    var rawTx = await HYNApi.transAtlasUnStake(map3Address, atlasAddress, password, wallet);
 
     TxHashEntity txHashEntity = await AtlasApi().postPledgeAtlas(rawTx);
     print("[Confirm] txHashEntity:${txHashEntity.txHash}");
@@ -497,7 +501,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   final String amount;
   final String pendingAmount;
-  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount,this.pendingAmount});
+  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount, this.pendingAmount});
 
   @override
   Future<dynamic> action(String password) async {
@@ -510,8 +514,10 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
       return [amount, pendingAmount];
-    } catch(e) {
-      print(e);
+    } catch (e) {
+      print("e:$e");
+      // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
+      //LogUtil.toastException(e);
     }
 
     return false;
@@ -541,19 +547,30 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
 
 class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   final PledgeMap3Entity entity;
-
-  ConfirmCollectMap3NodeMessage({this.entity});
+  final String amount;
+  final List<String> addressList;
+  ConfirmCollectMap3NodeMessage({
+    this.entity,
+    this.amount,
+    this.addressList,
+  });
 
   @override
   Future<dynamic> action(String password) async {
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transCollectMap3Node(password, wallet);
+    try {
+      var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+      var rawTx = await HYNApi.transCollectMap3Node(password, wallet);
 
-    this.entity.rawTx = rawTx;
-    TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
-    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+      this.entity.rawTx = rawTx;
+      TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
+      print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
-    return txHashEntity.txHash.isNotEmpty;
+      return txHashEntity.txHash.isNotEmpty;
+    } catch (e) {
+      print(e);
+    }
+
+    return false;
   }
 
   @override
@@ -569,11 +586,12 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       title: "提取奖励",
       amountDirection: "+",
       fromName: "Map3节点",
-      fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
-      amount: "0",
+      fromDetail: "",
+      amount: this.amount,
       toName: "钱包",
       toDetail: "$walletName ($address)",
       fee: "0.000021",
+      addressList: this.addressList,
     );
   }
 }

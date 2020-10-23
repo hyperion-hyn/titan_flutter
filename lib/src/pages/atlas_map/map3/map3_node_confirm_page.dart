@@ -36,7 +36,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
   List<String> _titleList = ["From", "To", ""];
   List<String> _subList = ["钱包", "Map3节点", "矿工费"];
-  List<String> _detailList = ["Star01 (89hfisbjgiw…2owooe8)", "节点号: PB2020", "0.0000021 HYN"];
+  List<String> _detailList = ["*** (***…***)", "节点号: PB2020", "0.0000021 HYN"];
   String _pageTitle = "";
   String _amount = "0";
   String _amountDirection = "0";
@@ -163,7 +163,20 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                       style: TextStyle(color: HexColor("#999999"), fontSize: 14),
                     ),
                   ],
-                )
+                ),
+                if (widget.message.description.addressList.isNotEmpty)
+                  Container(
+                    child: ListView.builder(
+                      itemBuilder: (BuildContext context, int index) => Text(
+                        widget.message.description.addressList[index],
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                        ),
+                      ),
+                      itemCount: widget.message.description.addressList.length,
+                    ),
+                  )
               ],
             )
           ],
@@ -246,8 +259,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   Routes.map3node_broadcast_success_page +
                       "?actionEvent=${widget.message.type}" +
                       "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
-            }
-            else if (result is List) {
+            } else if (result is List) {
               Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
 
               Application.router.navigateTo(
@@ -255,9 +267,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   Routes.map3node_broadcast_success_page +
                       "?actionEvent=${widget.message.type}" +
                       "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
-            }
-
-            else if (result is bool) {
+            } else if (result is bool) {
               var isOK = result;
               if (isOK) {
                 Application.router.navigateTo(
