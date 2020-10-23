@@ -9,6 +9,7 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
@@ -195,7 +196,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   Widget _headerWidget() {
     var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
-    var quoteSign = activatedQuoteSign?.sign?.sign??"￥";
+    var quoteSign = activatedQuoteSign?.sign?.sign ?? "￥";
     var amountValue = double.parse(_amount ?? '0');
     var price = amountValue * quotePrice;
     var priceFormat = FormatUtil.formatPrice(price);
@@ -262,9 +263,22 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
             if (result is String) {
               Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
+              map3infoEntity.status = 1;
+
               if (widget.message is ConfirmCreateMap3NodeMessage) {
+                var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+                var address = activatedWallet.wallet.getEthAccount().address;
+                map3infoEntity.address = address;
+
                 var messageEntity = widget.message as ConfirmCreateMap3NodeMessage;
-                map3infoEntity.staking = messageEntity.entity.payload.staking;
+                var payload = messageEntity.entity.payload;
+                map3infoEntity.name = payload.name;
+                map3infoEntity.nodeId = payload.nodeId;
+                map3infoEntity.describe = payload.describe;
+                map3infoEntity.region = payload.region;
+                map3infoEntity.provider = payload.provider;
+                map3infoEntity.staking = payload.staking;
+                map3infoEntity.contact = payload.connect;
               }
               Application.router.navigateTo(
                   context,

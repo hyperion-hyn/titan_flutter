@@ -115,7 +115,8 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
       child: Padding(
         padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 16, top: 16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Row(
               children: <Widget>[
@@ -135,37 +136,30 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text.rich(TextSpan(children: [
-                      TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                      TextSpan(text: "", style: TextStyles.textC333S14bold),
-                    ])),
+                    Row(
+                      children: <Widget>[
+                        Text(nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                        SizedBox(width: 16,),
+                        RichText(
+                          text: TextSpan(
+                              text: nodeIdPre,
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                              ),
+                              children: [
+                                TextSpan(text: nodeId, style: TextStyle(fontSize: 13, color: HexColor("#333333")))
+                              ]),
+                        )
+                      ],
+                    ),
                     Container(
                       height: 4,
                     ),
                     Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
                   ],
                 ),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    RichText(
-                      text: TextSpan(
-                          text: nodeIdPre,
-                          style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 12,
-                          ),
-                          children: [
-                            TextSpan(text: nodeId, style: TextStyle(fontSize: 13, color: HexColor("#333333")))
-                          ]),
-                    ),
-                    Container(
-                      height: 4,
-                    ),
-                    Text("", style: TextStyles.textC9b9b9bS12),
-                  ],
-                )
+                //Spacer(),
               ],
             ),
             Padding(
@@ -825,18 +819,17 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
         )
       : containerWidget;
 }
- 
 
 Widget delegateRecordItemWidget(Map3TxLogEntity item) {
   var isPending = item.status == 0 || item.status == 1;
   // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
-  var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount??"0")).toDouble();
+  var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
   var detail = "";
   switch (item.type) {
     case 0:
-      detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount??"0")).toString();
+      detail = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toString();
       break;
 
     case 1:
@@ -860,7 +853,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item) {
       break;
 
     case 6:
-    // detail = "创建Map3节点";
+      // detail = "创建Map3节点";
       detail = "创建Map3节点" + " " + amount;
       break;
 
@@ -924,8 +917,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item) {
                             RichText(
                               text: TextSpan(
                                 text: item.name,
-                                style:
-                                TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
                               ),
                             ),
                             Spacer(),

@@ -76,7 +76,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
     var staking = ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
-      widget.map3infoEntity?.staking ?? "0",
+      _map3infoEntity?.staking ?? "0",
     )).toDouble();
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
@@ -130,9 +130,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canJoin => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  get _isCreator => widget.map3infoEntity.address == _address;
+  get _isCreator => _map3infoEntity.address == _address;
 
-  get _isJoiner => !widget.map3infoEntity.isCreator();
+  get _isJoiner => !_map3infoEntity.isCreator();
 
   get _currentStep {
     if (_map3Status == null) return 0;
@@ -314,8 +314,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
-    _nodeId = widget.map3infoEntity?.nodeId ?? "";
-    _nodeAddress = widget.map3infoEntity?.address ?? "";
+    _map3infoEntity = widget.map3infoEntity;
+
+    _nodeId = _map3infoEntity?.nodeId ?? "";
+    _nodeAddress = _map3infoEntity?.address ?? "";
+    _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
     getContractDetailData();
   }
@@ -765,7 +768,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var newFeeRate = "10%";
     bool autoRenew = false;
 
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
+    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
     var feeRate = haveEdit ? newFeeRate : lastFeeRate;
     var statusDesc = autoRenew ? "已开启" : "未开启";
     var editDateLimit = "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
@@ -1103,12 +1106,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _contractProfitWidget() {
     if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
 
-    var totalDelegation = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-      widget.map3infoEntity?.staking ?? "0",
-    )).toString());
-
-    var feeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
+    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
+    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
 
     var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
     var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
@@ -1375,22 +1374,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Future getContractDetailData() async {
     try {
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
-
-      if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
-        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
-        _delegateRecordList = tempMemberList;
-      }
-
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
-      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-      _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+      if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
+        _nodeAddress = _map3infoEntity.address;
+        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        _delegateRecordList = tempMemberList;
 
-      var walletAddress = EthereumAddress.fromHex(_address);
-      _microDelegations = await client.getMap3NodeDelegation(
-        map3Address,
-        walletAddress,
-      );
+        var map3Address = EthereumAddress.fromHex(_nodeAddress);
+        var walletAddress = EthereumAddress.fromHex(_address);
+
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+
+        _microDelegations = await client.getMap3NodeDelegation(
+          map3Address,
+          walletAddress,
+        );
+      }
 
       var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);
 
@@ -1461,19 +1461,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     if (!_canExitAndCancel) return;
 
-    if (widget.map3infoEntity != null) {
+    if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(widget.map3infoEntity.toJson())}',
+        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
 
   void _shareAction() {
-    Application.router.navigateTo(
-        context,
-        Routes.map3node_share_page +
-            "?contractNodeItem=${FluroConvertUtils.object2string(widget.map3infoEntity.toJson())}");
+    Application.router.navigateTo(context,
+        Routes.map3node_share_page + "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
 
   void _divideAction() {
@@ -1489,10 +1487,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _pushWalletManagerAction();
       return;
     }
-    if (widget.map3infoEntity != null) {
+    if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(widget.map3infoEntity.toJson())}',
+        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
