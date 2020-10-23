@@ -211,8 +211,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         break;
 
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        _map3StatusDesc = "募集中";
+
+        break;
+
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "启动中";
+        _map3StatusDesc = "运行中";
 
         break;
 
@@ -231,11 +236,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         break;
 
-      default:
+      case Map3InfoStatus.MAP:
         _map3StatusDesc = "映射中";
 
         break;
+
+      default:
+        _map3StatusDesc = "";
+
+        break;
     }
+
+    print("_map3Status：$_map3Status, _map3StatusDesc:$_map3StatusDesc");
 
     return _map3StatusDesc;
   }
