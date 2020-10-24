@@ -5,6 +5,9 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_options_page.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
@@ -426,6 +429,10 @@ class _WalletSettingState extends State<WalletSettingPage> {
           BlocProvider.of<WalletCmpBloc>(context)
               .add(ActiveWalletEvent(wallet: widget.wallet));
           UiUtil.toast(S.of(context).update_success);
+
+          var userPayload = UserPayloadWithAddressEntity(Payload(userName: widget.wallet.keystore.name),widget.wallet.getAtlasAccount().address);
+          AtlasApi.postUserSync(userPayload);
+
 //          await UiUtil.showSetBioAuthDialog(
 //            context,
 //            '更新成功',

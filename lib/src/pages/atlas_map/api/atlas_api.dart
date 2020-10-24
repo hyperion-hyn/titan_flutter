@@ -24,6 +24,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -559,4 +560,13 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
+  // 上传用户信息同步
+  static Future postUserSync(UserPayloadWithAddressEntity userPayload) async {
+    return AtlasHttpCore.instance.post(
+        "/v1/wallet/user_sync",
+        data: userPayload.toJson(),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
 }

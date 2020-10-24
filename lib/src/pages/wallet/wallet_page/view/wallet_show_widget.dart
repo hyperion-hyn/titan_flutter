@@ -577,7 +577,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         children: <Widget>[
           Text('Ropsten环境测试'),
           RaisedButton(
-            child: Text('-测试申请1000万主链HYN'),
+            child: Text('-测试申请55万主链HYN'),
             onPressed: () async {
               var activeWallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client(true);
@@ -585,7 +585,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               final credentials = await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
                 var toAddress = activeWallet.getAtlasAccount().address;
-                var amount = ConvertTokenUnit.etherToWei(etherDouble: 10000000);
+                var amount = ConvertTokenUnit.etherToWei(etherDouble: 550000);
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction(

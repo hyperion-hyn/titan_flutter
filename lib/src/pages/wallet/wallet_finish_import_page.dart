@@ -7,6 +7,9 @@ import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -28,7 +31,7 @@ class FinishImportPage extends StatelessWidget {
               return IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () async {
-                  onClosePage(context);
+                  onClosePage(context,false);
                 },
               );
             },
@@ -36,7 +39,7 @@ class FinishImportPage extends StatelessWidget {
         ),
         body: WillPopScope(
           onWillPop: () async {
-            onClosePage(context);
+            onClosePage(context,false);
             return;
           },
           child: Center(
@@ -85,20 +88,7 @@ class FinishImportPage extends StatelessWidget {
                       textColor: Colors.white,
                       disabledTextColor: Colors.white,
                       onPressed: () async {
-                        BlocProvider.of<WalletCmpBloc>(context)
-                            .add(ActiveWalletEvent(wallet: wallet));
-
-                        await Future.delayed(Duration(milliseconds: 300));
-                        BlocProvider.of<WalletCmpBloc>(context)
-                            .add(UpdateActivatedWalletBalanceEvent());
-
-                        ///Clear exchange account when switch wallet
-                        BlocProvider.of<ExchangeCmpBloc>(context)
-                            .add(ClearExchangeAccountEvent());
-
-                        ///Use digits password now
-                        WalletUtil.useDigitsPwd(wallet);
-                        Routes.popUntilCachedEntryRouteName(context);
+                        onClosePage(context,true);
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -122,9 +112,9 @@ class FinishImportPage extends StatelessWidget {
         ));
   }
 
-  void onClosePage(BuildContext context) async {
+  void onClosePage(BuildContext context, bool isClickActive) async {
     List<Wallet> walletList = await WalletUtil.scanWallets();
-    if (walletList.length == 1) {
+    if (walletList.length == 1 || isClickActive) {
       BlocProvider.of<WalletCmpBloc>(context)
           .add(ActiveWalletEvent(wallet: wallet));
 
@@ -139,6 +129,8 @@ class FinishImportPage extends StatelessWidget {
     ///Clear exchange account when switch wallet
     BlocProvider.of<ExchangeCmpBloc>(context).add(ClearExchangeAccountEvent());
 
+    var userPayload = UserPayloadWithAddressEntity(Payload(userName: wallet.keystore.name),wallet.getAtlasAccount().address);
+    AtlasApi.postUserSync(userPayload);
     Routes.popUntilCachedEntryRouteName(context);
   }
 }
