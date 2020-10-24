@@ -210,6 +210,7 @@ class _WalletPageState extends BaseState<WalletPage>
 //      ),
       body: Container(
         color: Colors.white,
+        width: double.infinity,
         child: Column(
           children: <Widget>[
             SizedBox(

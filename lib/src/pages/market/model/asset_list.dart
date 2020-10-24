@@ -36,6 +36,8 @@ class AssetList {
   AssetType getAsset(String type) {
     if (type == 'HYN') {
       return HYN;
+    } else if (type == 'HYN ERC20') {
+      return HYN;
     } else if (type == 'USDT') {
       return USDT;
     } else if (type == 'ETH') {
