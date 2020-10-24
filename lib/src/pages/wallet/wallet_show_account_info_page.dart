@@ -8,6 +8,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -57,7 +58,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     gasPriceStr = "$gasPriceGwei Gdust";
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
-    _dataInfoList = [amountText, gasEstimate, HYNApi.getHynToAddress(transDetail), transDetail.fromAddress, transDetail.hash];
+    _dataInfoList = [amountText, gasEstimate, WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)), WalletUtil.ethAddressToBech32Address(transDetail.fromAddress), transDetail.hash];
     super.onCreated();
   }
 

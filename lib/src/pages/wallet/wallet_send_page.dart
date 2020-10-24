@@ -15,6 +15,8 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
@@ -95,7 +97,11 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       addressErrorHint = S.of(context).legal_address_starting_1_or_bc_or_3;
     } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
-      addressHint = S.of(context).example + ': 0x81e7A0529AC1726e...';
+      var addressExample =
+          widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol
+              ? 'hyn1ntjklkvx9jlkrz9'
+              : '0x81e7A0529AC1726e';
+      addressHint = S.of(context).example + ': $addressExample...';
       addressErrorHint = S.of(context).input_valid_address;
     }
 
@@ -169,11 +175,15 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             horizontal: 0, vertical: 12),
                         child: TextFormField(
                             validator: (value) {
-                              if (value.isEmpty) {
+                              var address = widget.coinVo.symbol ==
+                                      SupportedTokens.HYN_Atlas.symbol
+                                  ? WalletUtil.bech32ToEthAddress(value)
+                                  : value;
+                              if (address.isEmpty) {
                                 return S
                                     .of(context)
                                     .receiver_address_not_empty_hint;
-                              } else if (!_basicAddressReg.hasMatch(value)) {
+                              } else if (!_basicAddressReg.hasMatch(address)) {
                                 return addressErrorHint;
                               }
                               return null;
@@ -393,7 +403,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       Application.router.navigateTo(
           context,
           Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${_receiverAddressController.text}");
+              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? WalletUtil.bech32ToEthAddress(_receiverAddressController.text) : _receiverAddressController.text}");
     }
   }
 

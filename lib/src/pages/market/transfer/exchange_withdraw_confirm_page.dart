@@ -20,7 +20,9 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -306,7 +308,13 @@ class _ExchangeWithdrawConfirmPageState
                                 softWrap: true,
                               ),
                               Text(
-                                "(${shortBlockChainAddress(widget.coinVo.address)})",
+                                "(${shortBlockChainAddress(
+                                  widget.coinVo.symbol ==
+                                          SupportedTokens.HYN_Atlas.symbol
+                                      ? WalletUtil.ethAddressToBech32Address(
+                                          widget.coinVo.address)
+                                      : widget.coinVo.address,
+                                )})",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF999999),

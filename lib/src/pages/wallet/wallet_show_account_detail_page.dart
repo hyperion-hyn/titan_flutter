@@ -15,6 +15,7 @@ import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -100,8 +101,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       "${transDetail.epoch}",
       "${transDetail.blockNum}",
       timeStr,
-      transDetail.fromAddress,
-      HYNApi.getHynToAddress(transDetail),
+      WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+      WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)),
       amountText,
       gasEstimate,
       gasPriceStr,

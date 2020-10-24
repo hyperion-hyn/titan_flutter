@@ -20,6 +20,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/global.dart';
@@ -119,7 +120,7 @@ class _ExchangeDepositConfirmPageState
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-       //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
+      //var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
       var hynQuotePrice = QuotesInheritedModel.of(context)
               .activatedQuoteVoAndSign('HYN')
               ?.quoteVo
@@ -246,7 +247,13 @@ class _ExchangeDepositConfirmPageState
                                 softWrap: true,
                               ),
                               Text(
-                                "(${shortBlockChainAddress(widget.coinVo.address)})",
+                                "(${shortBlockChainAddress(
+                                  widget.coinVo.symbol ==
+                                          SupportedTokens.HYN_Atlas.symbol
+                                      ? WalletUtil.ethAddressToBech32Address(
+                                          widget.coinVo.address)
+                                      : widget.coinVo.address,
+                                )})",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF999999),
@@ -350,10 +357,10 @@ class _ExchangeDepositConfirmPageState
                       ],
                     ),
                   ),
-                  if(widget.coinVo.symbol != SupportedTokens.HYN_Atlas.symbol)
+                  if (widget.coinVo.symbol != SupportedTokens.HYN_Atlas.symbol)
                     Padding(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 12),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -412,7 +419,7 @@ class _ExchangeDepositConfirmPageState
                                         : Colors.grey[200],
                                     border: Border(),
                                     borderRadius:
-                                    BorderRadius.all(Radius.circular(0))),
+                                        BorderRadius.all(Radius.circular(0))),
                                 child: Column(
                                   children: <Widget>[
                                     Text(
@@ -465,8 +472,9 @@ class _ExchangeDepositConfirmPageState
                                           fontSize: 12),
                                     ),
                                     Text(
-                                      S.of(context).wait_min(
-                                          gasPriceRecommend.fastWait.toString()),
+                                      S.of(context).wait_min(gasPriceRecommend
+                                          .fastWait
+                                          .toString()),
                                       style: TextStyle(
                                           fontSize: 10, color: Colors.black38),
                                     )
