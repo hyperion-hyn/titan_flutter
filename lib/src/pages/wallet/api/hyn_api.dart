@@ -351,10 +351,10 @@ class HYNApi {
         typeStr = "取消复抵押";
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = "提取复抵押奖励" + " "+amount;
+        typeStr = "提取复抵押奖励" + " " + amount;
         break;
       case MessageType.typeCreateMap3:
-        typeStr = "创建Map3节点" + " "+amount;
+        typeStr = "创建Map3节点" + " " + amount;
         break;
       case MessageType.typeEditMap3:
         typeStr = "编辑Map3节点";
@@ -363,13 +363,13 @@ class HYNApi {
         typeStr = "终止Map3节点";
         break;
       case MessageType.typeMicroDelegate:
-        typeStr = "微抵押" + " "+amount;
+        typeStr = "微抵押" + " " + amount;
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "取消微抵押";
+        typeStr = "取消微抵押" + ' ' + amount;
         break;
       case MessageType.typeCollectMicroStakingRewards:
-        typeStr = "提取微抵押奖励" + " "+amount;
+        typeStr = "提取微抵押奖励" + " " + amount;
         break;
     }
 
