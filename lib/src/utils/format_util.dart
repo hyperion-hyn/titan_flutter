@@ -160,6 +160,8 @@ class FormatUtil {
   }
 
   static String formatPrice(double price, [isFloor = true]) {
+    if (price == 0) return "0";
+
     if (price >= 1) {
       if (isFloor) {
         price = (price * 100).floor() / 100;

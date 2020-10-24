@@ -80,8 +80,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull) {
-      var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) +
-          S.of(context).ten_thousand;
+      var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
       return "抵押已满$startMinValue，将在下个纪元启动……";
     } else if (_map3Status == Map3InfoStatus.CONTRACT_IS_END) {
       return "节点已到期，将在下个纪元结算……";
@@ -343,7 +342,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         } else {
           var remainDelegation = FormatUtil.formatPrice(remain);
           _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
-
         }
 
         break;
@@ -750,7 +748,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _map3NodeInfoItem(BuildContext context) {
     if (_map3infoEntity == null) return Container();
 
-    var nodeName =  _map3infoEntity?.name ?? "***"  ;
+    var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
@@ -792,7 +790,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     ),
                   ),
                 ),
-                 
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(top: 2),
@@ -806,7 +803,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         Text.rich(TextSpan(children: [
                           TextSpan(
                               text: nodeIdPre,
-                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
+                              style:
+                                  TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
                           TextSpan(
                               text: nodeId,
                               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
@@ -1098,11 +1096,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
               InkWell(
                 onTap: () {
-                  var map3Address = _map3nodeInformationEntity?.map3Node?.map3Address??(_map3infoEntity?.address??"");
+                  var map3Address =
+                      _map3nodeInformationEntity?.map3Node?.map3Address ?? (_map3infoEntity?.address ?? "");
                   Application.router.navigateTo(
                     context,
                     Routes.atlas_detail_page +
-                        '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.nodeId??_nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.address??map3Address)}',
+                        '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.nodeId ?? _nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.address ?? map3Address)}',
                   );
                 },
                 child: Padding(
@@ -1131,13 +1130,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                 children: <Widget>[
                                   Text.rich(TextSpan(children: [
                                     TextSpan(
-                                        text: atlasEntity?.name??"",
+                                        text: atlasEntity?.name ?? "",
                                         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                   ])),
                                   Container(
                                     height: 4,
                                   ),
-                                  _item("节点排名：", "${atlasEntity?.rank??0}"),
+                                  _item("节点排名：", "${atlasEntity?.rank ?? 0}"),
                                 ],
                               ),
                             ),
@@ -1284,35 +1283,31 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var myDelegationString = "0";
     var myRewardString = "0";
-    if (_map3infoEntity.mine != null) {
-      /*
-      var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount);
+
+    if (_microDelegationsJoiner != null) {
+      var myDelegation = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
-      Microdelegations microdelegations;
-      for (var item in _map3nodeInformationEntity.microdelegations) {
-        if (item.delegatorAddress == _address) {
-          microdelegations = item;
-          break;
-        }
-      }
-      if (microdelegations != null) {
-        var myReward = FormatUtil.clearScientificCounting(microdelegations.reward.toDouble());
-        var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
-        myRewardString = FormatUtil.formatPrice(myRewardValue);
-      }
-      */
+      var myReward = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.reward?.toDouble() ?? 0);
+      var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
+      myRewardString = FormatUtil.formatPrice(myRewardValue);
+    }
 
-      myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-        _map3infoEntity?.mine?.staking ?? "0",
-      )).toString());
+    if (_isDelegator) {
+      if (myDelegationString == "0" || myDelegationString.isEmpty) {
+        myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(
+          _map3infoEntity?.mine?.staking ?? "0",
+        )).toString());
+      }
 
-      myRewardString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-          weiBigInt: BigInt.parse(
-        _map3infoEntity?.mine?.reward ?? "0",
-      )).toString());
+      if (myRewardString == "0" || myRewardString.isEmpty) {
+        myRewardString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(
+          _map3infoEntity?.mine?.reward ?? "0",
+        )).toString());
+      }
     }
 
     return Container(
