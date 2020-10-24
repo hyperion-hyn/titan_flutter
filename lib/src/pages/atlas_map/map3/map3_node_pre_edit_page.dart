@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -11,7 +10,6 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_public_widget.dart';
 
@@ -20,14 +18,11 @@ class Map3NodePreEditPage extends StatefulWidget {
   Map3NodePreEditPage({this.map3infoEntity});
 
   @override
-  _Map3NodePreEditState createState() => new _Map3NodePreEditState();
+  _Map3NodePreEditState createState() => _Map3NodePreEditState();
 }
 
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
-  bool _isOpen = false;
-
-  double minTotal = 0;
-  double remainTotal = 0;
+  bool _isOpen = true;
   int _managerSpendCount = 20;
   TextEditingController _rateCoinController = TextEditingController();
   get _isJoiner => !widget.map3infoEntity.isCreator();
@@ -225,7 +220,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: ClickOvalButton(
         "确认修改",
         () {
-          // todo: 前置判断，不能小于1，不能大于20
+          // todo: 管理费
           var text = _rateCoinController?.text ?? "0";
           var value = double.parse(text);
           if (value > 20 || value < 1) {

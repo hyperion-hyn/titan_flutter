@@ -8,46 +8,41 @@ part of 'map3_info_entity.dart';
 
 Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
   return Map3InfoEntity(
-      json['address'] as String,
-      json['bls_key'] as String,
-      json['bls_sign'] as String,
-      json['atlas'] == null
-          ? null
-          : AtlasInfoEntity.fromJson(json['atlas'] as Map<String, dynamic>),
-      json['contact'] as String,
-      json['created_at'] as String,
-      json['creator'] as String,
-      json['describe'] as String,
-      json['end_block'] as int,
-      json['fee_rate'] as String,
-      json['home'] as String,
-      json['id'] as int,
-      json['mod'] as int,
-      json['mine'] == null
-          ? null
-          : UserMap3Entity.fromJson(json['mine'] as Map<String, dynamic>),
-      json['name'] as String,
-      json['node_id'] as String,
-      json['parentAddress'] as String,
-      json['pic'] as String,
-      json['provider'] as String,
-      json['region'] as String,
-      json['relative'] == null
-          ? null
-          : Map3AtlasEntity.fromJson(json['relative'] as Map<String, dynamic>),
-      json['reward_history'] as String,
-      json['reward_rate'] as String,
-      json['staking'] as String,
-      json['total_pending_taking'] == null ? "0" : json['staking'] as String,
-      json['start_block'] as int,
-      json['status'] as int,
-      json['updated_at'] as String,
-      json['start_epoch'] as int,
-      json['end_epoch'] as int);
+    json['address'] as String,
+    json['bls_key'] as String,
+    json['bls_sign'] as String,
+    json['atlas'] == null ? null : AtlasInfoEntity.fromJson(json['atlas'] as Map<String, dynamic>),
+    json['contact'] as String,
+    json['created_at'] as String,
+    json['creator'] as String,
+    json['describe'] as String,
+    json['end_block'] as int,
+    json['fee_rate'] as String,
+    json['home'] as String,
+    json['id'] as int,
+    json['mod'] as int,
+    json['mine'] == null ? null : UserMap3Entity.fromJson(json['mine'] as Map<String, dynamic>),
+    json['name'] as String,
+    json['node_id'] as String,
+    json['parentAddress'] as String,
+    json['pic'] as String,
+    json['provider'] as String,
+    json['region'] as String,
+    json['relative'] == null ? null : Map3AtlasEntity.fromJson(json['relative'] as Map<String, dynamic>),
+    json['reward_history'] as String,
+    json['reward_rate'] as String,
+    json['staking'] as String,
+    json['total_pending_taking'] == null ? "0" : json['staking'] as String,
+    json['start_block'] as int,
+    json['status'] as int,
+    json['updated_at'] as String,
+    json['start_epoch'] as int,
+    json['end_epoch'] as int,
+    json['RateForNextPeriod'] as String,
+  );
 }
 
-Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String, dynamic>{
       'address': instance.address,
       'bls_key': instance.blsKey,
       'bls_sign': instance.blsSign,
@@ -78,4 +73,5 @@ Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) =>
       'updated_at': instance.updatedAt,
       'start_epoch': instance.startEpoch,
       'end_epoch': instance.endEpoch,
+      'RateForNextPeriod': instance.rateForNextPeriod,
     };

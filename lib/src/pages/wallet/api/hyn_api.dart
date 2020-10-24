@@ -332,7 +332,7 @@ class HYNApi {
     return sendTransferHYN(password, wallet, message: message);
   }
 
-  static String getValueByHynType(int hynMessageType,) {
+  static String getValueByHynType(int hynMessageType, {String amount = ""}) {
     String typeStr = "";
     switch (hynMessageType) {
       case MessageType.typeNormal:
@@ -351,25 +351,25 @@ class HYNApi {
         typeStr = "取消复抵押";
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = "提取复抵押奖励";
+        typeStr = "提取复抵押奖励" + " "+amount;
         break;
       case MessageType.typeCreateMap3:
-        typeStr = "创建Map3";
+        typeStr = "创建Map3节点" + " "+amount;
         break;
       case MessageType.typeEditMap3:
-        typeStr = "编辑Map3";
+        typeStr = "编辑Map3节点";
         break;
       case MessageType.typeTerminateMap3:
-        typeStr = "终止Map3";
+        typeStr = "终止Map3节点";
         break;
       case MessageType.typeMicroDelegate:
-        typeStr = "微抵押";
+        typeStr = "微抵押" + " "+amount;
         break;
       case MessageType.typeUnMicroDelegate:
         typeStr = "取消微抵押";
         break;
       case MessageType.typeCollectMicroStakingRewards:
-        typeStr = "提取微抵押奖励";
+        typeStr = "提取微抵押奖励" + " "+amount;
         break;
     }
 

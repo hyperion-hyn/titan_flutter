@@ -221,7 +221,7 @@ class _WalletPageState extends BaseState<WalletPage>
             ),
             //hyn quotes view
             // hynQuotesView(),
-            _authorizedView(),
+            //_authorizedView(),
           ],
         ),
       ),
