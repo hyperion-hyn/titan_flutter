@@ -1441,9 +1441,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
-    var pendingEpoch = _map3nodeInformationEntity.map3Node.pendingEpoch;
-    var activationEpoch = _map3nodeInformationEntity.map3Node.activationEpoch;
-    var releaseEpoch = double.parse(_map3nodeInformationEntity.map3Node.releaseEpoch).toInt();
+    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch??0;
+    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch??0;
+    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch??"0")?.toInt()??0;
     var titles = [
       pendingEpoch > 0 ? "创建 #$pendingEpoch" : "创建",
       activationEpoch > 0 ? "启动 #$activationEpoch" : "启动",
