@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'atlas_info_entity.dart';
@@ -102,6 +101,9 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
+  @JsonKey(name: 'RateForNextPeriod')
+  String rateForNextPeriod;
+
   Map3InfoEntity(
     this.address,
     this.blsKey,
@@ -133,6 +135,7 @@ class Map3InfoEntity extends Object {
     this.updatedAt,
     this.startEpoch,
     this.endEpoch,
+    this.rateForNextPeriod,
   );
 
   String getFeeRate() {
@@ -153,8 +156,7 @@ class Map3InfoEntity extends Object {
 
   Map3InfoEntity.onlyStaking(this.staking, this.totalPendingStaking);
 
-  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) =>
-      _$Map3InfoEntityFromJson(srcJson);
+  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3InfoEntityToJson(this);
 }

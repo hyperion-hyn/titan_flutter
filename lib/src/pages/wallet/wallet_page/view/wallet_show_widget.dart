@@ -602,6 +602,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               }
             },
           ),
+          /*
           RaisedButton(
             child: Text('-测试申请0.05ETH'),
             onPressed: () {
@@ -781,6 +782,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               }, 2000)();
             },
           ),
+          */
         ],
       ),
     );

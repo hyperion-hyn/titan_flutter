@@ -64,7 +64,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
-  //0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
+  // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
 
@@ -91,6 +91,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return condition0 && _isCreator;
   }
 
+  get _visibleBottomBar {
+    var condition0 = !(_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL);
+    var condition1 =  !_isDelegate;
+
+    return condition0 && condition1;
+  }
+
   bool _isTransferring = false;
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -108,7 +115,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _canPreEdit {
     var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
 
-    // todo:
+    // todo:管理费
     //  创建者
     var condition1 = (_unlockRemainEpoch.toDouble() > 14) && _isCreator && condition0;
 
@@ -129,9 +136,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canJoin => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  //get _isCreator => _map3infoEntity.address == _address;
-  //get _isJoiner => !_map3infoEntity.isCreator();
-  get _isCreator => !_map3infoEntity.isCreator();
+  get _isCreator => _map3infoEntity.isCreator();
 
   get _isDelegate => _map3infoEntity?.mine != null;
 
@@ -438,17 +443,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                   // 2
                   SliverToBoxAdapter(
-                    child: _nodeNextTimesWidget(),
+                    child: _nodeNextPeriodWidget(),
                   ),
                   _spacer(isVisible: _canPreEdit),
 
                   // 3.2服务器
                   SliverToBoxAdapter(child: _reDelegationWidget()),
-
                   _spacer(),
 
                   SliverToBoxAdapter(child: _nodeServerWidget()),
-
                   _spacer(),
 
                   // SliverToBoxAdapter(child: _lineSpacer()),
@@ -463,10 +466,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     child: Material(
                       color: Colors.white,
                       child: NodeJoinMemberWidget(
-                        _nodeId,
-                        "",
-                        "",
-                        "",
+                        nodeId: _nodeId,
                         isShowInviteItem: false,
                         loadDataBloc: _loadDataBloc,
                       ),
@@ -480,13 +480,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index]);
-/*
                           return delegateRecordItemWidget(
                             _delegateRecordList[index],
                             map3CreatorAddress: _map3nodeInformationEntity?.map3Node?.operatorAddress ?? "",
                           );
-*/
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                 ],
@@ -569,7 +566,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
-    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED && !_isDelegate) return Container();
+    if (_visibleBottomBar) return Container();
+
+    print("_canExitAndCancel:$_canExitAndCancel");
 
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -596,7 +595,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           Spacer(),
           ClickOvalButton(
             "提取奖励",
-            _collectAction,
+            _isDelegate ? _collectAction : null,
             width: 100,
             height: 32,
             fontSize: 14,
@@ -785,17 +784,24 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _nodeNextTimesWidget() {
+  Widget _nodeNextPeriodWidget() {
     if (!_canPreEdit) return Container();
 
-    // todo
-    var haveEdit = false;
-    var newFeeRate = "10%";
-    bool autoRenew = false;
+    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
+    var haveEdit = rateForNextPeriod.isNotEmpty;
+    if (haveEdit) {
+      _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
+    }
 
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
+    var newFeeRate = FormatUtil.formatPercent(double.parse(FormatUtil.weiToEtherStr(rateForNextPeriod)));
     var feeRate = haveEdit ? newFeeRate : lastFeeRate;
+
+    // todo: 续约状态
+    bool autoRenew = _microDelegations.renewal.status == 1;
     var statusDesc = autoRenew ? "已开启" : "未开启";
+
+    // todo: 管理费
     var editDateLimit = "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
 
     return Container(
@@ -1063,12 +1069,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
-                SizedBox(
-                  height: 30,
-                  child: InkWell(
-                    onTap: _pushNodeInfoAction,
-                    child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
-                    //style: TextStyles.textC906b00S13),
+                Visibility(
+                  visible: false,
+                  child: SizedBox(
+                    height: 30,
+                    child: InkWell(
+                      onTap: _pushNodeInfoAction,
+                      child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                      //style: TextStyles.textC906b00S13),
+                    ),
                   ),
                 ),
               ],
@@ -1245,7 +1254,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "可提奖励",
- 
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     ),
                   ),
@@ -1278,7 +1286,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
-
             child: Row(
               children: <Widget>[
                 Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
@@ -1464,21 +1471,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
- 
+
         List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
-
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         var walletAddress = EthereumAddress.fromHex(_address);
 
         print("----1:" + DateTime.now().toString());
-        var newRequestList = await Future.wait([
-          client.getMap3NodeInformation(map3Address),
-        ]);
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
         print("----2:" + DateTime.now().toString());
 
-        _map3nodeInformationEntity = newRequestList[0];
 
         if (_isDelegate) {
           print("----3:" + DateTime.now().toString());
@@ -1489,7 +1492,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           );
           _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
           print("----4:" + DateTime.now().toString());
-
         }
       }
       print(DateTime.now());
@@ -1524,7 +1526,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         });
       }
       print(DateTime.now());
-
     } catch (e) {
       logger.e(e);
       LogUtil.toastException(e);

@@ -36,12 +36,11 @@ class Map3NodeCreatePage extends StatefulWidget {
   _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateState extends State<Map3NodeCreatePage>
-    with WidgetsBindingObserver {
-  TextEditingController _joinCoinController = new TextEditingController();
+class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
+  TextEditingController _inputTextController = new TextEditingController();
   TextEditingController _rateCoinController = new TextEditingController();
 
-  final _joinCoinFormKey = GlobalKey<FormState>();
+  final _inputFormKey = GlobalKey<FormState>();
   AllPageState _currentState = LoadingState();
   AtlasApi _atlasApi = AtlasApi();
   NodeApi _nodeApi = NodeApi();
@@ -50,13 +49,13 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
   PublishSubject<String> _filterSubject = PublishSubject<String>();
   String endProfit = "";
   String spendManager = "";
-  var selectServerItemValue = 0;
-  var selectNodeItemValue = 0;
+  var _selectServerItemValue = 0;
+  var _selectNodeItemValue = 0;
   NodeProviderEntity _selectProviderEntity;
-  List<DropdownMenuItem> serverList;
-  List<DropdownMenuItem> nodeList;
-  List<NodeProviderEntity> providerList = [];
-  String originInputStr = "";
+  List<DropdownMenuItem> _serverList;
+  List<DropdownMenuItem> _nodeList;
+  List<NodeProviderEntity> _providerList = [];
+  String _originInputStr = "";
   int _managerSpendCount = 20;
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -77,17 +76,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
   var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
   List<String> _detailList = ["", "", "", "", ""];
-  List<String> _hintList = [
-    "请输入节点名称",
-    "请输入节点号",
-    "请输入节点网址",
-    "请输入节点的联系方式",
-    "请输入节点描述"
-  ];
+  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
   @override
   void initState() {
-    _joinCoinController.addListener(_joinTextFieldChangeListener);
+    _inputTextController.addListener(_joinTextFieldChangeListener);
     _rateCoinController.addListener(_rateTextFieldChangeListener);
 
     _rateCoinController.text = "$_managerSpendCount";
@@ -183,9 +176,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       });
     }
 
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-
     return Column(
       children: <Widget>[
         Expanded(
@@ -219,7 +209,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
             padding: const EdgeInsets.all(12.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Image.asset(
                   "res/drawable/ic_map3_node_item_2.png",
@@ -238,15 +227,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text(_introduceEntity?.name ?? "",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
+                              child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
-                            child: Text("详细介绍",
-                                style: TextStyle(
-                                    fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: () =>
-                                AtlasApi.goToAtlasMap3HelpPage(context),
+                            child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
                           ),
                         ],
                       ),
@@ -264,23 +248,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                                 softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(" (HYN) ",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: HexColor("#999999"))),
+                              child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text("  |  ",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color:
-                                          HexColor("000000").withOpacity(0.2))),
+                                  style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(
-                                S
-                                    .of(context)
-                                    .n_day("${_introduceEntity?.days ?? 0}"),
+                            Text(S.of(context).n_day("${_introduceEntity?.days ?? 0}"),
                                 style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -298,14 +273,13 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                 Container(
                     width: 100,
                     child: Text(S.of(context).service_provider,
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
+                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
                     child: DropdownButton(
-                      value: selectServerItemValue,
-                      items: serverList,
+                      value: _selectServerItemValue,
+                      items: _serverList,
                       onChanged: (value) {
                         setState(() {
                           selectNodeProvider(
@@ -330,18 +304,17 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
               children: <Widget>[
                 Container(
                     width: 100,
-                    child: Text(S.of(context).node_location,
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
+                    child:
+                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
                     child: DropdownButton(
-                      value: selectNodeItemValue,
-                      items: nodeList,
+                      value: _selectNodeItemValue,
+                      items: _nodeList,
                       onChanged: (value) {
                         setState(() {
-                          selectNodeProvider(selectServerItemValue, value);
+                          selectNodeProvider(_selectServerItemValue, value);
                         });
                       },
                     ),
@@ -369,8 +342,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
           getHoldInNum(
             context,
             null,
-            _joinCoinFormKey,
-            _joinCoinController,
+            _inputFormKey,
+            _inputTextController,
             endProfit,
             spendManager,
             focusNode: _focusNode,
@@ -381,8 +354,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
               _managerSpendCount--;
-              if (_managerSpendCount < 1) {
-                _managerSpendCount = 1;
+              if (_managerSpendCount < 10) {
+                _managerSpendCount = 10;
               }
 
               _rateCoinController.text = "$_managerSpendCount";
@@ -409,7 +382,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
           var subTitle = index < 2 ? "" : "（选填）";
           var title = _titleList[index];
           var detail = _detailList[index];
-          //var detail = _detailList[index].isEmpty ? _hintList[index] : _detailList[index];
           var hint = _hintList[index];
           var keyboardType = TextInputType.text;
 
@@ -426,8 +398,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, (
-              {String value}) {
+          return editInfoItem(context, index, title, hint, detail, ({String value}) {
             setState(() {
               _detailList[index] = value;
             });
@@ -489,16 +460,22 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
         _payload.describe = _detailList[4];
       }
 
+      var text = _rateCoinController?.text ?? "0";
+      var value = double.parse(text);
+      // todo: 管理费
+      if (value > 20 || value < 10) {
+        _managerSpendCount = 20;
+        _rateCoinController.text = "$_managerSpendCount";
+      }
       var feeRate = _rateCoinController.text ?? "0";
       _payload.feeRate = feeRate;
 
-      var staking = _joinCoinController.text ?? "0";
-
+      var staking = _inputTextController.text ?? "0";
       _payload.staking = staking;
 
-      _selectProviderEntity = providerList[0];
+      _selectProviderEntity = _providerList[0];
 
-      var region = _selectProviderEntity.regions[selectNodeItemValue];
+      var region = _selectProviderEntity.regions[_selectNodeItemValue];
       _payload.regionName = region.name;
       _payload.region = region.id;
       // var latLng = region.location.coordinates.first.toString() + "," + region.location.coordinates.last.toString();
@@ -521,15 +498,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       _payload.userName = walletName;
 
       _payload.userIdentity = _payload.nodeId;
-      _payload.userEmail = "titan@163.com";
-      _payload.userPic = "http://www.baidu.com";
+      _payload.userEmail = "";
+      _payload.userPic = "";
     }
     _payload.isEdit = false;
     var payloadJson = _payload.toJson();
     print("payloadJson: $payloadJson");
     var encodeEntity = FluroConvertUtils.object2string(payloadJson);
-    Application.router.navigateTo(
-        context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
+    Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 
   void getNetworkData() async {
@@ -541,9 +517,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
         _atlasApi.getMap3RecCreate(),
       ]);
 
-      print("[object] ===> requestList:${requestList.length}");
-
-      providerList = requestList[0];
+      _providerList = requestList[0];
       _introduceEntity = requestList[1];
       _blsKeySignEntity = requestList[2];
       _reCreateList = requestList[3];
@@ -566,37 +540,36 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
   }
 
   void selectNodeProvider(int providerIndex, int regionIndex) {
-    if (providerList.length == 0) {
+    if (_providerList.length == 0) {
       return;
     }
 
-    serverList = new List();
-    for (int i = 0; i < providerList.length; i++) {
-      NodeProviderEntity nodeProviderEntity = providerList[i];
+    _serverList = new List();
+    for (int i = 0; i < _providerList.length; i++) {
+      NodeProviderEntity nodeProviderEntity = _providerList[i];
       DropdownMenuItem item = new DropdownMenuItem(
           value: i,
           child: new Text(
             nodeProviderEntity.name,
             style: TextStyles.textC333S14,
           ));
-      serverList.add(item);
+      _serverList.add(item);
     }
-    selectServerItemValue = serverList[providerIndex].value;
+    _selectServerItemValue = _serverList[providerIndex].value;
 
-    List<Regions> nodeListStr = providerList[providerIndex].regions;
-    nodeList = new List();
+    List<Regions> nodeListStr = _providerList[providerIndex].regions;
+    _nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(regions.name, style: TextStyles.textC333S14));
-      nodeList.add(item);
+      DropdownMenuItem item =
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      _nodeList.add(item);
     }
-    selectNodeItemValue = nodeList[regionIndex].value;
+    _selectNodeItemValue = _nodeList[regionIndex].value;
   }
 
   void _joinTextFieldChangeListener() {
-    _filterSubject.sink.add(_joinCoinController.text);
+    _filterSubject.sink.add(_inputTextController.text);
   }
 
   void _rateTextFieldChangeListener() {
@@ -604,12 +577,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
   }
 
   void _dealTextField(String inputText) {
-    if (!mounted || originInputStr == inputText) {
+    if (!mounted || _originInputStr == inputText) {
       return;
     }
 
-    originInputStr = inputText;
-    _joinCoinFormKey.currentState?.validate();
+    _originInputStr = inputText;
+    _inputFormKey.currentState?.validate();
 
     if (inputText == null || inputText == "") {
       setState(() {
@@ -621,12 +594,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
     if (mounted) {
       setState(() {
-        _joinCoinController.value = TextEditingValue(
+        _inputTextController.value = TextEditingValue(
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection: TextSelection.fromPosition(TextPosition(
-                affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
