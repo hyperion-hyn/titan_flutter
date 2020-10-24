@@ -29,8 +29,7 @@ import 'map3_node_public_widget.dart';
 import 'package:titan/src/utils/log_util.dart';
 import '../../../global.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
@@ -69,9 +68,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   @override
   void onCreated() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
-        .activatedWallet
-        ?.wallet;
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getAtlasAccount().address;
     _nodeId = widget.map3infoEntity.nodeId;
 
@@ -113,10 +110,12 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       print('map3: $map3Address wallet: $walletAddress');
 
-      _microdelegations = await _client.getMap3NodeDelegation(
-        map3Address,
-        walletAddress,
-      );
+      if (_map3infoEntity.mine != null) {
+        _microdelegations = await _client.getMap3NodeDelegation(
+          map3Address,
+          walletAddress,
+        );
+      }
 
       _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
@@ -126,8 +125,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       _currentEpoch = _atlasHomeEntity?.info?.epoch;
 
-      print(
-          '[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
+      print('[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
 
       if (mounted) {
         setState(() {
@@ -163,8 +161,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
       );
     }
 
-    var walletAddressStr =
-        "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
+    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -181,173 +178,136 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(
+                    color: Colors.white,
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("到账钱包",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 16, right: 8, bottom: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 42,
-                                    height: 42,
-                                    child: walletHeaderWidget(
-                                      _walletName,
-                                      isShowShape: false,
-                                      address: _walletAddress,
-                                      isCircle: true,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text.rich(TextSpan(children: [
-                                        TextSpan(
-                                            text: _walletName,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16)),
-                                        TextSpan(
-                                            text: "",
-                                            style: TextStyles.textC333S14bold),
-                                      ])),
-                                      Container(
-                                        height: 4,
-                                      ),
-                                      Text(walletAddressStr,
-                                          style: TextStyles.textC9b9b9bS12),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                        child: Container(
-                          color: HexColor("#F4F4F4"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: 42,
+                                height: 42,
+                                child: walletHeaderWidget(
+                                  _walletName,
+                                  isShowShape: false,
+                                  address: _walletAddress,
+                                  isCircle: true,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(
+                                        text: _walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  Text(walletAddressStr, style: TextStyles.textC9b9b9bS12),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 16),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("节点金额",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15)),
-                                ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                    child: Container(
+                      color: HexColor("#F4F4F4"),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16),
+                          child: Row(
+                            children: <Widget>[
+                              Text("节点金额", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 12),
+                          child: profitListBigLightWidget(
+                            [
+                              {"节点总抵押": '${FormatUtil.formatPrice(double.parse(_nodeStartMin()))}'},
+                              {"我的抵押": '${_myStakingAmount()}'},
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text("撤销数量", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 18),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "HYN",
+                                style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 12),
-                              child: profitListBigLightWidget(
-                                [
-                                  {
-                                    "节点总抵押":
-                                        '${FormatUtil.formatPrice(double.parse(_nodeStartMin()))}'
-                                  },
-                                  {"我的抵押": '${_myStakingAmount()}'},
-                                ],
+                              SizedBox(
+                                width: 12,
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  Text("撤销数量",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15)),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 16, right: 18),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    "HYN",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: HexColor("#35393E")),
-                                  ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Form(
-                                      key: _formKey,
-                                      child: RoundBorderTextField(
-                                        onChanged: (text) {
-                                          _formKey.currentState.validate();
-                                        },
-                                        controller: _textEditingController,
-                                        keyboardType: TextInputType.number,
-                                        //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                        hint: "请输入提币数量",
-                                        validator: (textStr) {
-                                          if (textStr.length == 0) {
-                                            return S
-                                                .of(context)
-                                                .please_input_hyn_count;
-                                          }
+                              Flexible(
+                                flex: 1,
+                                child: Form(
+                                  key: _formKey,
+                                  child: RoundBorderTextField(
+                                    onChanged: (text) {
+                                      _formKey.currentState.validate();
+                                    },
+                                    controller: _textEditingController,
+                                    keyboardType: TextInputType.number,
+                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    hint: "请输入提币数量",
+                                    validator: (textStr) {
+                                      if (textStr.length == 0) {
+                                        return S.of(context).please_input_hyn_count;
+                                      }
 
-                                          if (Decimal.parse(textStr) >
-                                              _myStakingAmount()) {
-                                            return '超过您的抵押量';
-                                          }
+                                      if (Decimal.parse(textStr) > _myStakingAmount()) {
+                                        return '超过您的抵押量';
+                                      }
 
-                                          if (Decimal.parse(textStr) >
-                                              ConvertTokenUnit.weiToEther(
-                                                  weiBigInt: BigInt.parse(
-                                                      _map3infoEntity
-                                                              ?.staking ??
-                                                          "0"))) {
-                                            return '超过节点总抵押';
-                                          }
+                                      if (Decimal.parse(textStr) >
+                                          ConvertTokenUnit.weiToEther(
+                                              weiBigInt: BigInt.parse(_map3infoEntity?.staking ?? "0"))) {
+                                        return '超过节点总抵押';
+                                      }
 
-                                          if (_map3infoEntity.isCreator() &&
-                                              _myStakingAmount() -
-                                                      Decimal.parse(textStr) <
-                                                  _minRemain()) {
-                                            return '撤销后剩余量不能少于${_minRemain()}';
-                                          }
+                                      if (_map3infoEntity.isCreator() &&
+                                          _myStakingAmount() - Decimal.parse(textStr) < _minRemain()) {
+                                        return '撤销后剩余量不能少于${_minRemain()}';
+                                      }
 
-                                          /*else if (minTotal == 0) {
+                                      /*else if (minTotal == 0) {
                                         return "抵押已满";
                                       } else if (int.parse(textStr) < minTotal) {
                                         return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
@@ -357,34 +317,33 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                                         return S.of(context).hyn_balance_no_enough;
                                       }*/
-                                          else {
-                                            return null;
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                      else {
+                                        return null;
+                                      }
+                                    },
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 12, bottom: 18, right: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 48,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      _epochHint(),
-                    ])),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 18, right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 48,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  _epochHint(),
+                ])),
               ),
             ),
           ),
@@ -398,8 +357,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     print('[delegateMin]${_map3introduceEntity.delegateMin}');
     if (_map3infoEntity.isCreator()) {
       var min = Decimal.parse(_nodeStartMin()) *
-          ConvertTokenUnit.weiToEther(
-              weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
+          ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
       print('_minRemain feeRate: ${_map3infoEntity.feeRate} min: $min');
       return min;
     } else {
@@ -412,9 +370,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   Decimal _myStakingAmount() {
+    if (_map3infoEntity.mine == null || _microdelegations == null) return Decimal.parse("0");
+
     return ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-            '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'));
+        weiBigInt: BigInt.parse('${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'));
   }
 
   bool _canCancelDelegation() {
@@ -422,8 +381,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   Decimal _remainEpoch() {
-    return Decimal.parse('${_unlockEpoch ?? 0}') -
-        Decimal.parse('${_currentEpoch ?? 0}');
+    return Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
   }
 
   _epochHint() {

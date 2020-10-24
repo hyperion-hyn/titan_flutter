@@ -39,6 +39,9 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['start_epoch'] as int,
     json['end_epoch'] as int,
     json['RateForNextPeriod'] as String,
+    json['create_time'] as int,
+    json['start_time'] as int,
+    json['end_time'] as int,
   );
 }
 
@@ -74,4 +77,7 @@ Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String,
       'start_epoch': instance.startEpoch,
       'end_epoch': instance.endEpoch,
       'RateForNextPeriod': instance.rateForNextPeriod,
+      'create_time': instance.createTime,
+      'start_time': instance.startTime,
+      'end_time': instance.endTime,
     };

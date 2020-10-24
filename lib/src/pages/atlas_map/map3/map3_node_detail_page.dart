@@ -90,8 +90,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   get _visibleReDelegation {
-    var isRunning = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
-    return isRunning;
+    return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   }
 
   get _invisibleBottomBar {
@@ -117,7 +116,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
   // 到期纪元
-  get releaseEpoch => int.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? 0);
+  get releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
 
   get _visibleEditNextPeriod {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
@@ -165,14 +164,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     // 1.纪元已经过7天；
     var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
-    return _isJoiner && condition0 && condition1;
+    return _isDelegator && condition0 && condition1;
   }
 
   get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
-  get _isJoiner => _map3infoEntity?.mine != null;
+  get _isDelegator => _map3infoEntity?.mine != null;
 
   get _currentStep {
     if (_map3Status == null) return 0;
@@ -604,6 +603,60 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     print("_invisibleBottomBar:$_invisibleBottomBar");
 
+    List<Widget> children = [];
+    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) {
+      children = <Widget>[
+        ClickOvalButton(
+          "提取奖励",
+          _collectAction,
+          width: 160,
+          height: 32,
+          fontSize: 14,
+        )
+      ];
+    } else {
+      children = <Widget>[
+        Spacer(),
+        ClickOvalButton(
+          "撤销抵押",
+          _cancelAction,
+          width: 100,
+          height: 32,
+          fontSize: 14,
+        ),
+        Spacer(),
+        ClickOvalButton(
+          "抵押",
+          _joinAction,
+          width: 100,
+          height: 32,
+          fontSize: 14,
+        ),
+        Spacer(),
+      ];
+    }
+    return Container(
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          offset: Offset(0.0, 0.1), //阴影xy轴偏移量
+          blurRadius: 1, //阴影模糊程度
+        )
+      ]),
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
+      ),
+    );
+  }
+
+  /*
+  Widget _bottomBtnBarWidget() {
+    if (_invisibleBottomBar) return Container();
+
+    print("_invisibleBottomBar:$_invisibleBottomBar");
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -651,6 +704,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+  */
 
   Widget _topNextEpisodeNotifyWidget() {
     var notification = _notifyMessage();
@@ -804,16 +858,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget _nodeNextPeriodWidget() {
     var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
-    var status = currentMicroDelegations?.renewal?.status;
-    if (!_visibleEditNextPeriod || currentMicroDelegations == null || status == null) {
+    var status = currentMicroDelegations?.renewal?.status ?? 0;
+    if (!_visibleEditNextPeriod) {
       return Container();
     }
 
-    var haveEdited = status > 0;
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
-
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
-    var newFeeRate = FormatUtil.formatPercent(double.parse(FormatUtil.weiToEtherStr(rateForNextPeriod)));
+    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
+    var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = "已开启";
     var feeRate = lastFeeRate;
@@ -837,7 +889,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     // 周期
     var periodEpoch14 = releaseEpoch - 14;
     var periodEpoch7 = releaseEpoch - 7;
-    var editDateLimit = "（请在纪元$periodEpoch14 - 纪元$periodEpoch7之前修改）";
+    var editDateLimit = "（请在纪元$periodEpoch14 - $periodEpoch7前修改）";
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
       editDateLimit = "（请在到期前修改）";
     }
@@ -855,29 +907,32 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
-                SizedBox(
-                  height: 30,
-                  child: InkWell(
-                    onTap: () {
-                      if (haveEdited) return;
+                Visibility(
+                  visible: _canEditNextPeriod,
+                  child: SizedBox(
+                    height: 30,
+                    child: InkWell(
+                      onTap: () {
+                        if (!_canEditNextPeriod) return;
 
-                      if (_isJoiner) {
-                        _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
-                      }
+                        if (_isDelegator) {
+                          _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
+                        }
 
-                      Application.router.navigateTo(
-                          context,
-                          Routes.map3node_pre_edit_page +
-                              "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
-                    },
-                    child: Center(
-                        child: Text(
-                      "修改",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: haveEdited ? HexColor("#999999") : HexColor("#1F81FF"),
-                      ),
-                    )),
+                        Application.router.navigateTo(
+                            context,
+                            Routes.map3node_pre_edit_page +
+                                "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+                      },
+                      child: Center(
+                          child: Text(
+                        "修改",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
+                        ),
+                      )),
+                    ),
                   ),
                 ),
               ],
@@ -888,7 +943,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 children: <Widget>[
                   Expanded(
                     child: Text(
-                      "自动续期",
+                      _isCreator ? "自动续期" : "跟随续期",
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 14,
@@ -1386,19 +1441,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
+    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch??0;
+    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch??0;
+    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch??"0")?.toInt()??0;
     var titles = [
-      "创建",
-      S.of(context).launch_success,
-      "到期",
+      pendingEpoch > 0 ? "创建 #$pendingEpoch" : "创建",
+      activationEpoch > 0 ? "启动 #$activationEpoch" : "启动",
+      releaseEpoch > 0 ? "到期 #$releaseEpoch" : "到期",
     ];
+
+    var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0, isSecond: false);
+    var startTime = FormatUtil.formatDate(_map3infoEntity?.startTime ?? 0, isSecond: false);
+    var endTime = FormatUtil.formatDate(_map3infoEntity?.endTime ?? 0, isSecond: false);
+
     var subtitles = [
-      _map3infoEntity.startBlock,
-      _map3infoEntity.startBlock, // todo
-      _map3infoEntity.endBlock,
+      createdAt,
+      startTime, // todo
+      endTime,
     ];
     var progressHints = [
       "",
-      "180纪元",
+      "${AtlasApi.map3introduceEntity?.days}纪元",
       "",
     ];
 
@@ -1411,8 +1474,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       steps: titles.map(
         (title) {
           var index = titles.indexOf(title);
-          //var subtitle = FormatUtil.formatDate(subtitles[index]);
-          var subtitle = "";
+          var subtitle = subtitles[index];
           var date = progressHints[index];
           var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
@@ -1495,16 +1557,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   // todo: test_detail
+  /*
   _requestMicroDelegations() async {
-    var map3Address = EthereumAddress.fromHex(_nodeAddress);
-    var creatorAddress = EthereumAddress.fromHex(_nodeAddress);
+
+    if (_map3nodeInformationEntity == null) return;
+
+    var map3Address = EthereumAddress.fromHex(_map3nodeInformationEntity.map3Node.map3Address);
+    var creatorAddress = EthereumAddress.fromHex(_map3nodeInformationEntity.map3Node.operatorAddress);
 
     _microDelegationsCreator = await client.getMap3NodeDelegation(
       map3Address,
       creatorAddress,
     );
 
-    if (_isJoiner) {
+    if (_isDelegator) {
       var joinerAddress = EthereumAddress.fromHex(_address);
       _microDelegationsJoiner = await client.getMap3NodeDelegation(
         map3Address,
@@ -1512,20 +1578,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       );
     }
   }
+  */
 
   _setupMicroDelegations() {
-    if (_map3nodeInformationEntity.microdelegations.isEmpty) {
-      _requestMicroDelegations();
-      return;
-    }
-    var creatorAddress = _nodeAddress;
+    print(
+        "[object] --> _map3nodeInformationEntity.microdelegations:${_map3nodeInformationEntity.microdelegations.length}");
+
+    if (_map3nodeInformationEntity == null) return;
+
+    var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress;
     var joinerAddress = _address;
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
-      if (item.delegatorAddress == creatorAddress || item.delegatorAddress == joinerAddress) {
+      if (item.delegatorAddress.isNotEmpty &&
+          item.delegatorAddress == creatorAddress &&
+          item.delegatorAddress == joinerAddress) {
         if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
-          // ignore: unnecessary_statements
-          _microDelegationsCreator == item;
+          _microDelegationsCreator = item;
           print("[object] --> _microDelegationsCreator:${_microDelegationsCreator.delegatorAddress}");
         }
 
@@ -1534,29 +1603,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           print("[object] --> _microDelegationsJoiner:${_microDelegationsJoiner.delegatorAddress}");
         }
       }
-
-      if (_microDelegationsJoiner != null && _microDelegationsCreator != null) {
-        break;
-      }
-    }
-
-    if (_microDelegationsJoiner == null && _microDelegationsCreator == null) {
-      _requestMicroDelegations();
     }
   }
 
   Future getContractDetailData() async {
     try {
-      print(DateTime.now());
-
       var requestList = await Future.wait([
         _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.postAtlasHome(_address),
         _nodeApi.getNodeProviderList(),
         _atlasApi.getMap3StakingLogList(_nodeAddress),
       ]);
-
-      print(DateTime.now());
 
       _map3infoEntity = requestList[0];
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
@@ -1569,10 +1626,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        print(
+            "[object] --> _map3nodeInformationEntity.microdelegations:${_map3nodeInformationEntity.microdelegations.length}");
 
         _setupMicroDelegations();
       }
-      print(DateTime.now());
 
       List<Map3TxLogEntity> tempMemberList = requestList[3];
       _delegateRecordList = tempMemberList;
@@ -1591,7 +1649,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
       }
-      print(DateTime.now());
 
       // 3.
 
@@ -1603,7 +1660,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _isTransferring = false;
         });
       }
-      print(DateTime.now());
     } catch (e) {
       logger.e(e);
       LogUtil.toastException(e);
@@ -1641,8 +1697,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _pushWalletManagerAction();
       return;
     }
-
-    if (!_canCancel) return;
 
     if (_map3infoEntity != null) {
       Application.router.navigateTo(

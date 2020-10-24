@@ -169,7 +169,7 @@ class AtlasApi {
     String address,
     NodeJoinType nodeJoinType, {
     int page = 1,
-    int size = 0,
+    int size = 10,
   }) async {
     return AtlasHttpCore.instance.postEntity(
         nodeJoinType == NodeJoinType.CREATOR

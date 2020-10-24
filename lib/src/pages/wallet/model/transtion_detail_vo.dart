@@ -1,6 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'dart:convert' as jsonUtils;
 
+import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+
+import 'hyn_transfer_history.dart';
+
 import 'package:titan/src/plugins/wallet/convert.dart';
 
 part 'transtion_detail_vo.g.dart';
@@ -84,7 +89,39 @@ class TransactionDetailVo {
     return amount;
   }
 
-  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) => _$TransactionDetailVoFromJson(json);
+  factory TransactionDetailVo.fromHynTransferHistory(
+    HynTransferHistory hynTransferHistory,
+    int transactionType,
+    String symbol,
+  ) {
+    return TransactionDetailVo(
+      type: transactionType,
+      state: hynTransferHistory.status,
+      amount: ConvertTokenUnit.weiToEther(
+              weiBigInt: BigInt.parse(hynTransferHistory.value))
+          .toDouble(),
+      symbol: symbol,
+      fromAddress: hynTransferHistory.from,
+      toAddress: hynTransferHistory.to,
+      time: hynTransferHistory.timestamp * 1000,
+      hash: hynTransferHistory.txHash,
+      gasPrice: hynTransferHistory.gasPrice,
+      gasUsed: hynTransferHistory.gasUsed.toString(),
+      gas: hynTransferHistory.gasLimit.toString(),
+      nonce: hynTransferHistory.nonce.toString(),
+      contractAddress: hynTransferHistory.contractAddress,
+      data: hynTransferHistory.data,
+      dataDecoded: hynTransferHistory.dataDecoded,
+      blockHash: hynTransferHistory.blockHash,
+      blockNum: hynTransferHistory.blockNum,
+      epoch: hynTransferHistory.epoch,
+      transactionIndex: hynTransferHistory.transactionIndex,
+      hynType: hynTransferHistory.type,
+    );
+  }
+
+  factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
+      _$TransactionDetailVoFromJson(json);
 
   Map<String, dynamic> toJson() => _$TransactionDetailVoToJson(this);
 

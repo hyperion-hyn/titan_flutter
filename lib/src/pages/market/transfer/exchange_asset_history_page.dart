@@ -19,6 +19,9 @@ import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -307,20 +310,44 @@ class _ExchangeAssetHistoryPageState
 
   _assetHistoryItem(AssetHistory assetHistory) {
     return InkWell(
-      onTap: () {
-        var isChinaMainland =
-            SettingInheritedModel.of(context).areaModel?.isChinaMainland ==
-                true;
-        var url =
-            EtherscanApi.getTxDetailUrl(assetHistory.txId, isChinaMainland);
-        if (url != null) {
+      onTap: () async {
+        if (assetHistory.isAtlas()) {
+          var _api = EtherscanApi();
+
+          HynTransferHistory hynTransferHistory = await _api.queryHYNTxDetail(
+            assetHistory.txId,
+          );
+
+          var transactionType = (assetHistory.name ?? '') == 'withdraw' ? 2 : 1;
+
+          var transactionDetailVo = TransactionDetailVo.fromHynTransferHistory(
+            hynTransferHistory,
+            transactionType,
+            assetHistory.type,
+          );
+
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => InAppWebViewContainer(
-                        initUrl: url,
-                        title: '',
-                      )));
+                  builder: (context) =>
+                      WalletShowAccountInfoPage(transactionDetailVo)));
+        } else {
+          var isChinaMainland =
+              SettingInheritedModel.of(context).areaModel?.isChinaMainland ==
+                  true;
+          var url = EtherscanApi.getTxDetailUrl(
+            assetHistory.txId,
+            isChinaMainland,
+          );
+          if (url != null) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InAppWebViewContainer(
+                          initUrl: url,
+                          title: '',
+                        )));
+          }
         }
       },
       child: Padding(

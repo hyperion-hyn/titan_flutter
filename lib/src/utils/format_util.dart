@@ -44,6 +44,8 @@ class FormatUtil {
   }
 
   static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
+    if (timestamp <= 0) return "";
+    
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
       timestamp = timestamp * 1000;
@@ -75,6 +77,8 @@ class FormatUtil {
   }
 
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    if (utcStr.isEmpty) return "";
+
     var utc = DateTime.parse(utcStr);
 
     var utcLocal = utc.toLocal();

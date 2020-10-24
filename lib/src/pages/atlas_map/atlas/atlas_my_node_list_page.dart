@@ -33,7 +33,7 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
   List<AtlasInfoEntity> _atlasNodeList = List();
 
   int _currentPage = 1;
-  int _pageSize = 30;
+  int _pageSize = 10;
 
   @override
   void initState() {

@@ -33,6 +33,13 @@ class AssetHistory extends Object {
   @JsonKey(name: 'ctime')
   String ctime;
 
+  @JsonKey(name: 'chain')
+  String chain;
+
+  bool isAtlas() {
+    return chain == 'atlas';
+  }
+
   bool isAbnormal() {
     return status == '9';
   }
@@ -111,6 +118,7 @@ class AssetHistory extends Object {
     this.status,
     this.mtime,
     this.ctime,
+    this.chain,
   );
 
   factory AssetHistory.fromJson(Map<String, dynamic> srcJson) =>
