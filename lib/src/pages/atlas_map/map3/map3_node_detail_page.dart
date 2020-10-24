@@ -70,9 +70,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _atlasInfoEntity => _map3infoEntity.atlas;
 
-  Microdelegations _microDelegations;
+  Microdelegations _microDelegationsCreator;
+  Microdelegations _microDelegationsJoiner;
+
   var _currentEpoch = 0;
-  var _unlockEpoch;
+  get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
 
   get _visibleNotify {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
@@ -91,11 +93,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return condition0 && _isCreator;
   }
 
-  get _visibleBottomBar {
+  get _invisibleBottomBar {
     var condition0 = !(_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL);
-    var condition1 =  !_isDelegate;
+    var condition1 = !_isJoiner;
 
-    return condition0 && condition1;
+    return (condition0 && condition1);
   }
 
   bool _isTransferring = false;
@@ -112,17 +114,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
-  get _canPreEdit {
+  // 到期纪元
+  get releaseEpoch => int.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? 0);
+
+  get _visibleEditNextPeriod {
     var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
 
-    // todo:管理费
+    // 周期
+    var periodEpoch14 = releaseEpoch - 14;
+    var periodEpoch7 = releaseEpoch - 7;
+
     //  创建者
-    var condition1 = (_unlockRemainEpoch.toDouble() > 14) && _isCreator && condition0;
+    var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
+    var haveEditedCreator = statusCreator > 0;
+    var isInActionPeriodCreator =
+        (periodEpoch14 > 0 && periodEpoch7 > 0) && (_currentEpoch >= periodEpoch14) && (_currentEpoch <= periodEpoch7);
+    var conditionCreator = condition0 && _isCreator && (isInActionPeriodCreator) && !haveEditedCreator;
 
     // 参与者
-    var condition2 = (_unlockRemainEpoch.toDouble() > 7) && !_isCreator && condition0;
+    var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
+    var haveEditedJoiner = statusJoiner > 0;
+    var isInActionPeriodJoiner =
+        (periodEpoch7 > 0 && releaseEpoch > 0) && (_currentEpoch >= periodEpoch7) && (_currentEpoch <= releaseEpoch);
+    var condition2 = condition0 && _isJoiner && !haveEditedJoiner && (statusCreator == 2);
+    var condition3 = condition0 && _isJoiner && (isInActionPeriodJoiner) && !haveEditedJoiner && (statusCreator != 1);
+    var conditionJoiner = (condition2 || condition3);
 
-    return condition1 || condition2;
+    return conditionCreator || conditionJoiner;
   }
 
   get _canExitAndCancel {
@@ -134,11 +152,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return _isCreator && condition0 && condition1;
   }
 
-  get _canJoin => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
+  get _canCancel {
+    // 0.募集中
+    var condition0 = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
+
+    // 1.纪元已经过7天；
+    var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
+    return _isJoiner && condition0 && condition1;
+  }
+
+  get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
   get _isCreator => _map3infoEntity.isCreator();
 
-  get _isDelegate => _map3infoEntity?.mine != null;
+  get _isJoiner => _map3infoEntity?.mine != null;
 
   get _currentStep {
     if (_map3Status == null) return 0;
@@ -445,7 +472,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(
                     child: _nodeNextPeriodWidget(),
                   ),
-                  _spacer(isVisible: _canPreEdit),
+                  _spacer(isVisible: _visibleEditNextPeriod),
 
                   // 3.2服务器
                   SliverToBoxAdapter(child: _reDelegationWidget()),
@@ -566,9 +593,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
-    if (_visibleBottomBar) return Container();
+    if (_invisibleBottomBar) return Container();
 
-    print("_canExitAndCancel:$_canExitAndCancel");
+    print("_invisibleBottomBar:$_invisibleBottomBar");
 
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -585,32 +612,32 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           Spacer(),
           ClickOvalButton(
             "撤销抵押",
-            _canExitAndCancel ? _cancelAction : null,
+            _canCancel ? _cancelAction : null,
             width: 100,
             height: 32,
             fontSize: 14,
-            fontColor: _canExitAndCancel ? Colors.white : DefaultColors.color999,
-            btnColor: _canExitAndCancel ? null : Colors.transparent,
+            fontColor: _canCancel ? Colors.white : DefaultColors.color999,
+            btnColor: _canCancel ? null : Colors.transparent,
           ),
           Spacer(),
           ClickOvalButton(
             "提取奖励",
-            _isDelegate ? _collectAction : null,
+            _isJoiner ? _collectAction : null,
             width: 100,
             height: 32,
             fontSize: 14,
-            fontColor: _isDelegate ? Colors.white : DefaultColors.color999,
-            btnColor: _isDelegate ? null : Colors.transparent,
+            fontColor: _isJoiner ? Colors.white : DefaultColors.color999,
+            btnColor: _isJoiner ? null : Colors.transparent,
           ),
           Spacer(),
           ClickOvalButton(
             "抵押",
-            _canJoin ? _joinAction : null,
+            _canDelegate ? _joinAction : null,
             width: 100,
             height: 32,
             fontSize: 14,
-            fontColor: _canJoin ? Colors.white : DefaultColors.color999,
-            btnColor: _canJoin ? null : Colors.transparent,
+            fontColor: _canDelegate ? Colors.white : DefaultColors.color999,
+            btnColor: _canDelegate ? null : Colors.transparent,
           ),
           Spacer(),
         ],
@@ -785,24 +812,44 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _nodeNextPeriodWidget() {
-    if (!_canPreEdit) return Container();
-
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
-    var haveEdit = rateForNextPeriod.isNotEmpty;
-    if (haveEdit) {
-      _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
+    var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
+    var status = currentMicroDelegations?.renewal?.status;
+    if (!_visibleEditNextPeriod || currentMicroDelegations == null || status == null) {
+      return Container();
     }
+
+    var haveEdited = status > 0;
+    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
 
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
     var newFeeRate = FormatUtil.formatPercent(double.parse(FormatUtil.weiToEtherStr(rateForNextPeriod)));
-    var feeRate = haveEdit ? newFeeRate : lastFeeRate;
 
-    // todo: 续约状态
-    bool autoRenew = _microDelegations.renewal.status == 1;
-    var statusDesc = autoRenew ? "已开启" : "未开启";
+    var statusDesc = "已开启";
+    var feeRate = lastFeeRate;
+    switch (status) {
+      case 0: // 未编辑，默认，开启，取上传rate
+        statusDesc = "已开启";
+        feeRate = lastFeeRate;
+        break;
 
-    // todo: 管理费
-    var editDateLimit = "（请在纪元${_map3infoEntity.startEpoch} - 纪元${_map3infoEntity.endEpoch}之前修改）";
+      case 1:
+        statusDesc = "关闭";
+        feeRate = newFeeRate;
+        break;
+
+      case 2:
+        statusDesc = "已开启";
+        feeRate = newFeeRate;
+        break;
+    }
+
+    // 周期
+    var periodEpoch14 = releaseEpoch - 14;
+    var periodEpoch7 = releaseEpoch - 7;
+    var editDateLimit = "（请在纪元$periodEpoch14 - 纪元$periodEpoch7之前修改）";
+    if (periodEpoch14 < 0 || periodEpoch7 < 0) {
+      editDateLimit = "（请在到期前修改）";
+    }
 
     return Container(
       color: Colors.white,
@@ -821,7 +868,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   height: 30,
                   child: InkWell(
                     onTap: () {
-                      if (haveEdit) return;
+                      if (haveEdited) return;
+
+                      if (_isJoiner) {
+                        _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
+                      }
 
                       Application.router.navigateTo(
                           context,
@@ -833,7 +884,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       "修改",
                       style: TextStyle(
                         fontSize: 14,
-                        color: haveEdit ? HexColor("#999999") : HexColor("#1F81FF"),
+                        color: haveEdited ? HexColor("#999999") : HexColor("#1F81FF"),
                       ),
                     )),
                   ),
@@ -1453,6 +1504,56 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   // todo: test_detail
+  _requestMicroDelegations() async {
+    var map3Address = EthereumAddress.fromHex(_nodeAddress);
+    var creatorAddress = EthereumAddress.fromHex(_nodeAddress);
+
+    _microDelegationsCreator = await client.getMap3NodeDelegation(
+      map3Address,
+      creatorAddress,
+    );
+
+    if (_isJoiner) {
+      var joinerAddress = EthereumAddress.fromHex(_address);
+      _microDelegationsJoiner = await client.getMap3NodeDelegation(
+        map3Address,
+        joinerAddress,
+      );
+    }
+  }
+
+  _setupMicroDelegations() {
+    if (_map3nodeInformationEntity.microdelegations.isEmpty) {
+      _requestMicroDelegations();
+      return;
+    }
+    var creatorAddress = _nodeAddress;
+    var joinerAddress = _address;
+
+    for (var item in _map3nodeInformationEntity.microdelegations) {
+      if (item.delegatorAddress == creatorAddress || item.delegatorAddress == joinerAddress) {
+        if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
+          // ignore: unnecessary_statements
+          _microDelegationsCreator == item;
+          print("[object] --> _microDelegationsCreator:${_microDelegationsCreator.delegatorAddress}");
+        }
+
+        if (item.delegatorAddress == joinerAddress && _microDelegationsJoiner == null) {
+          _microDelegationsJoiner = item;
+          print("[object] --> _microDelegationsJoiner:${_microDelegationsJoiner.delegatorAddress}");
+        }
+      }
+
+      if (_microDelegationsJoiner != null && _microDelegationsCreator != null) {
+        break;
+      }
+    }
+
+    if (_microDelegationsJoiner == null && _microDelegationsCreator == null) {
+      _requestMicroDelegations();
+    }
+  }
+
   Future getContractDetailData() async {
     try {
       print(DateTime.now());
@@ -1476,23 +1577,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         _delegateRecordList = tempMemberList;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        var walletAddress = EthereumAddress.fromHex(_address);
-
-        print("----1:" + DateTime.now().toString());
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-        print("----2:" + DateTime.now().toString());
 
-
-        if (_isDelegate) {
-          print("----3:" + DateTime.now().toString());
-
-          _microDelegations = await client.getMap3NodeDelegation(
-            map3Address,
-            walletAddress,
-          );
-          _unlockEpoch = _microDelegations?.pendingDelegation?.unlockedEpoch;
-          print("----4:" + DateTime.now().toString());
-        }
+        _setupMicroDelegations();
       }
       print(DateTime.now());
 
@@ -1564,7 +1651,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return;
     }
 
-    if (!_canExitAndCancel) return;
+    if (!_canCancel) return;
 
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
@@ -1615,7 +1702,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return;
     }
 
-    if (!_canJoin) return;
+    if (!_canDelegate) return;
 
     if (mounted) {
       setState(() {

@@ -142,6 +142,10 @@ class Map3InfoEntity extends Object {
     return FormatUtil.weiToEtherStr(feeRate);
   }
 
+  String getNextFeeRate() {
+    return FormatUtil.weiToEtherStr(rateForNextPeriod);
+  }
+
   String getStaking() {
     return FormatUtil.weiToEtherStr(staking);
   }
@@ -149,6 +153,8 @@ class Map3InfoEntity extends Object {
   bool isCreator() {
     return mine?.creator == NodeJoinType.CREATOR.index;
   }
+
+  get isJoiner => mine?.creator != NodeJoinType.CREATOR.index;
 
   Map3InfoEntity.onlyNodeId(this.nodeId);
 

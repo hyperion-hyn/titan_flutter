@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
@@ -7,6 +9,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -25,10 +28,18 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   bool _isOpen = true;
   int _managerSpendCount = 20;
   TextEditingController _rateCoinController = TextEditingController();
-  get _isJoiner => !widget.map3infoEntity.isCreator();
+  get _isJoiner => widget.map3infoEntity.isJoiner;
 
   @override
   void initState() {
+
+    if (!_isJoiner) {
+      var staking =  double.parse(widget.map3infoEntity.getStaking());
+      var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
+      var rate = (100 * (staking / createMin)).toInt();
+      _managerSpendCount = min(max(10, rate), 20);
+      print("_managerSpendCount: $_managerSpendCount");
+    }
     _rateCoinController.text = "$_managerSpendCount";
 
     super.initState();
@@ -96,7 +107,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _rateWidgetJoiner() {
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getFeeRate()));
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getNextFeeRate()));
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -122,7 +133,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           Spacer(),
           RichText(
             text: TextSpan(
-                text: lastFeeRate,
+                text: nextFeeRate,
                 style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
@@ -140,8 +151,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return managerSpendWidget(context, _rateCoinController, reduceFunc: () {
       setState(() {
         _managerSpendCount--;
-        if (_managerSpendCount < 1) {
-          _managerSpendCount = 1;
+        if (_managerSpendCount < 10) {
+          _managerSpendCount = 10;
         }
 
         _rateCoinController.text = "$_managerSpendCount";
@@ -223,7 +234,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           // todo: 管理费
           var text = _rateCoinController?.text ?? "0";
           var value = double.parse(text);
-          if (value > 20 || value < 1) {
+          if (value > 20 || value < 10) {
             _managerSpendCount = 20;
             _rateCoinController.text = "$_managerSpendCount";
           }
@@ -264,7 +275,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           () {
             var message = ConfirmPreEditMap3NodeMessage(
               autoRenew: _isOpen,
-              feeRate: feeRate,
+              feeRate: _isJoiner ? null : feeRate,
               map3NodeAddress: widget.map3infoEntity.address,
             );
             Navigator.push(
