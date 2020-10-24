@@ -402,20 +402,21 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ),
                 Expanded(
                   flex: 1,
-                  child: Center(
-                    child: InkWell(
-                      child: Text(
-                        S.of(context).atlas_launch_tutorial,
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                      ),
-                      onTap: () {
-                        AtlasApi.goToAtlasMap3HelpPage(context);
-                      },
-                    ),
-                  ),
+//                  child: Center(
+//                    child: InkWell(
+//                      child: Text(
+//                        S.of(context).atlas_launch_tutorial,
+//                        style: TextStyle(
+//                          color: DefaultColors.color999,
+//                          fontSize: 12,
+//                        ),
+//                      ),
+//                      onTap: () {
+//                        AtlasApi.goToAtlasMap3HelpPage(context);
+//                      },
+//                    ),
+//                  ),
+                child: Container(),
                 ),
               ],
             ),
