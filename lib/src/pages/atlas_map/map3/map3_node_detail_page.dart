@@ -1612,8 +1612,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
 
-        // var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        // _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        var map3Address = EthereumAddress.fromHex(_nodeAddress);
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
         _setupMicroDelegations();
       }
