@@ -477,38 +477,46 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var _minTransferText = _fromExchangeToWallet
         ? S.of(context).exchange_withdraw_min
         : S.of(context).exchange_deposit_min;
+
+    ///no limit in deposit
+    var _maxTransferText = S.of(context).exchange_withdraw_max;
+
     var _amountInputHint = _fromExchangeToWallet
         ? S.of(context).exchange_deposit_input_hint
         : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            ?.assetList
-            ?.getAsset(_selectedCoinSymbol)
-            ?.withdrawMin??'0'
+                .exchangeModel
+                .activeAccount
+                ?.assetList
+                ?.getAsset(_selectedCoinSymbol)
+                ?.withdrawMin ??
+            '0'
         : ExchangeInheritedModel.of(context)
+                .exchangeModel
+                .activeAccount
+                ?.assetList
+                ?.getAsset(_selectedCoinSymbol)
+                ?.rechargeMin ??
+            '0';
+    var _maxTransferAmount = ExchangeInheritedModel.of(context)
             .exchangeModel
             .activeAccount
-            ?.assetList
+            .assetList
             ?.getAsset(_selectedCoinSymbol)
-            ?.rechargeMin??'0';
-    var _maxTransferAmount = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        .assetList
-        ?.getAsset(_selectedCoinSymbol)
-        ?.withdrawMax;
-    var complex = _minTransferText + _minTransferAmount + _selectedCoinSymbol;
-    var _maxTransferText = S.of(context).exchange_withdraw_max;
+            ?.withdrawMax ??
+        '0';
+
+    var minAndMaxAmountHint = '';
+
     if (_fromExchangeToWallet) {
-      complex = _minTransferText +
-          _minTransferAmount +
-          _selectedCoinSymbol +
-          "," +
-          _maxTransferText +
-          _maxTransferAmount +
-          _selectedCoinSymbol;
+      minAndMaxAmountHint =
+          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol' +
+              ',' +
+              '$_maxTransferText $_maxTransferAmount $_selectedCoinSymbol';
+    } else {
+      minAndMaxAmountHint =
+          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol';
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,14 +524,14 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16.0),
           child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.end,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(S.of(context).exchange_transfer_amount),
               SizedBox(
-                width: 4.0,
+                width: 8.0,
               ),
               Text(
-                '($_minTransferText $_minTransferAmount $_selectedCoinSymbol)',
+                '($minAndMaxAmountHint)',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 11,
@@ -707,7 +715,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       if (_fromExchangeToWallet) {
         _withdraw();
       } else {
-        var ret = await _exchangeApi.getAddress(_selectedCoinSymbol);
+        ///HYN-Atlas and HYN-ERC20 both use symbol [HYN]
+        var symbol = _selectedCoinSymbol == SupportedTokens.HYN_ERC20.symbol
+            ? SupportedTokens.HYN_Atlas.symbol
+            : _selectedCoinSymbol;
+        var ret = await _exchangeApi.getAddress(symbol);
         var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }
