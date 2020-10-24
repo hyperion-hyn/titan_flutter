@@ -885,7 +885,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = fals
 
   var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
-  var detail = HYNApi.getValueByHynType(item.type, amount: isAtlasDetail ? "" : amount);
+  var detail = HYNApi.getValueByHynType(item.type, amount: isAtlasDetail ? "" : amount,getTypeStr: true);
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";

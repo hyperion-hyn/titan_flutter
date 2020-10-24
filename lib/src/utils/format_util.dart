@@ -16,6 +16,10 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(int.parse(numValue));
   }
 
+  static String stringFormatCoinNum(String numValue) {
+    return NumberFormat("#,###.######").format(double.parse(numValue));
+  }
+
   static String doubleFormatNum(double numValue) {
     return NumberFormat("#,###,###,###").format(numValue);
   }

@@ -176,7 +176,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey[200],
-                  blurRadius: 40.0,
+                  blurRadius: 3.0,
                 ),
               ],
             ),

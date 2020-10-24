@@ -1006,17 +1006,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
   _joinMap3Widget() {
     return SliverToBoxAdapter(
-      child: Column(
-        children: <Widget>[
-          AtlasJoinMap3Widget(
-            "${_atlasInfoEntity.nodeId}",
-            "",
-            "",
-            "",
-            isShowInviteItem: false,
-            loadDataBloc: _loadDataBloc,
-          ),
-        ],
+      child: Material(
+        color: Colors.white,
+        child: AtlasJoinMap3Widget(
+          "${_atlasInfoEntity.nodeId}",
+          isShowInviteItem: false,
+          loadDataBloc: _loadDataBloc,
+        ),
       ),
     );
   }
