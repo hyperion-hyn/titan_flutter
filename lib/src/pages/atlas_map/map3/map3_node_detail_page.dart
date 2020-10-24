@@ -117,6 +117,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   }
 
+  /*
+  tips:
+  “创建者“显示编辑： 倒数14个纪元到倒数7纪元 且 状态为未设置  开始显示。
+  如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
+
+  ”抵押者“显示编辑： 倒数7纪元后  且 （“创建者”设置为【已开启】或【未设置】） 且  自己状态为未设置，    或“创建者”已设置为【已开启】 且 自己状态为未设置，  开始显示。
+  如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
+  */
   get _canEditNextPeriod {
     // 周期
     var periodEpoch14 = releaseEpoch - 14 > 0 ? releaseEpoch - 14 : 0;
@@ -1577,12 +1585,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           (item.delegatorAddress == creatorAddress || item.delegatorAddress == joinerAddress)) {
         if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
           _microDelegationsCreator = item;
-          print("[object] --> _microDelegationsCreator:${_microDelegationsCreator.delegatorAddress}");
         }
 
         if (item.delegatorAddress == joinerAddress && _microDelegationsJoiner == null) {
           _microDelegationsJoiner = item;
-          print("[object] --> _microDelegationsJoiner:${_microDelegationsJoiner.delegatorAddress}");
         }
       }
     }
@@ -1612,9 +1618,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         _setupMicroDelegations();
       }
 
-      List<Map3TxLogEntity> tempMemberList = requestList[3];
-      _delegateRecordList = tempMemberList;
-
       AtlasHomeEntity _atlasHomeEntity = requestList[1];
       _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
 
@@ -1629,6 +1632,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
       }
+
+      List<Map3TxLogEntity> tempMemberList = requestList[3];
+      _delegateRecordList = tempMemberList;
 
       // 3.
 

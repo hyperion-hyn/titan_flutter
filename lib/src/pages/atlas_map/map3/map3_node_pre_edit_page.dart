@@ -9,7 +9,6 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -32,9 +31,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   @override
   void initState() {
-
     if (!_isJoiner) {
-      var staking =  double.parse(widget.map3infoEntity.getStaking());
+      var staking = double.parse(widget.map3infoEntity.getStaking());
       var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
       var rate = (100 * (staking / createMin)).toInt();
       _managerSpendCount = min(max(10, rate), 20);
@@ -107,7 +105,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _rateWidgetJoiner() {
-    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget.map3infoEntity.getNextFeeRate()));
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.getNextFeeRate() ?? "0"));
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -117,7 +115,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: Row(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
             child: RichText(
               text: TextSpan(
                   text: "下期管理费",
@@ -249,9 +247,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   showAlertView() {
-    var feeRate = _rateCoinController?.text ?? "20";
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.getNextFeeRate() ?? "0"));
+    var feeRate = _isJoiner ? nextFeeRate : (_rateCoinController?.text ?? "20") + "%";
     var contentPre = _isJoiner ? "开启期满跟随续约" : "开启期满自动续约";
-    var content = contentPre + "，管理费设置为$feeRate%每个节点周期只能修改一次，确定修改吗？";
+    var content = contentPre + "，管理费设置为$feeRate每个节点周期只能修改一次，确定修改吗？";
     UiUtil.showAlertView(
       context,
       title: "下期预设",
@@ -273,6 +272,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         ClickOvalButton(
           "确定",
           () {
+            Navigator.pop(context);
+
             var message = ConfirmPreEditMap3NodeMessage(
               autoRenew: _isOpen,
               feeRate: _isJoiner ? null : feeRate,
