@@ -119,7 +119,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
-      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch;
+      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch??0;
 
       var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);
 
@@ -306,17 +306,6 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           _myStakingAmount() - Decimal.parse(textStr) < _minRemain()) {
                                         return '撤销后剩余量不能少于${_minRemain()}';
                                       }
-
-                                      /*else if (minTotal == 0) {
-                                        return "抵押已满";
-                                      } else if (int.parse(textStr) < minTotal) {
-                                        return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                                      } else if (int.parse(textStr) > remainTotal) {
-                                        return "不能超过剩余份额";
-                                      } else if (Decimal.parse(textStr) >
-                                          Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                                        return S.of(context).hyn_balance_no_enough;
-                                      }*/
                                       else {
                                         return null;
                                       }

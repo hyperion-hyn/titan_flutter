@@ -8,6 +8,7 @@ import 'package:titan/src/config/consts.dart';
 
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
@@ -48,9 +49,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   var _nodeId = "string";
   var _walletName = "";
   var _walletAddress = "";
-  Microdelegations _microdelegations;
+  Microdelegations _microDelegations;
   final _client = WalletUtil.getWeb3Client(true);
   List<Map3UserEntity> _map3UserList = [];
+  Map3NodeInformationEntity _map3nodeInformationEntity;
 
   @override
   void onCreated() {
@@ -84,20 +86,33 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     super.dispose();
   }
 
+  _setupMicroDelegations() {
+    if (_map3nodeInformationEntity == null ||
+        (_map3nodeInformationEntity != null && _map3nodeInformationEntity.microdelegations.isEmpty)) return;
+
+    var joinerAddress = _address;
+
+    for (var item in _map3nodeInformationEntity.microdelegations) {
+      if (item.delegatorAddress.isNotEmpty && item.delegatorAddress == joinerAddress) {
+        if (item.delegatorAddress == joinerAddress) {
+          _microDelegations = item;
+
+          break;
+        }
+      }
+    }
+  }
+
   Future getNetworkData() async {
     try {
       print("[${widget.runtimeType}] getNetworkData");
 
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-      var walletAddress = EthereumAddress.fromHex(_address);
 
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
-      print('map3: $map3Address wallet: $walletAddress');
-      _microdelegations = await _client.getMap3NodeDelegation(
-        map3Address,
-        walletAddress,
-      );
+      _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
+      _setupMicroDelegations();
 
       _map3UserList = await _atlasApi.getMap3UserList(widget.map3infoEntity.nodeId, size: 0);
 
@@ -138,7 +153,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    var nodeYearOld = "   节龄: ***天";
+    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
+    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 9)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
@@ -188,7 +205,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                     TextSpan(
                                         text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                                     TextSpan(
-                                        text: nodeYearOld, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                                        text: oldYearValue, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                                   ])),
                                   Container(
                                     height: 4,
@@ -319,24 +336,28 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           child: ClickOvalButton(
             "确认终止",
             () {
-              var entity = PledgeMap3Entity(
-                  payload: Payload(
-                userName: _walletName,
-                userIdentity: widget.map3infoEntity.nodeId,
-              ));
+              //print("_map3infoEntity.status:${_map3infoEntity.status}");
+              var isPending = (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index);
+              if (isPending) {
+                var entity = PledgeMap3Entity(
+                    payload: Payload(
+                  userName: _walletName,
+                  userIdentity: widget.map3infoEntity.nodeId,
+                ));
 
-              var message = ConfirmTerminateMap3NodeMessage(
-                entity: entity,
-                map3NodeAddress: widget.map3infoEntity.address,
-              );
+                var message = ConfirmTerminateMap3NodeMessage(
+                  entity: entity,
+                  map3NodeAddress: widget.map3infoEntity.address,
+                );
 
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Map3NodeConfirmPage(
-                      message: message,
-                    ),
-                  ));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Map3NodeConfirmPage(
+                        message: message,
+                      ),
+                    ));
+              }
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
@@ -382,7 +403,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
               title = "我的抵押";
               detail = ConvertTokenUnit.weiToEther(
                       weiBigInt: BigInt.parse(
-                          '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'))
+                          '${FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount ?? 0)}'))
                   .toString();
               break;
 

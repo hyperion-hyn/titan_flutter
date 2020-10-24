@@ -15,7 +15,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_stake_select_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
@@ -26,8 +25,6 @@ import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
-import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -37,7 +34,6 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -76,7 +72,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   var _currentEpoch = 0;
 
-  get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
+  //get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
 
   String _notifyMessage() {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
@@ -102,7 +98,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ].contains(_map3Status);
   }
 
-
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
   List<Map3TxLogEntity> _delegateRecordList = [];
@@ -111,7 +106,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _isNoWallet => _address.isEmpty;
 
-  get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  //get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
   get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
@@ -149,15 +144,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return false;
   }
 
-  get _canExitAndCancel {
+  get _canExit {
     // 0.募集中
-    var condition0 = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
+    var isPending = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
     // 1.纪元已经过7天；
-    var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
-    return _isCreator && condition0 && condition1;
+    var isOver7Epoch = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) >= 7;
+    return _isCreator && isPending && isOver7Epoch;
   }
 
+  /*
   get _canCancel {
     // 0.募集中
     var condition0 = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
@@ -166,6 +162,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
     return _isDelegator && condition0 && condition1;
   }
+  */
 
   get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
@@ -421,12 +418,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
             InkWell(
-              onTap: _canExitAndCancel ? _showMoreAlertView : _shareAction,
+              onTap: _canExit ? _showMoreAlertView : _shareAction,
               borderRadius: BorderRadius.circular(60),
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 35),
                 child: Icon(
-                  _canExitAndCancel ? Icons.add : Icons.share,
+                  _canExit ? Icons.add : Icons.share,
                   color: Theme.of(context).primaryColor,
                 ),
               ),
@@ -863,8 +860,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate()??"0"));
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod??"0";
+    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
+    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = "已开启";
@@ -1245,26 +1242,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _contractProfitWidget() {
-    /*
-
     if (_map3infoEntity == null) return Container();
 
-    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
-    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
+    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity?.getStaking() ?? "0");
+    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
 
     var totalReward =
         FormatUtil.clearScientificCounting(_map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
     var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
-
-*/
-    if (_map3infoEntity == null || _map3nodeInformationEntity == null) return Container();
-
-    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity.getStaking());
-    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
-
-    var totalReward = FormatUtil.clearScientificCounting(_map3nodeInformationEntity.accumulatedReward.toDouble());
-    var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
-
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
     var myDelegationString = "0";
@@ -1291,12 +1276,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
-        _map3infoEntity.mine.staking ?? "0",
+        _map3infoEntity?.mine?.staking ?? "0",
       )).toString());
 
       myRewardString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
           weiBigInt: BigInt.parse(
-        _map3infoEntity.mine.reward ?? "0",
+        _map3infoEntity?.mine?.reward ?? "0",
       )).toString());
     }
 
@@ -1581,18 +1566,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   */
 
   _setupMicroDelegations() {
-    print(
-        "[object] --> _map3nodeInformationEntity.microdelegations:${_map3nodeInformationEntity.microdelegations.length}");
-
-    if (_map3nodeInformationEntity == null) return;
+    if (_map3nodeInformationEntity == null ||
+        (_map3nodeInformationEntity != null && _map3nodeInformationEntity.microdelegations.isEmpty)) return;
 
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress;
     var joinerAddress = _address;
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
       if (item.delegatorAddress.isNotEmpty &&
-          item.delegatorAddress == creatorAddress &&
-          item.delegatorAddress == joinerAddress) {
+          (item.delegatorAddress == creatorAddress || item.delegatorAddress == joinerAddress)) {
         if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
           _microDelegationsCreator = item;
           print("[object] --> _microDelegationsCreator:${_microDelegationsCreator.delegatorAddress}");
@@ -1624,8 +1606,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
 
-        var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        // var map3Address = EthereumAddress.fromHex(_nodeAddress);
+        // _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
         _setupMicroDelegations();
       }
@@ -1654,7 +1636,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         setState(() {
           _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
-
         });
       }
     } catch (e) {
@@ -1665,7 +1646,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         setState(() {
           _loadDataBloc.add(RefreshFailEvent());
           _currentState = all_page_state.LoadFailState();
-
         });
       }
     }
@@ -1756,7 +1736,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     if (!_canDelegate) return;
-
 
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
