@@ -888,11 +888,12 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = fals
   var detail = HYNApi.getValueByHynType(item.type, amount: isAtlasDetail ? "" : amount);
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-  var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
-
+  var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
+  var isYou = item.from.toLowerCase() == walletAddress;
+  var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
   var recordName = isAtlasDetail
-      ? " ${item.from == walletAddress ? "(你)" : ""}"
-      : "${map3CreatorAddress == walletAddress ? "(创建者) " : ""} ${item.from == walletAddress ? "(你)" : ""}";
+      ? " ${isYou ? "(你)" : ""}"
+      : "${isCreator && !isYou ? " (创建者)" : ""}${!isCreator && isYou ? " (你)" : ""}${isCreator && isYou ? " (创建者 | 你)" : ""}";
 
   return Container(
     color: Colors.white,
