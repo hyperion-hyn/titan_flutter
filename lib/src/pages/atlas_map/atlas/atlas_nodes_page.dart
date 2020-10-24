@@ -57,8 +57,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   int _currentPage = 1;
   int _pageSize = 10;
 
-  bool _isAutoRefresh = false;
-
   @override
   bool get wantKeepAlive => true;
 
@@ -110,10 +108,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ?.address ??
             '',
       );
-      _isAutoRefresh = true;
       setState(() {});
     } catch (e) {
-      _isAutoRefresh = false;
       setState(() {});
       print('[_getCommitteeInfo]: $e');
     }
@@ -406,20 +402,21 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ),
                 Expanded(
                   flex: 1,
-                  child: Center(
-                    child: InkWell(
-                      child: Text(
-                        S.of(context).atlas_launch_tutorial,
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                      ),
-                      onTap: () {
-                        AtlasApi.goToAtlasMap3HelpPage(context);
-                      },
-                    ),
-                  ),
+//                  child: Center(
+//                    child: InkWell(
+//                      child: Text(
+//                        S.of(context).atlas_launch_tutorial,
+//                        style: TextStyle(
+//                          color: DefaultColors.color999,
+//                          fontSize: 12,
+//                        ),
+//                      ),
+//                      onTap: () {
+//                        AtlasApi.goToAtlasMap3HelpPage(context);
+//                      },
+//                    ),
+//                  ),
+                child: Container(),
                 ),
               ],
             ),
@@ -629,9 +626,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       );
 
       if (_nodeList != null) {
+        _atlasNodeList.clear();
         _atlasNodeList.addAll(_nodeList);
       }
-
+      setState(() {});
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
@@ -657,7 +655,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
       }
-
+      setState(() {});
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());

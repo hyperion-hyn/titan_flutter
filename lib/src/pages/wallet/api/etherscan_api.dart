@@ -49,23 +49,42 @@ class EtherscanApi {
     return '${getWebHost(isChinaMainland)}/address/$address';
   }
 
-  Future<List<HynTransferHistory>> queryHYNHistory(String address, int page) async {
-    Map result = await TestHttpCore.instance.post("v1/wallet/account_txs", data:
-      "{\"address\": \"$address\",\"page\": $page,\"size\": 20}");
+  Future<List<HynTransferHistory>> queryHYNHistory(
+      String address, int page) async {
+    Map result = await TestHttpCore.instance.post(
+      "v1/wallet/account_txs",
+      data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
+    );
 
     if (result["code"] == 0) {
       var dataList = result["data"]["data"];
-      if(dataList == null || (dataList as List).length == 0){
+      if (dataList == null || (dataList as List).length == 0) {
         return [];
       }
       List resultList = dataList as List;
-      return resultList.map((json) => HynTransferHistory.fromJson(json)).toList();
+      return resultList
+          .map((json) => HynTransferHistory.fromJson(json))
+          .toList();
     } else {
       throw new Exception();
     }
   }
 
-  Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
+  Future<HynTransferHistory> queryHYNTxDetail(String address) async {
+    Map result = await TestHttpCore.instance.post(
+      "v1/wallet/tx_detail",
+      data: "{\"address\": \"$address\"}",
+    );
+    if (result["code"] == 0) {
+      var data = result["data"];
+      return HynTransferHistory.fromJson(data);
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<List<EthTransferHistory>> queryEthHistory(
+      String address, int page) async {
     Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "txlist",
@@ -80,13 +99,16 @@ class EtherscanApi {
 
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
-      return resultList.map((json) => EthTransferHistory.fromJson(json)).toList();
+      return resultList
+          .map((json) => EthTransferHistory.fromJson(json))
+          .toList();
     } else {
       throw new Exception();
     }
   }
 
-  Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
+  Future<List<Erc20TransferHistory>> queryErc20History(
+      String contractAddress, String address, int page) async {
     Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "tokentx",
@@ -99,12 +121,13 @@ class EtherscanApi {
     });
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
-      return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
+      return resultList
+          .map((json) => Erc20TransferHistory.fromJson(json))
+          .toList();
     } else {
       return [];
     }
   }
-
 
   Future<ResponseEntity> getGasFromEtherScan() async {
     Map json = await HttpCore.instance.get("$apiHost/api", params: {

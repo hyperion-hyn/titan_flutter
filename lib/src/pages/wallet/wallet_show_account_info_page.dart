@@ -44,12 +44,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       "交易号",
     ];
     var transDetail = widget.transactionDetail;
-    var amountText = "";
+    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
+    /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
     } else if (transDetail.type == TransactionType.TRANSFER_OUT) {
       amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    }
+    }*/
 
     var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));

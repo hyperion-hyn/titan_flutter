@@ -95,7 +95,7 @@ class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
-                        Text("抵押Atlas节点，你需要先拥有Map3节点，现在你可以进行以下操作参与抵押Atlas节点：", style: TextStyles.textC333S14),
+                        Text("抵押Atlas节点，你需要先拥有未抵押的Map3节点，现在你可以进行以下操作参与抵押Atlas节点：", style: TextStyles.textC333S14),
                         Padding(
                           padding: const EdgeInsets.only(top: 28, bottom: 10),
                           child: Text("1、创建并启动一个Map3节点，然后抵押到Atlas节点并享受节点出块奖励", style: TextStyles.textC333S12),

@@ -71,12 +71,13 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     ];
 
     var transDetail = widget.transactionDetail;
-    var amountText = "";
+    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
+    /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
     } else if (transDetail.type == TransactionType.TRANSFER_OUT) {
       amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    }
+    }*/
     var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceWithHyn = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceStr = "$gasPriceWithHyn Hyn ($gasPriceGwei Gdust)";
@@ -91,7 +92,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var hynPriceStr = "\$0 / HYN";
     var gasUsedStr = "${transDetail.gasUsed} (${FormatUtil.formatPercent(
         (Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
-    var typeStr = HYNApi.getValueByHynType(transDetail.hynType);
+    var typeStr = HYNApi.getValueByHynType(transDetail.hynType,getTypeStr: true);
 
     _dataInfoList = [
       transDetail.hash,
@@ -116,7 +117,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       timestamp = int.parse(transDetail.time.toString().substring(0,10));
     }
 
-    if(transDetail.dataDecoded == null || transDetail.dataDecoded == "null"){
+    if(transDetail.dataDecoded == null){
       hasDefaultData = false;
       selectDefault = false;
       inputData = transDetail.data;
