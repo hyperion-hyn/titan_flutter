@@ -301,7 +301,14 @@ class HYNApi {
     String feeRate,
     String map3NodeAddress,
   ) async {
-    var newCommissionRate = ConvertTokenUnit.decimalToWei(Decimal.parse(feeRate));
+
+    var newCommissionRate;
+    if (feeRate != null) {
+       var feeRateValue = ConvertTokenUnit.strToBigInt(feeRate) /
+          BigInt.parse('100');
+
+      newCommissionRate = BigInt.from(feeRateValue);
+    }
 
     var message = RenewMap3NodeMessage(
       isRenew: isRenew,
@@ -365,7 +372,7 @@ class HYNApi {
         amountStr ="-${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "取消微抵押";
+        typeStr = "取消微抵押" + ' ' + amount;
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;

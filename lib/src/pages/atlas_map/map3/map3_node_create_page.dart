@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -445,6 +446,18 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
+    var staking = _inputTextController.text ?? "0";
+
+    var stakingValue = double.parse(staking);
+    var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
+    var rate = (100 * (stakingValue / createMin)).toInt();
+    var rateMax = min(max(10, rate), 20);
+    var feeRate = int.parse(_rateCoinController.text ?? "0");
+    if (feeRate < 10 || feeRate > rateMax) {
+      Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$rateMax");
+      return;
+    }
+
     for (var index = 0; index < _titleList.length; index++) {
       var title = _titleList[index];
 
@@ -460,18 +473,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         _payload.describe = _detailList[4];
       }
 
-      var text = _rateCoinController?.text ?? "0";
-      var value = double.parse(text);
-      // todo: 管理费
-      if (value > 20 || value < 10) {
-        _managerSpendCount = 20;
-        _rateCoinController.text = "$_managerSpendCount";
-      }
+
+
+      _payload.staking = staking;
+
       var feeRate = _rateCoinController.text ?? "0";
       _payload.feeRate = feeRate;
-
-      var staking = _inputTextController.text ?? "0";
-      _payload.staking = staking;
 
       _selectProviderEntity = _providerList[0];
 
