@@ -330,8 +330,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _nodeOwnerWidget() {
-    var oldYear = Decimal.parse(_map3nodeInformationEntity.map3Node.age).toDouble();
-
+    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age??"0").toInt();
+    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
@@ -346,7 +346,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               Text.rich(TextSpan(children: [
                 TextSpan(text: widget.map3infoEntity.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(
-                    text: oldYear > 0 ? "  币龄: ${FormatUtil.formatPrice(oldYear)}天" : "",
+                    text: oldYearValue,
                     style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(

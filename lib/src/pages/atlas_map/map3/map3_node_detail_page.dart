@@ -68,36 +68,38 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
 
-  get _atlasInfoEntity => _map3infoEntity.atlas;
-
   Microdelegations _microDelegationsCreator;
   Microdelegations _microDelegationsJoiner;
 
+  get _atlasInfoEntity => _map3infoEntity.atlas;
+
   var _currentEpoch = 0;
+
   get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
 
-  get _visibleNotify {
-    var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
-    var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
+  String _notifyMessage() {
+    var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
+    var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
-    var condition0 = (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull);
-
-    var condition1 =
-        (_map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status == Map3InfoStatus.CONTRACT_IS_END);
-
-    return (condition0 || condition1) && _isCreator;
+    if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull) {
+      return "抵押已满$startMin，将在下个纪元启动……";
+    } else if (_map3Status == Map3InfoStatus.CONTRACT_IS_END) {
+      return "节点已到期，将在下个纪元结算……";
+    }
+    return null;
   }
 
   get _visibleReDelegation {
-    var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
-    return condition0 && _isCreator;
+    var isRunning = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+    return isRunning;
   }
 
   get _invisibleBottomBar {
-    var condition0 = !(_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL);
-    var condition1 = !_isJoiner;
-
-    return (condition0 && condition1);
+    return [
+      Map3InfoStatus.CONTRACT_IS_END,
+      Map3InfoStatus.CREATE_FAIL,
+      Map3InfoStatus.CANCEL_NODE_SUCCESS,
+    ].contains(_map3Status);
   }
 
   bool _isTransferring = false;
@@ -118,29 +120,34 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get releaseEpoch => int.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? 0);
 
   get _visibleEditNextPeriod {
-    var condition0 = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+    return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+  }
 
+  get _canEditNextPeriod {
     // 周期
-    var periodEpoch14 = releaseEpoch - 14;
-    var periodEpoch7 = releaseEpoch - 7;
+    var periodEpoch14 = releaseEpoch - 14 > 0 ? releaseEpoch - 14 : 0;
+    var periodEpoch7 = releaseEpoch - 7 > 0 ? releaseEpoch - 7 : 0;
+
+    var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
 
     //  创建者
-    var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
-    var haveEditedCreator = statusCreator > 0;
-    var isInActionPeriodCreator =
-        (periodEpoch14 > 0 && periodEpoch7 > 0) && (_currentEpoch >= periodEpoch14) && (_currentEpoch <= periodEpoch7);
-    var conditionCreator = condition0 && _isCreator && (isInActionPeriodCreator) && !haveEditedCreator;
+    if (_isCreator) {
+      var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
+      if (isInActionPeriodCreator && statusCreator == 0) {
+        //在可编辑时间内，且未修改过
+        return true;
+      }
+    }
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-    var haveEditedJoiner = statusJoiner > 0;
-    var isInActionPeriodJoiner =
-        (periodEpoch7 > 0 && releaseEpoch > 0) && (_currentEpoch >= periodEpoch7) && (_currentEpoch <= releaseEpoch);
-    var condition2 = condition0 && _isJoiner && !haveEditedJoiner && (statusCreator == 2);
-    var condition3 = condition0 && _isJoiner && (isInActionPeriodJoiner) && !haveEditedJoiner && (statusCreator != 1);
-    var conditionJoiner = (condition2 || condition3);
+    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= releaseEpoch;
+    var isCreatorSetOpen = statusCreator == 2; //创建人已开启
+    if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
+      return true;
+    }
 
-    return conditionCreator || conditionJoiner;
+    return false;
   }
 
   get _canExitAndCancel {
@@ -163,7 +170,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  get _isCreator => _map3infoEntity.isCreator();
+  get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
   get _isJoiner => _map3infoEntity?.mine != null;
 
@@ -646,27 +653,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _topNextEpisodeNotifyWidget() {
-    if (!_visibleNotify) return Container();
-
-    var notification = "";
-    switch (_map3Status) {
-      case Map3InfoStatus.CONTRACT_IS_END:
-        // "第二期已经开启，前往查看  >>"
-        notification = "节点已到期，将在下个纪元结算……";
-        break;
-
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        notification = "节点已终止，抵押金额已返回您的钱包……";
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        notification = "抵押已满100W，将在下个纪元启动……";
-        break;
-
-      default:
-        break;
+    var notification = _notifyMessage();
+    if (notification == null) {
+      return Container();
     }
-
     return Container(
       color: HexColor("#1FB9C7").withOpacity(0.08),
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
@@ -695,8 +685,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (_map3infoEntity == null) return Container();
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    //var nodeYearOld = "   节龄: ***天";
-    var nodeYearOld = "";
+    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
+    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
@@ -723,7 +714,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     children: <Widget>[
                       Text.rich(TextSpan(children: [
                         TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                        TextSpan(text: nodeYearOld, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                        TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
                       ])),
                       Container(
                         height: 4,
