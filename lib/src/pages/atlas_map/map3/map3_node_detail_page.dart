@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -101,7 +102,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ].contains(_map3Status);
   }
 
-  bool _isTransferring = false;
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
@@ -414,7 +414,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => !_isTransferring,
+      onWillPop: () async => true,
       child: Scaffold(
         backgroundColor: DefaultColors.colorf5f5f5,
         appBar: BaseAppBar(
@@ -863,8 +863,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity.getFeeRate()));
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod;
+    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate()??"0"));
+    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod??"0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = "已开启";
@@ -1441,9 +1441,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
-    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch??0;
-    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch??0;
-    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch??"0")?.toInt()??0;
+    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
+    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
     var titles = [
       pendingEpoch > 0 ? "创建 #$pendingEpoch" : "创建",
       activationEpoch > 0 ? "启动 #$activationEpoch" : "启动",
@@ -1626,8 +1626,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-        print(
-            "[object] --> _map3nodeInformationEntity.microdelegations:${_map3nodeInformationEntity.microdelegations.length}");
 
         _setupMicroDelegations();
       }
@@ -1657,7 +1655,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
 
-          _isTransferring = false;
         });
       }
     } catch (e) {
@@ -1669,7 +1666,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _loadDataBloc.add(RefreshFailEvent());
           _currentState = all_page_state.LoadFailState();
 
-          _isTransferring = false;
         });
       }
     }
@@ -1695,6 +1691,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void _cancelAction() {
     if (_isNoWallet) {
       _pushWalletManagerAction();
+      return;
+    }
+
+    print("_map3infoEntity.status:${_map3infoEntity.status}");
+
+    if (_map3infoEntity.status == 1) {
+      Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
       return;
     }
 
@@ -1747,13 +1750,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return;
     }
 
+    if (_map3infoEntity.status == 1) {
+      Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
+      return;
+    }
+
     if (!_canDelegate) return;
 
-    if (mounted) {
-      setState(() {
-        _isTransferring = true;
-      });
-    }
 
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
@@ -1772,12 +1775,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     if (result != null && result is Map && result["result"] is bool) {
       getContractDetailData();
-    } else {
-      if (mounted) {
-        setState(() {
-          _isTransferring = false;
-        });
-      }
     }
   }
 }

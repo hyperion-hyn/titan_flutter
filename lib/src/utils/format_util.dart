@@ -45,7 +45,7 @@ class FormatUtil {
 
   static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
     if (timestamp <= 0) return "";
-    
+
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
       timestamp = timestamp * 1000;
