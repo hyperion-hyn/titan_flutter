@@ -302,6 +302,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 setState(() {
                   _isTransferring = false;
                 });
+                // todo: 提示错误具体原因
                 Fluttertoast.showToast(msg: '操作失败');
               }
             } else {

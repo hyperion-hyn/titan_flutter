@@ -189,13 +189,16 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
     }
 
-    //_map3stakingEntity.canStakingNum = 1;
     return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
       return Container(
         color: Colors.white,
-        child: getMap3NodeWaitItem(context, _pendingList[index], _map3introduceEntity,
-            canCheck: (index < _map3stakingEntity.canStakingNum)),
+        child: getMap3NodeWaitItem(
+          context,
+          _pendingList[index],
+          _map3introduceEntity,
+          canCheck: (index < _map3stakingEntity.canStakingNum),
+        ),
       );
     }, childCount: _pendingList.length));
   }

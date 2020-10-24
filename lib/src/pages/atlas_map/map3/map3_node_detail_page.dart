@@ -34,6 +34,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -79,7 +80,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull) {
-      return "抵押已满$startMin，将在下个纪元启动……";
+      var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) +
+          S.of(context).ten_thousand;
+      return "抵押已满$startMinValue，将在下个纪元启动……";
     } else if (_map3Status == Map3InfoStatus.CONTRACT_IS_END) {
       return "节点已到期，将在下个纪元结算……";
     }
@@ -299,16 +302,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _map3StatusDesc = "";
 
-    //_map3Status = Map3InfoStatus.CONTRACT_HAS_STARTED;
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        _map3StatusDesc = "待启动";
+        _map3StatusDesc = "";
 
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
-        _map3StatusDesc = S.of(context).launch_fail;
+        _map3StatusDesc = "";
 
         break;
 
@@ -318,17 +320,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        _map3StatusDesc = S.of(context).expired_can_withdraw_rewards;
+        _map3StatusDesc = "";
 
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusDesc = "已终止";
+        _map3StatusDesc = "";
 
         break;
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        _map3StatusDesc = "撤销中";
+        _map3StatusDesc = "";
 
         break;
 
@@ -336,13 +338,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
         var remain = startMin - staking;
-        var remainDelegation = FormatUtil.formatPrice(remain);
-        _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
+        if (remain <= 0) {
+          _map3StatusDesc = "抵押已满，准备启动";
+        } else {
+          var remainDelegation = FormatUtil.formatPrice(remain);
+          _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
+
+        }
 
         break;
 
       default:
-        _map3StatusDesc = "映射中";
+        _map3StatusDesc = "";
 
         break;
     }
@@ -743,11 +750,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _map3NodeInfoItem(BuildContext context) {
     if (_map3infoEntity == null) return Container();
 
-    var nodeName = _map3infoEntity?.name ?? "***";
+    var nodeName =  _map3infoEntity?.name ?? "***"  ;
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
-    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 6)}";
+    var nodeAddress = "${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 8)}";
     var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
@@ -766,41 +773,46 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 iconMap3Widget(_map3infoEntity),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 2),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text.rich(TextSpan(children: [
-                        TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                        TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
-                      ])),
-                      Container(
-                        height: 4,
-                      ),
-                      Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
-                    ],
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text.rich(TextSpan(children: [
+                          TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                          TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                        ])),
+                        Container(
+                          height: 4,
+                        ),
+                        Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                      ],
+                    ),
                   ),
                 ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
-                      Container(
-                        height: 4,
-                      ),
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: nodeIdPre,
-                            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
-                        TextSpan(
-                            text: nodeId,
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
-                      ])),
-                    ],
+                 
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
+                        Container(
+                          height: 4,
+                        ),
+                        Text.rich(TextSpan(children: [
+                          TextSpan(
+                              text: nodeIdPre,
+                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
+                          TextSpan(
+                              text: nodeId,
+                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+                        ])),
+                      ],
+                    ),
                   ),
                 )
               ],
@@ -896,7 +908,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var periodEpoch7 = releaseEpoch - 7;
     var editDateLimit = "（请在纪元$periodEpoch14 - $periodEpoch7前修改）";
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
-      editDateLimit = "（请在到期前修改）";
+      editDateLimit = "";
     }
 
     return Container(
@@ -1084,66 +1096,76 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   ])),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: HexColor("#F8F8F8"),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
+              InkWell(
+                onTap: () {
+                  var map3Address = _map3nodeInformationEntity?.map3Node?.map3Address??(_map3infoEntity?.address??"");
+                  Application.router.navigateTo(
+                    context,
+                    Routes.atlas_detail_page +
+                        '?atlasNodeId=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.nodeId??_nodeId)}&atlasNodeAddress=${FluroConvertUtils.fluroCnParamsEncode(atlasEntity?.address??map3Address)}',
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16),
                   child: Container(
-                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          width: 42,
-                          height: 42,
-                          child: walletHeaderWidget(
+                    decoration: BoxDecoration(
+                      color: HexColor("#F8F8F8"),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(16, 18, 16, 20),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          iconWidget(
+                            atlasEntity.pic,
                             atlasEntity.name,
-                            isShowShape: false,
-                            address: atlasEntity.address,
-                            isCircle: false,
+                            atlasEntity.address,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text.rich(TextSpan(children: [
-                                TextSpan(
-                                    text: atlasEntity.name,
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                              ])),
-                              Container(
-                                height: 4,
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(
+                                        text: atlasEntity?.name??"",
+                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  _item("节点排名：", "${atlasEntity?.rank??0}"),
+                                ],
                               ),
-                              _item("节点排名：", "${atlasEntity.rank}"),
-                            ],
-                          ),
-                        ),
-                        Spacer(),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Text(rewardRate,
-                                style: TextStyle(
-                                  color: HexColor("#9B9B9B"),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                )),
-                            Container(
-                              height: 4,
                             ),
-                            Text("年化奖励",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: HexColor("#999999"),
-                                )),
-                          ],
-                        )
-                      ],
+                          ),
+                          //Spacer(),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(rewardRate,
+                                    style: TextStyle(
+                                      color: HexColor("#9B9B9B"),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    )),
+                                Container(
+                                  height: 4,
+                                ),
+                                Text("年化奖励",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: HexColor("#999999"),
+                                    )),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -1550,28 +1572,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   // todo: test_detail
-  /*
-  _requestMicroDelegations() async {
-
-    if (_map3nodeInformationEntity == null) return;
-
-    var map3Address = EthereumAddress.fromHex(_map3nodeInformationEntity.map3Node.map3Address);
-    var creatorAddress = EthereumAddress.fromHex(_map3nodeInformationEntity.map3Node.operatorAddress);
-
-    _microDelegationsCreator = await client.getMap3NodeDelegation(
-      map3Address,
-      creatorAddress,
-    );
-
-    if (_isDelegator) {
-      var joinerAddress = EthereumAddress.fromHex(_address);
-      _microDelegationsJoiner = await client.getMap3NodeDelegation(
-        map3Address,
-        joinerAddress,
-      );
-    }
-  }
-  */
 
   _setupMicroDelegations() {
     if (_map3nodeInformationEntity == null ||
@@ -1605,6 +1605,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       _map3infoEntity = requestList[0];
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
+      // todo: test_jison
+      //_map3Status = Map3InfoStatus.values[7];
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
@@ -1682,10 +1684,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     print("_map3infoEntity.status:${_map3infoEntity.status}");
 
-    if (_map3infoEntity.status == 1) {
+    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
       Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
       return;
     }
+
+    // todo: 撤销节点中
+    /*
+    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
+      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能撤销抵押");
+      return;
+    }*/
 
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
@@ -1736,12 +1745,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return;
     }
 
-    if (_map3infoEntity.status == 1) {
-      Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
+    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
+      Fluttertoast.showToast(msg: "节点创建中, 暂不能抵押！");
       return;
     }
 
-    if (!_canDelegate) return;
+    // todo: 撤销节点中
+    /*
+    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
+      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能抵押");
+      return;
+    }*/
 
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);

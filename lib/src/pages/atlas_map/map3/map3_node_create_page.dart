@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -446,7 +447,18 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
+    var coinVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbol('HYN');
+
     var staking = _inputTextController.text ?? "0";
+
+    if (Decimal.parse(staking) > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+      //Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
+
+      return;
+    }
 
     var stakingValue = double.parse(staking);
     var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
@@ -472,8 +484,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       } else if (title == "描述") {
         _payload.describe = _detailList[4];
       }
-
-
 
       _payload.staking = staking;
 
