@@ -71,6 +71,8 @@ class FormatUtil {
   }
 
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    if (utcStr.isEmpty) return "";
+
     var utc = DateTime.parse(utcStr);
 
     var utcLocal = utc.toLocal();

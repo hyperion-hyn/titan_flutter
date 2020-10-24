@@ -104,6 +104,12 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'RateForNextPeriod')
   String rateForNextPeriod;
 
+  @JsonKey(name: 'start_time')
+  String startTime;
+
+  @JsonKey(name: 'end_time')
+  String endTime;
+
   Map3InfoEntity(
     this.address,
     this.blsKey,
@@ -136,6 +142,8 @@ class Map3InfoEntity extends Object {
     this.startEpoch,
     this.endEpoch,
     this.rateForNextPeriod,
+    this.startTime,
+    this.endTime,
   );
 
   String getFeeRate() {
