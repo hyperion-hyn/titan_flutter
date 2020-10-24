@@ -18,14 +18,10 @@ import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
   final String nodeId;
-  final String remainDay;
-  final String shareName;
-  final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.nodeId, this.remainDay, this.shareName, this.shareUrl,
-      {this.isShowInviteItem = true, this.loadDataBloc});
+  NodeJoinMemberWidget({this.nodeId, this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -120,10 +116,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   Expanded(
                       child:
                           Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
-                  /*Text(
-                    "剩余时间：${widget.remainDay}天",
-                    style: TextStyles.textC999S14,
-                  ),*/
                   Text(
                     S.of(context).total_member_count(memberList.length.toString()),
                     style: TextStyles.textC999S14,
@@ -243,11 +235,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     var url = EtherscanApi.getAddressDetailUrl(
         item.address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
     if (url != null) {
-      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
-      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page
-          + '?initUrl=$webUrl&title=$webTitle');*/
-
       Navigator.push(
           context,
           MaterialPageRoute(
