@@ -604,6 +604,60 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     print("_invisibleBottomBar:$_invisibleBottomBar");
 
+    List<Widget> children = [];
+    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) {
+      children = <Widget>[
+        ClickOvalButton(
+          "提取奖励",
+          _collectAction,
+          width: 160,
+          height: 32,
+          fontSize: 14,
+        )
+      ];
+    } else {
+      children = <Widget>[
+        Spacer(),
+        ClickOvalButton(
+          "撤销抵押",
+          _cancelAction,
+          width: 100,
+          height: 32,
+          fontSize: 14,
+        ),
+        Spacer(),
+        ClickOvalButton(
+          "抵押",
+          _joinAction,
+          width: 100,
+          height: 32,
+          fontSize: 14,
+        ),
+        Spacer(),
+      ];
+    }
+    return Container(
+      decoration: BoxDecoration(color: Colors.white, boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          offset: Offset(0.0, 0.1), //阴影xy轴偏移量
+          blurRadius: 1, //阴影模糊程度
+        )
+      ]),
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: children,
+      ),
+    );
+  }
+
+  /*
+  Widget _bottomBtnBarWidget() {
+    if (_invisibleBottomBar) return Container();
+
+    print("_invisibleBottomBar:$_invisibleBottomBar");
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -651,6 +705,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+  */
 
   Widget _topNextEpisodeNotifyWidget() {
     var notification = _notifyMessage();
@@ -1398,7 +1453,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ];
     var progressHints = [
       "",
-      "180纪元",
+      "${AtlasApi.map3introduceEntity?.days}纪元",
       "",
     ];
 
@@ -1641,8 +1696,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _pushWalletManagerAction();
       return;
     }
-
-    if (!_canCancel) return;
 
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
