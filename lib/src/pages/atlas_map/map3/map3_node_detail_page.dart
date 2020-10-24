@@ -1450,10 +1450,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       releaseEpoch > 0 ? "到期 #$releaseEpoch" : "到期",
     ];
 
-    var createdAt = FormatUtil.formatUTCDateStr(_map3infoEntity?.createdAt??"", isSecond: false);
-    var startTime = FormatUtil.formatUTCDateStr(_map3infoEntity?.startTime??"", isSecond: false);
-    var endTime = FormatUtil.formatUTCDateStr(_map3infoEntity?.endTime??"", isSecond: false);
-
+    var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0, isSecond: false);
+    var startTime = FormatUtil.formatDate(_map3infoEntity?.startTime ?? 0, isSecond: false);
+    var endTime = FormatUtil.formatDate(_map3infoEntity?.endTime ?? 0, isSecond: false);
 
     var subtitles = [
       createdAt,
@@ -1595,7 +1594,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           item.delegatorAddress == creatorAddress &&
           item.delegatorAddress == joinerAddress) {
         if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
-          _microDelegationsCreator == item;
+          _microDelegationsCreator = item;
           print("[object] --> _microDelegationsCreator:${_microDelegationsCreator.delegatorAddress}");
         }
 
@@ -1609,16 +1608,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Future getContractDetailData() async {
     try {
-      print(DateTime.now());
-
       var requestList = await Future.wait([
         _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.postAtlasHome(_address),
         _nodeApi.getNodeProviderList(),
         _atlasApi.getMap3StakingLogList(_nodeAddress),
       ]);
-
-      print(DateTime.now());
 
       _map3infoEntity = requestList[0];
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
@@ -1636,7 +1631,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         _setupMicroDelegations();
       }
-      print(DateTime.now());
 
       List<Map3TxLogEntity> tempMemberList = requestList[3];
       _delegateRecordList = tempMemberList;
@@ -1655,7 +1649,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
       }
-      print(DateTime.now());
 
       // 3.
 
@@ -1667,7 +1660,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _isTransferring = false;
         });
       }
-      print(DateTime.now());
     } catch (e) {
       logger.e(e);
       LogUtil.toastException(e);
