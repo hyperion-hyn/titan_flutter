@@ -265,8 +265,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
 
         var left = (_currentEpoch - activationEpoch).toDouble() / (releaseEpoch - activationEpoch).toDouble();
-        if (left <= 0) {
-          value = 0.5;
+        if (left <= 0.1) {
+          value = 0.1;
         } else {
           value = left;
         }
