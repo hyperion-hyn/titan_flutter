@@ -811,7 +811,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               children: <Widget>[
                 iconMap3Widget(_map3infoEntity),
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, top: 2),
                     child: Column(
@@ -1101,18 +1101,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text.rich(TextSpan(children: [
-                    TextSpan(
-                        text: "复投Atlas节点",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: HexColor("#1F81FF"),
-                        )),
-                  ])),
+                Visibility(
+                  visible: _isCreator,
+                  child: InkWell(
+                    onTap: () {
+
+                      Navigator.of(context).pop();
+                    },
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(
+                          text: "复投Atlas节点",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: HexColor("#1F81FF"),
+                          )),
+                    ])),
+                  ),
                 ),
               ],
             ),
