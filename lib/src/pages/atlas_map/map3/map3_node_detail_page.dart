@@ -20,6 +20,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -128,12 +129,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
-
-
-  get _releaseEpoch =>
-      double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")
-          .toInt();
-
+  get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
 
   get _visibleEditNextPeriod {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
@@ -157,6 +153,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
+      //print("isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
@@ -166,8 +163,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
 
-    var isInActionPeriodJoiner =
-        _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
+    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
     if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
@@ -211,6 +207,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   c: 游客
   *
    */
+
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
   get _isDelegator => _map3infoEntity?.mine != null;
@@ -834,7 +831,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Expanded(
+                            Flexible(
                               child: Text(nodeName,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
@@ -1555,7 +1552,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
-    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
+    var pendingEpoch = _map3infoEntity?.startEpoch ?? 0;
+    //var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
     var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
     var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
     var titles = [
@@ -1702,18 +1700,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ]);
 
       _map3infoEntity = requestList[0];
+
+      // todo:
+      //_map3infoEntity.mine = UserMap3Entity.onlyCreator(0);
+
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity =
-            await client.getMap3NodeInformation(map3Address);
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
         _setupMicroDelegations();
 
-        List<HynTransferHistory> tempMemberList =
-            await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
       }
 

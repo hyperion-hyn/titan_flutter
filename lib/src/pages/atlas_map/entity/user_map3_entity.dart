@@ -41,6 +41,7 @@ class UserMap3Entity extends Object {
   UserMap3Entity(this.address,this.createdAt,this.creator,this.id,this.nodeId,this.reward,this.rewardHistory,this.staking,this.status,this.updatedAt,);
 
   UserMap3Entity.onlyId(this.id);
+  UserMap3Entity.onlyCreator(this.creator);
 
   factory UserMap3Entity.fromJson(Map<String, dynamic> srcJson) => _$UserMap3EntityFromJson(srcJson);
 

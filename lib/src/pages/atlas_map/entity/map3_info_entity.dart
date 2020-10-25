@@ -154,10 +154,6 @@ class Map3InfoEntity extends Object {
     return FormatUtil.weiToEtherStr(feeRate);
   }
 
-  String getNextFeeRate() {
-    return FormatUtil.weiToEtherStr(rateForNextPeriod);
-  }
-
   String getStaking() {
     return FormatUtil.weiToEtherStr(staking);
   }

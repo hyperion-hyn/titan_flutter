@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -105,7 +106,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _rateWidgetJoiner() {
-    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.getNextFeeRate() ?? "0"));
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -229,12 +230,19 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: ClickOvalButton(
         "确认修改",
         () {
-          // todo: 管理费
+
           var text = _rateCoinController?.text ?? "0";
+          if (text == null || text.isEmpty) {
+            Fluttertoast.showToast(msg: "请设置管理费");
+            return;
+          }
           var value = double.parse(text);
           if (value > 20 || value < 10) {
             _managerSpendCount = 20;
             _rateCoinController.text = "$_managerSpendCount";
+
+            Fluttertoast.showToast(msg: "管理费不能小于10%，且不能大于20%");
+            return;
           }
 
           showAlertView();
@@ -247,7 +255,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   showAlertView() {
-    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.getNextFeeRate() ?? "0"));
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
     var feeRate = _isJoiner ? nextFeeRate : (_rateCoinController?.text ?? "20") + "%";
     var contentPre = _isJoiner ? "开启期满跟随续约" : "开启期满自动续约";
     var content = contentPre + "，管理费设置为$feeRate每个节点周期只能修改一次，确定修改吗？";
