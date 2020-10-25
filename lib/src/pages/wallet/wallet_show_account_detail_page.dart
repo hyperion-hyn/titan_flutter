@@ -13,6 +13,7 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -86,6 +87,13 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
+
+    /*var pageTitle;
+    var pageStatusImage;
+    getAccountPageTitle(context,widget.transactionDetail,(funPageTitle,funPageStatusImage){
+      pageTitle = funPageTitle;
+      pageStatusImage = funPageStatusImage;
+    });*/
 
     var isFail = (transDetail.state == 4 || transDetail.state == 5);
     var statusStr = isFail ? "失败" : "成功";
