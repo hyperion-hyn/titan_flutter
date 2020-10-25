@@ -427,18 +427,19 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
 
     if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       iconPath = "res/drawable/ic_wallet_account_list_receiver.png";
-      var fromAddress = widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol
-          ? WalletUtil.ethAddressToBech32Address(transactionDetail.fromAddress)
-          : transactionDetail.fromAddress;
+      var fromAddress = WalletUtil.formatToHynAddrIfAtlasChain(
+        widget.coinVo,
+        transactionDetail.fromAddress,
+      );
       describe = "From: " +
           shortBlockChainAddress(fromAddress, limitCharsLength: limitLength);
     } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
       iconPath = "res/drawable/ic_wallet_account_list_send.png";
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        var toAddress = widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol
-            ? WalletUtil.ethAddressToBech32Address(
-                HYNApi.getHynToAddress(transactionDetail))
-            : HYNApi.getHynToAddress(transactionDetail);
+        var toAddress = WalletUtil.formatToHynAddrIfAtlasChain(
+          widget.coinVo,
+          HYNApi.getHynToAddress(transactionDetail),
+        );
         describe = "To: " +
             shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
       } else {
