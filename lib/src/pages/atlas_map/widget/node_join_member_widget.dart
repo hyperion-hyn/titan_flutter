@@ -162,69 +162,66 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     if (showName.isNotEmpty) {
       showName = showName.characters.first;
     }
-    return InkWell(
-      onTap: () => _pushTransactionDetailAction(entity),
-      child: Padding(
-        padding: EdgeInsets.only(top: 4, bottom: 4.0),
-        child: SizedBox(
-          width: 91,
-          height: 111,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[200],
-                  blurRadius: 3.0,
+    return Padding(
+      padding: EdgeInsets.only(top: 4, bottom: 4.0),
+      child: SizedBox(
+        width: 91,
+        height: 111,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[200],
+                blurRadius: 3.0,
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.only(right: 12),
+          child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      child: walletHeaderWidget(
+                        showName,
+                        isShowShape: false,
+                        address: entity.address,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0, right: 5),
+                      child: Text(entity.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
+                    ),
+                    Text(
+                        "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                        style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
+                  ],
                 ),
-              ],
-            ),
-            margin: const EdgeInsets.only(right: 12),
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        child: walletHeaderWidget(
-                          showName,
-                          isShowShape: false,
-                          address: entity.address,
-                        ),
+              ),
+              if (entity.creator == 1)
+                Positioned(
+                  top: 15,
+                  right: 4,
+                  child: Container(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      decoration: BoxDecoration(
+                        color: DefaultColors.colorffdb58,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text(entity.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
-                      ),
-                      Text(
-                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
-                          style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
-                    ],
-                  ),
-                ),
-                if (entity.creator == 1)
-                  Positioned(
-                    top: 15,
-                    right: 4,
-                    child: Container(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        decoration: BoxDecoration(
-                          color: DefaultColors.colorffdb58,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
-                  )
-              ],
-            ),
+                      child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
+                )
+            ],
           ),
         ),
       ),
