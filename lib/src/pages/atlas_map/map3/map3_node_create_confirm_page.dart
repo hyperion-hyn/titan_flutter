@@ -75,7 +75,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
     if (entity.staking?.isNotEmpty ?? false) {
       _titleList.add("首次抵押");
-      _detailList.add(entity.staking);
+      _detailList.add(entity.staking + " HYN");
     }
 
     if (entity.feeRate?.isNotEmpty ?? false) {
@@ -249,7 +249,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
                 entity: map3entity, map3NodeAddress: "");
           }
 
-          Navigator.push(
+          await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => Map3NodeConfirmPage(

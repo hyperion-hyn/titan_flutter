@@ -393,7 +393,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               break;
 
             case 3:
-              keyboardType = TextInputType.phone;
+              keyboardType = TextInputType.text;
               break;
 
             case 4:

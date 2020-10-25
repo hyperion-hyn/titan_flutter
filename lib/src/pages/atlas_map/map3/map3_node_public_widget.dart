@@ -13,13 +13,12 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
-import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -91,7 +90,7 @@ Widget iconWidget(String picture, String name, String address, {bool isCircle = 
 }
 
 Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity,
-    {bool canCheck = true}) {
+    {bool canCheck = true, int currentEpoch = 0}) {
   if (infoEntity == null) return Container();
 
   var state = Map3InfoStatus.values[infoEntity?.status ?? 0];
@@ -144,7 +143,17 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
   var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : infoEntity.describe;
-  var date = FormatUtil.formatUTCDateStr(infoEntity?.updatedAt ?? "0", isSecond: true);
+  var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
+  // todo:
+  date = "创建于${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
+
+  if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
+    date = "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
+
+  } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index){
+    var remainEpoch = infoEntity?.endEpoch??0 - currentEpoch;
+    date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
+  }
 
   return InkWell(
     onTap: () async {
@@ -875,8 +884,8 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
       children: <Widget>[
         Image.asset(
           'res/drawable/ic_empty_contract.png',
-          width: 120,
-          height: 120,
+          width: 80,
+          height: 80,
         ),
         SizedBox(height: 16),
         SizedBox(
@@ -978,14 +987,14 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                         Row(
                           children: <Widget>[
                             Text(
-                              shortBlockChainAddress("${item.from}", limitCharsLength: 8),
+                              shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(item.from)}", limitCharsLength: 8),
                               style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                             ),
                             Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(FormatUtil.formatDateStr(item.createdAt.toString()),
+                                Text(FormatUtil.formatDate(item.timestamp, isSecond: true),
                                     style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                               ],
                             ),

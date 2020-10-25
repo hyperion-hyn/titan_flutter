@@ -238,89 +238,91 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   }
 
   Widget _confirmButtonWidget() {
-    var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-
     return Container(
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
         S.of(context).submit,
-        () async {
-          setState(() {
-            _isTransferring = true;
-          });
-
-          try {
-            var password = await UiUtil.showWalletPasswordDialogV2(context, activatedWallet.wallet);
-            if (password == null) {
-              setState(() {
-                _isTransferring = false;
-              });
-              return;
-            }
-            var result = await widget.message.action(password);
-            print("object --> result:$result");
-
-            if (result is String) {
-              Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
-              map3infoEntity.status = 1;
-
-              if (widget.message is ConfirmCreateMap3NodeMessage) {
-                var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-                var address = activatedWallet.wallet.getEthAccount().address;
-                map3infoEntity.address = address;
-
-                var messageEntity = widget.message as ConfirmCreateMap3NodeMessage;
-                var payload = messageEntity.entity.payload;
-                map3infoEntity.name = payload.name;
-                map3infoEntity.nodeId = payload.nodeId;
-                map3infoEntity.describe = payload.describe;
-                map3infoEntity.region = payload.region;
-                map3infoEntity.provider = payload.provider;
-                map3infoEntity.staking = payload.staking;
-                map3infoEntity.contact = payload.connect;
-              }
-              Application.router.navigateTo(
-                  context,
-                  Routes.map3node_broadcast_success_page +
-                      "?actionEvent=${widget.message.type}" +
-                      "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
-            } else if (result is List) {
-              Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
-
-              Application.router.navigateTo(
-                  context,
-                  Routes.map3node_broadcast_success_page +
-                      "?actionEvent=${widget.message.type}" +
-                      "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
-            } else if (result is bool) {
-              var isOK = result;
-              if (isOK) {
-                Application.router.navigateTo(
-                    context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
-              } else {
-                setState(() {
-                  _isTransferring = false;
-                });
-                // todo: 提示错误具体原因
-                Fluttertoast.showToast(msg: '操作失败');
-              }
-            } else {
-              setState(() {
-                _isTransferring = false;
-              });
-              Fluttertoast.showToast(msg: '操作失败');
-            }
-          } catch (error) {
-            setState(() {
-              _isTransferring = false;
-            });
-          }
-        },
+        _isTransferring ? null : _action,
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
+        isLoading: _isTransferring,
       ),
     );
+  }
+
+  _action() async {
+    setState(() {
+      _isTransferring = true;
+    });
+
+    try {
+      var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
+      var password = await UiUtil.showWalletPasswordDialogV2(context, activatedWallet.wallet);
+      if (password == null) {
+        setState(() {
+          _isTransferring = false;
+        });
+        return;
+      }
+      var result = await widget.message.action(password);
+      print("object --> result:$result");
+
+      if (result is String) {
+        Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
+        map3infoEntity.status = 1;
+
+        if (widget.message is ConfirmCreateMap3NodeMessage) {
+          var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+          var address = activatedWallet.wallet.getEthAccount().address;
+          map3infoEntity.address = address;
+
+          var messageEntity = widget.message as ConfirmCreateMap3NodeMessage;
+          var payload = messageEntity.entity.payload;
+          map3infoEntity.name = payload.name;
+          map3infoEntity.nodeId = payload.nodeId;
+          map3infoEntity.describe = payload.describe;
+          map3infoEntity.region = payload.region;
+          map3infoEntity.provider = payload.provider;
+          map3infoEntity.staking = payload.staking;
+          map3infoEntity.contact = payload.connect;
+        }
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcast_success_page +
+                "?actionEvent=${widget.message.type}" +
+                "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+      } else if (result is List) {
+        Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
+
+        Application.router.navigateTo(
+            context,
+            Routes.map3node_broadcast_success_page +
+                "?actionEvent=${widget.message.type}" +
+                "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
+      } else if (result is bool) {
+        var isOK = result;
+        if (isOK) {
+          Application.router
+              .navigateTo(context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
+        } else {
+          setState(() {
+            _isTransferring = false;
+          });
+          // todo: 提示错误具体原因
+          //Fluttertoast.showToast(msg: '操作失败');
+        }
+      } else {
+        setState(() {
+          _isTransferring = false;
+        });
+        //Fluttertoast.showToast(msg: '操作失败');
+      }
+    } catch (error) {
+      setState(() {
+        _isTransferring = false;
+      });
+    }
   }
 }

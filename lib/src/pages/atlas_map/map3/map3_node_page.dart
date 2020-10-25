@@ -10,6 +10,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -44,6 +45,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Map3IntroduceEntity _map3introduceEntity;
   var _address = "";
   get _isNoWallet => _address.isEmpty;
+  int _currentEpoch = 0;
 
   @override
   bool get wantKeepAlive => true;
@@ -113,11 +115,17 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _atlasApi.getMap3Home(_address),
         _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10),
         AtlasApi.getIntroduceEntity(),
+        _atlasApi.postAtlasHome(_address),
       ]);
+
+
 
       _map3homeEntity = requestList[0];
       _map3stakingEntity = requestList[1];
       _map3introduceEntity = requestList[2];
+
+      var _atlasHomeEntity = requestList[3] as AtlasHomeEntity;
+      _currentEpoch = _atlasHomeEntity?.info?.epoch??0;
 
       if (_map3stakingEntity != null) {
         _lastActiveList = _map3homeEntity.newStartNodes;
@@ -199,6 +207,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           _pendingList[index],
           _map3introduceEntity,
           canCheck: (index < _map3stakingEntity.canStakingNum),
+          currentEpoch: _currentEpoch,
         ),
       );
     }, childCount: _pendingList.length));

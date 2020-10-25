@@ -453,7 +453,7 @@
   "no_enough_hyn_fail_invest_extract": "·  投入後，若在規定期限內Map3節點抵押合約不能積攢夠啟動所需HYN，則本次合約啟動失敗。投入HYN的錢包賬戶可提取自己投入的HYN資金。",
   "mortgage_quantity_standard": "•  抵押hyn數量以最終鏈上交易數量為準。",
   "invest_cant_undo": "·  投入Map3節點後不可撤銷。",
-  "account_flow": "合約流水",
+  "account_flow": "合約记录",
   "total": "總額",
   "part_member": "參與地址",
   "total_member_count": "共：{memberCount}（個）",
