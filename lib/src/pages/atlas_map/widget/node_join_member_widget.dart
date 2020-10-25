@@ -84,9 +84,14 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
   void getJoinMemberMoreData() async {
+    _currentPage++;
+
     try {
-      _currentPage++;
-      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeId, page: _currentPage);
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
+        widget.nodeId,
+        page: _currentPage,
+        size: 10,
+      );
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);

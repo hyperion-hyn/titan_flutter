@@ -481,7 +481,7 @@ class AtlasApi {
 
   // 获取节点的抵押人地址列表
   Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
-      {int page = 0, int size = 10}) async {
+      {int page = 1, int size = 0}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/user_list",
         EntityFactory<List<Map3UserEntity>>((list) => (list as List)
@@ -489,7 +489,7 @@ class AtlasApi {
             .toList()),
         params: {
           "node_id": nodeId,
-          "page": 0,
+          "page": page,
           "size": size,
         },
         options: RequestOptions(contentType: "application/json"));
