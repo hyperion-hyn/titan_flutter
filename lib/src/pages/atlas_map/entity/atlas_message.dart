@@ -290,6 +290,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
       return txHashEntity.nodeId;
     } catch (e) {
       print(e);
+      LogUtil.toastException(e);
     }
 
     return false;
@@ -383,6 +384,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
       return rawTx.isNotEmpty;
     } catch (e) {
       print(e);
+      LogUtil.toastException(e);
     }
     return false;
   }
@@ -429,6 +431,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       return txHashEntity.txHash.isNotEmpty;
     } catch (e) {
       print(e);
+      LogUtil.toastException(e);
     }
 
     return false;
@@ -464,14 +467,21 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<dynamic> action(String password) async {
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
-    this.entity.rawTx = rawTx;
+    try {
+      var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+      var rawTx = await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
+      this.entity.rawTx = rawTx;
 
-    TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
-    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+      TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
+      print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
-    return txHashEntity.txHash.isNotEmpty;
+      return txHashEntity.txHash.isNotEmpty;
+    }catch(e) {
+      LogUtil.toastException(e);
+      print(e);
+    }
+
+    return false;
   }
 
   @override
@@ -517,7 +527,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       print("e:$e");
       // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
-      //LogUtil.toastException(e);
+      LogUtil.toastException(e);
     }
 
     return false;
@@ -568,6 +578,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       return txHashEntity.txHash.isNotEmpty;
     } catch (e) {
       print(e);
+      LogUtil.toastException(e);
     }
 
     return false;
