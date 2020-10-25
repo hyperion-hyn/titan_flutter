@@ -143,7 +143,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
         return DropdownMenuItem(
           value: index,
           child: Text(
-            '${map3nodeEntity.name}的Map3节点',
+            '${map3nodeEntity.name}',
             style: TextStyles.textC333S14,
           ),
         );

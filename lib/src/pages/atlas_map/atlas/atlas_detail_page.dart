@@ -137,6 +137,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     if(hasWallet)
       myMap3List.forEach((myElement) {
         bool isShowMap3 = true;
+        if(myElement.status != Map3InfoStatus.CONTRACT_HAS_STARTED.index){
+          isShowMap3 = false;
+        }
         if(_atlasInfoEntity.myMap3 != null){
           _atlasInfoEntity.myMap3.forEach((atlasElement) {
             if(myElement.address == atlasElement.address){
