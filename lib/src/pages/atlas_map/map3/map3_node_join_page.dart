@@ -94,7 +94,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF3F0F5),
+      backgroundColor: Colors.white,
+
+      //backgroundColor: Color(0xffF3F0F5),
       appBar: BaseAppBar(
         baseTitle: '抵押Map3节点',
       ),
@@ -104,16 +106,21 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   Future getNetworkData() async {
     try {
-      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       var requestList = await Future.wait([
         _atlasApi.getMapRecStaking(),
-        client.getMap3NodeInformation(map3Address),
         AtlasApi.getIntroduceEntity(),
       ]);
 
       _suggestList = requestList[0];
-      _map3nodeInformationEntity = requestList[1];
-      _map3introduceEntity = requestList[2];
+      _map3introduceEntity = requestList[1];
+
+      if ((widget?.map3infoEntity?.address ?? "").isNotEmpty) {
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+
+        print('map3Address: $map3Address');
+
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+      }
 
       if (mounted) {
         setState(() {
@@ -177,6 +184,10 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
       );
     }
 
+    var spaceWidget = Container(
+      height: 8,
+      color: HexColor("#F8F8F8"),
+    );
     return Column(
       children: <Widget>[
         Expanded(
@@ -189,7 +200,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               child: SingleChildScrollView(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _nodeWidget(context),
-                SizedBox(height: 8),
+                spaceWidget,
                 getHoldInNum(
                   context,
                   widget.map3infoEntity,
@@ -201,7 +212,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                   suggestList: _suggestList,
                   map3introduceEntity: _map3introduceEntity,
                 ),
-                SizedBox(height: 8),
+                spaceWidget,
                 _tipsWidget(),
               ])),
             ),
@@ -229,9 +240,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
           rowTipsItem("抵押7天内不可撤销", top: 0),
           rowTipsItem("需要总抵押满${startMin}HYN才能正式启动，每次参与抵押数额不少于${delegateMin}HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
-          rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
+          /*rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
             AtlasApi.goToAtlasMap3HelpPage(context);
-          }),
+          }),*/
         ],
       ),
     );
@@ -256,7 +267,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _delegateCountWidget() {
-    var totalPendingDelegation = _map3nodeInformationEntity.totalPendingDelegation.toDouble();
+    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble()??0;
     print("totalPendingDelegation: $totalPendingDelegation");
 
     var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
@@ -285,7 +296,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
           child: ClickOvalButton(
             "确定",
             () {
-              if (!(_joinCoinFormKey.currentState?.validate()??false)) {
+              if (!(_joinCoinFormKey.currentState?.validate() ?? false)) {
                 return;
               }
 
@@ -302,6 +313,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
+              //if (_map3nodeInformationEntity == null) return;
+
               var entity = PledgeMap3Entity(
                   payload: Payload(
                 userIdentity: widget.map3infoEntity.nodeId,
@@ -310,7 +323,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
                 amount: amount,
-                pendingAmount: _map3nodeInformationEntity.totalPendingDelegation.toString(),
+                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString()??"0",
               );
               Navigator.push(
                   context,
@@ -330,7 +343,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _nodeOwnerWidget() {
-    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age??"0").toInt();
+    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
@@ -345,9 +358,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             children: <Widget>[
               Text.rich(TextSpan(children: [
                 TextSpan(text: widget.map3infoEntity.name, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                TextSpan(
-                    text: oldYearValue,
-                    style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
                 height: 4,

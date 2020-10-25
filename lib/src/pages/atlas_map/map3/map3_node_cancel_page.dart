@@ -102,15 +102,16 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   Future getNetworkData() async {
     try {
-      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       var walletAddress = EthereumAddress.fromHex(_address);
       print("[${widget.runtimeType}] getNetworkData");
 
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
-      print('map3: $map3Address wallet: $walletAddress');
 
-      if (_map3infoEntity.mine != null) {
+      if (_map3infoEntity.mine != null && (widget?.map3infoEntity?.address??"").isNotEmpty) {
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+        print('map3: $map3Address wallet: $walletAddress');
+
         _microdelegations = await _client.getMap3NodeDelegation(
           map3Address,
           walletAddress,
