@@ -462,7 +462,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
-
     var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
     var rate = (100 * (stakingValue.toDouble() / createMin)).toInt();
     var rateMax = min(max(10, rate), 20);
@@ -592,7 +591,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   void _rateTextFieldChangeListener() {
-    var rate = _rateCoinController?.text??"0";
+    var rate = _rateCoinController?.text ?? "0";
     if (rate.isEmpty) {
       rate = "0";
     }
