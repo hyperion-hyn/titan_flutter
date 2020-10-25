@@ -322,7 +322,7 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                 style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
-                    text: "（1%-20%）",
+                    text: "（10%-20%）",
                     style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                   )
                 ]),
@@ -364,10 +364,18 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                   bgColor: HexColor("#ffffff"),
                   maxLength: 3,
                   validator: (textStr) {
+
                     if (textStr.length == 0) {
-                      return S.of(buildContext).please_input_hyn_count;
+                      return "请输入合适的管理费";
+                    } else if (int.parse(textStr??"0") < 10) {
+                      return "管理费不能小于10%";
+                    } else if (Decimal.parse(textStr) >
+                        Decimal.parse("20")) {
+                      return "管理费不能大于20%";
+                    } else {
+                      return null;
                     }
-                    return null;
+
                   },
                 ),
               ),
