@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:web3dart/web3dart.dart';
 
 import 'model/transtion_detail_vo.dart';
 
@@ -81,9 +83,12 @@ class WalletShowAccountInfoPageState
   Widget build(BuildContext context) {
     var isFail = (widget.transactionDetail.state == 4 ||
         widget.transactionDetail.state == 5);
-    var imagePath = isFail
-        ? "res/drawable/ic_transfer_account_info_fail.png"
-        : "res/drawable/ic_transfer_account_info_success.png";
+    var pageTitle;
+    var pageStatusImage;
+    getAccountPageTitle(context,widget.transactionDetail,(funPageTitle,funPageStatusImage){
+      pageTitle = funPageTitle;
+      pageStatusImage = funPageStatusImage;
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: "详情"),
@@ -99,13 +104,13 @@ class WalletShowAccountInfoPageState
                     Padding(
                       padding: const EdgeInsets.only(top: 18.0, bottom: 20),
                       child: Image.asset(
-                        imagePath,
+                        pageStatusImage,
                         width: 63,
                         height: 63,
                       ),
                     ),
                     Text(
-                      isFail ? "转账失败" : "转账成功",
+                      pageTitle,
                       style: TextStyle(
                           fontSize: 16,
                           color: DefaultColors.color333,
@@ -239,4 +244,28 @@ class WalletShowAccountInfoPageState
       ),
     );
   }
+}
+
+void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail,Function function){
+  var pageTitle = "";
+  var pageStatusImage = "";
+  if(transactionDetail.state == 1 || transactionDetail.state == 2){
+    pageTitle = S.of(context).pending;
+    pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
+  }else if(transactionDetail.state == 3){
+    if(transactionDetail.hynType == MessageType.typeNormal){
+      pageTitle = "转账成功";
+    }else{
+      pageTitle = "已完成";
+    }
+    pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
+  }else if(transactionDetail.state == 4 || transactionDetail.state == 5){
+    if(transactionDetail.hynType == MessageType.typeNormal){
+      pageTitle = "转账失败";
+    }else{
+      pageTitle = "失败";
+    }
+    pageStatusImage = "res/drawable/ic_transfer_account_info_fail.png";
+  }
+  function(pageTitle,pageStatusImage);
 }
