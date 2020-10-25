@@ -300,7 +300,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   _showAlertView() {
     var count = _rewardMap?.values?.length ?? 0;
     if (count == 0) {
-      Fluttertoast.showToast(msg: "当期奖励为零哟！");
+      Fluttertoast.showToast(msg: "当前奖励为零哟！");
       return;
     }
 
