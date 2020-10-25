@@ -33,10 +33,11 @@ class HYNApi {
       if(message == null || message?.type == MessageType.typeNormal){
         gasLimit = 21000;
       }else{
-        var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
             data: message?.toRlp(),
             txType: message?.type ?? MessageType.typeNormal);
-        gasLimit = gasLimitBitInt.toInt();
+        gasLimit = gasLimitBitInt.toInt();*/
+        gasLimit = 100000;
       }
 
       print("!!!!! $gasLimit");
@@ -72,10 +73,11 @@ class HYNApi {
       if(message == null || message?.type == MessageType.typeNormal){
         gasLimit = 21000;
       }else{
-        var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
             data: message?.toRlp(),
             txType: message?.type ?? MessageType.typeNormal);
-        gasLimit = gasLimitBitInt.toInt();
+        gasLimit = gasLimitBitInt.toInt();*/
+        gasLimit = 100000;
       }
 
       print("!!!!! $gasLimit");
