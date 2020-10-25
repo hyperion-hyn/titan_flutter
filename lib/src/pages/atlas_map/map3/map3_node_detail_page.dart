@@ -1552,8 +1552,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
-    var pendingEpoch = _map3infoEntity?.startEpoch ?? 0;
-    //var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
+    //var pendingEpoch = _map3infoEntity?.startEpoch ?? 0;
+    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
     var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
     var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
     var titles = [
@@ -1568,7 +1568,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var subtitles = [
       createdAt,
-      startTime, // todo
+      startTime,
       endTime,
     ];
     var progressHints = [
