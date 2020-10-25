@@ -202,10 +202,6 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                             ),
                           ),),
-
-
-
-                          // todo: 位置
                           RichText(
                             textAlign: TextAlign.end,
                             overflow: TextOverflow.ellipsis,
