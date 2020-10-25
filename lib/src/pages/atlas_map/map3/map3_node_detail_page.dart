@@ -107,6 +107,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _visibleBottomBar {
     return [
+      //Map3InfoStatus.CREATE_SUBMIT_ING,
       Map3InfoStatus.FUNDRAISING_NO_CANCEL,
       Map3InfoStatus.CONTRACT_HAS_STARTED,
     ].contains(_map3Status);
@@ -122,10 +123,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   //get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
-  get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  // get _endRemainEpoch => Decimal.parse('${_releaseEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  //get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
+  get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
-  get releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
+  get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
 
   get _visibleEditNextPeriod {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
@@ -141,8 +144,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   */
   get _canEditNextPeriod {
     // 周期
-    var periodEpoch14 = releaseEpoch - 14 > 0 ? releaseEpoch - 14 : 0;
-    var periodEpoch7 = releaseEpoch - 7 > 0 ? releaseEpoch - 7 : 0;
+    var periodEpoch14 = _releaseEpoch - 14 > 0 ? _releaseEpoch - 14 : 0;
+    var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
 
     var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
 
@@ -157,7 +160,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= releaseEpoch;
+    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
     if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
       return true;
@@ -458,6 +461,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget build(BuildContext context) {
     // todo: test_jison
     //_map3Status = Map3InfoStatus.values[0];
+    print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
     return WillPopScope(
       onWillPop: () async => true,
@@ -650,7 +654,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (!_visibleBottomBar) return Container();
 
     List<Widget> children = [];
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL) {
+    // if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL || _map3Status == Map3InfoStatus.CREATE_SUBMIT_ING)) {
+
+      if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL)) {
       children = <Widget>[
         Spacer(),
         ClickOvalButton(
@@ -792,7 +798,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
     var nodeAddress = "${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 8)}";
-    var nodeIdPre = "节点号：";
+    var nodeIdPre = "节点号";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
@@ -811,7 +817,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               children: <Widget>[
                 iconMap3Widget(_map3infoEntity),
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, top: 2),
                     child: Column(
@@ -964,8 +970,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     // 周期
-    var periodEpoch14 = releaseEpoch - 14;
-    var periodEpoch7 = releaseEpoch - 7;
+    var periodEpoch14 = _releaseEpoch - 14;
+    var periodEpoch7 = _releaseEpoch - 7;
     var editDateLimit = "（请在纪元$periodEpoch14 - $periodEpoch7前修改）";
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
       editDateLimit = "";
@@ -1756,13 +1762,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     print("_map3infoEntity.status:${_map3infoEntity.status}");
 
+    /*
     if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
       Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
       return;
     }
 
     // todo: 撤销节点中
-    /*
+
     if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
       Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能撤销抵押");
       return;
@@ -1817,13 +1824,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return;
     }
 
+    /*
     if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
       Fluttertoast.showToast(msg: "节点创建中, 暂不能抵押！");
       return;
     }
 
     // todo: 撤销节点中
-    /*
+
     if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
       Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能抵押");
       return;
