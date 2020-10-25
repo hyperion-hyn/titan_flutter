@@ -221,12 +221,12 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     ),
                     InkWell(
                       child: Text(
-                        '#${_atlasHomeEntity?.info?.blockNum}',
+                        '${_atlasHomeEntity?.info?.blockNum}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
+                          //color: Colors.blue,
+                          //decoration: TextDecoration.underline,
                         ),
                       ),
                       onTap: () {},

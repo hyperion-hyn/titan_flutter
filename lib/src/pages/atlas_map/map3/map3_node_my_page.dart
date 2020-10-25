@@ -75,9 +75,9 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       _tabController = TabController(length: _contractTypeModels.length, vsync: this);
     }
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    _walletName = activatedWallet.wallet.keystore.name;
-    _address = activatedWallet.wallet.getEthAccount().address;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     getNetworkData();
   }
@@ -124,14 +124,14 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   void getNetworkData() async {
     try {
       _rewardEntity = await _atlasApi.getRewardInfo(_address);
-      print("_address:$_address");
+      print("[my] _address:$_address");
 
       _rewardMap = await client.getAllMap3RewardByDelegatorAddress(
         EthereumAddress.fromHex(_address),
       );
 
       var parse = "0";
-      if (_rewardMap.isNotEmpty) {
+      if (_rewardMap?.isNotEmpty ?? false) {
         parse = _rewardMap?.values?.last ?? "0";
       }
 
@@ -300,7 +300,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   _showAlertView() {
     var count = _rewardMap?.values?.length ?? 0;
     if (count == 0) {
-      Fluttertoast.showToast(msg: "当前奖励为零哟！");
+      Fluttertoast.showToast(msg: "当前可提奖励为零!");
       return;
     }
 
@@ -331,7 +331,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             fontSize: 16,
           ),
         ],
-        content: "您一共创建或参与了${_rewardMap.values.length ?? 0}个Map3节点，截止当前可提奖励为: $_balance HYN 确定全部提取到钱包",
+        content: "您一共创建或参与了${_rewardMap?.values?.length ?? 0}个Map3节点，截止当前可提奖励为: $_balance HYN 确定全部提取到钱包",
         boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),

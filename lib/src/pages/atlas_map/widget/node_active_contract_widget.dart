@@ -74,7 +74,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     var nodeName = item.name;
     var nodeId = "节点号: ${item.nodeId}";
 
-    print("[object] item.nodeId:${item.nodeId}");
+    //print("[object] item.nodeId:${item.nodeId}");
 
     return InkWell(
       onTap: () {
