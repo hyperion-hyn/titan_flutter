@@ -117,7 +117,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _delegateRecordList.clear();
 
     var hasWallet = _activatedWallet != null;
-//    try {
+    try {
     var resultList = await Future.wait([
       _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
       _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
@@ -172,12 +172,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       });
       _loadDataBloc.add(RefreshSuccessEvent());
     }
-//    }catch(error){
-//      logger.e(error);
-//      setState(() {
-//        _currentState = all_page_state.LoadFailState();
-//      });
-//    }
+    }catch(error){
+      logger.e(error);
+      LogUtil.toastException(error);
+      setState(() {
+        _currentState = all_page_state.LoadFailState();
+      });
+    }
 
   }
 

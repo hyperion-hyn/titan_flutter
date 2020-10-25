@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/json_rpc.dart';
 
@@ -29,7 +30,7 @@ class LogUtil {
     }
   }
 
-  static toastException(Exception error) {
+  static toastException(dynamic error) {
     if (error is HttpResponseCodeNotSuccess) {
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
       if (notSuccessError == null) {
@@ -52,7 +53,9 @@ class LogUtil {
         Fluttertoast.showToast(msg: error.message);
       }
     } else if(error is RPCError){
-      Fluttertoast.showToast(msg: error.message);
+      Fluttertoast.showToast(
+          msg: MemoryCache.contractErrorStr(error.message),
+          toastLength: Toast.LENGTH_LONG);
     } else {
       Fluttertoast.showToast(msg: error.toString());
     }

@@ -187,12 +187,12 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16,),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(maxWidth: 110),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 108,
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(child: Padding(
+                            padding: const EdgeInsets.only(right: 16,),
                             child: Text(
                               //shortName(nodeName, limitCharsLength: 8),
                               nodeName,
@@ -201,31 +201,31 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                               softWrap: true,
                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                             ),
-                          ),
-                        ),
+                          ),),
 
 
 
-                        // todo: 位置
-                        RichText(
-                          textAlign: TextAlign.end,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                              text: nodeIdPre,
-                              style: TextStyle(
-                                color: HexColor("#999999"),
-                                fontSize: 12,
-                              ),
-                              children: [
-                                TextSpan(
-                                    text: "$nodeId",
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: HexColor("#333333"),
-                                    ))
-                              ]),
-                        )
-                      ],
+                          // todo: 位置
+                          RichText(
+                            textAlign: TextAlign.end,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                                text: nodeIdPre,
+                                style: TextStyle(
+                                  color: HexColor("#999999"),
+                                  fontSize: 12,
+                                ),
+                                children: [
+                                  TextSpan(
+                                      text: "$nodeId",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: HexColor("#333333"),
+                                      ))
+                                ]),
+                          )
+                        ],
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
