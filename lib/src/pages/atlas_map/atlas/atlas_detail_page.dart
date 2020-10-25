@@ -118,7 +118,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _delegateRecordList.clear();
 
     var hasWallet = _activatedWallet != null;
-    try {
+//    try {
     var resultList = await Future.wait([
       _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
       _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
@@ -173,13 +173,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       });
       _loadDataBloc.add(RefreshSuccessEvent());
     }
-    }catch(error){
-      logger.e(error);
-      LogUtil.toastException(error);
-      setState(() {
-        _currentState = all_page_state.LoadFailState();
-      });
-    }
+//    }catch(error){
+//      logger.e(error);
+//      LogUtil.toastException(error);
+//      setState(() {
+//        _currentState = all_page_state.LoadFailState();
+//      });
+//    }
 
   }
 
@@ -408,7 +408,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         return DropdownMenuItem(
           value: index,
           child: Text(
-            '${map3nodeEntity.name}的Map3节点',
+            '${map3nodeEntity.name}',
             style: TextStyles.textC333S14,
           ),
         );

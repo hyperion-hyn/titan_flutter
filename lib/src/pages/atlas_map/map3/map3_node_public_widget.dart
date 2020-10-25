@@ -912,7 +912,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
   var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
   var recordName = isAtlasDetail
       ? " ${isYou ? "(你)" : ""}"
-      : "${isCreator && !isYou ? " (创建者)" : ""}${!isCreator && isYou ? " (你)" : ""}${isCreator && isYou ? " (创建者 | 你)" : ""}";
+      : "${isCreator && !isYou ? " (创建者)" : ""}${!isCreator && isYou ? " (你)" : ""}${isCreator && isYou ? " (创建者)" : ""}";
 
   return Container(
     color: Colors.white,

@@ -118,7 +118,7 @@ class MemoryCache {
     map["already collected"] = S.of(Keys.rootKey.currentContext).already_collected_hint;
     map["not half time to collect"] = S.of(Keys.rootKey.currentContext).not_half_time_to_collect_hint;
     map["provision insufficient"] = S.of(Keys.rootKey.currentContext).provision_insufficient_hint;
-    map["duplicate identity"] = S.of(Keys.rootKey.currentContext).duplicate_identity_hint;
+    map["map3 node identity exists"] = S.of(Keys.rootKey.currentContext).duplicate_identity_hint;
     instance.setMemoryMap(CONTRACT_ERROR_TRANSLATION, json.encode(map));
   }
 
@@ -141,6 +141,9 @@ class MemoryCache {
     }
     if(errorStr.indexOf("Gas limit exceeded.") == 0){
       return errorMap["Gas limit exceeded."];
+    }
+    if(errorStr.indexOf("map3 node identity exists") == 0){
+      return errorMap["map3 node identity exists"];
     }
     if(errorMap.containsKey(errorStr)){
       return errorMap[errorStr];
