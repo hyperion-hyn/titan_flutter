@@ -247,13 +247,10 @@ class _ExchangeDepositConfirmPageState
                                 softWrap: true,
                               ),
                               Text(
-                                "(${shortBlockChainAddress(
-                                  widget.coinVo.symbol ==
-                                          SupportedTokens.HYN_Atlas.symbol
-                                      ? WalletUtil.ethAddressToBech32Address(
-                                          widget.coinVo.address)
-                                      : widget.coinVo.address,
-                                )})",
+                                "(${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                                  widget.coinVo,
+                                  widget.coinVo.address,
+                                ))})",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF999999),

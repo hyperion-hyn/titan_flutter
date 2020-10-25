@@ -25,7 +25,8 @@ class WalletShowAccountInfoPage extends StatefulWidget {
   }
 }
 
-class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage> {
+class WalletShowAccountInfoPageState
+    extends BaseState<WalletShowAccountInfoPage> {
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = List();
   var gasPriceStr = "";
@@ -45,7 +46,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       "交易号",
     ];
     var transDetail = widget.transactionDetail;
-    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
+    var amountText =
+        "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
     /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
@@ -53,12 +55,20 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
     }*/
 
-    var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
-    var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
+    var gasPriceGwei = ConvertTokenUnit.weiToGWei(
+        weiBigInt: BigInt.parse(transDetail.gasPrice));
+    var gasPriceEth = ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse(transDetail.gasPrice));
     gasPriceStr = "$gasPriceGwei Gdust";
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
-    _dataInfoList = [amountText, gasEstimate, WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)), WalletUtil.ethAddressToBech32Address(transDetail.fromAddress), transDetail.hash];
+    _dataInfoList = [
+      amountText,
+      gasEstimate,
+      WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)),
+      WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+      transDetail.hash,
+    ];
     super.onCreated();
   }
 
@@ -69,9 +79,11 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   @override
   Widget build(BuildContext context) {
-    var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
-    var imagePath =
-        isFail ? "res/drawable/ic_transfer_account_info_fail.png" : "res/drawable/ic_transfer_account_info_success.png";
+    var isFail = (widget.transactionDetail.state == 4 ||
+        widget.transactionDetail.state == 5);
+    var imagePath = isFail
+        ? "res/drawable/ic_transfer_account_info_fail.png"
+        : "res/drawable/ic_transfer_account_info_success.png";
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: "详情"),
@@ -94,13 +106,18 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                     ),
                     Text(
                       isFail ? "转账失败" : "转账成功",
-                      style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: DefaultColors.color333,
+                          fontWeight: FontWeight.bold),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0, bottom: 34),
                       child: Text(
-                        FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true),
-                        style: TextStyle(color: DefaultColors.color999, fontSize: 13),
+                        FormatUtil.formatDate(widget.transactionDetail.time,
+                            isSecond: true, isMillisecond: true),
+                        style: TextStyle(
+                            color: DefaultColors.color999, fontSize: 13),
                       ),
                     ),
                     Container(
@@ -116,8 +133,10 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
               var leftText = _dataTitleList[index];
               var rightText = _dataInfoList[index];
               if (index == 1) {
-                var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
-                return accountInfoItem(leftText, rightText, bottomText: bottomText);
+                var bottomText =
+                    "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                return accountInfoItem(leftText, rightText,
+                    bottomText: bottomText);
               } else if (index == 4) {
                 return accountInfoItem(leftText, rightText, normalLine: false);
               } else {
@@ -127,15 +146,19 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
             SliverToBoxAdapter(
               child: InkWell(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => WalletShowAccountDetailPage(widget.transactionDetail)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WalletShowAccountDetailPage(
+                              widget.transactionDetail)));
                 },
                 child: Container(
                   color: Colors.white,
                   child: Row(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+                        padding: const EdgeInsets.only(
+                            top: 16, bottom: 16.0, left: 15),
                         child: Text(
                           "查看详细信息",
                           style: TextStyles.textC333S13,
@@ -160,13 +183,15 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText, {String bottomText, bool normalLine = true}) {
+  Widget accountInfoItem(String leftText, String rightText,
+      {String bottomText, bool normalLine = true}) {
     return Container(
       color: Colors.white,
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+                top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -181,14 +206,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        rightText??"",
+                        rightText ?? "",
                         style: TextStyles.textC333S13,
                         textAlign: TextAlign.end,
                       ),
                       if (bottomText != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text(bottomText,
+                              style: TextStyles.textC999S11,
+                              textAlign: TextAlign.end),
                         ),
                     ],
                   ),

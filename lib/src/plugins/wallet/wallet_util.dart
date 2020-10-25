@@ -10,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
+import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -423,6 +424,14 @@ class WalletUtil {
       }
     }
     return BigInt.from(0);
+  }
+
+  static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
+    if (coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+      return ethAddressToBech32Address(ethAddress);
+    } else {
+      return ethAddress;
+    }
   }
 
   static String ethAddressToBech32Address(String ethAddress) {

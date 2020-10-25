@@ -252,7 +252,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                                 softWrap: true,
                               ),
                               Text(
-                                "(${shortBlockChainAddress(widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? WalletUtil.ethAddressToBech32Address(widget.coinVo.address) : widget.coinVo.address)})",
+                                "(${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                                  widget.coinVo,
+                                  widget.coinVo.address,
+                                ))})",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF999999),
@@ -294,7 +297,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
                       Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(
-                            '${shortBlockChainAddress(widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? WalletUtil.ethAddressToBech32Address(widget.receiverAddress) : widget.receiverAddress)}',
+                            '${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                              widget.coinVo,
+                              widget.receiverAddress,
+                            ))}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Color(0xFF333333),
