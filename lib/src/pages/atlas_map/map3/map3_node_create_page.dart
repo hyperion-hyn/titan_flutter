@@ -590,7 +590,47 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   void _rateTextFieldChangeListener() {
-    _managerSpendCount = int.parse(_rateCoinController.text ?? "0");
+    var rate = _rateCoinController?.text??"0";
+    if (rate.isEmpty) {
+      rate = "0";
+    }
+
+    var rateValue = int.tryParse(rate);
+    if (rateValue != null) {
+      if (rateValue >= 10 && rateValue <= 20) {
+        _managerSpendCount = rateValue;
+      }
+
+      if (rateValue < 10) {
+        // _managerSpendCount = 10;
+        // _rateCoinController.text = "$_managerSpendCount";
+      } else if (rateValue >= 10 && rateValue <= 20) {
+        _managerSpendCount = rateValue;
+      } else {
+        _managerSpendCount = 20;
+        _rateCoinController.text = "$_managerSpendCount";
+      }
+      print("rate:$rate, _managerSpendCount:$_managerSpendCount");
+    } else {
+      _rateCoinController.text = rate;
+    }
+
+    /*
+    var staking = _inputTextController?.text??"0";
+    if (staking.isEmpty) {
+      staking = "0";
+    }
+    var stakingValue = double.parse(staking);
+    var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
+    var rate = (100 * (stakingValue / createMin)).toInt();
+    var rateMax = min(max(10, rate), 20);
+    setState(() {
+      _rateCoinController.text = "$rateMax";
+    });
+    if (_managerSpendCount < 10 || _managerSpendCount > rateMax) {
+      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$rateMax%");
+    }
+    */
   }
 
   void _dealTextField(String inputText) {

@@ -93,11 +93,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   }
 
-  get _invisibleBottomBar {
+  /*
+  enum Map3InfoStatus {
+  MAP,
+  CREATE_SUBMIT_ING,
+  CREATE_FAIL,
+  FUNDRAISING_NO_CANCEL,
+  FUNDRAISING_CANCEL_SUBMIT,
+  CANCEL_NODE_SUCCESS,
+  CONTRACT_HAS_STARTED,
+  CONTRACT_IS_END,
+}*/
+
+  get _visibleBottomBar {
     return [
-      Map3InfoStatus.CONTRACT_IS_END,
-      Map3InfoStatus.CREATE_FAIL,
-      Map3InfoStatus.CANCEL_NODE_SUCCESS,
+      Map3InfoStatus.FUNDRAISING_NO_CANCEL,
+      Map3InfoStatus.CONTRACT_HAS_STARTED,
     ].contains(_map3Status);
   }
 
@@ -177,6 +188,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
+  /*
+  角色分析：
+  1.判断是否参与抵押
+  Yes：用户（包括：创建人，参与者）
+  NO：未抵押，即：游客
+
+  2.针对角色开放不同权限
+  a: 创建人
+  b: 参与人
+  c: 游客
+  *
+   */
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
   get _isDelegator => _map3infoEntity?.mine != null;
@@ -610,22 +633,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _bottomBtnBarWidget() {
-    if (_invisibleBottomBar) return Container();
+    print("_invisibleBottomBar:$_visibleBottomBar");
 
-    print("_invisibleBottomBar:$_invisibleBottomBar");
+    if (!_visibleBottomBar) return Container();
 
     List<Widget> children = [];
-    if (_map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED) {
-      children = <Widget>[
-        ClickOvalButton(
-          "提取奖励",
-          _collectAction,
-          width: 160,
-          height: 32,
-          fontSize: 14,
-        )
-      ];
-    } else {
+    if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL) {
       children = <Widget>[
         Spacer(),
         ClickOvalButton(
@@ -644,6 +657,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           fontSize: 14,
         ),
         Spacer(),
+      ];
+    } else {
+      children = <Widget>[
+        ClickOvalButton(
+          "提取奖励",
+          _collectAction,
+          width: 160,
+          height: 32,
+          fontSize: 14,
+        )
       ];
     }
     return Container(
@@ -1331,7 +1354,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       totalDelegation,
                       style: TextStyle(fontSize: 22, color: HexColor("#228BA1"), fontWeight: FontWeight.w600),
@@ -1352,7 +1375,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               Column(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       myRewardString,
                       style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
@@ -1369,14 +1392,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, top: 32, left: 16, right: 16),
-            child: profitListBigWidget(
-              [
-                {"累积产生": totalRewardString},
-                {"管理费": feeRate},
-                {"我的抵押": myDelegationString},
-              ],
+          Container(
+            padding: const EdgeInsets.only(bottom: 20, top: 30, left: 14, right: 14),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+              ),
+              decoration: BoxDecoration(
+                color: HexColor("#F8F8F8"),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: profitListBigWidget(
+                [
+                  {"累积产生": totalRewardString},
+                  {"管理费": feeRate},
+                  {"我的抵押": myDelegationString},
+                ],
+              ),
             ),
           ),
         ],
@@ -1632,7 +1664,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _delegateRecordList = tempMemberList;
 
       // 3.
-
       if (mounted) {
         setState(() {
           _currentState = null;

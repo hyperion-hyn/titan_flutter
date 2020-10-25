@@ -28,7 +28,7 @@ class Map3IntroduceEntity extends Object {
   @JsonKey(name: 'delegate_min')
   String delegateMin;
 
-  String get name => "${this?.title ?? "Map3"}云节点 (${this?.version ?? "v1.0"})";
+  String get name => "${this?.title ?? "Map3"}云节点 (v${this?.version ?? "v1.0"})";
 
   Map3IntroduceEntity(
     this.createMin,

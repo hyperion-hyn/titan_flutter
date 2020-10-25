@@ -43,6 +43,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Map3StakingEntity _map3stakingEntity;
   Map3IntroduceEntity _map3introduceEntity;
   var _address = "";
+  get _isNoWallet => _address.isEmpty;
 
   @override
   bool get wantKeepAlive => true;
@@ -203,11 +204,20 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     }, childCount: _pendingList.length));
   }
 
+  void _pushWalletManagerAction() {
+    Application.router.navigateTo(
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+  }
+
   Widget _sectionTitleWidget({String title, bool hasMore = true, bool isMine = false}) {
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
           if (isMine) {
+            if (_isNoWallet) {
+              _pushWalletManagerAction();
+              return;
+            }
             Application.router.navigateTo(context, Routes.map3node_my_page);
           } else {
             if (!hasMore) return;

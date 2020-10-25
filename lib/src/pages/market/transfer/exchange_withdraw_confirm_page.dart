@@ -171,8 +171,15 @@ class _ExchangeWithdrawConfirmPageState
     _gasPriceEstimate =
         Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
 
-    var _gasPriceByToken = FormatUtil.truncateDoubleNum(
-        _gasPriceEstimate.toDouble() / _quotePrice, 8);
+    print(
+        'WithdrawConfirm: gasPriceEstimate: $_gasPriceEstimate quotePrice: $_quotePrice');
+
+    var _gasPriceByToken = '0';
+
+    try {
+      _gasPriceByToken = FormatUtil.truncateDoubleNum(
+          _gasPriceEstimate.toDouble() / _quotePrice, 8);
+    } catch (e) {}
 
     _gasPriceEstimateStr =
         " $_gasPriceByToken ${widget.coinVo.symbol} (≈ $_quoteSign${_gasPriceEstimate.toDouble()})";

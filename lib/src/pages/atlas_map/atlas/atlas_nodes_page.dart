@@ -416,7 +416,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 //                      },
 //                    ),
 //                  ),
-                child: Container(),
+                  child: Container(),
                 ),
               ],
             ),
@@ -490,21 +490,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       return _nodeInfoItem(index);
                     }),
               )
-            : Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Image.asset(
-                        'res/drawable/ic_empty_contract.png',
-                        width: 100,
-                        height: 100,
-                      ),
-                    ),
-                    Text('暂无记录'),
-                  ],
-                ),
-              ),
+            : _emptyListHint(),
       ],
     );
   }
@@ -520,12 +506,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       ));
     } else {
       return SliverToBoxAdapter(
-        child: Container(
-          height: 200,
-          child: Center(
-            child: Text(S.of(context).exchange_empty_list),
-          ),
-        ),
+        child: _emptyListHint(),
       );
     }
   }
@@ -606,6 +587,30 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             )
           ],
         ),
+      ),
+    );
+  }
+
+  _emptyListHint() {
+    return Center(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/ic_empty_contract.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Text(
+            S.of(context).exchange_empty_list,
+            style: TextStyle(
+              fontSize: 13,
+              color: DefaultColors.color999,
+            ),
+          ),
+        ],
       ),
     );
   }
