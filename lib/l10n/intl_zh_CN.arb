@@ -1012,7 +1012,7 @@
   "atlas_current_age": "当前纪元",
   "block_height": "区块高度",
   "atlas_elected_nodes": "当选节点",
-  "atlas_candidate_nodes": "候选节点",
+  "atlas_candidate_nodes": "总节点",
   "atlas_next_age": "下个纪元",
   "atlas_create_node": "创建Atlas节点",
   "atlas_launch_tutorial": "开通教程",
