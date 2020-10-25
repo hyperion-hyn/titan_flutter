@@ -157,7 +157,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
     },
     child: Container(
       decoration: BoxDecoration(
-        color: canCheck ? Colors.white : HexColor("#000000").withOpacity(0.1),
+        color: canCheck ? Colors.white : HexColor("#F2F2F2"),
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -433,10 +433,15 @@ Widget getHoldInNum(
 }) {
   double minTotal = double.parse(isJoin ? map3introduceEntity?.delegateMin : map3introduceEntity?.createMin);
 
-  var coinVo = WalletInheritedModel.of(
+  var wallet = WalletInheritedModel.of(
     context,
     aspect: WalletAspect.activatedWallet,
-  ).getCoinVoBySymbol('HYN');
+  );
+  var activatedWallet = wallet.activatedWallet;
+
+  var walletName = activatedWallet?.wallet?.keystore?.name??"";
+
+  var coinVo = wallet.getCoinVoBySymbol('HYN');
 
   return Container(
     color: Colors.white,
@@ -454,7 +459,7 @@ Widget getHoldInNum(
                     Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(S.of(context).mortgage_wallet_balance(walletName,FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(
                       color: Colors.grey[600],
                     )),
@@ -490,9 +495,17 @@ Widget getHoldInNum(
                           keyboardType: TextInputType.number,
                           hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                           validator: (textStr) {
+
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;
-                            } else if (int.parse(textStr) < minTotal) {
+                            }
+
+                            var inputValue = Decimal.tryParse(textStr);
+                            if (inputValue == null) {
+                              return '请正确的输入数据';
+                            }
+
+                            if (int.parse(textStr) < minTotal) {
                               return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (Decimal.parse(textStr) >
                                 Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {

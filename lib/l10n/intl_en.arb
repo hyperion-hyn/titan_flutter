@@ -428,7 +428,7 @@
   "freeze_balance_reward_direct_push": "• A 500U deposit is required for node initiation to reward a referee。The referee will charge 5% of the total node reward",
   "confirm_bug": "Confirm to purchase",
   "mortgage_hyn_num": "Delegated HYN",
-  "mortgage_wallet_balance": "（Available {balance}）",
+  "mortgage_wallet_balance": "（{walletName} Available: {balance}）",
   "mintotal_buy": "Min. delegation {minTotal}",
   "mintotal_hyn": "Must > {minTotal} HYN",
   "hyn_balance_no_enough": "Insufficient HYN balance",

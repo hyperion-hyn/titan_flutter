@@ -86,7 +86,7 @@ class FormatUtil {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
 
     var formatDate = DateFormat(format).format(utcLocal);
-    print("[time] formatDate:$formatDate");
+    //print("[time] formatDate:$formatDate");
 
     /*
     var dateTime = DateFormat(format).parse(utcStr, true);

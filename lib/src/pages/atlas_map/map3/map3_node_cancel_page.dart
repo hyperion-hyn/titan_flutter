@@ -293,7 +293,12 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                         return S.of(context).please_input_hyn_count;
                                       }
 
-                                      if (Decimal.parse(textStr) > _myStakingAmount()) {
+                                      var inputValue = Decimal.tryParse(textStr);
+                                      if (inputValue == null) {
+                                        return '请正确的输入数据';
+                                      }
+
+                                      if (inputValue > _myStakingAmount()) {
                                         return '超过您的抵押量';
                                       }
 

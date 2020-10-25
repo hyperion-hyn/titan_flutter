@@ -233,6 +233,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     );
   }
 
+  /*
   void _pushTransactionDetailAction(Map3UserEntity item) {
     var url = EtherscanApi.getAddressDetailUrl(
         item.address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
@@ -245,5 +246,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     title: "",
                   )));
     }
-  }
+  }*/
+
 }
