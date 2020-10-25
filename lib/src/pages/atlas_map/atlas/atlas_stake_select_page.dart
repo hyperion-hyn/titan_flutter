@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -24,14 +25,15 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasStakeSelectPage extends StatefulWidget {
   final AtlasInfoEntity _atlasInfoEntity;
   final List<Map3InfoEntity> myMap3List;
 
-  AtlasStakeSelectPage(this._atlasInfoEntity,this.myMap3List);
+  AtlasStakeSelectPage(this._atlasInfoEntity, this.myMap3List);
 
   @override
   State<StatefulWidget> createState() {
@@ -40,7 +42,20 @@ class AtlasStakeSelectPage extends StatefulWidget {
 }
 
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
-  var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
+  var infoTitleList = [
+    "总抵押",
+    "签名率",
+    "最近回报率",
+    "最大抵押量",
+    "网址",
+    "安全联系",
+    "描述",
+    "费率",
+    "最大费率",
+    "费率幅度",
+    "bls key",
+    "bls签名"
+  ];
   List<String> infoContentList = [];
   bool isShowAll = false;
 
@@ -52,7 +67,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
 
   @override
   void initState() {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
     _refreshData();
@@ -67,7 +83,9 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white, appBar: BaseAppBar(baseTitle: "抵押Atlas节点"), body: _pageWidget(context));
+        backgroundColor: Colors.white,
+        appBar: BaseAppBar(baseTitle: "抵押Atlas节点"),
+        body: _pageWidget(context));
   }
 
   Widget _pageWidget(BuildContext context) {
@@ -255,7 +273,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   }
 }
 
-Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
+Widget stakeHeaderInfo(
+    BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
   return Row(
     children: <Widget>[
       Padding(
@@ -291,14 +310,22 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
             ),
             Row(
               children: <Widget>[
-                Text(shortBlockChainAddress(atlasInfoEntity.address), style: TextStyles.textC999S11),
+                Text(
+                    shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+                      atlasInfoEntity.address,
+                    )),
+                    style: TextStyles.textC999S11),
                 InkWell(
                   onTap: () {
-                    Clipboard.setData(ClipboardData(text: atlasInfoEntity.address));
+                    Clipboard.setData(ClipboardData(
+                        text: WalletUtil.ethAddressToBech32Address(
+                      atlasInfoEntity.address,
+                    )));
                     UiUtil.toast(S.of(buildContext).copyed);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8, top: 3, bottom: 3),
+                    padding: const EdgeInsets.only(
+                        left: 8.0, right: 8, top: 3, bottom: 3),
                     child: Image.asset(
                       "res/drawable/ic_copy.png",
                       width: 16,
@@ -310,7 +337,8 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 Container(
                     padding: EdgeInsets.only(left: 6.0, right: 6),
                     color: HexColor("#e3fafb"),
-                    child: Text("${getAtlasNodeType(atlasInfoEntity.type)}", style: TextStyles.textC333S12)),
+                    child: Text("${getAtlasNodeType(atlasInfoEntity.type)}",
+                        style: TextStyles.textC333S12)),
               ],
             )
           ],
@@ -323,7 +351,8 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
   );
 }
 
-Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
+Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList,
+    bool isShowAll, Function showAllInfo) {
   return Column(
     children: <Widget>[
       Column(
@@ -339,7 +368,8 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
                           padding: const EdgeInsets.only(left: 14),
                           child: Text(
                             infoTitleList[index],
-                            style: TextStyle(fontSize: 14, color: HexColor("#999999")),
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#999999")),
                           ),
                         ),
                       ),
@@ -349,7 +379,8 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
                           padding: const EdgeInsets.only(right: 14),
                           child: Text(
                             infoContentList[index],
-                            style: TextStyle(fontSize: 14, color: HexColor("#333333")),
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#333333")),
                           ),
                         ),
                       )

@@ -435,6 +435,10 @@ class WalletUtil {
   }
 
   static String ethAddressToBech32Address(String ethAddress) {
+    if (ethAddress == null) {
+      return null;
+    }
+
     try {
       return web3.ethAddressToBech32Address(ethAddress);
     } catch (e) {
