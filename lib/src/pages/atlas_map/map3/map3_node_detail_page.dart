@@ -1393,10 +1393,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           ),
           Container(
             padding: const EdgeInsets.only(bottom: 20, top: 30, left: 14, right: 14),
-
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16,),
-
+              padding: const EdgeInsets.symmetric(
+                vertical: 16,
+              ),
               decoration: BoxDecoration(
                 color: HexColor("#F8F8F8"),
                 borderRadius: BorderRadius.circular(14),
