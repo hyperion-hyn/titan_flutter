@@ -118,6 +118,7 @@ class MemoryCache {
     map["already collected"] = S.of(Keys.rootKey.currentContext).already_collected_hint;
     map["not half time to collect"] = S.of(Keys.rootKey.currentContext).not_half_time_to_collect_hint;
     map["provision insufficient"] = S.of(Keys.rootKey.currentContext).provision_insufficient_hint;
+    map["duplicate identity"] = S.of(Keys.rootKey.currentContext).duplicate_identity_hint;
     instance.setMemoryMap(CONTRACT_ERROR_TRANSLATION, json.encode(map));
   }
 

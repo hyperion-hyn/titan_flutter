@@ -1052,5 +1052,6 @@
   "dex_settlement_error": "The balance has transferred to wallet, but the DEX data settlement failed",
   "exchange_withdraw_status_9": "Abnormal withdrawal bill",
   "wallet_send_fix_dex_account": "Your dex account data is abnormal, please fix it first!",
-  "dex_fix_account_contact_us": "If you have any questions, please contact customer service"
+  "dex_fix_account_contact_us": "If you have any questions, please contact customer service",
+  "duplicate_identity_hint": "节点号已被占用，请修改!"
 }
