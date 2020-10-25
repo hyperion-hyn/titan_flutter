@@ -454,15 +454,17 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
     var staking = _inputTextController.text ?? "0";
 
-    if (Decimal.parse(staking) > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-      //Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
+    var stakingValue = Decimal.tryParse(staking);
+
+    if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+      Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
 
       return;
     }
 
-    var stakingValue = double.parse(staking);
+
     var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
-    var rate = (100 * (stakingValue / createMin)).toInt();
+    var rate = (100 * (stakingValue.toDouble() / createMin)).toInt();
     var rateMax = min(max(10, rate), 20);
     var feeRate = int.parse(_rateCoinController.text ?? "0");
     if (feeRate < 10 || feeRate > rateMax) {
