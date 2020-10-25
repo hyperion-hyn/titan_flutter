@@ -542,7 +542,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                   // 3.2服务器
                   SliverToBoxAdapter(child: _reDelegationWidget()),
-                  _spacer(),
+                  _spacer(isVisible: _visibleReDelegation),
 
                   // SliverToBoxAdapter(child: _lineSpacer()),
                   // _spacer(),
