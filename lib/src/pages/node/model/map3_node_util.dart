@@ -104,39 +104,52 @@ class Map3NodeUtil {
   static HexColor statusColor(Map3InfoStatus state) {
     if (state == null) return HexColor('#1FB9C7');
 
-    var _map3StatusColor = HexColor("#228BA1");
+    var _map3StatusColor = HexColor("#1FB9C7");
     switch (state) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        _map3StatusColor = HexColor("#228BA1");
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#1FB9C7");
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
-        _map3StatusColor = HexColor("#FF4C3B");
-        break;
-
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusColor = HexColor("#228BA1");
-        break;
-
       case Map3InfoStatus.CONTRACT_IS_END:
-        _map3StatusColor = HexColor("#FF4C3B");
-        break;
-
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         _map3StatusColor = HexColor("#FF4C3B");
         break;
 
-      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        _map3StatusColor = HexColor("#228BA1");
-        break;
-
       default:
-        _map3StatusColor = HexColor("#228BA1");
+        _map3StatusColor = HexColor("#1FB9C7");
         break;
     }
 
     return _map3StatusColor;
   }
 
+  static HexColor statusBorderColor(Map3InfoStatus state) {
+    if (state == null) return HexColor('#CBF6FF');
+
+    var _map3StatusColor = HexColor("#CBF6FF");
+    switch (state) {
+      case Map3InfoStatus.MAP:
+      case Map3InfoStatus.CREATE_SUBMIT_ING:
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#CBF6FF");
+        break;
+
+      case Map3InfoStatus.CREATE_FAIL:
+      case Map3InfoStatus.CONTRACT_IS_END:
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        _map3StatusColor = HexColor("#FFC8C3");
+        break;
+
+      default:
+        _map3StatusColor = HexColor("#CBF6FF");
+        break;
+    }
+
+    return _map3StatusColor;
+  }
 }

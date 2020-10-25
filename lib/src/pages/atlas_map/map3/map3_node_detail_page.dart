@@ -270,8 +270,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var _map3StatusDesc = "待启动";
 
     switch (_map3Status) {
+
       case Map3InfoStatus.MAP:
+        _map3StatusDesc = "映射中";
+
+        break;
+
       case Map3InfoStatus.CREATE_SUBMIT_ING:
+        _map3StatusDesc = "创建中";
+
+        break;
+
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         _map3StatusDesc = "待启动";
 
@@ -447,6 +456,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget build(BuildContext context) {
+    // todo: test_jison
+    //_map3Status = Map3InfoStatus.values[0];
+
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
@@ -644,15 +656,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         ClickOvalButton(
           "撤销抵押",
           _cancelAction,
-          width: 100,
+          width: 120,
           height: 32,
           fontSize: 14,
+          fontColor: HexColor("#999999"),
+          btnColor: Colors.transparent,
         ),
         Spacer(),
         ClickOvalButton(
           "抵押",
           _joinAction,
-          width: 100,
+          width: 120,
           height: 32,
           fontSize: 14,
         ),
@@ -664,8 +678,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           "提取奖励",
           _collectAction,
           width: 160,
-          height: 32,
+          height: 36,
           fontSize: 14,
+          //btnColor: HexColor("#FFC900"),
         )
       ];
     }
@@ -774,10 +789,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
     var nodeAddress = "${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 8)}";
-    var nodeIdPre = "节点号";
+    var nodeIdPre = "节点号：";
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
@@ -803,8 +818,24 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text.rich(TextSpan(children: [
-                          TextSpan(text: nodeName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
-                          TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
+                          TextSpan(
+                              text: nodeName,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              )),
+                          TextSpan(
+                              text: "    ",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor("#999999"),
+                              )),
+                          TextSpan(
+                              text: oldYearValue,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor("#999999"),
+                              )),
                         ])),
                         Container(
                           height: 4,
@@ -827,11 +858,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         Text.rich(TextSpan(children: [
                           TextSpan(
                               text: nodeIdPre,
-                              style:
-                                  TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#333333"))),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                color: HexColor("#333333"),
+                              )),
                           TextSpan(
                               text: nodeId,
-                              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: HexColor("#333333"),
+                              )),
                         ])),
                       ],
                     ),
@@ -1439,14 +1477,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         height: 10,
                         //color: Colors.red,
                         decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _stateColor,
-                            border: Border.all(color: Colors.grey, width: 1.0)),
+                          shape: BoxShape.circle,
+                          color: _stateColor,
+                          border: Border.all(
+                            color: Map3NodeUtil.statusBorderColor(_map3Status),
+                            width: 1.0,
+                          ),
+                        ),
                       ),
                     ),
-                    Text.rich(TextSpan(children: [
-                      TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-                    ])),
+                    Text.rich(
+                      TextSpan(children: [
+                        TextSpan(
+                          text: _contractStateDesc,
+                          style: TextStyle(fontSize: 12, color: _stateColor),
+                        ),
+                      ]),
+                    ),
                   ],
                 ),
 /*
@@ -1633,8 +1680,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       _map3infoEntity = requestList[0];
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
-      // todo: test_jison
-      //_map3Status = Map3InfoStatus.values[7];
 
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
