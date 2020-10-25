@@ -320,7 +320,7 @@ class _ExchangeDepositConfirmPageState
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
-                      S.of(context).gas_fee,
+                      '${S.of(context).gas_fee}(${widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? 'HYN' : 'ETH'})',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
