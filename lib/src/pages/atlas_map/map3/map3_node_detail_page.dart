@@ -107,11 +107,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 }*/
 
   get _visibleBottomBar {
-    return [
-      //Map3InfoStatus.CREATE_SUBMIT_ING,
-      Map3InfoStatus.FUNDRAISING_NO_CANCEL,
-      Map3InfoStatus.CONTRACT_HAS_STARTED,
-    ].contains(_map3Status);
+    return ([
+              //Map3InfoStatus.CREATE_SUBMIT_ING,
+              Map3InfoStatus.FUNDRAISING_NO_CANCEL,
+              Map3InfoStatus.CONTRACT_HAS_STARTED,
+            ].contains(_map3Status) &&
+            _isDelegator) ||
+        (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL);
   }
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -120,7 +122,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _stateColor => Map3NodeUtil.statusColor(_map3Status);
 
-  get _isNoWallet => _address.isEmpty;
+  get _isNoWallet => _address?.isEmpty ?? false;
 
   //get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
@@ -257,6 +259,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         value = 0.5;
+
+        //var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
+        var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+        var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
+
+        var left = (_currentEpoch - activationEpoch).toDouble() / (releaseEpoch - activationEpoch).toDouble();
+        if (left <= 0) {
+          value = left;
+        }
+
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
@@ -480,7 +492,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 35),
                 child: Icon(
-                  _canExit ? Icons.add : Icons.share,
+                  _canExit ? Icons.more_horiz : Icons.share,
                   color: Theme.of(context).primaryColor,
                 ),
               ),
@@ -807,7 +819,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc = (_map3infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+    var desc =
+        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
@@ -981,8 +994,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     // 周期
     var periodEpoch14 = _releaseEpoch - 14;
     var periodEpoch7 = _releaseEpoch - 7;
-    var editDateLimit = "（请在纪元$periodEpoch14 - $periodEpoch7前修改）";
-    if (periodEpoch14 < 0 || periodEpoch7 < 0) {
+    var editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
+    if (periodEpoch14 < 0 || periodEpoch7 < 0 || !_canEditNextPeriod) {
       editDateLimit = "";
     }
 
@@ -1378,18 +1391,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     if (_isDelegator) {
-      if (myDelegationString == "0" || myDelegationString.isEmpty) {
-        myDelegationString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+      if (myDelegationString == "0" || (myDelegationString?.isEmpty ?? false)) {
+        var staking = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse(
           _map3infoEntity?.mine?.staking ?? "0",
-        )).toString());
+        ));
+        myDelegationString = FormatUtil.formatPrice(staking.toDouble());
+
+        //myDelegationString = FormatUtil.stringFormatNum(staking.toString());
       }
 
-      if (myRewardString == "0" || myRewardString.isEmpty) {
-        myRewardString = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
+      if (myRewardString == "0" || (myRewardString?.isEmpty ?? false)) {
+        var reward = ConvertTokenUnit.weiToEther(
             weiBigInt: BigInt.parse(
           _map3infoEntity?.mine?.reward ?? "0",
-        )).toString());
+        ));
+        myRewardString = FormatUtil.formatPrice(reward.toDouble());
       }
     }
 
@@ -1672,7 +1689,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   _setupMicroDelegations() {
     if (_map3nodeInformationEntity == null ||
-        (_map3nodeInformationEntity != null && _map3nodeInformationEntity.microdelegations.isEmpty)) return;
+        (_map3nodeInformationEntity != null && (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? false)))
+      return;
 
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress;
     var joinerAddress = _address;

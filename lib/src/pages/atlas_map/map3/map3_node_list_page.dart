@@ -30,6 +30,7 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
   int _pageSize = 30;
   Wallet _wallet;
   AtlasApi api = AtlasApi();
+  int _currentEpoch = 0;
 
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   var _address = "";
@@ -100,7 +101,8 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
         onLoadingMore: _loadMoreData,
         child: ListView.builder(
             itemBuilder: (context, index) {
-              return getMap3NodeWaitItem(context, _dataArray[index], AtlasApi.map3introduceEntity);
+              return getMap3NodeWaitItem(context, _dataArray[index], AtlasApi.map3introduceEntity,
+                  currentEpoch: _currentEpoch);
             },
             itemCount: _dataArray.length),
       ),
@@ -154,6 +156,9 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     try {
       _currentPage = 1;
       List<Map3InfoEntity> dataList = [];
+
+      var _atlasHomeEntity = await AtlasApi().postAtlasHome(_address);
+      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
 
       switch (widget.model.type) {
         case MyContractType.join:
