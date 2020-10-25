@@ -25,6 +25,7 @@ import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_provider_entity.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -102,7 +103,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
-  List<Map3TxLogEntity> _delegateRecordList = [];
+  List<HynTransferHistory> _delegateRecordList = [];
 
   get _stateColor => Map3NodeUtil.statusColor(_map3Status);
 
@@ -467,7 +468,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               bloc: _loadDataBloc,
               //enablePullDown: false,
               onRefresh: getContractDetailData,
-              onLoadingMore: getJoinMemberMoreData,
+              onLoadingMore: getMap3StakingLogMoreData,
               child: CustomScrollView(
                 slivers: <Widget>[
                   // 0.通知
@@ -1541,11 +1542,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Future getJoinMemberMoreData() async {
+  Future getMap3StakingLogMoreData() async {
     try {
       _currentPage++;
 
-      List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
+      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1606,9 +1607,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
         _nodeAddress = _map3infoEntity.address;
 
-        List<Map3TxLogEntity> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
-        _delegateRecordList = tempMemberList;
-
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
@@ -1630,7 +1628,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         }
       }
 
-      List<Map3TxLogEntity> tempMemberList = requestList[3];
+      List<HynTransferHistory> tempMemberList = requestList[3];
       _delegateRecordList = tempMemberList;
 
       // 3.

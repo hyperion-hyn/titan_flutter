@@ -48,12 +48,13 @@ class TransactionDetailVo {
                     "amount": "110000000000000000000000"
                 }
   * */
-  Map dataDecoded;
+  DataDecoded dataDecoded;
   String blockHash;
   int blockNum;
   int epoch;
   int transactionIndex;
   int hynType;
+  LogsDecoded logsDecoded;
 
   TransactionDetailVo({
     this.id,
@@ -79,14 +80,37 @@ class TransactionDetailVo {
     this.epoch,
     this.transactionIndex,
     this.hynType,
+    this.logsDecoded,
   });
 
   String getDecodedAmount(){
-    if(dataDecoded['amount'] == null){
+    if(dataDecoded.amount == null){
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(dataDecoded['amount'])).toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(dataDecoded.amount)).toString();
     return amount;
+  }
+
+  String getAtlasRewardAmount(){
+    if(logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+      return "0.0";
+    }
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
+    return amount;
+  }
+
+  String getMap3RewardAmount(){
+    if(logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+      return "0.0";
+    }
+    BigInt amount = BigInt.parse("0.0");
+    logsDecoded.rewards.forEach((element) {
+      if(element.address == toAddress){
+        amount = amount + BigInt.parse(element.amount);
+      }
+    });
+    var amountStr = ConvertTokenUnit.weiToEther(weiBigInt: amount).toString();
+    return amountStr;
   }
 
   factory TransactionDetailVo.fromHynTransferHistory(
@@ -117,6 +141,7 @@ class TransactionDetailVo {
       epoch: hynTransferHistory.epoch,
       transactionIndex: hynTransferHistory.transactionIndex,
       hynType: hynTransferHistory.type,
+      logsDecoded: hynTransferHistory.logsDecoded,
     );
   }
 
