@@ -1101,18 +1101,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text.rich(TextSpan(children: [
-                    TextSpan(
-                        text: "复投Atlas节点",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: HexColor("#1F81FF"),
-                        )),
-                  ])),
+                Visibility(
+                  visible: _isCreator,
+                  child: InkWell(
+                    onTap: () {
+
+                      Navigator.of(context).pop();
+                    },
+                    child: Text.rich(TextSpan(children: [
+                      TextSpan(
+                          text: "复投Atlas节点",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: HexColor("#1F81FF"),
+                          )),
+                    ])),
+                  ),
                 ),
               ],
             ),
