@@ -127,14 +127,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   //get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
 
-
   // get _endRemainEpoch => Decimal.parse('${_releaseEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
   //get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
-  get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
- 
+  get _releaseEpoch =>
+      double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")
+          .toInt();
 
   get _visibleEditNextPeriod {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
@@ -168,8 +168,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
 
-    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
- 
+    var isInActionPeriodJoiner =
+        _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
+
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
     if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
       return true;
@@ -537,6 +538,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(child: _contractProfitWidget()),
                   _spacer(),
 
+                  SliverToBoxAdapter(child: _nodeServerWidget()),
+                  _spacer(),
+
                   // 2
                   SliverToBoxAdapter(
                     child: _nodeNextPeriodWidget(),
@@ -545,9 +549,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
                   // 3.2服务器
                   SliverToBoxAdapter(child: _reDelegationWidget()),
-                  _spacer(),
-
-                  SliverToBoxAdapter(child: _nodeServerWidget()),
                   _spacer(),
 
                   // SliverToBoxAdapter(child: _lineSpacer()),
@@ -674,7 +675,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     List<Widget> children = [];
     // if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL || _map3Status == Map3InfoStatus.CREATE_SUBMIT_ING)) {
 
-      if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL)) {
+    if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL)) {
       children = <Widget>[
         Spacer(),
         ClickOvalButton(
@@ -817,7 +818,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var oldYearValue =
         oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
- 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 8)}";
     var nodeIdPre = "节点号：";
@@ -1818,10 +1818,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         _nodeAddress = _map3infoEntity.address;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        _map3nodeInformationEntity =
+            await client.getMap3NodeInformation(map3Address);
         _setupMicroDelegations();
 
-        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        List<HynTransferHistory> tempMemberList =
+            await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
       }
 
@@ -1839,7 +1841,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           }
         }
       }
-
 
       // 3.
       if (mounted) {
