@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:titan/src/components/root_page_control_component/root_page_control_component.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_create_info_page.dart';
@@ -89,7 +90,7 @@ void _cacheEntryRouteName(params) {
 }
 
 var toolsPageWebviewHandler = Handler(handlerFunc: (context, params) {
-  return WebViewContainer(
+  return InAppWebViewContainer(
       initUrl: FluroConvertUtils.fluroCnParamsDecode(params['initUrl']?.first),
       title: FluroConvertUtils.fluroCnParamsDecode(params['title']?.first));
 });
