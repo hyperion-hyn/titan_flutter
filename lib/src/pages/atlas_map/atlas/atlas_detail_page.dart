@@ -31,6 +31,7 @@ import 'package:titan/src/pages/atlas_map/widget/simple_line_chart.dart';
 import 'package:titan/src/pages/atlas_map/widget/sliding_viewport_on_selection.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -64,7 +65,7 @@ class AtlasDetailPage extends StatefulWidget {
 class AtlasDetailPageState extends State<AtlasDetailPage> {
   AtlasApi _atlasApi = AtlasApi();
   final _client = WalletUtil.getWeb3Client(true);
-  List<Map3TxLogEntity> _delegateRecordList = List();
+  List<HynTransferHistory> _delegateRecordList = List();
   ValidatorInformationEntity _validatorInformationEntity;
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;

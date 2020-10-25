@@ -16,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -884,7 +885,7 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
       : containerWidget;
 }
 
-Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = false, String map3CreatorAddress = ""}) {
+Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = false, String map3CreatorAddress = ""}) {
   var isPending = item.status == 0 || item.status == 1;
   // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
@@ -971,7 +972,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = fals
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(FormatUtil.formatDateStr(item.createdAt),
+                                Text(FormatUtil.formatDateStr(item.createdAt.toString()),
                                     style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                               ],
                             ),
@@ -999,7 +1000,7 @@ Widget delegateRecordItemWidget(Map3TxLogEntity item, {bool isAtlasDetail = fals
   );
 }
 
-void _pushTransactionDetailAction(Map3TxLogEntity item) {
+void _pushTransactionDetailAction(HynTransferHistory item) {
   TransactionDetailVo transactionDetail = TransactionDetailVo(
     id: item.id,
     contractAddress: item.contractAddress,
@@ -1016,7 +1017,7 @@ void _pushTransactionDetailAction(Map3TxLogEntity item) {
     gasUsed: item.gasUsed.toString(),
     describe: item?.dataDecoded?.description?.details ?? "",
     data: item?.data ?? "很棒",
-    dataDecoded: item.dataDecoded.toJson(),
+    dataDecoded: item.dataDecoded,
     blockHash: item.blockHash,
     blockNum: item.blockNum,
     epoch: item.epoch,
@@ -1030,7 +1031,7 @@ void _pushTransactionDetailAction(Map3TxLogEntity item) {
   );
 }
 
-Widget _billStateWidget(Map3TxLogEntity item) {
+Widget _billStateWidget(HynTransferHistory item) {
   // status 自定义： 1.pending；2.wait receipt; 3success; 4.fail;5.drop fail see TransactionXXX
 
   switch (item.status) {

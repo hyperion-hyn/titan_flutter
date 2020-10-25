@@ -1,4 +1,6 @@
 import 'package:decimal/decimal.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
@@ -9,6 +11,7 @@ import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'package:web3dart/web3dart.dart';
@@ -24,6 +27,15 @@ class HYNApi {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
+    if(gasLimit == null){
+      final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+      data: message.toRlp(),
+      txType: message.type ?? MessageType.typeNormal);
+      gasLimit = gasLimitBitInt.toInt();
+      print("!!!!! $gasLimit");
+    }
     final txHash = await wallet.signEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -32,8 +44,7 @@ class HYNApi {
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
-      // todo: 需要动态设置
-      gasLimit: 600000,
+      gasLimit: gasLimit,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -50,6 +61,15 @@ class HYNApi {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
+    if(gasLimit == null){
+      final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+          data: message.toRlp(),
+          txType: message.type ?? MessageType.typeNormal);
+      gasLimit = gasLimitBitInt.toInt();
+      print("!!!!! $gasLimit");
+    }
     final txHash = await wallet.sendEthTransaction(
       password: password,
       toAddress: toAddress,
@@ -58,8 +78,7 @@ class HYNApi {
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
-      // todo: 需要动态设置
-      gasLimit: 600000,
+      gasLimit: gasLimit,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -204,7 +223,7 @@ class HYNApi {
     print(message);
 
     return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
+        toAddress: entity.to, message: message, gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -231,7 +250,7 @@ class HYNApi {
     print(message);
 
     return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasLimit: entity.gasLimit, gasPrice: entity.price);
+        toAddress: entity.to, message: message, gasPrice: entity.price);
   }
 
   static Future transTerminateMap3Node(
@@ -355,7 +374,7 @@ class HYNApi {
         break;
       case MessageType.typeCollectReStakingReward:
         typeStr = "提取复抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;
-        amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getAtlasRewardAmount() ?? "0.0")}";
         break;
       case MessageType.typeCreateMap3:
         typeStr = "创建Map3节点" + "${amount.isNotEmpty ? " " : ""}" + amount;
@@ -376,7 +395,7 @@ class HYNApi {
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;
-        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getMap3RewardAmount() ?? "0.0")}";
         break;
     }
 

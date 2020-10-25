@@ -9,6 +9,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -219,30 +220,35 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   Widget _exchangeHYNView(BuildContext context, CoinVo coin) {
-    return Column(
-      children: <Widget>[
-        _buildAccountItem(context, coin),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 6),
-              child: Text(
-                "兑换主链币",
-                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+    return InkWell(
+      onTap: (){
+        AtlasApi.goToAtlasMap3HelpPage(context);
+      },
+      child: Column(
+        children: <Widget>[
+          _buildAccountItem(context, coin),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 6),
+                child: Text(
+                  "兑换主链币",
+                  style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 14),
-              child: Image.asset(
-                "res/drawable/ic_question_remind.png",
-                width: 16,
-                height: 16,
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Image.asset(
+                  "res/drawable/ic_question_remind.png",
+                  width: 16,
+                  height: 16,
+                ),
               ),
-            ),
-          ],
-        )
-      ],
+            ],
+          )
+        ],
+      ),
     );
   }
 

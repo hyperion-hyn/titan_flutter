@@ -238,7 +238,6 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           if (!widget.payload.isEdit) {
             CreateMap3Entity map3entity =
                 CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
-            map3entity.gasLimit = 600000;
             map3entity.payload = widget.payload;
             map3entity.amount = widget.payload.staking;
             message = ConfirmCreateMap3NodeMessage(entity: map3entity);
