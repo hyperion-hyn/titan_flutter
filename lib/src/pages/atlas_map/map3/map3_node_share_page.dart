@@ -130,12 +130,15 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24.0, top: 40),
               child: Text(
+                '「${wallet?.wallet?.keystore?.name ?? ''}」在泰坦地图发现了海波利安节点, 邀请你前往围观！',
+                /*
                 S.of(context).contract_share_content(
                     wallet?.wallet?.keystore?.name ?? '',
                     S.of(context).app_name,
                     widget?.contractNodeItem?.contract?.nodeName??"",
                     FormatUtil.formatPercent(widget.contractNodeItem?.contract?.annualizedYield??0),
                     widget.contractNodeItem?.contract?.duration?.toString()??""),
+                */
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),
