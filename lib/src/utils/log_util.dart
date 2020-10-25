@@ -54,7 +54,7 @@ class LogUtil {
       }
     } else if(error is RPCError){
       Fluttertoast.showToast(
-          msg: MemoryCache.contractErrorStr(error.message),
+          msg: MemoryCache.contractErrorStr("【错误码: ${error.errorCode}】：" + error.message),
           toastLength: Toast.LENGTH_LONG);
     } else {
       Fluttertoast.showToast(msg: error.toString());
