@@ -442,7 +442,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
-      subSymbol = '主链';
+      subSymbol = 'Atlas';
     } else if (coin.coinType == CoinType.ETHEREUM) {
       var symbolComponents = symbol.split(" ");
       if (symbolComponents.length == 2) {
@@ -581,7 +581,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
-          Text('Ropsten环境测试'),
+         // Text('Ropsten环境测试'),
           RaisedButton(
             child: Text('-测试申请55万主链HYN'),
             onPressed: () async {
