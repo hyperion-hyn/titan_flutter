@@ -1679,7 +1679,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         _atlasApi.getMap3Info(_address, _nodeId),
         _atlasApi.postAtlasHome(_address),
         _nodeApi.getNodeProviderList(),
-        _atlasApi.getMap3StakingLogList(_nodeAddress),
       ]);
 
       _map3infoEntity = requestList[0];
@@ -1690,8 +1689,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-
         _setupMicroDelegations();
+
+        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        _delegateRecordList = tempMemberList;
       }
 
       AtlasHomeEntity _atlasHomeEntity = requestList[1];
@@ -1709,8 +1710,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         }
       }
 
-      List<HynTransferHistory> tempMemberList = requestList[3];
-      _delegateRecordList = tempMemberList;
 
       // 3.
       if (mounted) {

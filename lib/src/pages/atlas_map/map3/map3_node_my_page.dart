@@ -331,7 +331,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             fontSize: 16,
           ),
         ],
-        content: "您一共创建或参与了${_rewardMap.values.length ?? 0}个Map3节点，截止昨日可提奖励为: $_balance HYN 确定全部提取到钱包",
+        content: "您一共创建或参与了${_rewardMap.values.length ?? 0}个Map3节点，截止当前可提奖励为: $_balance HYN 确定全部提取到钱包",
         boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),
