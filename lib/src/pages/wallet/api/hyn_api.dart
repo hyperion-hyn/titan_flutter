@@ -30,10 +30,15 @@ class HYNApi {
     if(gasLimit == null){
       final client = WalletUtil.getWeb3Client(isAtlasTrans);
       var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
-      data: message.toRlp(),
-      txType: message.type ?? MessageType.typeNormal);
-      gasLimit = gasLimitBitInt.toInt();
+      if(message == null || message?.type == MessageType.typeNormal){
+        gasLimit = 21000;
+      }else{
+        var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+            data: message?.toRlp(),
+            txType: message?.type ?? MessageType.typeNormal);
+        gasLimit = gasLimitBitInt.toInt();
+      }
+
       print("!!!!! $gasLimit");
     }
     final txHash = await wallet.signEthTransaction(
@@ -64,10 +69,15 @@ class HYNApi {
     if(gasLimit == null){
       final client = WalletUtil.getWeb3Client(isAtlasTrans);
       var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
-          data: message.toRlp(),
-          txType: message.type ?? MessageType.typeNormal);
-      gasLimit = gasLimitBitInt.toInt();
+      if(message == null || message?.type == MessageType.typeNormal){
+        gasLimit = 21000;
+      }else{
+        var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+            data: message?.toRlp(),
+            txType: message?.type ?? MessageType.typeNormal);
+        gasLimit = gasLimitBitInt.toInt();
+      }
+
       print("!!!!! $gasLimit");
     }
     final txHash = await wallet.sendEthTransaction(
