@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
@@ -17,6 +18,8 @@ import 'http_exception.dart';
 class BaseHttpCore {
   final Dio dio;
   var packageInfo;
+  var androidInfo;
+  var iosInfo;
 
   BaseHttpCore(this.dio) {
     //hack method
@@ -184,9 +187,26 @@ class BaseHttpCore {
                 ?.activatedWallet
                 ?.wallet
                 ?.getEthAccount()
-                ?.address ??
-            ''
-        : '';
+                ?.address ?? '' : '';
+    var deviceInfo = new DeviceInfoPlugin();
+    try {
+      androidInfo = await deviceInfo.androidInfo;
+    }catch(error){
+    }
+    try {
+      iosInfo = await deviceInfo.iosInfo;
+    }catch(error){
+    }
+
+    if (androidInfo != null) {
+      options.headers["model"] = androidInfo?.model ?? "";
+      options.headers["androidId"] = androidInfo?.androidId ?? "";
+    }
+    if (iosInfo != null) {
+      options.headers["model"] = iosInfo?.model ?? "";
+      options.headers["iosId"] = iosInfo?.identifierForVendor ?? "";
+    }
+    options.headers["androidId"] = androidInfo?.androidId ?? "";
 
     // todo rich add userid
 
