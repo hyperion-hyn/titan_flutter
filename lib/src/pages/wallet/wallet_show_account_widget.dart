@@ -511,12 +511,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
                               )));
                 } else {
                   if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-                    if((transactionDetail.state != 1 && transactionDetail.state != 2)){
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                                  WalletShowAccountInfoPage(transactionDetail)));
-                    }
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                                WalletShowAccountInfoPage(transactionDetail)));
                   } else {
                     var isChinaMainland = SettingInheritedModel.of(context)
                             .areaModel
