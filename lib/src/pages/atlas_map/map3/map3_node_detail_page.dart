@@ -362,7 +362,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
-      case Map3InfoStatus.CREATE_SUBMIT_ING:
+      //case Map3InfoStatus.CREATE_SUBMIT_ING:
         _map3StatusDesc = "";
 
         break;
@@ -393,6 +393,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+      case Map3InfoStatus.CREATE_SUBMIT_ING:
+
         var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
         var remain = startMin - staking;

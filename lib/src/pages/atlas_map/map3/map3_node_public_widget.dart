@@ -971,7 +971,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6),
                                   child: Text(
-                                    isPending ? "*" : detail,
+                                     detail,
                                     style: TextStyle(
                                         fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                                   ),
