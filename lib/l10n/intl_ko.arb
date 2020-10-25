@@ -1040,5 +1040,6 @@
   "dex_settlement_error": "잔액이 지갑으로 이체되었지만 DEX 데이터 정산에 실패했습니다.",
   "exchange_withdraw_status_9": "비정상 인출 청구서",
   "wallet_send_fix_dex_account": "귀하의 dex 계정 데이터가 비정상입니다. 먼저 수정하십시오!",
-  "dex_fix_account_contact_us": "질문이 있으시면 고객 서비스에 문의하십시오."
+  "dex_fix_account_contact_us": "질문이 있으시면 고객 서비스에 문의하십시오.",
+  "duplicate_identity_hint": "节点号已被占用，请修改!"
 }
