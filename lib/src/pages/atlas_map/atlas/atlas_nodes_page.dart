@@ -10,6 +10,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_detail_item.dart';
@@ -17,6 +18,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -56,6 +58,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   ///
   int _currentPage = 1;
   int _pageSize = 10;
+  get _isNoWallet => _address.isEmpty;
+  var _address = "";
 
   @override
   bool get wantKeepAlive => true;
@@ -72,6 +76,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     )..repeat();
 
     _initTimer();
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   _initTimer() {
@@ -438,6 +445,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     );
   }
 
+  void _pushWalletManagerAction() {
+    Application.router.navigateTo(
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+  }
+
   _myNodes() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -459,6 +471,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
               Spacer(),
               InkWell(
                 onTap: () {
+                  if (_isNoWallet) {
+                    _pushWalletManagerAction();
+                    return;
+                  }
+
                   Application.router.navigateTo(
                     context,
                     Routes.atlas_my_node_page,
