@@ -40,6 +40,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   var _walletName = "";
   var _address = "";
   var _balance = "0";
+  var _balanceValue = "0";
+
   Map<String, dynamic> _rewardMap = {};
 
   final client = WalletUtil.getWeb3Client(true);
@@ -139,6 +141,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
       var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(parse));
       _balance = "${FormatUtil.formatPrice(value.toDouble())}";
+      _balanceValue = "${value.toDouble()}";
       print(_rewardMap);
 
       var _atlasHomeEntity = await AtlasApi().postAtlasHome(_address);
@@ -326,7 +329,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               var entity = PledgeMap3Entity();
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
-                amount: _balance,
+                amount: _balanceValue,
                 addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
               );
               Navigator.push(
