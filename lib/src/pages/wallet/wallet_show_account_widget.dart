@@ -410,7 +410,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
 
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       amountText =
-          "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true)} (${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true)})";
+          "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true)}";
+      amountSubText = " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true)}";
     } else if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");
@@ -562,6 +563,13 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold),
                               ),
+                              if(amountSubText.isNotEmpty)
+                                Text(
+                                  amountSubText,
+                                  style: TextStyle(
+                                      color: DefaultColors.color999,
+                                      fontSize: 12,),
+                                ),
                               Spacer(),
                               Text(
                                 title,
@@ -592,8 +600,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
                                 time,
                                 style: TextStyle(
                                     color: DefaultColors.color999,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 14,),
                               ),
                             ],
                           ),
