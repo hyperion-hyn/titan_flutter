@@ -111,7 +111,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _visibleBottomBar {
     return ([
-              //Map3InfoStatus.CREATE_SUBMIT_ING,
+              // Map3InfoStatus.CREATE_SUBMIT_ING,
               Map3InfoStatus.FUNDRAISING_NO_CANCEL,
               Map3InfoStatus.CONTRACT_HAS_STARTED,
             ].contains(_map3Status) &&

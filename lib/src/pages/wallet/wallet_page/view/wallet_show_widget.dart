@@ -196,7 +196,13 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               itemBuilder: (BuildContext context, int index) {
                 var coinVo = widget.walletVo.coins[index];
                 if(coinVo.symbol == SupportedTokens.HYN_ERC20.symbol){
-                  return _exchangeHYNView(context, coinVo);
+                  return InkWell(
+                      onTap: (){
+                        var coinVo = widget.walletVo.coins[index];
+                        var coinVoJsonStr = FluroConvertUtils.object2string(coinVo.toJson());
+                        Application.router.navigateTo(context, Routes.wallet_account_detail + '?coinVo=$coinVoJsonStr');
+                      },
+                      child: _exchangeHYNView(context, coinVo));
                 } else {
                   return InkWell(
                       onTap: () {
@@ -220,8 +226,37 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   }
 
   Widget _exchangeHYNView(BuildContext context, CoinVo coin) {
+    return Column(
+      children: <Widget>[
+        _buildAccountItem(context, coin),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 6),
+              child: Text(
+                "兑换主链币",
+                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: Image.asset(
+                "res/drawable/ic_question_remind.png",
+                width: 16,
+                height: 16,
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _exchangeHYNViewOld(BuildContext context, CoinVo coin) {
     return InkWell(
       onTap: (){
+        print("111111111");
         AtlasApi.goToAtlasMap3HelpPage(context);
       },
       child: Column(
