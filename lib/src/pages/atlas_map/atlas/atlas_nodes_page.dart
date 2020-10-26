@@ -58,6 +58,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   ///
   int _currentPage = 1;
   int _pageSize = 10;
+
   get _isNoWallet => _address.isEmpty;
   var _address = "";
 
@@ -77,7 +78,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 
     _initTimer();
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
@@ -304,7 +306,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     var _remainTime = _secPerBlock *
         (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
 
-    var points = json.decode(_atlasHomeEntity?.points ?? '{}');
+    var points = json.decode(_atlasHomeEntity?.points ?? '[]');
 
     return Container(
       width: double.infinity,
@@ -325,6 +327,13 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
@@ -332,7 +341,17 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   ),
                   Text(
                     '为海伯利安生态提供共识保证',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -447,7 +466,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   _myNodes() {
