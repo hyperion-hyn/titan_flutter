@@ -14,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -176,7 +177,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                       children: _addressList
                           .map((e) => Padding(
                                 padding: const EdgeInsets.only(top: 8, bottom: 4),
-                                child: Text(e,
+                                child: Text(WalletUtil.ethAddressToBech32Address(e),
                                     style: TextStyle(
                                       color: HexColor("#999999"),
                                       fontSize: 12,

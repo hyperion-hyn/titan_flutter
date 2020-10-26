@@ -43,6 +43,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   Map<String, dynamic> _rewardMap = {};
 
   final client = WalletUtil.getWeb3Client(true);
+  AtlasApi api = AtlasApi();
+  int _currentEpoch = 0;
 
   @override
   void initState() {
@@ -138,6 +140,15 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(parse));
       _balance = "${FormatUtil.formatPrice(value.toDouble())}";
       print(_rewardMap);
+
+      var _atlasHomeEntity = await AtlasApi().postAtlasHome(_address);
+      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
+
+      if (_contractTypeModels.isNotEmpty) {
+        _contractTypeModels.forEach((element) {
+          element.currentEpoch = _currentEpoch;
+        });
+      }
 
       if (mounted) {
         setState(() {

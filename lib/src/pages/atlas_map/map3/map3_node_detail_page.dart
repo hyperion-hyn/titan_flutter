@@ -167,7 +167,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-
+   print("[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
@@ -1705,15 +1705,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   _setupMicroDelegations() {
     print("[object] --> micro:${_map3nodeInformationEntity != null}");
 
-    if (_map3nodeInformationEntity == null ||
-        (_map3nodeInformationEntity != null && (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? false)))
-      return;
+    if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true)
+      {
+        print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length??0}");
+
+        return;
+      }
 
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
-      print("[object] --> micro.length:${_map3nodeInformationEntity.microdelegations.length}");
+      print("[object] --> 2micro.length:${_map3nodeInformationEntity.microdelegations.length}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase() ;
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {

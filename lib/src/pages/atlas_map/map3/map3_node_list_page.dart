@@ -219,7 +219,8 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
 class MyContractModel {
   String name;
   MyContractType type;
-  MyContractModel(this.name, this.type);
+  int currentEpoch;
+  MyContractModel(this.name, this.type, {this.currentEpoch=0});
 }
 
 enum MyContractType {

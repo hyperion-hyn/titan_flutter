@@ -144,14 +144,14 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   var descPre = "描   述：";
   var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : infoEntity.describe;
   var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
-  // todo:
-  date = "创建于${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
     date = "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
 
   } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index){
-    var remainEpoch = infoEntity?.endEpoch??0 - currentEpoch;
+    print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch??0}");
+
+    var remainEpoch = (infoEntity?.endEpoch??0) - currentEpoch;
     date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 
@@ -951,23 +951,27 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            RichText(
-                              text: TextSpan(
-                                text: item.name,
-                                style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
-                                children: [
-                                  TextSpan(
-                                    text: recordName,
-                                    style: TextStyle(
-                                        fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
-                                  )
-                                ],
+                            Flexible(
+                              flex: 2,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: item.name,
+                                  style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                  children: [
+                                    TextSpan(
+                                      text: recordName,
+                                      style: TextStyle(
+                                          fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                             Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
+
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6),
                                   child: Text(

@@ -255,10 +255,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   showAlertView() {
-    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
+    var nextFeeRate = 100 *double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
     var feeRate = _isJoiner ? nextFeeRate : (_rateCoinController?.text ?? "20");
     var contentPre = _isJoiner ? "开启期满跟随续约" : "开启期满自动续约";
-    var content = contentPre + "，管理费设置为$feeRate每个节点周期只能修改一次，确定修改吗？";
+    var content = contentPre + "，管理费设置为$feeRate%每个节点周期只能修改一次，确定修改吗？";
     UiUtil.showAlertView(
       context,
       title: "下期预设",
@@ -284,7 +284,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
             var message = ConfirmPreEditMap3NodeMessage(
               autoRenew: _isOpen,
-              feeRate: _isJoiner ? null : feeRate+"%",
+              feeRate: _isJoiner ? null : feeRate,
               map3NodeAddress: widget.map3infoEntity.address,
             );
             Navigator.push(

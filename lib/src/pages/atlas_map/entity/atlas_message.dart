@@ -7,6 +7,7 @@ import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utils.dart';
 
@@ -65,8 +66,9 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认创建Atlas节点",
@@ -102,8 +104,9 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认编辑Atlas节点",
@@ -140,8 +143,9 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "提取奖励",
@@ -178,8 +182,9 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "激活节点",
@@ -216,8 +221,9 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getAtlasAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "抵押Atlas节点",
@@ -254,8 +260,9 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "撤销抵押",
@@ -302,8 +309,9 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认创建节点",
@@ -341,8 +349,9 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认编辑节点",
@@ -395,8 +404,9 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认修改预设",
@@ -443,8 +453,9 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认终止节点",
@@ -490,8 +501,9 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认撤销",
@@ -539,8 +551,9 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "确认抵押节点",
@@ -590,8 +603,9 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "提取奖励",
@@ -614,7 +628,7 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<dynamic> action(String password) async {
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+    // var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
 //    var rawTx =
 //        await HYNApi.transMicroMap3Node(this.entity.amount, password, this.entity.to, this.map3NodeAddress, wallet);
 //    this.entity.rawTx = rawTx;
@@ -631,8 +645,9 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
   @override
   ConfirmInfoDescription get description {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet.wallet.keystore.name;
-    var address = shortBlockChainAddress(activatedWallet.wallet.getEthAccount().address);
+    var walletName = activatedWallet?.wallet?.keystore?.name??"";
+    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
+    var address = shortBlockChainAddress(hynAddress);
 
     return ConfirmInfoDescription(
       title: "节点分裂",
