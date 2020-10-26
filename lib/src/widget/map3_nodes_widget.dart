@@ -60,12 +60,12 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
         zlevel:1,
         rippleEffect: {
               period: 10,
-              scale: 4,
+              scale: 9,
               brushType: 'fill'
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${widget.points ?? json.encode({})},
+        data: ${widget.points ?? json.encode('[]')},
         symbolSize: 4,
         label: {
           normal: {
