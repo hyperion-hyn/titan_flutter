@@ -572,6 +572,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
               onRefresh: getContractDetailData,
               onLoadingMore: getMap3StakingLogMoreData,
               child: CustomScrollView(
+                //physics: AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
                   // 0.通知
                   SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
@@ -858,7 +859,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 8)}";
@@ -1043,17 +1044,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var periodEpoch7 = _releaseEpoch - 7;
 
     var editDateLimit = "";
-    if (_isCreator) {
-      editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
-      if ((_microDelegationsCreator?.renewal?.status ?? 0) != 0) {
-        editDateLimit = "（设置完成）";
+    if (_isDelegator) {
+      if (_isCreator) {
+        editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
+        if ((_microDelegationsCreator?.renewal?.status ?? 0) != 0) {
+          editDateLimit = "（设置完成）";
+        }
+      } else {
+        editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
+        if ((_microDelegationsJoiner?.renewal?.status ?? 0) != 0) {
+          editDateLimit = "（设置完成）";
+        }
       }
     } else {
-      editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
-      if ((_microDelegationsJoiner?.renewal?.status ?? 0) != 0) {
-        editDateLimit = "（设置完成）";
-      }
+      editDateLimit = "";
     }
+
 
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
       editDateLimit = "";
@@ -1066,7 +1072,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         child: Column(
           children: <Widget>[
             Visibility(
-              //visible: showLog,
+              // visible: showLog,
               visible: false,
               child: Text(
                 "当前纪元：$_currentEpoch",

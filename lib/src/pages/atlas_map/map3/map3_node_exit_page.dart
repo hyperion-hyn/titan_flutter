@@ -154,7 +154,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
 
     var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 9)}";
     var nodeIdPre = "节点号";

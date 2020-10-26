@@ -52,7 +52,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   void initState() {
     super.initState();
 
-    client.printErrors = true;
+    // client.printErrors = true;
   }
 
   @override

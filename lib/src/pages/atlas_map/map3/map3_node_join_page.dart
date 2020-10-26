@@ -344,7 +344,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
   Widget _nodeOwnerWidget() {
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
       child: Row(
