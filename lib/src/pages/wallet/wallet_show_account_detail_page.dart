@@ -137,6 +137,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       }
     }
     if(hynQuote != null){
+      /*var tempAmountText = amountText;
+      if(tempAmountText.contains("-") || tempAmountText.contains("+")){
+        tempAmountText = tempAmountText.substring(1);
+      }*/
       var amountQuote = Decimal.parse(transDetail.amount.toString()) * Decimal.parse(hynQuote.price.toString());
       amountText = "$amountText (${quotesSign.sign}$amountQuote)";
       gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";

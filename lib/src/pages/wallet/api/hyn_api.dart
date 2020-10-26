@@ -357,9 +357,11 @@ class HYNApi {
     TransactionDetailVo transactionDetail,
     bool getTypeStr = false,
     bool getAmountStr = false,
+    bool getRecordAmountStr = false,
   }) {
     String typeStr = "";
     String amountStr = "0";
+    String recordAmountStr = "";
     switch (hynMessageType) {
       case MessageType.typeNormal:
         typeStr = "转账";
@@ -385,30 +387,42 @@ class HYNApi {
         break;
       case MessageType.typeCollectReStakingReward:
         typeStr = "提取复抵押奖励";
-        amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getAtlasRewardAmount() ?? "0.0")}";
+        String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
+        amountStr = "+${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCreateMap3:
         typeStr = "创建Map3节点";
-        amountStr = "-${FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        String value = getDecodedAmount(transactionDetail);
+        amountStr ="-${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeEditMap3:
         typeStr = "编辑Map3节点";
         break;
       case MessageType.typeTerminateMap3:
         typeStr = "终止Map3节点";
-        amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        String value = getDecodedAmount(transactionDetail);
+        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
         typeStr = "微抵押";
-        amountStr ="-${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        String value = getDecodedAmount(transactionDetail);
+        amountStr ="-${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeUnMicroDelegate:
         typeStr = "部分撤销";
-        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        String value = getDecodedAmount(transactionDetail);
+        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励";
-        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getMap3RewardAmount() ?? "0.0")}";
+        String value = transactionDetail?.getMap3RewardAmount() ?? "0.0";
+        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
         typeStr = "下期预设";
@@ -419,9 +433,23 @@ class HYNApi {
       return typeStr;
     }else if(getAmountStr){
       return amountStr;
+    }else if(getRecordAmountStr){
+      return recordAmountStr;
     } else {
       return "";
     }
+  }
+
+  static String getDecodedAmount(TransactionDetailVo transactionDetail){
+    return transactionDetail?.getDecodedAmount() ?? "0.0";
+  }
+
+  static String getTransRecordAmount(String value){
+    var recordAmountStr = "";
+    if(Decimal.parse(value) > Decimal.fromInt(0)){
+      recordAmountStr = FormatUtil.stringFormatCoinNum(value);
+    }
+    return recordAmountStr;
   }
 
   static String getHynToAddress(TransactionDetailVo transactionDetailVo) {
