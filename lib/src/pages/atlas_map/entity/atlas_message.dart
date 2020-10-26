@@ -2,7 +2,6 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -43,6 +42,14 @@ class ConfirmInfoDescription {
   });
 }
 
+get _walletAddressAndName {
+  var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+  var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+  var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address ?? "");
+  var address = shortBlockChainAddress(hynAddress);
+  return "$walletName ($address)";
+}
+
 //==================================Atlas Message Begin==============================================
 
 class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
@@ -65,17 +72,12 @@ class ConfirmCreateAtlasNodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认创建Atlas节点",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas节点",
       toDetail: "节点号:${entity.payload.nodeId}",
       fee: "0.000021",
@@ -103,17 +105,12 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认编辑Atlas节点",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas节点",
       toDetail: "节点号:${entity.payload.nodeId}",
       fee: "0.000021",
@@ -142,11 +139,6 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "提取奖励",
       amountDirection: "+",
@@ -181,17 +173,12 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "激活节点",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas链",
       toDetail: "",
       fee: "0.000021",
@@ -220,17 +207,12 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "抵押Atlas节点",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas节点",
       toDetail: "节点号:$nodeId",
       fee: "0.000021",
@@ -259,17 +241,12 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "撤销抵押",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas链",
       toDetail: "",
       fee: "0.000021",
@@ -308,17 +285,12 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认创建节点",
       amountDirection: "-",
       amount: entity.payload.staking,
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Map3节点",
       toDetail: "节点号:${entity.payload.nodeId}",
       fee: "0.000021",
@@ -348,17 +320,12 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认编辑节点",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Map3节点",
       toDetail: "节点号:${entity.payload.nodeId}",
       fee: "0.000021",
@@ -403,17 +370,12 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认修改预设",
       amountDirection: "",
       amount: "0",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Atlas链",
       toDetail: "",
       fee: "0.000021",
@@ -452,11 +414,6 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认终止节点",
       amountDirection: "+",
@@ -464,7 +421,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
       amount: "0",
       toName: "钱包",
-      toDetail: "$walletName ($address)",
+      toDetail: _walletAddressAndName,
       fee: "0.000021",
     );
   }
@@ -487,7 +444,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
       return txHashEntity.txHash.isNotEmpty;
-    }catch(e) {
+    } catch (e) {
       LogUtil.toastException(e);
       print(e);
     }
@@ -500,11 +457,6 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认撤销",
       amountDirection: "+",
@@ -512,7 +464,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       fromDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
       amount: amount ?? "0",
       toName: "钱包",
-      toDetail: "$walletName ($address)",
+      toDetail: _walletAddressAndName,
       fee: "0.000021",
     );
   }
@@ -550,16 +502,11 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "确认抵押节点",
       amountDirection: "-",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Map3节点",
       toDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
       amount: amount ?? "0",
@@ -602,11 +549,6 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "提取奖励",
       amountDirection: "+",
@@ -614,7 +556,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       fromDetail: "",
       amount: this.amount,
       toName: "钱包",
-      toDetail: "$walletName ($address)",
+      toDetail: _walletAddressAndName,
       fee: "0.000021",
       addressList: this.addressList,
     );
@@ -644,16 +586,11 @@ class ConfirmDivideMap3NodeMessage implements AtlasMessage {
 
   @override
   ConfirmInfoDescription get description {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var walletName = activatedWallet?.wallet?.keystore?.name??"";
-    var hynAddress = WalletUtil.ethAddressToBech32Address(activatedWallet?.wallet?.getEthAccount()?.address??"");
-    var address = shortBlockChainAddress(hynAddress);
-
     return ConfirmInfoDescription(
       title: "节点分裂",
       amountDirection: "-",
       fromName: "钱包",
-      fromDetail: "$walletName ($address)",
+      fromDetail: _walletAddressAndName,
       toName: "Map3节点",
       toDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
       amount: "0",
