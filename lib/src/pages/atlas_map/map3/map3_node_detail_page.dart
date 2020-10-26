@@ -452,11 +452,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   _loadData() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
-    _map3infoEntity = widget.map3infoEntity;
-
-    _nodeId = _map3infoEntity?.nodeId ?? "";
-    _nodeAddress = _map3infoEntity?.address ?? "";
-    _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
     getContractDetailData();
   }
@@ -470,6 +465,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+
+    _map3infoEntity = widget.map3infoEntity;
+
+    _nodeId = _map3infoEntity?.nodeId ?? "";
+    _nodeAddress = _map3infoEntity?.address ?? "";
+    _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
     super.initState();
   }

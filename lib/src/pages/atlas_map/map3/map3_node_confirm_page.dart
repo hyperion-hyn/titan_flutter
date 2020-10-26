@@ -222,7 +222,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
                   child: Text(
-                    "$_amountDirection$_amount HYN",
+                    "$_amountDirection${FormatUtil.formatPrice(double.parse(_amount ?? "0"))} HYN",
                     style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
                   ),
                 ),
