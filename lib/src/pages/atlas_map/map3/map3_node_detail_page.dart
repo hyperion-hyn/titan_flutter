@@ -1208,7 +1208,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                       Application.eventBus.fire(UpdateMap3TabsPageIndexEvent(
                         index: 1,
                       ));
-                      Navigator.of(context).pop();
+                      Routes.popUntilCachedEntryRouteName(context);
                     },
                     child: Text.rich(TextSpan(children: [
                       TextSpan(
