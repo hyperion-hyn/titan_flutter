@@ -114,8 +114,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
   Future _refreshData() async {
     infoContentList.clear();
-    _currentPage = 1;
     _delegateRecordList.clear();
+    showMap3List.clear();
+    _currentPage = 1;
 
     var hasWallet = _activatedWallet != null;
 //    try {
