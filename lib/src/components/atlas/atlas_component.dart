@@ -98,7 +98,7 @@ class _AtlasManagerState extends BaseState<_AtlasManager> {
   }
 }
 
-enum AtlasAspect { config }
+enum AtlasAspect { home }
 
 class AtlasInheritedModel extends InheritedModel<AtlasAspect> {
   final AtlasHomeEntity atlasHomeEntity;
@@ -156,8 +156,6 @@ class AtlasInheritedModel extends InheritedModel<AtlasAspect> {
   bool updateShouldNotifyDependent(
       AtlasInheritedModel oldWidget, Set<AtlasAspect> dependencies) {
     return atlasHomeEntity != oldWidget.atlasHomeEntity &&
-        dependencies.contains(
-          AtlasAspect.config,
-        );
+        dependencies.contains(AtlasAspect.home);
   }
 }
