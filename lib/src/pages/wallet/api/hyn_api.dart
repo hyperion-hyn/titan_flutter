@@ -399,11 +399,11 @@ class HYNApi {
         break;
       case MessageType.typeMicroDelegate:
         typeStr = "微抵押";
-        amountStr ="-${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        amountStr ="${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "取消微抵押";
-        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        typeStr = "部分撤销";
+        amountStr ="${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励";
