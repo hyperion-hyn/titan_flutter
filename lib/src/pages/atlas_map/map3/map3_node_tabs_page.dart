@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
+import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 
@@ -13,13 +17,26 @@ class Map3NodeTabsPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerProviderStateMixin {
+class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
+    with SingleTickerProviderStateMixin {
   TabController _tabController;
+  StreamSubscription _eventBusSubscription;
 
   @override
   void initState() {
     _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
     super.initState();
+    _listenEventBus();
+  }
+
+  _listenEventBus() {
+    _eventBusSubscription = Application.eventBus.on().listen((event) async {
+      if (event is UpdateMap3TabsPageIndexEvent) {
+        this.setState(() {
+          _tabController.index = event.index;
+        });
+      }
+    });
   }
 
   @override
@@ -47,7 +64,10 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
                     child: TabBar(
                       controller: _tabController,
                       labelColor: Colors.white,
-                      labelStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+                      labelStyle: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: Colors.white,
                       indicatorWeight: 3,

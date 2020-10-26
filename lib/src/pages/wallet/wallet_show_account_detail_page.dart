@@ -73,7 +73,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     ];
 
     var transDetail = widget.transactionDetail;
-    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
+    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true, formatComma: false)}";
     /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
@@ -137,8 +137,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       }
     }
     if(hynQuote != null){
-      var amountQuote = Decimal.parse(transDetail.amount.toString()) * Decimal.parse(hynQuote.price.toString());
-      amountText = "$amountText (${quotesSign.sign}$amountQuote)";
+      var tempAmountText = amountText;
+      if(tempAmountText.contains("-") || tempAmountText.contains("+")){
+        tempAmountText = tempAmountText.substring(1);
+      }
+      var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
+      amountText = "${FormatUtil.stringFormatCoinNum(amountText)} (${quotesSign.sign}$amountQuote)";
       gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
       hynPrice = "${quotesSign.sign}${hynQuote.price} / HYN";
 

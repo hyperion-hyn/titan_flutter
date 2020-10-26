@@ -119,49 +119,51 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _currentPage = 1;
 
     var hasWallet = _activatedWallet != null;
-//    try {
-    var resultList = await Future.wait([
-      _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
-      _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
-      _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
-      hasWallet ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000) : Future.delayed(Duration())
-    ]);
-    _atlasInfoEntity = resultList[0];
-    _delegateRecordList = resultList[1];
-    _validatorInformationEntity = resultList[2];
-    List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
+    try {
+      var resultList = await Future.wait([
+        _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
+        _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
+        _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
+        hasWallet
+            ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
+            : Future.delayed(Duration())
+      ]);
+      _atlasInfoEntity = resultList[0];
+      _delegateRecordList = resultList[1];
+      _validatorInformationEntity = resultList[2];
+      List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
 
-    if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
-      showMyMap3 = true;
-    }
+      if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
+        showMyMap3 = true;
+      }
 
-    if(hasWallet)
-      myMap3List.forEach((myElement) {
-        bool isShowMap3 = true;
-        if(myElement.status != Map3InfoStatus.CONTRACT_HAS_STARTED.index){
-          isShowMap3 = false;
-        }
-        if(_atlasInfoEntity.myMap3 != null){
-          _atlasInfoEntity.myMap3.forEach((atlasElement) {
-            if(myElement.address == atlasElement.address){
-              isShowMap3 = false;
-            }
-          });
-        }
-        if(isShowMap3){
-          showMap3List.add(myElement);
-        }
-      });
+      if (hasWallet)
+        myMap3List.forEach((myElement) {
+          bool isShowMap3 = true;
+          if (myElement.status != Map3InfoStatus.CONTRACT_HAS_STARTED.index) {
+            isShowMap3 = false;
+          }
+          if (_atlasInfoEntity.myMap3 != null) {
+            _atlasInfoEntity.myMap3.forEach((atlasElement) {
+              if (myElement.address == atlasElement.address) {
+                isShowMap3 = false;
+              }
+            });
+          }
+          if (isShowMap3) {
+            showMap3List.add(myElement);
+          }
+        });
 
-    infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.home)}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.contact)}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.describe)}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
+      infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.home)}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.contact)}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.describe)}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
 
-    /*_dataList.forEach((element) {
+      /*_dataList.forEach((element) {
         element.name = "haha";
         element.address = "121112121";
         element.rewardRate = "11%";
@@ -171,27 +173,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
       });*/
 
-    if (mounted) {
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+        });
+        _loadDataBloc.add(RefreshSuccessEvent());
+      }
+    } catch (error) {
+      logger.e(error);
+      LogUtil.toastException(error);
       setState(() {
-        _currentState = null;
+        _currentState = all_page_state.LoadFailState();
       });
-      _loadDataBloc.add(RefreshSuccessEvent());
-    }
-//    }catch(error){
-//      logger.e(error);
-//      LogUtil.toastException(error);
-//      setState(() {
-//        _currentState = all_page_state.LoadFailState();
-//      });
-//    }
-
-  }
-
-  String getContentStr(String contentStr){
-    if(contentStr == null || contentStr.isEmpty){
-      return "暂无";
-    }else{
-      return contentStr;
     }
   }
 
@@ -254,7 +247,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index],isAtlasDetail: true);
+                          return delegateRecordItemWidget(_delegateRecordList[index], isAtlasDetail: true);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                   /*SliverList(
@@ -422,16 +415,16 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     Decimal leftReward = Decimal.fromInt(0);
     Decimal historyReward = Decimal.fromInt(0);
     if (_validatorInformationEntity != null && _validatorInformationEntity.redelegations != null) {
-      if(showMyMap3){
+      if (showMyMap3) {
         _validatorInformationEntity.redelegations.forEach((element) {
-          if(_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address.toLowerCase() == element.delegatorAddress){
+          if (_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address.toLowerCase() == element.delegatorAddress) {
             leftReward = leftReward + ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(element.reward));
           }
         });
       }
     }
 
-    if(_validatorInformationEntity != null){
+    if (_validatorInformationEntity != null) {
       historyReward = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(_validatorInformationEntity.blockReward));
     }
 
@@ -932,7 +925,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          if(showMyMap3 && _atlasInfoEntity.myMap3[_selectedMap3NodeValue].isCreator())
+          if (showMyMap3 && _atlasInfoEntity.myMap3[_selectedMap3NodeValue].isCreator())
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 14),
               child: ClickOvalButton(
@@ -994,8 +987,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               if (showMap3List.isEmpty) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
               } else {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity,showMap3List)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity, showMap3List)));
               }
             },
             width: 90,
@@ -1062,5 +1055,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         ),
       ),
     );
+  }
+}
+
+String getContentOrEmptyStr(String contentStr) {
+  if (contentStr == null || contentStr.isEmpty) {
+    return "暂无";
+  } else {
+    return contentStr;
   }
 }

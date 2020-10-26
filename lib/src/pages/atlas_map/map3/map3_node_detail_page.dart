@@ -25,6 +25,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -161,6 +162,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
       print("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
+
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
@@ -170,6 +172,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
+
     print("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
@@ -1042,12 +1045,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var editDateLimit = "";
     if (_isCreator) {
       editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
-      if ((_microDelegationsCreator?.renewal?.status??0) != 0) {
+      if ((_microDelegationsCreator?.renewal?.status ?? 0) != 0) {
         editDateLimit = "（设置完成）";
       }
     } else {
       editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
-      if ((_microDelegationsJoiner?.renewal?.status??0) != 0) {
+      if ((_microDelegationsJoiner?.renewal?.status ?? 0) != 0) {
         editDateLimit = "（设置完成）";
       }
     }
@@ -1171,9 +1174,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     if (!_visibleReDelegation) return Container();
 
     bool isReDelegation = _atlasInfoEntity != null;
-    var isOk = !isReDelegation;
 
-    if (true) {
+    if (!isReDelegation) {
       return Container(
         color: Colors.white,
         child: Padding(
@@ -1775,14 +1777,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
     var joinerAddress = _address.toLowerCase();
 
-    for (var item in _map3nodeInformationEntity?.microdelegations??[]) {
-      print("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length??0}");
+    for (var item in _map3nodeInformationEntity?.microdelegations ?? []) {
+      print("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
         print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
-        if (item.delegatorAddress == creatorAddress ) {
+        if (item.delegatorAddress == creatorAddress) {
           _microDelegationsCreator = item;
           print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
