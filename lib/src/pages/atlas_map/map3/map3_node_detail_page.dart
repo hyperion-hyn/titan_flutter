@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -14,6 +15,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_event.dart';
+import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
@@ -1142,6 +1145,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   visible: _isCreator,
                   child: InkWell(
                     onTap: () {
+                      BlocProvider.of<AppTabBarBloc>(context).add(ChangeNodeTabBarItemEvent(index: 1));
                       Navigator.of(context).pop();
                     },
                     child: Text.rich(TextSpan(children: [
@@ -1390,7 +1394,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var myRewardString = "0";
 
     if (_microDelegationsJoiner != null) {
-      var myDelegation = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount ?? 0);
+      var myDelegation = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
@@ -1399,6 +1403,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
 
+
+    /*
     if (_isDelegator) {
       if (myDelegationString == "0" || (myDelegationString?.isEmpty ?? false)) {
         var staking = ConvertTokenUnit.weiToEther(
@@ -1418,6 +1424,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         myRewardString = FormatUtil.formatPrice(reward.toDouble());
       }
     }
+    */
 
     return Container(
       color: Colors.white,
@@ -1695,24 +1702,31 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   // todo: test_detail
-
   _setupMicroDelegations() {
+    print("[object] --> micro:${_map3nodeInformationEntity != null}");
+
     if (_map3nodeInformationEntity == null ||
         (_map3nodeInformationEntity != null && (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? false)))
       return;
 
-    var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress;
-    var joinerAddress = _address;
+    var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
+    var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
-      if (item.delegatorAddress.isNotEmpty &&
-          (item.delegatorAddress == creatorAddress || item.delegatorAddress == joinerAddress)) {
+      print("[object] --> micro.length:${_map3nodeInformationEntity.microdelegations.length}");
+
+      var delegatorAddress = item.delegatorAddress.toLowerCase() ;
+      if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
+        print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+
         if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
           _microDelegationsCreator = item;
+          print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
 
         if (item.delegatorAddress == joinerAddress && _microDelegationsJoiner == null) {
           _microDelegationsJoiner = item;
+          print("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }
       }
     }
