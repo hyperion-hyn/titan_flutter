@@ -502,10 +502,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               onTap: _canExit ? _showMoreAlertView : _shareAction,
               borderRadius: BorderRadius.circular(60),
               child: Padding(
-                padding: EdgeInsets.only(left: 20, right: 35),
+                padding: EdgeInsets.only(left: 16, right: 16),
                 child: Icon(
                   _canExit ? Icons.more_horiz : Icons.share,
-                  color: Theme.of(context).primaryColor,
+                  color: HexColor("999999"),
+                  size: 20,
                 ),
               ),
             ),
@@ -1014,7 +1015,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
@@ -1055,7 +1056,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: 16),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -1081,7 +1082,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: 16),
               child: Row(
                 children: <Widget>[
                   Expanded(
@@ -1294,7 +1295,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
@@ -1345,6 +1346,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Expanded(
                                   child: Text(
@@ -1497,11 +1499,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
               decoration: BoxDecoration(
                 color: HexColor("#F8F8F8"),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(6),
               ),
               child: profitListBigWidget(
                 [
-                  {"累积产生": totalRewardString},
+                  {"累计奖励": totalRewardString},
                   {"管理费": feeRate},
                   {"我的抵押": _isDelegator?myDelegationString:"未抵押"},
                 ],
