@@ -358,6 +358,7 @@ class HYNApi {
     bool getTypeStr = false,
     bool getAmountStr = false,
     bool getRecordAmountStr = false,
+    bool formatComma = true,
   }) {
     String typeStr = "";
     String amountStr = "0";
@@ -388,13 +389,13 @@ class HYNApi {
       case MessageType.typeCollectReStakingReward:
         typeStr = "提取复抵押奖励";
         String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
-        amountStr = "+${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCreateMap3:
         typeStr = "创建Map3节点";
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="-${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeEditMap3:
@@ -403,25 +404,25 @@ class HYNApi {
       case MessageType.typeTerminateMap3:
         typeStr = "终止Map3节点";
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
         typeStr = "微抵押";
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="-${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeUnMicroDelegate:
         typeStr = "部分撤销";
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励";
         String value = transactionDetail?.getMap3RewardAmount() ?? "0.0";
-        amountStr ="+${FormatUtil.stringFormatCoinNum(value)}";
+        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
