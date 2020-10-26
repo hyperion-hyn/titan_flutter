@@ -229,25 +229,30 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     return Column(
       children: <Widget>[
         _buildAccountItem(context, coin),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 6),
-              child: Text(
-                "兑换主链币",
-                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+        InkWell(
+          onTap: (){
+            AtlasApi.goToAtlasMap3HelpPage(context);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 6),
+                child: Text(
+                  "兑换主链币",
+                  style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 14),
-              child: Image.asset(
-                "res/drawable/ic_question_remind.png",
-                width: 16,
-                height: 16,
+              Padding(
+                padding: const EdgeInsets.only(right: 14),
+                child: Image.asset(
+                  "res/drawable/ic_question_remind.png",
+                  width: 16,
+                  height: 16,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         )
       ],
     );

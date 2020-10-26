@@ -81,7 +81,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
 
   @override
   void didPopNext() {
-    onWidgetRefreshCallback();
+    if (mounted) {
+      onWidgetRefreshCallback();
+    }
+
     super.didPopNext();
   }
 

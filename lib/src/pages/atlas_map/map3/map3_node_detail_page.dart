@@ -1116,8 +1116,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (!_visibleReDelegation) return Container();
 
     bool isReDelegation = _atlasInfoEntity != null;
+    var isOk = !isReDelegation;
 
-    if (!isReDelegation) {
+    if (true) {
       return Container(
         color: Colors.white,
         child: Padding(
@@ -1142,9 +1143,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   ),
                 ),
                 Visibility(
-                  visible: _isCreator,
+                  visible: _isCreator && _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
                   child: InkWell(
                     onTap: () {
+                      // todo: bloc
                       BlocProvider.of<AppTabBarBloc>(context).add(ChangeNodeTabBarItemEvent(index: 1));
                       Navigator.of(context).pop();
                     },
@@ -1398,6 +1400,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
+      // todo:
+      // 156551332955190012
+      _microDelegationsJoiner?.reward = num.parse('156551332955190012');
       var myReward = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.reward?.toDouble() ?? 0);
       var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
