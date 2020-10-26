@@ -43,8 +43,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   @override
   void initState() {
-    _currentFeeRate = _maxFeeRate;
-    _rateCoinController.addListener(_rateTextFieldChangeListener);
+    _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate())).toInt();
+    //_rateCoinController.addListener(_rateTextFieldChangeListener);
     _rateCoinController.text = "$_currentFeeRate";
 
     if (!_isJoiner) {
@@ -74,6 +74,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       return;
     }
 
+    /*
     var rateValue = _inputFeeRateValue;
     if (rateValue >= 10 && rateValue <= _maxFeeRate) {
       _currentFeeRate = rateValue;
@@ -85,6 +86,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _rateCoinController.text = "$_currentFeeRate";
       });
     }
+    */
   }
 
   @override
@@ -195,6 +197,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _currentFeeRate--;
         if (_currentFeeRate <= 10) {
           _currentFeeRate = 10;
+          Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
         }
 
         _rateCoinController.text = "$_currentFeeRate";
@@ -204,10 +207,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _currentFeeRate++;
         if (_currentFeeRate >= _maxFeeRate) {
           _currentFeeRate = _maxFeeRate;
+          Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
         }
         _rateCoinController.text = "$_currentFeeRate";
       });
-    });
+    }, maxFeeRate: _maxFeeRate);
   }
 
   Widget _switchWidget() {
@@ -281,7 +285,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
             var feeRate = _inputFeeRateValue;
             if (feeRate < 10 || feeRate > _maxFeeRate) {
-              Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$_maxFeeRate");
+              Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
               return;
             }
           }
@@ -325,7 +329,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
             var message = ConfirmPreEditMap3NodeMessage(
               autoRenew: _isOpen,
-              feeRate: _isJoiner ? null : feeRate,
+              map3NodeName: widget?.map3infoEntity?.name ?? "",
+              feeRate: _isJoiner ? null : feeRate.toString(),
               map3NodeAddress: widget.map3infoEntity.address,
             );
             Navigator.push(

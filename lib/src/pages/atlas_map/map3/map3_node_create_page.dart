@@ -87,7 +87,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     _inputTextController.addListener(_joinTextFieldChangeListener);
 
     _currentFeeRate = _maxFeeRate;
-    _rateCoinController.addListener(_rateTextFieldChangeListener);
+    //_rateCoinController.addListener(_rateTextFieldChangeListener);
     _rateCoinController.text = "$_currentFeeRate";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
@@ -361,7 +361,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               _currentFeeRate--;
               if (_currentFeeRate <= 10) {
                 _currentFeeRate = 10;
-                Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
+                Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -371,7 +371,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               _currentFeeRate++;
               if (_currentFeeRate >= _maxFeeRate) {
                 _currentFeeRate = _maxFeeRate;
-                Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
+                Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -635,7 +635,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     if (rateValue >= 10 && rateValue <= _maxFeeRate) {
       _currentFeeRate = rateValue;
     } else {
-      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
+      Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
 
       setState(() {
         _currentFeeRate = _maxFeeRate;

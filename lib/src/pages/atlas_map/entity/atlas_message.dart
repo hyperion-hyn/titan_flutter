@@ -337,11 +337,13 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   final bool autoRenew;
   final String feeRate;
   final String map3NodeAddress;
+  final String map3NodeName;
 
   ConfirmPreEditMap3NodeMessage({
     this.autoRenew,
     this.feeRate,
     this.map3NodeAddress,
+    this.map3NodeName,
   });
 
   @override
@@ -376,8 +378,8 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
       amount: "0",
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
-      toName: "Atlas链",
-      toDetail: "",
+      toName: "Map3节点",
+      toDetail: "${this.map3NodeName ?? ""}",
       fee: "0.000021",
     );
   }
