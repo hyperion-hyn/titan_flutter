@@ -94,6 +94,10 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         action = "参与Atlas节点";
         break;
 
+      case Map3NodeActionEvent.ATLAS_CANCEL_STAKE:
+        action = "撤销Map3节点";
+        break;
+
       default:
         break;
     }

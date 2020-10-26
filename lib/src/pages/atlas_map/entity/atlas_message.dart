@@ -119,10 +119,11 @@ class ConfirmEditAtlasNodeMessage implements AtlasMessage {
 }
 
 class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
+  final String nodeName;
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasReceiveAwardMessage({this.nodeId, this.map3Address, this.atlasAddress});
+  ConfirmAtlasReceiveAwardMessage({this.nodeName,this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
@@ -143,7 +144,7 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
       title: "提取奖励",
       amountDirection: "+",
       amount: "0",
-      fromName: "Atlas节点",
+      fromName: nodeName ?? "Atlas节点",
       fromDetail: "节点号:$nodeId",
       toName: "Map3节点",
       toDetail: "",
@@ -187,10 +188,11 @@ class ConfirmAtlasActiveMessage implements AtlasMessage {
 }
 
 class ConfirmAtlasStakeMessage implements AtlasMessage {
+  final String nodeName;
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasStakeMessage({this.nodeId, this.map3Address, this.atlasAddress});
+  ConfirmAtlasStakeMessage({this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
@@ -213,7 +215,7 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
       amount: "0",
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
-      toName: "Atlas节点",
+      toName: nodeName ?? "Atlas节点",
       toDetail: "节点号:$nodeId",
       fee: "0.000021",
     );
@@ -221,10 +223,10 @@ class ConfirmAtlasStakeMessage implements AtlasMessage {
 }
 
 class ConfirmAtlasUnStakeMessage implements AtlasMessage {
-  final String nodeId;
+  final String nodeName;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasUnStakeMessage({this.nodeId, this.map3Address, this.atlasAddress});
+  ConfirmAtlasUnStakeMessage({this.nodeName, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
@@ -237,7 +239,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
   }
 
   @override
-  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_STAKE;
+  Map3NodeActionEvent get type => Map3NodeActionEvent.ATLAS_CANCEL_STAKE;
 
   @override
   ConfirmInfoDescription get description {
@@ -247,7 +249,7 @@ class ConfirmAtlasUnStakeMessage implements AtlasMessage {
       amount: "0",
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
-      toName: "Atlas链",
+      toName: nodeName ?? "Atlas节点",
       toDetail: "",
       fee: "0.000021",
     );

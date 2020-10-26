@@ -489,6 +489,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               () {
                                 var entity = PledgeAtlasEntity.emptyEntity();
                                 AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
+                                  nodeName: _atlasInfoEntity.name,
                                   nodeId: _atlasInfoEntity.nodeId,
                                   map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
                                   atlasAddress: widget.atlasNodeAddress,
@@ -954,7 +955,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         () {
                           var entity = PledgeAtlasEntity.emptyEntity();
                           AtlasMessage message = ConfirmAtlasUnStakeMessage(
-                            nodeId: _atlasInfoEntity.nodeId,
+                            nodeName: _atlasInfoEntity.name,
                             atlasAddress: widget.atlasNodeAddress,
                             map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
                           );

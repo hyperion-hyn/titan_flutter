@@ -18,6 +18,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -327,6 +328,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         //Fluttertoast.showToast(msg: '操作失败');
       }
     } catch (error) {
+      LogUtil.toastException(error);
       setState(() {
         _isTransferring = false;
       });

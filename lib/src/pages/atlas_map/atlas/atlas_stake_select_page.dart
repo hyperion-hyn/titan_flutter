@@ -235,6 +235,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
         S.of(context).confirm,
         () async {
           AtlasMessage message = ConfirmAtlasStakeMessage(
+            nodeName: widget._atlasInfoEntity.name,
             nodeId: widget._atlasInfoEntity.nodeId,
             atlasAddress: widget._atlasInfoEntity.address,
             map3Address: widget.myMap3List[_selectedMap3NodeValue].address,

@@ -127,6 +127,7 @@ enum Map3NodeActionEvent {
   ATLAS_RECEIVE_AWARD,
   ATLAS_ACTIVE_NODE,
   ATLAS_STAKE,
+  ATLAS_CANCEL_STAKE,
 
   //Other
 
