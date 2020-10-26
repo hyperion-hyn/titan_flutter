@@ -1200,11 +1200,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   ),
                 ),
                 Visibility(
-                  visible: _isCreator && _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
+                  visible: _isCreator &&
+                      _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
                   child: InkWell(
                     onTap: () {
                       // todo: bloc
-                      BlocProvider.of<AppTabBarBloc>(context).add(ChangeNodeTabBarItemEvent(index: 1));
+                      Application.eventBus.fire(UpdateMap3TabsPageIndexEvent(
+                        index: 1,
+                      ));
                       Navigator.of(context).pop();
                     },
                     child: Text.rich(TextSpan(children: [
