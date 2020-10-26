@@ -83,11 +83,11 @@ class WalletShowAccountInfoPageState
   Widget build(BuildContext context) {
     var isFail = (widget.transactionDetail.state == 4 ||
         widget.transactionDetail.state == 5);
-    var pageTitle;
-    var pageStatusImage;
-    getAccountPageTitle(context,widget.transactionDetail,(funPageTitle,funPageStatusImage){
-      pageTitle = funPageTitle;
-      pageStatusImage = funPageStatusImage;
+    var infoItemTitle;
+    var infoItemStatusImage;
+    getAccountPageTitle(context,widget.transactionDetail,(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage){
+      infoItemTitle = pageTitle;
+      infoItemStatusImage = pageStatusImage;
     });
     return Scaffold(
       backgroundColor: Colors.white,
@@ -104,13 +104,13 @@ class WalletShowAccountInfoPageState
                     Padding(
                       padding: const EdgeInsets.only(top: 18.0, bottom: 20),
                       child: Image.asset(
-                        pageStatusImage,
+                        infoItemStatusImage,
                         width: 63,
                         height: 63,
                       ),
                     ),
                     Text(
-                      pageTitle,
+                      infoItemTitle,
                       style: TextStyle(
                           fontSize: 16,
                           color: DefaultColors.color333,
@@ -249,13 +249,13 @@ class WalletShowAccountInfoPageState
 void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail,Function function){
   var pageTitle = "";
   var pageStatusImage = "";
-  var pageDetailColor = HexColor("#F2F2F2");
+  var pageDetailColor = HexColor("#22F2F2F2");
   var pageDetailStatusImage = "";
   if(transactionDetail.state == 1 || transactionDetail.state == 2){
     pageTitle = S.of(context).pending;
     pageStatusImage = "res/drawable/ic_transfer_account_info_pending.png";
 
-    pageDetailColor = HexColor("#F2F2F2");
+    pageDetailColor = HexColor("#22F2F2F2");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_pending.png";
   }else if(transactionDetail.state == 3){
     if(transactionDetail.hynType == MessageType.typeNormal){
@@ -265,7 +265,7 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
 
-    pageDetailColor = HexColor("#07C160");
+    pageDetailColor = HexColor("#2207C160");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_success.png";
   }else if(transactionDetail.state == 4 || transactionDetail.state == 5){
     if(transactionDetail.hynType == MessageType.typeNormal){
@@ -275,7 +275,7 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_fail.png";
 
-    pageDetailColor = HexColor("#FF5E5E");
+    pageDetailColor = HexColor("#22FF5E5E");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_fail.png";
   }
   function(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage);
