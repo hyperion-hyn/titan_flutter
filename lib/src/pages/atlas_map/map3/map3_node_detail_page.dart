@@ -707,7 +707,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       children = <Widget>[
         Spacer(),
         ClickOvalButton(
-          "撤销抵押",
+          "部分撤销",
           _cancelAction,
           width: 120,
           height: 32,

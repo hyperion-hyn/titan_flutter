@@ -918,7 +918,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
   var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
   var detail = HYNApi.getValueByHynType(item.type, getTypeStr: true);
-  detail = detail + " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getAmountStr: true)}";
+//  detail = detail + " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getAmountStr: true)}";
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
@@ -947,8 +947,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                   width: 40,
                   child: iconWidget("", item.name, item.from, isCircle: true),
                 ),
-                Flexible(
-                  flex: 4,
+                Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Column(
@@ -956,12 +955,14 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            Flexible(
+                            Expanded(
                               flex: 2,
                               child: RichText(
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 text: TextSpan(
                                   text: item.name,
-                                  style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500),
+                                  style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500,),
                                   children: [
                                     TextSpan(
                                       text: recordName,
@@ -972,11 +973,10 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                                 ),
                               ),
                             ),
-                            Spacer(),
+                            SizedBox(width: 20,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6),
                                   child: Text(
