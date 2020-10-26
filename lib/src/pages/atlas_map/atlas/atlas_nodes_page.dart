@@ -8,6 +8,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -88,7 +89,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     ///
     _timer = Timer.periodic(Duration(seconds: 7), (t) {
       print('[AtlasNodePage] refresh epoch');
-      _getData();
+      // _getData();
     });
   }
 
@@ -207,7 +208,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.epoch}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -230,7 +231,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     ),
                     InkWell(
                       child: Text(
-                        '${_atlasHomeEntity?.info?.blockNum}',
+                        '${AtlasInheritedModel.of(context).committeeInfo?.blockNum}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -254,7 +255,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.elected}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.elected}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -274,7 +275,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.candidate}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -385,8 +386,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         ),
                       ),
                       TimerTextWidget(
-                        remainTime: _remainTime,
-                        loopTime: _secPerEpoch,
+                        remainTime: AtlasInheritedModel.of(context)
+                            .remainSecTillNextEpoch,
+                        loopTime: AtlasInheritedModel.of(context).secPerEpoch,
                       ),
                     ],
                   )
