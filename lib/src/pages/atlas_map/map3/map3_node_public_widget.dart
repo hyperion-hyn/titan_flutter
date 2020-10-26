@@ -1032,10 +1032,11 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
 }
 
 void _pushTransactionDetailAction(HynTransferHistory item) {
-  TransactionDetailVo transactionDetail = TransactionDetailVo(
+  TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
+  /*TransactionDetailVo transactionDetail = TransactionDetailVo(
     id: item.id,
     contractAddress: item.contractAddress,
-    state: 1,
+    state: item.status,
     //1 success, 0 pending, -1 failed
     amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble(),
     symbol: "HYN",
@@ -1054,7 +1055,7 @@ void _pushTransactionDetailAction(HynTransferHistory item) {
     epoch: item.epoch,
     transactionIndex: item.transactionIndex,
     type: item.type, //1、转出 2、转入
-  );
+  );*/
 
   Navigator.push(
     Keys.rootKey.currentContext,
