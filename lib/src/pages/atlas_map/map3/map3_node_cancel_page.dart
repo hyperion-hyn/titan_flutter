@@ -413,7 +413,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
     return ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
-            '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'));
+            '${FormatUtil.clearScientificCounting((_microdelegations?.pendingDelegation?.amount??0).toDouble())}'));
   }
 
   bool _canCancelDelegation() {

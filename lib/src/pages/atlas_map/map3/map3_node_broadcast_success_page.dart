@@ -91,7 +91,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         break;
 
       case Map3NodeActionEvent.ATLAS_STAKE:
-        action = "激活Atlas节点";
+        action = "参与Atlas节点";
         break;
 
       default:
