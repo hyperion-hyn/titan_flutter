@@ -26,12 +26,10 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerPr
   Widget build(BuildContext context) {
     return BlocListener<AppTabBarBloc, AppTabBarState>(
       listener: (context, state) {
-        if (state is ChangeTabBarItemState) {
-          if (state.index == 1) {
-            this.setState(() {
-              _tabController.index = 0;
-            });
-          }
+        if (state is ChangeNodeTabBarItemState) {
+          this.setState(() {
+            _tabController.index = state.index;
+          });
         }
       },
       child: Scaffold(

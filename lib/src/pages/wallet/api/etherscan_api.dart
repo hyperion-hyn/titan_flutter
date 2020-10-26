@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
-import 'package:titan/src/basic/http/test_http.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
@@ -51,7 +50,7 @@ class EtherscanApi {
 
   Future<List<HynTransferHistory>> queryHYNHistory(
       String address, int page) async {
-    Map result = await TestHttpCore.instance.post(
+    Map result = await HttpCore.instance.post(
       "v1/wallet/account_txs",
       data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
     );
@@ -71,7 +70,7 @@ class EtherscanApi {
   }
 
   Future<HynTransferHistory> queryHYNTxDetail(String address) async {
-    Map result = await TestHttpCore.instance.post(
+    Map result = await HttpCore.instance.post(
       "v1/wallet/tx_detail",
       data: "{\"address\": \"$address\"}",
     );

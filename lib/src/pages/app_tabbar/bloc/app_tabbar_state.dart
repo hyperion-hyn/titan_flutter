@@ -30,3 +30,8 @@ class ChangeTabBarItemState extends AppTabBarState {
   int index;
   ChangeTabBarItemState({this.index});
 }
+
+class ChangeNodeTabBarItemState extends AppTabBarState {
+  int index;
+  ChangeNodeTabBarItemState({this.index});
+}
