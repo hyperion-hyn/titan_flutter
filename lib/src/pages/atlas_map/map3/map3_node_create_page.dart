@@ -58,7 +58,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   List<DropdownMenuItem> _nodeList;
   List<NodeProviderEntity> _providerList = [];
   String _originInputStr = "";
-  int _managerSpendCount = 20;
+  int _currentFeeRate = 20;
+  int _maxFeeRate = 20;
+
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
 
@@ -83,9 +85,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   @override
   void initState() {
     _inputTextController.addListener(_joinTextFieldChangeListener);
-    _rateCoinController.addListener(_rateTextFieldChangeListener);
 
-    _rateCoinController.text = "$_managerSpendCount";
+    _currentFeeRate = _maxFeeRate;
+    _rateCoinController.addListener(_rateTextFieldChangeListener);
+    _rateCoinController.text = "$_currentFeeRate";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       _dealTextField(text);
@@ -120,7 +123,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _isKeyboardActive = false;
     });
 
-    print("[Keyboard] 1, isKeyboardActived:$_isKeyboardActive");
+    print("[Keyboard] 1, isKeyboardActive:$_isKeyboardActive");
   }
 
   @override
@@ -355,20 +358,23 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
           divider,
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
-              _managerSpendCount--;
-              if (_managerSpendCount < 10) {
-                _managerSpendCount = 10;
+              _currentFeeRate--;
+              if (_currentFeeRate <= 10) {
+                _currentFeeRate = 10;
+                Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
               }
 
-              _rateCoinController.text = "$_managerSpendCount";
+              _rateCoinController.text = "$_currentFeeRate";
             });
           }, addFunc: () {
             setState(() {
-              _managerSpendCount++;
-              if (_managerSpendCount > 20) {
-                _managerSpendCount = 20;
+              _currentFeeRate++;
+              if (_currentFeeRate >= _maxFeeRate) {
+                _currentFeeRate = _maxFeeRate;
+                Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
               }
-              _rateCoinController.text = "$_managerSpendCount";
+
+              _rateCoinController.text = "$_currentFeeRate";
             });
           }),
           divider,
@@ -452,22 +458,17 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       aspect: WalletAspect.activatedWallet,
     ).getCoinVoBySymbol('HYN');
 
-    var staking = _inputTextController.text ?? "0";
-
+    var staking = _inputStakingValue.toString();
     var stakingValue = Decimal.tryParse(staking);
-
     if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
       Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
 
       return;
     }
 
-    var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
-    var rate = (100 * (stakingValue.toDouble() / createMin)).toInt();
-    var rateMax = min(max(10, rate), 20);
-    var feeRate = int.parse(_rateCoinController.text ?? "0");
-    if (feeRate < 10 || feeRate > rateMax) {
-      Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$rateMax");
+    var feeRate = _inputFeeRateValue;
+    if (feeRate < 10 || feeRate > _maxFeeRate) {
+      Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$_maxFeeRate");
       return;
     }
 
@@ -488,8 +489,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
       _payload.staking = staking;
 
-      var feeRate = _rateCoinController.text ?? "0";
-      _payload.feeRate = feeRate;
+      _payload.feeRate = _inputFeeRateValue;
 
       _selectProviderEntity = _providerList[0];
 
@@ -586,52 +586,62 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     _selectNodeItemValue = _nodeList[regionIndex].value;
   }
 
+  get _inputStakingValue {
+    var text = _inputTextController?.text ?? '0';
+    if (text.isEmpty) {
+      text = '0';
+    }
+    var value = double.tryParse(text);
+    if (value == null) return 0;
+    return value;
+  }
+
+  get _inputFeeRateValue {
+    var text = _rateCoinController?.text ?? '0';
+    if (text.isEmpty) {
+      text = '0';
+    }
+    var value = double.tryParse(text);
+    if (value == null) return 0;
+    return value.toInt();
+  }
+
   void _joinTextFieldChangeListener() {
     _filterSubject.sink.add(_inputTextController.text);
+
+    _updateRate();
+  }
+
+  _updateRate() {
+    var createMin = double.parse(_introduceEntity?.startMin ?? '550000');
+    var rate = (100 * (_inputStakingValue / createMin)).toInt();
+    if (rate >= 20) {
+      _maxFeeRate = 20;
+    } else if (rate < 20 && rate > 10) {
+      _maxFeeRate = rate;
+    } else {
+      _maxFeeRate = 10;
+    }
+    _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
+    _rateCoinController.text = "$_currentFeeRate";
   }
 
   void _rateTextFieldChangeListener() {
-    var rate = _rateCoinController?.text ?? "0";
-    if (rate.isEmpty) {
-      rate = "0";
+    if (_inputFeeRateValue <= 0) {
+      return;
     }
 
-    var rateValue = int.tryParse(rate);
-    if (rateValue != null) {
-      if (rateValue >= 10 && rateValue <= 20) {
-        _managerSpendCount = rateValue;
-      }
-
-      if (rateValue < 10) {
-        // _managerSpendCount = 10;
-        // _rateCoinController.text = "$_managerSpendCount";
-      } else if (rateValue >= 10 && rateValue <= 20) {
-        _managerSpendCount = rateValue;
-      } else {
-        _managerSpendCount = 20;
-        _rateCoinController.text = "$_managerSpendCount";
-      }
-      print("rate:$rate, _managerSpendCount:$_managerSpendCount");
+    var rateValue = _inputFeeRateValue;
+    if (rateValue >= 10 && rateValue <= _maxFeeRate) {
+      _currentFeeRate = rateValue;
     } else {
-      _rateCoinController.text = rate;
-    }
+      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
 
-    /*
-    var staking = _inputTextController?.text??"0";
-    if (staking.isEmpty) {
-      staking = "0";
+      setState(() {
+        _currentFeeRate = _maxFeeRate;
+        _rateCoinController.text = "$_currentFeeRate";
+      });
     }
-    var stakingValue = double.parse(staking);
-    var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
-    var rate = (100 * (stakingValue / createMin)).toInt();
-    var rateMax = min(max(10, rate), 20);
-    setState(() {
-      _rateCoinController.text = "$rateMax";
-    });
-    if (_managerSpendCount < 10 || _managerSpendCount > rateMax) {
-      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$rateMax%");
-    }
-    */
   }
 
   void _dealTextField(String inputText) {

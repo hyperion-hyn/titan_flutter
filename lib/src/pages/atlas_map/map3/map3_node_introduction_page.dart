@@ -116,8 +116,14 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       AtlasApi.goToAtlasMap3HelpPage(context);
     };
 
-    var startMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.startMin ?? "0"));
+    var startMinValue = double.parse(_introduceEntity?.startMin ?? "0");
+    var startMin = FormatUtil.formatPrice(startMinValue);
     var createMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? 0));
+
+    var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
+    var amount = " ${FormatUtil.formatTenThousandNoUnit(startMin)}" +
+        S.of(context).ten_thousand;
+    var rateTips = "管理费的设置根据抵押量来决定，抵押量越高管理费的最大值越高，(计算公式为：个人抵押量 / $amount x 100%）管理费最高不高于$feeMax%";
 
     return Container(
       color: Colors.white,
@@ -140,6 +146,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
               onTap("收益详细介绍");
             },
           ),
+          rowTipsItem(rateTips),
           /*rowTipsItem(
             "如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看",
             subTitle: "扩容详细介绍",

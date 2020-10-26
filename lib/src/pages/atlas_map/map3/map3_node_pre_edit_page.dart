@@ -26,22 +26,65 @@ class Map3NodePreEditPage extends StatefulWidget {
 
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isOpen = true;
-  int _managerSpendCount = 20;
+  int _currentFeeRate = 20;
+  int _maxFeeRate = 20;
   TextEditingController _rateCoinController = TextEditingController();
   get _isJoiner => widget.map3infoEntity.isJoiner;
 
+  get _inputFeeRateValue {
+    var text = _rateCoinController?.text ?? '0';
+    if (text.isEmpty) {
+      text = '0';
+    }
+    var value = double.tryParse(text);
+    if (value == null) return 0;
+    return value.toInt();
+  }
+
   @override
   void initState() {
+    _currentFeeRate = _maxFeeRate;
+    _rateCoinController.addListener(_rateTextFieldChangeListener);
+    _rateCoinController.text = "$_currentFeeRate";
+
     if (!_isJoiner) {
-      var staking = double.parse(widget.map3infoEntity.getStaking());
-      var createMin = double.parse(AtlasApi.map3introduceEntity.createMin);
-      var rate = (100 * (staking / createMin)).toInt();
-      _managerSpendCount = min(max(10, rate), 20);
-      print("_managerSpendCount: $_managerSpendCount");
+      _updateRate();
     }
-    _rateCoinController.text = "$_managerSpendCount";
 
     super.initState();
+  }
+
+  _updateRate() {
+    var _inputStakingValue = double.parse(widget.map3infoEntity.getStaking());
+    var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
+    var rate = (100 * (_inputStakingValue / createMin)).toInt();
+    if (rate >= 20) {
+      _maxFeeRate = 20;
+    } else if (rate < 20 && rate > 10) {
+      _maxFeeRate = rate;
+    } else {
+      _maxFeeRate = 10;
+    }
+    _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
+    _rateCoinController.text = "$_currentFeeRate";
+  }
+
+  void _rateTextFieldChangeListener() {
+    if (_inputFeeRateValue <= 0) {
+      return;
+    }
+
+    var rateValue = _inputFeeRateValue;
+    if (rateValue >= 10 && rateValue <= _maxFeeRate) {
+      _currentFeeRate = rateValue;
+    } else {
+      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
+
+      setState(() {
+        _currentFeeRate = _maxFeeRate;
+        _rateCoinController.text = "$_currentFeeRate";
+      });
+    }
   }
 
   @override
@@ -149,20 +192,20 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   Widget _rateWidgetCreator() {
     return managerSpendWidget(context, _rateCoinController, reduceFunc: () {
       setState(() {
-        _managerSpendCount--;
-        if (_managerSpendCount < 10) {
-          _managerSpendCount = 10;
+        _currentFeeRate--;
+        if (_currentFeeRate <= 10) {
+          _currentFeeRate = 10;
         }
 
-        _rateCoinController.text = "$_managerSpendCount";
+        _rateCoinController.text = "$_currentFeeRate";
       });
     }, addFunc: () {
       setState(() {
-        _managerSpendCount++;
-        if (_managerSpendCount > 20) {
-          _managerSpendCount = 20;
+        _currentFeeRate++;
+        if (_currentFeeRate >= _maxFeeRate) {
+          _currentFeeRate = _maxFeeRate;
         }
-        _rateCoinController.text = "$_managerSpendCount";
+        _rateCoinController.text = "$_currentFeeRate";
       });
     });
   }
@@ -230,19 +273,17 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: ClickOvalButton(
         "确认修改",
         () {
+          if (!_isJoiner) {
+            if (_inputFeeRateValue <= 0) {
+              Fluttertoast.showToast(msg: "请设置管理费");
+              return;
+            }
 
-          var text = _rateCoinController?.text ?? "0";
-          if (text == null || text.isEmpty) {
-            Fluttertoast.showToast(msg: "请设置管理费");
-            return;
-          }
-          var value = double.parse(text);
-          if (value > 20 || value < 10) {
-            _managerSpendCount = 20;
-            _rateCoinController.text = "$_managerSpendCount";
-
-            Fluttertoast.showToast(msg: "管理费不能小于10%，且不能大于20%");
-            return;
+            var feeRate = _inputFeeRateValue;
+            if (feeRate < 10 || feeRate > _maxFeeRate) {
+              Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$_maxFeeRate");
+              return;
+            }
           }
 
           showAlertView();
@@ -255,8 +296,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   showAlertView() {
-    var nextFeeRate = 100 *double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
-    var feeRate = _isJoiner ? nextFeeRate : (_rateCoinController?.text ?? "20");
+    var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
+    var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
     var contentPre = _isJoiner ? "开启期满跟随续约" : "开启期满自动续约";
     var content = contentPre + "，管理费设置为$feeRate%每个节点周期只能修改一次，确定修改吗？";
     UiUtil.showAlertView(
