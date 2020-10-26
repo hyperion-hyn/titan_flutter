@@ -103,7 +103,7 @@ class TransactionDetailVo {
     if(logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
       return "0.0";
     }
-    BigInt amount = BigInt.parse("0.0");
+    BigInt amount = BigInt.parse("0");
     logsDecoded.rewards.forEach((element) {
       if(element.address == toAddress){
         amount = amount + BigInt.parse(element.amount);

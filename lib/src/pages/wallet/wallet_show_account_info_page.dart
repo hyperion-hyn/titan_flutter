@@ -249,9 +249,14 @@ class WalletShowAccountInfoPageState
 void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail,Function function){
   var pageTitle = "";
   var pageStatusImage = "";
+  var pageDetailColor = HexColor("#F2F2F2");
+  var pageDetailStatusImage = "";
   if(transactionDetail.state == 1 || transactionDetail.state == 2){
     pageTitle = S.of(context).pending;
-    pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
+    pageStatusImage = "res/drawable/ic_transfer_account_info_pending.png";
+
+    pageDetailColor = HexColor("#F2F2F2");
+    pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_pending.png";
   }else if(transactionDetail.state == 3){
     if(transactionDetail.hynType == MessageType.typeNormal){
       pageTitle = "转账成功";
@@ -259,6 +264,9 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
       pageTitle = "已完成";
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
+
+    pageDetailColor = HexColor("#07C160");
+    pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_success.png";
   }else if(transactionDetail.state == 4 || transactionDetail.state == 5){
     if(transactionDetail.hynType == MessageType.typeNormal){
       pageTitle = "转账失败";
@@ -266,6 +274,9 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
       pageTitle = "失败";
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_fail.png";
+
+    pageDetailColor = HexColor("#FF5E5E");
+    pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_fail.png";
   }
-  function(pageTitle,pageStatusImage);
+  function(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage);
 }

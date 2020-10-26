@@ -88,12 +88,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
-    /*var pageTitle;
+    var pageTitle;
     var pageStatusImage;
     getAccountPageTitle(context,widget.transactionDetail,(funPageTitle,funPageStatusImage){
       pageTitle = funPageTitle;
       pageStatusImage = funPageStatusImage;
-    });*/
+    });
 
     var isFail = (transDetail.state == 4 || transDetail.state == 5);
     var statusStr = isFail ? "失败" : "成功";
@@ -202,6 +202,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   }
 
   Widget accountInfoItemStatus(String leftText, String rightText,bool isFail){
+    var accountItemColor;
+    var accountItemImage;
+    getAccountPageTitle(context,widget.transactionDetail,(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage){
+      accountItemColor = pageDetailColor;
+      accountItemImage = pageDetailStatusImage;
+    });
     return Container(
       color: Colors.white,
       child: Column(

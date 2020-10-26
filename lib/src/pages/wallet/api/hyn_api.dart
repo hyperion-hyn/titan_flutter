@@ -409,6 +409,9 @@ class HYNApi {
         typeStr = "提取微抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;
         amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getMap3RewardAmount() ?? "0.0")}";
         break;
+      case MessageType.typeRenewMap3:
+        typeStr = "续约" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        break;
     }
 
     if (getTypeStr) {
