@@ -3,14 +3,13 @@ import 'package:titan/config.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
-import 'package:titan/src/basic/http/test_http.dart';
 
 import 'vo/symbol_quote_entity.dart';
 import 'vo/symbol_quote_vo.dart';
 
 class CoinMarketApi {
   Future<List<SymbolQuoteVo>> quotes(int timestamp) async {
-    var response = await TestHttpCore.instance.postEntity('v1/wallet/quotes',
+    var response = await HttpCore.instance.postEntity('v1/wallet/quotes',
         EntityFactory<SymbolQuoteEntity>(
               (json) => SymbolQuoteEntity.fromJson(json),
         ),

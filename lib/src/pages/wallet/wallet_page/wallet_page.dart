@@ -129,7 +129,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
     ///get value from cache first
     _isExchangeAccountAbnormal = await AppCache.getValue(
-          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo.wallet.getEthAccount().address}',
+          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo?.wallet?.getEthAccount()?.address ?? ""}',
         ) ??
         false;
 
