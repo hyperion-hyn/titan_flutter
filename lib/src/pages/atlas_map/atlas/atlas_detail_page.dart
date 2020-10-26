@@ -513,7 +513,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               fontSize: 16,
                             ),
                           ],
-                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率扣除管理费后分配到你的Map3节点抵押者。",
+                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率分配到你的Map3节点抵押者。",
                         );
 
                         break;

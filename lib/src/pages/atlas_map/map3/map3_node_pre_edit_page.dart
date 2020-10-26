@@ -302,8 +302,21 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   showAlertView() {
     var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
     var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
-    var contentPre = _isJoiner ? "开启期满跟随续约" : "开启期满自动续约";
-    var content = contentPre + "，管理费设置为$feeRate%每个节点周期只能修改一次，确定修改吗？";
+
+    var content = "";
+    if (!_isOpen) {
+      if (!_isJoiner) {
+        content = "你将停止自动续约，修改后不能撤回，确定修改吗？";
+      } else {
+        content = "你将停止跟随续约，修改后不能撤回，确定修改吗？";
+      }
+    } else {
+      if (!_isJoiner) {
+        content = "你将开启自动续约，管理费设置为$feeRate%，修改后不能撤回，确定修改吗？";
+      } else {
+        content = "你将跟随续约，修改后不能撤回，确定修改吗？";
+      }
+    }
     UiUtil.showAlertView(
       context,
       title: "下期预设",

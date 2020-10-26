@@ -50,6 +50,7 @@ import 'package:titan/src/widget/popup/pop_route.dart';
 import 'package:titan/src/widget/popup/pop_widget.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/web3dart.dart';
+import '../../../../env.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
@@ -151,7 +152,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   */
   get _canEditNextPeriod {
     // 周期
-    var periodEpoch14 = _releaseEpoch - 14 > 0 ? _releaseEpoch - 14 : 0;
+    var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
 
     var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
@@ -159,20 +160,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      print("statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
+      print("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
       }
+      return false;
     }
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-    print("[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
+    print("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
-    var isCreatorSetOpen = statusCreator == 2; //创建人已开启
     if (_isDelegator) {
+      var isCreatorSetOpen = statusCreator == 2; //创建人已开启
+
       var c1 = (statusJoiner == 0 && isCreatorSetOpen);
       var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
       print("c1: $c1, c2:$c2");
@@ -223,6 +226,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   *
    */
 
+  // get _isCreator => true;
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
   get _isDelegator => _map3infoEntity?.mine != null;
@@ -384,7 +388,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt()) > 0 ? _endRemainEpoch : 0}纪元";
+        var _endRemainEpochValue = _endRemainEpoch.toInt();
+        if (_endRemainEpochValue > 0) {
+          _map3StatusDesc = "距离到期还有$_endRemainEpochValue纪元";
+        } else {
+          _map3StatusDesc = "距离到期仅剩1个纪元";
+        }
 
         break;
 
@@ -1027,10 +1036,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     }
 
     // 周期
-    var periodEpoch14 = _releaseEpoch - 14;
+    var periodEpoch14 = _releaseEpoch - 14 + 1;
     var periodEpoch7 = _releaseEpoch - 7;
-    var editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
-    if (periodEpoch14 < 0 || periodEpoch7 < 0 || !_canEditNextPeriod) {
+
+    var editDateLimit = "";
+    if (_isCreator) {
+      editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
+      if ((_microDelegationsCreator?.renewal?.status??0) != 0) {
+        editDateLimit = "（设置完成）";
+      }
+    } else {
+      editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
+      if ((_microDelegationsJoiner?.renewal?.status??0) != 0) {
+        editDateLimit = "（设置完成）";
+      }
+    }
+
+    if (periodEpoch14 < 0 || periodEpoch7 < 0) {
       editDateLimit = "";
     }
 
@@ -1040,6 +1062,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
+            Visibility(
+              //visible: showLog,
+              visible: false,
+              child: Text(
+                "当前纪元：$_currentEpoch",
+              ),
+            ),
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
@@ -1064,14 +1093,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                             Routes.map3node_pre_edit_page +
                                 "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
                       },
-                      child: Center(
-                          child: Text(
-                        "修改",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
-                        ),
-                      )),
+                      child: Visibility(
+                        visible: _canEditNextPeriod,
+                        child: Center(
+                            child: Text(
+                          "修改",
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
+                          ),
+                        )),
+                      ),
                     ),
                   ),
                 ),
@@ -1743,19 +1775,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
     var joinerAddress = _address.toLowerCase();
 
-    for (var item in _map3nodeInformationEntity.microdelegations) {
-      print("[object] --> 2micro.length:${_map3nodeInformationEntity.microdelegations.length}");
+    for (var item in _map3nodeInformationEntity?.microdelegations??[]) {
+      print("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length??0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
         print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
-        if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
+        if (item.delegatorAddress == creatorAddress ) {
           _microDelegationsCreator = item;
           print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
 
-        if (item.delegatorAddress == joinerAddress && _microDelegationsJoiner == null) {
+        if (item.delegatorAddress == joinerAddress) {
           _microDelegationsJoiner = item;
           print("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }

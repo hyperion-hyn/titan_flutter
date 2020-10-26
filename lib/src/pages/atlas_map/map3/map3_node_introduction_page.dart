@@ -136,9 +136,9 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          rowTipsItem("创建7天内不可撤销", top: 0),
+          rowTipsItem("创建7纪元内不可撤销", top: 0),
           rowTipsItem("需要总抵押满$startMin才能正式启动，你至少需要$createMin的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押$startMin即可启动节点"),
-          rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
+          rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14纪元关闭或开启自动续约开关"),
           rowTipsItem(
             "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
             subTitle: "收益详细介绍",
@@ -200,7 +200,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
     var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
     var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
     var fee = "$feeMin%-$feeMax%";
-    var day = "${_introduceEntity?.days ?? 180}天";
+    var day = "${_introduceEntity?.days ?? 180}纪元";
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
       child: profitListLightWidget(
