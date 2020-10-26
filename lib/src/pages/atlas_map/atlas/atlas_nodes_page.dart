@@ -66,8 +66,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   bool get wantKeepAlive => true;
 
-  Timer _timer;
-
   @override
   void initState() {
     super.initState();
@@ -77,29 +75,13 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       duration: Duration(seconds: 10),
     )..repeat();
 
-    _initTimer();
-
     var activatedWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
-  _initTimer() {
-    ///refresh epoch
-    ///
-    _timer = Timer.periodic(Duration(seconds: 7), (t) {
-      print('[AtlasNodePage] refresh epoch');
-      // _getData();
-    });
-  }
-
   @override
   void dispose() {
-    if (_timer != null) {
-      if (_timer.isActive) {
-        _timer.cancel();
-      }
-    }
     super.dispose();
     _loadDataBloc.close();
   }
@@ -121,7 +103,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       setState(() {});
     } catch (e) {
       setState(() {});
-      print('[_getCommitteeInfo]: $e');
     }
   }
 
@@ -292,21 +273,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _atlasMap() {
-    var _secPerBlock = _atlasHomeEntity?.info?.secPerBlock ?? 0;
-    var _blocksPerEpoch = _atlasHomeEntity?.info?.blockHeight ?? 0;
-    var _currentBlockNum = _atlasHomeEntity?.info?.blockNum ?? 0;
-    var _epochStartBlockNum = _atlasHomeEntity?.info?.blockNumStart ?? 0;
-
-    ///total time of 1 epoch:  blocksPerEpoch * secPerBlock
-    ///
-    var _secPerEpoch = _blocksPerEpoch * _secPerBlock;
-
-    ///remain time: remainBlockCount * secPerBlock
-    ///remainBlockCount = blocksPerEpoch - (currentBlockNum - startBlockNum)
-    ///
-    var _remainTime = _secPerBlock *
-        (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
-
     var points = json.decode(_atlasHomeEntity?.points ?? '[]');
 
     return Container(
@@ -364,8 +330,17 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 children: <Widget>[
                   Text(
                     S.of(context).atlas_next_age,
-                    style:
-                        TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
+                    style: TextStyle(
+                      color: HexColor('#FFFFFFFF'),
+                      fontSize: 10,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 4),
                   Stack(
