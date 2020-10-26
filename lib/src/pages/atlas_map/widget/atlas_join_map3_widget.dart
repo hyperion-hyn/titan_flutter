@@ -195,7 +195,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(right: 12),
+            margin: const EdgeInsets.only(left:6, right: 6),
             child: Stack(
               children: <Widget>[
                 Align(
