@@ -113,6 +113,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   Future _refreshData() async {
+    showMyMap3 = false;
     infoContentList.clear();
     _delegateRecordList.clear();
     showMap3List.clear();
@@ -956,6 +957,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           var entity = PledgeAtlasEntity.emptyEntity();
                           AtlasMessage message = ConfirmAtlasUnStakeMessage(
                             nodeName: _atlasInfoEntity.name,
+                            nodeId: _atlasInfoEntity.nodeId,
                             atlasAddress: widget.atlasNodeAddress,
                             map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
                           );

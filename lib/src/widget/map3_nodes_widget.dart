@@ -65,7 +65,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
               },
         hoverAnimation: true,
         coordinateSystem: 'geo',
-        data: ${widget.points ?? json.encode('[]')},
+        data: ${widget.points != null ? (widget.points.isNotEmpty ? widget.points : json.encode('[]')) : json.encode('[]')},
         symbolSize: 4,
         label: {
           normal: {
