@@ -491,6 +491,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     //_map3Status = Map3InfoStatus.values[0];
     print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
+    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch??0;
+
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
