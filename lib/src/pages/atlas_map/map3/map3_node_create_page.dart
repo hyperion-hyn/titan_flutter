@@ -188,6 +188,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             bloc: _loadDataBloc,
             enablePullUp: false,
             onRefresh: getNetworkData,
+            onLoadData: getNetworkData,
             child: BaseGestureDetector(
               context: context,
               child: CustomScrollView(
@@ -552,6 +553,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       print(e);
 
       setState(() {
+        _loadDataBloc.add(RefreshFailEvent());
         _currentState = LoadFailState();
       });
     }

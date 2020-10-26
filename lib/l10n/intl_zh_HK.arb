@@ -428,7 +428,7 @@
   "confirm_bug": "確定買入",
   "mortgage_hyn_num": "抵押HYN數量",
   "mortgage_wallet_balance": "（{walletName} 錢包余額: {balance}）",
-  "mintotal_buy": "最低買入{minTotal}",
+  "mintotal_buy": "最低抵押{minTotal}",
   "mintotal_hyn": "不能少於{minTotal}HYN",
   "hyn_balance_no_enough": "HYN余額不足",
   "balance_portion_hyn": "剩余份額(HYN)：",

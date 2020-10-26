@@ -161,7 +161,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      print("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
+      LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
 
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
@@ -173,7 +173,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
 
-    print("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
+    LogUtil.printMessage("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     if (_isDelegator) {
@@ -181,7 +181,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       var c1 = (statusJoiner == 0 && isCreatorSetOpen);
       var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
-      print("c1: $c1, c2:$c2");
+      LogUtil.printMessage("c1: $c1, c2:$c2");
 
       if ((statusJoiner == 0 && isCreatorSetOpen) || (isInActionPeriodJoiner && statusJoiner == 0)) {
         return true;
@@ -366,7 +366,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         break;
     }
 
-    print("_map3Status：$_map3Status, _map3StatusDesc:$_map3StatusDesc");
+    LogUtil.printMessage("_map3Status：$_map3Status, _map3StatusDesc:$_map3StatusDesc");
 
     return _map3StatusDesc;
   }
@@ -461,9 +461,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   @override
+  void didPush() {
+    //_loadData();
+    super.didPush();
+  }
+
+  @override
   void didPopNext() {
-    _loadData();
-    super.didPopNext();
+    //_loadData();
+    super.didPushNext();
   }
 
   _loadData() {
@@ -476,6 +482,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    //Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
@@ -502,7 +510,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     final positions = renderBox.localToGlobal(Offset(0, 0));
     _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
     _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
-    //print("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
+    //LogUtil.printMessage("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
   }
 
 //  left: 246,
@@ -510,7 +518,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   @override
   void dispose() {
-    print("[detail] dispose");
+    LogUtil.printMessage("[detail] dispose");
+    //Application.routeObserver.unsubscribe(this);
 
     _loadDataBloc.close();
     super.dispose();
@@ -519,11 +528,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget build(BuildContext context) {
     // todo: test_jison
     //_map3Status = Map3InfoStatus.values[0];
-    print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
+    LogUtil.printMessage("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
 
-    print("_currentEpoch: $_currentEpoch");
+    LogUtil.printMessage("_currentEpoch: $_currentEpoch");
 
     return WillPopScope(
       onWillPop: () async => true,
@@ -713,7 +722,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   Widget _bottomBtnBarWidget() {
-    print("_invisibleBottomBar:$_visibleBottomBar");
+    LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
     if (!_visibleBottomBar) return Container();
 
@@ -774,7 +783,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget _bottomBtnBarWidget() {
     if (_invisibleBottomBar) return Container();
 
-    print("_invisibleBottomBar:$_invisibleBottomBar");
+    LogUtil.printMessage("_invisibleBottomBar:$_invisibleBottomBar");
 
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -868,7 +877,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc =
-        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高." : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
@@ -1060,7 +1069,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       editDateLimit = "";
     }
 
-
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
       editDateLimit = "";
     }
@@ -1206,8 +1214,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   ),
                 ),
                 Visibility(
-                  visible: _isCreator &&
-                      _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
+                  visible: _isCreator && _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
                   child: InkWell(
                     onTap: () {
                       Application.eventBus.fire(UpdateMap3TabsPageIndexEvent(
@@ -1246,7 +1253,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var rewardValueString = FormatUtil.truncateDecimalNum(rewardDecimal, 4);
     var rewardValue = double.parse(rewardValueString);
     var rewardRate = FormatUtil.formatPercent(rewardValue);
-    //print("rank:${atlasEntity.rank},atlasEntity.reward:${atlasEntity.rewardRate}, rewardValueString:$rewardValueString");
+    //LogUtil.printMessage("rank:${atlasEntity.rank},atlasEntity.reward:${atlasEntity.rewardRate}, rewardValueString:$rewardValueString");
 
     return Container(
       color: Colors.white,
@@ -1681,7 +1688,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       "",
     ];
 
-    //print('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
+    //LogUtil.printMessage('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
     return CustomStepper(
       tickColor: _stateColor,
       tickText: _contractStateDetail,
@@ -1774,10 +1781,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   // todo: test_detail
   _setupMicroDelegations() {
-    print("[object] --> micro:${_map3nodeInformationEntity != null}");
+    LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
-      print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       return;
     }
@@ -1786,20 +1793,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity?.microdelegations ?? []) {
-      print("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
-        print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+        LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
         if (item.delegatorAddress == creatorAddress) {
           _microDelegationsCreator = item;
-          print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
+          LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
 
         if (item.delegatorAddress == joinerAddress) {
           _microDelegationsJoiner = item;
-          print("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
+          LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }
       }
     }
@@ -1826,7 +1833,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
         if (_map3nodeInformationEntity?.microdelegations?.isNotEmpty ?? false) {
           for (var item in _map3nodeInformationEntity.microdelegations) {
-            print("renewal.json:${item.renewal.toJson()}");
+            LogUtil.printMessage("renewal.json:${item.renewal.toJson()}");
           }
         }
 
@@ -1886,32 +1893,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
-  void _cancelAction() {
+  void _cancelAction() async{
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;
     }
 
-    print("_map3infoEntity.status:${_map3infoEntity.status}");
-
-    /*
-    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
-      Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
-      return;
-    }
-
-    // todo: 撤销节点中
-
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
-      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能撤销抵押");
-      return;
-    }*/
+    LogUtil.printMessage("_map3infoEntity.status:${_map3infoEntity.status}");
 
     if (_map3infoEntity != null) {
-      Application.router.navigateTo(
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      await Application.router.navigateTo(
         context,
-        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_cancel_page +
+            '?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
+      _nextAction();
     }
   }
 
@@ -1928,16 +1925,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     Application.router.navigateTo(context, Routes.map3node_divide_page);
   }
 
-  void _exitAction() {
+  void _exitAction() async{
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;
     }
     if (_map3infoEntity != null) {
-      Application.router.navigateTo(
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      await Application.router.navigateTo(
         context,
-        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_exit_page +
+            '?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
+      _nextAction();
     }
   }
 
@@ -1956,19 +1956,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       return;
     }
 
-    /*
-    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
-      Fluttertoast.showToast(msg: "节点创建中, 暂不能抵押！");
-      return;
-    }
-
-    // todo: 撤销节点中
-
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
-      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能抵押");
-      return;
-    }*/
-
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
       await Application.router.navigateTo(
@@ -1982,10 +1969,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   void _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
 
-    print("[detail] _next action, result:$result");
+    LogUtil.printMessage("[detail] _next action, result:$result");
 
     if (result != null && result is Map && result["result"] is bool) {
-      getContractDetailData();
+      _loadData();
     }
   }
 }

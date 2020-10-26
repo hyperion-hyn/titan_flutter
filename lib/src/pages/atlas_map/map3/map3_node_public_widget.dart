@@ -138,13 +138,14 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   }
 
   var nodeName = infoEntity?.name ?? "";
-  var nodeAddress = "${UiUtil.shortEthAddress(infoEntity?.address ?? "", limitLength: 8)}";
+  var nodeAddress = "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(infoEntity?.address ?? ""), limitLength: 8)}";
+
   var nodeIdPre = "节点号";
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
-  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : infoEntity.describe;
+  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高." : infoEntity.describe;
   var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
@@ -922,8 +923,12 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
+
   var isYou = item.from.toLowerCase() == walletAddress;
-  var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
+  // todo: 创建者
+  //var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
+  var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
+
   var recordName = isAtlasDetail
       ? " ${isYou ? "(你)" : ""}"
       : "${isCreator && !isYou ? " (创建者)" : ""}${!isCreator && isYou ? " (你)" : ""}${isCreator && isYou ? " (创建者)" : ""}";

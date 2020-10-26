@@ -46,7 +46,6 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
   final client = WalletUtil.getWeb3Client(true);
   AtlasApi api = AtlasApi();
-  int _currentEpoch = 0;
 
   @override
   void initState() {
@@ -143,15 +142,6 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       _balance = "${FormatUtil.formatPrice(value.toDouble())}";
       _balanceValue = "${value.toDouble()}";
       print(_rewardMap);
-
-      var _atlasHomeEntity = await AtlasApi().postAtlasHome(_address);
-      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
-
-      if (_contractTypeModels.isNotEmpty) {
-        _contractTypeModels.forEach((element) {
-          element.currentEpoch = _currentEpoch;
-        });
-      }
 
       if (mounted) {
         setState(() {
@@ -318,7 +308,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       return;
     }
 
-    var preText = count != 0 ? "您一共创建或参与了${_rewardMap?.values?.length ?? 0}个Map3节点，":"";
+    var preText = count != 0 ? "您一共创建或参与了${_rewardMap?.values?.length ?? 0}个Map3节点，" : "";
 
     UiUtil.showAlertView(context,
         title: "提取奖励",

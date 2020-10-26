@@ -45,28 +45,22 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   Map3InfoEntity _map3infoEntity;
   AtlasApi _atlasApi = AtlasApi();
-  var _address = "string";
-  var _nodeId = "string";
+
+  var _nodeId = "";
   var _walletName = "";
   var _walletAddress = "";
-  Microdelegations _microDelegations;
+  Microdelegations _microDelegationsJoiner;
   final _client = WalletUtil.getWeb3Client(true);
   List<Map3UserEntity> _map3UserList = [];
   Map3NodeInformationEntity _map3nodeInformationEntity;
 
   @override
   void onCreated() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
-    _address = _wallet.getEthAccount().address;
-    _nodeId = widget.map3infoEntity.nodeId;
-
-    var activatedWallet = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).activatedWallet;
-
-    _walletName = activatedWallet.wallet.keystore.name;
-    _walletAddress = activatedWallet.wallet.getEthAccount().address;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var _wallet = activatedWallet?.wallet;
+    _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+    _walletName = _wallet?.keystore?.name ?? "";
+    _nodeId = widget?.map3infoEntity?.nodeId ?? "";
 
     getNetworkData();
 
@@ -87,16 +81,16 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   _setupMicroDelegations() {
-    if (_map3nodeInformationEntity == null ||
-        (_map3nodeInformationEntity != null && _map3nodeInformationEntity.microdelegations.isEmpty)) return;
+    if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
+      return;
+    }
 
-    var joinerAddress = _address;
+    var joinerAddress = _walletAddress.toLowerCase();
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
       if (item.delegatorAddress.isNotEmpty && item.delegatorAddress == joinerAddress) {
-        if (item.delegatorAddress == joinerAddress) {
-          _microDelegations = item;
-
+        if (item.delegatorAddress.toLowerCase() == joinerAddress) {
+          _microDelegationsJoiner = item;
           break;
         }
       }
@@ -105,11 +99,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
   Future getNetworkData() async {
     try {
-      print("[${widget.runtimeType}] getNetworkData");
-
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
 
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+      _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
 
       _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
       _setupMicroDelegations();
@@ -150,15 +142,14 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       );
     }
 
-    var walletAddressStr = "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
+    var walletAddressStr =
+        "钱包地址 ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
-
-    var nodeAddress = "节点地址 ${UiUtil.shortEthAddress(_map3infoEntity?.address ?? "***", limitLength: 9)}";
-    var nodeIdPre = "节点号";
-    var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
+    var nodeAddress =
+        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 9)}";
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -381,8 +372,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           switch (value) {
             case 1:
               title = "创建日期";
-              detail = FormatUtil.formatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: false);
-              //subDetail = " (10天) ";
+              detail = FormatUtil.formatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: true);
+
               break;
 
             case 2:
@@ -403,7 +394,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
               title = "我的抵押";
               detail = ConvertTokenUnit.weiToEther(
                       weiBigInt: BigInt.parse(
-                          '${FormatUtil.clearScientificCounting(_microDelegations?.pendingDelegation?.amount ?? 0)}'))
+                          '${FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount ?? 0)}'))
                   .toString();
               break;
 
