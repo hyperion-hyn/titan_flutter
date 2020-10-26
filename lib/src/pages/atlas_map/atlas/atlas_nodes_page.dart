@@ -83,6 +83,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void dispose() {
     super.dispose();
+    _ageIconAnimationController.dispose();
     _loadDataBloc.close();
   }
 
