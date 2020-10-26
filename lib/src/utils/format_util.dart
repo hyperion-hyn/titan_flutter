@@ -30,7 +30,7 @@ class FormatUtil {
 
   static String formatPercent(double doubleValue) {
     doubleValue = doubleValue * 100;
-    return NumberFormat("#,###.##").format(doubleValue) + "%";
+    return NumberFormat("#,###.####").format(doubleValue) + "%";
   }
 
   static String formatTenThousand(String strValue) {
