@@ -12,6 +12,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -63,7 +64,7 @@ class Map3NodeDetailPage extends StatefulWidget {
   _Map3NodeDetailState createState() => _Map3NodeDetailState();
 }
 
-class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
+class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
@@ -437,12 +438,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   @override
   void onCreated() {
     super.onCreated();
+
+    _loadData();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void didPopNext() {
 
+    _loadData();
+    super.didPopNext();
+  }
+
+  _loadData() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
     _map3infoEntity = widget.map3infoEntity;
@@ -452,6 +459,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
     getContractDetailData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
   }
 
   @override
@@ -492,6 +505,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch??0;
+
+    print("_currentEpoch: $_currentEpoch");
 
     return WillPopScope(
       onWillPop: () async => true,
