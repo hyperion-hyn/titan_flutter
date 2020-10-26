@@ -404,6 +404,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage>
     var describe = "";
     var amountColor;
     var amountText = "";
+    var amountSubText = "";
     amountText =
         "${FormatUtil.formatCoinNum(transactionDetail.amount)} ${transactionDetail.symbol}";
 

@@ -913,7 +913,8 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
 
   var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
-  var detail = HYNApi.getValueByHynType(item.type, amount: isAtlasDetail ? "" : amount, getTypeStr: true);
+  var detail = HYNApi.getValueByHynType(item.type, getTypeStr: true);
+  detail = detail + " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getAmountStr: true)}";
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
