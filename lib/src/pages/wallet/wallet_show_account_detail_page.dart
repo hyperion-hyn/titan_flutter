@@ -88,15 +88,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
-    var pageTitle;
-    var pageStatusImage;
-    getAccountPageTitle(context,widget.transactionDetail,(funPageTitle,funPageStatusImage){
-      pageTitle = funPageTitle;
-      pageStatusImage = funPageStatusImage;
-    });
-
-    var isFail = (transDetail.state == 4 || transDetail.state == 5);
-    var statusStr = isFail ? "失败" : "成功";
+    var statusStr = "";
     var timeStr = FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true);
     var hynPriceStr = "\$0 / HYN";
     var gasUsedStr = "${transDetail.gasUsed} (${FormatUtil.formatPercent(
@@ -202,9 +194,11 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   }
 
   Widget accountInfoItemStatus(String leftText, String rightText,bool isFail){
-    var accountItemColor;
-    var accountItemImage;
+    var infoItemTitle;
+    Color accountItemColor;
+    var accountItemImage = "res/drawable/ic_transfer_account_detail_pending.png";
     getAccountPageTitle(context,widget.transactionDetail,(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage){
+      infoItemTitle = pageTitle;
       accountItemColor = pageDetailColor;
       accountItemImage = pageDetailStatusImage;
     });
@@ -225,7 +219,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                 Container(
                   padding: const EdgeInsets.only(top: 4.0, bottom: 4, left: 11, right: 11),
                   decoration: BoxDecoration(
-                    color: isFail ? HexColor("#22FF5E5E") : HexColor("#2207C160"),
+                    color: accountItemColor,
                     borderRadius: BorderRadius.all(Radius.circular(4))
                   ),
                   child: Row(
@@ -233,11 +227,10 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(top:2.0),
-                        child: Image.asset(isFail ? "res/drawable/ic_transfer_account_detail_fail.png"
-                            :"res/drawable/ic_transfer_account_detail_success.png",width: 13,height: 13,),
+                        child: Image.asset(accountItemImage,width: 13,height: 13,),
                       ),
                       SizedBox(width: 2,),
-                      Text(rightText,style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),)
+                      Text(infoItemTitle,style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),)
                     ],
                   ),
                 ),
