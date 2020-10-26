@@ -36,7 +36,6 @@ class AccountTransferService {
 
     List<TransactionDetailVo> detailList =
         hynTransferHistoryList.map((hynTransferHistory) {
-          print("!!!!! ${json.encode(hynTransferHistory.toJson())}");
       var type = 0;
       if (hynTransferHistory.from.toLowerCase() ==
           coinVo.address.toLowerCase()) {

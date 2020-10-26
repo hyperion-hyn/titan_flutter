@@ -39,8 +39,6 @@ class HYNApi {
         gasLimit = gasLimitBitInt.toInt();*/
         gasLimit = 100000;
       }
-
-      print("!!!!! $gasLimit");
     }
     final txHash = await wallet.signEthTransaction(
       password: password,
@@ -79,8 +77,6 @@ class HYNApi {
         gasLimit = gasLimitBitInt.toInt();*/
         gasLimit = 100000;
       }
-
-      print("!!!!! $gasLimit");
     }
     final txHash = await wallet.sendEthTransaction(
       password: password,
