@@ -1518,7 +1518,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _contractProgressWidget() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.only(top: 8),
+      padding: EdgeInsets.only(top: 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1673,7 +1673,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
         child: Row(
           children: <Widget>[
             Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
