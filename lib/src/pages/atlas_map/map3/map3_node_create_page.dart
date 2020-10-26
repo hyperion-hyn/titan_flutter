@@ -489,7 +489,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
       _payload.staking = staking;
 
-      _payload.feeRate = _inputFeeRateValue;
+      _payload.feeRate = _inputFeeRateValue.toString();
 
       _selectProviderEntity = _providerList[0];
 
