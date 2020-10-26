@@ -159,7 +159,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      print("isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
+      print("statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
@@ -168,13 +168,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-   print("[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
+    print("[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
-    if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
-      return true;
+    if (_isDelegator) {
+      var c1 = (statusJoiner == 0 && isCreatorSetOpen);
+      var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
+      print("c1: $c1, c2:$c2");
+
+      if ((statusJoiner == 0 && isCreatorSetOpen) || (isInActionPeriodJoiner && statusJoiner == 0)) {
+        return true;
+      }
     }
+    /*if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
+      return true;
+    }*/
 
     return false;
   }
@@ -272,11 +281,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
         if (left <= 0.1) {
           value = 0.1;
-        }
-        else if (left > 0.1 && left < 1.0) {
+        } else if (left > 0.1 && left < 1.0) {
           value = left;
-        }
-        else {
+        } else {
           value = 1.0;
         }
 
@@ -366,7 +373,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     switch (_map3Status) {
       case Map3InfoStatus.MAP:
-      //case Map3InfoStatus.CREATE_SUBMIT_ING:
+        //case Map3InfoStatus.CREATE_SUBMIT_ING:
         _map3StatusDesc = "";
 
         break;
@@ -398,7 +405,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-
         var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
         var remain = startMin - staking;
@@ -444,7 +450,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   @override
   void didPopNext() {
-
     _loadData();
     super.didPopNext();
   }
@@ -459,7 +464,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
   }
 
   @override
@@ -505,7 +509,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //_map3Status = Map3InfoStatus.values[0];
     print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
-    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch??0;
+    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
 
     print("_currentEpoch: $_currentEpoch");
 
@@ -607,7 +611,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   // 5.合约流水信息
                   SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
 
-                  _delegateRecordList.isNotEmpty
+                  (_delegateRecordList?.isNotEmpty ?? false)
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
                           return delegateRecordItemWidget(
@@ -1416,7 +1420,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var myRewardString = "0";
 
     if (_microDelegationsJoiner != null) {
-      var myDelegation = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
+      var myDelegation =
+          FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
@@ -1427,7 +1432,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
-
 
     /*
     if (_isDelegator) {
@@ -1523,7 +1527,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                 [
                   {"累计奖励": totalRewardString},
                   {"管理费": feeRate},
-                  {"我的抵押": _isDelegator?myDelegationString:"未抵押"},
+                  {"我的抵押": _isDelegator ? myDelegationString : "未抵押"},
                 ],
               ),
             ),
@@ -1730,12 +1734,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   _setupMicroDelegations() {
     print("[object] --> micro:${_map3nodeInformationEntity != null}");
 
-    if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true)
-      {
-        print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length??0}");
+    if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
+      print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
-        return;
-      }
+      return;
+    }
 
     var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
     var joinerAddress = _address.toLowerCase();
@@ -1743,7 +1746,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     for (var item in _map3nodeInformationEntity.microdelegations) {
       print("[object] --> 2micro.length:${_map3nodeInformationEntity.microdelegations.length}");
 
-      var delegatorAddress = item.delegatorAddress.toLowerCase() ;
+      var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
         print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
@@ -1775,12 +1778,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
-      if (_map3infoEntity != null && _map3infoEntity.address.isNotEmpty) {
+      if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {
         _nodeAddress = _map3infoEntity.address;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
         _setupMicroDelegations();
+
+        if (_map3nodeInformationEntity?.microdelegations?.isNotEmpty ?? false) {
+          for (var item in _map3nodeInformationEntity.microdelegations) {
+            print("renewal.json:${item.renewal.toJson()}");
+          }
+        }
 
         List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
