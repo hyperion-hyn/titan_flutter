@@ -354,7 +354,6 @@ class HYNApi {
 
   static String getValueByHynType(
     int hynMessageType, {
-    String amount = "",
     TransactionDetailVo transactionDetail,
     bool getTypeStr = false,
     bool getAmountStr = false,
@@ -385,11 +384,11 @@ class HYNApi {
         typeStr = "取消复抵押";
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = "提取复抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        typeStr = "提取复抵押奖励";
         amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getAtlasRewardAmount() ?? "0.0")}";
         break;
       case MessageType.typeCreateMap3:
-        typeStr = "创建Map3节点" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        typeStr = "创建Map3节点";
         amountStr = "-${FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeEditMap3:
@@ -399,18 +398,19 @@ class HYNApi {
         typeStr = "终止Map3节点";
         break;
       case MessageType.typeMicroDelegate:
-        typeStr = "微抵押" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        typeStr = "微抵押";
         amountStr ="-${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "取消微抵押" + ' ' + amount;
+        typeStr = "取消微抵押";
+        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeCollectMicroStakingRewards:
-        typeStr = "提取微抵押奖励" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        typeStr = "提取微抵押奖励";
         amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getMap3RewardAmount() ?? "0.0")}";
         break;
       case MessageType.typeRenewMap3:
-        typeStr = "续约" + "${amount.isNotEmpty ? " " : ""}" + amount;
+        typeStr = "续约";
         break;
     }
 
