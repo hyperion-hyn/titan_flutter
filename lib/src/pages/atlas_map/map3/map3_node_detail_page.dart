@@ -126,7 +126,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   int _currentPage = 0;
   List<HynTransferHistory> _delegateRecordList = [];
 
-  get _stateColor => Map3NodeUtil.statusColor(_map3Status);
+  get _statusColor => Map3NodeUtil.statusColor(_map3Status);
 
   get _isNoWallet => _address?.isEmpty ?? false;
 
@@ -307,69 +307,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     return value;
   }
 
-  get _contractStateDesc {
-    if (_map3Status == null) {
-      return S.of(context).wait_to_launch;
-    }
-
-    var _map3StatusDesc = "待启动";
-
-    switch (_map3Status) {
-      case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
-
-        break;
-
-      case Map3InfoStatus.CREATE_SUBMIT_ING:
-        _map3StatusDesc = "创建中";
-
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        _map3StatusDesc = "待启动";
-
-        break;
-
-      case Map3InfoStatus.CREATE_FAIL:
-        _map3StatusDesc = "启动失败";
-
-        break;
-
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "运行中";
-
-        break;
-
-      case Map3InfoStatus.CONTRACT_IS_END:
-        _map3StatusDesc = "已到期";
-
-        break;
-
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusDesc = "已终止";
-
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        _map3StatusDesc = "撤销中";
-
-        break;
-
-      case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
-
-        break;
-
-      default:
-        _map3StatusDesc = "";
-
-        break;
-    }
-
-    LogUtil.printMessage("_map3Status：$_map3Status, _map3StatusDesc:$_map3StatusDesc");
-
-    return _map3StatusDesc;
-  }
+  get _stateDescText => Map3NodeUtil.stateDescText(_map3Status);
 
   get _contractStateDetail {
     if (_map3Status == null) {
@@ -937,7 +875,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18, right: 8.0),
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              //color: Colors.red,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _statusColor,
+                                border: Border.all(
+                                  color: Map3NodeUtil.statusBorderColor(_map3Status),
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text.rich(
+                            TextSpan(children: [
+                              TextSpan(
+                                text: _stateDescText,
+                                style: TextStyle(fontSize: 12, color: _statusColor),
+                              ),
+                            ]),
+                          ),
+                        ],
+                      ),
+                      //Text(_stateDescText, style: TextStyle(color: _statusColor, fontSize: 12)),
                       Container(
                         height: 4,
                       ),
@@ -1610,7 +1576,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                         //color: Colors.red,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _stateColor,
+                          color: _statusColor,
                           border: Border.all(
                             color: Map3NodeUtil.statusBorderColor(_map3Status),
                             width: 1.0,
@@ -1621,34 +1587,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     Text.rich(
                       TextSpan(children: [
                         TextSpan(
-                          text: _contractStateDesc,
-                          style: TextStyle(fontSize: 12, color: _stateColor),
+                          text: _stateDescText,
+                          style: TextStyle(fontSize: 12, color: _statusColor),
                         ),
                       ]),
                     ),
                   ],
                 ),
-/*
-            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, right: 8.0),
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    //color: Colors.red,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
-                  ),
-                ),
-                Text.rich(TextSpan(children: [
-                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-                ])),
-*/
+
+
               ],
             ),
           ),
@@ -1690,7 +1637,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     //LogUtil.printMessage('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
     return CustomStepper(
-      tickColor: _stateColor,
+      tickColor: _statusColor,
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
       currentStep: _currentStep,
@@ -1893,7 +1840,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
-  void _cancelAction() async{
+  void _cancelAction() async {
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;
@@ -1925,7 +1872,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     Application.router.navigateTo(context, Routes.map3node_divide_page);
   }
 
-  void _exitAction() async{
+  void _exitAction() async {
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;

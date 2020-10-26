@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -158,6 +159,12 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
     date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 
+  var status = Map3InfoStatus.values[infoEntity?.status??0];
+  var statusColor = Map3NodeUtil.statusColor(status);
+  var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
+  var stateDescText = Map3NodeUtil.stateDescText(status);
+  var width = MediaQuery.of(context).size.width - 108;
+
   return InkWell(
     onTap: () async {
       if (!canCheck) return;
@@ -201,7 +208,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width - 108,
+                      width: width,
                       child: Row(
                         children: <Widget>[
                           Expanded(child: Padding(
@@ -215,24 +222,35 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                             ),
                           ),),
-                          RichText(
-                            textAlign: TextAlign.end,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                                text: nodeIdPre,
-                                style: TextStyle(
-                                  color: HexColor("#999999"),
-                                  fontSize: 12,
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18, right: 8.0),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  //color: Colors.red,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: statusColor,
+                                    border: Border.all(
+                                      color: statusBorderColor,
+                                      width: 1.0,
+                                    ),
+                                  ),
                                 ),
-                                children: [
+                              ),
+                              Text.rich(
+                                TextSpan(children: [
                                   TextSpan(
-                                      text: "$nodeId",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: HexColor("#333333"),
-                                      ))
+                                    text: stateDescText,
+                                    style: TextStyle(fontSize: 12, color: statusColor),
+                                  ),
                                 ]),
-                          )
+                              ),
+                            ],
+                          ),
+
                         ],
                       ),
                     ),
@@ -240,7 +258,33 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                       padding: const EdgeInsets.only(
                         top: 4,
                       ),
-                      child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                      child: Container(
+                        width: width,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12)),
+                            RichText(
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                  text: nodeIdPre,
+                                  style: TextStyle(
+                                    color: HexColor("#999999"),
+                                    fontSize: 12,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                        text: "$nodeId",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: HexColor("#333333"),
+                                        ))
+                                  ]),
+                            ),
+
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
