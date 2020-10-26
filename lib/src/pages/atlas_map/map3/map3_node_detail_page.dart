@@ -25,6 +25,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -41,7 +42,8 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
@@ -64,7 +66,8 @@ class Map3NodeDetailPage extends StatefulWidget {
   _Map3NodeDetailState createState() => _Map3NodeDetailState();
 }
 
-class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware {
+class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage>
+    with RouteAware {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
@@ -82,11 +85,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   //get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
 
   String _notifyMessage() {
-    var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
+    var startMin =
+        double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull) {
-      var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
+      var startMinValue =
+          FormatUtil.formatTenThousandNoUnit(startMin.toString()) +
+              S.of(context).ten_thousand;
       return "抵押已满$startMinValue，将在下个纪元启动……";
     } else if (_map3Status == Map3InfoStatus.CONTRACT_IS_END) {
       return "节点已到期，将在下个纪元结算……";
@@ -135,7 +141,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
-  get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
+  get _releaseEpoch =>
+      double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")
+          .toInt();
 
   get _visibleEditNextPeriod {
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
@@ -158,8 +166,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     //  创建者
     if (_isCreator) {
-      var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      print("statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
+      var isInActionPeriodCreator =
+          (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
+      print(
+          "statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
@@ -168,8 +178,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-    print("[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
-    var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
+    print(
+        "[statusJoiner] _microDelegationsJoiner?.renewal:${_microDelegationsJoiner?.renewal?.status}");
+    var isInActionPeriodJoiner =
+        _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     var isCreatorSetOpen = statusCreator == 2; //创建人已开启
     if (_isDelegator) {
@@ -177,7 +189,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
       print("c1: $c1, c2:$c2");
 
-      if ((statusJoiner == 0 && isCreatorSetOpen) || (isInActionPeriodJoiner && statusJoiner == 0)) {
+      if ((statusJoiner == 0 && isCreatorSetOpen) ||
+          (isInActionPeriodJoiner && statusJoiner == 0)) {
         return true;
       }
     }
@@ -193,7 +206,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var isPending = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
     // 1.纪元已经过7天；
-    var isOver7Epoch = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) >= 7;
+    var isOver7Epoch =
+        (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) >= 7;
     return _isCreator && isPending && isOver7Epoch;
   }
 
@@ -274,10 +288,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         value = 0.5;
 
         //var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-        var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
-        var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
+        var activationEpoch =
+            _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+        var releaseEpoch = double.parse(
+                    _map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")
+                ?.toInt() ??
+            0;
 
-        var left = (_currentEpoch - activationEpoch).toDouble() / (releaseEpoch - activationEpoch).toDouble();
+        var left = (_currentEpoch - activationEpoch).toDouble() /
+            (releaseEpoch - activationEpoch).toDouble();
 
         if (left <= 0.1) {
           value = 0.1;
@@ -384,7 +403,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "距离到期还有${(_endRemainEpoch.toInt()) > 0 ? _endRemainEpoch : 0}纪元";
+        _map3StatusDesc =
+            "距离到期还有${(_endRemainEpoch.toInt()) > 0 ? _endRemainEpoch : 0}纪元";
 
         break;
 
@@ -405,7 +425,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var startMin =
+            double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
         var remain = startMin - staking;
         if (remain <= 0) {
@@ -455,7 +476,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   _loadData() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
+        .activatedWallet
+        ?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
 
     getContractDetailData();
@@ -613,10 +636,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
                   (_delegateRecordList?.isNotEmpty ?? false)
                       ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
+                          delegate:
+                              SliverChildBuilderDelegate((context, index) {
                           return delegateRecordItemWidget(
                             _delegateRecordList[index],
-                            map3CreatorAddress: _map3nodeInformationEntity?.map3Node?.operatorAddress ?? "",
+                            map3CreatorAddress: _map3nodeInformationEntity
+                                    ?.map3Node?.operatorAddress ??
+                                "",
                           );
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
@@ -633,7 +659,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       context,
       PopRoute(
         child: Popup(
-          child: BubbleWidget(_moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
+          child: BubbleWidget(
+              _moreSizeWidth, 92.0, Colors.white, BubbleArrowDirection.top,
               length: 50,
               innerPadding: 0.0,
               child: Container(
@@ -675,7 +702,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                               endIndent: 13,
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(8, index == 0 ? 12 : 8, 8, 8),
+                              padding: EdgeInsets.fromLTRB(
+                                  8, index == 0 ? 12 : 8, 8, 8),
                               child: Text(
                                 title,
                                 style: TextStyle(
@@ -845,8 +873,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     if (_map3infoEntity == null) return Container();
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYear =
+        double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
+    var oldYearValue =
+        oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 8)}";
@@ -854,15 +884,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc =
-        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+    var desc = (_map3infoEntity?.describe ?? "").isEmpty ?? false
+        ? "大家快来参与我的节点吧，收益高高，收益真的很高，"
+        : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
+        padding:
+            const EdgeInsets.only(left: 16.0, right: 16, top: 16, bottom: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -915,7 +947,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
+                      Text(_contractStateDesc,
+                          style: TextStyle(color: _stateColor, fontSize: 12)),
                       Container(
                         height: 4,
                       ),
@@ -949,7 +982,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     children: <Widget>[
                       Text(
                         descPre,
-                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                        style:
+                            TextStyle(fontSize: 12, color: HexColor("#999999")),
                       ),
                       Flexible(
                         child: Padding(
@@ -959,7 +993,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                             maxLines: 3,
                             textAlign: TextAlign.justify,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, color: HexColor("#333333")),
+                            style: TextStyle(
+                                fontSize: 13, color: HexColor("#333333")),
                           ),
                         ),
                       ),
@@ -973,14 +1008,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                         //color: HexColor("#FF15B2D2"),
                         //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         onTap: () {
-                          var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
-                          Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
+                          var encodeEntity = FluroConvertUtils.object2string(
+                              _map3infoEntity.toJson());
+                          Application.router.navigateTo(
+                              context,
+                              Routes.map3node_edit_page +
+                                  "?entity=$encodeEntity");
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
                             Spacer(),
-                            Text("编辑节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            Text("编辑节点",
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#1F81FF"))),
                           ],
                         ),
                         //style: TextStyles.textC906b00S13),
@@ -997,14 +1038,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   Widget _nodeNextPeriodWidget() {
-    var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
+    var currentMicroDelegations =
+        _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
     var status = currentMicroDelegations?.renewal?.status ?? 0;
     if (!_visibleEditNextPeriod) {
       return Container();
     }
 
-    var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
-    var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
+    var lastFeeRate = FormatUtil.formatPercent(
+        double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
+    var rateForNextPeriod =
+        _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ??
+            "0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = "已开启";
@@ -1037,14 +1082,21 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: "下期预设",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: editDateLimit,
+                      style:
+                          TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1069,7 +1121,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                         "修改",
                         style: TextStyle(
                           fontSize: 14,
-                          color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
+                          color: !_canEditNextPeriod
+                              ? HexColor("#999999")
+                              : HexColor("#1F81FF"),
                         ),
                       )),
                     ),
@@ -1145,14 +1199,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       return Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+          padding:
+              const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
           child: Container(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
                   child: Text.rich(
                     TextSpan(children: [
                       TextSpan(
@@ -1193,8 +1249,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     Widget _item(String title, String detail) {
       return Text.rich(TextSpan(children: [
         TextSpan(
-            text: title, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12, color: HexColor("#999999"))),
-        TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
+            text: title,
+            style: TextStyle(
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+                color: HexColor("#999999"))),
+        TextSpan(
+            text: detail,
+            style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: HexColor("#333333"))),
       ]));
     }
 
@@ -1209,7 +1274,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 12, bottom: 20),
         child: Container(
           child: Column(
             children: <Widget>[
@@ -1228,7 +1294,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
               InkWell(
                 onTap: () {
                   var map3Address =
-                      _map3nodeInformationEntity?.map3Node?.map3Address ?? (_map3infoEntity?.address ?? "");
+                      _map3nodeInformationEntity?.map3Node?.map3Address ??
+                          (_map3infoEntity?.address ?? "");
                   Application.router.navigateTo(
                     context,
                     Routes.atlas_detail_page +
@@ -1262,7 +1329,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                                   Text.rich(TextSpan(children: [
                                     TextSpan(
                                         text: atlasEntity?.name ?? "",
-                                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16)),
                                   ])),
                                   Container(
                                     height: 4,
@@ -1317,13 +1386,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     return Container(
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
-                  TextSpan(text: "节点服务", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                  TextSpan(
+                      text: "节点服务",
+                      style:
+                          TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1332,7 +1405,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     height: 30,
                     child: InkWell(
                       onTap: _pushNodeInfoAction,
-                      child: Center(child: Text("访问节点", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")))),
+                      child: Center(
+                          child: Text("访问节点",
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#1F81FF")))),
                       //style: TextStyles.textC906b00S13),
                     ),
                   ),
@@ -1363,7 +1439,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                       child: Column(
                         children: [0, 1].map((index) {
                           var titles = ["设备", "位置"];
-                          var details = [_selectProviderEntity?.name ?? "亚马逊云", _selectedRegion?.name ?? ""];
+                          var details = [
+                            _selectProviderEntity?.name ?? "亚马逊云",
+                            _selectedRegion?.name ?? ""
+                          ];
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
@@ -1408,28 +1487,37 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget _contractProfitWidget() {
     if (_map3infoEntity == null) return Container();
 
-    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity?.getStaking() ?? "0");
-    var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
+    var totalDelegation =
+        FormatUtil.stringFormatNum(_map3infoEntity?.getStaking() ?? "0");
+    var feeRate = FormatUtil.formatPercent(
+        double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
 
-    var totalReward =
-        FormatUtil.clearScientificCounting(_map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
-    var totalRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward)).toDouble();
+    var totalReward = FormatUtil.clearScientificCounting(
+        _map3nodeInformationEntity?.accumulatedReward?.toDouble() ?? 0);
+    var totalRewardValue =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(totalReward))
+            .toDouble();
     var totalRewardString = FormatUtil.formatPrice(totalRewardValue);
 
     var myDelegationString = "0";
     var myRewardString = "0";
 
     if (_microDelegationsJoiner != null) {
-      var myDelegation =
-          FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
-      var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
+      var myDelegation = FormatUtil.clearScientificCounting(
+          _microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
+      var myDelegationValue =
+          ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation))
+              .toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
       // todo:
       // 156551332955190012
 //      _microDelegationsJoiner?.reward = num.parse('156551332955190012');
-      var myReward = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.reward?.toDouble() ?? 0);
-      var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
+      var myReward = FormatUtil.clearScientificCounting(
+          _microDelegationsJoiner?.reward?.toDouble() ?? 0);
+      var myRewardValue =
+          ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward))
+              .toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
 
@@ -1465,7 +1553,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 18, top: 16),
-                child: Text("节点金额", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                child: Text("节点金额",
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
               ),
             ],
           ),
@@ -1478,14 +1567,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       totalDelegation,
-                      style: TextStyle(fontSize: 22, color: HexColor("#228BA1"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#228BA1"),
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "总抵押",
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1499,14 +1594,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     padding: const EdgeInsets.only(top: 24),
                     child: Text(
                       myRewardString,
-                      style: TextStyle(fontSize: 22, color: HexColor("#BF8D2A"), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: HexColor("#BF8D2A"),
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
                       "可提奖励",
-                      style: TextStyle(fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     ),
                   ),
                 ],
@@ -1514,7 +1615,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
             ],
           ),
           Container(
-            padding: const EdgeInsets.only(bottom: 20, top: 30, left: 14, right: 14),
+            padding:
+                const EdgeInsets.only(bottom: 20, top: 30, left: 14, right: 14),
             child: Container(
               padding: const EdgeInsets.symmetric(
                 vertical: 16,
@@ -1549,7 +1651,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
             child: Row(
               children: <Widget>[
-                Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+                Text("节点进度",
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
                 Row(
                   children: <Widget>[
@@ -1616,17 +1719,24 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget _customStepperWidget() {
     //var pendingEpoch = _map3infoEntity?.startEpoch ?? 0;
     var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
-    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
+    var activationEpoch =
+        _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+    var releaseEpoch =
+        double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")
+                ?.toInt() ??
+            0;
     var titles = [
       pendingEpoch > 0 ? "创建 #$pendingEpoch" : "创建",
       activationEpoch > 0 ? "启动 #$activationEpoch" : "启动",
       releaseEpoch > 0 ? "到期 #$releaseEpoch" : "到期",
     ];
 
-    var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0, isSecond: false);
-    var startTime = FormatUtil.formatDate(_map3infoEntity?.startTime ?? 0, isSecond: false);
-    var endTime = FormatUtil.formatDate(_map3infoEntity?.endTime ?? 0, isSecond: false);
+    var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0,
+        isSecond: false);
+    var startTime =
+        FormatUtil.formatDate(_map3infoEntity?.startTime ?? 0, isSecond: false);
+    var endTime =
+        FormatUtil.formatDate(_map3infoEntity?.endTime ?? 0, isSecond: false);
 
     var subtitles = [
       createdAt,
@@ -1650,20 +1760,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
           var index = titles.indexOf(title);
           var subtitle = subtitles[index];
           var date = progressHints[index];
-          var textColor = _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
+          var textColor =
+              _currentStep != index ? HexColor("#A7A7A7") : HexColor('#1FB9C7');
 
           return CustomStep(
             title: Text(
               title,
-              style: TextStyle(fontSize: 12, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             progressHint: Text(
               date,
-              style: TextStyle(fontSize: 12, color: HexColor("#4B4B4B"), fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: HexColor("#4B4B4B"),
+                  fontWeight: FontWeight.normal),
             ),
             subtitle: Text(
               subtitle,
-              style: TextStyle(fontSize: 10, color: textColor, fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontSize: 10,
+                  color: textColor,
+                  fontWeight: FontWeight.normal),
             ),
             content: Container(),
             isActive: true,
@@ -1698,7 +1818,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
         child: Row(
           children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+            Text(S.of(context).account_flow,
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
           ],
         ),
       ),
@@ -1709,7 +1830,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     try {
       _currentPage++;
 
-      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
+      List<HynTransferHistory> tempMemberList =
+          await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1735,27 +1857,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     print("[object] --> micro:${_map3nodeInformationEntity != null}");
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
-      print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      print(
+          "[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       return;
     }
 
-    var creatorAddress = _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
+    var creatorAddress =
+        _map3nodeInformationEntity.map3Node.operatorAddress.toLowerCase();
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
-      print("[object] --> 2micro.length:${_map3nodeInformationEntity.microdelegations.length}");
+      print(
+          "[object] --> 2micro.length:${_map3nodeInformationEntity.microdelegations.length}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
-      if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
-        print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+      if ((delegatorAddress == creatorAddress ||
+          delegatorAddress == joinerAddress)) {
+        print(
+            "[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
-        if (item.delegatorAddress == creatorAddress && _microDelegationsCreator == null) {
+        if (item.delegatorAddress == creatorAddress &&
+            _microDelegationsCreator == null) {
           _microDelegationsCreator = item;
-          print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
+          print(
+              "[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
 
-        if (item.delegatorAddress == joinerAddress && _microDelegationsJoiner == null) {
+        if (item.delegatorAddress == joinerAddress &&
+            _microDelegationsJoiner == null) {
           _microDelegationsJoiner = item;
           print("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }
@@ -1778,11 +1908,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
-      if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {
+      if (_map3infoEntity != null &&
+          (_map3infoEntity?.address?.isNotEmpty ?? false)) {
         _nodeAddress = _map3infoEntity.address;
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        _map3nodeInformationEntity =
+            await client.getMap3NodeInformation(map3Address);
         _setupMicroDelegations();
 
         if (_map3nodeInformationEntity?.microdelegations?.isNotEmpty ?? false) {
@@ -1791,7 +1923,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
           }
         }
 
-        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        List<HynTransferHistory> tempMemberList =
+            await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
       }
 
@@ -1844,7 +1977,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
   void _cancelAction() {
@@ -1871,14 +2006,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_cancel_page +
+            '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
 
   void _shareAction() {
-    Application.router.navigateTo(context,
-        Routes.map3node_share_page + "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_share_page +
+            "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
 
   void _divideAction() {
@@ -1897,7 +2035,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     if (_map3infoEntity != null) {
       Application.router.navigateTo(
         context,
-        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_exit_page +
+            '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
     }
   }
@@ -1931,7 +2070,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     }*/
 
     if (_map3infoEntity != null) {
-      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      var entryRouteName =
+          Uri.encodeComponent(Routes.map3node_contract_detail_page);
       await Application.router.navigateTo(
           context,
           Routes.map3node_join_contract_page +
