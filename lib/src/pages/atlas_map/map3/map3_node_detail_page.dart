@@ -1204,7 +1204,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                       _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
                   child: InkWell(
                     onTap: () {
-                      // todo: bloc
                       Application.eventBus.fire(UpdateMap3TabsPageIndexEvent(
                         index: 1,
                       ));
@@ -1809,9 +1808,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       ]);
 
       _map3infoEntity = requestList[0];
-
-      // todo:
-      //_map3infoEntity.mine = UserMap3Entity.onlyCreator(0);
 
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
