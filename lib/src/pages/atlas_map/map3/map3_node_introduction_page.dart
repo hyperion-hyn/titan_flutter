@@ -121,7 +121,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
     var createMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? 0));
 
     var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
-    var amount = " ${FormatUtil.formatTenThousandNoUnit(startMin)}" +
+    var amount = " ${FormatUtil.formatTenThousandNoUnit(startMinValue.toString())}" +
         S.of(context).ten_thousand;
     var rateTips = "管理费的设置根据抵押量来决定，抵押量越高管理费的最大值越高，(计算公式为：个人抵押量 / $amount x 100%）管理费最高不高于$feeMax%";
 

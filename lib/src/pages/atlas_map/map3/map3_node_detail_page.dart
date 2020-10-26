@@ -1503,7 +1503,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 [
                   {"累积产生": totalRewardString},
                   {"管理费": feeRate},
-                  {"我的抵押": myDelegationString},
+                  {"我的抵押": _isDelegator?myDelegationString:"未抵押"},
                 ],
               ),
             ),
