@@ -396,21 +396,22 @@ class HYNApi {
         break;
       case MessageType.typeTerminateMap3:
         typeStr = "终止Map3节点";
+        amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeMicroDelegate:
         typeStr = "微抵押";
-        amountStr ="${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        amountStr ="-${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeUnMicroDelegate:
         typeStr = "部分撤销";
-        amountStr ="${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
+        amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getDecodedAmount() ?? "0.0")}";
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = "提取微抵押奖励";
         amountStr ="+${ FormatUtil.stringFormatCoinNum(transactionDetail?.getMap3RewardAmount() ?? "0.0")}";
         break;
       case MessageType.typeRenewMap3:
-        typeStr = "续约";
+        typeStr = "下期预设";
         break;
     }
 
