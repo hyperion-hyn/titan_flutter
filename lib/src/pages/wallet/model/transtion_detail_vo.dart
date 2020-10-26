@@ -105,9 +105,7 @@ class TransactionDetailVo {
     }
     BigInt amount = BigInt.parse("0");
     logsDecoded.rewards.forEach((element) {
-      if(element.address == toAddress){
-        amount = amount + BigInt.parse(element.amount);
-      }
+      amount = amount + BigInt.parse(element.amount);
     });
     var amountStr = ConvertTokenUnit.weiToEther(weiBigInt: amount).toString();
     return amountStr;
