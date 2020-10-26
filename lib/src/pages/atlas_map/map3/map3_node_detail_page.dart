@@ -159,7 +159,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      //print("isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
+      print("isInActionPeriodCreator:$isInActionPeriodCreator , isCreator");
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;

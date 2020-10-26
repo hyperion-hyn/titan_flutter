@@ -320,7 +320,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
 }
 
 Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
-    {Function reduceFunc, Function addFunc}) {
+    {Function reduceFunc, Function addFunc, int maxFeeRate = 20}) {
   return Container(
     color: Colors.white,
     child: Row(
@@ -334,7 +334,7 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                 style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
-                    text: "（10%-20%）",
+                    text: "（10%-$maxFeeRate%）",
                     style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                   )
                 ]),
@@ -378,8 +378,10 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                   validator: (textStr) {
 
                     if (textStr.length == 0) {
+
                       return "请输入合适的管理费";
                     } else if (int.parse(textStr??"0") < 10) {
+
                       return "管理费不能小于10%";
                     } else if (Decimal.parse(textStr) >
                         Decimal.parse("20")) {
