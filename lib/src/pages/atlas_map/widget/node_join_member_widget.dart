@@ -209,7 +209,7 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                     ),
                     Text(
-                        "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                        "${FormatUtil.stringFormatCoinNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
                         style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                   ],
                 ),

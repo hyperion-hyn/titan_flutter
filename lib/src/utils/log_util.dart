@@ -32,6 +32,14 @@ class LogUtil {
 
   static toastException(dynamic error) {
     if (error is HttpResponseCodeNotSuccess) {
+      if(error.subMsg != null) {
+        var rpcReturn = MemoryCache.contractErrorStr(error.subMsg);
+        if (rpcReturn != error.subMsg){
+          Fluttertoast.showToast(msg: rpcReturn, toastLength: Toast.LENGTH_LONG);
+          return;
+        }
+      }
+
       HttpResponseCodeNotSuccess notSuccessError = NOT_SUCCESS_ERROR_CODE_MAP[error.code];
       if (notSuccessError == null) {
         Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).undefind_error);
