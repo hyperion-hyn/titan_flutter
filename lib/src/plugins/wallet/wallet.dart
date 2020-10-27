@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
@@ -203,10 +204,9 @@ class Wallet {
     web3.IMessage message,
     bool isAtlasTrans = false
   }) async {
-    if (gasLimit == 0) {
+    /*if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
-//    nonce = await getCurrentWalletNonce(nonce: nonce);
 
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client(isAtlasTrans);
@@ -223,16 +223,33 @@ class Wallet {
         message: message,
       ),
       fetchChainIdFromNetworkId: type == null ? true : false,
+    );*/
+
+    final signedRawHex = await signEthTransaction(
+      password: password,
+      toAddress: toAddress,
+      gasPrice: gasPrice,
+      value: value,
+      type: type,
+      message: message,
+      isAtlasTrans: isAtlasTrans,
+      gasLimit: gasLimit,
+      nonce: nonce,
     );
 
-    if (type == null) {
+    var responseMap = await WalletUtil.postToEthereumNetwork(
+        method: 'eth_sendRawTransaction', params: [signedRawHex],isAtlasTrans: isAtlasTrans);
+    if (type == null && responseMap['result'] != null) {
       nonce = await getCurrentWalletNonce();
       await transactionInteractor.insertTransactionDB(
-          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+          responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
           id: id);
+    }else if(responseMap['error'] != null){
+      var errorEntity = responseMap['error'];
+      throw HttpResponseCodeNotSuccess(errorEntity['code'], errorEntity['message']);
     }
 
-    return txHash;
+    return responseMap['result'];
   }
 
   /// 签名转账
@@ -272,7 +289,7 @@ class Wallet {
       fetchChainIdFromNetworkId: type == null ? true : false,
     );
 
-    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);;
+    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
   }
 
   Future<String> sendErc20Transaction({

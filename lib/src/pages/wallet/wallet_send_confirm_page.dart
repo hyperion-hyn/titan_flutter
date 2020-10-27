@@ -605,23 +605,10 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       Application.router
           .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
     } catch (_) {
-      LogUtil.uploadException(_, "ETH or Bitcoin upload");
+      LogUtil.toastException(_);
       setState(() {
         isTransferring = false;
       });
-      if (_ is PlatformException) {
-        if (_.code == WalletError.PASSWORD_WRONG) {
-          Fluttertoast.showToast(msg: S.of(context).password_incorrect);
-        } else {
-          Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-        }
-      } else if (_ is RPCError) {
-        Fluttertoast.showToast(
-            msg: MemoryCache.contractErrorStr(_.message),
-            toastLength: Toast.LENGTH_LONG);
-      } else {
-        Fluttertoast.showToast(msg: S.of(context).transfer_fail);
-      }
     }
   }
 

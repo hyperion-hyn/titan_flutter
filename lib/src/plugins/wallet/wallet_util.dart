@@ -301,8 +301,9 @@ class WalletUtil {
 
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(
-      {String method, List params, int id = 1}) {
-    return HttpCore.instance.post(WalletConfig.getEthereumApi(),
+      {String method, List params, int id = 1,bool isAtlasTrans = false}) {
+    //{jsonrpc: 2.0, id: 1, result: 0x4547fdfbf3f1cfd25c0fa7267a97c7832ddda76352456b8e78898e9bd619adb7}
+    return HttpCore.instance.post(isAtlasTrans ? WalletConfig.getAtlasApi() : WalletConfig.getEthereumApi(),
         params: {
           "jsonrpc": "2.0",
           "method": method,
