@@ -20,6 +20,7 @@ import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
+import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
 import 'wallet_util.dart';
@@ -246,7 +247,7 @@ class Wallet {
           id: id);
     }else if(responseMap['error'] != null){
       var errorEntity = responseMap['error'];
-      throw HttpResponseCodeNotSuccess(errorEntity['code'], errorEntity['message']);
+      throw RPCError(errorEntity['code'], errorEntity['message'],"");
     }
 
     return responseMap['result'];
