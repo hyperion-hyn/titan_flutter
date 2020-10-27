@@ -7,13 +7,16 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
+import 'package:titan/src/pages/node/map3page/my_map3_contracts_page_v8.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -94,7 +97,10 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              AtlasApi.goToAtlasMap3HelpPage(context);
+
+              Application.router.navigateTo(context, Routes.map3node_my_page_v8);
+
+              //AtlasApi.goToAtlasMap3HelpPage(context);
             },
             child: Text(
               "旧版Map3",

@@ -29,6 +29,10 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_public_widget.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/wallet_cmp_event.dart';
+
 class Map3NodeCreatePage extends StatefulWidget {
   final String contractId;
 
@@ -148,6 +152,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         });
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    }
   }
 
   @override
@@ -377,7 +390,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
               _rateCoinController.text = "$_currentFeeRate";
             });
-          }),
+          }, maxFeeRate: _maxFeeRate),
           divider,
         ]),
       ),
@@ -626,8 +639,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     }
     _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
     _rateCoinController.text = "$_currentFeeRate";
+    setState(() {});
   }
 
+  /*
   void _rateTextFieldChangeListener() {
     if (_inputFeeRateValue <= 0) {
       return;
@@ -645,6 +660,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       });
     }
   }
+  */
 
   void _dealTextField(String inputText) {
     if (!mounted || _originInputStr == inputText) {

@@ -5,7 +5,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -151,21 +150,21 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
-                      child: Text(
-                        detail,
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600, color: HexColor("#0A6F84"), height: 1.5),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    if (detail.isNotEmpty)
-                      Image.asset(
-                        "res/drawable/node_create_success.gif",
-                        fit: BoxFit.contain,
-                        width: 26,
-                      ),
+//                    Container(
+//                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
+//                      child: Text(
+//                        detail,
+//                        style: TextStyle(
+//                            fontSize: 14, fontWeight: FontWeight.w600, color: HexColor("#0A6F84"), height: 1.5),
+//                        textAlign: TextAlign.center,
+//                      ),
+//                    ),
+//                    if (detail.isNotEmpty)
+//                      Image.asset(
+//                        "res/drawable/node_create_success.gif",
+//                        fit: BoxFit.contain,
+//                        width: 26,
+//                      ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 48),
                       constraints: BoxConstraints.expand(height: 48),
@@ -176,17 +175,19 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                             borderRadius: BorderRadius.circular(36)),
                         onPressed: () {
                           // todo: jison_1026
-                          if (detail.isNotEmpty) {
-                            _shareAction();
-                          } else {
-                            _pop(context);
-                          }
+//                          if (detail.isNotEmpty) {
+//                            _shareAction();
+//                          } else {
+//                            _pop(context);
+//                          }
+                        _pop(context);
                         },
                         child: Container(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                             child: Text(
-                              detail.isEmpty ? "完成" : "分享邀请",
+                              //detail.isEmpty ? "完成" : "分享邀请",
+                              "完成",
                               style: TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
@@ -251,7 +252,6 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         break;
 
       case Map3NodeActionEvent.MAP3_EDIT:
-      case Map3NodeActionEvent.MAP3_PRE_EDIT:
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
         Routes.popUntilCachedEntryRouteName(context);

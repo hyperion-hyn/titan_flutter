@@ -22,7 +22,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
+
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
@@ -33,6 +33,9 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/wallet_cmp_event.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
@@ -71,6 +74,17 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     });
 
     super.initState();
+  }
+
+
+  @override
+  void didChangeDependencies() {
+
+    super.didChangeDependencies();
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    }
   }
 
   @override

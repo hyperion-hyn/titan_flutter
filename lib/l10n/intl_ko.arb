@@ -5,6 +5,7 @@
   "no_recommended_route": "추천경로가 없습니다",
   "less_than_1_min": "1분 미만",
   "n_day": "{day}일",
+  "n_day_v8": "{day}天",
   "n_hour": "{hour}시간",
   "n_minute": "{minute}분",
   "km": "{km}킬로미터",

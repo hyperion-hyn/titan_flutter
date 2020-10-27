@@ -152,7 +152,15 @@ class ContractNodeItem extends Object {
 //    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
 //  }
 
-  bool get isHalfCompleteSecondsLeft => true;
+
+  bool get isHalfCompleteSecondsLeft {
+    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
+    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
+    double halfTotalDue = totalDue / 2;
+    double overDue = (now - instanceActiveTime);
+    double timeLeft = halfTotalDue - overDue;
+    return timeLeft <= 0;
+  }
 
   ///从启动到期满剩余时间
   double get completeSecondsLeft {

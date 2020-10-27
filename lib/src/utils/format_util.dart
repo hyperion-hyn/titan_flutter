@@ -250,6 +250,43 @@ class FormatUtil {
     return timeStr;
   }
 
+  static String timeStringSimpleV8(BuildContext context, double seconds) {
+    if (seconds < 60) {
+      return S.of(context).n_second('$seconds');
+    }
+    final kDay = 3600 * 24;
+    final kHour = 3600;
+    final kMinute = 60;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+    if (seconds > kDay) {
+      day = seconds ~/ kDay;
+      seconds = seconds - day * kDay;
+    }
+    if (seconds > kHour) {
+      hour = seconds ~/ kHour;
+      seconds = seconds - hour * kHour;
+    }
+    minute = seconds ~/ kMinute;
+    seconds = seconds - minute * kMinute;
+
+    var timeStr = '';
+    if (day > 0) {
+      timeStr += S.of(context).n_day_v8('$day');
+      timeStr += S.of(context).n_hour_simple('$hour');
+      return timeStr;
+    }
+
+    if (hour > 0) {
+      timeStr += S.of(context).n_hour_simple('$hour');
+    }
+    if (minute > 0) {
+      timeStr += S.of(context).n_minute_simple('$minute');
+    }
+    return timeStr;
+  }
+
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
