@@ -497,7 +497,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
-    var total = Decimal.parse('0.00005') + stakingValue;
+    var total = Decimal.parse('0.000021') + stakingValue;
 
     if (total >= balance) {
       Fluttertoast.showToast(msg: "请预留少量HYN（如：0.00005）作为矿工费");
