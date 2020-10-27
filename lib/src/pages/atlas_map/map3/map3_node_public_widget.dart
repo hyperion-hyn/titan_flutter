@@ -365,7 +365,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
 }
 
 Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
-    {Function reduceFunc, Function addFunc, int maxFeeRate = 20}) {
+    {Function reduceFunc, Function addFunc, double maxFeeRate = 20}) {
   return Container(
     color: Colors.white,
     child: Row(
@@ -413,13 +413,13 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                 ),
               ),
               Container(
-                width: 60,
+                width: 70,
                 height: 34,
                 child: RoundBorderTextField(
                   controller: _rateCoinController,
                   keyboardType: TextInputType.number,
                   bgColor: HexColor("#ffffff"),
-                  maxLength: 3,
+                  maxLength: 6,
                   validator: (textStr) {
 
                     if (textStr.length == 0) {

@@ -38,8 +38,8 @@ class Map3NodePreEditPage extends StatefulWidget {
 
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isOpen = true;
-  int _currentFeeRate = 20;
-  int _maxFeeRate = 20;
+  double _currentFeeRate = 20;
+  double _maxFeeRate = 20;
   TextEditingController _rateCoinController = TextEditingController();
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
 
@@ -57,12 +57,13 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     }
     var value = double.tryParse(text);
     if (value == null) return 0;
-    return value.toInt();
+    return value;
   }
 
   @override
   void initState() {
-    _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate())).toInt();
+    _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate()));
+
     _rateCoinController.text = "$_currentFeeRate";
 
     if (!_isJoiner) {
@@ -85,7 +86,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   _updateRate() {
     var staking = getStaking();
     var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
-    var rate = (100 * (staking / createMin)).toInt();
+    var rate = (100 * (staking / createMin)).toDouble();
 
     if (rate >= 20) {
       _maxFeeRate = 20;
@@ -108,15 +109,13 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
       var walletAddress = EthereumAddress.fromHex(_address);
 
-      if ((widget?.map3infoEntity?.mine != null) && (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
-        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
 
-        _microDelegations = await _client.getMap3NodeDelegation(
-          map3Address,
-          walletAddress,
-        );
-        _updateRate();
-      }
+      _microDelegations = await _client.getMap3NodeDelegation(
+        map3Address,
+        walletAddress,
+      );
+      _updateRate();
 
       if (mounted) {
         setState(() {
