@@ -26,7 +26,8 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasStakeSelectPage extends StatefulWidget {
@@ -65,7 +66,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
 
   @override
   void initState() {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
 
     _refreshData();
@@ -80,7 +82,9 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white, appBar: BaseAppBar(baseTitle: "抵押Atlas节点"), body: _pageWidget(context));
+        backgroundColor: Colors.white,
+        appBar: BaseAppBar(baseTitle: "抵押Atlas节点"),
+        body: _pageWidget(context));
   }
 
   Widget _pageWidget(BuildContext context) {
@@ -269,7 +273,8 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   }
 }
 
-Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
+Widget stakeHeaderInfo(
+    BuildContext buildContext, AtlasInfoEntity atlasInfoEntity) {
   return Row(
     children: <Widget>[
       Padding(
@@ -280,20 +285,18 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
         child: Column(
           children: <Widget>[
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  atlasInfoEntity.name,
-                  style: TextStyles.textC333S16,
-                ),
-                SizedBox(
-                  width: 6,
+                Expanded(
+                  child: Text(
+                    atlasInfoEntity.name,
+                    style: TextStyles.textC333S16,
+                  ),
                 ),
                 /*Text(
                   '${atlasInfoEntity.rank}',
                   style: TextStyle(color: HexColor("#228BA1"), fontSize: 16),
                 ),*/
-                Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2.0),
                   child: Text(
@@ -319,7 +322,8 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                     UiUtil.toast(S.of(buildContext).copyed);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8, top: 3, bottom: 3),
+                    padding: const EdgeInsets.only(
+                        left: 8.0, right: 8, top: 3, bottom: 3),
                     child: Image.asset(
                       "res/drawable/ic_copy.png",
                       width: 16,
@@ -331,7 +335,8 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
                 Container(
                     padding: EdgeInsets.only(left: 6.0, right: 6),
                     color: HexColor("#e3fafb"),
-                    child: Text("${getAtlasNodeType(atlasInfoEntity.type)}", style: TextStyles.textC333S12)),
+                    child: Text("${getAtlasNodeType(atlasInfoEntity.type)}",
+                        style: TextStyles.textC333S12)),
               ],
             )
           ],
@@ -344,7 +349,8 @@ Widget stakeHeaderInfo(BuildContext buildContext, AtlasInfoEntity atlasInfoEntit
   );
 }
 
-Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, bool isShowAll, Function showAllInfo) {
+Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList,
+    bool isShowAll, Function showAllInfo) {
   return Column(
     children: <Widget>[
       Column(
@@ -360,7 +366,8 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
                           padding: const EdgeInsets.only(left: 14),
                           child: Text(
                             infoTitleList[index],
-                            style: TextStyle(fontSize: 14, color: HexColor("#999999")),
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#999999")),
                           ),
                         ),
                       ),
@@ -370,7 +377,8 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList, b
                           padding: const EdgeInsets.only(right: 14),
                           child: Text(
                             infoContentList[index],
-                            style: TextStyle(fontSize: 14, color: HexColor("#333333")),
+                            style: TextStyle(
+                                fontSize: 14, color: HexColor("#333333")),
                           ),
                         ),
                       )
