@@ -161,8 +161,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             isShowMap3 = false;
           }
           if (_atlasInfoEntity.myMap3 != null) {
-            _atlasInfoEntity.myMap3.forEach((atlasElement) {
-              if (myElement.address == atlasElement.address) {
+            _atlasInfoEntity.myMap3.forEach((atlasMap3Element) {
+              if (myElement.address == atlasMap3Element.address || myElement.relative != null) {
                 isShowMap3 = false;
               }
             });
