@@ -130,7 +130,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                               TextSpan(text: ' '),
                               TextSpan(
                                   text:
-                                      '${FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
+                                      '${double.parse(_atlasInfo.rewardRate ?? '0') == 0 ? '--%' : FormatUtil.formatPercent(double.parse(_atlasInfo.rewardRate ?? '0'))}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
