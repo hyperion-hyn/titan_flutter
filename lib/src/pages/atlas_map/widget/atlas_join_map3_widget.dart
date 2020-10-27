@@ -217,7 +217,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
                       Text(
-                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                          "${FormatUtil.stringFormatCoinNum(entity.getStaking() ?? "0")}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),

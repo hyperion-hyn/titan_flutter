@@ -17,7 +17,7 @@ class FormatUtil {
   }
 
   static String stringFormatCoinNum(String numValue) {
-    return NumberFormat("#,###.######").format(double.parse(numValue));
+    return NumberFormat("#,###,###,###.#########").format(Decimal.parse(numValue).toDouble());
   }
 
   static String doubleFormatNum(double numValue) {

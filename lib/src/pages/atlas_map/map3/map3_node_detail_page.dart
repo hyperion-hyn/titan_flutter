@@ -1434,7 +1434,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _contractProfitWidget() {
     if (_map3infoEntity == null) return Container();
 
-    var totalDelegation = FormatUtil.stringFormatNum(_map3infoEntity?.getStaking() ?? "0");
+    var totalDelegation = FormatUtil.stringFormatCoinNum(_map3infoEntity?.getStaking() ?? "0");
     var feeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
 
     var totalReward =
