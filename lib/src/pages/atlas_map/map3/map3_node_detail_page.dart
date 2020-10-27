@@ -500,18 +500,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
           actions: <Widget>[
-            InkWell(
-              onTap: _canExit ? _showMoreAlertView : _shareAction,
-              borderRadius: BorderRadius.circular(60),
-              child: Padding(
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: Icon(
-                  _canExit ? Icons.more_horiz : Icons.share,
-                  color: HexColor("999999"),
-                  size: 20,
-                ),
-              ),
-            ),
+//            InkWell(
+//              onTap: _canExit ? _showMoreAlertView : _shareAction,
+//              borderRadius: BorderRadius.circular(60),
+//              child: Padding(
+//                padding: EdgeInsets.only(left: 16, right: 16),
+//                child: Icon(
+//                  _canExit ? Icons.more_horiz : Icons.share,
+//                  color: HexColor("999999"),
+//                  size: 20,
+//                ),
+//              ),
+//            ),
           ],
         ),
         body: _pageWidget(context),

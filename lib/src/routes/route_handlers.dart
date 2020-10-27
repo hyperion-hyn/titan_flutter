@@ -316,6 +316,15 @@ var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
   return Map3NodeSharePage(contractNodeItem);
 });
 
+var map3AtlasNodeShareHandler = Handler(handlerFunc: (context, params) {
+  _cacheEntryRouteName(params);
+
+  Map3InfoEntity entity = Map3InfoEntity.fromJson(
+      FluroConvertUtils.string2map(params['info']?.first));
+
+  return Map3NodeDetailPage(entity);
+});
+
 var map3NodeIntroductionHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodeIntroductionPage();
