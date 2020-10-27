@@ -563,7 +563,7 @@ Widget getHoldInNum(
                               return '请正确的输入数据';
                             }
 
-                            if (int.parse(textStr) < minTotal) {
+                            if ((double.tryParse(textStr) ?? 0) < minTotal) {
                               return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (Decimal.parse(textStr) >
                                 Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {

@@ -90,7 +90,7 @@ class BaseHttpCore {
         data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS &&
         responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg,subMsg: responseEntity.subMsg);
     }
     return responseEntity.data;
   }
