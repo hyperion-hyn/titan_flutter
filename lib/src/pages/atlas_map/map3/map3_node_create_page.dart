@@ -489,11 +489,21 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }*/
 
+
+    var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+
     if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
       Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
-
       return;
     }
+
+    var total = Decimal.parse('0.00005') + stakingValue;
+
+    if (total >= balance) {
+      Fluttertoast.showToast(msg: "请预留少量HYN（如：0.00005）作为矿工费");
+      return;
+    }
+
 
     var feeRate = _inputFeeRateValue;
     if (feeRate < 10 || feeRate > _maxFeeRate) {
