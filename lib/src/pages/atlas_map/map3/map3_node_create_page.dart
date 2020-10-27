@@ -377,7 +377,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
               _rateCoinController.text = "$_currentFeeRate";
             });
-          }),
+          }, maxFeeRate: _maxFeeRate),
           divider,
         ]),
       ),
@@ -626,8 +626,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     }
     _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
     _rateCoinController.text = "$_currentFeeRate";
+    setState(() {
+
+    });
   }
 
+  /*
   void _rateTextFieldChangeListener() {
     if (_inputFeeRateValue <= 0) {
       return;
@@ -645,6 +649,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       });
     }
   }
+  */
 
   void _dealTextField(String inputText) {
     if (!mounted || _originInputStr == inputText) {
