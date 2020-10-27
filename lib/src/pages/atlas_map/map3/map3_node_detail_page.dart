@@ -126,7 +126,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   int _currentPage = 0;
   List<HynTransferHistory> _delegateRecordList = [];
 
-  get _stateColor => Map3NodeUtil.statusColor(_map3Status);
+  get _statusColor => Map3NodeUtil.statusColor(_map3Status);
 
   get _isNoWallet => _address?.isEmpty ?? false;
 
@@ -161,7 +161,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      print("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
+      LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
 
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
@@ -173,7 +173,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     // 参与者
     var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
 
-    print("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
+    LogUtil.printMessage("[statusJoiner] _microDelegationsJoiner?.statusJoiner:$statusJoiner");
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
 
     if (_isDelegator) {
@@ -181,7 +181,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
       var c1 = (statusJoiner == 0 && isCreatorSetOpen);
       var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
-      print("c1: $c1, c2:$c2");
+      LogUtil.printMessage("c1: $c1, c2:$c2");
 
       if ((statusJoiner == 0 && isCreatorSetOpen) || (isInActionPeriodJoiner && statusJoiner == 0)) {
         return true;
@@ -268,10 +268,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     double value = 0.0;
 
+
+
     switch (_map3Status) {
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
+        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
+        var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
+        var left = staking / startMin;
+
+        if (isFull) {
+          value = 0.95;
+        } else {
+          if (left <= 0.1) {
+            value = 0.1;
+          } else if (left > 0.1 && left < 1.0) {
+            value = left;
+          } else {
+            value = 0.95;
+          }
+        }
+        break;
+
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         value = 0.5;
@@ -307,69 +327,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     return value;
   }
 
-  get _contractStateDesc {
-    if (_map3Status == null) {
-      return S.of(context).wait_to_launch;
-    }
-
-    var _map3StatusDesc = "待启动";
-
-    switch (_map3Status) {
-      case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
-
-        break;
-
-      case Map3InfoStatus.CREATE_SUBMIT_ING:
-        _map3StatusDesc = "创建中";
-
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        _map3StatusDesc = "待启动";
-
-        break;
-
-      case Map3InfoStatus.CREATE_FAIL:
-        _map3StatusDesc = "启动失败";
-
-        break;
-
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        _map3StatusDesc = "运行中";
-
-        break;
-
-      case Map3InfoStatus.CONTRACT_IS_END:
-        _map3StatusDesc = "已到期";
-
-        break;
-
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusDesc = "已终止";
-
-        break;
-
-      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        _map3StatusDesc = "撤销中";
-
-        break;
-
-      case Map3InfoStatus.MAP:
-        _map3StatusDesc = "映射中";
-
-        break;
-
-      default:
-        _map3StatusDesc = "";
-
-        break;
-    }
-
-    print("_map3Status：$_map3Status, _map3StatusDesc:$_map3StatusDesc");
-
-    return _map3StatusDesc;
-  }
+  get _stateDescText => Map3NodeUtil.stateDescText(_map3Status);
 
   get _contractStateDetail {
     if (_map3Status == null) {
@@ -411,6 +369,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         break;
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        // _map3StatusDesc = "撤销请求已提交";
         _map3StatusDesc = "";
 
         break;
@@ -461,9 +420,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   @override
+  void didPush() {
+    //_loadData();
+    super.didPush();
+  }
+
+  @override
   void didPopNext() {
-    _loadData();
-    super.didPopNext();
+    //_loadData();
+    super.didPushNext();
   }
 
   _loadData() {
@@ -476,6 +441,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    //Application.routeObserver.subscribe(this, ModalRoute.of(context));
   }
 
   @override
@@ -502,7 +469,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     final positions = renderBox.localToGlobal(Offset(0, 0));
     _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
     _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
-    //print("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
+    //LogUtil.printMessage("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
   }
 
 //  left: 246,
@@ -510,7 +477,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   @override
   void dispose() {
-    print("[detail] dispose");
+    LogUtil.printMessage("[detail] dispose");
+    //Application.routeObserver.unsubscribe(this);
 
     _loadDataBloc.close();
     super.dispose();
@@ -519,11 +487,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget build(BuildContext context) {
     // todo: test_jison
     //_map3Status = Map3InfoStatus.values[0];
-    print("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
+    LogUtil.printMessage("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
 
-    print("_currentEpoch: $_currentEpoch");
+    LogUtil.printMessage("_currentEpoch: $_currentEpoch");
 
     return WillPopScope(
       onWillPop: () async => true,
@@ -572,6 +540,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
               onRefresh: getContractDetailData,
               onLoadingMore: getMap3StakingLogMoreData,
               child: CustomScrollView(
+                //physics: AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
                   // 0.通知
                   SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
@@ -712,7 +681,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   }
 
   Widget _bottomBtnBarWidget() {
-    print("_invisibleBottomBar:$_visibleBottomBar");
+    LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
     if (!_visibleBottomBar) return Container();
 
@@ -773,7 +742,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   Widget _bottomBtnBarWidget() {
     if (_invisibleBottomBar) return Container();
 
-    print("_invisibleBottomBar:$_invisibleBottomBar");
+    LogUtil.printMessage("_invisibleBottomBar:$_invisibleBottomBar");
 
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
@@ -858,7 +827,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     var nodeName = _map3infoEntity?.name ?? "***";
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}天" : "";
+    var oldYearValue = oldYear > 0 ? "节龄：${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
 
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 8)}";
@@ -867,7 +836,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc =
-        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : _map3infoEntity.describe;
+        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高." : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
@@ -927,7 +896,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(_contractStateDesc, style: TextStyle(color: _stateColor, fontSize: 12)),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 18, right: 8.0),
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              //color: Colors.red,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _statusColor,
+                                border: Border.all(
+                                  color: Map3NodeUtil.statusBorderColor(_map3Status),
+                                  width: 1.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Text.rich(
+                            TextSpan(children: [
+                              TextSpan(
+                                text: _stateDescText,
+                                style: TextStyle(fontSize: 12, color: _statusColor),
+                              ),
+                            ]),
+                          ),
+                        ],
+                      ),
+                      //Text(_stateDescText, style: TextStyle(color: _statusColor, fontSize: 12)),
                       Container(
                         height: 4,
                       ),
@@ -1043,16 +1040,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var periodEpoch7 = _releaseEpoch - 7;
 
     var editDateLimit = "";
-    if (_isCreator) {
-      editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
-      if ((_microDelegationsCreator?.renewal?.status ?? 0) != 0) {
-        editDateLimit = "（设置完成）";
+    if (_isDelegator) {
+      if (_isCreator) {
+        editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内修改）";
+        if ((_microDelegationsCreator?.renewal?.status ?? 0) != 0) {
+          editDateLimit = "（设置完成）";
+        }
+      } else {
+        editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
+        if ((_microDelegationsJoiner?.renewal?.status ?? 0) != 0) {
+          editDateLimit = "（设置完成）";
+        }
       }
     } else {
-      editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内修改）";
-      if ((_microDelegationsJoiner?.renewal?.status ?? 0) != 0) {
-        editDateLimit = "（设置完成）";
-      }
+      editDateLimit = "";
     }
 
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
@@ -1066,7 +1067,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         child: Column(
           children: <Widget>[
             Visibility(
-              //visible: showLog,
+              // visible: showLog,
               visible: false,
               child: Text(
                 "当前纪元：$_currentEpoch",
@@ -1200,8 +1201,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   ),
                 ),
                 Visibility(
-                  visible: _isCreator &&
-                      _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
+                  visible: _isCreator && _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED,
                   child: InkWell(
                     onTap: () {
                       Application.eventBus.fire(UpdateMap3TabsPageIndexEvent(
@@ -1240,7 +1240,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var rewardValueString = FormatUtil.truncateDecimalNum(rewardDecimal, 4);
     var rewardValue = double.parse(rewardValueString);
     var rewardRate = FormatUtil.formatPercent(rewardValue);
-    //print("rank:${atlasEntity.rank},atlasEntity.reward:${atlasEntity.rewardRate}, rewardValueString:$rewardValueString");
+    //LogUtil.printMessage("rank:${atlasEntity.rank},atlasEntity.reward:${atlasEntity.rewardRate}, rewardValueString:$rewardValueString");
 
     return Container(
       color: Colors.white,
@@ -1597,7 +1597,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                         //color: Colors.red,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: _stateColor,
+                          color: _statusColor,
                           border: Border.all(
                             color: Map3NodeUtil.statusBorderColor(_map3Status),
                             width: 1.0,
@@ -1608,34 +1608,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                     Text.rich(
                       TextSpan(children: [
                         TextSpan(
-                          text: _contractStateDesc,
-                          style: TextStyle(fontSize: 12, color: _stateColor),
+                          text: _stateDescText,
+                          style: TextStyle(fontSize: 12, color: _statusColor),
                         ),
                       ]),
                     ),
                   ],
                 ),
-/*
-            child: Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 16, 8),
-            child: Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, right: 8.0),
-                  child: Container(
-                    width: 10,
-                    height: 10,
-                    //color: Colors.red,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: _stateColor, border: Border.all(color: Colors.grey, width: 1.0)),
-                  ),
-                ),
-                Text.rich(TextSpan(children: [
-                  TextSpan(text: _contractStateDesc, style: TextStyle(fontSize: 14, color: _stateColor)),
-                ])),
-*/
+
+
               ],
             ),
           ),
@@ -1675,9 +1656,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       "",
     ];
 
-    //print('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
+    //LogUtil.printMessage('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
     return CustomStepper(
-      tickColor: _stateColor,
+      tickColor: _statusColor,
       tickText: _contractStateDetail,
       currentStepProgress: _currentStepProgress,
       currentStep: _currentStep,
@@ -1768,10 +1749,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
   // todo: test_detail
   _setupMicroDelegations() {
-    print("[object] --> micro:${_map3nodeInformationEntity != null}");
+    LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
-      print("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       return;
     }
@@ -1780,20 +1761,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity?.microdelegations ?? []) {
-      print("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
-        print("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+        LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
         if (item.delegatorAddress == creatorAddress) {
           _microDelegationsCreator = item;
-          print("[object] --> creator.reward:${_microDelegationsCreator.reward}");
+          LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.reward}");
         }
 
         if (item.delegatorAddress == joinerAddress) {
           _microDelegationsJoiner = item;
-          print("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
+          LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }
       }
     }
@@ -1820,7 +1801,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
         if (_map3nodeInformationEntity?.microdelegations?.isNotEmpty ?? false) {
           for (var item in _map3nodeInformationEntity.microdelegations) {
-            print("renewal.json:${item.renewal.toJson()}");
+            LogUtil.printMessage("renewal.json:${item.renewal.toJson()}");
           }
         }
 
@@ -1880,32 +1861,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
-  void _cancelAction() {
+  void _cancelAction() async {
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;
     }
 
-    print("_map3infoEntity.status:${_map3infoEntity.status}");
-
-    /*
-    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
-      Fluttertoast.showToast(msg: "节点创建中, 暂不能撤销抵押！");
-      return;
-    }
-
-    // todo: 撤销节点中
-
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
-      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能撤销抵押");
-      return;
-    }*/
+    LogUtil.printMessage("_map3infoEntity.status:${_map3infoEntity.status}");
 
     if (_map3infoEntity != null) {
-      Application.router.navigateTo(
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      await Application.router.navigateTo(
         context,
-        Routes.map3node_cancel_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_cancel_page +
+            '?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
+      _nextAction();
     }
   }
 
@@ -1922,16 +1893,19 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     Application.router.navigateTo(context, Routes.map3node_divide_page);
   }
 
-  void _exitAction() {
+  void _exitAction() async {
     if (_isNoWallet) {
       _pushWalletManagerAction();
       return;
     }
     if (_map3infoEntity != null) {
-      Application.router.navigateTo(
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      await Application.router.navigateTo(
         context,
-        Routes.map3node_exit_page + '?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
+        Routes.map3node_exit_page +
+            '?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}',
       );
+      _nextAction();
     }
   }
 
@@ -1950,19 +1924,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
       return;
     }
 
-    /*
-    if (_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING) {
-      Fluttertoast.showToast(msg: "节点创建中, 暂不能抵押！");
-      return;
-    }
-
-    // todo: 撤销节点中
-
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT) {
-      Fluttertoast.showToast(msg: "正在撤销节点中, 暂不能抵押");
-      return;
-    }*/
-
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
       await Application.router.navigateTo(
@@ -1976,10 +1937,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   void _nextAction() {
     final result = ModalRoute.of(context).settings?.arguments;
 
-    print("[detail] _next action, result:$result");
+    LogUtil.printMessage("[detail] _next action, result:$result");
 
     if (result != null && result is Map && result["result"] is bool) {
-      getContractDetailData();
+      _loadData();
     }
   }
 }

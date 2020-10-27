@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -28,6 +31,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   NodeApi _nodeApi = NodeApi();
   Map3IntroduceEntity _introduceEntity;
   List<NodeProviderEntity> _providerList = [];
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -58,11 +62,14 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       _providerList = requestList[1];
 
       setState(() {
+        _loadDataBloc.add(RefreshSuccessEvent());
         currentState = null;
       });
     } catch (e) {
       print(e);
       setState(() {
+        _loadDataBloc.add(RefreshFailEvent());
+
         currentState = LoadFailState();
       });
     }
@@ -90,17 +97,22 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       child: Column(
         children: <Widget>[
           Expanded(
-            child: SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _nodeWidget(),
-              SizedBox(
-                height: 10,
-                child: Container(
-                  color: HexColor("#F4F4F4"),
+            child: LoadDataContainer(
+              bloc: _loadDataBloc,
+              enablePullUp: false,
+              onRefresh: getNetworkData,
+              child: SingleChildScrollView(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _nodeWidget(),
+                SizedBox(
+                  height: 10,
+                  child: Container(
+                    color: HexColor("#F4F4F4"),
+                  ),
                 ),
-              ),
-              _tipsWidget(),
-            ])),
+                _tipsWidget(),
+              ])),
+            ),
           ),
           _confirmButtonWidget(),
         ],

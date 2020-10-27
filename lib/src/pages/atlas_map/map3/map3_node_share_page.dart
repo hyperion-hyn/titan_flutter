@@ -25,6 +25,7 @@ class Map3NodeSharePage extends StatefulWidget {
   _Map3NodeSharePageState createState() => new _Map3NodeSharePageState();
 }
 
+// todo: test_1026
 class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   final ShotController _shotController = new ShotController();
   List<String> imagesList = [];

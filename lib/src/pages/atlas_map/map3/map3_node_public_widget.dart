@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -138,13 +139,14 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   }
 
   var nodeName = infoEntity?.name ?? "";
-  var nodeAddress = "${UiUtil.shortEthAddress(infoEntity?.address ?? "", limitLength: 8)}";
+  var nodeAddress = "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(infoEntity?.address ?? ""), limitLength: 8)}";
+
   var nodeIdPre = "节点号";
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
-  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高，" : infoEntity.describe;
+  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高." : infoEntity.describe;
   var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
@@ -156,6 +158,12 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
     var remainEpoch = (infoEntity?.endEpoch??0) - currentEpoch;
     date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
+
+  var status = Map3InfoStatus.values[infoEntity?.status??0];
+  var statusColor = Map3NodeUtil.statusColor(status);
+  var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
+  var stateDescText = Map3NodeUtil.stateDescText(status);
+  var width = MediaQuery.of(context).size.width - 108;
 
   return InkWell(
     onTap: () async {
@@ -200,7 +208,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width - 108,
+                      width: width,
                       child: Row(
                         children: <Widget>[
                           Expanded(child: Padding(
@@ -214,24 +222,35 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                             ),
                           ),),
-                          RichText(
-                            textAlign: TextAlign.end,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                                text: nodeIdPre,
-                                style: TextStyle(
-                                  color: HexColor("#999999"),
-                                  fontSize: 12,
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(left: 18, right: 8.0),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  //color: Colors.red,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: statusColor,
+                                    border: Border.all(
+                                      color: statusBorderColor,
+                                      width: 1.0,
+                                    ),
+                                  ),
                                 ),
-                                children: [
+                              ),
+                              Text.rich(
+                                TextSpan(children: [
                                   TextSpan(
-                                      text: "$nodeId",
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: HexColor("#333333"),
-                                      ))
+                                    text: stateDescText,
+                                    style: TextStyle(fontSize: 12, color: statusColor),
+                                  ),
                                 ]),
-                          )
+                              ),
+                            ],
+                          ),
+
                         ],
                       ),
                     ),
@@ -239,7 +258,33 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                       padding: const EdgeInsets.only(
                         top: 4,
                       ),
-                      child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12),
+                      child: Container(
+                        width: width,
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12)),
+                            RichText(
+                              textAlign: TextAlign.end,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                  text: nodeIdPre,
+                                  style: TextStyle(
+                                    color: HexColor("#999999"),
+                                    fontSize: 12,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                        text: "$nodeId",
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: HexColor("#333333"),
+                                        ))
+                                  ]),
+                            ),
+
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -922,8 +967,11 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
+
   var isYou = item.from.toLowerCase() == walletAddress;
-  var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
+
+  var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
+
   var recordName = isAtlasDetail
       ? " ${isYou ? "(你)" : ""}"
       : "${isCreator && !isYou ? " (创建者)" : ""}${!isCreator && isYou ? " (你)" : ""}${isCreator && isYou ? " (创建者)" : ""}";

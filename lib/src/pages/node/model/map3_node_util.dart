@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -6,9 +5,9 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/node_item.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 class Map3NodeUtil {
-
   // input
 
   static String getManagerTip(NodeItem contract, double inputValue) {
@@ -27,18 +26,14 @@ class Map3NodeUtil {
   static String spendManagerTip(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
-    double tip = (inputValue) *
-        contract.annualizedYield *
-        contract.duration /
-        365 *
-        contract.commission;
+    double tip = (inputValue) * contract.annualizedYield * contract.duration / 365 * contract.commission;
     return FormatUtil.formatNumDecimal(tip);
   }
 
   static String managerTip(NodeItem contract, double inputValue, {bool isOwner = false}) {
     if (contract == null) return "*";
 
-    return isOwner?getManagerTip(contract, inputValue):spendManagerTip(contract, inputValue);
+    return isOwner ? getManagerTip(contract, inputValue) : spendManagerTip(contract, inputValue);
   }
 
   // expect yeild
@@ -46,10 +41,7 @@ class Map3NodeUtil {
   static String getExpectYield(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
-    double out = (inputValue) *
-        contract.annualizedYield *
-        contract.duration /
-        365;
+    double out = (inputValue) * contract.annualizedYield * contract.duration / 365;
     return FormatUtil.formatNumDecimal(out);
   }
 
@@ -57,8 +49,7 @@ class Map3NodeUtil {
   static String getEndProfit(NodeItem contract, double inputValue) {
     if (contract == null) return FormatUtil.formatNumDecimal(inputValue);
 
-    double profit =
-        inputValue * (contract.annualizedYield) * contract.duration / 365 + inputValue;
+    double profit = inputValue * (contract.annualizedYield) * contract.duration / 365 + inputValue;
     return FormatUtil.formatNumDecimal(profit);
   }
 
@@ -151,5 +142,65 @@ class Map3NodeUtil {
     }
 
     return _map3StatusColor;
+  }
+
+  static String stateDescText(Map3InfoStatus _map3Status) {
+    var _map3StatusDesc = "待启动";
+
+    switch (_map3Status) {
+      case Map3InfoStatus.MAP:
+        _map3StatusDesc = "映射中";
+
+        break;
+
+      case Map3InfoStatus.CREATE_SUBMIT_ING:
+        _map3StatusDesc = "创建中";
+
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        _map3StatusDesc = "待启动";
+
+        break;
+
+      case Map3InfoStatus.CREATE_FAIL:
+        _map3StatusDesc = "启动失败";
+
+        break;
+
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+        _map3StatusDesc = "运行中";
+
+        break;
+
+      case Map3InfoStatus.CONTRACT_IS_END:
+        _map3StatusDesc = "已到期";
+
+        break;
+
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        _map3StatusDesc = "已终止";
+
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusDesc = "撤销中";
+
+        break;
+
+      case Map3InfoStatus.MAP:
+        _map3StatusDesc = "映射中";
+
+        break;
+
+      default:
+        _map3StatusDesc = "";
+
+        break;
+    }
+
+    LogUtil.printMessage("[map3Status：$_map3Status]  _map3StatusDesc:$_map3StatusDesc");
+
+    return _map3StatusDesc;
   }
 }

@@ -2,10 +2,12 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -173,8 +175,9 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                             side: BorderSide(color: Theme.of(context).primaryColor),
                             borderRadius: BorderRadius.circular(36)),
                         onPressed: () {
+                          // todo: jison_1026
                           if (detail.isNotEmpty) {
-                            Share.text(S.of(context).share, "http://baidu.com", 'text/plain');
+                            _shareAction();
                           } else {
                             _pop(context);
                           }
@@ -202,13 +205,6 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
                               _pop(context);
-
-                              //Routes.popUntilCachedEntryRouteName(context);
-
-//                              Application.router.navigateTo(
-//                                  context,
-//                                  Routes.wallet_import +
-//                                      '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
                             },
                             child: Container(
                               child: Padding(
@@ -233,6 +229,19 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
     );
   }
 
+  void _shareAction() {
+    if (widget.actionEvent != Map3NodeActionEvent.MAP3_CREATE) {
+      Share.text(S.of(context).share, "http://baidu.com", 'text/plain');
+
+      return;
+    }
+
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_share_page +
+            "?contractNodeItem=${FluroConvertUtils.object2string(widget.infoEntity.toJson())}");
+  }
+
   void _pop(BuildContext context) {
     switch (widget.actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
@@ -243,7 +252,6 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
 
       case Map3NodeActionEvent.MAP3_EDIT:
       case Map3NodeActionEvent.MAP3_PRE_EDIT:
-      case Map3NodeActionEvent.MAP3_CANCEL:
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
         Routes.popUntilCachedEntryRouteName(context);

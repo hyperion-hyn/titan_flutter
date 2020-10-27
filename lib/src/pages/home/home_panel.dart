@@ -836,6 +836,8 @@ class HomePanelState extends State<HomePanel> {
 
   Future _scanAction() async {
     String scanStr = await BarcodeScanner.scan();
+    print("[扫描结果] scanStr:$scanStr");
+
     if (scanStr == null) {
       return;
     } else if (scanStr.contains("share?id=")) {

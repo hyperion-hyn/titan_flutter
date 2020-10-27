@@ -167,7 +167,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
 
     var walletAddressStr =
-        "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
+        "钱包地址 ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_address) ?? "***", limitLength: 9)}";
 
     return Scaffold(
       appBar: BaseAppBar(
