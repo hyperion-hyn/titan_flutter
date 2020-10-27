@@ -905,7 +905,7 @@
   "exchange_auth_description": "你将使用钱包身份 {walletName} 授权交易功能",
   "exchange_loggin_in": "授权中",
   "exchange_auth_by_wallet": "使用钱包授权",
-  "exchange_trade": "交易",
+  "exchange_trade": "兌換",
   "exchange_account": "交易账户",
   "exchange_latest_price": "最新价",
   "exchange_change_percentage": "涨跌幅",

@@ -76,7 +76,23 @@ class FormatUtil {
     return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
+  // utc时间：2020-10-27 13:32:37   ->  local: 2020-10-27 21:32
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
+
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+
+    var dateTime = DateFormat(format).parse(utcStr, true);
+
+    var dateLocal = dateTime.toLocal();
+
+    var local = DateFormat(format).format(dateLocal) ?? "";
+
+    return local;
+  }
+
+  // utc时间：2020-10-27T08:20:49Z  --> local: 2020-10-27 16:20
+  static String newFormatUTCDateStr(String utcStr, {bool isSecond = true}) {
+
     if (utcStr == null || utcStr.isEmpty || utcStr == "0") return "";
 
     var utc = DateTime.parse(utcStr);
@@ -86,18 +102,6 @@ class FormatUtil {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
 
     var formatDate = DateFormat(format).format(utcLocal);
-    //print("[time] formatDate:$formatDate");
-
-    /*
-    var dateTime = DateFormat(format).parse(utcStr, true);
-    print("[time] dateTime:$dateTime");
-
-    var dateLocal = dateTime.toLocal();
-    print("[time] dateLocal:$dateLocal");
-
-    var local = DateFormat(format).format(dateLocal) ?? "";
-    print("[time] dateLocal:$dateLocal");
-    */
 
     return formatDate;
   }
