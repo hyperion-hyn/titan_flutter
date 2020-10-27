@@ -268,10 +268,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     double value = 0.0;
 
+
+
     switch (_map3Status) {
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
+        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
+        var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
+        var left = staking / startMin;
+
+        if (isFull) {
+          value = 0.95;
+        } else {
+          if (left <= 0.1) {
+            value = 0.1;
+          } else if (left > 0.1 && left < 1.0) {
+            value = left;
+          } else {
+            value = 0.95;
+          }
+        }
+        break;
+
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         value = 0.5;
@@ -349,6 +369,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
         break;
 
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        // _map3StatusDesc = "撤销请求已提交";
         _map3StatusDesc = "";
 
         break;
