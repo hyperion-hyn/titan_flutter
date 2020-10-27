@@ -176,17 +176,19 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                             borderRadius: BorderRadius.circular(36)),
                         onPressed: () {
                           // todo: jison_1026
-                          if (detail.isNotEmpty) {
-                            _shareAction();
-                          } else {
-                            _pop(context);
-                          }
+//                          if (detail.isNotEmpty) {
+//                            _shareAction();
+//                          } else {
+//                            _pop(context);
+//                          }
+                        _pop(context);
                         },
                         child: Container(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                             child: Text(
-                              detail.isEmpty ? "完成" : "分享邀请",
+                              //detail.isEmpty ? "完成" : "分享邀请",
+                              "完成",
                               style: TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
