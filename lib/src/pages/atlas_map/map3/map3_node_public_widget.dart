@@ -146,7 +146,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   var feeRatePre = "管理费：";
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
-  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高." : infoEntity.describe;
+  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : infoEntity.describe;
   var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {

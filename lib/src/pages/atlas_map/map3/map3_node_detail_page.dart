@@ -819,7 +819,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
     var desc =
-        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，收益高高，收益真的很高." : _map3infoEntity.describe;
+        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
