@@ -6,15 +6,27 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_public_widget.dart';
+
+import 'package:web3dart/credentials.dart';
+import 'map3_node_confirm_page.dart';
+import 'package:titan/src/utils/log_util.dart';
+import '../../../global.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
 class Map3NodePreEditPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
@@ -29,7 +41,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   int _currentFeeRate = 20;
   int _maxFeeRate = 20;
   TextEditingController _rateCoinController = TextEditingController();
-  get _isJoiner => widget.map3infoEntity.isJoiner;
+  get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
+
+  Microdelegations _microDelegations;
+  final _client = WalletUtil.getWeb3Client(true);
+
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+
+  var _address = "";
 
   get _inputFeeRateValue {
     var text = _rateCoinController?.text ?? '0';
@@ -44,20 +63,30 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   @override
   void initState() {
     _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate())).toInt();
-    //_rateCoinController.addListener(_rateTextFieldChangeListener);
     _rateCoinController.text = "$_currentFeeRate";
 
     if (!_isJoiner) {
-      _updateRate();
+      //_rateCoinController.addListener(_rateTextFieldChangeListener);
+
+      getNetworkData();
+    } else {
+      print("_currentFeeRate: $_currentFeeRate");
     }
 
     super.initState();
   }
 
+  double getStaking() {
+    var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.amount?.toDouble() ?? 0);
+    var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
+    return myDelegationValue;
+  }
+
   _updateRate() {
-    var _inputStakingValue = double.parse(widget.map3infoEntity.getStaking());
+    var staking = getStaking();
     var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
-    var rate = (100 * (_inputStakingValue / createMin)).toInt();
+    var rate = (100 * (staking / createMin)).toInt();
+
     if (rate >= 20) {
       _maxFeeRate = 20;
     } else if (rate < 20 && rate > 10) {
@@ -65,33 +94,45 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     } else {
       _maxFeeRate = 10;
     }
-    _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
-    _rateCoinController.text = "$_currentFeeRate";
+
+    setState(() {
+      _currentFeeRate = min(_currentFeeRate, _maxFeeRate);
+      _rateCoinController.text = "$_currentFeeRate";
+    });
   }
 
-  void _rateTextFieldChangeListener() {
-    if (_inputFeeRateValue <= 0) {
-      return;
+  Future getNetworkData() async {
+    try {
+      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+      _address = _wallet.getAtlasAccount().address;
+
+      var walletAddress = EthereumAddress.fromHex(_address);
+
+      if ((widget?.map3infoEntity?.mine != null) && (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+
+        _microDelegations = await _client.getMap3NodeDelegation(
+          map3Address,
+          walletAddress,
+        );
+        _updateRate();
+      }
+
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
     }
-
-    /*
-    var rateValue = _inputFeeRateValue;
-    if (rateValue >= 10 && rateValue <= _maxFeeRate) {
-      _currentFeeRate = rateValue;
-    } else {
-      Fluttertoast.showToast(msg: "管理费不能小于10%且不能大于$_maxFeeRate%");
-
-      setState(() {
-        _currentFeeRate = _maxFeeRate;
-        _rateCoinController.text = "$_currentFeeRate";
-      });
-    }
-    */
-  }
-
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
   }
 
   @override
@@ -105,12 +146,20 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Widget _pageView(BuildContext context) {
+    if (!_isJoiner) {
+      if (_currentState != null || _microDelegations == null) {
+        return Scaffold(
+          body: AllPageStateContainer(_currentState, () {
+            setState(() {
+              _currentState = all_page_state.LoadingState();
+            });
+            getNetworkData();
+          }),
+        );
+      }
+    }
+
     var divider = Container(
       color: HexColor("#F4F4F4"),
       height: 8,
@@ -152,7 +201,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   Widget _rateWidgetJoiner() {
     var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
-
+    if (nextFeeRate == '0%' || nextFeeRate == '0' || nextFeeRate.isEmpty || nextFeeRate == null) {
+      nextFeeRate = FormatUtil.formatPercent(_currentFeeRate.toDouble() / 100.0);
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 14,
@@ -263,7 +314,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          rowTipsItem(tip1),
+          if (!_isJoiner) rowTipsItem(tip1),
           rowTipsItem(tip2),
         ],
       ),

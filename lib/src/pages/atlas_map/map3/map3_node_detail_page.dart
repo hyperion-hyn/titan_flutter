@@ -1451,9 +1451,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
-      // todo:
-      // 156551332955190012
-//      _microDelegationsJoiner?.reward = num.parse('156551332955190012');
       var myReward = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.reward?.toDouble() ?? 0);
       var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
