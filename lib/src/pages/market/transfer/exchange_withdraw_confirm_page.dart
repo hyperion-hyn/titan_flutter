@@ -507,10 +507,17 @@ class _ExchangeWithdrawConfirmPageState
         gasFee,
       );
       print('$ret');
-      Application.router.navigateTo(
-        context,
-        Routes.exchange_transfer_success_page,
-      );
+
+      var msg;
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+        msg = '已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。';
+      } else {
+        msg = S.of(context).transfer_broadcase_success_description;
+      }
+      msg = FluroConvertUtils.fluroCnParamsEncode(msg);
+      Application.router
+          .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+
       setState(() {
         isTransferring = true;
       });
