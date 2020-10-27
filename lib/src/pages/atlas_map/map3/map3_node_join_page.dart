@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -317,15 +318,31 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var amount = _joinCoinController?.text;
+              var staking = _joinCoinController?.text;
               var delegateMin = double.parse(_map3introduceEntity.delegateMin);
-              var inputValue = double.parse(amount);
+              var inputValue = double.parse(staking);
               if (delegateMin > inputValue && inputValue > 0) {
                 Fluttertoast.showToast(msg: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(delegateMin)));
                 return;
               }
 
-              //if (_map3nodeInformationEntity == null) return;
+              var coinVo = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).getCoinVoBySymbol('HYN');
+
+              var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+              var stakingValue = Decimal.tryParse(staking);
+              if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
+                return;
+              }
+
+              var total = Decimal.parse('0.000021') + stakingValue;
+              if (total >= balance) {
+                Fluttertoast.showToast(msg: "请预留少量HYN（如：0.00005）作为矿工费");
+                return;
+              }
 
               var entity = PledgeMap3Entity(
                   payload: Payload(
@@ -334,7 +351,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
-                amount: amount,
+                amount: staking,
                 pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString()??"0",
               );
               Navigator.push(
