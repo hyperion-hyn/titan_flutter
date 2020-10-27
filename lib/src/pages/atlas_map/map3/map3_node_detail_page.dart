@@ -66,7 +66,7 @@ class Map3NodeDetailPage extends StatefulWidget {
   _Map3NodeDetailState createState() => _Map3NodeDetailState();
 }
 
-class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware {
+class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   AtlasApi _atlasApi = AtlasApi();
 
@@ -419,17 +419,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     _loadData();
   }
 
-  @override
-  void didPush() {
-    //_loadData();
-    super.didPush();
-  }
-
-  @override
-  void didPopNext() {
-    //_loadData();
-    super.didPushNext();
-  }
 
   _loadData() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
@@ -438,12 +427,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
     getContractDetailData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    //Application.routeObserver.subscribe(this, ModalRoute.of(context));
-  }
 
   @override
   void initState() {
@@ -478,7 +461,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
   @override
   void dispose() {
     LogUtil.printMessage("[detail] dispose");
-    //Application.routeObserver.unsubscribe(this);
 
     _loadDataBloc.close();
     super.dispose();
@@ -493,26 +475,31 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
 
     LogUtil.printMessage("_currentEpoch: $_currentEpoch");
 
+    List<Widget> actions = [];
+    if (_canExit) {
+      actions = [
+        FlatButton(
+          onPressed: _exitAction,
+          child: Text(
+            "终止",
+            style: TextStyle(
+              color: HexColor("#999999"),
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      ];
+    } else {
+      actions = null;
+    }
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
         backgroundColor: DefaultColors.colorf5f5f5,
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
-          actions: <Widget>[
-//            InkWell(
-//              onTap: _canExit ? _showMoreAlertView : _shareAction,
-//              borderRadius: BorderRadius.circular(60),
-//              child: Padding(
-//                padding: EdgeInsets.only(left: 16, right: 16),
-//                child: Icon(
-//                  _canExit ? Icons.more_horiz : Icons.share,
-//                  color: HexColor("999999"),
-//                  size: 20,
-//                ),
-//              ),
-//            ),
-          ],
+          actions: actions,
         ),
         body: _pageWidget(context),
       ),
@@ -1085,17 +1072,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with RouteAware
                   child: SizedBox(
                     height: 30,
                     child: InkWell(
-                      onTap: () {
+                      onTap: () async{
                         if (!_canEditNextPeriod) return;
 
                         if (_isDelegator) {
                           _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
                         }
 
-                        Application.router.navigateTo(
+                        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+
+                        await Application.router.navigateTo(
                             context,
                             Routes.map3node_pre_edit_page +
-                                "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+                                "?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+                        _nextAction();
                       },
                       child: Visibility(
                         visible: _canEditNextPeriod,
