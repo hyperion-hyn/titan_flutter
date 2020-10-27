@@ -338,9 +338,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var total = Decimal.parse('0.000021') + stakingValue;
+              var total = Decimal.parse('0.0001') + stakingValue;
               if (total >= balance) {
-                Fluttertoast.showToast(msg: "请预留少量HYN（如：0.00005）作为矿工费");
+                Fluttertoast.showToast(msg: "请预留少量HYN（如：0.0001）作为矿工费");
                 return;
               }
 
