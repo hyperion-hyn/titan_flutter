@@ -1,9 +1,11 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 
@@ -55,6 +57,17 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   List<Map3UserEntity> _map3UserList = [];
   Map3NodeInformationEntity _map3nodeInformationEntity;
 
+  get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0';
+  int _currentEpoch = 0;
+
+  get _remainEpoch {
+    var unlockEpoch = double.tryParse(_unlockEpoch)?.toInt() ?? 0;
+
+    return unlockEpoch - _currentEpoch;
+  }
+
+  get _canExitDelegation => _remainEpoch < 0;
+
   @override
   void onCreated() {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
@@ -64,6 +77,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     _nodeId = widget?.map3infoEntity?.nodeId ?? "";
 
     getNetworkData();
+
+    _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
 
     super.onCreated();
   }
@@ -106,6 +121,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
       _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
       _setupMicroDelegations();
+
+      print('[Exit] UnlockEpoch(client): $_unlockEpoch, CurrentEpoch(api): $_currentEpoch');
 
       _map3UserList = await _atlasApi.getMap3UserList(widget.map3infoEntity.nodeId, size: 0);
 
@@ -309,10 +326,35 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                       ),
                     ),
                   ),
+                  _epochHint(),
                 ])),
               ),
             ),
             _confirmButtonWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _epochHint() {
+    if (_canExitDelegation) return Container();
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32.0),
+        child: Column(
+          children: [
+            Text('你还在锁仓期内不可撤销'),
+            SizedBox(
+              height: 9,
+            ),
+            Text(
+              '解锁剩余: $_remainEpoch个纪元',
+              style: TextStyle(
+                color: DefaultColors.color999,
+              ),
+            )
           ],
         ),
       ),
@@ -359,7 +401,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !isPending,
+            isLoading: !isPending || !_canExitDelegation,
           ),
         ),
       ),

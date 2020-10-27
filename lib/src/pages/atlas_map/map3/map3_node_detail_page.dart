@@ -81,7 +81,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   var _currentEpoch = 0;
 
-  //get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch;
+  get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch??'0')?.toInt()??0;
 
   String _notifyMessage() {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
@@ -195,11 +195,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   get _canExit {
+
     // 0.募集中
     var isPending = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
     // 1.纪元已经过7天；
-    var isOver7Epoch = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) >= 7;
+    var isOver7Epoch = (_currentEpoch - _unlockEpoch) > 0;
     return _isCreator && isPending && isOver7Epoch;
   }
 
