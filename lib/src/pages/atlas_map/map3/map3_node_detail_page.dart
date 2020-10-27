@@ -1442,8 +1442,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var myRewardString = "0";
 
     if (_microDelegationsJoiner != null) {
+
+      var isStart = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+      var pendingAmount = _microDelegationsJoiner?.pendingDelegation?.amount;
+      var activeAmount = _microDelegationsJoiner?.amount;
+      var myAmount = isStart? activeAmount:pendingAmount;
+
       var myDelegation =
-          FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
+          FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
