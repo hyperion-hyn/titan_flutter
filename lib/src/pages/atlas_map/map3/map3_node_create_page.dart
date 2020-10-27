@@ -62,8 +62,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   List<DropdownMenuItem> _nodeList;
   List<NodeProviderEntity> _providerList = [];
   String _originInputStr = "";
-  int _currentFeeRate = 20;
-  int _maxFeeRate = 20;
+  double _currentFeeRate = 20;
+  double _maxFeeRate = 20;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -457,6 +457,12 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   void _confirmAction() async {
+    if (!_inputFormKey.currentState.validate()) {
+      Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
+
+      return;
+    }
+
     if (_detailList[0].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[0]);
       return;
@@ -473,7 +479,16 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     ).getCoinVoBySymbol('HYN');
 
     var staking = _inputStakingValue.toString();
+
     var stakingValue = Decimal.tryParse(staking);
+
+    /*
+    print("【create】staking: $staking");
+    if (stakingValue.toDouble() <= 0) {
+       Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
+      return;
+    }*/
+
     if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
       Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
 
@@ -618,7 +633,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     }
     var value = double.tryParse(text);
     if (value == null) return 0;
-    return value.toInt();
+    return value;
   }
 
   void _joinTextFieldChangeListener() {
@@ -629,7 +644,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
   _updateRate() {
     var createMin = double.parse(_introduceEntity?.startMin ?? '550000');
-    var rate = (100 * (_inputStakingValue / createMin)).toInt();
+    var rate = (100 * (_inputStakingValue / createMin));
     if (rate >= 20) {
       _maxFeeRate = 20;
     } else if (rate < 20 && rate > 10) {

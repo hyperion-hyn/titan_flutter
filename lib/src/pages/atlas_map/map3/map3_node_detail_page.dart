@@ -818,8 +818,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var nodeId = " ${_map3infoEntity.nodeId ?? "***"}";
     var descPre = "节点公告：";
-    var desc =
-        (_map3infoEntity?.describe ?? "").isEmpty ?? false ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : _map3infoEntity.describe;
+    var desc = (_map3infoEntity?.describe ?? "").isEmpty ?? false
+        ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！"
+        : _map3infoEntity.describe;
 
     return Container(
       decoration: BoxDecoration(
@@ -1441,38 +1442,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var myDelegationString = "0";
     var myRewardString = "0";
 
-    if (_microDelegationsJoiner != null) {
-      var myDelegation =
-          FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount?.toDouble() ?? 0);
+    Microdelegations _microDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
+
+    if (_microDelegations != null) {
+      var isStart = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+      var pendingAmount = _microDelegations?.pendingDelegation?.amount;
+      var activeAmount = _microDelegations?.amount;
+      var myAmount = isStart ? activeAmount : pendingAmount;
+
+      var myDelegation = FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
       myDelegationString = FormatUtil.formatPrice(myDelegationValue);
 
-      var myReward = FormatUtil.clearScientificCounting(_microDelegationsJoiner?.reward?.toDouble() ?? 0);
+      var myReward = FormatUtil.clearScientificCounting(_microDelegations?.reward?.toDouble() ?? 0);
       var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
-
-    /*
-    if (_isDelegator) {
-      if (myDelegationString == "0" || (myDelegationString?.isEmpty ?? false)) {
-        var staking = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-          _map3infoEntity?.mine?.staking ?? "0",
-        ));
-        myDelegationString = FormatUtil.formatPrice(staking.toDouble());
-
-        //myDelegationString = FormatUtil.stringFormatNum(staking.toString());
-      }
-
-      if (myRewardString == "0" || (myRewardString?.isEmpty ?? false)) {
-        var reward = ConvertTokenUnit.weiToEther(
-            weiBigInt: BigInt.parse(
-          _map3infoEntity?.mine?.reward ?? "0",
-        ));
-        myRewardString = FormatUtil.formatPrice(reward.toDouble());
-      }
-    }
-    */
 
     return Container(
       color: Colors.white,
