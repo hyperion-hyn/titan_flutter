@@ -64,8 +64,14 @@ class NodeApi {
         options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
   }
 
-  Future<ContractDetailItem> getContractDetail(String nodeAddress) async {
+  /*Future<ContractDetailItem> getContractDetail(String nodeAddress) async {
     return await NodeHttpCore.instance.getEntity("/delegations/instance/$nodeAddress",
+        EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
+        options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
+  }*/
+
+  Future<ContractDetailItem> getContractDetailV8(int contractId) async {
+    return await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId",
         EntityFactory<ContractDetailItem>((data) => ContractDetailItem.fromJson(data)),
         options: RequestOptions(headers: getOptionHeader(hasAddress: true, hasLang: true)));
   }
@@ -123,10 +129,10 @@ class NodeApi {
 
     return contractsItem;
   }
- 
-  Future<ContractNodeItem> startContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet,
-      String password, int gasPrice, String contractId, StartJoinInstance startJoinInstance, Decimal amount, {bool isRenew = false}) async {
 
+  Future<ContractNodeItem> startContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet,
+      String password, int gasPrice, String contractId, StartJoinInstance startJoinInstance, Decimal amount,
+      {bool isRenew = false}) async {
     var wallet = activatedWallet.wallet;
 //    var maxStakingAmount = 1000000; //一百万
 //    var myStaking = amount;
@@ -146,8 +152,7 @@ class NodeApi {
     var publicKey = nodeKey["publicKey"];
 
     final client = WalletUtil.getWeb3Client();
-    var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress));
+    var count = await client.getTransactionCount(EthereumAddress.fromHex(walletHynAddress));
 
     //approve
     print('approve result: $count');
@@ -177,8 +182,8 @@ class NodeApi {
     if (isRenew) {
       return contractNodeItem;
     }
-    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress,walletName,amount.toDouble(),publicKey,createMap3Hex
-        ,startJoinInstance.provider,startJoinInstance.region, gasPrice);
+    return await postStartDefaultInstance(contractNodeItem.contract.id, walletHynAddress, walletName, amount.toDouble(),
+        publicKey, createMap3Hex, startJoinInstance.provider, startJoinInstance.region, gasPrice);
   }
 
   Future<String> joinContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
@@ -194,13 +199,12 @@ class NodeApi {
     var walletName = wallet.keystore.name;
 
     final client = WalletUtil.getWeb3Client();
-    var count =
-        await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
+    var count = await client.getTransactionCount(EthereumAddress.fromHex(ethAccount.address));
 //    int nonce = await wallet.getCurrentWalletNonce();
 
     var approveNum = await wallet.getAllowance(hynErc20ContractAddress, ethAccount.address, approveToAddress);
 
-    if(approveNum < stakingBigInt) {
+    if (approveNum < stakingBigInt) {
       //approve
       var approveHex = await wallet.sendApproveErc20Token(
         contractAddress: hynErc20ContractAddress,
@@ -208,10 +212,7 @@ class NodeApi {
         amount: stakingBigInt,
         password: password,
         gasPrice: BigInt.from(gasPrice),
-        gasLimit: SettingInheritedModel
-            .ofConfig(Keys.rootKey.currentContext)
-            .systemConfigEntity
-            .erc20ApproveGasLimit,
+        gasLimit: SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20ApproveGasLimit,
         nonce: count,
       );
       print('approveHex is: $approveHex');
@@ -229,7 +230,8 @@ class NodeApi {
     );
     print('joinHex is: $joinHex');
 
-    await postJoinDefaultInstance(contractNodeItem.id, walletHynAddress, walletName, amount.toDouble(), joinHex, gasPrice);
+    await postJoinDefaultInstance(
+        contractNodeItem.id, walletHynAddress, walletName, amount.toDouble(), joinHex, gasPrice);
 
     return "success";
   }
@@ -256,8 +258,8 @@ class NodeApi {
   Future<List<ContractNodeItem>> getContractActiveList({int page = 0}) async {
     var contractsList = await NodeHttpCore.instance.getEntity("/instances/active?page=$page",
         EntityFactory<List<ContractNodeItem>>((data) {
-          return (data as List).map((dataItem) => ContractNodeItem.fromJson(dataItem)).toList();
-        }), options: RequestOptions(headers: getOptionHeader(hasLang: true)));
+      return (data as List).map((dataItem) => ContractNodeItem.fromJson(dataItem)).toList();
+    }), options: RequestOptions(headers: getOptionHeader(hasLang: true)));
 
     return contractsList;
   }
@@ -285,17 +287,8 @@ class NodeApi {
         data: _entity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<ContractNodeItem> postStartDefaultInstance(
-    int contractId,
-    String address,
-    String name,
-    double amount,
-    String publicKey,
-    String txHash,
-    String nodeProvider,
-    String nodeRegion,
-    int gasPrice
-  ) async {
+  Future<ContractNodeItem> postStartDefaultInstance(int contractId, String address, String name, double amount,
+      String publicKey, String txHash, String nodeProvider, String nodeRegion, int gasPrice) async {
     gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
     NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(address, txHash, gasPrice,
         name: name, amount: amount, publicKey: publicKey, nodeProvider: nodeProvider, nodeRegion: nodeRegion);
@@ -313,7 +306,7 @@ class NodeApi {
   }
 
   Future postJoinDefaultInstance(
-      int contractInstanceId, String address, String name, double amount, String txHash,int gasPrice) async {
+      int contractInstanceId, String address, String name, double amount, String txHash, int gasPrice) async {
     gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
     NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
       address,
@@ -327,7 +320,7 @@ class NodeApi {
         data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future postWithdrawDefaultInstance(int contractInstanceId, String address, String txHash,int gasPrice) async {
+  Future postWithdrawDefaultInstance(int contractInstanceId, String address, String txHash, int gasPrice) async {
     gasPrice = ConvertTokenUnit.weiToGWei(weiInt: gasPrice).toInt();
     NodeDefaultEntity nodeDefaultEntity = NodeDefaultEntity(
       address,
@@ -338,8 +331,8 @@ class NodeApi {
         data: nodeDefaultEntity.toJson(), options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<String> withdrawContractInstance(ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password,
-      int gasPrice, int gasLimit) async {
+  Future<String> withdrawContractInstance(
+      ContractNodeItem contractNodeItem, WalletVo activatedWallet, String password, int gasPrice, int gasLimit) async {
     var wallet = activatedWallet.wallet;
     var createNodeWalletAddress = contractNodeItem.owner;
     final client = WalletUtil.getWeb3Client();
@@ -360,8 +353,19 @@ class NodeApi {
     return "success";
   }
 
+  /*
   Future<bool> checkIsDelegatedContractInstance(String nodeAddress) async {
     var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$nodeAddress/isdelegated",
+        EntityFactory<bool>((data) {
+      return data;
+    }), options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));
+
+    return isDelegated;
+  }
+  */
+
+  Future<bool> checkIsDelegatedContractInstanceV8(int contractId) async {
+    var isDelegated = await NodeHttpCore.instance.getEntity("/delegations/instance/$contractId/isdelegated",
         EntityFactory<bool>((data) {
       return data;
     }), options: RequestOptions(headers: getOptionHeader(hasLang: true, hasAddress: true)));

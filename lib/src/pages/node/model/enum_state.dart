@@ -15,7 +15,7 @@ enum ContractState {
   ACTIVE,
   DUE,
   DUE_COMPLETED,
-  FAIL
+  FAIL,
 }
 
 //0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
