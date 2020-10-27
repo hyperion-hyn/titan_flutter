@@ -254,7 +254,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
                 onTap: () {
                   if (widget.wallet.getEthAccount().address.isNotEmpty) {
                     Clipboard.setData(ClipboardData(
-                        text: widget.wallet.getEthAccount().address));
+                        text: WalletUtil.ethAddressToBech32Address(
+                      widget.wallet.getEthAccount().address,
+                    )));
                     Scaffold.of(context).showSnackBar(SnackBar(
                         content: Text(
                       S.of(context).wallet_address_copied,
@@ -287,7 +289,9 @@ class _WalletSettingState extends State<WalletSettingPage> {
                       height: 8,
                     ),
                     Text(
-                      widget.wallet.getEthAccount().address,
+                      WalletUtil.ethAddressToBech32Address(
+                        widget.wallet.getEthAccount().address,
+                      ),
                       style: TextStyle(
                         fontSize: 12,
                         color: HexColor('#FF999999'),

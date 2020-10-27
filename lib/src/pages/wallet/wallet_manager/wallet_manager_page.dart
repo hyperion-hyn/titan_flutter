@@ -14,6 +14,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -204,7 +205,9 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                             Align(
                               alignment: Alignment.center,
                               child: walletHeaderWidget(
-                                walletKeyStore.name.isEmpty?"Name is empty":walletKeyStore.name.characters.first,
+                                walletKeyStore.name.isEmpty
+                                    ? "Name is empty"
+                                    : walletKeyStore.name.characters.first,
                                 address: ethAccount.address,
                                 size: 52,
                                 fontSize: 20,
@@ -249,7 +252,10 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Text(
-                                shortBlockChainAddress(ethAccount.address),
+                                shortBlockChainAddress(
+                                    WalletUtil.ethAddressToBech32Address(
+                                  ethAccount.address,
+                                )),
                                 style: TextStyle(
                                     fontSize: 14, color: Color(0xFF9B9B9B)),
                               ),
