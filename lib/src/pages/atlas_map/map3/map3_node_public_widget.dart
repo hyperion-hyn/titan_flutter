@@ -969,8 +969,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
 
   var isYou = item.from.toLowerCase() == walletAddress;
-  // todo: 创建者
-  //var isCreator = map3CreatorAddress.toLowerCase() == walletAddress;
+
   var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
 
   var recordName = isAtlasDetail

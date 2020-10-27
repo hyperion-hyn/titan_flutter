@@ -91,6 +91,21 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       backgroundColor: Theme.of(context).primaryColor,
       appBar: BaseAppBar(
         baseTitle: "我的节点",
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              AtlasApi.goToAtlasMap3HelpPage(context);
+            },
+            child: Text(
+              "旧版Map3",
+              style: TextStyle(
+                color: HexColor("#1F81FF"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _pageView(context),
     );
