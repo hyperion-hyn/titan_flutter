@@ -5,7 +5,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -253,7 +252,6 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         break;
 
       case Map3NodeActionEvent.MAP3_EDIT:
-      case Map3NodeActionEvent.MAP3_PRE_EDIT:
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
         Routes.popUntilCachedEntryRouteName(context);

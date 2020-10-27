@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -27,7 +30,7 @@ class Map3NodeJoinContractPage extends StatefulWidget {
   _Map3NodeJoinContractState createState() => new _Map3NodeJoinContractState();
 }
 
-class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
+class _Map3NodeJoinContractState extends BaseState<Map3NodeJoinContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   all_page_state.AllPageState currentState = all_page_state.LoadingState();
@@ -51,6 +54,7 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
 
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +192,8 @@ class _Map3NodeJoinContractState extends State<Map3NodeJoinContractPage> {
               color: DefaultColors.colorf5f5f5,
             ),
             getHoldInNum(
-                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, true, isMyself: isMyself),
+                context, contractNodeItem, _joinCoinFormKey, _joinCoinController, endProfit, spendManager, true,
+                isMyself: isMyself),
 //            Container(
 //              height: 10,
 //              color: DefaultColors.colorf5f5f5,
