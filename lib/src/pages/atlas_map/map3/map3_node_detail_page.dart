@@ -268,8 +268,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     double value = 0.0;
 
-
-
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
@@ -419,14 +417,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _loadData();
   }
 
-
   _loadData() {
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
 
     getContractDetailData();
   }
-
 
   @override
   void initState() {
@@ -1072,7 +1068,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   child: SizedBox(
                     height: 30,
                     child: InkWell(
-                      onTap: () async{
+                      onTap: () async {
                         if (!_canEditNextPeriod) return;
 
                         if (_isDelegator) {
@@ -1602,8 +1598,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     ),
                   ],
                 ),
-
-
               ],
             ),
           ),
@@ -1785,12 +1779,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
         _setupMicroDelegations();
-
-        if (_map3nodeInformationEntity?.microdelegations?.isNotEmpty ?? false) {
-          for (var item in _map3nodeInformationEntity.microdelegations) {
-            LogUtil.printMessage("renewal.json:${item.renewal.toJson()}");
-          }
-        }
 
         List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
         _delegateRecordList = tempMemberList;
