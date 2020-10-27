@@ -140,9 +140,11 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       var tempAmountText = amountText;
       if(tempAmountText.contains("-") || tempAmountText.contains("+")){
         tempAmountText = tempAmountText.substring(1);
+        tempAmountText = tempAmountText.replaceAll(",", "");
       }
+
       var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
-      amountText = "${FormatUtil.stringFormatCoinNum(amountText)} (${quotesSign.sign}$amountQuote)";
+      amountText = "${FormatUtil.stringFormatCoinNum(tempAmountText)} (${quotesSign.sign}$amountQuote)";
       gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
       hynPrice = "${quotesSign.sign}${hynQuote.price} / HYN";
 
