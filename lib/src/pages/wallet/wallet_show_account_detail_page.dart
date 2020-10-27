@@ -43,8 +43,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   var gasEstimateQuote;
   var hynPrice = "\$0";
   var inputData = "";
-  var hasDefaultData = false;
-  var selectDefault = true;
+  var hasDecodeData = false;
+  var selectLeftData = true;
 
   @override
   void initState() {
@@ -119,14 +119,11 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     }
 
     if(transDetail.dataDecoded == null){
-      hasDefaultData = false;
-      selectDefault = false;
-      inputData = transDetail.data;
+      hasDecodeData = false;
     } else {
-      hasDefaultData = true;
-      selectDefault = true;
-      inputData = json.encode(transDetail.dataDecoded);
+      hasDecodeData = true;
     }
+    inputData = transDetail.data;
 
     var quotes = await _coinMarketApi.quotes(timestamp);
     SymbolQuoteVo hynQuote;
@@ -379,24 +376,24 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
             ),
             child: SingleChildScrollView(child: Text(inputData)),
           ),
-          if(hasDefaultData)
+          if(hasDecodeData)
             Row(
             children: <Widget>[
               ClickOvalButton("Origi",(){
-                selectDefault = false;
+                selectLeftData = true;
                 inputData = widget.transactionDetail.data;
                 setState(() {
 
                 });
-              },width: 112,btnColor: HexColor(selectDefault ? "#F2F2F2" : "#1F81FF"),radius: 4,fontColor: HexColor(selectDefault ? "#999999" : "#ffffff"),),
+              },width: 112,btnColor: HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2"),radius: 4,fontColor: HexColor(selectLeftData ? "#ffffff" : "#999999"),),
               SizedBox(width: 11,),
                 ClickOvalButton("Decoded",(){
-                  selectDefault = true;
+                  selectLeftData = false;
                   inputData = json.encode(widget.transactionDetail.dataDecoded);
                   setState(() {
 
                   });
-                },width: 112,btnColor: HexColor(selectDefault ? "#1F81FF" : "#F2F2F2"),radius: 4,fontColor: HexColor(selectDefault ? "#ffffff" : "#999999"),),
+                },width: 112,btnColor: HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF"),radius: 4,fontColor: HexColor(selectLeftData ? "#999999" : "#ffffff"),),
             ],
           )
         ],
