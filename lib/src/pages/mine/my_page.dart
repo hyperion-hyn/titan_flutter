@@ -147,7 +147,8 @@ class _MyPageState extends State<MyPage> {
                   ),
                   if ([
                     '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
-                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()
+                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
+                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         S.of(context).map_smart_contract_management,
@@ -160,6 +161,7 @@ class _MyPageState extends State<MyPage> {
                   if ([
                     '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A'.toLowerCase(),
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
+                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
                         () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
