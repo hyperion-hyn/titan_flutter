@@ -151,21 +151,21 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
-                      child: Text(
-                        detail,
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600, color: HexColor("#0A6F84"), height: 1.5),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    if (detail.isNotEmpty)
-                      Image.asset(
-                        "res/drawable/node_create_success.gif",
-                        fit: BoxFit.contain,
-                        width: 26,
-                      ),
+//                    Container(
+//                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
+//                      child: Text(
+//                        detail,
+//                        style: TextStyle(
+//                            fontSize: 14, fontWeight: FontWeight.w600, color: HexColor("#0A6F84"), height: 1.5),
+//                        textAlign: TextAlign.center,
+//                      ),
+//                    ),
+//                    if (detail.isNotEmpty)
+//                      Image.asset(
+//                        "res/drawable/node_create_success.gif",
+//                        fit: BoxFit.contain,
+//                        width: 26,
+//                      ),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 48),
                       constraints: BoxConstraints.expand(height: 48),
