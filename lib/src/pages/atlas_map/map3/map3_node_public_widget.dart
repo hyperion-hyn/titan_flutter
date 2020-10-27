@@ -155,7 +155,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index){
     print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch??0}");
 
-    var remainEpoch = (infoEntity?.endEpoch??0) - currentEpoch;
+    var remainEpoch = (infoEntity?.endEpoch??0) - currentEpoch + 1;
     date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 

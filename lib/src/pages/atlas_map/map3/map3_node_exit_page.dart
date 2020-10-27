@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -319,6 +320,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   Widget _confirmButtonWidget() {
+    var isPending = (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index);
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -328,31 +331,35 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
             "确认终止",
             () {
               //print("_map3infoEntity.status:${_map3infoEntity.status}");
-              var isPending = (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index);
-              if (isPending) {
-                var entity = PledgeMap3Entity(
-                    payload: Payload(
-                  userName: _walletName,
-                  userIdentity: widget.map3infoEntity.nodeId,
-                ));
 
-                var message = ConfirmTerminateMap3NodeMessage(
-                  entity: entity,
-                  map3NodeAddress: widget.map3infoEntity.address,
-                );
-
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Map3NodeConfirmPage(
-                        message: message,
-                      ),
-                    ));
+              if (!isPending) {
+                Fluttertoast.showToast(msg: "撤销节点中");
+                return;
               }
+
+              var entity = PledgeMap3Entity(
+                  payload: Payload(
+                userName: _walletName,
+                userIdentity: widget.map3infoEntity.nodeId,
+              ));
+
+              var message = ConfirmTerminateMap3NodeMessage(
+                entity: entity,
+                map3NodeAddress: widget.map3infoEntity.address,
+              );
+
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Map3NodeConfirmPage(
+                      message: message,
+                    ),
+                  ));
             },
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
+            isLoading: !isPending,
           ),
         ),
       ),
