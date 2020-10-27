@@ -421,7 +421,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           switch (value) {
             case 1:
               title = "创建日期";
-              detail = FormatUtil.formatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: true);
+              detail = FormatUtil.newFormatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: true);
 
               break;
 
