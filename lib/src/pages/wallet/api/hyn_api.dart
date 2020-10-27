@@ -364,9 +364,9 @@ class HYNApi {
         typeStr = "转账";
         if(transactionDetail != null){
           if(transactionDetail.type == TransactionType.TRANSFER_IN){
-            amountStr = "+${FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString())}";
+            amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }else if(transactionDetail.type == TransactionType.TRANSFER_OUT){
-            amountStr = "-${FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString())}";
+            amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }
         }
         break;
