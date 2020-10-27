@@ -432,12 +432,12 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
           padding: const EdgeInsets.symmetric(vertical: 32.0),
           child: Column(
             children: [
-              Text('节点创建7个纪元内不可撤销'),
+              Text('您仍处于锁仓期中，暂不可撤销抵押'),
               SizedBox(
                 height: 9,
               ),
               Text(
-                '剩余时间: ${_remainEpoch().toString()}个纪元',
+                '解锁剩余: ${_remainEpoch().toString()}个纪元',
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
