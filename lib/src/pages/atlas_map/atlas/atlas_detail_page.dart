@@ -696,7 +696,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             child: Column(
                               children: <Widget>[
                                 Text(
-                                    "${double.parse(_atlasInfoEntity.rewardRate ?? '0') == 0 ? '--%' : FormatUtil.formatPercent(double.parse(
+                                    "${double.parse(_atlasInfoEntity.rewardRate ?? '0') == 0 ? '--' : FormatUtil.formatPercent(double.parse(
                                         _atlasInfoEntity.rewardRate,
                                       ))}",
                                     style: TextStyles.textC333S14),
