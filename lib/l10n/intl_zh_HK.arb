@@ -5,6 +5,7 @@
   "no_recommended_route": "暫無推薦路線",
   "less_than_1_min": "小於1分鐘",
   "n_day": "{day}纪元",
+  "n_day_v8": "{day}天",
   "n_hour": "{hour}小時",
   "n_minute": "{minute}分鐘",
   "km": "{km}公裏",

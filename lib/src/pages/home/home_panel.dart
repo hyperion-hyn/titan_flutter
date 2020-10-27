@@ -849,13 +849,8 @@ class HomePanelState extends State<HomePanel> {
       if(idList.length < 1){
         return;
       }
-
-      Map3InfoEntity infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
-      Application.router.navigateTo(
-        context,
-        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
-      );
-
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page_v8 + "?contractId=${idList[1]}");
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

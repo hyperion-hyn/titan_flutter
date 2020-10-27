@@ -177,16 +177,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
     if (type == "contract" && subType == "detail") {
-      var nodeId = content["contractId"];
+      var contractId = content["contractId"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-
-      var item = Map3InfoEntity.onlyNodeId(nodeId);
-      Application.router.navigateTo(
-        context,
-        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
-      );
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page_v8 + "?contractId=$contractId");
 
      } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
