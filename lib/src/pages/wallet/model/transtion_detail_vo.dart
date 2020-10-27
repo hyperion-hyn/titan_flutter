@@ -84,7 +84,7 @@ class TransactionDetailVo {
   });
 
   String getDecodedAmount(){
-    if(dataDecoded.amount == null){
+    if(dataDecoded == null || dataDecoded.amount == null){
       return "0.0";
     }
     var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(dataDecoded.amount)).toString();
@@ -92,7 +92,7 @@ class TransactionDetailVo {
   }
 
   String getAtlasRewardAmount(){
-    if(logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
       return "0.0";
     }
     var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
@@ -100,7 +100,7 @@ class TransactionDetailVo {
   }
 
   String getMap3RewardAmount(){
-    if(logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
       return "0.0";
     }
     BigInt amount = BigInt.parse("0");

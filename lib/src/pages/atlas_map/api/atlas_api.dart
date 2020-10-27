@@ -36,6 +36,40 @@ import '../../../../config.dart';
 class AtlasApi {
   static Map3IntroduceEntity map3introduceEntity;
 
+  Future<List<HynTransferHistory>> queryHYNHistory(
+      String address, int page) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/account_txs",
+      data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
+    );
+
+    if (result["code"] == 0) {
+      var dataList = result["data"]["data"];
+      if (dataList == null || (dataList as List).length == 0) {
+        return [];
+      }
+      List resultList = dataList as List;
+      return resultList
+          .map((json) => HynTransferHistory.fromJson(json))
+          .toList();
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<HynTransferHistory> queryHYNTxDetail(String address) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/tx_detail",
+      data: "{\"address\": \"$address\"}",
+    );
+    if (result["code"] == 0) {
+      var data = result["data"];
+      return HynTransferHistory.fromJson(data);
+    } else {
+      throw new Exception();
+    }
+  }
+
   static Future<Map3IntroduceEntity> getIntroduceEntity() async {
     if (map3introduceEntity != null) {
       return map3introduceEntity;
@@ -135,7 +169,7 @@ class AtlasApi {
 
   // 查询Atlas节点下的所有map3节点列表
   Future<List<Map3InfoEntity>> postAtlasMap3NodeList(String nodeId,
-      {int page = 1, int size = 0}) async {
+      {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)

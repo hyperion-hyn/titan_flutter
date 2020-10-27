@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
 import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
@@ -15,6 +16,7 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 
 class AccountTransferService {
   EtherscanApi _etherScanApi = EtherscanApi();
+  AtlasApi _atlasApi = AtlasApi();
 
   Future<List<TransactionDetailVo>> getTransferList(
       CoinVo coinVo, int page) async {
@@ -32,7 +34,7 @@ class AccountTransferService {
   Future<List<TransactionDetailVo>> _getHYNAtlasTransferList(
       CoinVo coinVo, int page) async {
     List<HynTransferHistory> hynTransferHistoryList =
-        await _etherScanApi.queryHYNHistory(coinVo.address, page);
+        await _atlasApi.queryHYNHistory(coinVo.address, page);
 
     List<TransactionDetailVo> detailList =
         hynTransferHistoryList.map((hynTransferHistory) {
@@ -147,11 +149,6 @@ class AccountTransferService {
       );
     }).toList();
     return detailList;
-  }
-
-  Future<HynTransferHistory> _getHYNAtlasTransferDetail(
-      String transactionHash) {
-    return _etherScanApi.queryHYNTxDetail(transactionHash);
   }
 }
 

@@ -48,40 +48,6 @@ class EtherscanApi {
     return '${getWebHost(isChinaMainland)}/address/$address';
   }
 
-  Future<List<HynTransferHistory>> queryHYNHistory(
-      String address, int page) async {
-    Map result = await HttpCore.instance.post(
-      "v1/wallet/account_txs",
-      data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
-    );
-
-    if (result["code"] == 0) {
-      var dataList = result["data"]["data"];
-      if (dataList == null || (dataList as List).length == 0) {
-        return [];
-      }
-      List resultList = dataList as List;
-      return resultList
-          .map((json) => HynTransferHistory.fromJson(json))
-          .toList();
-    } else {
-      throw new Exception();
-    }
-  }
-
-  Future<HynTransferHistory> queryHYNTxDetail(String address) async {
-    Map result = await HttpCore.instance.post(
-      "v1/wallet/tx_detail",
-      data: "{\"address\": \"$address\"}",
-    );
-    if (result["code"] == 0) {
-      var data = result["data"];
-      return HynTransferHistory.fromJson(data);
-    } else {
-      throw new Exception();
-    }
-  }
-
   Future<List<EthTransferHistory>> queryEthHistory(
       String address, int page) async {
     Map result = await HttpCore.instance.get("$apiHost/api", params: {

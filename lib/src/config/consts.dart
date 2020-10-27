@@ -12,7 +12,7 @@ class Const {
   }
 
   static String get LOCAL_DOMAIN {
-    return Config.ATLAS_API_URL_TEST + "/";
+    return Config.ATLAS_API_URL_TEST;
   }
 
   static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
