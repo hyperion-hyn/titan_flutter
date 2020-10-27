@@ -178,11 +178,16 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                       children: _addressList
                           .map((e) => Padding(
                                 padding: const EdgeInsets.only(top: 8, bottom: 4),
-                                child: Text(WalletUtil.ethAddressToBech32Address(e),
-                                    style: TextStyle(
-                                      color: HexColor("#999999"),
-                                      fontSize: 12,
-                                    )),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(WalletUtil.ethAddressToBech32Address(e),
+                                        style: TextStyle(
+                                          color: HexColor("#999999"),
+                                          fontSize: 12,
+                                        )),
+                                  ],
+                                ),
                               ))
                           .toList(),
                     ),
