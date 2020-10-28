@@ -183,6 +183,10 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                                 return S
                                     .of(context)
                                     .receiver_address_not_empty_hint;
+                              } else if (widget.coinVo.symbol ==
+                                      SupportedTokens.HYN_Atlas.symbol &&
+                                  !value.startsWith('hyn1')) {
+                                return addressErrorHint;
                               } else if (!_basicAddressReg.hasMatch(address)) {
                                 return addressErrorHint;
                               }
