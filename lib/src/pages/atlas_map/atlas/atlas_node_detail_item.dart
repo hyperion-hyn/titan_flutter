@@ -146,7 +146,7 @@ class AtlasNodeDetailItem extends StatelessWidget {
                               TextSpan(text: ' '),
                               TextSpan(
                                   text:
-                                      '${FormatUtil.stringFormatNum(_atlasInfo.getTotalStaking())}',
+                                      '${FormatUtil.stringFormatCoinNum(_atlasInfo.getTotalStaking())}',
                                   style: TextStyle(
                                     fontSize: 12,
                                   ))
