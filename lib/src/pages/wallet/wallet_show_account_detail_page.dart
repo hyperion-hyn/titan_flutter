@@ -54,22 +54,22 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   @override
   void onCreated() async {
     _dataTitleList = [
-      "转账Hash:",
-      "状态:",
-      "纪元:",
-      "区块:",
-      "时间:",
-      "付款地址:",
-      "收款地址:",
-      "金额:",
-      "矿工费:",
+      S.of(context).transfer_hash,
+      S.of(context).transfer_status,
+      S.of(context).tx_age,
+      "${S.of(context).tx_block}:",
+      "${S.of(context).tx_time}:",
+      "${S.of(context).tx_from_address}:",
+      "${S.of(context).tx_to_address}:",
+      "${S.of(context).tx_amount}:",
+      "${S.of(context).transfer_gas_fee}:",
       "Gas Price:",
-      "HYN价格:",
+      "HYN${S.of(context).price}:",
       "Gas Limit:",
       "Gas Used:",
       "Nonce",
-      "类型",
-      "输入数据:",
+      "${S.of(context).tx_type}:",
+      "${S.of(context).tx_input_data}:",
     ];
 
     var transDetail = widget.transactionDetail;

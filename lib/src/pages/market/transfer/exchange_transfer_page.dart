@@ -357,7 +357,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     if (symbol == SupportedTokens.HYN_Atlas.symbol) {
       return 'HYN (ATLAS)';
     } else if (symbol == SupportedTokens.HYN_ERC20.symbol) {
-      return 'HYN (ERC-20)(${S.of(Keys.rootKey.currentContext).exchange_mapping})';
+      return 'HYN (ERC-20)(${S.of(context).mapping})';
     } else if (symbol == 'USDT') {
       return 'USDT';
     }

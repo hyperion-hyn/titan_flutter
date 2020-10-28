@@ -41,11 +41,11 @@ class WalletShowAccountInfoPageState
   @override
   void onCreated() {
     _dataTitleList = [
-      "金额",
-      "矿工费",
-      "收款地址",
-      "付款地址",
-      "交易号",
+      S.of(context).transfer_amount,
+      S.of(context).transfer_gas_fee,
+      S.of(context).from_address,
+      S.of(context).transfer_to_address,
+      S.of(context).transfer_id,
     ];
     var transDetail = widget.transactionDetail;
     var amountText =
@@ -91,7 +91,7 @@ class WalletShowAccountInfoPageState
     });
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BaseAppBar(baseTitle: "详情"),
+      appBar: BaseAppBar(baseTitle: S.of(context).detail),
       body: Container(
         color: DefaultColors.colorf2f2f2,
         child: CustomScrollView(
@@ -165,7 +165,7 @@ class WalletShowAccountInfoPageState
                         padding: const EdgeInsets.only(
                             top: 16, bottom: 16.0, left: 15),
                         child: Text(
-                          "查看详细信息",
+                          S.of(context).check_for_detail_info,
                           style: TextStyles.textC333S13,
                         ),
                       ),
@@ -259,9 +259,9 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_pending.png";
   }else if(transactionDetail.state == 3){
     if(transactionDetail.hynType == MessageType.typeNormal){
-      pageTitle = "转账成功";
+      pageTitle = S.of(context).transfer_successful;
     }else{
-      pageTitle = "已完成";
+      pageTitle = S.of(context).completed;
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
 
@@ -269,9 +269,9 @@ void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDe
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_success.png";
   }else if(transactionDetail.state == 4 || transactionDetail.state == 5){
     if(transactionDetail.hynType == MessageType.typeNormal){
-      pageTitle = "转账失败";
+      pageTitle = S.of(context).transfer_fail;
     }else{
-      pageTitle = "失败";
+      pageTitle = S.of(context).failed;
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_fail.png";
 

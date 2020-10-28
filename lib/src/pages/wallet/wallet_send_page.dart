@@ -15,7 +15,9 @@ import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -401,6 +403,24 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       if (count <= 0) {
         Fluttertoast.showToast(msg: S.of(context).transfer_num_bigger_zero);
         return;
+      }
+
+      ///
+      if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+        var balance = Decimal.parse(
+          FormatUtil.coinBalanceDouble(
+            widget.coinVo,
+          ).toString(),
+        );
+
+        var estimateGas = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(
+          (1 * TokenUnit.G_WEI * 21000).toString(),
+        ));
+
+        if (balance - estimateGas < Decimal.parse(amountTrim)) {
+          amountTrim = (Decimal.parse(amountTrim) - estimateGas).toString();
+        }
       }
 
       var voStr = FluroConvertUtils.object2string(widget.coinVo.toJson());
