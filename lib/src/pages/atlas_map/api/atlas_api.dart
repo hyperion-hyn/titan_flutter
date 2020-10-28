@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -83,7 +84,7 @@ class AtlasApi {
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
         "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
-    String webTitle = FluroConvertUtils.fluroCnParamsEncode("帮助页面");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,
         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }

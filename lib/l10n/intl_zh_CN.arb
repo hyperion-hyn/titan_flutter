@@ -1080,7 +1080,7 @@
   "msg_re_delegation": "复抵押",
   "msg_cancel_re_delegation": "取消复抵押",
   "msg_collect_re_delegation_reward": "提取复抵押奖励",
-  "msg_create_atlas": "创建Map3节点",
+  "msg_create_map3": "创建Map3节点",
   "msg_collect_micro_staking_rewards" :"提取微抵押奖励",
   "msg_renew_map3": "下期预设",
   "msg_un_micro_delegate": "部分撤销",
@@ -1106,5 +1106,6 @@
   "tx_to_address": "收款地址",
   "tx_amount": "金额",
   "tx_type": "类型",
-  "tx_input_data": "输入数据"
+  "tx_input_data": "输入数据",
+  "help": "帮助文档"
 }
