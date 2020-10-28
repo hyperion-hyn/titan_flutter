@@ -437,7 +437,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 height: 9,
               ),
               Text(
-                '解锁剩余: ${_remainEpoch().toString()}个纪元',
+                '解锁剩余: ${(_remainEpoch() + Decimal.fromInt(1)).toString()}个纪元',
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
