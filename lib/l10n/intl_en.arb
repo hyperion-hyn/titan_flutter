@@ -1066,5 +1066,7 @@
   "map3_nodes_v1": "Map3节点（v1.0）",
   "tutorial": "开通教程",
   "map3_introduction": "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。",
-  "map3_introduce_title": "Map3节点介绍"
+  "map3_introduce_title": "Map3节点介绍",
+  "mapping": "mapping",
+  "atlas_transfer_broadcast_success_description": "已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。"
 }

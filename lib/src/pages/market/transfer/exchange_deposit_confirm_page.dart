@@ -597,7 +597,7 @@ class _ExchangeDepositConfirmPageState
 
       var msg;
       if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
-        msg = '已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。';
+        msg = S.of(context).atlas_transfer_broadcast_success_description;
       } else {
         msg = S.of(context).transfer_broadcase_success_description;
       }
