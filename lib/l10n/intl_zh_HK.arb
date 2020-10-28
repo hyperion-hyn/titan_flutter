@@ -1022,7 +1022,7 @@
   "not_open_please_wait": "待開放，敬請期待",
   "important_hint": "重要提示",
   "got_it": "知道了",
-  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于(北京时间 2020.11.02之前）映射为主链币，之后HYN ERC20变为无效币！",
+  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于(北京时间 2020.11.02之前）映射为主链币，无法在未支持HYN主网的交易所或者钱包充提交易，之后HYN ERC20变为无效币！",
   "bio_auth_expired_hint": "生物識別已過期，請輸入密碼",
   "map3_main_page_title": "Map3地圖服務節點",
   "dex_account_error": "數據異常",
