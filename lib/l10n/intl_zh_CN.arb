@@ -1014,7 +1014,7 @@
   "block_height": "区块高度",
   "atlas_elected_nodes": "当选节点",
   "atlas_candidate_nodes": "总节点",
-  "atlas_next_age": "下个纪元还需",
+  "atlas_next_age": "纪元剩余块数",
   "atlas_create_node": "创建Atlas节点",
   "atlas_launch_tutorial": "开通教程",
   "atlas_fee_rate": "管理费",
