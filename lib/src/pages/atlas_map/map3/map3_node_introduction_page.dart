@@ -44,7 +44,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: 'Map3节点介绍',
+        baseTitle: S.of(context).map3_introduce_title,
       ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),

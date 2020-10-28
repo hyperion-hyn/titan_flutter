@@ -96,9 +96,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: "我的节点", hasMore: true, isMine: true),
+            _sectionTitleWidget(title: S.of(context).my_nodes, hasMore: true, isMine: true),
             _myNodeListWidget(),
-            _sectionTitleWidget(title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
+            _sectionTitleWidget(title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
             _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
@@ -173,7 +173,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return emptyListWidget(title: _address.isEmpty ? "请创建或导入钱包后查看" : "没有我的节点，您可以创建节点");
+      return emptyListWidget(title: _address.isEmpty ? S.of(context).check_after_has_wallet : S.of(context).my_nodes_empty);
     }
 
     return SliverToBoxAdapter(
@@ -185,7 +185,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _lastActiveWidget() {
     if (_lastActiveList.isEmpty) {
-      return emptyListWidget(title: "没有最新启动的节点，您可以创建节点");
+      return emptyListWidget(title: S.of(context).no_lastest_active_nodes);
     }
 
     return SliverToBoxAdapter(
@@ -252,7 +252,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  isMine ? "查看收益" : "查看更多",
+                  isMine ? S.of(context).check_reward : S.of(context).check_more,
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -288,7 +288,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Map3地图服务节点",
+                      S.of(context).map3_nodes,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -329,9 +329,9 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   _nodeIntroduceWidget() {
-    var title = _map3introduceEntity?.name ?? "Map3节点（v1.0）";
-    var desc = "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
-    var guideTitle = "开通教程";
+    var title = _map3introduceEntity?.name ?? S.of(context).map3_nodes_v1;
+    var desc = S.of(context).map3_introduction;
+    var guideTitle = S.of(context).tutorial;
     return Container(
       color: Colors.white24,
       margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),

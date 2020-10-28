@@ -1042,5 +1042,17 @@
   "exchange_withdraw_status_9": "비정상 인출 청구서",
   "wallet_send_fix_dex_account": "귀하의 dex 계정 데이터가 비정상입니다. 먼저 수정하십시오!",
   "dex_fix_account_contact_us": "질문이 있으시면 고객 서비스에 문의하십시오.",
-  "duplicate_identity_hint": "节点号已被占用，请修改!"
+  "duplicate_identity_hint": "节点号已被占用，请修改!",
+  "my_nodes": "我的节点",
+  "lastest_launched_nodes": "最新启动的节点",
+  "check_after_has_wallet": "请创建或导入钱包后查看",
+  "my_nodes_empty": "没有我的节点，您可以创建节点",
+  "no_lastest_active_nodes": "没有最新启动的节点，您可以创建节点",
+  "check_reward": "查看收益",
+  "check_more": "查看更多",
+  "map3_nodes": "Map3地图服务节点",
+  "map3_nodes_v1": "Map3节点（v1.0）",
+  "tutorial": "开通教程",
+  "map3_introduction": "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。",
+  "map3_introduce_title": "Map3节点介绍"
 }
