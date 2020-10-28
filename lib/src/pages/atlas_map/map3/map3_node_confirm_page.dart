@@ -174,7 +174,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 if ((_addressList?.isNotEmpty ?? false) && index == 0)
                   Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: _addressList
                           .map((e) => Padding(
                                 padding: const EdgeInsets.only(top: 8, bottom: 4),

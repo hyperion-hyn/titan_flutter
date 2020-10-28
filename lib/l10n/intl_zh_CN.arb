@@ -1030,7 +1030,7 @@
   "not_open_please_wait": "待开放，敬请期待",
   "important_hint": "重要提示",
   "got_it": "知道了",
-  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于(北京时间 2020.11.02之前）映射为主链币，之后HYN ERC20变为无效币！",
+  "wallet_show_atlas_alert": "HYN主链币已上线，请将HYN ERC20于(北京时间 2020.11.02之前）映射为主链币，无法在未支持HYN主网的交易所或者钱包充提交易，之后HYN ERC20变为无效币！",
   "exchange_logout_hint": "您将要退出授权状态，确定要退出吗？",
   "bio_auth_expired_hint": "生物识别已过期，请输入密码",
   "map3_main_page_title": "Map3地图服务节点",
@@ -1063,6 +1063,7 @@
   "tutorial": "开通教程",
   "map3_introduction": "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。",
   "map3_introduce_title": "Map3节点介绍",
+  "exchange_main_block_hyn": "兑换主链币",
   "mapping": "映射中",
   "atlas_transfer_broadcast_success_description": "已在区块链上网络广播转账的消息，区块链网络需要6秒钟开采验证。"
 }
