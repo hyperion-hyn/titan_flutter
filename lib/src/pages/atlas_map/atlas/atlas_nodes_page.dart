@@ -332,8 +332,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   Text(
                     S.of(context).atlas_next_age,
                     style: TextStyle(
-                      color: HexColor('#FFFFFFFF'),
-                      fontSize: 12,
+                      color: DefaultColors.color999 ,
+                      fontSize: 11,
                       shadows: [
                         BoxShadow(
                           offset: const Offset(1.0, 1.0),
