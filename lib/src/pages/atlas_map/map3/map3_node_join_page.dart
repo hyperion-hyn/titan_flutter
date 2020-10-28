@@ -77,10 +77,8 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     super.initState();
   }
 
-
   @override
   void didChangeDependencies() {
-
     super.didChangeDependencies();
 
     if (context != null) {
@@ -280,7 +278,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _delegateCountWidget() {
-    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble()??0;
+    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble() ?? 0;
     print("totalPendingDelegation: $totalPendingDelegation");
 
     var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
@@ -344,15 +342,23 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var entity = PledgeMap3Entity(
-                  payload: Payload(
+              var payload = Payload(
                 userIdentity: widget.map3infoEntity.nodeId,
-              ));
+              );
+
+              var entity = PledgeMap3Entity(payload: payload);
+              var activatedWallet = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).activatedWallet;
+              var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+              payload.userName = walletName;
+
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
                 amount: staking,
-                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString()??"0",
+                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString() ?? "0",
               );
               Navigator.push(
                   context,
@@ -375,7 +381,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
     var nodeAddress =
-        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address??"") ?? "***", limitLength: 9)}";
+        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address ?? "") ?? "***", limitLength: 9)}";
 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
@@ -389,7 +395,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text.rich(TextSpan(children: [
-                TextSpan(text: widget?.map3infoEntity?.name??"", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(
+                    text: widget?.map3infoEntity?.name ?? "",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
