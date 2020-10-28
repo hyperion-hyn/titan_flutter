@@ -387,7 +387,7 @@ class HYNApi {
         typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = S.of(cotext).msg_collect_re_delegation_reward;
+        typeStr = S.of(context).msg_collect_re_delegation_reward;
         String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
         amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);

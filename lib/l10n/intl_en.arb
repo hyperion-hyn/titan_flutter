@@ -1068,7 +1068,6 @@
   "map3_introduction": "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。",
   "map3_introduce_title": "Map3节点介绍",
   "exchange_main_block_hyn": "兑换主链币",
-  "exchange_mapping": "映射中",
   "wallet_transfer_title": "你有未确认的转账，继续转账将被覆盖。",
   "wallet_symbol_pair_tips": "即将开通该交易对，敬请期待!",
   "wallet_cancel_transfer_tips": "取消交易操作无法保证能够成功取消您的原始交易。如果取消成功，您将被收取上述交易费用。",
