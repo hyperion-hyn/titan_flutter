@@ -239,7 +239,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 6),
                 child: Text(
-                  "兑换主链币",
+                  S.of(context).exchange_main_block_hyn,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               ),
@@ -273,7 +273,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 6),
                 child: Text(
-                  "兑换主链币",
+                  S.of(context).exchange_main_block_hyn,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               ),
