@@ -333,7 +333,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     S.of(context).atlas_next_age,
                     style: TextStyle(
                       color: HexColor('#FFFFFFFF'),
-                      fontSize: 10,
+                      fontSize: 12,
                       shadows: [
                         BoxShadow(
                           offset: const Offset(1.0, 1.0),
@@ -365,7 +365,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10,
+                          fontSize: 11,
                           shadows: [
                             BoxShadow(
                               offset: const Offset(1.0, 1.0),
