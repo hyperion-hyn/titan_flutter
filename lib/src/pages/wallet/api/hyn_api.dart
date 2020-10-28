@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
@@ -359,9 +360,12 @@ class HYNApi {
     String typeStr = "";
     String amountStr = "0";
     String recordAmountStr = "";
+
+    var context = Keys.rootKey.currentContext;
+
     switch (hynMessageType) {
       case MessageType.typeNormal:
-        typeStr = "转账";
+        typeStr = S.of(context).transfer;
         if(transactionDetail != null){
           if(transactionDetail.type == TransactionType.TRANSFER_IN){
             amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
@@ -371,58 +375,58 @@ class HYNApi {
         }
         break;
       case MessageType.typeCreateValidator:
-        typeStr = "创建Atlas";
+        typeStr = S.of(context).msg_create_atlas;
         break;
       case MessageType.typeEditValidator:
-        typeStr = "编辑Atlas";
+        typeStr = S.of(context).msg_edit_atlas;
         break;
       case MessageType.typeReDelegate:
-        typeStr = "复抵押";
+        typeStr = S.of(context).msg_re_delegation;
         break;
       case MessageType.typeUnReDelegate:
-        typeStr = "取消复抵押";
+        typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = "提取复抵押奖励";
+        typeStr = S.of(cotext).msg_collect_re_delegation_reward;
         String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
         amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCreateMap3:
-        typeStr = "创建Map3节点";
+        typeStr = S.of(context).create_map_mortgage_contract;
         String value = getDecodedAmount(transactionDetail);
         amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeEditMap3:
-        typeStr = "编辑Map3节点";
+        typeStr = S.of(context).msg_edit_map3;
         break;
       case MessageType.typeTerminateMap3:
-        typeStr = "终止Map3节点";
+        typeStr = S.of(context).msg_terminate_map3;
         String value = getDecodedAmount(transactionDetail);
         amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
-        typeStr = "微抵押";
+        typeStr = S.of(context).msg_micro_delegate;
         String value = getDecodedAmount(transactionDetail);
         amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "部分撤销";
+        typeStr = S.of(context).msg_un_micro_delegate;
         String value = getDecodedAmount(transactionDetail);
         amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCollectMicroStakingRewards:
-        typeStr = "提取微抵押奖励";
+        typeStr = S.of(context).msg_collect_micro_staking_rewards;
         String value = transactionDetail?.getMap3RewardAmount() ?? "0.0";
         amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
-        typeStr = "下期预设";
+        typeStr = S.of(context).msg_renew_map3;
         break;
     }
 
