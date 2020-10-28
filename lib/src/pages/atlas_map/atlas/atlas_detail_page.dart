@@ -634,7 +634,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                        text: "已产生奖励  ",
+                        text: "节点累计奖励  ",
                         style: TextStyles.textC333S10,
                         children: [
                           TextSpan(
@@ -796,7 +796,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("可提奖励",
+                                      Text("可提往Map3",
                                           style: TextStyles.textC999S12)
                                     ],
                                   ),

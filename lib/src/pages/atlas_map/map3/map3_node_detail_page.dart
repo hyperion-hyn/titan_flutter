@@ -1530,7 +1530,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               ),
               child: profitListBigWidget(
                 [
-                  {"累计奖励": totalRewardString},
+                  {"节点累计奖励": totalRewardString},
                   {"管理费": feeRate},
                   {"我的抵押": _isDelegator ? myDelegationString : "未抵押"},
                 ],
