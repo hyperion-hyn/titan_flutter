@@ -41,13 +41,18 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   var _isTransferring = false;
 
   List<String> _titleList = ["From", "To", ""];
-  List<String> _subList = ["钱包", "Map3节点", "矿工费"];
+  List<String> _subList = [
+    S.of(Keys.rootKey.currentContext).wallet,
+    S.of(Keys.rootKey.currentContext).map3_node,
+    S.of(Keys.rootKey.currentContext).gas_fee
+  ];
   List<String> _detailList = ["*** (***…***)", "节点号: PB2020", "0.0000021 HYN"];
   String _pageTitle = "";
   String _amount = "0";
   String _amountDirection = "0";
 
   List<dynamic> _addressList = [];
+
   @override
   void initState() {
     super.initState();
@@ -68,7 +73,11 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
       var fromName = desc.fromName;
       var toName = desc.toName;
-      _subList = [fromName, toName, "矿工费"];
+      _subList = [
+        fromName,
+        toName,
+        S.of(context).gas_fee,
+      ];
 
       var fromDetail = desc.fromDetail;
       var toDetail = desc.toDetail;
@@ -101,9 +110,11 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: Container(
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    _headerWidget(),
-                  ]),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _headerWidget(),
+                      ]),
                 ),
               ),
               SliverToBoxAdapter(
@@ -148,7 +159,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                     children: <Widget>[
                       Text(
                         title,
-                        style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                        style:
+                            TextStyle(color: HexColor("#999999"), fontSize: 14),
                       ),
                     ],
                   ),
@@ -162,14 +174,16 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                   children: <Widget>[
                     Text(
                       subTitle,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 14),
+                      style:
+                          TextStyle(color: HexColor("#333333"), fontSize: 14),
                     ),
                     SizedBox(
                       width: 8,
                     ),
                     Text(
                       detail,
-                      style: TextStyle(color: HexColor("#999999"), fontSize: 14),
+                      style:
+                          TextStyle(color: HexColor("#999999"), fontSize: 14),
                     ),
                   ],
                 ),
@@ -180,11 +194,13 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                       //mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: _addressList
                           .map((e) => Padding(
-                                padding: const EdgeInsets.only(top: 8, bottom: 4),
+                                padding:
+                                    const EdgeInsets.only(top: 8, bottom: 4),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(WalletUtil.ethAddressToBech32Address(e),
+                                    Text(
+                                        WalletUtil.ethAddressToBech32Address(e),
                                         style: TextStyle(
                                           color: HexColor("#999999"),
                                           fontSize: 12,
@@ -204,7 +220,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   }
 
   Widget _headerWidget() {
-    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
+    var activatedQuoteSign =
+        QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
     var quoteSign = activatedQuoteSign?.sign?.sign ?? "￥";
     var amountValue = double.parse(_amount ?? '0');
@@ -231,10 +248,14 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 Visibility(
                   visible: _amount != "0",
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 8),
                     child: Text(
                       "$_amountDirection${FormatUtil.formatPrice(double.parse(_amount ?? "0"))} HYN",
-                      style: TextStyle(color: Color(0xFF252525), fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(
+                          color: Color(0xFF252525),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
                     ),
                   ),
                 ),
@@ -275,7 +296,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
     try {
       var activatedWallet = WalletInheritedModel.of(context).activatedWallet;
-      var password = await UiUtil.showWalletPasswordDialogV2(context, activatedWallet.wallet);
+      var password = await UiUtil.showWalletPasswordDialogV2(
+          context, activatedWallet.wallet);
       if (password == null) {
         setState(() {
           _isTransferring = false;
@@ -301,7 +323,9 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         map3infoEntity.status = 1;
 
         if (widget.message is ConfirmCreateMap3NodeMessage) {
-          var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+          var activatedWallet =
+              WalletInheritedModel.of(Keys.rootKey.currentContext)
+                  .activatedWallet;
           var address = activatedWallet.wallet.getEthAccount().address;
           map3infoEntity.address = address;
 
@@ -321,7 +345,8 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
                 "?actionEvent=${widget.message.type}" +
                 "&info=${FluroConvertUtils.object2string(map3infoEntity.toJson())}");
       } else if (result is List) {
-        Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyStaking(result[0], result[1]);
+        Map3InfoEntity map3infoEntity =
+            Map3InfoEntity.onlyStaking(result[0], result[1]);
 
         Application.router.navigateTo(
             context,
@@ -331,8 +356,10 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
       } else if (result is bool) {
         var isOK = result;
         if (isOK) {
-          Application.router
-              .navigateTo(context, Routes.map3node_broadcast_success_page + "?actionEvent=${widget.message.type}");
+          Application.router.navigateTo(
+              context,
+              Routes.map3node_broadcast_success_page +
+                  "?actionEvent=${widget.message.type}");
         } else {
           setState(() {
             _isTransferring = false;

@@ -109,7 +109,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
       //backgroundColor: Color(0xffF3F0F5),
       appBar: BaseAppBar(
-        baseTitle: '抵押Map3节点',
+        baseTitle: S.of(context).delegate_map3,
       ),
       body: _pageView(context),
     );
@@ -246,9 +246,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions, style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          rowTipsItem("抵押7天内不可撤销", top: 0),
+          rowTipsItem(S.of(context).cant_cancel_delegation_with_7, top: 0),
           rowTipsItem("需要总抵押满${startMin}HYN才能正式启动，每次参与抵押数额不少于${delegateMin}HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           /*rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
