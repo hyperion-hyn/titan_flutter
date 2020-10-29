@@ -27,8 +27,8 @@ import 'model/transtion_detail_vo.dart';
 
 class WalletShowAccountDetailPage extends StatefulWidget {
   final TransactionDetailVo transactionDetail;
-
-  WalletShowAccountDetailPage(this.transactionDetail);
+  final bool isContain;
+  WalletShowAccountDetailPage(this.transactionDetail, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -45,6 +45,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   var inputData = "";
   var hasDecodeData = false;
   var selectLeftData = true;
+
+  get _toAddress {
+    var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+    var toAddress = widget.isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return toAddress;
+  }
 
   @override
   void initState() {
@@ -102,7 +108,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       "${transDetail.blockNum}",
       timeStr,
       WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-      WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)),
+      _toAddress,
       amountText,
       gasEstimate,
       gasPriceStr,

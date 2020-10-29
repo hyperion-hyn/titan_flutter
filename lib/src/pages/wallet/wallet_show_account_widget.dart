@@ -22,6 +22,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
@@ -93,6 +94,35 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     if (tempTransList.length > 0) {
       await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
     }
+
+    getWhiteList();
+  }
+
+
+  List<String> whiteList = [];
+
+  getWhiteList() async {
+    if (widget.coinVo.coinType != CoinType.HYN_ATLAS) {
+      return;
+    }
+
+    whiteList = await AtlasApi().getBiboxWhiteList();
+  }
+
+  String _toAddress(TransactionDetailVo transactionDetail) {
+    var ethAddress = HYNApi.getHynToAddress(transactionDetail);
+    bool isContain = false;
+    if (whiteList.isNotEmpty && ethAddress.isNotEmpty) {
+      for (var item in whiteList) {
+        if (item.toLowerCase() == ethAddress.toLowerCase()) {
+          isContain = true;
+          break;
+        }
+      }
+    }
+
+    var toAddress = isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return toAddress;
   }
 
   @override
@@ -400,6 +430,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
           widget.coinVo,
           HYNApi.getHynToAddress(transactionDetail),
         );
+
+        toAddress = _toAddress(transactionDetail);
         describe = "To: " + shortBlockChainAddress(toAddress, limitCharsLength: limitLength);
       } else {
         describe = "To: " + shortBlockChainAddress(transactionDetail.toAddress, limitCharsLength: limitLength);

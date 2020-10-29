@@ -69,12 +69,11 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     payload.connect = widget.entity.contact;
     payload.describe = widget.entity.describe;
     payload.isEdit = true;
-    payload.nodeId = null;
+    //payload.nodeId = '';
 
     print("[dd1] payload.toJson():${payload.toJson()}");
 
-    //payload.blsRemoveKey = widget?.entity?.blsKey ?? "";
-    payload.blsRemoveKey = null;
+    payload.blsRemoveKey = widget?.entity?.blsKey ?? "";
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
     print("[dd2] payload.toJson():${payload.toJson()}");
@@ -286,7 +285,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             keyboardType: keyboardType,
             subtitle: subTitle,
             hasSubtitle: false,
-            canEdit: title != "节点号",
+            canEdit: true,
+            // canEdit: title != "节点号",
           );
 
         },
@@ -331,7 +331,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
               _payload.name = _detailList[0];
 
             } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
-              //_payload.nodeId = _detailList[1];
+              _payload.nodeId = _detailList[1];
             } else if (title == S.of(Keys.rootKey.currentContext).website) {
 
               _payload.home = _detailList[2];
