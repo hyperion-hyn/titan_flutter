@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
@@ -20,20 +21,33 @@ import 'map3_node_public_widget.dart';
 
 class Map3NodeEditPage extends StatefulWidget {
   final Map3InfoEntity entity;
+
   Map3NodeEditPage({this.entity});
 
   @override
   _Map3NodeEditState createState() => new _Map3NodeEditState();
 }
 
-class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
-
+class _Map3NodeEditState extends State<Map3NodeEditPage>
+    with WidgetsBindingObserver {
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
 
   var _localImagePath = "";
-  var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
+  var _titleList = [
+    S.of(Keys.rootKey.currentContext).name,
+    S.of(Keys.rootKey.currentContext).node_num,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).description,
+  ];
   List<String> _detailList = ["", "", "", "", ""];
-  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  List<String> _hintList = [
+    S.of(Keys.rootKey.currentContext).please_enter_node_name,
+    S.of(Keys.rootKey.currentContext).please_input_node_num,
+    S.of(Keys.rootKey.currentContext).please_enter_node_address,
+    S.of(Keys.rootKey.currentContext).please_input_node_contact,
+    S.of(Keys.rootKey.currentContext).please_enter_node_description
+  ];
 
   @override
   void initState() {
@@ -74,7 +88,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '编辑Map3节点',
+        baseTitle: S.of(context).edit_map3,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -130,11 +144,15 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
+                      Expanded(
+                          child: Text(S.of(context).map3_nodes_v1,
+                              style: TextStyle(fontWeight: FontWeight.bold))),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
-                          child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                          child: Text(S.of(context).detailed_introduction,
+                              style: TextStyle(
+                                  fontSize: 14, color: HexColor("#1F81FF"))),
                           onTap: () {
                             AtlasApi.goToAtlasMap3HelpPage(context);
                           },
@@ -147,17 +165,25 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("启动所需100万  ", style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
+                        Text(S.of(context).activate_need_1m,
+                            style: TextStyles.textC99000000S13,
+                            maxLines: 1,
+                            softWrap: true),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                          child: Text(" (HYN) ",
+                              style: TextStyle(
+                                  fontSize: 10, color: HexColor("#999999"))),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child:
-                              Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                          child: Text("  |  ",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: HexColor("000000").withOpacity(0.2))),
                         ),
-                        Text(S.of(context).n_day("180"), style: TextStyles.textC99000000S13)
+                        Text(S.of(context).n_day("180"),
+                            style: TextStyles.textC99000000S13)
                       ],
                     ),
                   ),
@@ -190,7 +216,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（选填）";
+          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -209,7 +235,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, ({String value}){
+          return editInfoItem(context, index, title, hint, detail, (
+                  {String value}) {
             if (index == 0) {
               setState(() {
                 _localImagePath = value;
@@ -220,7 +247,10 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                 _detailList[index] = value;
               });
             }
-          }, keyboardType: keyboardType, subtitle: subTitle, hasSubtitle: false);
+          },
+              keyboardType: keyboardType,
+              subtitle: subTitle,
+              hasSubtitle: false);
         },
         separatorBuilder: (context, index) {
           return Divider(
@@ -254,23 +284,25 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
 
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
-            if (title == "名称") {
+            if (title == S.of(Keys.rootKey.currentContext).name) {
               _payload.name = _detailList[0];
-            } else if (title == "节点号" && _detailList[1] != widget.entity.nodeId) {
+            } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
               _payload.nodeId = _detailList[1];
-            } else if (title == "网址") {
+            } else if (title == S.of(Keys.rootKey.currentContext).website) {
               _payload.home = _detailList[2];
-            } else if (title == "安全联系") {
+            } else if (title == S.of(Keys.rootKey.currentContext).contact) {
               _payload.connect = _detailList[3];
-            } else if (title == "描述") {
+            } else if (title == S.of(Keys.rootKey.currentContext).description) {
               _payload.describe = _detailList[4];
             }
           }
           _payload.isEdit = true;
 
-          CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+          CreateMap3Entity map3entity =
+              CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
           map3entity.payload = _payload;
-          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: widget.entity.address);
+          var message = ConfirmEditMap3NodeMessage(
+              entity: map3entity, map3NodeAddress: widget.entity.address);
 
           Navigator.push(
               context,
@@ -279,7 +311,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                   message: message,
                 ),
               ));
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

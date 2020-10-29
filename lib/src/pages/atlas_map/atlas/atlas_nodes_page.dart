@@ -178,6 +178,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             vertical: 16,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 child: Column(

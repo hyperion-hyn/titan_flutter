@@ -14,6 +14,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
@@ -42,7 +43,8 @@ class Map3NodeCreatePage extends StatefulWidget {
   _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
+class _Map3NodeCreateState extends State<Map3NodeCreatePage>
+    with WidgetsBindingObserver {
   TextEditingController _inputTextController = new TextEditingController();
   TextEditingController _rateCoinController = new TextEditingController();
 
@@ -82,9 +84,21 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   // List<String> _detailList = ["", "", "", "", "", ""];
   // List<String> _hintList = ["请选择节点图标", "请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
 
-  var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
+  var _titleList = [
+    S.of(Keys.rootKey.currentContext).name,
+    S.of(Keys.rootKey.currentContext).node_num,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).description,
+  ];
   List<String> _detailList = ["", "", "", "", ""];
-  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  List<String> _hintList = [
+    S.of(Keys.rootKey.currentContext).please_enter_node_name,
+    S.of(Keys.rootKey.currentContext).please_input_node_num,
+    S.of(Keys.rootKey.currentContext).please_enter_node_address,
+    S.of(Keys.rootKey.currentContext).please_input_node_contact,
+    S.of(Keys.rootKey.currentContext).please_enter_node_description
+  ];
 
   @override
   void initState() {
@@ -159,7 +173,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     super.didChangeDependencies();
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateActivatedWalletBalanceEvent());
     }
   }
 
@@ -167,7 +182,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '创建Map3节点',
+        baseTitle: S.of(context).create_map3_node,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -246,10 +261,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
+                              child: Text(_introduceEntity?.name ?? "",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
-                            child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
+                            child: Text(S.of(context).detailed_introduction,
+                                style: TextStyle(
+                                    fontSize: 14, color: HexColor("#1F81FF"))),
+                            onTap: () =>
+                                AtlasApi.goToAtlasMap3HelpPage(context),
                           ),
                         ],
                       ),
@@ -259,7 +279,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                                "启动所需" +
+                                S.of(context).active_still_need +
                                     "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
                                     S.of(context).ten_thousand,
                                 style: TextStyles.textC99000000S13,
@@ -267,14 +287,23 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                                 softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                              child: Text(" (HYN) ",
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: HexColor("#999999"))),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text("  |  ",
-                                  style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(S.of(context).n_day("${_introduceEntity?.days ?? 0}"),
+                            Text(
+                                S
+                                    .of(context)
+                                    .n_day("${_introduceEntity?.days ?? 0}"),
                                 style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -292,7 +321,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                 Container(
                     width: 100,
                     child: Text(S.of(context).service_provider,
-                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -323,8 +353,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               children: <Widget>[
                 Container(
                     width: 100,
-                    child:
-                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
+                    child: Text(S.of(context).node_location,
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -375,7 +406,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               _currentFeeRate--;
               if (_currentFeeRate <= 10) {
                 _currentFeeRate = 10;
-                Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
+                Fluttertoast.showToast(
+                    msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -385,7 +417,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               _currentFeeRate++;
               if (_currentFeeRate >= _maxFeeRate) {
                 _currentFeeRate = _maxFeeRate;
-                Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
+                Fluttertoast.showToast(
+                    msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -401,7 +434,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（选填）";
+          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -420,7 +453,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, ({String value}) {
+          return editInfoItem(context, index, title, hint, detail, (
+              {String value}) {
             setState(() {
               _detailList[index] = value;
             });
@@ -446,7 +480,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         color: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
         child: ClickOvalButton(
-          "创建提交",
+          S.of(context).submit_create,
           _confirmAction,
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -489,10 +523,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }*/
 
-
     var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
-    if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+    if (stakingValue == null ||
+        stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
       Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
       return;
     }
@@ -504,25 +538,25 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
-
     var feeRate = _inputFeeRateValue;
     if (feeRate < 10 || feeRate > _maxFeeRate) {
-      Fluttertoast.showToast(msg: "管理费不能小于10且不能大于$_maxFeeRate");
+      Fluttertoast.showToast(
+          msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
       return;
     }
 
     for (var index = 0; index < _titleList.length; index++) {
       var title = _titleList[index];
 
-      if (title == "名称") {
+      if (title == S.of(Keys.rootKey.currentContext).name) {
         _payload.name = _detailList[0];
-      } else if (title == "节点号") {
+      } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
         _payload.nodeId = _detailList[1];
-      } else if (title == "网址") {
+      } else if (title == S.of(Keys.rootKey.currentContext).website) {
         _payload.home = _detailList[2];
-      } else if (title == "安全联系") {
+      } else if (title == S.of(Keys.rootKey.currentContext).contact) {
         _payload.connect = _detailList[3];
-      } else if (title == "描述") {
+      } else if (title == S.of(Keys.rootKey.currentContext).description) {
         _payload.describe = _detailList[4];
       }
 
@@ -562,7 +596,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     var payloadJson = _payload.toJson();
     print("payloadJson: $payloadJson");
     var encodeEntity = FluroConvertUtils.object2string(payloadJson);
-    Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
+    Application.router.navigateTo(
+        context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 
   void getNetworkData() async {
@@ -619,8 +654,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     _nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item =
-          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item = new DropdownMenuItem(
+          value: i,
+          child: new Text(regions.name, style: TextStyles.textC333S14));
       _nodeList.add(item);
     }
     _selectNodeItemValue = _nodeList[regionIndex].value;
@@ -709,8 +745,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection:
-                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection: TextSelection.fromPosition(TextPosition(
+                affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
