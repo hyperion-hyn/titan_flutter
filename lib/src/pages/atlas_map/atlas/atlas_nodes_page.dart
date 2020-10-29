@@ -332,7 +332,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   Text(
                     S.of(context).atlas_next_age,
                     style: TextStyle(
-                      color: DefaultColors.color999 ,
+                      color: DefaultColors.color999,
                       fontSize: 11,
                       shadows: [
                         BoxShadow(
@@ -681,16 +681,16 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         size: _pageSize,
       );
 
-      if (_nodeList != null) {
+      if (_nodeList != null && _nodeList.isNotEmpty) {
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {});
-      _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }
