@@ -81,7 +81,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   var _currentEpoch = 0;
 
-  get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch??'0')?.toInt()??0;
+  get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
   String _notifyMessage() {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
@@ -138,8 +138,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   // 到期纪元
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
+  get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
 
   get _visibleEditNextPeriod {
+
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   }
 
@@ -152,6 +154,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -195,7 +198,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   get _canExit {
-
     // 0.募集中
     var isPending = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
@@ -299,11 +301,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         value = 0.5;
 
-        //var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-        var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
-        var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
-
-        var left = (_currentEpoch - activationEpoch).toDouble() / (releaseEpoch - activationEpoch).toDouble();
+        var left = (_currentEpoch - _activeEpoch).toDouble() / (_releaseEpoch - _activeEpoch).toDouble();
 
         if (left <= 0.1) {
           value = 0.1;
@@ -466,7 +464,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget build(BuildContext context) {
     // todo: test_jison
     //_map3Status = Map3InfoStatus.values[0];
-    LogUtil.printMessage("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
+    //LogUtil.printMessage("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
 
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
 
@@ -966,10 +964,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       child: InkWell(
                         //color: HexColor("#FF15B2D2"),
                         //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        onTap: () {
-                          var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
-                          Application.router.navigateTo(context, Routes.map3node_edit_page + "?entity=$encodeEntity");
-                        },
+                        onTap: _editAction,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -1291,7 +1286,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                   Container(
                                     height: 4,
                                   ),
-                                  _item("节点排名：", "${atlasEntity?.rank ?? 0}"),
+                                  _item("节点号：", atlasEntity?.nodeId ?? ''),
                                 ],
                               ),
                             ),
@@ -1877,6 +1872,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     Application.router.navigateTo(context, Routes.map3node_my_page);
+  }
+
+  void _editAction() async {
+    if (_isNoWallet) {
+      _pushWalletManagerAction();
+      return;
+    }
+
+    if (_map3infoEntity != null) {
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+      var encodeEntity = FluroConvertUtils.object2string(_map3infoEntity.toJson());
+
+      await Application.router
+          .navigateTo(context, Routes.map3node_edit_page + "?entryRouteName=$entryRouteName&entity=$encodeEntity");
+      _nextAction();
+    }
   }
 
   void _joinAction() async {

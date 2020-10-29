@@ -24,9 +24,11 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class Map3NodeConfirmPage extends StatefulWidget {
   final AtlasMessage message;
+  final AtlasMessage editMessage;
 
   Map3NodeConfirmPage({
     this.message,
+    this.editMessage,
   });
 
   @override
@@ -280,6 +282,17 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         });
         return;
       }
+
+      if (widget.editMessage != null && (widget.editMessage is ConfirmEditMap3NodeMessage) && (widget.message is ConfirmPreEditMap3NodeMessage)) {
+        var editResult = true;
+        editResult = await widget.editMessage.action(password);
+        print("object --> editResult:$editResult");
+
+        if (!editResult) {
+          return;
+        }
+      }
+
       var result = await widget.message.action(password);
       print("object --> result:$result");
 

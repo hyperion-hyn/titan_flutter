@@ -441,9 +441,15 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 4:
               title = "我的抵押";
+
+              var isStart = widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index;
+              var pendingAmount = _microDelegationsJoiner?.pendingDelegation?.amount;
+              var activeAmount = _microDelegationsJoiner?.amount;
+              var myAmount = isStart ? activeAmount : pendingAmount;
+
               detail = ConvertTokenUnit.weiToEther(
                       weiBigInt: BigInt.parse(
-                          '${FormatUtil.clearScientificCounting(_microDelegationsJoiner?.pendingDelegation?.amount ?? 0)}'))
+                          '${FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0)}'))
                   .toString();
               break;
 

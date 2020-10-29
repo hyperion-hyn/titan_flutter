@@ -180,7 +180,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
 //                          } else {
 //                            _pop(context);
 //                          }
-                        _pop(context);
+                          _pop(context);
                         },
                         child: Container(
                           child: Padding(
@@ -230,6 +230,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
     );
   }
 
+  /*
   void _shareAction() {
     if (widget.actionEvent != Map3NodeActionEvent.MAP3_CREATE) {
       Share.text(S.of(context).share, "http://baidu.com", 'text/plain');
@@ -242,6 +243,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         Routes.map3node_share_page +
             "?contractNodeItem=${FluroConvertUtils.object2string(widget.infoEntity.toJson())}");
   }
+  */
 
   void _pop(BuildContext context) {
     switch (widget.actionEvent) {
@@ -251,11 +253,13 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
         Routes.popUntilCachedEntryRouteName(context, widget.infoEntity);
         break;
 
+      /*
       case Map3NodeActionEvent.MAP3_EDIT:
         print("[pop] -----> EDIT_MAP3, 返回Map3 detail");
         Routes.cachedEntryRouteName = Routes.map3node_contract_detail_page;
         Routes.popUntilCachedEntryRouteName(context);
         break;
+        */
 
       default:
         print("[pop] -----> _pop, contractNodeItem");

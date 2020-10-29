@@ -1012,7 +1012,7 @@
   "atlas_fee_rate": "管理費",
   "atlas_sign_rate": "簽名率",
   "atlas_total_staking": "總抵押",
-  "atlas_reward_rate": "預期收益",
+  "atlas_reward_rate": "近期收益",
   "atlas_node_rank": "節點排名",
   "edit": "編輯",
   "save": "保存",

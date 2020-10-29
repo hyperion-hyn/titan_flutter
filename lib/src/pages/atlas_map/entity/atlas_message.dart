@@ -308,14 +308,21 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<dynamic> action(String password) async {
-    var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
-    var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
-    this.entity.rawTx = rawTx;
+    try {
+      var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
+      var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
+      this.entity.rawTx = rawTx;
 
-    TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
-    print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+      TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
+      print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
-    return txHashEntity.txHash.isNotEmpty;
+      return txHashEntity.txHash.isNotEmpty;
+    } catch(e) {
+      print(e);
+      LogUtil.toastException(e);
+    }
+
+    return false;
   }
 
   @override

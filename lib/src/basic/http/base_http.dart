@@ -225,8 +225,11 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        LogUtil.printMessage(
-            "[base_http] post params = ${params.toString()} ***URL = $url");
+
+        if (url != '/v1/atlas/home') {
+          LogUtil.printMessage(
+              "[base_http] post params = ${params.toString()} ***URL = $url");
+        }
         /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
         });*/
@@ -234,9 +237,7 @@ class BaseHttpCore {
         response = await dio.post(url,
             data: params, options: options, cancelToken: cancelToken);
 
-        /*if (url == '/v1/map3/info') {
-          print("[object] ---> code:${response.statusCode}");
-        }*/
+
       }  else if (data != null) {
         LogUtil.printMessage(
             "[base_http] post data = ${data.toString()} ***URL = $url");

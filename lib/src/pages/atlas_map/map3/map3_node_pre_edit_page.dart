@@ -10,8 +10,12 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -60,6 +64,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return value;
   }
 
+  get _isEmptyBls =>
+      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+
+  ConfirmEditMap3NodeMessage _editMessage;
+
   @override
   void initState() {
     _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate()));
@@ -74,7 +83,39 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       print("_currentFeeRate: $_currentFeeRate");
     }
 
+    getMap3Bls();
+
     super.initState();
+  }
+
+  getMap3Bls() async {
+
+    if (_isJoiner) {
+      return;
+    }
+
+    if (!_isEmptyBls) {
+      return;
+    }
+
+    var blsKeySignEntity = await AtlasApi().getMap3Bls();
+
+    var payload = CreateMap3Payload.onlyNodeId(widget.map3infoEntity.nodeId);
+    payload.name = widget.map3infoEntity.name;
+    payload.nodeId = null;
+    payload.home = widget.map3infoEntity.home;
+    payload.connect = widget.map3infoEntity.contact;
+    payload.describe = widget.map3infoEntity.describe;
+    payload.isEdit = true;
+
+    payload.blsRemoveKey = null;
+    payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
+    payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
+
+    CreateMap3Entity createMap3Entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+    createMap3Entity.payload = payload;
+    var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
+    _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
   }
 
   double getStaking() {
@@ -401,6 +442,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
                 MaterialPageRoute(
                   builder: (context) => Map3NodeConfirmPage(
                     message: message,
+                    editMessage: _editMessage,
                   ),
                 ));
           },
