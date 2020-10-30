@@ -28,12 +28,13 @@ class HYNApi {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
-    if(gasLimit == null){
+    if (gasLimit == null) {
       final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      if(message == null || message?.type == MessageType.typeNormal){
+      var walletAddress =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      if (message == null || message?.type == MessageType.typeNormal) {
         gasLimit = 21000;
-      }else{
+      } else {
         /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
             data: message?.toRlp(),
             txType: message?.type ?? MessageType.typeNormal);
@@ -66,12 +67,13 @@ class HYNApi {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
     }
-    if(gasLimit == null){
+    if (gasLimit == null) {
       final client = WalletUtil.getWeb3Client(isAtlasTrans);
-      var walletAddress = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
-      if(message == null || message?.type == MessageType.typeNormal){
+      var walletAddress =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      if (message == null || message?.type == MessageType.typeNormal) {
         gasLimit = 21000;
-      }else{
+      } else {
         /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
             data: message?.toRlp(),
             txType: message?.type ?? MessageType.typeNormal);
@@ -231,8 +233,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasPrice: entity.price);
+    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -246,7 +247,7 @@ class HYNApi {
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: payload.name,// ''
+          name: payload.name, // ''
           details: payload.describe, //''
           identity: payload.nodeId,
           securityContact: payload.connect,
@@ -258,8 +259,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet,
-        toAddress: entity.to, message: message, gasPrice: entity.price);
+    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, gasPrice: entity.price);
   }
 
   static Future transTerminateMap3Node(
@@ -329,11 +329,9 @@ class HYNApi {
     String feeRate,
     String map3NodeAddress,
   ) async {
-
     var newCommissionRate;
     if (feeRate != null) {
-       var feeRateValue = ConvertTokenUnit.strToBigInt(feeRate) /
-          BigInt.parse('100');
+      var feeRateValue = ConvertTokenUnit.strToBigInt(feeRate) / BigInt.parse('100');
 
       newCommissionRate = BigInt.from(feeRateValue);
     }
@@ -356,6 +354,8 @@ class HYNApi {
     bool getAmountStr = false,
     bool getRecordAmountStr = false,
     bool formatComma = true,
+    Map<String, dynamic> dataDecoded,
+        String creatorAddress = '',
   }) {
     String typeStr = "";
     String amountStr = "0";
@@ -366,11 +366,13 @@ class HYNApi {
     switch (hynMessageType) {
       case MessageType.typeNormal:
         typeStr = S.of(context).transfer;
-        if(transactionDetail != null){
-          if(transactionDetail.type == TransactionType.TRANSFER_IN){
-            amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
-          }else if(transactionDetail.type == TransactionType.TRANSFER_OUT){
-            amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+        if (transactionDetail != null) {
+          if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+            amountStr =
+                "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+          } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
+            amountStr =
+                "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }
         }
         break;
@@ -395,7 +397,7 @@ class HYNApi {
       case MessageType.typeCreateMap3:
         typeStr = S.of(context).create_map_mortgage_contract;
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeEditMap3:
@@ -404,50 +406,102 @@ class HYNApi {
       case MessageType.typeTerminateMap3:
         typeStr = S.of(context).msg_terminate_map3;
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
         typeStr = S.of(context).msg_micro_delegate;
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeUnMicroDelegate:
         typeStr = S.of(context).msg_un_micro_delegate;
         String value = getDecodedAmount(transactionDetail);
-        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCollectMicroStakingRewards:
         typeStr = S.of(context).msg_collect_micro_staking_rewards;
         String value = transactionDetail?.getMap3RewardAmount() ?? "0.0";
-        amountStr ="+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
-        typeStr = S.of(context).msg_renew_map3;
+
+        /*
+
+        * 根据角色，设置，如果是创建人， 设置true/false，展示： （下期预设，节点续约/停止续约），
+        * 如果是参与人， 设置true/false，展示： （下期预设，跟随续约/不跟随）
+        * */
+
+        print("transactionDetail?.dataDecoded:${dataDecoded}");
+
+        if (dataDecoded != null) {
+          var map3NodeAddress = creatorAddress?.toLowerCase() ?? '';
+          print("transactionDetail?.fromAddress:${map3NodeAddress}");
+
+          var delegatorAddress = '';
+          if (dataDecoded.keys.contains('delegatorAddress')) {
+            print("transactionDetail?.222");
+
+            delegatorAddress = (dataDecoded["delegatorAddress"] as String).toLowerCase();
+            print("transactionDetail?.delegatorAddress:$delegatorAddress");
+          }
+
+          var isCreator =
+              map3NodeAddress.isNotEmpty && delegatorAddress.isNotEmpty && map3NodeAddress == delegatorAddress;
+          print("transactionDetail?.isCreator:$isCreator");
+
+          var isRenew;
+          if (dataDecoded.keys.contains('isRenew')) {
+            print("transactionDetail?.3333");
+
+            isRenew = (dataDecoded["isRenew"] as bool);
+          }
+
+          if (isCreator) {
+            if (isRenew != null) {
+              typeStr = isRenew ? '下期预设，节点续约' : '下期预设，停止续约';
+            } else {
+              typeStr = S.of(context).msg_renew_map3;
+            }
+          } else {
+            if (isRenew != null) {
+              typeStr = isRenew ? '下期预设，跟随续约' : '下期预设，不跟随';
+            } else {
+              typeStr = S.of(context).msg_renew_map3;
+            }
+          }
+
+          print("transactionDetail?.typeStr:$typeStr");
+        } else {
+          typeStr = S.of(context).msg_renew_map3;
+
+          print("transactionDetail?.typeStr:$typeStr");
+        }
+
         break;
     }
 
     if (getTypeStr) {
       return typeStr;
-    }else if(getAmountStr){
+    } else if (getAmountStr) {
       return amountStr;
-    }else if(getRecordAmountStr){
+    } else if (getRecordAmountStr) {
       return recordAmountStr;
     } else {
       return "";
     }
   }
 
-  static String getDecodedAmount(TransactionDetailVo transactionDetail){
+  static String getDecodedAmount(TransactionDetailVo transactionDetail) {
     return transactionDetail?.getDecodedAmount() ?? "0.0";
   }
 
-  static String getTransRecordAmount(String value){
+  static String getTransRecordAmount(String value) {
     var recordAmountStr = "";
-    if(Decimal.parse(value) > Decimal.fromInt(0)){
+    if (Decimal.parse(value) > Decimal.fromInt(0)) {
       recordAmountStr = FormatUtil.stringFormatCoinNum(value);
     }
     return recordAmountStr;

@@ -16,7 +16,7 @@ HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> json) {
     json['data'] as String,
     json['data_decoded'] == null
         ? null
-        : DataDecoded.fromJson(json['data_decoded'] as Map<String, dynamic>),
+        : json['data_decoded'] as Map<String, dynamic>,
     json['epoch'] as int,
     json['from'] as String,
     json['gas_limit'] as int,

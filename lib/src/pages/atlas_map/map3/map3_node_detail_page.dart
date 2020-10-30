@@ -87,12 +87,56 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
-    if (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL && isFull) {
-      var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
-      return "抵押已满$startMinValue，将在下个纪元启动……";
-    } else if (_map3Status == Map3InfoStatus.CONTRACT_IS_END) {
-      return "节点已到期，将在下个纪元结算……";
+    switch (_map3Status) {
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        if (isFull) {
+          var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
+          return "抵押已满$startMinValue，将在下个纪元启动……";
+        }
+        break;
+
+      case Map3InfoStatus.CONTRACT_IS_END:
+        return "节点已到期，将在下个纪元结算……";
+        break;
+
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+        if (_isDelegator) {
+          if (_isCreator) {
+            /*
+            * 没有设置过，开始提示
+            * */
+            var periodEpoch14 = _releaseEpoch - 14 + 1;
+            var periodEpoch7 = _releaseEpoch - 7;
+            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
+
+            var isOutActionPeriodCreator = (_currentEpoch < periodEpoch14);
+
+            if (statusCreator == 0 && isOutActionPeriodCreator) {
+              return "请在纪元$periodEpoch14 ~ $periodEpoch7内设置下期预设，是否自动续约";
+            }
+          } else {
+            /*
+            * 没有设置过，开始提示
+            * */
+            //var periodEpoch14 = _releaseEpoch - 14 + 1;
+            var periodEpoch7 = _releaseEpoch - 7 + 1;
+            var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
+            var isOutActionPeriodJoiner = _currentEpoch < periodEpoch7;
+
+            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
+
+            if (statusJoiner == 0 && isOutActionPeriodJoiner && statusCreator == 0) {
+              return '请在纪元$periodEpoch7 ~ $_releaseEpoch内设置下期预设，是否跟随自动续约';
+            }
+          }
+        }
+
+        break;
+
+      default:
+        break;
     }
+
     return null;
   }
 
@@ -141,7 +185,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
 
   get _visibleEditNextPeriod {
-
     return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   }
 
@@ -154,6 +197,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+    // return true;
 
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
@@ -181,10 +225,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     if (_isDelegator) {
       var isCreatorSetOpen = statusCreator == 2; //创建人已开启
-
-      var c1 = (statusJoiner == 0 && isCreatorSetOpen);
-      var c2 = (isInActionPeriodJoiner && statusJoiner == 0);
-      LogUtil.printMessage("c1: $c1, c2:$c2");
 
       if ((statusJoiner == 0 && isCreatorSetOpen) || (isInActionPeriodJoiner && statusJoiner == 0)) {
         return true;
@@ -433,7 +473,40 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _nodeAddress = _map3infoEntity?.address ?? "";
     _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
+    /*WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _showAtlasExchangeAlert();
+    });*/
+
     super.initState();
+  }
+
+
+  var haveShow = false;
+  _showEditPreNextAlert() {
+    if (haveShow) return;
+
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          "马上修改",
+          () {
+
+            haveShow = true;
+            Navigator.pop(context);
+
+            _preNextAction();
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content: _isCreator
+          ? '请你设置下期预设是否自动续约，或修改管理费率。如果过期不设置，节点将在到期后自动续约'
+          : '节点主已经设置下期自动续约，请你设置下期是否跟随续约。如果过期不设置，节点将在到期后自动跟随续约。',
+    );
   }
 
   void _afterLayout(_) {
@@ -977,7 +1050,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -1002,17 +1074,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var feeRate = lastFeeRate;
     switch (status) {
       case 0: // 未编辑，默认，开启，取上传rate
-        statusDesc = "已开启";
+        statusDesc = "未设置，过期将默认续约";
         feeRate = lastFeeRate;
         break;
 
       case 1:
-        statusDesc = "关闭";
+        statusDesc = "停止续约";
         feeRate = newFeeRate;
         break;
 
       case 2:
-        statusDesc = "已开启";
+        statusDesc = "已开启续约";
         feeRate = newFeeRate;
         break;
     }
@@ -1042,6 +1114,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       editDateLimit = "";
     }
 
+    if (_isDelegator && _canEditNextPeriod) {
+      _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
+    }
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -1067,26 +1143,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   child: SizedBox(
                     height: 30,
                     child: InkWell(
-                      onTap: () async {
-                        if (!_canEditNextPeriod) return;
-
-                        if (_isDelegator) {
-                          _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
-                        }
-
-                        var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
-
-                        await Application.router.navigateTo(
-                            context,
-                            Routes.map3node_pre_edit_page +
-                                "?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
-                        _nextAction();
-                      },
+                      onTap: _preNextAction,
                       child: Visibility(
                         visible: _canEditNextPeriod,
                         child: Center(
                             child: Text(
-                          "修改",
+                              "设置",
                           style: TextStyle(
                             fontSize: 14,
                             color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
@@ -1307,7 +1369,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                 Container(
                                   height: 4,
                                 ),
-                                Text("近期收益",
+                                Text("昨日年化",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: HexColor("#999999"),
@@ -1788,6 +1850,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
+
+        if (_canEditNextPeriod) {
+          _showEditPreNextAlert();
+        }
       }
     } catch (e) {
       logger.e(e);
@@ -1906,6 +1972,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               "?entryRouteName=$entryRouteName&entityInfo=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
       _nextAction();
     }
+  }
+
+  void _preNextAction() async {
+    if (!_canEditNextPeriod) return;
+
+    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+
+    await Application.router.navigateTo(
+        context,
+        Routes.map3node_pre_edit_page +
+            "?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+    _nextAction();
   }
 
   void _nextAction() {

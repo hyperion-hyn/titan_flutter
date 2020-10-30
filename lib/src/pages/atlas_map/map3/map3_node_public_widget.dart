@@ -975,18 +975,32 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
   var isPending = item.status == 0 || item.status == 1;
   // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
-  var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
+  /*
+  var bigAmount = '0';
+  if (item.dataDecoded.keys.contains('amount')) {
+    bigAmount = item.dataDecoded['amount'] ?? '0';
+  }
+  var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount)).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
-  var detail = HYNApi.getValueByHynType(item.type, getTypeStr: true);
+  */
+  var detail = HYNApi.getValueByHynType(
+    item.type,
+    getTypeStr: true,
+    dataDecoded: item.dataDecoded,
+    creatorAddress: item.from,
+  );
+  var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
   detail = detail +
-      " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getRecordAmountStr: true)}";
+      " ${HYNApi.getValueByHynType(
+        item.type,
+        transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"),
+        getRecordAmountStr: true,
+      )}";
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
 
   var isYou = item.from.toLowerCase() == walletAddress;
-
-  var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
 
   var recordName = isAtlasDetail
       ? " ${isYou ? "(你)" : ""}"
