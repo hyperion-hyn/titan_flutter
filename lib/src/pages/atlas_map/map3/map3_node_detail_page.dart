@@ -54,19 +54,31 @@ class Map3NodeDetailPage extends StatefulWidget {
 }
 
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+
   AtlasApi _atlasApi = AtlasApi();
+  NodeApi _nodeApi = NodeApi();
+  final client = WalletUtil.getWeb3Client(true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
   Map3InfoEntity _map3infoEntity;
+  Map3NodeInformationEntity _map3nodeInformationEntity;
 
   Microdelegations _microDelegationsCreator;
   Microdelegations _microDelegationsJoiner;
 
-  get _atlasInfoEntity => _map3infoEntity?.atlas;
+  int _currentPage = 0;
+  List<HynTransferHistory> _delegateRecordList = [];
 
-  var _currentEpoch = 0;
+  var _address = "";
+  var _nodeId = "";
+  var _nodeAddress = "";
+
+  NodeProviderEntity _selectProviderEntity;
+  Regions _selectedRegion;
+  var _haveShowedAlertView = false;
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
@@ -130,16 +142,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   
   get _visibleBottomBar => ((_isRunning && _isDelegator) || _isPending); // 提取奖励 or 参与抵押
 
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
-  int _currentPage = 0;
-  List<HynTransferHistory> _delegateRecordList = [];
-
-  get _statusColor => Map3NodeUtil.statusColor(_map3Status);
-
   get _isNoWallet => _address?.isEmpty ?? true;
 
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
+  var _currentEpoch = 0;
   // 到期纪元
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
@@ -303,6 +310,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _stateDescText => Map3NodeUtil.stateDescText(_map3Status);
 
+  get _statusColor => Map3NodeUtil.statusColor(_map3Status);
+
   get _contractStateDetail {
     if (_map3Status == null) {
       return S.of(context).wait_block_chain_verification;
@@ -375,17 +384,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   // double _moreSizeHeight = 18;
   // double _moreOffsetLeft = 246;
   // double _moreOffsetTop = 76;
-  double _moreSizeWidth = 100;
-  var _address = "";
-  var _nodeId = "";
-  var _nodeAddress = "";
-  final client = WalletUtil.getWeb3Client(true);
-  Map3NodeInformationEntity _map3nodeInformationEntity;
+  //double _moreSizeWidth = 100;
 
-  NodeApi _nodeApi = NodeApi();
-  NodeProviderEntity _selectProviderEntity;
-  Regions _selectedRegion;
-  var _haveShowedAlertView = false;
 
   @override
   void initState() {
@@ -1097,7 +1097,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _reDelegationWidget() {
     if (!_isRunning) return Container();
 
-    bool isReDelegation = _atlasInfoEntity != null;
+    var atlasEntity = _map3infoEntity?.atlas;
+    bool isReDelegation = atlasEntity != null;
 
     if (!isReDelegation) {
       return Container(
@@ -1156,8 +1157,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         TextSpan(text: detail, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, color: HexColor("#333333"))),
       ]));
     }
-
-    var atlasEntity = _atlasInfoEntity as AtlasInfoEntity;
 
     Decimal rewardDecimal = Decimal.parse(atlasEntity.rewardRate);
     var rewardValueString = FormatUtil.truncateDecimalNum(rewardDecimal, 4);
