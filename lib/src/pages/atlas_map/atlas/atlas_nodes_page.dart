@@ -178,6 +178,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             vertical: 16,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 child: Column(
@@ -291,7 +292,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Atlas共识节点',
+                    S.of(context).atlas_consensus_node,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
@@ -308,7 +309,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     height: 8.0,
                   ),
                   Text(
-                    '为海伯利安生态提供共识保证',
+                    S.of(context).consensus_guarantee_for_hyberion,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -332,8 +333,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   Text(
                     S.of(context).atlas_next_age,
                     style: TextStyle(
-                      color: HexColor('#FFFFFFFF'),
-                      fontSize: 10,
+                      color: DefaultColors.color999,
+                      fontSize: 11,
                       shadows: [
                         BoxShadow(
                           offset: const Offset(1.0, 1.0),
@@ -361,10 +362,19 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           height: 60,
                         ),
                       ),
-                      TimerTextWidget(
-                        remainTime: AtlasInheritedModel.of(context)
-                            .remainSecTillNextEpoch,
-                        loopTime: AtlasInheritedModel.of(context).secPerEpoch,
+                      Text(
+                        '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(1.0, 1.0),
+                              blurRadius: 2.0,
+                              spreadRadius: 2.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   )
@@ -464,7 +474,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                '我的节点',
+                S.of(context).my_nodes,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Spacer(),
@@ -481,7 +491,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                   );
                 },
                 child: Text(
-                  '查看更多',
+                  S.of(context).check_more,
                   style: TextStyle(
                     color: DefaultColors.color999,
                     fontSize: 12,
@@ -672,16 +682,16 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         size: _pageSize,
       );
 
-      if (_nodeList != null) {
+      if (_nodeList != null && _nodeList.isNotEmpty) {
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {});
-      _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }

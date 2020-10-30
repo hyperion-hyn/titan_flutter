@@ -95,7 +95,7 @@ class MemoryCache {
     map["nonce too high"] = S.of(Keys.rootKey.currentContext).nonce_too_high_hint;
     map["gas limit reached"] = S.of(Keys.rootKey.currentContext).gas_limit_reached_hint;
     map["insufficient funds for transfer"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_transfer_hint;
-    map["insufficient funds for gas * price + value"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_gas_price_value_hint;
+    map["insufficient funds for gas"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_gas_price_value_hint;
     map["intrinsic gas too low"] = S.of(Keys.rootKey.currentContext).intrinsic_gas_too_low_hint;
     map["Already imported"] = S.of(Keys.rootKey.currentContext).already_imported_hint;
     map["No longer valid"] = S.of(Keys.rootKey.currentContext).no_longer_valid_hint;
@@ -144,6 +144,9 @@ class MemoryCache {
     }
     if(errorStr.indexOf("map3 node identity exists") == 0){
       return errorMap["map3 node identity exists"];
+    }
+    if(errorStr.contains("insufficient funds for gas")){
+      return errorMap["insufficient funds for gas"];
     }
     if(errorMap.containsKey(errorStr)){
       return errorMap[errorStr];

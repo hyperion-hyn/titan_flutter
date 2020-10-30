@@ -139,27 +139,27 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   }
 
   var nodeName = infoEntity?.name ?? "";
-  var nodeAddress = "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(infoEntity?.address ?? ""), limitLength: 8)}";
+  var nodeAddress =
+      "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(infoEntity?.address ?? ""), limitLength: 8)}";
 
   var nodeIdPre = "节点号";
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
   var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
-  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，收益高高，收益真的很高." : infoEntity.describe;
-  var date = FormatUtil.formatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
+  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : infoEntity.describe;
+  var date = FormatUtil.newFormatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
     date = "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
+  } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) {
+    print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch ?? 0}");
 
-  } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index){
-    print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch??0}");
-
-    var remainEpoch = (infoEntity?.endEpoch??0) - currentEpoch;
-    date = "剩余 ${remainEpoch>0?remainEpoch:0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
+    var remainEpoch = (infoEntity?.endEpoch ?? 0) - currentEpoch + 1;
+    date = "剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 
-  var status = Map3InfoStatus.values[infoEntity?.status??0];
+  var status = Map3InfoStatus.values[infoEntity?.status ?? 0];
   var statusColor = Map3NodeUtil.statusColor(status);
   var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
   var stateDescText = Map3NodeUtil.stateDescText(status);
@@ -211,17 +211,21 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                       width: width,
                       child: Row(
                         children: <Widget>[
-                          Expanded(child: Padding(
-                            padding: const EdgeInsets.only(right: 16,),
-                            child: Text(
-                              //shortName(nodeName, limitCharsLength: 8),
-                              nodeName,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                              softWrap: true,
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                right: 16,
+                              ),
+                              child: Text(
+                                //shortName(nodeName, limitCharsLength: 8),
+                                nodeName,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                softWrap: true,
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                              ),
                             ),
-                          ),),
+                          ),
                           Row(
                             children: <Widget>[
                               Padding(
@@ -250,7 +254,6 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                               ),
                             ],
                           ),
-
                         ],
                       ),
                     ),
@@ -281,7 +284,6 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
                                         ))
                                   ]),
                             ),
-
                           ],
                         ),
                       ),
@@ -365,7 +367,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
 }
 
 Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
-    {Function reduceFunc, Function addFunc, int maxFeeRate = 20}) {
+    {Function reduceFunc, Function addFunc, double maxFeeRate = 20}) {
   return Container(
     color: Colors.white,
     child: Row(
@@ -413,28 +415,23 @@ Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rate
                 ),
               ),
               Container(
-                width: 60,
+                width: 70,
                 height: 34,
                 child: RoundBorderTextField(
                   controller: _rateCoinController,
                   keyboardType: TextInputType.number,
                   bgColor: HexColor("#ffffff"),
-                  maxLength: 3,
+                  maxLength: 6,
                   validator: (textStr) {
-
                     if (textStr.length == 0) {
-
                       return "请输入合适的管理费";
-                    } else if (int.parse(textStr??"0") < 10) {
-
+                    } else if (int.parse(textStr ?? "0") < 10) {
                       return "管理费不能小于10%";
-                    } else if (Decimal.parse(textStr) >
-                        Decimal.parse("20")) {
+                    } else if (Decimal.parse(textStr) > Decimal.parse("20")) {
                       return "管理费不能大于20%";
                     } else {
                       return null;
                     }
-
                   },
                 ),
               ),
@@ -497,7 +494,7 @@ Widget getHoldInNum(
   );
   var activatedWallet = wallet.activatedWallet;
 
-  var walletName = activatedWallet?.wallet?.keystore?.name??"";
+  var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
 
   var coinVo = wallet.getCoinVoBySymbol('HYN');
 
@@ -517,7 +514,8 @@ Widget getHoldInNum(
                     Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(walletName,FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(
+                    S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(
                       color: Colors.grey[600],
                     )),
@@ -553,7 +551,6 @@ Widget getHoldInNum(
                           keyboardType: TextInputType.number,
                           hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                           validator: (textStr) {
-
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;
                             }
@@ -563,7 +560,7 @@ Widget getHoldInNum(
                               return '请正确的输入数据';
                             }
 
-                            if (int.parse(textStr) < minTotal) {
+                            if ((double.tryParse(textStr) ?? 0) < minTotal) {
                               return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (Decimal.parse(textStr) >
                                 Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
@@ -611,8 +608,17 @@ Widget getHoldInNum(
 typedef NodePublicCallback = void Function({String value});
 
 Widget editInfoItem(
-    BuildContext context, int index, String title, String hint, String detail, NodePublicCallback callback,
-    {String subtitle = "", bool hasSubtitle = true, TextInputType keyboardType = TextInputType.text}) {
+  BuildContext context,
+  int index,
+  String title,
+  String hint,
+  String detail,
+  NodePublicCallback callback, {
+  String subtitle = "",
+  bool hasSubtitle = true,
+  TextInputType keyboardType = TextInputType.text,
+  bool canEdit = true,
+}) {
   return Material(
     child: Ink(
       child: InkWell(
@@ -625,6 +631,7 @@ Widget editInfoItem(
             return;
           }*/
 
+          if (!canEdit) return;
           String text = await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => Map3NodePronouncePage(
                     title: title,
@@ -677,13 +684,21 @@ Widget editInfoItem(
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 6),
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: DefaultColors.color999,
-                  ),
-                ),
+                canEdit
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.chevron_right,
+                          color: DefaultColors.color999,
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
               ],
             ),
           ),
@@ -963,7 +978,8 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
   var amountValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item?.dataDecoded?.amount ?? "0")).toDouble();
   var amount = FormatUtil.formatPrice(amountValue);
   var detail = HYNApi.getValueByHynType(item.type, getTypeStr: true);
-  detail = detail + " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getRecordAmountStr: true)}";
+  detail = detail +
+      " ${HYNApi.getValueByHynType(item.type, transactionDetail: TransactionDetailVo.fromHynTransferHistory(item, item.type, "HYN"), getRecordAmountStr: true)}";
 
   WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
   var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
@@ -1010,7 +1026,11 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                                 overflow: TextOverflow.ellipsis,
                                 text: TextSpan(
                                   text: item.name,
-                                  style: TextStyle(fontSize: 14, color: HexColor("#000000"), fontWeight: FontWeight.w500,),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: HexColor("#000000"),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                   children: [
                                     TextSpan(
                                       text: recordName,
@@ -1021,14 +1041,16 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                                 ),
                               ),
                             ),
-                            SizedBox(width: 20,),
+                            SizedBox(
+                              width: 20,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6),
                                   child: Text(
-                                     detail,
+                                    detail,
                                     style: TextStyle(
                                         fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                                   ),
@@ -1044,7 +1066,8 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
                         Row(
                           children: <Widget>[
                             Text(
-                              shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(item.from)}", limitCharsLength: 8),
+                              shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(item.from)}",
+                                  limitCharsLength: 8),
                               style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                             ),
                             Spacer(),

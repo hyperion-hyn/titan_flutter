@@ -117,6 +117,14 @@ class AtlasInheritedModel extends InheritedModel<AtlasAspect> {
     return atlasHomeEntity?.info?.epoch ?? 0;
   }
 
+  int get remainBlockTillNextEpoch {
+    var _blocksPerEpoch = atlasHomeEntity?.info?.blockHeight ?? 0;
+    var _currentBlockNum = atlasHomeEntity?.info?.blockNum ?? 0;
+    var _epochStartBlockNum = atlasHomeEntity?.info?.blockNumStart ?? 0;
+
+    return (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
+  }
+
   int get remainSecTillNextEpoch {
     var _secPerBlock = atlasHomeEntity?.info?.secPerBlock ?? 0;
     var _blocksPerEpoch = atlasHomeEntity?.info?.blockHeight ?? 0;

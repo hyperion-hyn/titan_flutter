@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -97,7 +98,6 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-
               Application.router.navigateTo(context, Routes.map3node_my_page_v8);
 
               //AtlasApi.goToAtlasMap3HelpPage(context);
@@ -154,15 +154,20 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         EthereumAddress.fromHex(_address),
       );
 
-      var parse = "0";
-      if (_rewardMap?.isNotEmpty ?? false) {
-        parse = _rewardMap?.values?.last ?? "0";
+      Decimal value = Decimal.parse('0');
+      if (_rewardMap?.values?.isNotEmpty ?? false) {
+        BigInt totalReward = BigInt.from(0);
+        for (var value in _rewardMap?.values) {
+          var source = value ?? "0";
+          var bigIntValue = BigInt.tryParse(source) ?? BigInt.from(0);
+          totalReward += bigIntValue;
+        }
+        value = ConvertTokenUnit.weiToEther(weiBigInt: totalReward);
       }
+      print("[my] _rewardMap:$_rewardMap");
 
-      var value = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(parse));
-      _balance = "${FormatUtil.formatPrice(value.toDouble())}";
+      _balance = "${FormatUtil.formatPrice(value.toDouble() ?? 0)}";
       _balanceValue = "${value.toDouble()}";
-      print(_rewardMap);
 
       if (mounted) {
         setState(() {

@@ -15,6 +15,7 @@ import 'package:titan/src/components/quotes/model.dart';
 import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
@@ -312,7 +313,7 @@ class _ExchangeAssetHistoryPageState
     return InkWell(
       onTap: () async {
         if (assetHistory.isAtlas()) {
-          var _api = EtherscanApi();
+          var _api = AtlasApi();
 
           HynTransferHistory hynTransferHistory = await _api.queryHYNTxDetail(
             assetHistory.txId,

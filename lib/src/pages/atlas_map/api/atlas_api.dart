@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -36,6 +37,40 @@ import '../../../../config.dart';
 class AtlasApi {
   static Map3IntroduceEntity map3introduceEntity;
 
+  Future<List<HynTransferHistory>> queryHYNHistory(
+      String address, int page) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/account_txs",
+      data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
+    );
+
+    if (result["code"] == 0) {
+      var dataList = result["data"]["data"];
+      if (dataList == null || (dataList as List).length == 0) {
+        return [];
+      }
+      List resultList = dataList as List;
+      return resultList
+          .map((json) => HynTransferHistory.fromJson(json))
+          .toList();
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<HynTransferHistory> queryHYNTxDetail(String address) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/tx_detail",
+      data: "{\"address\": \"$address\"}",
+    );
+    if (result["code"] == 0) {
+      var data = result["data"];
+      return HynTransferHistory.fromJson(data);
+    } else {
+      throw new Exception();
+    }
+  }
+
   static Future<Map3IntroduceEntity> getIntroduceEntity() async {
     if (map3introduceEntity != null) {
       return map3introduceEntity;
@@ -49,7 +84,7 @@ class AtlasApi {
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
         "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
-    String webTitle = FluroConvertUtils.fluroCnParamsEncode("帮助页面");
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,
         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }
@@ -135,7 +170,7 @@ class AtlasApi {
 
   // 查询Atlas节点下的所有map3节点列表
   Future<List<Map3InfoEntity>> postAtlasMap3NodeList(String nodeId,
-      {int page = 1, int size = 0}) async {
+      {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/map3_list",
         EntityFactory<List<Map3InfoEntity>>((list) => (list as List)
@@ -548,6 +583,16 @@ class AtlasApi {
             (list) => (list as List).map((item) => "$item").toList()),
         options: RequestOptions(contentType: "application/json"));
   }
+
+  // 获取节点推荐抵押量
+  Future<List<String>> getBiboxWhiteList() async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/wallet/bibox",
+        EntityFactory<List<String>>(
+                (list) => (list as List).map((item) => "$item").toList()),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
 
   // 查询map3首页数据
   Future<Map3HomeEntity> getMap3Home(String address) async {

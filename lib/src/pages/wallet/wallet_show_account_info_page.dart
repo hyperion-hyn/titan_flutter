@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
@@ -27,8 +28,7 @@ class WalletShowAccountInfoPage extends StatefulWidget {
   }
 }
 
-class WalletShowAccountInfoPageState
-    extends BaseState<WalletShowAccountInfoPage> {
+class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage> {
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = List();
   var gasPriceStr = "";
@@ -38,14 +38,52 @@ class WalletShowAccountInfoPageState
     super.initState();
   }
 
+  List<String> whiteList = [];
+  bool _isContain = false;
+  get _toAddress {
+    var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+    var toAddress = _isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return toAddress;
+  }
+
+  getWhiteList() async {
+    var toAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+    var list = await AtlasApi().getBiboxWhiteList();
+    //print("getMap3Bls -->toAddress:$toAddress,  list:$list");
+    //list.add(toAddress);
+    //print("getMap3Bls -->toAddress2:$toAddress,  list:$list");
+
+    if (list.isNotEmpty && toAddress.isNotEmpty) {
+      for (var item in list) {
+        if (item.toLowerCase() == toAddress.toLowerCase()) {
+          _isContain = true;
+          break;
+        }
+      }
+    }
+
+    if (_isContain) {
+      setState(() {
+        _dataInfoList[2] = toAddress;
+      });
+    }
+  }
+
   @override
-  void onCreated() {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    getWhiteList();
+  }
+
+  @override
+  void onCreated() async {
     _dataTitleList = [
-      "金额",
-      "矿工费",
-      "收款地址",
-      "付款地址",
-      "交易号",
+      S.of(context).transfer_amount,
+      S.of(context).transfer_gas_fee,
+      S.of(context).from_address,
+      S.of(context).transfer_to_address,
+      S.of(context).transfer_id,
     ];
     var transDetail = widget.transactionDetail;
     var amountText =
@@ -57,17 +95,17 @@ class WalletShowAccountInfoPageState
       amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
     }*/
 
-    var gasPriceGwei = ConvertTokenUnit.weiToGWei(
-        weiBigInt: BigInt.parse(transDetail.gasPrice));
-    var gasPriceEth = ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(transDetail.gasPrice));
+    var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
+    var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     gasPriceStr = "$gasPriceGwei Gdust";
+
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
+
     _dataInfoList = [
       amountText,
       gasEstimate,
-      WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)),
+      _toAddress,
       WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
       transDetail.hash,
     ];
@@ -81,17 +119,17 @@ class WalletShowAccountInfoPageState
 
   @override
   Widget build(BuildContext context) {
-    var isFail = (widget.transactionDetail.state == 4 ||
-        widget.transactionDetail.state == 5);
+    var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
     var infoItemTitle;
     var infoItemStatusImage;
-    getAccountPageTitle(context,widget.transactionDetail,(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage){
+    getAccountPageTitle(context, widget.transactionDetail,
+        (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
       infoItemTitle = pageTitle;
       infoItemStatusImage = pageStatusImage;
     });
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BaseAppBar(baseTitle: "详情"),
+      appBar: BaseAppBar(baseTitle: S.of(context).detail),
       body: Container(
         color: DefaultColors.colorf2f2f2,
         child: CustomScrollView(
@@ -111,18 +149,13 @@ class WalletShowAccountInfoPageState
                     ),
                     Text(
                       infoItemTitle,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: DefaultColors.color333,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0, bottom: 34),
                       child: Text(
-                        FormatUtil.formatDate(widget.transactionDetail.time,
-                            isSecond: true, isMillisecond: true),
-                        style: TextStyle(
-                            color: DefaultColors.color999, fontSize: 13),
+                        FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true),
+                        style: TextStyle(color: DefaultColors.color999, fontSize: 13),
                       ),
                     ),
                     Container(
@@ -138,10 +171,8 @@ class WalletShowAccountInfoPageState
               var leftText = _dataTitleList[index];
               var rightText = _dataInfoList[index];
               if (index == 1) {
-                var bottomText =
-                    "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
-                return accountInfoItem(leftText, rightText,
-                    bottomText: bottomText);
+                var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                return accountInfoItem(leftText, rightText, bottomText: bottomText);
               } else if (index == 4) {
                 return accountInfoItem(leftText, rightText, normalLine: false);
               } else {
@@ -155,17 +186,18 @@ class WalletShowAccountInfoPageState
                       context,
                       MaterialPageRoute(
                           builder: (context) => WalletShowAccountDetailPage(
-                              widget.transactionDetail)));
+                                widget.transactionDetail,
+                                isContain: _isContain,
+                              )));
                 },
                 child: Container(
                   color: Colors.white,
                   child: Row(
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.only(
-                            top: 16, bottom: 16.0, left: 15),
+                        padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
                         child: Text(
-                          "查看详细信息",
+                          S.of(context).check_for_detail_info,
                           style: TextStyles.textC333S13,
                         ),
                       ),
@@ -188,15 +220,13 @@ class WalletShowAccountInfoPageState
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText,
-      {String bottomText, bool normalLine = true}) {
+  Widget accountInfoItem(String leftText, String rightText, {String bottomText, bool normalLine = true}) {
     return Container(
       color: Colors.white,
       child: Column(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(
-                top: 18.0, bottom: 18, left: 15, right: 15),
+            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -218,9 +248,7 @@ class WalletShowAccountInfoPageState
                       if (bottomText != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(bottomText,
-                              style: TextStyles.textC999S11,
-                              textAlign: TextAlign.end),
+                          child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
                   ),
@@ -246,37 +274,37 @@ class WalletShowAccountInfoPageState
   }
 }
 
-void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail,Function function){
+void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail, Function function) {
   var pageTitle = "";
   var pageStatusImage = "";
   var pageDetailColor = HexColor("#22F2F2F2");
   var pageDetailStatusImage = "";
-  if(transactionDetail.state == 1 || transactionDetail.state == 2){
+  if (transactionDetail.state == 1 || transactionDetail.state == 2) {
     pageTitle = S.of(context).pending;
     pageStatusImage = "res/drawable/ic_transfer_account_info_pending.png";
 
     pageDetailColor = HexColor("#22F2F2F2");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_pending.png";
-  }else if(transactionDetail.state == 3){
-    if(transactionDetail.hynType == MessageType.typeNormal){
-      pageTitle = "转账成功";
-    }else{
-      pageTitle = "已完成";
+  } else if (transactionDetail.state == 3) {
+    if (transactionDetail.hynType == MessageType.typeNormal) {
+      pageTitle = S.of(context).transfer_successful;
+    } else {
+      pageTitle = S.of(context).completed;
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_success.png";
 
     pageDetailColor = HexColor("#2207C160");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_success.png";
-  }else if(transactionDetail.state == 4 || transactionDetail.state == 5){
-    if(transactionDetail.hynType == MessageType.typeNormal){
-      pageTitle = "转账失败";
-    }else{
-      pageTitle = "失败";
+  } else if (transactionDetail.state == 4 || transactionDetail.state == 5) {
+    if (transactionDetail.hynType == MessageType.typeNormal) {
+      pageTitle = S.of(context).transfer_fail;
+    } else {
+      pageTitle = S.of(context).failed;
     }
     pageStatusImage = "res/drawable/ic_transfer_account_info_fail.png";
 
     pageDetailColor = HexColor("#22FF5E5E");
     pageDetailStatusImage = "res/drawable/ic_transfer_account_detail_fail.png";
   }
-  function(pageTitle,pageStatusImage,pageDetailColor,pageDetailStatusImage);
+  function(pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage);
 }

@@ -33,8 +33,7 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends BaseState<Map3NodePage>
-    with AutomaticKeepAliveClientMixin {
+class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClientMixin {
   LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 1;
@@ -61,8 +60,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     if (!MemoryCache.hasNodePageData) {
@@ -98,13 +96,11 @@ class _Map3NodeState extends BaseState<Map3NodePage>
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: "我的节点", hasMore: true, isMine: true),
+            _sectionTitleWidget(title: S.of(context).my_nodes, hasMore: true, isMine: true),
             _myNodeListWidget(),
-            _sectionTitleWidget(
-                title: "最新启动的节点", hasMore: _lastActiveList.isNotEmpty),
+            _sectionTitleWidget(title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
-            _sectionTitleWidget(
-                title: S.of(context).wait_start_node_contract, hasMore: false),
+            _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],
         ),
@@ -114,6 +110,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void onLoadData() async {
     _currentPage = 1;
+    print("[onLoadData] _currentPage ---> _currentPage : $_currentPage");
 
     try {
       var requestList = await Future.wait([
@@ -149,17 +146,18 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void onLoadingMore() async {
     _currentPage++;
+
+    print("[onLoadingMore] _currentPage ---> _currentPage : $_currentPage");
+
     try {
-      Map3StakingEntity map3stakingEntity = await _atlasApi
-          .getMap3StakingList(_address, page: _currentPage, size: 10);
+      Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
       if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
         List<Map3InfoEntity> lastPendingList = List.from(_pendingList);
-        List<Map3InfoEntity> list = _map3stakingEntity.map3Nodes;
+        List<Map3InfoEntity> list = map3stakingEntity.map3Nodes;
         lastPendingList.addAll(list);
-        print("[Home] onLoadingMore,1:${_pendingList.length}");
+
         _pendingList = lastPendingList;
-        print("[Home] onLoadingMore,2:${_pendingList.length}");
 
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
@@ -175,8 +173,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return emptyListWidget(
-          title: _address.isEmpty ? "请创建或导入钱包后查看" : "没有我的节点，您可以创建节点");
+      return emptyListWidget(title: _address.isEmpty ? S.of(context).check_after_has_wallet : S.of(context).my_nodes_empty);
     }
 
     return SliverToBoxAdapter(
@@ -188,7 +185,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   Widget _lastActiveWidget() {
     if (_lastActiveList.isEmpty) {
-      return emptyListWidget(title: "没有最新启动的节点，您可以创建节点");
+      return emptyListWidget(title: S.of(context).no_lastest_active_nodes);
     }
 
     return SliverToBoxAdapter(
@@ -200,8 +197,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   Widget _pendingListWidget() {
     if (_pendingList.isEmpty) {
-      return emptyListWidget(
-          title: S.of(context).no_pengding_node_contract_hint);
+      return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
     }
 
     return SliverList(
@@ -221,13 +217,10 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context,
-        Routes.map3node_create_wallet +
-            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
-  Widget _sectionTitleWidget(
-      {String title, bool hasMore = true, bool isMine = false}) {
+  Widget _sectionTitleWidget({String title, bool hasMore = true, bool isMine = false}) {
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
@@ -254,13 +247,12 @@ class _Map3NodeState extends BaseState<Map3NodePage>
               Expanded(
                   child: Text(
                 title,
-                style: TextStyle(
-                    fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
               )),
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  isMine ? "查看收益" : "查看更多",
+                  isMine ? S.of(context).check_reward : S.of(context).check_more,
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -296,7 +288,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Map3地图服务节点",
+                      S.of(context).map3_nodes,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
@@ -337,10 +329,9 @@ class _Map3NodeState extends BaseState<Map3NodePage>
   }
 
   _nodeIntroduceWidget() {
-    var title = _map3introduceEntity?.name ?? "Map3节点（v1.0）";
-    var desc =
-        "Map3已开放云节点抵押，通过创建和委托抵押合约有效提升服务质量和网络安全，提供全球去中心化地图服务。节点参与者将在合约到期后按抵押量获得奖励。";
-    var guideTitle = "开通教程";
+    var title = _map3introduceEntity?.name ?? S.of(context).map3_nodes_v1;
+    var desc = S.of(context).map3_introduction;
+    var guideTitle = S.of(context).tutorial;
     return Container(
       color: Colors.white24,
       margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
@@ -352,10 +343,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: DefaultColors.colorcc000000)),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
                 Spacer(),
                 InkWell(
                   onTap: _pushWebViewAction,
@@ -376,18 +364,14 @@ class _Map3NodeState extends BaseState<Map3NodePage>
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
                   child: ClipRRect(
-                    child: Image.asset("res/drawable/ic_map3_node_item_2.png",
-                        width: 80, height: 80, fit: BoxFit.cover),
+                    child:
+                        Image.asset("res/drawable/ic_map3_node_item_2.png", width: 80, height: 80, fit: BoxFit.cover),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
                 SizedBox(width: 16),
                 Flexible(
-                  child: Text(desc,
-                      style: TextStyle(
-                          fontSize: 12,
-                          height: 1.7,
-                          color: DefaultColors.color99000000)),
+                  child: Text(desc, style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
                 )
               ],
             ),
@@ -427,14 +411,11 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     var walletList = await WalletUtil.scanWallets();
 
     if (walletList.length == 0) {
-      Application.router.navigateTo(
-          context,
-          Routes.map3node_create_wallet +
-              "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(context,
+          Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router
-          .navigateTo(context, Routes.map3node_introduction_page);
+      await Application.router.navigateTo(context, Routes.map3node_introduction_page);
     }
 
     // 2.创建成功回调的处理
@@ -455,8 +436,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
   Future _pushContractDetail(Map3InfoEntity infoEntity) async {
     Application.router.navigateTo(
       context,
-      Routes.map3node_contract_detail_page +
-          '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+      Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
     );
   }
 }

@@ -27,8 +27,8 @@ import 'model/transtion_detail_vo.dart';
 
 class WalletShowAccountDetailPage extends StatefulWidget {
   final TransactionDetailVo transactionDetail;
-
-  WalletShowAccountDetailPage(this.transactionDetail);
+  final bool isContain;
+  WalletShowAccountDetailPage(this.transactionDetail, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -43,8 +43,14 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   var gasEstimateQuote;
   var hynPrice = "\$0";
   var inputData = "";
-  var hasDefaultData = false;
-  var selectDefault = true;
+  var hasDecodeData = false;
+  var selectLeftData = true;
+
+  get _toAddress {
+    var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+    var toAddress = widget.isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return toAddress;
+  }
 
   @override
   void initState() {
@@ -54,26 +60,26 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   @override
   void onCreated() async {
     _dataTitleList = [
-      "转账Hash:",
-      "状态:",
-      "纪元:",
-      "区块:",
-      "时间:",
-      "付款地址:",
-      "收款地址:",
-      "金额:",
-      "矿工费:",
+      S.of(context).transfer_hash,
+      S.of(context).transfer_status,
+      S.of(context).tx_age,
+      "${S.of(context).tx_block}:",
+      "${S.of(context).tx_time}:",
+      "${S.of(context).tx_from_address}:",
+      "${S.of(context).tx_to_address}:",
+      "${S.of(context).tx_amount}:",
+      "${S.of(context).transfer_gas_fee}:",
       "Gas Price:",
-      "HYN价格:",
+      "HYN${S.of(context).price}:",
       "Gas Limit:",
       "Gas Used:",
       "Nonce",
-      "类型",
-      "输入数据:",
+      "${S.of(context).tx_type}:",
+      "${S.of(context).tx_input_data}:",
     ];
 
     var transDetail = widget.transactionDetail;
-    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true, formatComma: false)}";
+    var amountText = "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
     /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
@@ -102,7 +108,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       "${transDetail.blockNum}",
       timeStr,
       WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-      WalletUtil.ethAddressToBech32Address(HYNApi.getHynToAddress(transDetail)),
+      _toAddress,
       amountText,
       gasEstimate,
       gasPriceStr,
@@ -119,14 +125,11 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     }
 
     if(transDetail.dataDecoded == null){
-      hasDefaultData = false;
-      selectDefault = false;
-      inputData = transDetail.data;
+      hasDecodeData = false;
     } else {
-      hasDefaultData = true;
-      selectDefault = true;
-      inputData = json.encode(transDetail.dataDecoded);
+      hasDecodeData = true;
     }
+    inputData = transDetail.data;
 
     var quotes = await _coinMarketApi.quotes(timestamp);
     SymbolQuoteVo hynQuote;
@@ -140,11 +143,13 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       var tempAmountText = amountText;
       if(tempAmountText.contains("-") || tempAmountText.contains("+")){
         tempAmountText = tempAmountText.substring(1);
+        tempAmountText = tempAmountText.replaceAll(",", "");
       }
+
       var amountQuote = Decimal.parse(tempAmountText) * Decimal.parse(hynQuote.price.toString());
-      amountText = "${FormatUtil.stringFormatCoinNum(amountText)} (${quotesSign.sign}$amountQuote)";
+      amountText = "${FormatUtil.stringFormatCoinNum(tempAmountText)} (${quotesSign.sign}${FormatUtil.truncateDecimalNum(amountQuote, 4)})";
       gasEstimateQuote = "(${(gasPriceEth * gasLimit) * Decimal.parse(hynQuote.price.toString())})";
-      hynPrice = "${quotesSign.sign}${hynQuote.price} / HYN";
+      hynPrice = "${quotesSign.sign}${FormatUtil.truncateDecimalNum(Decimal.parse(hynQuote.price.toString()),4)} / HYN";
 
       _dataInfoList[7] = amountText;
       _dataInfoList[10] = hynPrice;
@@ -377,24 +382,24 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
             ),
             child: SingleChildScrollView(child: Text(inputData)),
           ),
-          if(hasDefaultData)
+          if(hasDecodeData)
             Row(
             children: <Widget>[
               ClickOvalButton("Origi",(){
-                selectDefault = false;
+                selectLeftData = true;
                 inputData = widget.transactionDetail.data;
                 setState(() {
 
                 });
-              },width: 112,btnColor: HexColor(selectDefault ? "#F2F2F2" : "#1F81FF"),radius: 4,fontColor: HexColor(selectDefault ? "#999999" : "#ffffff"),),
+              },width: 112,btnColor: HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2"),radius: 4,fontColor: HexColor(selectLeftData ? "#ffffff" : "#999999"),),
               SizedBox(width: 11,),
                 ClickOvalButton("Decoded",(){
-                  selectDefault = true;
+                  selectLeftData = false;
                   inputData = json.encode(widget.transactionDetail.dataDecoded);
                   setState(() {
 
                   });
-                },width: 112,btnColor: HexColor(selectDefault ? "#1F81FF" : "#F2F2F2"),radius: 4,fontColor: HexColor(selectDefault ? "#ffffff" : "#999999"),),
+                },width: 112,btnColor: HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF"),radius: 4,fontColor: HexColor(selectLeftData ? "#999999" : "#ffffff"),),
             ],
           )
         ],

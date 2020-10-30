@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
@@ -22,7 +23,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
+
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
@@ -33,6 +34,9 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/wallet_cmp_event.dart';
 
 class Map3NodeJoinPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
@@ -74,6 +78,15 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (context != null) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+    }
+  }
+
+  @override
   void dispose() {
     print("[Join] dispose");
 
@@ -96,7 +109,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
 
       //backgroundColor: Color(0xffF3F0F5),
       appBar: BaseAppBar(
-        baseTitle: '抵押Map3节点',
+        baseTitle: S.of(context).delegate_map3,
       ),
       body: _pageView(context),
     );
@@ -233,9 +246,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions, style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          rowTipsItem("抵押7天内不可撤销", top: 0),
+          rowTipsItem(S.of(context).cant_cancel_delegation_with_7, top: 0),
           rowTipsItem("需要总抵押满${startMin}HYN才能正式启动，每次参与抵押数额不少于${delegateMin}HYN"),
           rowTipsItem("节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期"),
           /*rowTipsItem("如果节点主扩容节点，你的抵押也会分布在扩容的节点里面。", subTitle: "关于扩容", onTap: () {
@@ -265,7 +278,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
   }
 
   Widget _delegateCountWidget() {
-    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble()??0;
+    var totalPendingDelegation = _map3nodeInformationEntity?.totalPendingDelegation?.toDouble() ?? 0;
     print("totalPendingDelegation: $totalPendingDelegation");
 
     var totalPendingDelegationValue = ConvertTokenUnit.weiToEther(
@@ -303,25 +316,49 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var amount = _joinCoinController?.text;
+              var staking = _joinCoinController?.text;
               var delegateMin = double.parse(_map3introduceEntity.delegateMin);
-              var inputValue = double.parse(amount);
+              var inputValue = double.parse(staking);
               if (delegateMin > inputValue && inputValue > 0) {
                 Fluttertoast.showToast(msg: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(delegateMin)));
                 return;
               }
 
-              //if (_map3nodeInformationEntity == null) return;
+              var coinVo = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).getCoinVoBySymbol('HYN');
 
-              var entity = PledgeMap3Entity(
-                  payload: Payload(
+              var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
+              var stakingValue = Decimal.tryParse(staking);
+              if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+                Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
+                return;
+              }
+
+              var total = Decimal.parse('0.0001') + stakingValue;
+              if (total >= balance) {
+                Fluttertoast.showToast(msg: "请预留少量HYN（如：0.0001）作为矿工费");
+                return;
+              }
+
+              var payload = Payload(
                 userIdentity: widget.map3infoEntity.nodeId,
-              ));
+              );
+
+              var entity = PledgeMap3Entity(payload: payload);
+              var activatedWallet = WalletInheritedModel.of(
+                context,
+                aspect: WalletAspect.activatedWallet,
+              ).activatedWallet;
+              var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+              payload.userName = walletName;
+
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,
                 map3NodeAddress: widget.map3infoEntity.address,
-                amount: amount,
-                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString()??"0",
+                amount: staking,
+                pendingAmount: _map3nodeInformationEntity?.totalPendingDelegation?.toString() ?? "0",
               );
               Navigator.push(
                   context,
@@ -344,7 +381,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
     var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
     var oldYearValue = oldYear > 0 ? "  节龄: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
     var nodeAddress =
-        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address??"") ?? "***", limitLength: 9)}";
+        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(widget?.map3infoEntity?.address ?? "") ?? "***", limitLength: 9)}";
 
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, top: 18, right: 18, bottom: 18),
@@ -358,7 +395,9 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text.rich(TextSpan(children: [
-                TextSpan(text: widget?.map3infoEntity?.name??"", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                TextSpan(
+                    text: widget?.map3infoEntity?.name ?? "",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 TextSpan(text: oldYearValue, style: TextStyle(fontSize: 13, color: HexColor("#333333"))),
               ])),
               Container(
