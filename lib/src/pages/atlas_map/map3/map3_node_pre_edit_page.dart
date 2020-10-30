@@ -29,22 +29,26 @@ import 'map3_node_confirm_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 import '../../../global.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart'
+    as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
 class Map3NodePreEditPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
+
   Map3NodePreEditPage({this.map3infoEntity});
 
   @override
   _Map3NodePreEditState createState() => _Map3NodePreEditState();
 }
 
-class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
+class _Map3NodePreEditState extends State<Map3NodePreEditPage>
+    with WidgetsBindingObserver {
   bool _isOpen = true;
   double _currentFeeRate = 20;
   double _maxFeeRate = 20;
   TextEditingController _rateCoinController = TextEditingController();
+
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
 
   Microdelegations _microDelegations;
@@ -64,8 +68,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return value;
   }
 
-  get _isEmptyBls =>
-      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+  get _isEmptyBls => ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) ||
+      (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   ConfirmEditMap3NodeMessage _editMessage;
 
@@ -89,7 +93,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   getMap3Bls() async {
-
     if (_isJoiner) {
       return;
     }
@@ -112,21 +115,27 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
 
-    CreateMap3Entity createMap3Entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+    CreateMap3Entity createMap3Entity =
+        CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
     createMap3Entity.payload = payload;
     var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
-    _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
+    _editMessage = ConfirmEditMap3NodeMessage(
+        entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
   }
 
   double getStaking() {
-    var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.amount?.toDouble() ?? 0);
-    var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
+    var myDelegation = FormatUtil.clearScientificCounting(
+        _microDelegations?.amount?.toDouble() ?? 0);
+    var myDelegationValue =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation))
+            .toDouble();
     return myDelegationValue;
   }
 
   _updateRate() {
     var staking = getStaking();
-    var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
+    var createMin =
+        double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
     var rate = (100 * (staking / createMin)).toDouble();
 
     if (rate >= 20) {
@@ -145,7 +154,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   Future getNetworkData() async {
     try {
-      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
+          .activatedWallet
+          ?.wallet;
       _address = _wallet.getAtlasAccount().address;
 
       var walletAddress = EthereumAddress.fromHex(_address);
@@ -179,7 +190,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '下期预设',
+        baseTitle: S.of(context).preset_for_next_period,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -213,21 +224,25 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
               slivers: <Widget>[
                 SliverToBoxAdapter(
                   child: Container(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      _switchWidget(),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                        ),
-                        child: Divider(
-                          color: HexColor("#F2F2F2"),
-                          height: 0.5,
-                        ),
-                      ),
-                      _isJoiner ? _rateWidgetJoiner() : _rateWidgetCreator(),
-                      divider,
-                      _tipsWidget(),
-                    ]),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _switchWidget(),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                            ),
+                            child: Divider(
+                              color: HexColor("#F2F2F2"),
+                              height: 0.5,
+                            ),
+                          ),
+                          _isJoiner
+                              ? _rateWidgetJoiner()
+                              : _rateWidgetCreator(),
+                          divider,
+                          _tipsWidget(),
+                        ]),
                   ),
                 ),
               ],
@@ -240,9 +255,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _rateWidgetJoiner() {
-    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
-    if (nextFeeRate == '0%' || nextFeeRate == '0' || nextFeeRate.isEmpty || nextFeeRate == null) {
-      nextFeeRate = FormatUtil.formatPercent(_currentFeeRate.toDouble() / 100.0);
+    var nextFeeRate = FormatUtil.formatPercent(
+        double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
+    if (nextFeeRate == '0%' ||
+        nextFeeRate == '0' ||
+        nextFeeRate.isEmpty ||
+        nextFeeRate == null) {
+      nextFeeRate =
+          FormatUtil.formatPercent(_currentFeeRate.toDouble() / 100.0);
     }
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -255,12 +275,18 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             padding: const EdgeInsets.fromLTRB(0, 16, 16, 16),
             child: RichText(
               text: TextSpan(
-                  text: "下期管理费",
-                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                  text: S.of(context).map3_next_period_manage_fee,
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: HexColor("#333333"),
+                      fontWeight: FontWeight.normal),
                   children: [
                     TextSpan(
                       text: "",
-                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor("#999999"),
+                          fontWeight: FontWeight.normal),
                     )
                   ]),
             ),
@@ -269,11 +295,17 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           RichText(
             text: TextSpan(
                 text: nextFeeRate,
-                style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: HexColor("#333333"),
+                    fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
                     text: "",
-                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: HexColor("#999999"),
+                        fontWeight: FontWeight.normal),
                   )
                 ]),
           ),
@@ -288,7 +320,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _currentFeeRate--;
         if (_currentFeeRate <= 10) {
           _currentFeeRate = 10;
-          Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
+          Fluttertoast.showToast(
+              msg: S.of(context).manage_fee_range(10, _maxFeeRate));
         }
 
         _rateCoinController.text = "$_currentFeeRate";
@@ -298,7 +331,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _currentFeeRate++;
         if (_currentFeeRate >= _maxFeeRate) {
           _currentFeeRate = _maxFeeRate;
-          Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
+          Fluttertoast.showToast(
+              msg: S.of(context).manage_fee_range(10, _maxFeeRate));
         }
         _rateCoinController.text = "$_currentFeeRate";
       });
@@ -337,9 +371,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _tipsWidget() {
-    var amount = " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
-        S.of(context).ten_thousand;
-    var tip1 = "管理费的设置根据抵押量来决定，抵押量越高管理费的最大值越高，(计算公式为：个人抵押量 / $amount x 100%）管理费最高不高于20%";
+    var amount =
+        " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
+            S.of(context).ten_thousand;
+    var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 
     var tip2 = _isJoiner
         ? "期满跟随续约每个节点周期只能修改一次，修改完之后直到下个节点周期才能再次修改，请谨慎操作！"
@@ -352,7 +387,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions,
+                style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           if (!_isJoiner) rowTipsItem(tip1),
           rowTipsItem(tip2),
@@ -366,17 +402,18 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       color: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
-        "确认修改",
+        S.of(context).confirm_mod,
         () {
           if (!_isJoiner) {
             if (_inputFeeRateValue <= 0) {
-              Fluttertoast.showToast(msg: "请设置管理费");
+              Fluttertoast.showToast(msg: S.of(context).please_setup_manage_fee);
               return;
             }
 
             var feeRate = _inputFeeRateValue;
             if (feeRate < 10 || feeRate > _maxFeeRate) {
-              Fluttertoast.showToast(msg: "管理费须在10%到$_maxFeeRate%之间");
+              Fluttertoast.showToast(
+                  msg: S.of(context).manage_fee_range(10, _maxFeeRate));
               return;
             }
           }
@@ -391,26 +428,27 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   showAlertView() {
-    var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
+    var nextFeeRate =
+        100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
     var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
 
     var content = "";
     if (!_isOpen) {
       if (!_isJoiner) {
-        content = "你将停止自动续约，修改后不能撤回，确定修改吗？";
+        content = S.of(context).confirm_stop_auto_renew;
       } else {
-        content = "你将停止跟随续约，修改后不能撤回，确定修改吗？";
+        content = S.of(context).confirm_stop_follow_renew;
       }
     } else {
       if (!_isJoiner) {
-        content = "你将开启自动续约，管理费设置为$feeRate%，修改后不能撤回，确定修改吗？";
+        content = S.of(context).confirm_open_auto_renew(feeRate);
       } else {
-        content = "你将跟随续约，修改后不能撤回，确定修改吗？";
+        content = S.of(context).confirm_follow_renew;
       }
     }
     UiUtil.showAlertView(
       context,
-      title: "下期预设",
+      title: S.of(context).preset_for_next_period,
       actions: [
         ClickOvalButton(
           S.of(context).cancel,
@@ -427,7 +465,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           width: 8,
         ),
         ClickOvalButton(
-          "确定",
+          S.of(context).confirm,
           () {
             Navigator.pop(context);
 
