@@ -371,7 +371,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return _map3StatusDesc;
   }
 
-  var _moreKey = GlobalKey(debugLabel: '__more_global__');
+  //var _moreKey = GlobalKey(debugLabel: '__more_global__');
   // double _moreSizeHeight = 18;
   // double _moreOffsetLeft = 246;
   // double _moreOffsetTop = 76;
@@ -388,30 +388,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   var _haveShowedAlertView = false;
 
   @override
-  void onCreated() {
-    super.onCreated();
+  void initState() {
+    //WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
 
-    _loadData();
-  }
-
-  _loadData() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
-    _address = _wallet?.getEthAccount()?.address ?? "";
-
-    getContractDetailData();
+    _setupData();
+    
+    super.initState();
   }
 
   @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+  void onCreated() {
+    super.onCreated();
 
+    _loadDetailData();
+  }
+
+  _setupData() {
     _map3infoEntity = widget.map3infoEntity;
 
     _nodeId = _map3infoEntity?.nodeId ?? "";
     _nodeAddress = _map3infoEntity?.address ?? "";
     _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
-    super.initState();
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+    _address = _wallet?.getEthAccount()?.address ?? "";
   }
 
   _showEditPreNextAlert() {
@@ -440,6 +440,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  /*
   void _afterLayout(_) {
     _getMorePosition();
   }
@@ -454,9 +455,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     //LogUtil.printMessage("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
   }
 
-//  left: 246,
-//  top: 76,
-
+  //  left: 246,
+  //  top: 76,
+  */
+  
   @override
   void dispose() {
     LogUtil.printMessage("[detail] dispose");
@@ -507,7 +509,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
-            getContractDetailData();
+            _loadDetailData();
           });
         }),
       );
@@ -519,8 +521,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           child: LoadDataContainer(
               bloc: _loadDataBloc,
               //enablePullDown: false,
-              onRefresh: getContractDetailData,
-              onLoadingMore: getMap3StakingLogMoreData,
+              onRefresh: _loadDetailData,
+              onLoadingMore: _loadMoreData,
               child: CustomScrollView(
                 //physics: AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
@@ -1610,7 +1612,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   /// TODO:Request
-  Future getMap3StakingLogMoreData() async {
+  Future _loadMoreData() async {
     try {
       _currentPage++;
 
@@ -1630,6 +1632,63 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       if (mounted) {
         setState(() {
           _loadDataBloc.add(LoadMoreFailEvent());
+        });
+      }
+    }
+  }
+
+  Future _loadDetailData() async {
+    try {
+      var requestList = await Future.wait([
+        _atlasApi.getMap3Info(_address, _nodeId),
+        _nodeApi.getNodeProviderList(),
+      ]);
+
+      _map3infoEntity = requestList[0];
+      _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
+
+      if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {
+        _nodeAddress = _map3infoEntity.address;
+
+        var map3Address = EthereumAddress.fromHex(_nodeAddress);
+        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        _setupMicroDelegations();
+
+        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        _delegateRecordList = tempMemberList;
+      }
+
+      var providerList = requestList[1] as List;
+      if (providerList.isNotEmpty) {
+        _selectProviderEntity = providerList[0];
+
+        for (var region in _selectProviderEntity.regions) {
+          if (region.id == _map3infoEntity.region) {
+            _selectedRegion = region;
+            break;
+          }
+        }
+      }
+
+      // 3.
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+
+        if (_canEditNextPeriod) {
+          _showEditPreNextAlert();
+        }
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+          _loadDataBloc.add(RefreshFailEvent());
         });
       }
     }
@@ -1663,68 +1722,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           _microDelegationsJoiner = item;
           LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.reward}");
         }
-      }
-    }
-  }
-
-  Future getContractDetailData() async {
-    try {
-      var requestList = await Future.wait([
-        _atlasApi.getMap3Info(_address, _nodeId),
-        _atlasApi.postAtlasHome(_address),
-        _nodeApi.getNodeProviderList(),
-      ]);
-
-      _map3infoEntity = requestList[0];
-
-      _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
-
-      if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {
-        _nodeAddress = _map3infoEntity.address;
-
-        var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-        _setupMicroDelegations();
-
-        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
-        _delegateRecordList = tempMemberList;
-      }
-
-      AtlasHomeEntity _atlasHomeEntity = requestList[1];
-      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
-
-      var providerList = requestList[2] as List;
-      if (providerList.isNotEmpty) {
-        _selectProviderEntity = providerList[0];
-
-        for (var region in _selectProviderEntity.regions) {
-          if (region.id == _map3infoEntity.region) {
-            _selectedRegion = region;
-            break;
-          }
-        }
-      }
-
-      // 3.
-      if (mounted) {
-        setState(() {
-          _currentState = null;
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-
-        if (_canEditNextPeriod) {
-          _showEditPreNextAlert();
-        }
-      }
-    } catch (e) {
-      logger.e(e);
-      LogUtil.toastException(e);
-
-      if (mounted) {
-        setState(() {
-          _loadDataBloc.add(RefreshFailEvent());
-          _currentState = all_page_state.LoadFailState();
-        });
       }
     }
   }
@@ -1858,7 +1855,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     LogUtil.printMessage("[detail] _next action, result:$result");
 
     if (result != null && result is Map && result["result"] is bool) {
-      _loadData();
+      _loadDetailData();
     }
   }
 }
