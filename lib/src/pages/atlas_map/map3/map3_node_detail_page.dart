@@ -64,15 +64,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Microdelegations _microDelegationsCreator;
   Microdelegations _microDelegationsJoiner;
 
-  get _atlasInfoEntity => _map3infoEntity.atlas;
+  get _atlasInfoEntity => _map3infoEntity?.atlas;
 
   var _currentEpoch = 0;
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+  get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
-  get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
-
-  get _notifyMessage  {
+  get _notifyMessage {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
@@ -128,31 +127,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     return null;
   }
-
-  get _visibleReDelegation {
-    return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
-  }
-
-  /*
-  enum Map3InfoStatus {
-  MAP,
-  CREATE_SUBMIT_ING,
-  CREATE_FAIL,
-  FUNDRAISING_NO_CANCEL,
-  FUNDRAISING_CANCEL_SUBMIT,
-  CANCEL_NODE_SUCCESS,
-  CONTRACT_HAS_STARTED,
-  CONTRACT_IS_END,
-}*/
-
-  get _visibleBottomBar {
-    return ([
-              Map3InfoStatus.FUNDRAISING_NO_CANCEL,
-              Map3InfoStatus.CONTRACT_HAS_STARTED,
-            ].contains(_map3Status) &&
-            _isDelegator) ||
-        (_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL);
-  }
+  
+  get _visibleBottomBar => ((_isRunning && _isDelegator) || _isPending); // 提取奖励 or 参与抵押
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 0;
@@ -160,15 +136,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _statusColor => Map3NodeUtil.statusColor(_map3Status);
 
-  get _isNoWallet => _address?.isEmpty ?? false;
+  get _isNoWallet => _address?.isEmpty ?? true;
 
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
-
-  get _visibleEditNextPeriod => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+  get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
+  get _pendingUnlockEpoch => double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
   /*
   tips:
@@ -179,7 +155,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
-
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -211,20 +186,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         return true;
       }
     }
-    /*if (statusJoiner == 0 && (isInActionPeriodJoiner || isCreatorSetOpen)) {
-      return true;
-    }*/
 
     return false;
   }
 
   get _canExit {
     // 0.募集中
-    var isPending = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
-
     // 1.纪元已经过7天；
-    var isOver7Epoch = (_currentEpoch - _unlockEpoch) > 0;
-    return _isCreator && isPending && isOver7Epoch;
+    var isOver7Epoch = (_currentEpoch - _pendingUnlockEpoch) > 0;
+    return _isCreator && _isPending && isOver7Epoch;
   }
 
   /*
@@ -239,7 +209,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   c: 游客
   *
    */
-
 
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
@@ -403,10 +372,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   var _moreKey = GlobalKey(debugLabel: '__more_global__');
-  double _moreSizeHeight = 18;
+  // double _moreSizeHeight = 18;
+  // double _moreOffsetLeft = 246;
+  // double _moreOffsetTop = 76;
   double _moreSizeWidth = 100;
-  double _moreOffsetLeft = 246;
-  double _moreOffsetTop = 76;
   var _address = "";
   var _nodeId = "";
   var _nodeAddress = "";
@@ -416,6 +385,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   NodeApi _nodeApi = NodeApi();
   NodeProviderEntity _selectProviderEntity;
   Regions _selectedRegion;
+  var _haveShowedAlertView = false;
 
   @override
   void onCreated() {
@@ -441,17 +411,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _nodeAddress = _map3infoEntity?.address ?? "";
     _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
 
-    /*WidgetsBinding.instance.addPostFrameCallback((callback) {
-      _showAtlasExchangeAlert();
-    });*/
-
     super.initState();
   }
 
-
-  var haveShow = false;
   _showEditPreNextAlert() {
-    if (haveShow) return;
+    if (_haveShowedAlertView) return;
 
     UiUtil.showAlertView(
       context,
@@ -460,8 +424,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         ClickOvalButton(
           "马上修改",
           () {
-
-            haveShow = true;
+            _haveShowedAlertView = true;
             Navigator.pop(context);
 
             _preNextAction();
@@ -485,9 +448,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     final RenderBox renderBox = _moreKey?.currentContext?.findRenderObject();
     if (renderBox == null) return;
 
-    final positions = renderBox.localToGlobal(Offset(0, 0));
-    _moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
-    _moreOffsetTop = positions.dy + 18 * 2.0 + 10;
+    //final positions = renderBox.localToGlobal(Offset(0, 0));
+    //_moreOffsetLeft = positions.dx - _moreSizeWidth * 0.75;
+    //_moreOffsetTop = positions.dy + 18 * 2.0 + 10;
     //LogUtil.printMessage("positions of more:$positions, left:$_moreOffsetLeft, top:$_moreOffsetTop");
   }
 
@@ -503,12 +466,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget build(BuildContext context) {
-    // todo: test_jison
-    //_map3Status = Map3InfoStatus.values[0];
-    //LogUtil.printMessage("【Detail】 --> status:$_map3Status == ${_map3Status.index}");
-
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
-
     LogUtil.printMessage("_currentEpoch: $_currentEpoch");
 
     List<Widget> actions = [];
@@ -542,6 +500,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  /// TODO:Widget
   Widget _pageWidget(BuildContext context) {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
@@ -586,14 +545,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(
                     child: _nodeNextPeriodWidget(),
                   ),
-                  _spacer(isVisible: _visibleEditNextPeriod),
+                  _spacer(isVisible: _isRunning),
 
                   // 3.2服务器
                   SliverToBoxAdapter(child: _reDelegationWidget()),
-                  _spacer(isVisible: _visibleReDelegation),
-
-                  // SliverToBoxAdapter(child: _lineSpacer()),
-                  // _spacer(),
+                  _spacer(isVisible: _isRunning),
 
                   // 3.2合约进度状态
                   SliverToBoxAdapter(child: _contractProgressWidget()),
@@ -711,9 +667,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     if (!_visibleBottomBar) return Container();
 
     List<Widget> children = [];
-    // if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL || _map3Status == Map3InfoStatus.CREATE_SUBMIT_ING)) {
 
-    if ((_map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL)) {
+    if (_isPending) {
       children = <Widget>[
         Spacer(),
         ClickOvalButton(
@@ -763,69 +718,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  /*
-  Widget _bottomBtnBarWidget() {
-    if (_invisibleBottomBar) return Container();
-
-    LogUtil.printMessage("_invisibleBottomBar:$_invisibleBottomBar");
-
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, boxShadow: [
-        BoxShadow(
-          color: Colors.black12,
-          offset: Offset(0.0, 0.1), //阴影xy轴偏移量
-          blurRadius: 1, //阴影模糊程度
-        )
-      ]),
-      height: 50,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Spacer(),
-          ClickOvalButton(
-            "撤销抵押",
-            _canCancel ? _cancelAction : null,
-            width: 100,
-            height: 32,
-            fontSize: 14,
-            fontColor: _canCancel ? Colors.white : DefaultColors.color999,
-            btnColor: _canCancel ? null : Colors.transparent,
-          ),
-          Spacer(),
-          ClickOvalButton(
-            "提取奖励",
-            _isJoiner ? _collectAction : null,
-            width: 100,
-            height: 32,
-            fontSize: 14,
-            fontColor: _isJoiner ? Colors.white : DefaultColors.color999,
-            btnColor: _isJoiner ? null : Colors.transparent,
-          ),
-          Spacer(),
-          ClickOvalButton(
-            "抵押",
-            _canDelegate ? _joinAction : null,
-            width: 100,
-            height: 32,
-            fontSize: 14,
-            fontColor: _canDelegate ? Colors.white : DefaultColors.color999,
-            btnColor: _canDelegate ? null : Colors.transparent,
-          ),
-          Spacer(),
-        ],
-      ),
-    );
-  }
-  */
-
   Widget _topNextEpisodeNotifyWidget() {
     var notification = _notifyMessage;
     if (notification == null) {
       return Container();
     }
 
-    var bgColor = _isRunning?HexColor("#FF4C3B"):HexColor("#1FB9C7").withOpacity(0.08);
-    var contentColor = _isRunning?HexColor("#FFFFFF"):HexColor("#333333");
+    var bgColor = _isRunning ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
+    var contentColor = _isRunning ? HexColor("#FFFFFF") : HexColor("#333333");
     return Container(
       color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
@@ -1036,7 +936,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _nodeNextPeriodWidget() {
     var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
     var status = currentMicroDelegations?.renewal?.status ?? 0;
-    if (!_visibleEditNextPeriod) {
+    if (!_isRunning) {
       return Container();
     }
 
@@ -1122,7 +1022,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                         visible: _canEditNextPeriod,
                         child: Center(
                             child: Text(
-                              "设置",
+                          "设置",
                           style: TextStyle(
                             fontSize: 14,
                             color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
@@ -1193,7 +1093,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _reDelegationWidget() {
-    if (!_visibleReDelegation) return Container();
+    if (!_isRunning) return Container();
 
     bool isReDelegation = _atlasInfoEntity != null;
 
@@ -1479,10 +1379,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     Microdelegations _microDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
 
     if (_microDelegations != null) {
-      var isStart = _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
       var pendingAmount = _microDelegations?.pendingDelegation?.amount;
       var activeAmount = _microDelegations?.amount;
-      var myAmount = isStart ? activeAmount : pendingAmount;
+      var myAmount = _isRunning ? activeAmount : pendingAmount;
 
       var myDelegation = FormatUtil.clearScientificCounting(myAmount?.toDouble() ?? 0);
       var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
@@ -1631,14 +1530,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _customStepperWidget() {
-    //var pendingEpoch = _map3infoEntity?.startEpoch ?? 0;
-    var pendingEpoch = _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-    var activationEpoch = _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
-    var releaseEpoch = double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0")?.toInt() ?? 0;
     var titles = [
-      pendingEpoch > 0 ? "创建 #$pendingEpoch" : "创建",
-      activationEpoch > 0 ? "启动 #$activationEpoch" : "启动",
-      releaseEpoch > 0 ? "到期 #$releaseEpoch" : "到期",
+      _pendingEpoch > 0 ? "创建 #$_pendingEpoch" : "创建",
+      _activeEpoch > 0 ? "启动 #$_activeEpoch" : "启动",
+      _releaseEpoch > 0 ? "到期 #$_releaseEpoch" : "到期",
     ];
 
     var createdAt = FormatUtil.formatDate(_map3infoEntity?.createTime ?? 0, isSecond: false);
@@ -1656,7 +1551,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       "",
     ];
 
-    //LogUtil.printMessage('[detail] _currentStep:$_currentStep， _currentStepProgress：${_currentStepProgress}');
     return CustomStepper(
       tickColor: _statusColor,
       tickText: _contractStateDetail,
@@ -1690,13 +1584,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
-  Widget _lineSpacer() {
-    return Container(
-      height: 0.5,
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    );
-  }
-
   Widget _spacer({bool isVisible = true}) {
     return SliverToBoxAdapter(
       child: Visibility(
@@ -1722,6 +1609,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  /// TODO:Request
   Future getMap3StakingLogMoreData() async {
     try {
       _currentPage++;
@@ -1747,7 +1635,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  // todo: test_detail
   _setupMicroDelegations() {
     LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
 
@@ -1842,6 +1729,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
+  /// TODO:Action
   void _pushNodeInfoAction() {
     if (_map3infoEntity != null) {
       Navigator.push(
