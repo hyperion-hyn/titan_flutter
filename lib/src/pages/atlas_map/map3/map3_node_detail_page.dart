@@ -1,10 +1,7 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -16,15 +13,11 @@ import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/app_tabbar_event.dart';
-import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
@@ -41,17 +34,11 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
-import 'package:titan/src/widget/popup/bubble_widget.dart';
-import 'package:titan/src/widget/popup/pop_route.dart';
-import 'package:titan/src/widget/popup/pop_widget.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/web3dart.dart';
-import '../../../../env.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
@@ -81,9 +68,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   var _currentEpoch = 0;
 
+  get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
+
   get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
-  String _notifyMessage() {
+  get _notifyMessage  {
     var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
@@ -158,7 +147,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _visibleBottomBar {
     return ([
-              // Map3InfoStatus.CREATE_SUBMIT_ING,
               Map3InfoStatus.FUNDRAISING_NO_CANCEL,
               Map3InfoStatus.CONTRACT_HAS_STARTED,
             ].contains(_map3Status) &&
@@ -174,19 +162,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _isNoWallet => _address?.isEmpty ?? false;
 
-  //get _unlockRemainEpoch => Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
-
-  // get _endRemainEpoch => Decimal.parse('${_releaseEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
-  //get _endRemainEpoch => Decimal.parse('${_map3infoEntity?.endEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   // 到期纪元
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
 
-  get _visibleEditNextPeriod {
-    return _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
-  }
+  get _visibleEditNextPeriod => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
 
   /*
   tips:
@@ -197,7 +179,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
-    // return true;
 
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
@@ -247,19 +228,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   /*
-  get _canCancel {
-    // 0.募集中
-    var condition0 = _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
-
-    // 1.纪元已经过7天；
-    var condition1 = (_currentEpoch - (_map3infoEntity?.startEpoch ?? 0)) > 7;
-    return _isDelegator && condition0 && condition1;
-  }
-  */
-
-  get _canDelegate => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
-
-  /*
   角色分析：
   1.判断是否参与抵押
   Yes：用户（包括：创建人，参与者）
@@ -272,7 +240,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   *
    */
 
-  // get _isCreator => true;
+
   get _isCreator => _map3infoEntity?.isCreator() ?? false;
 
   get _isDelegator => _map3infoEntity?.mine != null;
@@ -664,6 +632,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  /*
   _showMoreAlertView() {
     return Navigator.push(
       context,
@@ -734,6 +703,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ),
     );
   }
+  */
 
   Widget _bottomBtnBarWidget() {
     LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
@@ -849,12 +819,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   */
 
   Widget _topNextEpisodeNotifyWidget() {
-    var notification = _notifyMessage();
+    var notification = _notifyMessage;
     if (notification == null) {
       return Container();
     }
+
+    var bgColor = _isRunning?HexColor("#FF4C3B"):HexColor("#1FB9C7").withOpacity(0.08);
+    var contentColor = _isRunning?HexColor("#FFFFFF"):HexColor("#333333");
     return Container(
-      color: HexColor("#1FB9C7").withOpacity(0.08),
+      color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
       child: Row(
         children: <Widget>[
@@ -862,13 +835,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             "res/drawable/volume.png",
             width: 15,
             height: 14,
+            color: contentColor,
           ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Text(
                 notification,
-                style: TextStyle(fontSize: 12, color: HexColor("#333333")),
+                style: TextStyle(fontSize: 12, color: contentColor),
               ),
             ),
           ),
@@ -1904,6 +1878,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
+  /*
   void _shareAction() {
     Application.router.navigateTo(context,
         Routes.map3node_share_page + "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
@@ -1916,6 +1891,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
     Application.router.navigateTo(context, Routes.map3node_divide_page);
   }
+  */
 
   void _exitAction() async {
     if (_isNoWallet) {
@@ -1977,13 +1953,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void _preNextAction() async {
     if (!_canEditNextPeriod) return;
 
-    var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
+    if (_map3infoEntity != null) {
+      var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);
 
-    await Application.router.navigateTo(
-        context,
-        Routes.map3node_pre_edit_page +
-            "?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
-    _nextAction();
+      await Application.router.navigateTo(
+          context,
+          Routes.map3node_pre_edit_page +
+              "?entryRouteName=$entryRouteName&info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+      _nextAction();
+    }
   }
 
   void _nextAction() {
