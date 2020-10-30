@@ -29,10 +29,8 @@ class Map3NodeEditPage extends StatefulWidget {
   _Map3NodeEditState createState() => new _Map3NodeEditState();
 }
 
-
 class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
   CreateMap3Payload _payload;
-
 
   var _localImagePath = "";
   var _titleList = [
@@ -59,27 +57,25 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   }
 
   _setupPayload() async {
-    var blsKeySignEntity = await AtlasApi().getMap3Bls();
     print("[dd0] payload.toJson():${widget.entity.toJson()}");
 
-    var payload = CreateMap3Payload.onlyNodeId(widget.entity.nodeId);
-    payload.name = widget.entity.name;
-    payload.nodeId = widget.entity.nodeId;
-    payload.home = widget.entity.home;
-    payload.connect = widget.entity.contact;
-    payload.describe = widget.entity.describe;
-    payload.isEdit = true;
-    //payload.nodeId = '';
+    var payload = CreateMap3Payload.onlyIsEdit(true);
+    _payload = payload;
 
-    print("[dd1] payload.toJson():${payload.toJson()}");
+    // payload.name = widget.entity.name;
+    // payload.nodeId = widget.entity.nodeId;
+    // payload.home = widget.entity.home;
+    // payload.connect = widget.entity.contact;
+    // payload.describe = widget.entity.describe;
+    // payload.isEdit = true;
 
+    //print("[dd1] payload.toJson():${payload.toJson()}");
+
+    var blsKeySignEntity = await AtlasApi().getMap3Bls();
     payload.blsRemoveKey = widget?.entity?.blsKey ?? "";
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
     print("[dd2] payload.toJson():${payload.toJson()}");
-
-    _payload = payload;
-
   }
 
   _setupData() {
@@ -178,8 +174,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
                           child: Text(S.of(context).detailed_introduction,
-                              style: TextStyle(
-                                  fontSize: 14, color: HexColor("#1F81FF"))),
+                              style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           onTap: () {
                             AtlasApi.goToAtlasMap3HelpPage(context);
                           },
@@ -192,27 +187,23 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-
-                        Text(S.of(context).activate_need_1m,
+                        Text(
+                            S.of(context).active_still_need +
+                                " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
+                                S.of(context).ten_thousand,
                             style: TextStyles.textC99000000S13,
                             maxLines: 1,
                             softWrap: true),
-
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
-                          child: Text(" (HYN) ",
-                              style: TextStyle(
-                                  fontSize: 10, color: HexColor("#999999"))),
+                          child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("  |  ",
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: HexColor("000000").withOpacity(0.2))),
+                          child:
+                              Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                         ),
                         Text(S.of(context).n_day(AtlasApi.map3introduceEntity.days), style: TextStyles.textC99000000S13)
-
                       ],
                     ),
                   ),
@@ -285,10 +276,9 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             keyboardType: keyboardType,
             subtitle: subTitle,
             hasSubtitle: false,
-            canEdit: true,
-            // canEdit: title != "节点号",
+            // canEdit: true,
+            canEdit: title != _titleList[1],
           );
-
         },
         separatorBuilder: (context, index) {
           return Divider(
@@ -325,31 +315,50 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             return;
           }
 
+          /*
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
+
             if (title == S.of(Keys.rootKey.currentContext).name) {
-              _payload.name = _detailList[0];
-
+              var last = widget.entity.name;
+              var edit = _detailList[0];
+              if (last != edit && edit.isNotEmpty) {
+                _payload.name = last;
+              }
             } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
-              _payload.nodeId = _detailList[1];
+              var last = widget.entity.nodeId;
+              var edit = _detailList[1];
+              if (last != edit && edit.isNotEmpty) {
+                _payload.nodeId = last;
+              }
             } else if (title == S.of(Keys.rootKey.currentContext).website) {
-
-              _payload.home = _detailList[2];
+              var last = widget.entity.home;
+              var edit = _detailList[2];
+              if (last != edit && edit.isNotEmpty) {
+                _payload.home = last;
+              }
             } else if (title == S.of(Keys.rootKey.currentContext).contact) {
-              _payload.connect = _detailList[3];
+              var last = widget.entity.home;
+              var edit = _detailList[3];
+              if (last != edit && edit.isNotEmpty) {
+                _payload.connect = last;
+              }
             } else if (title == S.of(Keys.rootKey.currentContext).description) {
-              _payload.describe = _detailList[4];
+              var last = widget.entity.describe;
+              var edit = _detailList[4];
+              if (last != edit && edit.isNotEmpty) {
+                _payload.describe = last;
+              }
             }
           }
+          */
 
-          _payload.isEdit = true;
+          print("[_payload] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");
 
-          CreateMap3Entity map3entity =
-              CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+          CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
           map3entity.payload = _payload;
 
           var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: map3NodeAddress);
-
 
           Navigator.push(
               context,

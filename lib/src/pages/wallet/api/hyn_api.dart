@@ -246,8 +246,8 @@ class HYNApi {
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: payload.name,
-          details: payload.describe,
+          name: payload.name,// ''
+          details: payload.describe, //''
           identity: payload.nodeId,
           securityContact: payload.connect,
           website: payload.home),

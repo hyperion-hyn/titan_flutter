@@ -959,6 +959,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   ),
                   Visibility(
                     visible: false,
+                    //visible: (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: InkWell(
@@ -976,6 +977,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       ),
                     ),
                   ),
+
                 ],
               ),
             ),

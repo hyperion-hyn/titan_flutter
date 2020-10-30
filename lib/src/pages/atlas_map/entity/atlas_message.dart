@@ -337,7 +337,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
       toName: "Map3节点",
-      toDetail: "节点号:${entity.payload.nodeId}",
+      toDetail: entity.payload.nodeId == null ?'':"节点号:${entity.payload.nodeId}",
       fee: "0.000021",
     );
   }
