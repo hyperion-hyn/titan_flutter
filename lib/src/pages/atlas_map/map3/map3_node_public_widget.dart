@@ -1078,7 +1078,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
     item.type,
     getTypeStr: true,
     dataDecoded: item.dataDecoded,
-    creatorAddress: item.from,
+    creatorAddress: map3CreatorAddress,
   );
   var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
   detail = detail +

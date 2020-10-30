@@ -14,6 +14,7 @@ import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import 'package:web3dart/web3dart.dart';
 
@@ -355,7 +356,7 @@ class HYNApi {
     bool getRecordAmountStr = false,
     bool formatComma = true,
     Map<String, dynamic> dataDecoded,
-        String creatorAddress = '',
+    String creatorAddress = '',
   }) {
     String typeStr = "";
     String amountStr = "0";
@@ -435,28 +436,21 @@ class HYNApi {
         * 如果是参与人， 设置true/false，展示： （下期预设，跟随续约/不跟随）
         * */
 
-        print("transactionDetail?.dataDecoded:${dataDecoded}");
+        LogUtil.printMessage("transactionDetail?.dataDecoded:${dataDecoded}");
 
         if (dataDecoded != null) {
           var map3NodeAddress = creatorAddress?.toLowerCase() ?? '';
-          print("transactionDetail?.fromAddress:${map3NodeAddress}");
 
           var delegatorAddress = '';
           if (dataDecoded.keys.contains('delegatorAddress')) {
-            print("transactionDetail?.222");
-
             delegatorAddress = (dataDecoded["delegatorAddress"] as String).toLowerCase();
-            print("transactionDetail?.delegatorAddress:$delegatorAddress");
           }
 
           var isCreator =
               map3NodeAddress.isNotEmpty && delegatorAddress.isNotEmpty && map3NodeAddress == delegatorAddress;
-          print("transactionDetail?.isCreator:$isCreator");
 
           var isRenew;
           if (dataDecoded.keys.contains('isRenew')) {
-            print("transactionDetail?.3333");
-
             isRenew = (dataDecoded["isRenew"] as bool);
           }
 
@@ -473,12 +467,8 @@ class HYNApi {
               typeStr = S.of(context).msg_renew_map3;
             }
           }
-
-          print("transactionDetail?.typeStr:$typeStr");
         } else {
           typeStr = S.of(context).msg_renew_map3;
-
-          print("transactionDetail?.typeStr:$typeStr");
         }
 
         break;
