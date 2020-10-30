@@ -58,6 +58,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
           currentQuotesModel = QuotesModel(
               quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
+        print('QuotesComponent UpdatedQuotesState === yield');
           yield UpdatedQuotesState(quoteModel: currentQuotesModel);
 //        } catch (e) {
 //          logger.e(e);

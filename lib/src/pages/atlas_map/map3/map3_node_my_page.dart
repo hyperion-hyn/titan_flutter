@@ -34,7 +34,8 @@ class Map3NodeMyPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStateMixin {
+class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
+    with TickerProviderStateMixin {
   TabController _tabController;
   List<MyContractModel> _contractTypeModels;
   UserRewardEntity _rewardEntity;
@@ -76,13 +77,16 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
     if (_contractTypeModels?.isEmpty ?? true) {
       _contractTypeModels = [
-        MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
+        MyContractModel(
+            S.of(context).my_initiated_map_contract, MyContractType.create),
         MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
       ];
-      _tabController = TabController(length: _contractTypeModels.length, vsync: this);
+      _tabController =
+          TabController(length: _contractTypeModels.length, vsync: this);
     }
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -94,16 +98,17 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       appBar: BaseAppBar(
-        baseTitle: "我的节点",
+        baseTitle: S.of(context).my_nodes,
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              Application.router.navigateTo(context, Routes.map3node_my_page_v8);
+              Application.router
+                  .navigateTo(context, Routes.map3node_my_page_v8);
 
               //AtlasApi.goToAtlasMap3HelpPage(context);
             },
             child: Text(
-              "旧版Map3",
+              S.of(context).old_map3,
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
@@ -202,7 +207,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20, top: 12),
+            margin: const EdgeInsets.only(
+                left: 15.0, right: 15, bottom: 20, top: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -220,7 +226,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    "当前奖励",
+                    S.of(context).current_reward,
                     style: TextStyle(
                       color: HexColor("#333333"),
                       fontSize: 10,
@@ -264,7 +270,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
                 Padding(
                   padding: const EdgeInsets.only(top: 28, bottom: 25),
                   child: ClickOvalButton(
-                    "提取奖励",
+                    S.of(context).collect_reward,
                     () {
                       _showAlertView();
                     },
@@ -321,7 +327,9 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         child: TabBarView(
           controller: _tabController,
           //physics: NeverScrollableScrollPhysics(),
-          children: _contractTypeModels.map((model) => Map3NodeListPage(model)).toList(),
+          children: _contractTypeModels
+              .map((model) => Map3NodeListPage(model))
+              .toList(),
         ),
       ),
     );
@@ -330,17 +338,19 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   _showAlertView() {
     var count = _rewardMap?.values?.length ?? 0;
     if (count == 0) {
-      Fluttertoast.showToast(msg: "当前可提奖励为零!");
+      Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
       return;
     }
 
-    var preText = count != 0 ? "您一共创建或参与了${_rewardMap?.values?.length ?? 0}个Map3节点，" : "";
+    var preText = count != 0
+        ? "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，"
+        : "";
 
     UiUtil.showAlertView(context,
-        title: "提取奖励",
+        title: S.of(context).collect_reward,
         actions: [
           ClickOvalButton(
-            "确认提取",
+            S.of(context).confirm_collect,
             () {
               Navigator.pop(context);
 
@@ -348,7 +358,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
                 amount: _balanceValue,
-                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+                addressList:
+                    _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
               );
               Navigator.push(
                   context,
@@ -363,13 +374,14 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             fontSize: 16,
           ),
         ],
-        content: "$preText截止当前可提奖励为: $_balance HYN 确定全部提取到钱包",
+        content:
+            S.of(context).confirm_collect_reward_to_wallet(preText, _balance),
         boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),
           fontSize: 12,
           height: 1.8,
         ),
-        suffixContent: " 吗？");
+        suffixContent: " ？");
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 
@@ -41,7 +42,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle: "编辑" + widget.title ?? '创建Map3节点',
+        baseTitle: S.of(context).edit + widget.title ?? S.of(context).create_map3_node,
         actions: <Widget>[
           FlatButton(
             onPressed: () {
@@ -51,7 +52,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
               Navigator.of(context).pop(_controller.text);
             },
             child: Text(
-              "保存",
+              S.of(context).save,
               style: TextStyle(color: HexColor("#1F81FF")),
             ),
           ),
