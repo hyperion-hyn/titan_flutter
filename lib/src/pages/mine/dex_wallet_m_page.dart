@@ -19,6 +19,7 @@ import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import "package:convert/convert.dart" show hex;
@@ -252,7 +253,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
               children: <Widget>[
                 Text('从'),
                 Text(
-                  '${addressData.name} (可用 $balance)',
+                  '${addressData.name} (可用 ${FormatUtil.formatCoinNum(balance.toDouble())})',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
               ],
@@ -364,7 +365,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                         style: TextStyle(fontSize: 13),
                       ),
                       SizedBox(width: 4),
-                      Text(addressData.ethBalance.toString(), style: TextStyle(fontSize: 13)),
+                      Text(FormatUtil.formatCoinNum(addressData.ethBalance.toDouble()), style: TextStyle(fontSize: 13)),
                     ],
                   ),
                 if (addressData.type != AddressIndex.M_HYN)
@@ -375,14 +376,14 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                         style: TextStyle(fontSize: 13),
                       ),
                       SizedBox(width: 4),
-                      Text(addressData.usdtBalance.toString(), style: TextStyle(fontSize: 13)),
+                      Text(FormatUtil.formatCoinNum(addressData.usdtBalance.toDouble()), style: TextStyle(fontSize: 13)),
                     ],
                   ),
                 Row(
                   children: <Widget>[
                     Text('HYN', style: TextStyle(fontSize: 13)),
                     SizedBox(width: 4),
-                    Text(addressData.hynBanlance.toString(), style: TextStyle(fontSize: 13)),
+                    Text(FormatUtil.formatCoinNum(addressData.hynBanlance.toDouble()), style: TextStyle(fontSize: 13)),
                   ],
                 ),
               ],
