@@ -1307,7 +1307,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                                 Container(
                                   height: 4,
                                 ),
-                                Text("年化奖励",
+                                Text("近期收益",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: HexColor("#999999"),

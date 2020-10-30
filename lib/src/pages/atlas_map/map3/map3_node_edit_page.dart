@@ -72,7 +72,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     //print("[dd1] payload.toJson():${payload.toJson()}");
 
     var blsKeySignEntity = await AtlasApi().getMap3Bls();
-    payload.blsRemoveKey = widget?.entity?.blsKey ?? "";
+    payload.blsRemoveKey = widget?.entity?.blsKey ;
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
     print("[dd2] payload.toJson():${payload.toJson()}");

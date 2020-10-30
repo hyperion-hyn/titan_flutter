@@ -19,8 +19,9 @@ import 'model/transtion_detail_vo.dart';
 
 class WalletShowAccountInfoPage extends StatefulWidget {
   final TransactionDetailVo transactionDetail;
+  final bool isContain;
 
-  WalletShowAccountInfoPage(this.transactionDetail);
+  WalletShowAccountInfoPage(this.transactionDetail, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -38,42 +39,10 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     super.initState();
   }
 
-  List<String> whiteList = [];
-  bool _isContain = false;
   get _toAddress {
     var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
-    var toAddress = _isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
-    return toAddress;
-  }
-
-  getWhiteList() async {
-    var toAddress = HYNApi.getHynToAddress(widget.transactionDetail);
-    var list = await AtlasApi().getBiboxWhiteList();
-    //print("getMap3Bls -->toAddress:$toAddress,  list:$list");
-    //list.add(toAddress);
-    //print("getMap3Bls -->toAddress2:$toAddress,  list:$list");
-
-    if (list.isNotEmpty && toAddress.isNotEmpty) {
-      for (var item in list) {
-        if (item.toLowerCase() == toAddress.toLowerCase()) {
-          _isContain = true;
-          break;
-        }
-      }
-    }
-
-    if (_isContain) {
-      setState(() {
-        _dataInfoList[2] = toAddress;
-      });
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    getWhiteList();
+    //var toAddress = widget.isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return WalletUtil.ethAddressToBech32Address(ethAddress);
   }
 
   @override
@@ -187,7 +156,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       MaterialPageRoute(
                           builder: (context) => WalletShowAccountDetailPage(
                                 widget.transactionDetail,
-                                isContain: _isContain,
+                                isContain: widget.isContain,
                               )));
                 },
                 child: Container(
