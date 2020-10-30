@@ -22,6 +22,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:web3dart/web3dart.dart';
 import 'map3_node_public_widget.dart';
 
 import 'package:web3dart/credentials.dart';
@@ -29,8 +30,7 @@ import 'map3_node_confirm_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 import '../../../global.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
 class Map3NodePreEditPage extends StatefulWidget {
@@ -42,8 +42,7 @@ class Map3NodePreEditPage extends StatefulWidget {
   _Map3NodePreEditState createState() => _Map3NodePreEditState();
 }
 
-class _Map3NodePreEditState extends State<Map3NodePreEditPage>
-    with WidgetsBindingObserver {
+class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isOpen = true;
   double _currentFeeRate = 20;
   double _maxFeeRate = 20;
@@ -68,10 +67,13 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
     return value;
   }
 
-  get _isEmptyBls => ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) ||
-      (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+
+  get _isEmptyBls =>
+      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   ConfirmEditMap3NodeMessage _editMessage;
+
+  int nonce;
 
   @override
   void initState() {
@@ -115,27 +117,35 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
 
-    CreateMap3Entity createMap3Entity =
-        CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+    CreateMap3Entity createMap3Entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
     createMap3Entity.payload = payload;
     var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
-    _editMessage = ConfirmEditMap3NodeMessage(
-        entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
+    _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
+
+    final client = WalletUtil.getWeb3Client();
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var _wallet = activatedWallet?.wallet;
+    var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+    nonce = await client.getTransactionCount(
+      EthereumAddress.fromHex(_walletAddress),
+      atBlock: const BlockNum.pending(),
+    );
+    createMap3Entity.nonce = nonce;
+
+    print("[pre]  --> createMap3Entity.nonce:${createMap3Entity.nonce}");
+
   }
 
   double getStaking() {
-    var myDelegation = FormatUtil.clearScientificCounting(
-        _microDelegations?.amount?.toDouble() ?? 0);
-    var myDelegationValue =
-        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation))
-            .toDouble();
+    var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.amount?.toDouble() ?? 0);
+    var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
     return myDelegationValue;
   }
 
   _updateRate() {
     var staking = getStaking();
-    var createMin =
-        double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
+    var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
     var rate = (100 * (staking / createMin)).toDouble();
 
     if (rate >= 20) {
@@ -154,9 +164,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
 
   Future getNetworkData() async {
     try {
-      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
-          .activatedWallet
-          ?.wallet;
+      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
       _address = _wallet.getAtlasAccount().address;
 
       var walletAddress = EthereumAddress.fromHex(_address);
@@ -224,25 +232,21 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
               slivers: <Widget>[
                 SliverToBoxAdapter(
                   child: Container(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _switchWidget(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                            ),
-                            child: Divider(
-                              color: HexColor("#F2F2F2"),
-                              height: 0.5,
-                            ),
-                          ),
-                          _isJoiner
-                              ? _rateWidgetJoiner()
-                              : _rateWidgetCreator(),
-                          divider,
-                          _tipsWidget(),
-                        ]),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      _switchWidget(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                        ),
+                        child: Divider(
+                          color: HexColor("#F2F2F2"),
+                          height: 0.5,
+                        ),
+                      ),
+                      _isJoiner ? _rateWidgetJoiner() : _rateWidgetCreator(),
+                      divider,
+                      _tipsWidget(),
+                    ]),
                   ),
                 ),
               ],
@@ -255,14 +259,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
   }
 
   Widget _rateWidgetJoiner() {
-    var nextFeeRate = FormatUtil.formatPercent(
-        double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
-    if (nextFeeRate == '0%' ||
-        nextFeeRate == '0' ||
-        nextFeeRate.isEmpty ||
-        nextFeeRate == null) {
-      nextFeeRate =
-          FormatUtil.formatPercent(_currentFeeRate.toDouble() / 100.0);
+    var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
+    if (nextFeeRate == '0%' || nextFeeRate == '0' || nextFeeRate.isEmpty || nextFeeRate == null) {
+      nextFeeRate = FormatUtil.formatPercent(_currentFeeRate.toDouble() / 100.0);
     }
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -276,17 +275,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
             child: RichText(
               text: TextSpan(
                   text: S.of(context).map3_next_period_manage_fee,
-                  style: TextStyle(
-                      fontSize: 16,
-                      color: HexColor("#333333"),
-                      fontWeight: FontWeight.normal),
+                  style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
                   children: [
                     TextSpan(
                       text: "",
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor("#999999"),
-                          fontWeight: FontWeight.normal),
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                     )
                   ]),
             ),
@@ -295,17 +288,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
           RichText(
             text: TextSpan(
                 text: nextFeeRate,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: HexColor("#333333"),
-                    fontWeight: FontWeight.normal),
+                style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
                     text: "",
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor("#999999"),
-                        fontWeight: FontWeight.normal),
+                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
                   )
                 ]),
           ),
@@ -320,8 +307,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
         _currentFeeRate--;
         if (_currentFeeRate <= 10) {
           _currentFeeRate = 10;
-          Fluttertoast.showToast(
-              msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
         }
 
         _rateCoinController.text = "$_currentFeeRate";
@@ -331,8 +317,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
         _currentFeeRate++;
         if (_currentFeeRate >= _maxFeeRate) {
           _currentFeeRate = _maxFeeRate;
-          Fluttertoast.showToast(
-              msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
         }
         _rateCoinController.text = "$_currentFeeRate";
       });
@@ -371,9 +356,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
   }
 
   Widget _tipsWidget() {
-    var amount =
-        " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
-            S.of(context).ten_thousand;
+    var amount = " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
+        S.of(context).ten_thousand;
     var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 
     var tip2 = _isJoiner
@@ -387,8 +371,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text(S.of(context).precautions,
-                style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions, style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
           if (!_isJoiner) rowTipsItem(tip1),
           rowTipsItem(tip2),
@@ -412,8 +395,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
 
             var feeRate = _inputFeeRateValue;
             if (feeRate < 10 || feeRate > _maxFeeRate) {
-              Fluttertoast.showToast(
-                  msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+              Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
               return;
             }
           }
@@ -428,8 +410,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
   }
 
   showAlertView() {
-    var nextFeeRate =
-        100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
+    var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
     var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
 
     var content = "";
@@ -475,6 +456,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage>
               feeRate: _isJoiner ? null : feeRate.toString(),
               map3NodeAddress: widget.map3infoEntity.address,
             );
+
+
+            if (!_isJoiner && _isEmptyBls && nonce != null) {
+              message.nonce = nonce + 1;
+            }
+            print("[pre]  --> createMap3Entity.nonce:${message.nonce}");
+
+
             Navigator.push(
                 context,
                 MaterialPageRoute(

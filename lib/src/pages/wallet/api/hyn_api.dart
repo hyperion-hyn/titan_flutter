@@ -25,6 +25,7 @@ class HYNApi {
       IMessage message,
       bool isAtlasTrans = true,
       String gasPrice,
+      int nonce,
       int gasLimit}) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
@@ -64,6 +65,7 @@ class HYNApi {
       IMessage message,
       bool isAtlasTrans = true,
       String gasPrice,
+        int nonce,
       int gasLimit}) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
@@ -91,6 +93,7 @@ class HYNApi {
       message: message,
       isAtlasTrans: isAtlasTrans,
       gasLimit: gasLimit,
+      nonce: nonce,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -260,7 +263,14 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, gasPrice: entity.price);
+    return signTransferHYN(
+      password,
+      wallet,
+      toAddress: entity.to,
+      message: message,
+      gasPrice: entity.price,
+      nonce: entity.nonce,
+    );
   }
 
   static Future transTerminateMap3Node(
@@ -329,6 +339,7 @@ class HYNApi {
     bool isRenew,
     String feeRate,
     String map3NodeAddress,
+    int nonce,
   ) async {
     var newCommissionRate;
     if (feeRate != null) {
@@ -345,7 +356,7 @@ class HYNApi {
     );
     print(message);
 
-    return sendTransferHYN(password, wallet, message: message);
+    return sendTransferHYN(password, wallet, message: message, nonce: nonce);
   }
 
   static String getValueByHynType(
