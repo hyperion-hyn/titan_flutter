@@ -118,6 +118,7 @@ class _WalletPageState extends BaseState<WalletPage>
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
 
+    print('WalletPage onCreated ======');
     listLoadingData();
   }
 
@@ -307,10 +308,12 @@ class _WalletPageState extends BaseState<WalletPage>
         enablePullUp: false,
         showLoadingWidget: false,
         onLoadData: () {
+          print('WalletPage LoadDataContainer onLoadData ======');
           _checkDexAccount();
           listLoadingData();
         },
         onRefresh: () async {
+          print('WalletPage LoadDataContainer onRefresh ======');
           _checkDexAccount();
           listLoadingData();
         },
@@ -337,6 +340,7 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   Future listLoadingData() async {
+    print('WalletPage listLoadingData ===');
     //update quotes
     var quoteSignStr =
         await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);

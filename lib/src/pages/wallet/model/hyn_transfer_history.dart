@@ -2,10 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'hyn_transfer_history.g.dart';
 
-
 @JsonSerializable()
 class HynTransferHistory extends Object {
-
   @JsonKey(name: 'atlas_address')
   String atlasAddress;
 
@@ -25,7 +23,7 @@ class HynTransferHistory extends Object {
   String data;
 
   @JsonKey(name: 'data_decoded')
-  DataDecoded dataDecoded;
+  Map<String, dynamic> dataDecoded;
 
   @JsonKey(name: 'epoch')
   int epoch;
@@ -84,18 +82,42 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'value')
   String value;
 
-  HynTransferHistory(this.atlasAddress,this.blockHash,this.blockNum,this.contractAddress,this.createdAt,this.data,this.dataDecoded,this.epoch,this.from,this.gasLimit,this.gasPrice,this.gasUsed,this.id,this.logsDecoded,this.map3Address,this.name,this.nonce,this.pic,this.status,this.timestamp,this.to,this.transactionIndex,this.txHash,this.type,this.updatedAt,this.value,);
+  HynTransferHistory(
+    this.atlasAddress,
+    this.blockHash,
+    this.blockNum,
+    this.contractAddress,
+    this.createdAt,
+    this.data,
+    this.dataDecoded,
+    this.epoch,
+    this.from,
+    this.gasLimit,
+    this.gasPrice,
+    this.gasUsed,
+    this.id,
+    this.logsDecoded,
+    this.map3Address,
+    this.name,
+    this.nonce,
+    this.pic,
+    this.status,
+    this.timestamp,
+    this.to,
+    this.transactionIndex,
+    this.txHash,
+    this.type,
+    this.updatedAt,
+    this.value,
+  );
 
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$HynTransferHistoryToJson(this);
-
 }
-
 
 @JsonSerializable()
 class DataDecoded extends Object {
-
   @JsonKey(name: 'operatorAddress')
   String operatorAddress;
 
@@ -114,17 +136,22 @@ class DataDecoded extends Object {
   @JsonKey(name: 'amount')
   String amount;
 
-  DataDecoded(this.operatorAddress,this.description,this.commission,this.nodePubKey,this.nodeKeySig,this.amount,);
+  DataDecoded(
+    this.operatorAddress,
+    this.description,
+    this.commission,
+    this.nodePubKey,
+    this.nodeKeySig,
+    this.amount,
+  );
 
   factory DataDecoded.fromJson(Map<String, dynamic> srcJson) => _$DataDecodedFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$DataDecodedToJson(this);
-
 }
 
 @JsonSerializable()
 class Description extends Object {
-
   @JsonKey(name: 'name')
   String name;
 
@@ -140,47 +167,51 @@ class Description extends Object {
   @JsonKey(name: 'details')
   String details;
 
-  Description(this.name,this.identity,this.website,this.securityContact,this.details,);
+  Description(
+    this.name,
+    this.identity,
+    this.website,
+    this.securityContact,
+    this.details,
+  );
 
   factory Description.fromJson(Map<String, dynamic> srcJson) => _$DescriptionFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$DescriptionToJson(this);
-
 }
 
 @JsonSerializable()
 class LogsDecoded extends Object {
-
   @JsonKey(name: 'rewards')
   List<Rewards> rewards;
 
   @JsonKey(name: 'topics')
   String topics;
 
-  LogsDecoded(this.rewards,this.topics,);
+  LogsDecoded(
+    this.rewards,
+    this.topics,
+  );
 
   factory LogsDecoded.fromJson(Map<String, dynamic> srcJson) => _$LogsDecodedFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$LogsDecodedToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Rewards extends Object {
-
   @JsonKey(name: 'address')
   String address;
 
   @JsonKey(name: 'amount')
   String amount;
 
-  Rewards(this.address,this.amount,);
+  Rewards(
+    this.address,
+    this.amount,
+  );
 
   factory Rewards.fromJson(Map<String, dynamic> srcJson) => _$RewardsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RewardsToJson(this);
-
 }
-
-

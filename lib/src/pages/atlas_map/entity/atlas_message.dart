@@ -309,6 +309,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   @override
   Future<dynamic> action(String password) async {
     try {
+
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
       var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
@@ -348,12 +349,14 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
   final String feeRate;
   final String map3NodeAddress;
   final String map3NodeName;
+  int nonce;
 
   ConfirmPreEditMap3NodeMessage({
     this.autoRenew,
     this.feeRate,
     this.map3NodeAddress,
     this.map3NodeName,
+    this.nonce,
   });
 
   @override
@@ -368,6 +371,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
         this.autoRenew,
         feeRate,
         map3NodeAddress,
+        nonce,
       );
       return rawTx.isNotEmpty;
     } catch (e) {

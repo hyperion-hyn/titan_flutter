@@ -3,6 +3,7 @@ import 'dart:convert' as jsonUtils;
 
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'hyn_transfer_history.dart';
 
@@ -48,7 +49,7 @@ class TransactionDetailVo {
                     "amount": "110000000000000000000000"
                 }
   * */
-  DataDecoded dataDecoded;
+  Map<String, dynamic> dataDecoded;
   String blockHash;
   int blockNum;
   int epoch;
@@ -84,10 +85,17 @@ class TransactionDetailVo {
   });
 
   String getDecodedAmount(){
-    if(dataDecoded == null || dataDecoded.amount == null){
+
+    if(dataDecoded == null){
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(dataDecoded.amount)).toString();
+
+    var bigAmount = '0';
+    if (dataDecoded.keys.contains('amount')) {
+      bigAmount = dataDecoded['amount'] ?? '0';
+    }
+
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount)).toString();
     return amount;
   }
 

@@ -48,16 +48,20 @@ class _QuotesManagerState extends State<_QuotesManager> {
   }
 
   void initData() async {
-    var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
+    var gasPriceEntityStr =
+        await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
     if (gasPriceEntityStr != null) {
-      _gasPriceRecommend = GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
+      _gasPriceRecommend =
+          GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
     } else {
       _gasPriceRecommend = GasPriceRecommend.defaultValue();
     }
 
-    var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
+    var btcGasPriceEntityStr =
+        await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
     if (btcGasPriceEntityStr != null) {
-      _btcGasPriceRecommend = BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
+      _btcGasPriceRecommend =
+          BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
     } else {
       _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
     }
@@ -67,25 +71,30 @@ class _QuotesManagerState extends State<_QuotesManager> {
   Widget build(BuildContext context) {
     return BlocListener<QuotesCmpBloc, QuotesCmpState>(
       listener: (context, state) {
-        print("state is UpdatedQuotesSignState 111 = ${state is UpdatedQuotesSignState}");
+        print(
+            "state is UpdatedQuotesSignState 111 = ${state is UpdatedQuotesSignState}");
         if (state is UpdatedQuotesSignState) {
           _quotesSign = state.sign;
         }
       },
       child: BlocBuilder<QuotesCmpBloc, QuotesCmpState>(
         builder: (ctx, state) {
-          print("state is UpdatedQuotesSignState 222 = ${state is UpdatedQuotesSignState}");
+          print(
+              "state is UpdatedQuotesSignState 222 = ${state is UpdatedQuotesSignState}");
           if (state is UpdatedQuotesState) {
             _quotesModel = state.quoteModel;
+            print('QuotesComponent UpdatedQuotesState === receive');
           }
           if (state is UpdatedQuotesSignState) {
             _quotesSign = state.sign;
           }
           if (state is GasPriceState) {
-            if (state.status == Status.success && state.gasPriceRecommend != null) {
+            if (state.status == Status.success &&
+                state.gasPriceRecommend != null) {
               _gasPriceRecommend = state.gasPriceRecommend;
             }
-            if (state.status == Status.success && state.btcGasPriceRecommend != null) {
+            if (state.status == Status.success &&
+                state.btcGasPriceRecommend != null) {
               _btcGasPriceRecommend = state.btcGasPriceRecommend;
             }
           }
@@ -130,7 +139,8 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
     return null;
   }
 
-  ActiveQuoteVoAndSign selectedQuoteVoAndSign({String symbol, QuotesSign quotesSign}) {
+  ActiveQuoteVoAndSign selectedQuoteVoAndSign(
+      {String symbol, QuotesSign quotesSign}) {
     if (quotesModel != null && quotesSign != null) {
       for (var quote in quotesModel.quotes) {
         if (quote.symbol == symbol && quote.quote == quotesSign.quote) {
@@ -142,7 +152,8 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
   }
 
   static QuotesInheritedModel of(BuildContext context, {QuotesAspect aspect}) {
-    return InheritedModel.inheritFrom<QuotesInheritedModel>(context, aspect: aspect);
+    return InheritedModel.inheritFrom<QuotesInheritedModel>(context,
+        aspect: aspect);
   }
 
   @override
@@ -154,10 +165,15 @@ class QuotesInheritedModel extends InheritedModel<QuotesAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(QuotesInheritedModel oldWidget, Set<QuotesAspect> dependencies) {
-    return (quotesModel != oldWidget.quotesModel && dependencies.contains(QuotesAspect.quote) ||
-        activeQuotesSign != oldWidget.activeQuotesSign && dependencies.contains(QuotesAspect.sign) ||
-        gasPriceRecommend != oldWidget.gasPriceRecommend && dependencies.contains(QuotesAspect.gasPrice) ||
-        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend && dependencies.contains(QuotesAspect.gasPrice));
+  bool updateShouldNotifyDependent(
+      QuotesInheritedModel oldWidget, Set<QuotesAspect> dependencies) {
+    return (quotesModel != oldWidget.quotesModel &&
+            dependencies.contains(QuotesAspect.quote) ||
+        activeQuotesSign != oldWidget.activeQuotesSign &&
+            dependencies.contains(QuotesAspect.sign) ||
+        gasPriceRecommend != oldWidget.gasPriceRecommend &&
+            dependencies.contains(QuotesAspect.gasPrice) ||
+        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
+            dependencies.contains(QuotesAspect.gasPrice));
   }
 }

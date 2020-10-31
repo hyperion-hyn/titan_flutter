@@ -46,7 +46,7 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var infoTitleList = [
     "总抵押",
     "签名率",
-    "最近回报率",
+    "昨日年化",
     "最大抵押量",
     "网址",
     "安全联系",

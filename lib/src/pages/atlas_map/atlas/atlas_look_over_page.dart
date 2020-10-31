@@ -26,7 +26,7 @@ class AtlasLookOverPage extends StatefulWidget {
 
 class _AtlasLookOverPageState extends State<AtlasLookOverPage> {
 //  var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度", "bls key", "bls签名"];
-  var infoTitleList = ["总抵押", "签名率", "最近回报率", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度"];
+  var infoTitleList = ["总抵押", "签名率", "昨日年化", "最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度"];
   List<String> infoContentList = [];
   bool isShowAll = false;
 

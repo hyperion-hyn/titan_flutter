@@ -98,9 +98,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     getWhiteList();
   }
 
-
   List<String> whiteList = [];
-
   getWhiteList() async {
     if (widget.coinVo.coinType != CoinType.HYN_ATLAS) {
       return;
@@ -110,6 +108,23 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   }
 
   String _toAddress(TransactionDetailVo transactionDetail) {
+    //bool isContain = _isContain(transactionDetail);
+
+    var ethAddress = HYNApi.getHynToAddress(transactionDetail);
+    //var toAddress = isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
+    return WalletUtil.ethAddressToBech32Address(ethAddress);
+  }
+
+  // todo: whiteList
+  bool _isContain(TransactionDetailVo transactionDetail) {
+    if (widget.coinVo.coinType != CoinType.HYN_ATLAS) {
+      return false;
+    }
+
+    if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+      return false;
+    }
+
     var ethAddress = HYNApi.getHynToAddress(transactionDetail);
     bool isContain = false;
     if (whiteList.isNotEmpty && ethAddress.isNotEmpty) {
@@ -121,8 +136,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       }
     }
 
-    var toAddress = isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
-    return toAddress;
+    return isContain;
   }
 
   @override
@@ -493,7 +507,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                 } else {
                   if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => WalletShowAccountInfoPage(transactionDetail)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WalletShowAccountInfoPage(
+                                  transactionDetail,
+                                  isContain: _isContain(transactionDetail),
+                                )));
                   } else {
                     var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
                     var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);

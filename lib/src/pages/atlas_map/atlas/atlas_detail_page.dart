@@ -703,7 +703,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text("最近回报率", style: TextStyles.textC999S10)
+                                Text("昨日年化", style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
