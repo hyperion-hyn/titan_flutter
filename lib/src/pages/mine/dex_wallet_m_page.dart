@@ -32,8 +32,17 @@ class AddressData {
   Decimal usdtBalance;
   Decimal hynBanlance;
   int type;
+  bitcoin.HDWallet hdWallet;
 
-  AddressData({this.name, this.address, this.ethBalance, this.hynBanlance, this.usdtBalance, this.type});
+  AddressData({
+    this.hdWallet,
+    this.name,
+    this.address,
+    this.ethBalance,
+    this.hynBanlance,
+    this.usdtBalance,
+    this.type,
+  });
 }
 
 class MMData {
@@ -56,7 +65,15 @@ class AddressIndex {
   static const int GAS = 10;
   static const int C_HYN = 1;
   static const int C_USDT = 2;
+  static const int C_USDT2 = 5;
   static const int M_HYN = 4;
+}
+
+class TokenType {
+  static const int HYN_MAIN = 1;
+  static const int HYN_ERC20 = 2;
+  static const int USDT_ERC20 = 3;
+  static const int ETH = 4;
 }
 
 class DexWalletManagerPage extends StatefulWidget {
@@ -131,27 +148,40 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
                 var seed = bip39.mnemonicToSeed(mnemonic);
                 var hdWallet = bitcoin.HDWallet.fromSeed(seed);
-                var ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.GAS}");
-                var ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+                // 归gas
+                var ethWallet;
+                var ethAddress;
+                var account;
                 List<AddressData> accs = [];
-                var account = await newAddressData('归GAS', ethAddress, AddressIndex.GAS);
 
+                //主hyn
                 ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.M_HYN}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                var accountMain = await newAddressData('主HYN 归/出', ethAddress, AddressIndex.M_HYN);
+                var accountMain = await newAddressData(ethWallet, '主HYN 归/出', ethAddress, AddressIndex.M_HYN);
                 accs.add(accountMain);
 
+                // u归2
+                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT2}");
+                ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+                account = await newAddressData(ethWallet, 'U2 归/出', ethAddress, AddressIndex.C_USDT2);
                 accs.add(account);
+
+                //归gas
+                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.GAS}");
+                ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+                var accountGas = await newAddressData(ethWallet, '归GAS', ethAddress, AddressIndex.GAS);
+                accs.add(accountGas);
 
                 ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_HYN}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                account = await newAddressData('HYN 归/出', ethAddress, AddressIndex.C_HYN);
+                account = await newAddressData(ethWallet, 'HYN 归/出', ethAddress, AddressIndex.C_HYN);
                 accs.add(account);
 
                 ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                account = await newAddressData('U 归/出', ethAddress, AddressIndex.C_USDT);
+                account = await newAddressData(ethWallet, 'U 归/出', ethAddress, AddressIndex.C_USDT);
                 accs.add(account);
+
                 setState(() {
                   accounts = accs;
                 });
@@ -196,7 +226,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     );
   }
 
-  Widget buildMMOptAccountDialogView(Decimal balance, int type, bool isAdd) {
+  Widget buildMMOptAccountDialogView(Decimal balance, bool isAdd) {
     return Material(
       child: Form(
         key: _formKeyMM,
@@ -239,8 +269,8 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     );
   }
 
-  Widget buildTransferDialogView(AddressData addressData, int optType) {
-    var balance = getBalanceByType(addressData, optType);
+  Widget buildTransferDialogView(AddressData addressData, int tokenType) {
+    var balance = getBalanceByType(addressData, tokenType);
     return Material(
       child: Form(
         key: _formKeyTransfer,
@@ -253,7 +283,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
               children: <Widget>[
                 Text('从'),
                 Text(
-                  '${addressData.name} (可用 ${FormatUtil.formatCoinNum(balance.toDouble())})',
+                  '${addressData.name} (可用 ${FormatUtil.formatCoinNum(balance?.toDouble() ?? 0)})',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
               ],
@@ -274,7 +304,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                     if (value.length == 0) {
                       return '请输入收款地址';
                     }
-                    if(!value.startsWith("hyn1")) {
+                    if (!value.startsWith("hyn1")) {
                       bool isEthAddress = isValidEthereumAddress(value);
                       if (!isEthAddress) {
                         return '收款地址格式不符合规范';
@@ -296,7 +326,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('转出${getTypeName(optType)}数目'),
+                Text('转出${getTypeName(tokenType)}数目'),
                 TextFormField(
                   controller: _amountTextEditorController,
                   decoration: InputDecoration(
@@ -306,7 +336,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                     if (value.length == 0) {
                       return '请输入转账数目';
                     }
-                    if(addressData.type != AddressIndex.M_HYN) {
+                    if (addressData.type != AddressIndex.M_HYN) {
                       if (addressData.ethBalance == Decimal.zero) {
                         return 'gas费不足';
                       }
@@ -365,7 +395,8 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                         style: TextStyle(fontSize: 13),
                       ),
                       SizedBox(width: 4),
-                      Text(FormatUtil.formatCoinNum(addressData.ethBalance.toDouble()), style: TextStyle(fontSize: 13)),
+                      Text(FormatUtil.formatCoinNum(addressData.ethBalance?.toDouble() ?? 0),
+                          style: TextStyle(fontSize: 13)),
                     ],
                   ),
                 if (addressData.type != AddressIndex.M_HYN)
@@ -376,14 +407,16 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                         style: TextStyle(fontSize: 13),
                       ),
                       SizedBox(width: 4),
-                      Text(FormatUtil.formatCoinNum(addressData.usdtBalance.toDouble()), style: TextStyle(fontSize: 13)),
+                      Text(FormatUtil.formatCoinNum(addressData.usdtBalance?.toDouble() ?? 0),
+                          style: TextStyle(fontSize: 13)),
                     ],
                   ),
                 Row(
                   children: <Widget>[
                     Text('HYN', style: TextStyle(fontSize: 13)),
                     SizedBox(width: 4),
-                    Text(FormatUtil.formatCoinNum(addressData.hynBanlance.toDouble()), style: TextStyle(fontSize: 13)),
+                    Text(FormatUtil.formatCoinNum(addressData.hynBanlance?.toDouble() ?? 0),
+                        style: TextStyle(fontSize: 13)),
                   ],
                 ),
               ],
@@ -395,19 +428,21 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
               child: RaisedButton(
                 child: Text('提'),
                 onPressed: () async {
-                  int type;
+                  int tokenType;
                   if (addressData.type == AddressIndex.M_HYN) {
-                    type = AddressIndex.M_HYN;
+                    tokenType = TokenType.HYN_MAIN;
                   } else {
-                    type = await selectTokenType(context);
-                    if (![AddressIndex.C_HYN, AddressIndex.C_USDT, AddressIndex.GAS].contains(type)) {
-                      return;
-                    }
+                    tokenType = await selectTokenType(context);
+                  }
+                  if (![TokenType.ETH, TokenType.USDT_ERC20, TokenType.HYN_ERC20, TokenType.HYN_MAIN]
+                      .contains(tokenType)) {
+                    UiUtil.toast('提币类型错误');
+                    return;
                   }
 
                   UiUtil.showDialogWidget(context,
                       title: Text('转账'),
-                      content: buildTransferDialogView(addressData, type),
+                      content: buildTransferDialogView(addressData, tokenType),
                       actions: [
                         FlatButton(
                           child: Text('取消'),
@@ -432,19 +467,21 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                   return;
                                 }
 
-                                var mnemonic = await WalletUtil.exportMnemonic(
-                                    fileName: wallet.keystore.fileName, password: password);
-                                var seed = bip39.mnemonicToSeed(mnemonic);
-                                var hdWallet = bitcoin.HDWallet.fromSeed(seed);
-                                var ethWallet = hdWallet.derivePath("${Config.M_Main_Path}$type");
+                                // await WalletUtil.exportMnemonic(
+                                //     fileName: wallet.keystore.fileName, password: password);
+                                print('ok');
+                                // var seed = bip39.mnemonicToSeed(mnemonic);
+                                // var hdWallet = bitcoin.HDWallet.fromSeed(seed);
+                                // var ethWallet = hdWallet.derivePath("${Config.M_Main_Path}$type");
 
                                 var txhash = '';
 
-                                if (type == AddressIndex.GAS) {
+                                if (tokenType == TokenType.ETH) {
                                   //需要转ETH
                                   try {
                                     final client = WalletUtil.getWeb3Client();
-                                    final credentials = await client.credentialsFromPrivateKey(ethWallet.privKey);
+                                    final credentials =
+                                        await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
                                     txhash = await client.sendTransaction(
                                       credentials,
                                       web3.Transaction(
@@ -456,47 +493,53 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       ),
                                       fetchChainIdFromNetworkId: true,
                                     );
+
+                                    print('txhash $txhash');
+                                    UiUtil.toast('转账 $_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
                                     print(e);
-                                    UiUtil.toast('ETH转账异常');
+                                    UiUtil.toast('ETH转账异常 ${e.message}');
                                   }
-                                } else if (type == AddressIndex.M_HYN) {
-                                  //转HYN币
+                                } else if (tokenType == TokenType.HYN_MAIN) {
                                   try {
                                     final client = WalletUtil.getWeb3Client(true);
-                                    final credentials = await client.credentialsFromPrivateKey(ethWallet.privKey);
+                                    final credentials =
+                                        await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
                                     txhash = await client.sendTransaction(
                                       credentials,
                                       web3.Transaction(
                                         to: web3.EthereumAddress.fromHex(WalletUtil.bech32ToEthAddress(_toAddress)),
-                                        gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                        gasPrice: web3.EtherAmount.inWei(BigInt.one),
                                         maxGas: 21000,
                                         value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
                                         type: web3.MessageType.typeNormal,
                                       ),
                                       fetchChainIdFromNetworkId: false,
                                     );
+
+                                    print('txhash $txhash');
+                                    UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
                                     print(e);
-                                    UiUtil.toast('HYN转账异常');
+                                    UiUtil.toast('HYN转账异常 ${e.message}');
                                   }
                                 } else {
                                   //转ERC 20币
                                   try {
                                     final client = WalletUtil.getWeb3Client();
-                                    final credentials = await client.credentialsFromPrivateKey(ethWallet.privKey);
+                                    final credentials =
+                                        await client.credentialsFromPrivateKey(addressData.hdWallet.privKey);
 
                                     var contract;
                                     var decimals;
-                                    if (type == AddressIndex.C_USDT) {
+                                    if (tokenType == TokenType.USDT_ERC20) {
                                       contract = WalletUtil.getHynErc20Contract(WalletConfig.getUsdtErc20Address());
                                       decimals = SupportedTokens.USDT_ERC20.decimals;
-                                    } else if (type == AddressIndex.C_HYN) {
+                                    } else if (tokenType == TokenType.HYN_ERC20) {
                                       contract = WalletUtil.getHynErc20Contract(WalletConfig.getHynErc20Address());
                                       decimals = SupportedTokens.HYN_ERC20.decimals;
                                     } else {
-                                      UiUtil.toast('错误的类型 $type');
+                                      UiUtil.toast('错误的类型 $tokenType');
                                       return;
                                     }
                                     txhash = await client.sendTransaction(
@@ -514,14 +557,14 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       ),
                                       fetchChainIdFromNetworkId: true,
                                     );
+
+                                    print('txhash $txhash');
+                                    UiUtil.toast('转账$_amount，请等待成功后再执行其他转账');
                                   } catch (e) {
                                     print(e);
-                                    UiUtil.toast('转账异常');
+                                    UiUtil.toast('转账异常, ${e.message}');
                                   }
                                 }
-
-                                print('txhash $txhash');
-                                UiUtil.toast('广播成功，请等待成功后再执行其他转账');
                               }
                             })
                       ]);
@@ -616,7 +659,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     await AppCache.saveValue('mm-$address', '$ethBalance,$hynBalance,$usdtBalance');
   }
 
-  Future<AddressData> newAddressData(String name, String address, int type) async {
+  Future<AddressData> newAddressData(bitcoin.HDWallet hdWallet, String name, String address, int type) async {
     Decimal ethBalance;
     Decimal hynBalance;
     Decimal usdtBalance;
@@ -637,6 +680,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
       }
     }
     return AddressData(
+        hdWallet: hdWallet,
         name: name,
         address: address,
         ethBalance: ethBalance,
@@ -667,6 +711,16 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
   }
 
   Future updateMMList() async {
+    // //mock test
+    // var mmData = MMData(
+    //   uid: '1',
+    //   key: 'k1',
+    //   hynBalance: Decimal.parse('1111'),
+    //   usdtBalance: Decimal.parse('111'),
+    // );
+    // mmList.add(mmData);
+    // return ;
+
     var rets = await _exchangeApi.walletSignAndPost(
       path: Config.MM_ACCOUNT_INFO,
       wallet: wallet,
@@ -687,35 +741,38 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
     }
   }
 
-  Decimal getBalanceByType(AddressData addressData, int optType) {
-    var balance = Decimal.zero;
-    switch (optType) {
-      case AddressIndex.GAS:
+  Decimal getBalanceByType(AddressData addressData, int tokenType) {
+    var balance;
+    switch (tokenType) {
+      case TokenType.ETH:
         balance = addressData.ethBalance;
         break;
-      case AddressIndex.C_HYN:
+      case TokenType.HYN_ERC20:
         balance = addressData.hynBanlance;
         break;
-      case AddressIndex.M_HYN:
+      case TokenType.HYN_MAIN:
         balance = addressData.hynBanlance;
         break;
-      case AddressIndex.C_USDT:
+      case TokenType.USDT_ERC20:
         balance = addressData.usdtBalance;
         break;
     }
-    return balance;
+    return balance ?? Decimal.zero;
   }
 
-  String getTypeName(int optType) {
+  String getTypeName(int tokenType) {
     var name = '';
-    switch (optType) {
-      case AddressIndex.GAS:
+    switch (tokenType) {
+      case TokenType.ETH:
         name = 'ETH';
         break;
-      case AddressIndex.C_HYN:
+      case TokenType.HYN_MAIN:
         name = 'HYN';
         break;
-      case AddressIndex.C_USDT:
+      case TokenType.HYN_ERC20:
+        name = 'HYN';
+        break;
+      case TokenType.USDT_ERC20:
         name = 'USDT';
         break;
     }
@@ -732,7 +789,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
           children: <Widget>[
             InkWell(
                 onTap: () {
-                  Navigator.pop(context, AddressIndex.C_HYN);
+                  Navigator.pop(context, TokenType.HYN_ERC20);
                 },
                 child: Container(
                   child: Text('HYN'),
@@ -741,7 +798,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 )),
             InkWell(
                 onTap: () {
-                  Navigator.pop(context, AddressIndex.C_USDT);
+                  Navigator.pop(context, TokenType.USDT_ERC20);
                 },
                 child: Container(
                   child: Text('USDT'),
@@ -752,7 +809,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
             if (includeEth)
               InkWell(
                   onTap: () {
-                    Navigator.pop(context, AddressIndex.GAS);
+                    Navigator.pop(context, TokenType.ETH);
                   },
                   child: Container(
                       child: Text('ETH'),
@@ -820,13 +877,18 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
               child: Text('减'),
               onPressed: () async {
                 var type = await selectTokenType(context, false);
-                if (![AddressIndex.C_HYN, AddressIndex.C_USDT].contains(type)) {
+                if (![TokenType.ETH, TokenType.USDT_ERC20, TokenType.HYN_ERC20, TokenType.HYN_MAIN].contains(type)) {
+                  UiUtil.toast('币类型错误');
                   return;
                 }
+
                 UiUtil.showDialogWidget(context,
                     title: Text('减少'),
                     content: buildMMOptAccountDialogView(
-                        type == AddressIndex.C_HYN ? mmData.hynBalance : mmData.usdtBalance, type, false),
+                        (type == TokenType.HYN_MAIN || type == TokenType.HYN_ERC20)
+                            ? mmData.hynBalance
+                            : mmData.usdtBalance,
+                        false),
                     actions: [
                       FlatButton(
                         child: Text('取消'),
@@ -883,13 +945,18 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
               child: Text('加'),
               onPressed: () async {
                 var type = await selectTokenType(context, false);
-                if (![AddressIndex.C_HYN, AddressIndex.C_USDT].contains(type)) {
+                if (![TokenType.ETH, TokenType.USDT_ERC20, TokenType.HYN_ERC20, TokenType.HYN_MAIN].contains(type)) {
+                  UiUtil.toast('币类型错误');
                   return;
                 }
+
                 UiUtil.showDialogWidget(context,
                     title: Text('增加'),
                     content: buildMMOptAccountDialogView(
-                        type == AddressIndex.C_HYN ? mmData.hynBalance : mmData.usdtBalance, type, true),
+                        (type == TokenType.HYN_MAIN || type == TokenType.HYN_ERC20)
+                            ? mmData.hynBalance
+                            : mmData.usdtBalance,
+                        true),
                     actions: [
                       FlatButton(
                         child: Text('取消'),
