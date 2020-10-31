@@ -163,7 +163,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 // u归2
                 ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT2}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                account = await newAddressData(ethWallet, 'U2 归/出', ethAddress, AddressIndex.C_USDT2);
+                account = await newAddressData(ethWallet, 'U 归/出', ethAddress, AddressIndex.C_USDT2);
                 accs.add(account);
 
                 //归gas
@@ -177,10 +177,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 account = await newAddressData(ethWallet, 'HYN 归/出', ethAddress, AddressIndex.C_HYN);
                 accs.add(account);
 
-                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT}");
-                ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                account = await newAddressData(ethWallet, 'U 归/出', ethAddress, AddressIndex.C_USDT);
-                accs.add(account);
+                // ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT}");
+                // ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+                // account = await newAddressData(ethWallet, 'U 归/出', ethAddress, AddressIndex.C_USDT);
+                // accs.add(account);
 
                 setState(() {
                   accounts = accs;
