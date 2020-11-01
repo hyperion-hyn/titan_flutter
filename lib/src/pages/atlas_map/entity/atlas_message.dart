@@ -315,8 +315,16 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
 
+      var uploadRawTx = '[ConfirmEditMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      print(uploadRawTx);
+      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] action, uploadRawTx", uploadRawTx);
+
       TxHashEntity txHashEntity = await AtlasApi().postEditMap3Node(this.entity);
       print("[Confirm] txHashEntity:${txHashEntity.txHash}");
+
+      var uploadTxHashEntity = '[ConfirmEditMap3NodeMessage] txHashEntity:${txHashEntity.toJson()}';
+      print(uploadTxHashEntity);
+      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] action, uploadTxHashEntity", uploadTxHashEntity);
 
       return txHashEntity.txHash.isNotEmpty;
     } catch(e) {
@@ -363,7 +371,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
 
   @override
   Future<dynamic> action(String password) async {
-    print("[ConfirmPreEditMap3NodeMessage] action:$password");
+    print("[ConfirmPreEditMap3NodeMessage] action:$password, nonce:$nonce");
 
     try {
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
@@ -375,6 +383,11 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
         map3NodeAddress,
         nonce,
       );
+
+      var uploadPreMsgRawText = '[ConfirmPreEditMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      print(uploadPreMsgRawText);
+      LogUtil.uploadException("[ConfirmPreEditMap3NodeMessage] action, uploadTxHashEntity", uploadPreMsgRawText);
+
       return rawTx.isNotEmpty;
     } catch (e) {
       print(e);

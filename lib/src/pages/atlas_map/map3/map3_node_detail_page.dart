@@ -163,6 +163,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -1864,6 +1865,32 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   void _preNextAction() async {
     if (!_canEditNextPeriod) return;
+
+    if (_map3infoEntity != null) {
+      var uploadInfo = 'currentEpoch:$_currentEpoch, info:${_map3infoEntity.toJson()}';
+      print(uploadInfo);
+      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadInfo", uploadInfo);
+    }
+
+    if (_map3nodeInformationEntity != null) {
+      var uploadInfoAtlas = 'currentEpoch:$_currentEpoch, infoFromAtlas:${_map3nodeInformationEntity.toJson()}';
+      print(uploadInfoAtlas);
+      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadInfoAtlas", uploadInfoAtlas);
+    }
+
+    if (_microDelegationsCreator != null) {
+      var uploadMicroCreator = 'currentEpoch:$_currentEpoch, _microDelegationsCreator:${_microDelegationsCreator.renewal.toJson()}';
+      print(uploadMicroCreator);
+      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroCreator", uploadMicroCreator);
+
+    }
+
+    if (_microDelegationsJoiner != null) {
+      var uploadMicroJoiner = 'currentEpoch:$_currentEpoch, _microDelegationsJoiner:${_microDelegationsJoiner.renewal.toJson()}';
+      print(uploadMicroJoiner);
+      LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroJoiner", uploadMicroJoiner);
+    }
+
 
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);

@@ -49,6 +49,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   TextEditingController _rateCoinController = TextEditingController();
 
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
+  get _isEmptyBls =>
+      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+
 
   Microdelegations _microDelegations;
   final _client = WalletUtil.getWeb3Client(true);
@@ -68,8 +71,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
 
-  get _isEmptyBls =>
-      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   ConfirmEditMap3NodeMessage _editMessage;
 
@@ -80,6 +81,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate()));
 
     _rateCoinController.text = "$_currentFeeRate";
+
+    var uploadStatus = '_isJoiner:$_isJoiner, _isEmptyBls:$_isEmptyBls';
+    print(uploadStatus);
+    LogUtil.uploadException("[Map3NodePreEditPage] initState, uploadStatus", uploadStatus);
 
     if (!_isJoiner) {
       //_rateCoinController.addListener(_rateTextFieldChangeListener);
@@ -132,8 +137,16 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       atBlock: const BlockNum.pending(),
     );
     createMap3Entity.nonce = nonce;
-
     print("[pre]  --> createMap3Entity.nonce:${createMap3Entity.nonce}");
+
+
+    var uploadConfirmEditMap3NodeMessage = 'payload:${payload.toJson()}, nonce:$nonce';
+    print(uploadConfirmEditMap3NodeMessage);
+    LogUtil.uploadException("[Map3NodePreEditPage] getMap3Bls, uploadConfirmEditMap3NodeMessage", uploadConfirmEditMap3NodeMessage);
+
+    var uploadBlsKeySignEntity = 'blsKeySignEntity:${blsKeySignEntity.toJson()}, nonce:$nonce';
+    print(uploadBlsKeySignEntity);
+    LogUtil.uploadException("[Map3NodePreEditPage] getMap3Bls, uploadBlsKeySignEntity", uploadBlsKeySignEntity);
 
   }
 
@@ -206,6 +219,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _pageView(BuildContext context) {
+    // todo: test_jison
+    /*
     if (!_isJoiner) {
       if (_currentState != null || _microDelegations == null) {
         return Scaffold(
@@ -218,6 +233,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         );
       }
     }
+   */
 
     var divider = Container(
       color: HexColor("#F4F4F4"),
@@ -461,7 +477,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             if (!_isJoiner && _isEmptyBls && nonce != null) {
               message.nonce = nonce + 1;
             }
-            print("[pre]  --> createMap3Entity.nonce:${message.nonce}");
+            print("[pre]  --> createMap3Entity.preMsg.nonce:${message.nonce}");
+
+            var uploadPreEditMsg = '_isOpen:$_isOpen, preMsg.nonce:${message.nonce}';
+            print(uploadPreEditMsg);
+            LogUtil.uploadException("[Map3NodePreEditPage] showAlertView, uploadPreEditMsg", uploadPreEditMsg);
 
 
             Navigator.push(

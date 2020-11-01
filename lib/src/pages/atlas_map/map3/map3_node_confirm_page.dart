@@ -307,6 +307,11 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
 
       if (widget.editMessage != null && (widget.editMessage is ConfirmEditMap3NodeMessage) && (widget.message is ConfirmPreEditMap3NodeMessage)) {
         var editResult = true;
+
+        setState(() {
+          _isTransferring = false;
+        });
+
         editResult = await widget.editMessage.action(password);
         print("object --> editResult:$editResult");
 
@@ -315,8 +320,14 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         }
       }
 
+
+      setState(() {
+        _isTransferring = false;
+      });
+
       var result = await widget.message.action(password);
       print("object --> result:$result");
+
 
       if (result is String) {
         Map3InfoEntity map3infoEntity = Map3InfoEntity.onlyNodeId(result);
