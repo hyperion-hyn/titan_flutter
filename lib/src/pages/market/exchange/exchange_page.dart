@@ -26,9 +26,12 @@ import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/loading_button/click_oval_icon_button.dart';
 
 import '../k_line/kline_detail_page.dart';
@@ -77,6 +80,44 @@ class _ExchangePageState extends BaseState<ExchangePage>
     _setupMarketItemList();
   }
 
+  _checkConfirmDexPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_DEX_POLICY,
+    );
+    if (isConfirmWalletPolicy == null || !isConfirmWalletPolicy) {
+      _showConfirmDexPolicy();
+    }
+  }
+
+  _showConfirmDexPolicy() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).check,
+          () async {
+            Navigator.pop(context);
+            var result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => PolicyConfirmPage(
+                PolicyType.DEX,
+              ),
+            ));
+            if (result != true) {
+              _showConfirmDexPolicy();
+            }
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content: '为了更好地体验Titan去中心化交易所，请您先仔细阅读并同意《海伯利安DEX服务协议》',
+      barrierDismissible: false,
+      isShowCloseIcon: false,
+    );
+  }
+
   _updateQuotes() async {
     var quoteSignStr =
         await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
@@ -98,6 +139,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((callback) {
+      _checkConfirmDexPolicy();
+    });
   }
 
   @override

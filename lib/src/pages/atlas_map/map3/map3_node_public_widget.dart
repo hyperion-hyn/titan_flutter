@@ -1269,7 +1269,7 @@ Widget _billStateWidget(HynTransferHistory item) {
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
-            S.of(Keys.rootKey.currentContext).pending,
+            '进行中',
             style: TextStyle(
                 fontSize: 6,
                 color: HexColor("#FFFFFF"),
