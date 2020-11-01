@@ -39,6 +39,7 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:web3dart/web3dart.dart';
+import '../../../../env.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
@@ -950,7 +951,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var feeRate = lastFeeRate;
     switch (status) {
       case 0: // 未编辑，默认，开启，取上传rate
-        statusDesc = "未设置，过期将默认续约";
+        if (_isDelegator) {
+          if (_isCreator) {
+
+            //var periodEpoch14 = _releaseEpoch - 14 + 1;
+            var periodEpoch7 = _releaseEpoch - 7;
+
+            var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
+
+            if (isOutActionPeriodCreator) {
+              statusDesc =  '创建人的设置期已过，将默认续约';
+            } else {
+              statusDesc = "未设置，过期将默认续约";
+            }
+          } else {
+
+            //var periodEpoch14 = _releaseEpoch - 14 + 1;
+            //var periodEpoch7 = _releaseEpoch - 7 + 1;
+            var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
+
+            if (isOutActionPeriodJoiner) {
+              statusDesc =  '参与人的设置期已过，将默认续约';
+            } else {
+              statusDesc = "未设置，过期将默认续约";
+            }
+          }
+        } else {
+          statusDesc = "未参与抵押，不能设置";
+        }
+
         feeRate = lastFeeRate;
         break;
 
@@ -1001,8 +1030,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         child: Column(
           children: <Widget>[
             Visibility(
-              // visible: showLog,
-              visible: false,
+              visible: showLog,
               child: Text(
                 "当前纪元：$_currentEpoch",
               ),

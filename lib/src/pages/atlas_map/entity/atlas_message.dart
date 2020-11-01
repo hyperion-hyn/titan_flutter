@@ -278,6 +278,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
 
     return false;
@@ -321,6 +322,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
     } catch(e) {
       print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
 
     return false;
@@ -377,6 +379,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
     return false;
   }
@@ -420,6 +423,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
 
     return false;
@@ -461,8 +465,9 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
 
       return txHashEntity.txHash.isNotEmpty;
     } catch (e) {
-      LogUtil.toastException(e);
       print(e);
+      LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
 
     return false;
@@ -505,9 +510,10 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
 
       return [amount, pendingAmount];
     } catch (e) {
-      print("e:$e");
-      // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
+      print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
+      // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 
     return false;
@@ -555,6 +561,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
     } catch (e) {
       print(e);
       LogUtil.toastException(e);
+      LogUtil.uploadException(e);
     }
 
     return false;
