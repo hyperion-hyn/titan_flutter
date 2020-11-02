@@ -49,8 +49,12 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   TextEditingController _rateCoinController = TextEditingController();
 
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
+
+  // get _isEmptyBls =>
+  //     ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+
   get _isEmptyBls =>
-      ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+      ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   Microdelegations _microDelegations;
   final _client = WalletUtil.getWeb3Client(true);

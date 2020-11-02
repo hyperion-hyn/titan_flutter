@@ -961,7 +961,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
 
             if (isOutActionPeriodCreator) {
-              statusDesc =  '创建人的设置期已过，将默认续约';
+              statusDesc =  '设置期已过，将默认续约';
             } else {
               statusDesc = "未设置，过期将默认续约";
             }
@@ -972,7 +972,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
 
             if (isOutActionPeriodJoiner) {
-              statusDesc =  '参与人的设置期已过，将默认续约';
+              statusDesc =  '设置期已过，将默认续约';
             } else {
               statusDesc = "未设置，过期将默认续约";
             }
@@ -1643,8 +1643,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Future _loadMoreData() async {
     try {
       _currentPage++;
+      print("[getMap3StakingLogList]  more, _currentPage:$_currentPage");
 
-      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeId, page: _currentPage);
+      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
         _delegateRecordList.addAll(tempMemberList);
@@ -1666,6 +1667,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Future _loadDetailData() async {
+    _currentPage = 1;
+
     try {
       var requestList = await Future.wait([
         _atlasApi.getMap3Info(_address, _nodeId),
@@ -1680,9 +1683,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+        /*if (_map3infoEntity.blsKey.isEmpty && _map3nodeInformationEntity.map3Node.nodeKeys.isNotEmpty) {
+          _map3infoEntity.blsKey = _map3nodeInformationEntity.map3Node.nodeKeys.first;
+          print("[_map3nodeInformationEntity._map3infoEntity.blsKey] ${_map3infoEntity.blsKey}");
+        }*/
         _setupMicroDelegations();
 
-        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress);
+        print("[_map3nodeInformationEntity.map3.nodeKeys] ${_map3nodeInformationEntity.map3Node.nodeKeys}， _currentPage:$_currentPage");
+
+        print("[getMap3StakingLogList]  refresh, _currentPage:$_currentPage");
+
+        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
         _delegateRecordList = tempMemberList;
       }
 
