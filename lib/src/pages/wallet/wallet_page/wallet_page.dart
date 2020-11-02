@@ -252,7 +252,7 @@ class _WalletPageState extends BaseState<WalletPage>
             child: Container(
               width: 300,
               child: Text(
-                '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
+                S.of(context).please_read_and_agree_wallet_policy,
                 textAlign: TextAlign.center,
                 style: TextStyle(height: 1.8, fontSize: 15),
               ),
