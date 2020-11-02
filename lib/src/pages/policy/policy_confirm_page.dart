@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:titan/config.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
-import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -34,8 +34,6 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
   }
 
   _initTimer() {
-    ///refresh epoch
-    ///
     _timer = Timer.periodic(Duration(seconds: 1), (t) {
       _autoConfirmCount--;
       if (_autoConfirmCount < 0) {
@@ -164,7 +162,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                             ),
                           ),
                     Text(
-                      '我已阅读并同意"用户协议"',
+                      S.of(context).i_hava_read_and_agree_policy,
                       softWrap: true,
                       style: TextStyle(
                         fontSize: 12,
@@ -182,7 +180,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                 ? Padding(
                     padding: const EdgeInsets.only(bottom: 4.0),
                     child: Text(
-                      '还需 $_autoConfirmCount 秒',
+                      S.of(context).still_need_secs(_autoConfirmCount),
                       softWrap: true,
                       style: TextStyle(
                         fontSize: 12,
@@ -198,7 +196,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
             Container(
               width: double.infinity,
               child: ClickOvalButton(
-                '同意并继续',
+                S.of(context).agree_and_continue,
                 () async {
                   await _confirmPolicy();
                 },

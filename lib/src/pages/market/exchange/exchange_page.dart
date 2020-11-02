@@ -100,7 +100,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
           fontSize: 16,
         ),
       ],
-      content: '为了更好地体验Titan去中心化交易所，请您先仔细阅读并同意《海伯利安DEX服务协议》',
+      content: S.of(context).please_read_and_agress_dex_policy,
       barrierDismissible: false,
     );
   }

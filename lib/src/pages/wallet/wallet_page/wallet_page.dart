@@ -350,7 +350,7 @@ class _WalletPageState extends BaseState<WalletPage>
             fontSize: 16,
           ),
         ],
-        content: '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
+        content: S.of(context).please_read_and_agree_wallet_policy,
         barrierDismissible: false,
         isShowCloseIcon: false);
   }
