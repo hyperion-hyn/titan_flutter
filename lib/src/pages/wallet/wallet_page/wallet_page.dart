@@ -80,9 +80,9 @@ class _WalletPageState extends BaseState<WalletPage>
   void initState() {
     super.initState();
     _checkConfirmWalletPolicy();
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      _showAtlasExchangeAlert();
-    });
+//    WidgetsBinding.instance.addPostFrameCallback((callback) {
+//      _showAtlasExchangeAlert();
+//    });
   }
 
   @override
