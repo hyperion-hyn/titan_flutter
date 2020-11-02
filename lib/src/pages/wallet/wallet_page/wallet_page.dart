@@ -60,7 +60,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
   bool _isExchangeAccountAbnormal = false;
 
-  bool _isShowConfirmPolicy = true;
+  bool _isShowConfirmPolicy = false;
 
   @override
   bool get wantKeepAlive => true;

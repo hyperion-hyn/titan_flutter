@@ -162,7 +162,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
                             ),
                           ),
                     Text(
-                      S.of(context).i_hava_read_and_agree_policy,
+                      '${S.of(context).i_hava_read_and_agree_policy}"${S.of(context).user_policy}"',
                       softWrap: true,
                       style: TextStyle(
                         fontSize: 12,
