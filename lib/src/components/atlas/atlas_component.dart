@@ -92,7 +92,7 @@ class _AtlasManagerState extends BaseState<_AtlasManager> {
                 ?.address ??
             '',
       );
-      print('[AtlasComponent] ${_atlasHomeEntity.toJson()}');
+      //print('[AtlasComponent] ${_atlasHomeEntity.toJson()}');
       setState(() {});
     } catch (e) {}
   }
