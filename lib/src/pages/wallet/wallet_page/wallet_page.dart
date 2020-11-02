@@ -29,6 +29,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -96,16 +97,16 @@ class _WalletPageState extends BaseState<WalletPage>
       actions: [
         ClickOvalButton(
           S.of(context).got_it,
-          () {
+          () async {
             Navigator.pop(context);
+            _checkConfirmWalletPolicy();
           },
           width: 160,
           height: 38,
           fontSize: 16,
         ),
       ],
-      content:
-          S.of(context).wallet_show_atlas_alert,
+      content: S.of(context).wallet_show_atlas_alert,
     );
   }
 
@@ -227,6 +228,43 @@ class _WalletPageState extends BaseState<WalletPage>
           ],
         ),
       ),
+    );
+  }
+
+  _checkConfirmWalletPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_WALLET_POLICY,
+    );
+    if (isConfirmWalletPolicy == null || !isConfirmWalletPolicy) {
+      _showConfirmWalletPolicy();
+    }
+  }
+
+  _showConfirmWalletPolicy() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).check,
+          () async {
+            Navigator.pop(context);
+            var result = await Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => PolicyConfirmPage(
+                PolicyType.WALLET,
+              ),
+            ));
+            if (result != true) {
+              _showConfirmWalletPolicy();
+            }
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content: '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
+      barrierDismissible: false,
     );
   }
 

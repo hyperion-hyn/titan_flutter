@@ -8,8 +8,13 @@ import 'package:titan/src/widget/widget_shot.dart';
 class InAppWebViewContainer extends StatefulWidget {
   final String initUrl;
   final String title;
+  final bool isShowAppBar;
 
-  InAppWebViewContainer({this.initUrl, this.title = ''});
+  InAppWebViewContainer({
+    this.initUrl,
+    this.title = '',
+    this.isShowAppBar = true,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -50,28 +55,30 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         return true;
       },
       child: Scaffold(
-        appBar: BaseAppBar(
-          baseTitle: title ?? widget.title,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.share),
-              tooltip: S.of(context).share,
-              onPressed: () {
-                _shareQr(context);
-              },
-            ),
-          ],
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-        ),
+        appBar: widget.isShowAppBar
+            ? BaseAppBar(
+                baseTitle: title ?? widget.title,
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.share),
+                    tooltip: S.of(context).share,
+                    onPressed: () {
+                      _shareQr(context);
+                    },
+                  ),
+                ],
+                leading: Builder(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                ),
+              )
+            : null,
         /*
         appBar: AppBar(
           leading: Builder(
@@ -106,7 +113,11 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
           child: Column(
             children: <Widget>[
               if (isLoading)
-                SizedBox(height: 2, child: progress < 1.0 ? LinearProgressIndicator(value: progress) : Container()),
+                SizedBox(
+                    height: 2,
+                    child: progress < 1.0
+                        ? LinearProgressIndicator(value: progress)
+                        : Container()),
               Expanded(
                 child: _body(),
               ),
@@ -211,7 +222,8 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
         var len = imageByte.lengthInBytes;
         debugPrint("screenshot taken bytes $len");
 
-        await Share.file(S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
+        await Share.file(
+            S.of(context).nav_share_app, 'app.png', imageByte, 'image/png');
       });
     }
   }

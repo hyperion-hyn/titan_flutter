@@ -49,7 +49,6 @@ class Const {
     }
   }
 
-
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -163,6 +162,10 @@ class PrefsKey {
   static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
+
+  ///Policy
+  static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
+  static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 }
 
 class SecurePrefsKey {
