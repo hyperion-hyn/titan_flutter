@@ -143,7 +143,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return null;
   }
 
-  get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending && _isFullDelegate)); // 提取奖励 or 参与抵押
+  get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending && !_isFullDelegate)); // 提取奖励 or 参与抵押
 
   get _isNoWallet => _address?.isEmpty ?? true;
 
