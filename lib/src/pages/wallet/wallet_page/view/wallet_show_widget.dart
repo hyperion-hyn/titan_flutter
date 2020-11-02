@@ -223,7 +223,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             Wrap(
               children: [
                 Text(
-                  '映射已完毕，如果疑问请点击',
+                  S.of(context).atlas_mapping_completed,
                   style: TextStyle(fontSize: 12, color: DefaultColors.color999),
                 ),
                 SizedBox(
@@ -235,7 +235,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                         MaterialPageRoute(builder: (context) => AboutMePage()));
                   },
                   child: Text(
-                    '联系我们',
+                    S.of(context).contact_us,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.blue,

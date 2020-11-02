@@ -62,7 +62,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 0,
         title: Text(
-          '用户协议',
+          S.of(context).user_policy,
           style: TextStyle(
             fontSize: 18,
             color: Colors.black,
