@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
@@ -68,20 +70,24 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
     );
   }
 
-  Widget _item(Map3InfoEntity item, {int index = 0}) {
+  Widget _item(Map3InfoEntity infoEntity, {int index = 0}) {
 
     var width = (MediaQuery.of(context).size.width - 4.0 * 16) / 3.0;
-    var nodeName = item.name;
-    var nodeId = "节点号: ${item.nodeId}";
+    var nodeName = infoEntity.name;
+    var nodeId = "节点号: ${infoEntity.nodeId}";
 
     //print("[object] item.nodeId:${item.nodeId}");
 
+    var status = Map3InfoStatus.values[infoEntity?.status ?? 0];
+    var statusColor = Map3NodeUtil.statusColor(status);
+    var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
+    
     return InkWell(
       onTap: () {
 
         Application.router.navigateTo(
           context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
         );
 
        },
@@ -98,23 +104,45 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
+          alignment: Alignment.center,
           children: <Widget>[
-            iconMap3Widget(item),
-            SizedBox(
-              height: 12,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                iconMap3Widget(infoEntity),
+                SizedBox(
+                  height: 12,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0, right: 5),
+                  child: Text(nodeName,
+                      style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(nodeId, style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 5.0, right: 5),
-              child: Text(nodeName,
-                  style: TextStyle(fontSize: 12, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
-            ),
-            SizedBox(
-              height: 4,
-            ),
-            Text(nodeId, style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B"))),
+            Positioned(
+              right: 12,
+              top: 12,
+              child: Container(
+                width: 8,
+                height: 8,
+                //color: Colors.red,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: statusColor,
+                  border: Border.all(
+                    color: statusBorderColor,
+                    width: 1.0,
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

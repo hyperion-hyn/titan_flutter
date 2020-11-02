@@ -523,6 +523,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           child: LoadDataContainer(
               bloc: _loadDataBloc,
               //enablePullDown: false,
+              enablePullUp: _nodeAddress.isNotEmpty,
               onRefresh: _loadDetailData,
               onLoadingMore: _loadMoreData,
               child: CustomScrollView(

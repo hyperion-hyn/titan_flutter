@@ -294,7 +294,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
           isLoading: _isRunningTimer,
         ),
       ],
-      content: '首次设置需要较长时间，请稍后！',
+      content: '首次设置需要较长时间哟！',
     );
   }
 
