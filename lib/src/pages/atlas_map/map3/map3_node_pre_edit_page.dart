@@ -14,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -53,8 +54,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   // get _isEmptyBls =>
   //     ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
-  get _isEmptyBls =>
-      ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
+  get _isEmptyBls => ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   Microdelegations _microDelegations;
   final _client = WalletUtil.getWeb3Client(true);
@@ -74,20 +74,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   ConfirmEditMap3NodeMessage _editMessage;
+  Map3IntroduceEntity _map3introduceEntity;
 
   int nonce;
 
   @override
   void initState() {
-    _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate()));
 
-    _rateCoinController.text = "$_currentFeeRate";
-
-    print("[Map3NodePreEditPage] info:${widget.map3infoEntity.toJson()}");
-
-    var uploadStatus = '_isJoiner:$_isJoiner, _isEmptyBls:$_isEmptyBls';
-    print(uploadStatus);
-    LogUtil.uploadException("[Map3NodePreEditPage] initState, uploadStatus", uploadStatus);
+    setupData();
 
     if (!_isJoiner) {
       //_rateCoinController.addListener(_rateTextFieldChangeListener);
@@ -100,6 +94,20 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     getMap3Bls();
 
     super.initState();
+  }
+
+  setupData() async {
+    _currentFeeRate = (100 * double.parse(widget.map3infoEntity.getFeeRate()));
+
+    _rateCoinController.text = "$_currentFeeRate";
+
+    print("[Map3NodePreEditPage] info:${widget.map3infoEntity.toJson()}");
+
+    var uploadStatus = '_isJoiner:$_isJoiner, _isEmptyBls:$_isEmptyBls';
+    print(uploadStatus);
+    LogUtil.uploadException("[Map3NodePreEditPage] initState, uploadStatus", uploadStatus);
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
   }
 
   getMap3Bls() async {
@@ -160,7 +168,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   _updateRate() {
     var staking = getStaking();
-    var createMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? '550000');
+    var createMin = double.parse(_map3introduceEntity?.startMin ?? '550000');
     var rate = (100 * (staking / createMin)).toDouble();
 
     if (rate >= 20) {
@@ -371,7 +379,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _tipsWidget() {
-    var amount = " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
+    var amount = " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
         S.of(context).ten_thousand;
     var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 

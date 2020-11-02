@@ -1052,7 +1052,7 @@
   "dex_fix_account_contact_us": "如有疑问，请联系客服",
   "duplicate_identity_hint": "节点号已被占用，请修改!",
   "my_nodes": "我的节点",
-  "lastest_launched_nodes": "最新启动的节点",
+  "lastest_launched_nodes": "最新节点",
   "check_after_has_wallet": "请创建或导入钱包后查看",
   "my_nodes_empty": "没有我的节点，您可以创建节点",
   "no_lastest_active_nodes": "没有最新启动的节点，您可以创建节点",

@@ -18,6 +18,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
@@ -80,12 +81,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   NodeProviderEntity _selectProviderEntity;
   Regions _selectedRegion;
   var _haveShowedAlertView = false;
+  Map3IntroduceEntity _map3introduceEntity;
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
   get _notifyMessage {
-    var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
+    var startMin = double.parse(_map3introduceEntity?.startMin ?? "0"); //最小启动所需
     var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
     var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     switch (_map3Status) {
@@ -140,8 +142,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     return null;
   }
-  
-  get _visibleBottomBar => ((_isRunning && _isDelegator) || _isPending); // 提取奖励 or 参与抵押
+
+  get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending && _isFullDelegate)); // 提取奖励 or 参与抵押
 
   get _isNoWallet => _address?.isEmpty ?? true;
 
@@ -152,7 +154,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
   get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-  get _pendingUnlockEpoch => double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
+  get _pendingUnlockEpoch =>
+      double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
   /*
   tips:
@@ -163,7 +166,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
-
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -252,6 +254,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return value;
   }
 
+  //最小启动所需
+  get startMin => double.tryParse(_map3introduceEntity?.startMin ?? "0") ?? 0;
+
+  //当前抵押量
+  get staking => double.tryParse(_map3infoEntity?.getStaking() ?? "0") ?? 0;
+
+  get _isFullDelegate => (startMin > 0) && (staking > 0) && (staking >= startMin);
+
   get _currentStepProgress {
     if (_map3Status == null) return 0.0;
 
@@ -259,12 +269,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0"); //最小启动所需
-        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
-        var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
         var left = staking / startMin;
 
-        if (isFull) {
+        if (_isFullDelegate) {
           value = 0.95;
         } else {
           if (left <= 0.1) {
@@ -361,12 +368,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-        var startMin = double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
-        var staking = double.parse(_map3infoEntity?.getStaking() ?? "0");
-        var remain = startMin - staking;
-        if (remain <= 0) {
+
+        if (_isFullDelegate) {
           _map3StatusDesc = "抵押已满，准备启动";
         } else {
+          var remain = startMin - staking;
           var remainDelegation = FormatUtil.formatPrice(remain);
           _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
         }
@@ -388,13 +394,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   // double _moreOffsetTop = 76;
   //double _moreSizeWidth = 100;
 
-
   @override
   void initState() {
     //WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
 
     _setupData();
-    
+
     super.initState();
   }
 
@@ -405,7 +410,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     _loadDetailData();
   }
 
-  _setupData() {
+  _setupData() async {
     _map3infoEntity = widget.map3infoEntity;
 
     _nodeId = _map3infoEntity?.nodeId ?? "";
@@ -414,6 +419,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
   }
 
   _showEditPreNextAlert() {
@@ -460,7 +467,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   //  left: 246,
   //  top: 76,
   */
-  
+
   @override
   void dispose() {
     LogUtil.printMessage("[detail] dispose");
@@ -955,25 +962,23 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       case 0: // 未编辑，默认，开启，取上传rate
         if (_isDelegator) {
           if (_isCreator) {
-
             //var periodEpoch14 = _releaseEpoch - 14 + 1;
             var periodEpoch7 = _releaseEpoch - 7;
 
             var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
 
             if (isOutActionPeriodCreator) {
-              statusDesc =  '设置期已过，将默认续约';
+              statusDesc = '设置期已过，将默认续约';
             } else {
               statusDesc = "未设置，过期将默认续约";
             }
           } else {
-
             //var periodEpoch14 = _releaseEpoch - 14 + 1;
             //var periodEpoch7 = _releaseEpoch - 7 + 1;
             var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
 
             if (isOutActionPeriodJoiner) {
-              statusDesc =  '设置期已过，将默认续约';
+              statusDesc = '设置期已过，将默认续约';
             } else {
               statusDesc = "未设置，过期将默认续约";
             }
@@ -1578,7 +1583,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     ];
     var progressHints = [
       "",
-      "${AtlasApi.map3introduceEntity?.days}纪元",
+      "${_map3introduceEntity?.days}纪元",
       "",
     ];
 
@@ -1690,11 +1695,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         }*/
         _setupMicroDelegations();
 
-        print("[_map3nodeInformationEntity.map3.nodeKeys] ${_map3nodeInformationEntity.map3Node.nodeKeys}， _currentPage:$_currentPage");
+        print(
+            "[_map3nodeInformationEntity.map3.nodeKeys] ${_map3nodeInformationEntity.map3Node.nodeKeys}， _currentPage:$_currentPage");
 
         print("[getMap3StakingLogList]  refresh, _currentPage:$_currentPage");
 
-        List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
+        List<HynTransferHistory> tempMemberList =
+            await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
         _delegateRecordList = tempMemberList;
       }
 
@@ -1891,18 +1898,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     if (_microDelegationsCreator != null) {
-      var uploadMicroCreator = 'currentEpoch:$_currentEpoch, _microDelegationsCreator:${_microDelegationsCreator.renewal.toJson()}';
+      var uploadMicroCreator =
+          'currentEpoch:$_currentEpoch, _microDelegationsCreator:${_microDelegationsCreator.renewal.toJson()}';
       print(uploadMicroCreator);
       LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroCreator", uploadMicroCreator);
-
     }
 
     if (_microDelegationsJoiner != null) {
-      var uploadMicroJoiner = 'currentEpoch:$_currentEpoch, _microDelegationsJoiner:${_microDelegationsJoiner.renewal.toJson()}';
+      var uploadMicroJoiner =
+          'currentEpoch:$_currentEpoch, _microDelegationsJoiner:${_microDelegationsJoiner.renewal.toJson()}';
       print(uploadMicroJoiner);
       LogUtil.uploadException("[Map3NodeDetail] _preNextAction, uploadMicroJoiner", uploadMicroJoiner);
     }
-
 
     if (_map3infoEntity != null) {
       var entryRouteName = Uri.encodeComponent(Routes.map3node_contract_detail_page);

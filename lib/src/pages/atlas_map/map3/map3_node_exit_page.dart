@@ -158,7 +158,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
         appBar: BaseAppBar(
-          baseTitle: S.of(context).detailed_introduction,
+          baseTitle: S.of(context).terminate_node,
         ),
         body: AllPageStateContainer(_currentState, () {
           setState(() {

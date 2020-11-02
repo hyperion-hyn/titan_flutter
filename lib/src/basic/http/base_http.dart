@@ -179,8 +179,13 @@ class BaseHttpCore {
     if (packageInfo == null) {
       packageInfo = await PackageInfo.fromPlatform();
     }
+
+    var version  = packageInfo?.version ?? "";
+    var buildNumber  = packageInfo?.buildNumber ?? "";
+    print("[base_http] header, version:$version, buildNumber:$buildNumber");
+
     options.headers["versionCode"] =
-        packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
+        version  + "+" + buildNumber;
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
     options.headers["walletAddress"] = Keys.rootKey.currentContext != null
         ? WalletInheritedModel.of(Keys.rootKey.currentContext)

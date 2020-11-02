@@ -5,15 +5,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
@@ -49,10 +47,14 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     S.of(Keys.rootKey.currentContext).please_enter_node_description
   ];
 
+  Map3IntroduceEntity _map3introduceEntity;
+
   @override
   void initState() {
     _setupData();
+
     _setupPayload();
+
     super.initState();
   }
 
@@ -72,13 +74,13 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     //print("[dd1] payload.toJson():${payload.toJson()}");
 
     var blsKeySignEntity = await AtlasApi().getMap3Bls();
-    payload.blsRemoveKey = widget?.entity?.blsKey ;
+    payload.blsRemoveKey = widget?.entity?.blsKey;
     payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
     payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
     print("[dd2] payload.toJson():${payload.toJson()}");
   }
 
-  _setupData() {
+  _setupData() async {
     var entity = widget.entity;
 
     if (entity.name?.isNotEmpty ?? false) {
@@ -100,6 +102,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     if (entity.describe?.isNotEmpty ?? false) {
       _detailList[4] = entity.describe;
     }
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
   }
 
   @override
@@ -168,8 +172,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Expanded(
-                          child: Text("${AtlasApi.map3introduceEntity.name}",
-                              style: TextStyle(fontWeight: FontWeight.bold))),
+                          child: Text("${_map3introduceEntity.name}", style: TextStyle(fontWeight: FontWeight.bold))),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
@@ -189,7 +192,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                       children: <Widget>[
                         Text(
                             S.of(context).active_still_need +
-                                " ${FormatUtil.formatTenThousandNoUnit(AtlasApi.map3introduceEntity?.startMin?.toString() ?? "0")}" +
+                                " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
                                 S.of(context).ten_thousand,
                             style: TextStyles.textC99000000S13,
                             maxLines: 1,
@@ -203,7 +206,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                           child:
                               Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                         ),
-                        Text(S.of(context).n_day(AtlasApi.map3introduceEntity.days), style: TextStyles.textC99000000S13)
+                        Text(S.of(context).n_day(_map3introduceEntity.days), style: TextStyles.textC99000000S13)
                       ],
                     ),
                   ),

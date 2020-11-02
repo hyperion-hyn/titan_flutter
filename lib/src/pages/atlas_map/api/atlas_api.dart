@@ -37,6 +37,7 @@ import '../../../../config.dart';
 class AtlasApi {
   static Map3IntroduceEntity map3introduceEntity;
 
+
   Future<List<HynTransferHistory>> queryHYNHistory(
       String address, int page) async {
     Map result = await AtlasHttpCore.instance.post(

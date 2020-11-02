@@ -1056,7 +1056,7 @@
   "dex_fix_account_contact_us": "Contact our staff if you have any questions",
   "duplicate_identity_hint": "Node number is taken please choose another one",
   "my_nodes": "My node",
-  "lastest_launched_nodes": "Latest initiated Map3 node",
+  "lastest_launched_nodes": "Latest Map3 node",
   "check_after_has_wallet": "Please create or import a wallet to continue",
   "my_nodes_empty": "No node is found you can create your own",
   "no_lastest_active_nodes": " No latest initiated node is found you can create your own ",

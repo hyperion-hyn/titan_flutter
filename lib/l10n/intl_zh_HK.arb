@@ -1043,7 +1043,7 @@
   "dex_fix_account_contact_us": "如有疑問，請聯繫客服",
   "duplicate_identity_hint": "節點號已被占用，請修改!",
   "my_nodes": "我的節點",
-  "lastest_launched_nodes": "最新啟動的節點",
+  "lastest_launched_nodes": "最新節點",
   "check_after_has_wallet": "請創建或導入錢包後查看",
   "my_nodes_empty": "沒有我的節點，您可以創建節點",
   "no_lastest_active_nodes": "沒有最新啟動的節點，您可以創建節點",

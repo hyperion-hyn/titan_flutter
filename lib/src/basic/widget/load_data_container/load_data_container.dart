@@ -65,7 +65,9 @@ class LoadDataContainerState extends State<LoadDataContainer> {
         }
         if (state is LoadingState) {
           print('LoadDataContainer LoadingState ===');
-          widget.onLoadData();
+          if (widget.onLoadData != null) {
+            widget.onLoadData();
+          }
         }
 
         return Stack(

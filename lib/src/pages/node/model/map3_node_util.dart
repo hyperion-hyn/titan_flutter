@@ -148,14 +148,18 @@ class Map3NodeUtil {
   */
 
   static HexColor statusColor(Map3InfoStatus state) {
-    if (state == null) return HexColor('#1FB9C7');
+    if (state == null) return HexColor('#999999');
 
-    var _map3StatusColor = HexColor("#1FB9C7");
+    var _map3StatusColor = HexColor("#999999");
     switch (state) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#1F81FF");
+        break;
+
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
         _map3StatusColor = HexColor("#1FB9C7");
         break;
 
@@ -169,7 +173,7 @@ class Map3NodeUtil {
         break;
 
       default:
-        _map3StatusColor = HexColor("#1FB9C7");
+        _map3StatusColor = HexColor("#999999");
         break;
     }
 
@@ -177,14 +181,19 @@ class Map3NodeUtil {
   }
 
   static HexColor statusBorderColor(Map3InfoStatus state) {
-    if (state == null) return HexColor('#CBF6FF');
+    if (state == null) return HexColor('#F2F2F2');
 
-    var _map3StatusColor = HexColor("#CBF6FF");
+    var _map3StatusColor = HexColor("#F2F2F2");
     switch (state) {
       case Map3InfoStatus.MAP:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        _map3StatusColor = HexColor("#CEE3FF");
+        break;
+
+
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
         _map3StatusColor = HexColor("#CBF6FF");
         break;
 
@@ -198,7 +207,7 @@ class Map3NodeUtil {
         break;
 
       default:
-        _map3StatusColor = HexColor("#CBF6FF");
+        _map3StatusColor = HexColor("#F2F2F2");
         break;
     }
 
