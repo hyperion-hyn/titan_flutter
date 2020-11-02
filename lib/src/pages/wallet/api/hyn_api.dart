@@ -260,8 +260,9 @@ class HYNApi {
       nodeKeyToRemove: payload.blsRemoveKey,
       nodeKeyToAdd: payload.blsAddKey,
       nodeKeyToAddSig: payload.blsAddSign,
+      isEditBLS: payload.editType == 2,
     );
-    print(message);
+    print("[hyn_api] --> payload:${payload.toJson()}");
 
     return signTransferHYN(
       password,

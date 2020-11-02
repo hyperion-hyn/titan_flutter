@@ -146,8 +146,8 @@ class CreateMap3Payload extends Object {
   @JsonKey(name: 'staking')
   String staking;
 
-  @JsonKey(name: 'is_edit')
-  bool isEdit = false;
+  @JsonKey(name: 'edit_type')
+  int editType = 0; // 0: 啥也不修改，1：普通的节点信息修改，2：修改BLS
 
   // 为掘金用户准备
   @JsonKey(name: 'latlng')
@@ -183,7 +183,7 @@ class CreateMap3Payload extends Object {
     this.region,
     this.regionName,
     this.staking,
-    this.isEdit,
+    this.editType,
     this.latLng,
     this.userEmail,
     this.userName,
@@ -191,7 +191,7 @@ class CreateMap3Payload extends Object {
     this.userPic,
   );
   CreateMap3Payload.onlyNodeId(this.nodeId);
-  CreateMap3Payload.onlyIsEdit(this.isEdit);
+  CreateMap3Payload.onlyEditType(this.editType);
 
   factory CreateMap3Payload.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3PayloadFromJson(srcJson);
 

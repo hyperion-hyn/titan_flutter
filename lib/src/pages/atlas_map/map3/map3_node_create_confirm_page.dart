@@ -114,9 +114,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: widget.payload.isEdit
-            ? S.of(context).confirm_edit_node
-            : S.of(context).confirm_create_node,
+        baseTitle: S.of(context).confirm_create_node,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -153,7 +151,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           children: <Widget>[
             Text(
               S.of(context).you_will_do_map3(
-                  '${widget.payload.isEdit ? S.of(context).edit : S.of(context).create}'),
+                  '${S.of(context).create}'),
               style: TextStyle(
                 color: HexColor("#333333"),
                 fontSize: 16,
@@ -239,19 +237,11 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;
-          if (!widget.payload.isEdit) {
-            CreateMap3Entity map3entity =
-                CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
-            map3entity.payload = widget.payload;
-            map3entity.amount = widget.payload.staking;
-            message = ConfirmCreateMap3NodeMessage(entity: map3entity);
-          } else {
-            CreateMap3Entity map3entity =
-                CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
-            map3entity.payload = widget.payload;
-            message = ConfirmEditMap3NodeMessage(
-                entity: map3entity, map3NodeAddress: "");
-          }
+          CreateMap3Entity map3entity =
+          CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+          map3entity.payload = widget.payload;
+          map3entity.amount = widget.payload.staking;
+          message = ConfirmCreateMap3NodeMessage(entity: map3entity);
 
           await Navigator.push(
               context,

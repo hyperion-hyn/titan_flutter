@@ -59,7 +59,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   _setupPayload() async {
     print("[dd0] payload.toJson():${widget.entity.toJson()}");
 
-    var payload = CreateMap3Payload.onlyIsEdit(true);
+    var payload = CreateMap3Payload.onlyEditType(1);
     _payload = payload;
 
     // payload.name = widget.entity.name;

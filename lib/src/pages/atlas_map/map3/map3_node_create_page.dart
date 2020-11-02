@@ -592,7 +592,6 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       _payload.userEmail = "";
       _payload.userPic = "";
     }
-    _payload.isEdit = false;
     var payloadJson = _payload.toJson();
     print("payloadJson: $payloadJson");
     var encodeEntity = FluroConvertUtils.object2string(payloadJson);
