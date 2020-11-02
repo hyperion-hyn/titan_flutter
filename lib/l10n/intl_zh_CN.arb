@@ -1215,5 +1215,13 @@
   "please_input_valid_data": "请正确的输入数据",
   "take_picture": "拍照",
   "you": "你",
-  "creator": "创建者"
+  "creator": "创建者",
+  "please_read_and_agree_wallet_policy": "为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》",
+  "please_read_and_agress_dex_policy": "为了更好地体验Titan去中心化交易所，请您先仔细阅读并同意《海伯利安DEX服务协议》",
+  "agree_and_continue": "同意并继续",
+  "i_hava_read_and_agree_policy": "我已阅读并同意",
+  "still_need_secs": "还需 {count} 秒",
+  "user_policy": "用户协议",
+  "contact_us": "联系我们",
+  "atlas_mapping_completed": "主网映射已完成，如有疑问请"
 }

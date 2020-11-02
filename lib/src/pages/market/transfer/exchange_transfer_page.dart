@@ -374,10 +374,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: _fromExchangeToWallet ? 170 : 220,
+            height: _fromExchangeToWallet ? 170 : 170,
             child: Column(
               children: <Widget>[
-                if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
+                //if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
                 _coinItem('HYN'),
 //                _coinItem('ETH'),
                 _coinItem('USDT'),
