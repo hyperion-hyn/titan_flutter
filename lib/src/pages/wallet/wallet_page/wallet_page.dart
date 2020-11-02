@@ -60,6 +60,8 @@ class _WalletPageState extends BaseState<WalletPage>
 
   bool _isExchangeAccountAbnormal = false;
 
+  bool _isShowConfirmPolicy = true;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -77,6 +79,7 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   void initState() {
     super.initState();
+    _checkConfirmWalletPolicy();
     WidgetsBinding.instance.addPostFrameCallback((callback) {
       _showAtlasExchangeAlert();
     });
@@ -213,21 +216,106 @@ class _WalletPageState extends BaseState<WalletPage>
       body: Container(
         color: Colors.white,
         width: double.infinity,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 16,
-            ),
-            _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
-            Expanded(
-              child: _buildWalletView(context),
-            ),
-            //hyn quotes view
-            // hynQuotesView(),
-            //_authorizedView(),
-          ],
-        ),
+        child: _content(),
       ),
+    );
+  }
+
+  _content() {
+    if (_isShowConfirmPolicy) {
+      return _confirmPolicyView();
+    } else {
+      return _walletView();
+    }
+  }
+
+  _confirmPolicyView() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 32,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/safe_lock.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Container(
+              width: 300,
+              child: Text(
+                '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
+                textAlign: TextAlign.center,
+                style: TextStyle(height: 1.8, fontSize: 15),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 32,
+          ),
+          Container(
+            width: 280,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: () async {
+                var result = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => PolicyConfirmPage(
+                    PolicyType.WALLET,
+                  ),
+                ));
+                _checkConfirmWalletPolicy();
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '查看',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _walletView() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 16,
+        ),
+        _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
+        Expanded(
+          child: _buildWalletView(context),
+        ),
+        //hyn quotes view
+        // hynQuotesView(),
+        //_authorizedView(),
+      ],
     );
   }
 
@@ -235,37 +323,36 @@ class _WalletPageState extends BaseState<WalletPage>
     var isConfirmWalletPolicy = await AppCache.getValue(
       PrefsKey.IS_CONFIRM_WALLET_POLICY,
     );
-    if (isConfirmWalletPolicy == null || !isConfirmWalletPolicy) {
-      _showConfirmWalletPolicy();
-    }
+    _isShowConfirmPolicy =
+        isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
+    setState(() {});
   }
 
   _showConfirmWalletPolicy() {
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).important_hint,
-      actions: [
-        ClickOvalButton(
-          S.of(context).check,
-          () async {
-            Navigator.pop(context);
-            var result = await Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => PolicyConfirmPage(
-                PolicyType.WALLET,
-              ),
-            ));
-            if (result != true) {
-              _showConfirmWalletPolicy();
-            }
-          },
-          width: 160,
-          height: 38,
-          fontSize: 16,
-        ),
-      ],
-      content: '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
-      barrierDismissible: false,
-    );
+    UiUtil.showAlertView(context,
+        title: S.of(context).important_hint,
+        actions: [
+          ClickOvalButton(
+            S.of(context).check,
+            () async {
+              Navigator.pop(context);
+              var result = await Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => PolicyConfirmPage(
+                  PolicyType.WALLET,
+                ),
+              ));
+              if (result != true) {
+                _showConfirmWalletPolicy();
+              }
+            },
+            width: 160,
+            height: 38,
+            fontSize: 16,
+          ),
+        ],
+        content: '为了更好地体验Titan去中心化钱包，请您先仔细阅读并同意《海伯利安钱包服务协议》',
+        barrierDismissible: false,
+        isShowCloseIcon: false);
   }
 
   _abnormalAccountBanner() {

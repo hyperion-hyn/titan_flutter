@@ -80,15 +80,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
     _setupMarketItemList();
   }
 
-  _checkConfirmDexPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_DEX_POLICY,
-    );
-    if (isConfirmWalletPolicy == null || !isConfirmWalletPolicy) {
-      _showConfirmDexPolicy();
-    }
-  }
-
   _showConfirmDexPolicy() {
     UiUtil.showAlertView(
       context,
@@ -98,14 +89,11 @@ class _ExchangePageState extends BaseState<ExchangePage>
           S.of(context).check,
           () async {
             Navigator.pop(context);
-            var result = await Navigator.of(context).push(MaterialPageRoute(
+            Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => PolicyConfirmPage(
                 PolicyType.DEX,
               ),
             ));
-            if (result != true) {
-              _showConfirmDexPolicy();
-            }
           },
           width: 160,
           height: 38,
@@ -114,7 +102,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
       ],
       content: '为了更好地体验Titan去中心化交易所，请您先仔细阅读并同意《海伯利安DEX服务协议》',
       barrierDismissible: false,
-      isShowCloseIcon: false,
     );
   }
 
@@ -139,10 +126,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      _checkConfirmDexPolicy();
-    });
   }
 
   @override
@@ -292,13 +275,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
               Spacer(),
               ClickOvalIconButton(
                 S.of(context).exchange_trade,
-                () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ExchangeDetailPage(
-                              selectedCoin: _selectedCoin,
-                              exchangeType: _exchangeType)));
+                () async {
+                  if (await _checkShowConfirmPolicy()) {
+                    _showConfirmDexPolicy();
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExchangeDetailPage(
+                                selectedCoin: _selectedCoin,
+                                exchangeType: _exchangeType)));
+                  }
                 },
                 width: 88,
                 height: 38,
@@ -376,17 +363,21 @@ class _ExchangePageState extends BaseState<ExchangePage>
         ?.sign
         ?.quote;
     return InkWell(
-      onTap: () {
-        if (ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .hasActiveAccount()) {
-          Application.router.navigateTo(
-              context,
-              Routes.exchange_assets_page +
-                  '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+      onTap: () async {
+        if (await _checkShowConfirmPolicy()) {
+          _showConfirmDexPolicy();
         } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          if (ExchangeInheritedModel.of(context)
+              .exchangeModel
+              .hasActiveAccount()) {
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          }
         }
       },
       child: Container(
@@ -446,6 +437,13 @@ class _ExchangePageState extends BaseState<ExchangePage>
         ),
       ),
     );
+  }
+
+  Future<bool> _checkShowConfirmPolicy() async {
+    var isConfirmDexPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_DEX_POLICY,
+    );
+    return isConfirmDexPolicy == null || !isConfirmDexPolicy;
   }
 
   _assetView() {
@@ -716,22 +714,25 @@ class _ExchangePageState extends BaseState<ExchangePage>
       children: <Widget>[
         InkWell(
             onTap: () async {
-              var prefs = await SharedPreferences.getInstance();
-              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
-              var periodCurrentIndex = 0;
-              if (index != null && index < 4) {
-                periodCurrentIndex = index;
+              if (await _checkShowConfirmPolicy()) {
+                _showConfirmDexPolicy();
+              } else {
+                var prefs = await SharedPreferences.getInstance();
+                int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+                var periodCurrentIndex = 0;
+                if (index != null && index < 4) {
+                  periodCurrentIndex = index;
+                }
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => KLineDetailPage(
+                              symbol: marketItemEntity.symbol,
+                              symbolName: marketItemEntity.symbolName,
+                              isPop: false,
+                              periodCurrentIndex: periodCurrentIndex,
+                            )));
               }
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => KLineDetailPage(
-                            symbol: marketItemEntity.symbol,
-                            symbolName: marketItemEntity.symbolName,
-                            isPop: false,
-                            periodCurrentIndex: periodCurrentIndex,
-                          )));
             },
             child: Padding(
               padding:
