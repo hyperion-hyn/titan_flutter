@@ -142,6 +142,17 @@ class _ApiDemoState extends State {
             },
             child: Text('清除当前交易账户登录记录'),
           ),
+          RaisedButton(
+            onPressed: () async {
+              await AppCache.remove(
+                PrefsKey.IS_CONFIRM_WALLET_POLICY,
+              );
+              await AppCache.remove(
+                PrefsKey.IS_CONFIRM_DEX_POLICY,
+              );
+            },
+            child: Text('清除用户协议确认记录'),
+          ),
           /*
           RaisedButton(
             child: Text('-测试申请0.05ETH'),
@@ -282,4 +293,3 @@ class _ApiDemoState extends State {
     );
   }
 }
-

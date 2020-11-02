@@ -13,6 +13,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/wallet_page/view/wallet_empty_widget.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -92,11 +93,21 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
           ),
           actions: <Widget>[
             InkWell(
-              onTap: () {
-                var currentRouteName =
-                    RouteUtil.encodeRouteNameWithoutParams(context);
-                Application.router.navigateTo(context,
-                    Routes.wallet_import + '?entryRouteName=$currentRouteName');
+              onTap: () async {
+                if (await _checkConfirmWalletPolicy()) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => PolicyConfirmPage(
+                      PolicyType.WALLET,
+                    ),
+                  ));
+                } else {
+                  var currentRouteName =
+                      RouteUtil.encodeRouteNameWithoutParams(context);
+                  Application.router.navigateTo(
+                      context,
+                      Routes.wallet_import +
+                          '?entryRouteName=$currentRouteName');
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -110,11 +121,21 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
               width: 4.0,
             ),
             InkWell(
-              onTap: () {
-                var currentRouteName =
-                    RouteUtil.encodeRouteNameWithoutParams(context);
-                Application.router.navigateTo(context,
-                    Routes.wallet_create + '?entryRouteName=$currentRouteName');
+              onTap: () async {
+                if (await _checkConfirmWalletPolicy()) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) => PolicyConfirmPage(
+                      PolicyType.WALLET,
+                    ),
+                  ));
+                } else {
+                  var currentRouteName =
+                      RouteUtil.encodeRouteNameWithoutParams(context);
+                  Application.router.navigateTo(
+                      context,
+                      Routes.wallet_create +
+                          '?entryRouteName=$currentRouteName');
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -290,5 +311,12 @@ class _WalletManagerState extends BaseState<WalletManagerPage> with RouteAware {
         ],
       ),
     );
+  }
+
+  Future<bool> _checkConfirmWalletPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_WALLET_POLICY,
+    );
+    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
   }
 }
