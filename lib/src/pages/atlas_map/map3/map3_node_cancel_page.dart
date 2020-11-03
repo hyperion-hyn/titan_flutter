@@ -348,6 +348,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                             return S.of(context).over_node_total_staking;
                                           }
 
+                                          /*
                                           if (_map3infoEntity.isCreator() &&
                                               _myStakingAmount() -
                                                       Decimal.parse(textStr) <
@@ -356,6 +357,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           } else {
                                             return null;
                                           }
+                                          */
+                                          return null;
                                         },
                                       ),
                                     ),
@@ -437,7 +440,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 height: 9,
               ),
               Text(
-                S.of(context).unlock_remain_epoch('${(_remainEpoch() + Decimal.fromInt(1)).toString()}'),
+                S.of(context).unlock_remain_epoch('${(_remainEpoch().toInt()).toString()}'),
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
