@@ -1227,5 +1227,5 @@
   "still_need_secs": "还需 {count} 秒",
   "user_policy": "用户协议",
   "contact_us": "联系我们",
-  "atlas_mapping_completed": "主网映射已完成，如有疑问请"
+  "atlas_mapping_completed": "主网映射已结束，如有疑问请"
 }
