@@ -529,7 +529,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
-      subSymbol = 'Atlas';
+      subSymbol = '';
     } else if (coin.coinType == CoinType.ETHEREUM) {
       var symbolComponents = symbol.split(" ");
       if (symbolComponents.length == 2) {

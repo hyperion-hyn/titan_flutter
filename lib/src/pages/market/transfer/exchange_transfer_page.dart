@@ -355,7 +355,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _getCoinNameBySymbol(String symbol) {
     if (symbol == SupportedTokens.HYN_Atlas.symbol) {
-      return 'HYN (ATLAS)';
+      return 'HYN';
     } else if (symbol == SupportedTokens.HYN_ERC20.symbol) {
       return 'HYN (ERC-20)(${S.of(context).mapping})';
     } else if (symbol == 'USDT') {
