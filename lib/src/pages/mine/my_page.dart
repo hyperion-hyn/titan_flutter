@@ -8,6 +8,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
@@ -146,6 +147,16 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
+                  _buildMenuBar(
+                      "用户协议",
+                      Icons.report_problem,
+                          () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (BuildContext context) => PolicyConfirmPage(
+                                PolicyType.WALLET,
+                              ),
+                            ));
+                          }),
                   if ([
                     '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
                     '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
