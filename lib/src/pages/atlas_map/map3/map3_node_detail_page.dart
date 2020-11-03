@@ -166,6 +166,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -1049,24 +1050,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
-                Visibility(
-                  visible: _canEditNextPeriod,
-                  child: SizedBox(
-                    height: 30,
-                    child: InkWell(
-                      onTap: _preNextAction,
-                      child: Visibility(
-                        visible: _canEditNextPeriod,
-                        child: Center(
-                            child: Text(
-                          "设置",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
-                          ),
-                        )),
+                SizedBox(
+                  height: 30,
+                  child: InkWell(
+                    onTap: _preNextAction,
+                    child: Center(
+                        child: Text(
+                      "设置",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: !_canEditNextPeriod ? HexColor("#999999") : HexColor("#1F81FF"),
                       ),
-                    ),
+                    )),
                   ),
                 ),
               ],

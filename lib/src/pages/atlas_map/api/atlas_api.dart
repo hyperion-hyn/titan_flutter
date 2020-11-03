@@ -35,7 +35,6 @@ import 'package:titan/src/utils/log_util.dart';
 import '../../../../config.dart';
 
 class AtlasApi {
-  static Map3IntroduceEntity map3introduceEntity;
 
 
   Future<List<HynTransferHistory>> queryHYNHistory(
@@ -72,13 +71,14 @@ class AtlasApi {
     }
   }
 
+  static Map3IntroduceEntity _map3introduceEntity;
   static Future<Map3IntroduceEntity> getIntroduceEntity() async {
-    if (map3introduceEntity != null) {
-      return map3introduceEntity;
+    if (_map3introduceEntity != null) {
+      return _map3introduceEntity;
     } else {
       var atlasApi = AtlasApi();
-      map3introduceEntity = await atlasApi._getMap3Introduce();
-      return map3introduceEntity;
+      _map3introduceEntity = await atlasApi._getMap3Introduce();
+      return _map3introduceEntity;
     }
   }
 

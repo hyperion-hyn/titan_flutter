@@ -65,6 +65,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   String _originInputStr = "";
   double _currentFeeRate = 20;
   double _maxFeeRate = 100;
+  double _minFeeRate = 0;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -384,30 +385,33 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             map3introduceEntity: _introduceEntity,
           ),
           divider,
-          managerSpendWidget(context, _rateCoinController, reduceFunc: () {
-            setState(() {
-              _currentFeeRate--;
+          managerSpendWidget(
+            context,
+            _rateCoinController,
+            reduceFunc: () {
+              setState(() {
+                _currentFeeRate--;
 
-              if (_currentFeeRate <= 0) {
-                _currentFeeRate = 0;
-                // Fluttertoast.showToast(
-                //     msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
-              }
+                if (_currentFeeRate <= _minFeeRate) {
+                  _currentFeeRate = _minFeeRate;
+                }
 
-              _rateCoinController.text = "$_currentFeeRate";
-            });
-          }, addFunc: () {
-            setState(() {
-              _currentFeeRate++;
-              if (_currentFeeRate >= _maxFeeRate) {
-                _currentFeeRate = _maxFeeRate;
-                // Fluttertoast.showToast(
-                //     msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
-              }
+                _rateCoinController.text = "$_currentFeeRate";
+              });
+            },
+            addFunc: () {
+              setState(() {
+                _currentFeeRate++;
+                if (_currentFeeRate >= _maxFeeRate) {
+                  _currentFeeRate = _maxFeeRate;
+                }
 
-              _rateCoinController.text = "$_currentFeeRate";
-            });
-          }, maxFeeRate: _maxFeeRate),
+                _rateCoinController.text = "$_currentFeeRate";
+              });
+            },
+            maxFeeRate: _maxFeeRate,
+            minFeeRate: _minFeeRate,
+          ),
           divider,
         ]),
       ),
@@ -521,8 +525,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     }
 
     var feeRate = _inputFeeRateValue;
-    if (feeRate < 10 || feeRate > _maxFeeRate) {
-      Fluttertoast.showToast(msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
+    if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
+      Fluttertoast.showToast(msg: S.of(context).manage_fee_range('${_minFeeRate.toInt()}', '${_maxFeeRate.toInt()}'));
       return;
     }
 
@@ -593,7 +597,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _blsKeySignEntity = requestList[2];
       _reCreateList = requestList[3];
 
-      _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "20");
+      _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "100");
+      _minFeeRate = 100 * double.parse(_introduceEntity?.feeMin ?? "0");
       selectNodeProvider(0, 0);
 
       if (mounted) {
