@@ -5,6 +5,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -22,8 +23,20 @@ class Map3NodeBroadcastSuccessPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeBroadcastSuccessState
-    extends State<Map3NodeBroadcastSuccessPage> {
+class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage> {
+  Map3IntroduceEntity _map3introduceEntity;
+
+  @override
+  void initState() {
+    setupData();
+
+    super.initState();
+  }
+
+  setupData() async {
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+  }
+
   @override
   Widget build(BuildContext context) {
     String action = "";
@@ -32,21 +45,17 @@ class _Map3NodeBroadcastSuccessState
       case Map3NodeActionEvent.MAP3_CREATE:
         action = S.of(context).action_create_map3;
 
-        var startMin =
-            double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var startMin = double.parse(_map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(widget.infoEntity.staking);
         var remain = startMin - staking;
         if (remain < 0) {
           remain = 0;
         }
-        detail = S
-            .of(context)
-            .detail_share_map3('${FormatUtil.formatPrice(remain)}');
+        detail = S.of(context).detail_share_map3('${FormatUtil.formatPrice(remain)}');
         break;
 
       case Map3NodeActionEvent.MAP3_DELEGATE:
-        var startMin =
-            double.parse(AtlasApi.map3introduceEntity?.startMin ?? "0");
+        var startMin = double.parse(_map3introduceEntity?.startMin ?? "0");
         var staking = double.parse(widget.infoEntity.staking);
         var pending = double.parse(widget.infoEntity.totalPendingStaking);
         var remain = startMin - staking - pending;
@@ -54,9 +63,7 @@ class _Map3NodeBroadcastSuccessState
           remain = 0;
         }
         action = S.of(context).action_delegate_map3;
-        detail = S
-            .of(context)
-            .detail_share_map3('${FormatUtil.formatPrice(remain)}');
+        detail = S.of(context).detail_share_map3('${FormatUtil.formatPrice(remain)}');
         break;
 
       case Map3NodeActionEvent.MAP3_COLLECT:
@@ -127,8 +134,7 @@ class _Map3NodeBroadcastSuccessState
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(
-                    top: 50 + MediaQuery.of(context).padding.top, bottom: 27),
+                padding: EdgeInsets.only(top: 50 + MediaQuery.of(context).padding.top, bottom: 27),
                 child: Container(
                   height: 76,
                   width: 124,
@@ -145,10 +151,7 @@ class _Map3NodeBroadcastSuccessState
               Padding(
                 padding: const EdgeInsets.only(bottom: 24),
                 child: Text(S.of(context).broadcase_success,
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: HexColor("#333333"),
-                        fontWeight: FontWeight.w500)),
+                    style: TextStyle(fontSize: 20, color: HexColor("#333333"), fontWeight: FontWeight.w500)),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -183,8 +186,7 @@ class _Map3NodeBroadcastSuccessState
                       child: FlatButton(
                         color: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: Theme.of(context).primaryColor),
+                            side: BorderSide(color: Theme.of(context).primaryColor),
                             borderRadius: BorderRadius.circular(36)),
                         onPressed: () {
                           // todo: jison_1026
@@ -197,13 +199,11 @@ class _Map3NodeBroadcastSuccessState
                         },
                         child: Container(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 40.0, vertical: 12.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                             child: Text(
                               //detail.isEmpty ? "完成" : "分享邀请",
                               S.of(context).completed,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
                         ),
@@ -211,29 +211,24 @@ class _Map3NodeBroadcastSuccessState
                     ),
                     if (detail.isNotEmpty)
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 16, horizontal: 48),
+                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 48),
                         child: Container(
                           constraints: BoxConstraints.expand(height: 48),
                           child: FlatButton(
                             //color: this.contractNodeItem == null?Theme.of(context).primaryColor:null,
                             shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    color: Theme.of(context).primaryColor),
+                                side: BorderSide(color: Theme.of(context).primaryColor),
                                 borderRadius: BorderRadius.circular(36)),
                             onPressed: () {
                               _pop(context);
                             },
                             child: Container(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40.0, vertical: 12.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                                 child: Text(
 //                                  S.of(context).finish,
                                   S.of(context).check_nodes,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Theme.of(context).primaryColor),
+                                  style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
                                 ),
                               ),
                             ),
@@ -268,8 +263,7 @@ class _Map3NodeBroadcastSuccessState
   void _pop(BuildContext context) {
     switch (widget.actionEvent) {
       case Map3NodeActionEvent.MAP3_CREATE:
-        print(
-            "[pop] -----> _pop, contractNodeItem:${widget.infoEntity.toJson()}");
+        print("[pop] -----> _pop, contractNodeItem:${widget.infoEntity.toJson()}");
 
         Routes.popUntilCachedEntryRouteName(context, widget.infoEntity);
         break;

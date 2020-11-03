@@ -1187,7 +1187,7 @@
   "check": "查看",
   "create_now": "立即创建",
   "delegate_map3": "抵押Map3节点",
-  "cant_cancel_delegation_with_7": "抵押7天内不可撤销",
+  "cant_cancel_delegation_with_7": "抵押7纪元内不可撤销",
   "map3_pre_edit_next_epoch": "节点主在到期前倒数第二周设置下一周期是否继续运行，或调整管理费率。抵押者在到期前最后一周可选择是否跟随下一周期",
   "map3_delegate_amount_hint": "需要总抵押满{startMin}HYN才能正式启动，每次参与抵押数额不少于{delegateMin}HYN",
   "total_staking": "总抵押",

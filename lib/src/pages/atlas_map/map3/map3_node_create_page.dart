@@ -43,8 +43,7 @@ class Map3NodeCreatePage extends StatefulWidget {
   _Map3NodeCreateState createState() => new _Map3NodeCreateState();
 }
 
-class _Map3NodeCreateState extends State<Map3NodeCreatePage>
-    with WidgetsBindingObserver {
+class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
   TextEditingController _inputTextController = new TextEditingController();
   TextEditingController _rateCoinController = new TextEditingController();
 
@@ -65,7 +64,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
   List<NodeProviderEntity> _providerList = [];
   String _originInputStr = "";
   double _currentFeeRate = 20;
-  double _maxFeeRate = 20;
+  double _maxFeeRate = 100;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -102,9 +101,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
   @override
   void initState() {
-    _inputTextController.addListener(_joinTextFieldChangeListener);
+    _inputTextController.addListener(_createTextFieldChangeListener);
 
-    _currentFeeRate = _maxFeeRate;
+    //_currentFeeRate = _maxFeeRate;
     //_rateCoinController.addListener(_rateTextFieldChangeListener);
     _rateCoinController.text = "$_currentFeeRate";
 
@@ -173,8 +172,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
     super.didChangeDependencies();
 
     if (context != null) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
     }
   }
 
@@ -261,15 +259,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Expanded(
-                              child: Text(_introduceEntity?.name ?? "",
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
+                              child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
                           InkWell(
                             child: Text(S.of(context).detailed_introduction,
-                                style: TextStyle(
-                                    fontSize: 14, color: HexColor("#1F81FF"))),
-                            onTap: () =>
-                                AtlasApi.goToAtlasMap3HelpPage(context),
+                                style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                            onTap: () => AtlasApi.goToAtlasMap3HelpPage(context),
                           ),
                         ],
                       ),
@@ -287,23 +281,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                                 softWrap: true),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
-                              child: Text(" (HYN) ",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: HexColor("#999999"))),
+                              child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 2.0),
                               child: Text("  |  ",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color:
-                                          HexColor("000000").withOpacity(0.2))),
+                                  style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                             ),
-                            Text(
-                                S
-                                    .of(context)
-                                    .n_day("${_introduceEntity?.days ?? 0}"),
+                            Text(S.of(context).n_day("${_introduceEntity?.days ?? 0}"),
                                 style: TextStyles.textC99000000S13)
                           ],
                         ),
@@ -321,8 +306,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
                 Container(
                     width: 100,
                     child: Text(S.of(context).service_provider,
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
+                        style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -353,9 +337,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
               children: <Widget>[
                 Container(
                     width: 100,
-                    child: Text(S.of(context).node_location,
-                        style: TextStyle(
-                            fontSize: 14, color: HexColor("#92979a")))),
+                    child:
+                        Text(S.of(context).node_location, style: TextStyle(fontSize: 14, color: HexColor("#92979a")))),
                 DropdownButtonHideUnderline(
                   child: Container(
                     height: 30,
@@ -404,10 +387,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
           managerSpendWidget(context, _rateCoinController, reduceFunc: () {
             setState(() {
               _currentFeeRate--;
-              if (_currentFeeRate <= 10) {
-                _currentFeeRate = 10;
-                Fluttertoast.showToast(
-                    msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
+
+              if (_currentFeeRate <= 0) {
+                _currentFeeRate = 0;
+                // Fluttertoast.showToast(
+                //     msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -417,8 +401,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
               _currentFeeRate++;
               if (_currentFeeRate >= _maxFeeRate) {
                 _currentFeeRate = _maxFeeRate;
-                Fluttertoast.showToast(
-                    msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
+                // Fluttertoast.showToast(
+                //     msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
               }
 
               _rateCoinController.text = "$_currentFeeRate";
@@ -453,8 +437,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, (
-              {String value}) {
+          return editInfoItem(context, index, title, hint, detail, ({String value}) {
             setState(() {
               _detailList[index] = value;
             });
@@ -525,8 +508,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
     var balance = Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo));
 
-    if (stakingValue == null ||
-        stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
+    if (stakingValue == null || stakingValue > Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
       Fluttertoast.showToast(msg: S.of(context).hyn_balance_no_enough);
       return;
     }
@@ -540,8 +522,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
 
     var feeRate = _inputFeeRateValue;
     if (feeRate < 10 || feeRate > _maxFeeRate) {
-      Fluttertoast.showToast(
-          msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
+      Fluttertoast.showToast(msg: S.of(context).manage_fee_range('10', '$_maxFeeRate'));
       return;
     }
 
@@ -588,15 +569,14 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       var walletName = activatedWallet.wallet.keystore.name;
       _payload.userName = walletName;
 
-      _payload.userIdentity = _payload.nodeId;
+      _payload.userIdentity = '';
       _payload.userEmail = "";
       _payload.userPic = "";
     }
     var payloadJson = _payload.toJson();
     print("payloadJson: $payloadJson");
     var encodeEntity = FluroConvertUtils.object2string(payloadJson);
-    Application.router.navigateTo(
-        context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
+    Application.router.navigateTo(context, Routes.map3node_create_confirm_page + "?entity=$encodeEntity");
   }
 
   void getNetworkData() async {
@@ -613,6 +593,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
       _blsKeySignEntity = requestList[2];
       _reCreateList = requestList[3];
 
+      _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "20");
       selectNodeProvider(0, 0);
 
       if (mounted) {
@@ -653,9 +634,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
     _nodeList = new List();
     for (int i = 0; i < nodeListStr.length; i++) {
       Regions regions = nodeListStr[i];
-      DropdownMenuItem item = new DropdownMenuItem(
-          value: i,
-          child: new Text(regions.name, style: TextStyles.textC333S14));
+      DropdownMenuItem item =
+          new DropdownMenuItem(value: i, child: new Text(regions.name, style: TextStyles.textC333S14));
       _nodeList.add(item);
     }
     _selectNodeItemValue = _nodeList[regionIndex].value;
@@ -681,12 +661,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
     return value;
   }
 
-  void _joinTextFieldChangeListener() {
+  void _createTextFieldChangeListener() {
     _filterSubject.sink.add(_inputTextController.text);
-
-    _updateRate();
   }
 
+  /*
   _updateRate() {
     var createMin = double.parse(_introduceEntity?.startMin ?? '550000');
     var rate = (100 * (_inputStakingValue / createMin));
@@ -702,7 +681,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
     setState(() {});
   }
 
-  /*
+
   void _rateTextFieldChangeListener() {
     if (_inputFeeRateValue <= 0) {
       return;
@@ -744,8 +723,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage>
             // 设置内容
             text: inputText,
             // 保持光标在最后
-            selection: TextSelection.fromPosition(TextPosition(
-                affinity: TextAffinity.downstream, offset: inputText.length)));
+            selection:
+                TextSelection.fromPosition(TextPosition(affinity: TextAffinity.downstream, offset: inputText.length)));
       });
     }
   }
