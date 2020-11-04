@@ -431,7 +431,6 @@ class _WalletPageState extends BaseState<WalletPage>
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
-    print("!!!!555 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)} ${activatedWalletVo.coins[0].balance}");
     if (activatedWalletVo != null) {
       return LoadDataContainer(
         bloc: loadDataBloc,
@@ -482,7 +481,6 @@ class _WalletPageState extends BaseState<WalletPage>
     //update all coin balance
     BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateActivatedWalletBalanceEvent());*/
-    print("!!!!111 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
     _checkDexAccount();
     BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());

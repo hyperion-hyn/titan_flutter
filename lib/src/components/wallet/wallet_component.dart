@@ -110,7 +110,6 @@ class _WalletManagerState extends State<_WalletManager> {
             _quotesSign = state.sign;
           }
         }else if (state is UpdatedQuotesState) {
-          print("!!!!111111 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
           _quotesModel = state.quoteModel;
           print('QuotesComponent UpdatedQuotesState === receive');
         }else if (state is UpdatedQuotesSignState) {

@@ -101,11 +101,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         yield UpdatingWalletBalanceState();
 
         try {
-          print("!!!!222 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
           await walletRepository.updateWalletVoBalance(_activatedWalletVo, event.symbol, event.contractAddress);
-          print("!!!!333 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
-          print("!!!!444 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
           yield UpdatedWalletBalanceState(walletVo: _activatedWalletVo.copyWith());
         } catch (e) {
           logger.e(e);
@@ -129,7 +126,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       }
     } else if (event is UpdateWalletPageEvent) {
       try {
-        print("!!!!666 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
         var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
         QuotesSign quotesSign = quoteSignStr != null
             ? QuotesSign.fromJson(json.decode(quoteSignStr))
@@ -137,10 +133,8 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         var symbols = DEFAULT_SYMBOLS;
         final symbolString = symbols.reduce((value, element) => value + ',' + element);
-        print("!!!!66622 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
         var quotes = await _coinMarketApi.quotes(0);
-        print("!!!!66633 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
         var addQuotes = List<SymbolQuoteVo>();
         for (var quote in quotes) {
           if (quote.symbol == SupportedTokens.HYN_Atlas.symbol) {
@@ -154,7 +148,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
         var currentQuotesModel =
             QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
-        print("!!!!66644 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
         if (_activatedWalletVo != null) {
           yield UpdateWalletPageState(
@@ -163,9 +156,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           _saveWalletVoBalanceToDisk(_activatedWalletVo); //save balance data to disk;
           yield UpdateWalletPageState(
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
-          print("!!!!66655 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
         } else {
-          print("!!!!66666 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
           yield UpdateWalletPageState(sign: quotesSign, quoteModel: currentQuotesModel);
         }
       } catch (e) {
@@ -174,12 +165,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     } else if (event is UpdateQuotesEvent) {
       yield UpdatingQuotesState();
 
-      print("!!!!666 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
       var symbols = DEFAULT_SYMBOLS;
       final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
       var quotes = await _coinMarketApi.quotes(0);
-      print("!!!!777 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
       List<SymbolQuoteVo> addQuotes = [];
       for (var quote in quotes) {
@@ -194,7 +183,6 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
       var currentQuotesModel =
           QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
-      print("!!!!888 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
       yield UpdatedQuotesState(quoteModel: currentQuotesModel);
     } else if (event is UpdateQuotesSignEvent) {
       yield UpdatedQuotesSignState(sign: event.sign);
