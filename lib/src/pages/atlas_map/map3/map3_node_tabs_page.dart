@@ -9,6 +9,8 @@ import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
+import 'package:titan/src/pages/skeleton/skeleton_atlas_node_page.dart';
+import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 
 class Map3NodeTabsPage extends StatefulWidget {
   @override
@@ -92,6 +94,7 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
         body: TabBarView(
           controller: _tabController,
           children: [
+            //SkeletonMap3NodePage(),
             Map3NodePage(),
             AtlasNodesPage(),
           ],

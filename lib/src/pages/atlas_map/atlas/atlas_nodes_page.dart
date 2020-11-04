@@ -21,6 +21,7 @@ import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/skeleton/skeleton_atlas_node_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -127,6 +128,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           onLoadingMore: () {
             _loadMoreData();
           },
+          //onLoadSkeletonView: SkeletonAtlasNodePage(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverToBoxAdapter(
