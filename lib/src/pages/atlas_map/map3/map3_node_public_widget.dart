@@ -395,7 +395,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
 
 Widget managerSpendWidget(
     BuildContext buildContext, TextEditingController _rateCoinController,
-    {Function reduceFunc, Function addFunc, double maxFeeRate = 20}) {
+    {Function reduceFunc, Function addFunc, double maxFeeRate = 20, double minFeeRate = 0}) {
   return Container(
     color: Colors.white,
     child: Row(
@@ -412,7 +412,7 @@ Widget managerSpendWidget(
                     fontWeight: FontWeight.normal),
                 children: [
                   TextSpan(
-                    text: "（10%-$maxFeeRate%）",
+                    text: "（${minFeeRate.toInt()}%-${maxFeeRate.toInt()}%）",
                     style: TextStyle(
                         fontSize: 12,
                         color: HexColor("#999999"),
@@ -462,14 +462,14 @@ Widget managerSpendWidget(
                       return S
                           .of(Keys.rootKey.currentContext)
                           .please_input_valid_manage_fee;
-                    } else if (int.parse(textStr ?? "0") < 10) {
+                    } else if (int.parse(textStr ?? "0") < minFeeRate) {
                       return S
                           .of(Keys.rootKey.currentContext)
-                          .manage_fee_not_less_than_10_percent;
-                    } else if (Decimal.parse(textStr) > Decimal.parse("20")) {
+                          .manage_fee_not_less_than_10_percent(minFeeRate);
+                    } else if (int.parse(textStr ?? "0") > maxFeeRate) {
                       return S
                           .of(Keys.rootKey.currentContext)
-                          .manage_fee_not_over_20_percent;
+                          .manage_fee_not_over_20_percent(maxFeeRate);
                     } else {
                       return null;
                     }

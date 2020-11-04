@@ -189,7 +189,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _startLogin() async {
     var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
-      if (await _checkConfirmWalletPolicy()) {
+      if (await checkConfirmWalletPolicy()) {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (BuildContext context) => PolicyConfirmPage(
             PolicyType.WALLET,
@@ -268,10 +268,13 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
     );
   }
 
-  Future<bool> _checkConfirmWalletPolicy() async {
-    var isConfirmWalletPolicy = await AppCache.getValue(
-      PrefsKey.IS_CONFIRM_WALLET_POLICY,
-    );
-    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
-  }
+
+}
+
+
+Future<bool> checkConfirmWalletPolicy() async {
+  var isConfirmWalletPolicy = await AppCache.getValue(
+    PrefsKey.IS_CONFIRM_WALLET_POLICY,
+  );
+  return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
 }

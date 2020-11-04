@@ -46,7 +46,9 @@ class Map3NodePreEditPage extends StatefulWidget {
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isOpen = true;
   double _currentFeeRate = 20;
-  double _maxFeeRate = 20;
+  double _maxFeeRate = 100;
+  double _minFeeRate = 0;
+
   TextEditingController _rateCoinController = TextEditingController();
 
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
@@ -108,6 +110,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     LogUtil.uploadException("[Map3NodePreEditPage] initState, uploadStatus", uploadStatus);
 
     _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+
+    setState(() {
+      _maxFeeRate = 100 * double.parse(_map3introduceEntity?.feeMax ?? "100");
+      _minFeeRate = 100 * double.parse(_map3introduceEntity?.feeMin ?? "0");
+    });
   }
 
   getMap3Bls() async {
@@ -166,6 +173,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return myDelegationValue;
   }
 
+  /*
   _updateRate() {
     var staking = getStaking();
     var createMin = double.parse(_map3introduceEntity?.startMin ?? '550000');
@@ -184,6 +192,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       _rateCoinController.text = "$_currentFeeRate";
     });
   }
+  */
 
   Future getNetworkData() async {
     try {
@@ -198,7 +207,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         map3Address,
         walletAddress,
       );
-      _updateRate();
+      //_updateRate();
 
       if (mounted) {
         setState(() {
@@ -328,9 +337,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return managerSpendWidget(context, _rateCoinController, reduceFunc: () {
       setState(() {
         _currentFeeRate--;
-        if (_currentFeeRate <= 10) {
-          _currentFeeRate = 10;
-          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+        if (_currentFeeRate <= _minFeeRate) {
+          _currentFeeRate = _minFeeRate;
+          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
         }
 
         _rateCoinController.text = "$_currentFeeRate";
@@ -340,7 +349,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         _currentFeeRate++;
         if (_currentFeeRate >= _maxFeeRate) {
           _currentFeeRate = _maxFeeRate;
-          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
         }
         _rateCoinController.text = "$_currentFeeRate";
       });
@@ -381,7 +390,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   Widget _tipsWidget() {
     var amount = " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
         S.of(context).ten_thousand;
-    var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
+    //var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 
     var tip2 = _isJoiner
         ? "期满跟随续约每个节点周期只能修改一次，修改完之后直到下个节点周期才能再次修改，请谨慎操作！"
@@ -396,7 +405,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
             child: Text(S.of(context).precautions, style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          if (!_isJoiner) rowTipsItem(tip1),
           rowTipsItem(tip2),
         ],
       ),
@@ -411,14 +419,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         S.of(context).confirm_mod,
         () {
           if (!_isJoiner) {
-            if (_inputFeeRateValue <= 0) {
+            if (_inputFeeRateValue <= _minFeeRate) {
               Fluttertoast.showToast(msg: S.of(context).please_setup_manage_fee);
               return;
             }
 
             var feeRate = _inputFeeRateValue;
-            if (feeRate < 10 || feeRate > _maxFeeRate) {
-              Fluttertoast.showToast(msg: S.of(context).manage_fee_range(10, _maxFeeRate));
+            if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
+              Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
               return;
             }
           }

@@ -378,7 +378,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
               }
 
               var payload = Payload(
-                userIdentity: widget.map3infoEntity.nodeId,
+                userIdentity: '',
               );
 
               var entity = PledgeMap3Entity(payload: payload);
