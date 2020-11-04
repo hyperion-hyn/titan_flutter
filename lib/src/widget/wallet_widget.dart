@@ -11,6 +11,8 @@ Widget walletHeaderWidget(String shortName,
   String hexColor = address;
   if (address.length > 6) {
     hexColor = "#" + address.substring(address.length - 6);
+  } else {
+    hexColor = "#1FB9C7";
   }
   HexColor color = HexColor(hexColor);
   var decoration = BoxDecoration(

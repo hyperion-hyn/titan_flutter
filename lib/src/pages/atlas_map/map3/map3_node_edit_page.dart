@@ -19,51 +19,45 @@ import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeEditPage extends StatefulWidget {
-  final Map3InfoEntity entity;
+  final Map3InfoEntity map3InfoEntity;
 
-  Map3NodeEditPage({this.entity});
+  Map3NodeEditPage({this.map3InfoEntity});
 
   @override
-  _Map3NodeEditState createState() => new _Map3NodeEditState();
+  _Map3NodeEditState createState() => _Map3NodeEditState();
 }
 
 class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
-  CreateMap3Payload _payload;
-
-  var _localImagePath = "";
   var _titleList = [
-    S.of(Keys.rootKey.currentContext).name,
     S.of(Keys.rootKey.currentContext).node_num,
+    S.of(Keys.rootKey.currentContext).name,
     S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
     S.of(Keys.rootKey.currentContext).description,
   ];
   List<String> _detailList = ["", "", "", "", ""];
   List<String> _hintList = [
-    S.of(Keys.rootKey.currentContext).please_enter_node_name,
     S.of(Keys.rootKey.currentContext).please_input_node_num,
+    S.of(Keys.rootKey.currentContext).please_enter_node_name,
     S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_input_node_contact,
     S.of(Keys.rootKey.currentContext).please_enter_node_description
   ];
 
   Map3IntroduceEntity _map3introduceEntity;
+  CreateMap3Payload _payload = CreateMap3Payload.onlyEditType(editType: 1);
 
   @override
   void initState() {
     _setupData();
 
-    _setupPayload();
-
     super.initState();
   }
 
+  /*
   _setupPayload() async {
-    print("[dd0] payload.toJson():${widget.entity.toJson()}");
-
-    var payload = CreateMap3Payload.onlyEditType(1);
-    _payload = payload;
-
+    print("[dd0] payload.toJson():${widget.map3InfoEntity.toJson()}");
+    
     // payload.name = widget.entity.name;
     // payload.nodeId = widget.entity.nodeId;
     // payload.home = widget.entity.home;
@@ -74,21 +68,22 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     //print("[dd1] payload.toJson():${payload.toJson()}");
 
     var blsKeySignEntity = await AtlasApi().getMap3Bls();
-    payload.blsRemoveKey = widget?.entity?.blsKey;
-    payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
-    payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
-    print("[dd2] payload.toJson():${payload.toJson()}");
+    _payload.blsRemoveKey = widget?.map3InfoEntity?.blsKey;
+    _payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
+    _payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
+    print("[dd2] payload.toJson():${_payload.toJson()}");
   }
+  */
 
   _setupData() async {
-    var entity = widget.entity;
-
-    if (entity.name?.isNotEmpty ?? false) {
-      _detailList[0] = entity.name;
-    }
+    var entity = widget.map3InfoEntity;
 
     if (entity.nodeId?.isNotEmpty ?? false) {
-      _detailList[1] = entity.nodeId;
+      _detailList[0] = entity.nodeId;
+    }
+
+    if (entity.name?.isNotEmpty ?? false) {
+      _detailList[1] = entity.name;
     }
 
     if (entity.home?.isNotEmpty ?? false) {
@@ -104,6 +99,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     }
 
     _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+    setState(() {});
   }
 
   @override
@@ -172,7 +168,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Expanded(
-                          child: Text("${_map3introduceEntity.name}", style: TextStyle(fontWeight: FontWeight.bold))),
+                          child: Text("${_map3introduceEntity?.name ?? ''}",
+                              style: TextStyle(fontWeight: FontWeight.bold))),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
@@ -206,7 +203,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                           child:
                               Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                         ),
-                        Text(S.of(context).n_day(_map3introduceEntity.days), style: TextStyles.textC99000000S13)
+                        Text(S.of(context).n_day(_map3introduceEntity?.days ?? '180'),
+                            style: TextStyles.textC99000000S13)
                       ],
                     ),
                   ),
@@ -265,12 +263,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             hint,
             detail,
             ({String value}) {
-              if (index == 0) {
-                setState(() {
-                  _localImagePath = value;
-                  _detailList[index] = value;
-                });
-              } else {
+              var last = _detailList[index];
+              if (last != value) {
                 setState(() {
                   _detailList[index] = value;
                 });
@@ -279,8 +273,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             keyboardType: keyboardType,
             subtitle: subTitle,
             hasSubtitle: false,
-            // canEdit: true,
-            canEdit: title != _titleList[1],
+            canEdit: title != _titleList[0],
           );
         },
         separatorBuilder: (context, index) {
@@ -313,48 +306,46 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             return;
           }
 
-          var map3NodeAddress = widget?.entity?.address ?? "";
+          var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
           if (map3NodeAddress.isEmpty) {
             return;
           }
 
-          /*
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
 
-            if (title == S.of(Keys.rootKey.currentContext).name) {
-              var last = widget.entity.name;
+            if (title == S.of(Keys.rootKey.currentContext).node_num) {
+              var last = widget.map3InfoEntity.nodeId;
               var edit = _detailList[0];
-              if (last != edit && edit.isNotEmpty) {
-                _payload.name = last;
+              if (last != edit) {
+                _payload.nodeId = edit;
               }
-            } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
-              var last = widget.entity.nodeId;
+            } else if (title == S.of(Keys.rootKey.currentContext).name) {
+              var last = widget.map3InfoEntity.name;
               var edit = _detailList[1];
-              if (last != edit && edit.isNotEmpty) {
-                _payload.nodeId = last;
+              if (last != edit) {
+                _payload.name = edit;
               }
             } else if (title == S.of(Keys.rootKey.currentContext).website) {
-              var last = widget.entity.home;
+              var last = widget.map3InfoEntity.home;
               var edit = _detailList[2];
-              if (last != edit && edit.isNotEmpty) {
-                _payload.home = last;
+              if (last != edit) {
+                _payload.home = edit;
               }
             } else if (title == S.of(Keys.rootKey.currentContext).contact) {
-              var last = widget.entity.home;
+              var last = widget.map3InfoEntity.home;
               var edit = _detailList[3];
-              if (last != edit && edit.isNotEmpty) {
-                _payload.connect = last;
+              if (last != edit) {
+                _payload.connect = edit;
               }
             } else if (title == S.of(Keys.rootKey.currentContext).description) {
-              var last = widget.entity.describe;
+              var last = widget.map3InfoEntity.describe;
               var edit = _detailList[4];
-              if (last != edit && edit.isNotEmpty) {
-                _payload.describe = last;
+              if (last != edit) {
+                _payload.describe = edit;
               }
             }
           }
-          */
 
           print("[_payload] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");
 

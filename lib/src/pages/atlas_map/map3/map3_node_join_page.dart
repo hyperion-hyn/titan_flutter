@@ -397,6 +397,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                         ?.totalPendingDelegation
                         ?.toString() ??
                     "0",
+                nodeId: widget.map3infoEntity.nodeId,
               );
               Navigator.push(
                   context,
