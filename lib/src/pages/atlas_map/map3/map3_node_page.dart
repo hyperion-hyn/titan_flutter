@@ -94,7 +94,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         onLoadingMore: () {
           onLoadingMore();
         },
-        //onLoadSkeletonView: SkeletonMap3NodePage(),
+        onLoadSkeletonView: SkeletonMap3NodePage(),
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),

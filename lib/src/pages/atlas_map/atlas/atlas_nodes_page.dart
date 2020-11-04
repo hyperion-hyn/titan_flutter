@@ -128,7 +128,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           onLoadingMore: () {
             _loadMoreData();
           },
-          //onLoadSkeletonView: SkeletonAtlasNodePage(),
+          onLoadSkeletonView: SkeletonAtlasNodePage(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverToBoxAdapter(
