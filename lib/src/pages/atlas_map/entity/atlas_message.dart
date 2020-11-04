@@ -123,7 +123,7 @@ class ConfirmAtlasReceiveAwardMessage implements AtlasMessage {
   final String nodeId;
   final String map3Address;
   final String atlasAddress;
-  ConfirmAtlasReceiveAwardMessage({this.nodeName,this.nodeId, this.map3Address, this.atlasAddress});
+  ConfirmAtlasReceiveAwardMessage({this.nodeName, this.nodeId, this.map3Address, this.atlasAddress});
 
   @override
   Future<dynamic> action(String password) async {
@@ -310,7 +310,6 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
   @override
   Future<dynamic> action(String password) async {
     try {
-
       var wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet;
       var rawTx = await HYNApi.transEditMap3Node(this.entity, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
@@ -327,7 +326,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       LogUtil.uploadException("[ConfirmEditMap3NodeMessage] action, uploadTxHashEntity", uploadTxHashEntity);
 
       return txHashEntity.txHash.isNotEmpty;
-    } catch(e) {
+    } catch (e) {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
@@ -348,7 +347,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
       toName: "Map3节点",
-      toDetail: entity.payload.nodeId == null ?'':"节点号:${entity.payload.nodeId}",
+      toDetail: entity.payload.nodeId == null ? '' : "节点号:${entity.payload.nodeId}",
       fee: "0.000021",
     );
   }
@@ -509,7 +508,15 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
   final String map3NodeAddress;
   final String amount;
   final String pendingAmount;
-  ConfirmDelegateMap3NodeMessage({this.entity, this.map3NodeAddress, this.amount, this.pendingAmount});
+  final String nodeId;
+
+  ConfirmDelegateMap3NodeMessage({
+    this.entity,
+    this.map3NodeAddress,
+    this.amount,
+    this.pendingAmount,
+    this.nodeId,
+  });
 
   @override
   Future<dynamic> action(String password) async {
@@ -543,7 +550,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       fromName: "钱包",
       fromDetail: _walletAddressAndName,
       toName: "Map3节点",
-      toDetail: "节点号:${entity?.payload?.userIdentity ?? ""}",
+      toDetail: "节点号:${nodeId ?? ""}",
       amount: amount ?? "0",
       fee: "0.000021",
     );

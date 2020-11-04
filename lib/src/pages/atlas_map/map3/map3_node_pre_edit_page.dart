@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,14 +8,11 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
-import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
-import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -29,10 +24,17 @@ import 'map3_node_public_widget.dart';
 import 'package:web3dart/credentials.dart';
 import 'map3_node_confirm_page.dart';
 import 'package:titan/src/utils/log_util.dart';
+
+/*
+import 'dart:math';
 import '../../../global.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
+*/
 
 class Map3NodePreEditPage extends StatefulWidget {
   final Map3InfoEntity map3infoEntity;
@@ -44,7 +46,7 @@ class Map3NodePreEditPage extends StatefulWidget {
 }
 
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
-  bool _isOpen = true;
+  bool _isAutoRenew = true;
   double _currentFeeRate = 20;
   double _maxFeeRate = 100;
   double _minFeeRate = 0;
@@ -53,17 +55,16 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
 
-  // get _isEmptyBls =>
-  //     ((widget?.map3infoEntity?.blsSign?.isEmpty ?? true) || (widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
-
   get _isEmptyBls => ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
+  /*
   Microdelegations _microDelegations;
   final _client = WalletUtil.getWeb3Client(true);
 
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   var _address = "";
+  */
 
   get _inputFeeRateValue {
     var text = _rateCoinController?.text ?? '0';
@@ -82,16 +83,15 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   @override
   void initState() {
-
     setupData();
 
+    /*
     if (!_isJoiner) {
-      //_rateCoinController.addListener(_rateTextFieldChangeListener);
-
       getNetworkData();
     } else {
       print("_currentFeeRate: $_currentFeeRate");
     }
+    */
 
     getMap3Bls();
 
@@ -167,13 +167,14 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     LogUtil.uploadException("[Map3NodePreEditPage] getMap3Bls, uploadBlsKeySignEntity", uploadBlsKeySignEntity);
   }
 
+  /*
   double getStaking() {
     var myDelegation = FormatUtil.clearScientificCounting(_microDelegations?.amount?.toDouble() ?? 0);
     var myDelegationValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myDelegation)).toDouble();
     return myDelegationValue;
   }
 
-  /*
+
   _updateRate() {
     var staking = getStaking();
     var createMin = double.parse(_map3introduceEntity?.startMin ?? '550000');
@@ -192,7 +193,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       _rateCoinController.text = "$_currentFeeRate";
     });
   }
-  */
+
 
   Future getNetworkData() async {
     try {
@@ -200,9 +201,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       _address = _wallet.getAtlasAccount().address;
 
       var walletAddress = EthereumAddress.fromHex(_address);
-
       var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-
       _microDelegations = await _client.getMap3NodeDelegation(
         map3Address,
         walletAddress,
@@ -225,6 +224,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       }
     }
   }
+  */
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +238,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _pageView(BuildContext context) {
+    /*
     if (!_isJoiner) {
       if (_currentState != null || _microDelegations == null) {
         return Scaffold(
@@ -250,6 +251,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         );
       }
     }
+    */
 
     var divider = Container(
       color: HexColor("#F4F4F4"),
@@ -373,12 +375,12 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           ),
           Spacer(),
           Switch(
-            value: _isOpen,
+            value: _isAutoRenew,
             activeColor: Theme.of(context).primaryColor,
             activeTrackColor: Theme.of(context).primaryColor,
             onChanged: (bool newValue) {
               setState(() {
-                _isOpen = newValue;
+                _isAutoRenew = newValue;
               });
             },
           ),
@@ -445,7 +447,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
 
     var content = "";
-    if (!_isOpen) {
+    if (!_isAutoRenew) {
       if (!_isJoiner) {
         content = S.of(context).confirm_stop_auto_renew;
       } else {
@@ -482,7 +484,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             Navigator.pop(context);
 
             var message = ConfirmPreEditMap3NodeMessage(
-              autoRenew: _isOpen,
+              autoRenew: _isAutoRenew,
               map3NodeName: widget?.map3infoEntity?.name ?? "",
               feeRate: _isJoiner ? null : feeRate.toString(),
               map3NodeAddress: widget.map3infoEntity.address,
@@ -493,7 +495,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             }
             print("[pre]  --> createMap3Entity.preMsg.nonce:${message.nonce}");
 
-            var uploadPreEditMsg = '_isOpen:$_isOpen, preMsg.nonce:${message.nonce}';
+            var uploadPreEditMsg = '_isOpen:$_isAutoRenew, preMsg.nonce:${message.nonce}';
             print(uploadPreEditMsg);
             LogUtil.uploadException("[Map3NodePreEditPage] showAlertView, uploadPreEditMsg", uploadPreEditMsg);
 
