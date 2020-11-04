@@ -16,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
+import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -93,6 +94,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         onLoadingMore: () {
           onLoadingMore();
         },
+        //onLoadSkeletonView: SkeletonMap3NodePage(),
         child: CustomScrollView(
           slivers: <Widget>[
             _map3HeadWidget(),

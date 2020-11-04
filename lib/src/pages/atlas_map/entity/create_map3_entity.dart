@@ -191,7 +191,7 @@ class CreateMap3Payload extends Object {
     this.userPic,
   );
   CreateMap3Payload.onlyNodeId(this.nodeId);
-  CreateMap3Payload.onlyEditType(this.editType);
+  CreateMap3Payload.onlyEditType({this.editType});
 
   factory CreateMap3Payload.fromJson(Map<String, dynamic> srcJson) => _$CreateMap3PayloadFromJson(srcJson);
 

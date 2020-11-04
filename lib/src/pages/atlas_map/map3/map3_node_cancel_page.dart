@@ -277,7 +277,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                 [
                                   {
                                     S.of(context).node_total_staking:
-                                        '${FormatUtil.formatPrice(double.parse(_nodeStartMin()))}'
+                                        '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
                                   },
                                   {S.of(context).my_staking: '${_myStakingAmount()}'},
                                 ],
@@ -348,7 +348,6 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                             return S.of(context).over_node_total_staking;
                                           }
 
-                                          /*
                                           if (_map3infoEntity.isCreator() &&
                                               _myStakingAmount() -
                                                       Decimal.parse(textStr) <
@@ -357,7 +356,6 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           } else {
                                             return null;
                                           }
-                                          */
                                           return null;
                                         },
                                       ),
@@ -396,7 +394,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   _minRemain() {
     print('[delegateMin]${_map3introduceEntity.delegateMin}');
     if (_map3infoEntity.isCreator()) {
-      var min = Decimal.parse(_nodeStartMin()) *
+      var min = Decimal.parse(_nodeCreateMin()) *
           ConvertTokenUnit.weiToEther(
               weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
       print('_minRemain feeRate: ${_map3infoEntity.feeRate} min: $min');
@@ -406,8 +404,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
   }
 
-  String _nodeStartMin() {
-    return _map3introduceEntity.startMin ?? '0';
+  String _nodeCreateMin() {
+    return _map3introduceEntity.createMin ?? '0';
   }
 
   Decimal _myStakingAmount() {

@@ -236,7 +236,7 @@ var map3NodeEditHandler = Handler(handlerFunc: (context, params) {
   }
 
   return Map3NodeEditPage(
-    entity: entity,
+    map3InfoEntity: entity,
   );
 });
 

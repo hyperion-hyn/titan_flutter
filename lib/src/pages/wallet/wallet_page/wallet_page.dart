@@ -93,26 +93,6 @@ class _WalletPageState extends BaseState<WalletPage>
     });
   }
 
-  _showAtlasExchangeAlert() {
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).important_hint,
-      actions: [
-        ClickOvalButton(
-          S.of(context).got_it,
-          () async {
-            Navigator.pop(context);
-            _checkConfirmWalletPolicy();
-          },
-          width: 160,
-          height: 38,
-          fontSize: 16,
-        ),
-      ],
-      content: S.of(context).wallet_show_atlas_alert,
-    );
-  }
-
   @override
   Future<void> onCreated() async {
     //update quotes
@@ -216,17 +196,9 @@ class _WalletPageState extends BaseState<WalletPage>
       body: Container(
         color: Colors.white,
         width: double.infinity,
-        child: _content(),
+        child: _walletView(),
       ),
     );
-  }
-
-  _content() {
-    if (_isShowConfirmPolicy) {
-      return _confirmPolicyView();
-    } else {
-      return _walletView();
-    }
   }
 
   _confirmPolicyView() {
@@ -328,33 +300,6 @@ class _WalletPageState extends BaseState<WalletPage>
     setState(() {});
   }
 
-  _showConfirmWalletPolicy() {
-    UiUtil.showAlertView(context,
-        title: S.of(context).important_hint,
-        actions: [
-          ClickOvalButton(
-            S.of(context).check,
-            () async {
-              Navigator.pop(context);
-              var result = await Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => PolicyConfirmPage(
-                  PolicyType.WALLET,
-                ),
-              ));
-              if (result != true) {
-                _showConfirmWalletPolicy();
-              }
-            },
-            width: 160,
-            height: 38,
-            fontSize: 16,
-          ),
-        ],
-        content: S.of(context).please_read_and_agree_wallet_policy,
-        barrierDismissible: false,
-        isShowCloseIcon: false);
-  }
-
   _abnormalAccountBanner() {
     return InkWell(
       onTap: () async {
@@ -428,25 +373,29 @@ class _WalletPageState extends BaseState<WalletPage>
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
     if (activatedWalletVo != null) {
-      return LoadDataContainer(
-        bloc: loadDataBloc,
-        enablePullUp: false,
-        showLoadingWidget: false,
-        onLoadData: () {
-          print('WalletPage LoadDataContainer onLoadData ======');
-          _checkDexAccount();
-          listLoadingData();
-        },
-        onRefresh: () async {
-          print('WalletPage LoadDataContainer onRefresh ======');
-          _checkDexAccount();
-          listLoadingData();
-        },
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: ShowWalletView(activatedWalletVo, loadDataBloc),
-        ),
-      );
+      if (_isShowConfirmPolicy) {
+        return _confirmPolicyView();
+      } else {
+        return LoadDataContainer(
+          bloc: loadDataBloc,
+          enablePullUp: false,
+          showLoadingWidget: false,
+          onLoadData: () {
+            print('WalletPage LoadDataContainer onLoadData ======');
+            _checkDexAccount();
+            listLoadingData();
+          },
+          onRefresh: () async {
+            print('WalletPage LoadDataContainer onRefresh ======');
+            _checkDexAccount();
+            listLoadingData();
+          },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: ShowWalletView(activatedWalletVo, loadDataBloc),
+          ),
+        );
+      }
     }
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(

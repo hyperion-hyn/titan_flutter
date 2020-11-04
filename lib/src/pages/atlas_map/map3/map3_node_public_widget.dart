@@ -692,9 +692,7 @@ Widget editInfoItem(
                     text: detail,
                     keyboardType: keyboardType,
                   )));
-          if (text?.isNotEmpty ?? false) {
-            callback(value: text);
-          }
+          callback(value: text);
         },
         child: Container(
           color: Colors.white,
