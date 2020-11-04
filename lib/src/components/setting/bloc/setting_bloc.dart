@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';

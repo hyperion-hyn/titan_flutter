@@ -13,7 +13,6 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/components/style/theme.dart';
 
 import 'components/auth/bloc/auth_bloc.dart';
-import 'components/quotes/quotes_component.dart';
 import 'components/root_page_control_component/bloc/bloc.dart';
 import 'components/setting/setting_component.dart';
 import 'components/socket/socket_component.dart';
@@ -39,7 +38,6 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-      child: QuotesComponent(
         child: AuthComponent(
           child: SettingComponent(
               child: ExchangeComponent(
@@ -97,7 +95,6 @@ class _AppState extends State<App> {
           ),
               )),
         ),
-      ),
     );
   }
 }

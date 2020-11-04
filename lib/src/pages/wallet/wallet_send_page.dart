@@ -10,7 +10,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/application.dart';
@@ -56,7 +56,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       if (_amountController.text.trim() != null &&
           _amountController.text.trim().length > 0) {
         var inputAmount = _amountController.text.trim();
-        var activatedQuoteSign = QuotesInheritedModel.of(context)
+        var activatedQuoteSign = WalletInheritedModel.of(context)
             .activatedQuoteVoAndSign(widget.coinVo.symbol);
         var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
         setState(() {
@@ -83,7 +83,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = QuotesInheritedModel.of(context)
+    var activatedQuoteSign = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign(widget.coinVo.symbol);
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;

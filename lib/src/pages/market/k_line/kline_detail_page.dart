@@ -9,7 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
@@ -289,7 +289,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
-    var _selectedQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+    var _selectedQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity?.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null

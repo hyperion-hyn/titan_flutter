@@ -16,7 +16,7 @@ import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/auth/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -163,8 +163,8 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                       Row(
                         children: <Widget>[
                           Text(
-                            QuotesInheritedModel.of(context,
-                                        aspect: QuotesAspect.quote)
+                            WalletInheritedModel.of(context,
+                                        aspect: WalletAspect.quote)
                                     .activeQuotesSign
                                     ?.sign ??
                                 '',
@@ -524,8 +524,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
     var symbol = coin.symbol;
-    var symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+    var symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -834,7 +833,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 var password = await UiUtil.showWalletPasswordDialogV2(context, wallet);
                 if (password != null) {
                   var gasPriceRecommend =
-                      QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+                      WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
                   var reciverAddr = "0xCb573bc656455A9B1464C59157B8A701aa6686ea";
 
                   var hynCoinVo = WalletInheritedModel.of(context).getCoinVoBySymbol("HYN");
