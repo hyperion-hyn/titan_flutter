@@ -74,6 +74,9 @@ class _WalletPageState extends BaseState<WalletPage>
 
     ///check dex account is abnormal
     _checkDexAccount();
+
+    ///
+    _checkConfirmWalletPolicy();
   }
 
   @override
