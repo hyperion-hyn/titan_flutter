@@ -28,6 +28,9 @@ class Map3IntroduceEntity extends Object {
   @JsonKey(name: 'delegate_min')
   String delegateMin;
 
+  @JsonKey(name: 'fee_avg')
+  String feeAvg;
+
   String get name => "${this?.title ?? "Map3"}云节点 (v${this?.version ?? "v1.0"})";
 
   Map3IntroduceEntity(
@@ -39,6 +42,7 @@ class Map3IntroduceEntity extends Object {
     this.title,
     this.version,
     this.delegateMin,
+    this.feeAvg,
   );
 
   factory Map3IntroduceEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3IntroduceEntityFromJson(srcJson);

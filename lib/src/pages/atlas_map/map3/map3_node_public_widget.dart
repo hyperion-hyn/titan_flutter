@@ -49,28 +49,24 @@ Widget iconAtlasHomeNodeWidget(AtlasHomeNode atlasHomeNode) {
   if (atlasHomeNode == null) {
     return iconEmptyDefault();
   }
-  return iconWidget(
-      atlasHomeNode.pic, atlasHomeNode.name, atlasHomeNode.address);
+  return iconWidget(atlasHomeNode.pic, atlasHomeNode.name, atlasHomeNode.address);
 }
 
 Widget iconAtlasWidget(AtlasInfoEntity infoEntity, {bool isCircle = false}) {
   if (infoEntity == null) {
     return iconEmptyDefault();
   }
-  return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address,
-      isCircle: isCircle);
+  return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address, isCircle: isCircle);
 }
 
 Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
   if (infoEntity == null) {
     return iconEmptyDefault();
   }
-  return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address,
-      isCircle: isCircle);
+  return iconWidget(infoEntity.pic, infoEntity.name, infoEntity.address, isCircle: isCircle);
 }
 
-Widget iconWidget(String picture, String name, String address,
-    {bool isCircle = false}) {
+Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
   if (picture.isNotEmpty) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.0),
@@ -96,8 +92,7 @@ Widget iconWidget(String picture, String name, String address,
   );
 }
 
-Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
-    Map3IntroduceEntity map3introduceEntity,
+Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3IntroduceEntity map3introduceEntity,
     {bool canCheck = true, int currentEpoch = 0}) {
   if (infoEntity == null) return Container();
 
@@ -115,17 +110,15 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
   switch (state) {
     case Map3InfoStatus.CREATE_SUBMIT_ING:
     case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-      dateDesc = S.of(context).left +
-          FormatUtil.timeStringSimple(
-              context, double.parse(infoEntity?.atlas?.staking ?? "0"));
+      dateDesc =
+          S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(infoEntity?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).active + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       break;
 
     case Map3InfoStatus.CONTRACT_HAS_STARTED:
-      dateDesc = S.of(context).left +
-          FormatUtil.timeStringSimple(
-              context, double.parse(infoEntity?.atlas?.staking ?? "0"));
+      dateDesc =
+          S.of(context).left + FormatUtil.timeStringSimple(context, double.parse(infoEntity?.atlas?.staking ?? "0"));
       dateDesc = S.of(context).expired + dateDesc;
       break;
 
@@ -152,24 +145,18 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
   var nodeIdPre = "节点号";
   var nodeId = " ${infoEntity.nodeId ?? ""}";
   var feeRatePre = "管理费：";
-  var feeRate =
-      FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
+  var feeRate = FormatUtil.formatPercent(double.parse(infoEntity?.getFeeRate() ?? "0"));
   var descPre = "描   述：";
-  var desc = (infoEntity?.describe ?? "").isEmpty
-      ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！"
-      : infoEntity.describe;
-  var date = FormatUtil.newFormatUTCDateStr(infoEntity?.createdAt ?? "0",
-      isSecond: true);
+  var desc = (infoEntity?.describe ?? "").isEmpty ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！" : infoEntity.describe;
+  var date = FormatUtil.newFormatUTCDateStr(infoEntity?.createdAt ?? "0", isSecond: true);
 
   if (infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) {
-    date =
-        "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
+    date = "创建于 ${FormatUtil.formatDate(infoEntity?.createTime, isSecond: true)}";
   } else if (infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) {
     print("currentEpoch:$currentEpoch, endEpoch:${infoEntity?.endEpoch ?? 0}");
 
     var remainEpoch = (infoEntity?.endEpoch ?? 0) - currentEpoch + 1;
-    date =
-        "剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
+    date = "剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元 ${FormatUtil.formatDate(infoEntity?.endTime, isSecond: true)}";
   }
 
   var status = Map3InfoStatus.values[infoEntity?.status ?? 0];
@@ -184,8 +171,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
 
       Application.router.navigateTo(
         context,
-        Routes.map3node_contract_detail_page +
-            '?info=${FluroConvertUtils.object2string(infoEntity)}',
+        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity)}',
       );
     },
     child: Container(
@@ -203,8 +189,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
       ),
       margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 9, top: 20),
       child: Padding(
-        padding:
-            const EdgeInsets.only(left: 12.0, right: 12, bottom: 16, top: 16),
+        padding: const EdgeInsets.only(left: 12.0, right: 12, bottom: 16, top: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,16 +222,14 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 softWrap: true,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16),
+                                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                               ),
                             ),
                           ),
                           Row(
                             children: <Widget>[
                               Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 18, right: 8.0),
+                                padding: const EdgeInsets.only(left: 18, right: 8.0),
                                 child: Container(
                                   width: 8,
                                   height: 8,
@@ -265,8 +248,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
                                 TextSpan(children: [
                                   TextSpan(
                                     text: stateDescText,
-                                    style: TextStyle(
-                                        fontSize: 12, color: statusColor),
+                                    style: TextStyle(fontSize: 12, color: statusColor),
                                   ),
                                 ]),
                               ),
@@ -283,9 +265,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
                         width: width,
                         child: Row(
                           children: <Widget>[
-                            Expanded(
-                                child: Text(nodeAddress,
-                                    style: TextStyles.textC9b9b9bS12)),
+                            Expanded(child: Text(nodeAddress, style: TextStyles.textC9b9b9bS12)),
                             RichText(
                               textAlign: TextAlign.end,
                               overflow: TextOverflow.ellipsis,
@@ -345,8 +325,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
                       desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontSize: 11, color: HexColor("#333333")),
+                      style: TextStyle(fontSize: 11, color: HexColor("#333333")),
                     ),
                   ),
                 ],
@@ -360,17 +339,11 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
               children: <Widget>[
                 isNotFull
                     ? RichText(
-                        text: TextSpan(
-                            text: S.of(context).remain,
-                            style: TextStyles.textC9b9b9bS12,
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text: remainDelegation,
-                                  style: TextStyles.textC7c5b00S12),
-                              TextSpan(
-                                  text: "HYN",
-                                  style: TextStyles.textC9b9b9bS12),
-                            ]),
+                        text:
+                            TextSpan(text: S.of(context).remain, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[
+                          TextSpan(text: remainDelegation, style: TextStyles.textC7c5b00S12),
+                          TextSpan(text: "HYN", style: TextStyles.textC9b9b9bS12),
+                        ]),
                       )
                     : RichText(
                         text: TextSpan(
@@ -393,123 +366,142 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity,
   );
 }
 
-Widget managerSpendWidget(
-    BuildContext buildContext, TextEditingController _rateCoinController,
-    {Function reduceFunc, Function addFunc, double maxFeeRate = 20, double minFeeRate = 0}) {
+Widget managerSpendWidget(BuildContext buildContext, TextEditingController _rateCoinController,
+    {Function reduceFunc, Function addFunc, double maxFeeRate = 20, double minFeeRate = 0, double avgFeeRate = 10}) {
   return Container(
     color: Colors.white,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    child: Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: RichText(
-            text: TextSpan(
-                text: S.of(buildContext).manage_fee_setup,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: HexColor("#333333"),
-                    fontWeight: FontWeight.normal),
-                children: [
-                  TextSpan(
-                    text: "（${minFeeRate.toInt()}%-${maxFeeRate.toInt()}%）",
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor("#999999"),
-                        fontWeight: FontWeight.normal),
-                  )
-                ]),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 16,
+                bottom: 8,
+              ),
+              child: RichText(
+                text: TextSpan(
+                    text: S.of(buildContext).manage_fee_setup,
+                    style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+                    children: [
+                      TextSpan(
+                        text: "（${minFeeRate.toInt()}%-${maxFeeRate.toInt()}%）",
+                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      )
+                    ]),
+              ),
+            ),
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      reduceFunc();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "-",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                        decoration: BoxDecoration(
+                          color: HexColor("#F2F2F2"),
+                          borderRadius: BorderRadius.circular(3.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 70,
+                    height: 34,
+                    child: RoundBorderTextField(
+                      controller: _rateCoinController,
+                      keyboardType: TextInputType.number,
+                      bgColor: HexColor("#ffffff"),
+                      maxLength: 6,
+                      validator: (textStr) {
+                        if (textStr.length == 0) {
+                          return S.of(Keys.rootKey.currentContext).please_input_valid_manage_fee;
+                        } else if (int.parse(textStr ?? "0") < minFeeRate) {
+                          return S.of(Keys.rootKey.currentContext).manage_fee_not_less_than_10_percent(minFeeRate);
+                        } else if (int.parse(textStr ?? "0") > maxFeeRate) {
+                          return S.of(Keys.rootKey.currentContext).manage_fee_not_over_20_percent(maxFeeRate);
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, right: 8.0),
+                    child: Container(
+                      child: Text(
+                        "%",
+                        style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      addFunc();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        height: 22,
+                        width: 22,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "+",
+                          style: TextStyle(fontSize: 16, color: HexColor("#333333")),
+                        ),
+                        decoration: BoxDecoration(
+                          color: HexColor("#F2F2F2"),
+                          borderRadius: BorderRadius.circular(3.0),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-        Spacer(),
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              InkWell(
-                onTap: () {
-                  reduceFunc();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Container(
-                    width: 22,
-                    height: 22,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "-",
-                      style:
-                          TextStyle(fontSize: 16, color: HexColor("#333333")),
-                    ),
-                    decoration: BoxDecoration(
-                      color: HexColor("#F2F2F2"),
-                      borderRadius: BorderRadius.circular(3.0),
-                    ),
-                  ),
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16,
               ),
-              Container(
-                width: 70,
-                height: 34,
-                child: RoundBorderTextField(
-                  controller: _rateCoinController,
-                  keyboardType: TextInputType.number,
-                  bgColor: HexColor("#ffffff"),
-                  maxLength: 6,
-                  validator: (textStr) {
-                    if (textStr.length == 0) {
-                      return S
-                          .of(Keys.rootKey.currentContext)
-                          .please_input_valid_manage_fee;
-                    } else if (int.parse(textStr ?? "0") < minFeeRate) {
-                      return S
-                          .of(Keys.rootKey.currentContext)
-                          .manage_fee_not_less_than_10_percent(minFeeRate);
-                    } else if (int.parse(textStr ?? "0") > maxFeeRate) {
-                      return S
-                          .of(Keys.rootKey.currentContext)
-                          .manage_fee_not_over_20_percent(maxFeeRate);
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
+              child: RichText(
+                text: TextSpan(
+                    text: '提示：当前全网的平均管理费',
+                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                    children: [
+                      TextSpan(
+                        text: " ${avgFeeRate.toInt()}%",
+                        style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                      )
+                    ]),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 4, right: 8.0),
-                child: Container(
-                  child: Text(
-                    "%",
-                    style: TextStyle(fontSize: 16, color: HexColor("#333333")),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  addFunc();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Container(
-                    height: 22,
-                    width: 22,
-                    alignment: Alignment.center,
-                    child: Text(
-                      "+",
-                      style:
-                          TextStyle(fontSize: 16, color: HexColor("#333333")),
-                    ),
-                    decoration: BoxDecoration(
-                      color: HexColor("#F2F2F2"),
-                      borderRadius: BorderRadius.circular(3.0),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
+            ),
+            Spacer(),
+          ],
+        ),
       ],
     ),
   );
@@ -528,9 +520,7 @@ Widget getHoldInNum(
   List<String> suggestList,
   Map3IntroduceEntity map3introduceEntity,
 }) {
-  double minTotal = double.parse(isJoin
-      ? map3introduceEntity?.delegateMin
-      : map3introduceEntity?.createMin);
+  double minTotal = double.parse(isJoin ? map3introduceEntity?.delegateMin : map3introduceEntity?.createMin);
 
   var wallet = WalletInheritedModel.of(
     context,
@@ -554,14 +544,12 @@ Widget getHoldInNum(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: Text(S.of(context).mortgage_hyn_num,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                child:
+                    Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
                 child: Text(
-                    S.of(context).mortgage_wallet_balance(walletName,
-                        FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                    S.of(context).mortgage_wallet_balance(walletName, FormatUtil.coinBalanceHumanReadFormat(coinVo)),
                     style: TextStyle(
                       color: Colors.grey[600],
                     )),
@@ -582,8 +570,7 @@ Widget getHoldInNum(
                   children: <Widget>[
                     Text(
                       "HYN",
-                      style:
-                          TextStyle(fontSize: 18, color: HexColor("#35393E")),
+                      style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                     ),
                     SizedBox(
                       width: 12,
@@ -596,8 +583,7 @@ Widget getHoldInNum(
                           focusNode: focusNode,
                           controller: textEditingController,
                           keyboardType: TextInputType.number,
-                          hint: S.of(context).mintotal_buy(
-                              FormatUtil.formatNumDecimal(minTotal)),
+                          hint: S.of(context).mintotal_buy(FormatUtil.formatNumDecimal(minTotal)),
                           validator: (textStr) {
                             if (textStr.length == 0) {
                               return S.of(context).please_input_hyn_count;
@@ -609,11 +595,9 @@ Widget getHoldInNum(
                             }
 
                             if ((double.tryParse(textStr) ?? 0) < minTotal) {
-                              return S.of(context).mintotal_hyn(
-                                  FormatUtil.formatNumDecimal(minTotal));
+                              return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
                             } else if (Decimal.parse(textStr) >
-                                Decimal.parse(
-                                    FormatUtil.coinBalanceHumanRead(coinVo))) {
+                                Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
                               return S.of(context).hyn_balance_no_enough;
                             } else {
                               return null;
@@ -638,11 +622,8 @@ Widget getHoldInNum(
                         return InkWell(
                           child: Container(
                             color: HexColor("#1FB9C7").withOpacity(0.08),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            child: Text(suggestList[value],
-                                style: TextStyle(
-                                    fontSize: 12, color: HexColor("#5C4304"))),
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            child: Text(suggestList[value], style: TextStyle(fontSize: 12, color: HexColor("#5C4304"))),
                           ),
                           onTap: () {
                             textEditingController.text = suggestList[value];
@@ -697,8 +678,7 @@ Widget editInfoItem(
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.symmetric(
-                vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+            padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -720,8 +700,7 @@ Widget editInfoItem(
                           )
                         : Text(
                             subtitle,
-                            style: TextStyle(
-                                color: HexColor("#999999"), fontSize: 12),
+                            style: TextStyle(color: HexColor("#999999"), fontSize: 12),
                           ),
                   ),
                 SizedBox(
@@ -733,11 +712,7 @@ Widget editInfoItem(
                     child: Text(
                       detail.isEmpty ? hint : detail,
                       textAlign: TextAlign.start,
-                      style: TextStyle(
-                          color: detail.isEmpty
-                              ? HexColor("#999999")
-                              : HexColor("#333333"),
-                          fontSize: 14),
+                      style: TextStyle(color: detail.isEmpty ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
                     ),
                   ),
                 ),
@@ -765,8 +740,7 @@ Widget editInfoItem(
   );
 }
 
-Widget rowTipsItem(String title,
-    {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
+Widget rowTipsItem(String title, {double top = 8, String subTitle = "", GestureTapCallback onTap}) {
   var _nodeWidget = Padding(
     padding: const EdgeInsets.only(right: 10, top: 10),
     child: Container(
@@ -797,8 +771,7 @@ Widget rowTipsItem(String title,
                 )
               ],
               text: title,
-              style: TextStyle(
-                  height: 1.8, color: DefaultColors.color999, fontSize: 12),
+              style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
             ),
           ),
         )),
@@ -812,19 +785,11 @@ Widget profitListWidget(List<Map> list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Text(detail,
-            style: TextStyle(
-                fontSize: 16,
-                color: HexColor("#333333"),
-                fontWeight: FontWeight.normal)),
+        Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
         Container(
           height: 4,
         ),
-        Text(title,
-            style: TextStyle(
-                fontSize: 12,
-                color: HexColor("#999999"),
-                fontWeight: FontWeight.normal)),
+        Text(title, style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -838,19 +803,11 @@ Widget profitListBigWidget(List<Map> list) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(detail,
-              style: TextStyle(
-                  fontSize: 14,
-                  color: HexColor("#333333"),
-                  fontWeight: FontWeight.normal)),
+          Text(detail, style: TextStyle(fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
           Container(
             height: 4,
           ),
-          Text(title,
-              style: TextStyle(
-                  fontSize: 10,
-                  color: HexColor("#999999"),
-                  fontWeight: FontWeight.normal)),
+          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#999999"), fontWeight: FontWeight.normal)),
         ],
       ),
     );
@@ -865,19 +822,11 @@ Widget profitListLightWidget(List<Map> list) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text(detail,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: HexColor("#333333"),
-                  fontWeight: FontWeight.normal)),
+          Text(detail, style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
           Container(
             height: 4,
           ),
-          Text(title,
-              style: TextStyle(
-                  fontSize: 10,
-                  color: HexColor("#333333"),
-                  fontWeight: FontWeight.normal)),
+          Text(title, style: TextStyle(fontSize: 10, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
         ],
       ),
     );
@@ -891,19 +840,11 @@ Widget profitListBigLightWidget(List<Map> list) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Text(detail,
-            style: TextStyle(
-                fontSize: 18,
-                color: HexColor("#333333"),
-                fontWeight: FontWeight.w600)),
+        Text(detail, style: TextStyle(fontSize: 18, color: HexColor("#333333"), fontWeight: FontWeight.w600)),
         Container(
           height: 5,
         ),
-        Text(title,
-            style: TextStyle(
-                fontSize: 11,
-                color: HexColor("#333333"),
-                fontWeight: FontWeight.normal)),
+        Text(title, style: TextStyle(fontSize: 11, color: HexColor("#333333"), fontWeight: FontWeight.normal)),
       ],
     );
   }
@@ -913,8 +854,7 @@ Widget profitListBigLightWidget(List<Map> list) {
 
 typedef ProfitBuildFunc = Widget Function({String title, String detail});
 
-Widget _profitListWidget(List<Map> list,
-    {double horizontal = 10, ProfitBuildFunc func}) {
+Widget _profitListWidget(List<Map> list, {double horizontal = 10, ProfitBuildFunc func}) {
   _buildLine() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: horizontal),
@@ -939,8 +879,7 @@ Widget _profitListWidget(List<Map> list,
     }
   }
 
-  MainAxisAlignment mainAxisAlignment =
-      list.length == 2 ? MainAxisAlignment.start : MainAxisAlignment.center;
+  MainAxisAlignment mainAxisAlignment = list.length == 2 ? MainAxisAlignment.start : MainAxisAlignment.center;
   return Row(
     mainAxisAlignment: mainAxisAlignment,
     children: children,
@@ -992,8 +931,8 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
             SizedBox(
               height: 54,
               child: ListTile(
-                title: Text(S.of(context).import_from_album,
-                    textAlign: TextAlign.center, style: TextStyles.textC333S18),
+                title:
+                    Text(S.of(context).import_from_album, textAlign: TextAlign.center, style: TextStyles.textC333S18),
                 onTap: () async {
                   Future.delayed(Duration(milliseconds: 500), () {
                     Navigator.pop(dialogContext);
@@ -1007,8 +946,7 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
                     compressSize: 500,
                     uiConfig: UIConfig(uiThemeColor: Color(0xff0f95b0)),
                   );
-                  if (tempListImagePaths != null &&
-                      tempListImagePaths.length == 1) {
+                  if (tempListImagePaths != null && tempListImagePaths.length == 1) {
                     callback(tempListImagePaths[0].path);
                   }
                 },
@@ -1019,8 +957,7 @@ Future editIconSheet(BuildContext context, EditIconCallback callback) async {
               color: DefaultColors.colorf4f4f4,
             ),
             ListTile(
-              title: Text(S.of(context).cancel,
-                  textAlign: TextAlign.center, style: TextStyles.textC333S18),
+              title: Text(S.of(context).cancel, textAlign: TextAlign.center, style: TextStyles.textC333S18),
               onTap: () {
                 Navigator.pop(context);
               },
@@ -1067,8 +1004,7 @@ Widget emptyListWidget({String title = "", bool isAdapter = true}) {
       : containerWidget;
 }
 
-Widget delegateRecordItemWidget(HynTransferHistory item,
-    {bool isAtlasDetail = false, String map3CreatorAddress = ""}) {
+Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = false, String map3CreatorAddress = ""}) {
   var isPending = item.status == 0 || item.status == 1;
   // type 0一般转账；1创建atlas节点；2修改atlas节点/重新激活Atlas；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12续期map3;13裂变map3节点；
 
@@ -1086,10 +1022,8 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
         getRecordAmountStr: true,
       )}";
 
-  WalletVo _activatedWallet =
-      WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-  var walletAddress =
-      _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
+  WalletVo _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+  var walletAddress = _activatedWallet?.wallet?.getAtlasAccount()?.address?.toLowerCase() ?? "";
 
   var isYou = item.from.toLowerCase() == walletAddress;
 
@@ -1140,9 +1074,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
                                     TextSpan(
                                       text: recordName,
                                       style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor("#999999"),
-                                          fontWeight: FontWeight.w500),
+                                          fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
                                     )
                                   ],
                                 ),
@@ -1159,9 +1091,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
                                   child: Text(
                                     detail,
                                     style: TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#333333"),
-                                        fontWeight: FontWeight.bold),
+                                        fontSize: 14, color: HexColor("#333333"), fontWeight: FontWeight.bold),
                                   ),
                                 ),
                                 _billStateWidget(item)
@@ -1175,22 +1105,16 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
                         Row(
                           children: <Widget>[
                             Text(
-                              shortBlockChainAddress(
-                                  "${WalletUtil.ethAddressToBech32Address(item.from)}",
+                              shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(item.from)}",
                                   limitCharsLength: 8),
-                              style: TextStyle(
-                                  fontSize: 12, color: HexColor("#999999")),
+                              style: TextStyle(fontSize: 12, color: HexColor("#999999")),
                             ),
                             Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(
-                                    FormatUtil.formatDate(item.timestamp,
-                                        isSecond: true),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: HexColor("#999999"))),
+                                Text(FormatUtil.formatDate(item.timestamp, isSecond: true),
+                                    style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
                               ],
                             ),
                           ],
@@ -1218,8 +1142,7 @@ Widget delegateRecordItemWidget(HynTransferHistory item,
 }
 
 void _pushTransactionDetailAction(HynTransferHistory item) {
-  TransactionDetailVo transactionDetail =
-      TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
+  TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
   /*TransactionDetailVo transactionDetail = TransactionDetailVo(
     id: item.id,
     contractAddress: item.contractAddress,
@@ -1246,8 +1169,7 @@ void _pushTransactionDetailAction(HynTransferHistory item) {
 
   Navigator.push(
     Keys.rootKey.currentContext,
-    MaterialPageRoute(
-        builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
+    MaterialPageRoute(builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
   );
 }
 
@@ -1268,10 +1190,7 @@ Widget _billStateWidget(HynTransferHistory item) {
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
             '进行中',
-            style: TextStyle(
-                fontSize: 6,
-                color: HexColor("#FFFFFF"),
-                fontWeight: FontWeight.normal),
+            style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
           ),
         ),
       );
@@ -1280,17 +1199,12 @@ Widget _billStateWidget(HynTransferHistory item) {
     case 4:
     case 5:
       return Container(
-        decoration: BoxDecoration(
-            color: HexColor("#FF4C3B"),
-            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+        decoration: BoxDecoration(color: HexColor("#FF4C3B"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
             S.of(Keys.rootKey.currentContext).failed,
-            style: TextStyle(
-                fontSize: 6,
-                color: HexColor("#FFFFFF"),
-                fontWeight: FontWeight.normal),
+            style: TextStyle(fontSize: 6, color: HexColor("#FFFFFF"), fontWeight: FontWeight.normal),
           ),
         ),
       );
@@ -1298,17 +1212,12 @@ Widget _billStateWidget(HynTransferHistory item) {
 
     default:
       return Container(
-        decoration: BoxDecoration(
-            color: HexColor("#F2F2F2"),
-            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+        decoration: BoxDecoration(color: HexColor("#F2F2F2"), borderRadius: BorderRadius.all(Radius.circular(12.0))),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),
           child: Text(
             "已完成",
-            style: TextStyle(
-                fontSize: 6,
-                color: HexColor("#999999"),
-                fontWeight: FontWeight.normal),
+            style: TextStyle(fontSize: 6, color: HexColor("#999999"), fontWeight: FontWeight.normal),
           ),
         ),
       );

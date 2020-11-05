@@ -6,7 +6,7 @@ enum BuildType { DEV, PROD }
 
 BuildEnvironment get env => _env;
 BuildEnvironment _env;
-//toto
+
 bool get showLog => env.buildType == BuildType.DEV;
 // bool get showLog => true;
 

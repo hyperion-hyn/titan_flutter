@@ -47,9 +47,10 @@ class Map3NodePreEditPage extends StatefulWidget {
 
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isAutoRenew = true;
-  double _currentFeeRate = 20;
+  double _currentFeeRate = 10;
   double _maxFeeRate = 100;
   double _minFeeRate = 0;
+  double _avgFeeRate = 0;
 
   TextEditingController _rateCoinController = TextEditingController();
 
@@ -114,6 +115,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     setState(() {
       _maxFeeRate = 100 * double.parse(_map3introduceEntity?.feeMax ?? "100");
       _minFeeRate = 100 * double.parse(_map3introduceEntity?.feeMin ?? "0");
+      _avgFeeRate = 100 * double.parse(_map3introduceEntity?.feeAvg ?? "10");
     });
   }
 
@@ -336,26 +338,34 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _rateWidgetCreator() {
-    return managerSpendWidget(context, _rateCoinController, reduceFunc: () {
-      setState(() {
-        _currentFeeRate--;
-        if (_currentFeeRate <= _minFeeRate) {
-          _currentFeeRate = _minFeeRate;
-          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
-        }
+    return managerSpendWidget(
+      context,
+      _rateCoinController,
+      reduceFunc: () {
+        setState(() {
+          _currentFeeRate--;
+          if (_currentFeeRate <= _minFeeRate) {
+            _currentFeeRate = _minFeeRate;
+            Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
+          }
 
-        _rateCoinController.text = "$_currentFeeRate";
-      });
-    }, addFunc: () {
-      setState(() {
-        _currentFeeRate++;
-        if (_currentFeeRate >= _maxFeeRate) {
-          _currentFeeRate = _maxFeeRate;
-          Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
-        }
-        _rateCoinController.text = "$_currentFeeRate";
-      });
-    }, maxFeeRate: _maxFeeRate);
+          _rateCoinController.text = "$_currentFeeRate";
+        });
+      },
+      addFunc: () {
+        setState(() {
+          _currentFeeRate++;
+          if (_currentFeeRate >= _maxFeeRate) {
+            _currentFeeRate = _maxFeeRate;
+            Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
+          }
+          _rateCoinController.text = "$_currentFeeRate";
+        });
+      },
+      maxFeeRate: _maxFeeRate,
+      minFeeRate: _minFeeRate,
+      avgFeeRate: _avgFeeRate,
+    );
   }
 
   Widget _switchWidget() {

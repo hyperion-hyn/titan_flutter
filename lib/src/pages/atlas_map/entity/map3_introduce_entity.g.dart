@@ -16,12 +16,11 @@ Map3IntroduceEntity _$Map3IntroduceEntityFromJson(Map<String, dynamic> json) {
     json['title'] as String,
     json['version'] as String,
     json['delegate_min'] as String,
+    json['fee_avg'] as String,
   );
 }
 
-Map<String, dynamic> _$Map3IntroduceEntityToJson(
-        Map3IntroduceEntity instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$Map3IntroduceEntityToJson(Map3IntroduceEntity instance) => <String, dynamic>{
       'create_min': instance.createMin,
       'days': instance.days,
       'fee_max': instance.feeMax,
@@ -30,4 +29,5 @@ Map<String, dynamic> _$Map3IntroduceEntityToJson(
       'title': instance.title,
       'version': instance.version,
       'delegate_min': instance.delegateMin,
+      'fee_avg': instance.feeAvg,
     };

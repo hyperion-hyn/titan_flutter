@@ -1149,7 +1149,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         child: Column(
           children: <Widget>[
             Visibility(
-              visible: showLog,
+              visible: _isDelegator,
               child: Text(
                 "当前纪元：$_currentEpoch",
               ),

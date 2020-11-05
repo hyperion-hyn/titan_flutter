@@ -63,9 +63,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   List<DropdownMenuItem> _nodeList;
   List<NodeProviderEntity> _providerList = [];
   String _originInputStr = "";
-  double _currentFeeRate = 20;
+  double _currentFeeRate = 10;
   double _maxFeeRate = 100;
   double _minFeeRate = 0;
+  double _avgFeeRate = 0;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -411,6 +412,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             },
             maxFeeRate: _maxFeeRate,
             minFeeRate: _minFeeRate,
+            avgFeeRate: _avgFeeRate,
           ),
           divider,
         ]),
@@ -599,6 +601,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
       _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "100");
       _minFeeRate = 100 * double.parse(_introduceEntity?.feeMin ?? "0");
+      _avgFeeRate = 100 * double.parse(_introduceEntity?.feeAvg ?? "0");
+
       selectNodeProvider(0, 0);
 
       if (mounted) {
