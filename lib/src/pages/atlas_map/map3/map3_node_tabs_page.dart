@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
@@ -9,8 +8,6 @@ import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
-import 'package:titan/src/pages/skeleton/skeleton_atlas_node_page.dart';
-import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 
 class Map3NodeTabsPage extends StatefulWidget {
   @override
@@ -55,38 +52,32 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(kToolbarHeight),
           child: Container(
-            color: Theme.of(context).primaryColor,
+            color: Colors.white,
             child: SafeArea(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: TabBar(
-                      controller: _tabController,
-                      labelColor: Colors.white,
-                      labelStyle: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: Colors.white,
-                      indicatorWeight: 3,
-                      indicatorPadding: EdgeInsets.only(bottom: 2),
-                      unselectedLabelColor: HexColor("#aaffffff"),
-                      tabs: [
-                        Tab(
-                          text: S.of(context).map3_node_introduction,
-                        ),
-                        Tab(
-                          text: "Atlas",
-                        ),
-                      ],
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  labelColor: Theme.of(context).primaryColor,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
-                  Expanded(flex: 2, child: Text(""))
-                ],
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  indicatorWeight: 3,
+                  indicatorPadding: EdgeInsets.only(bottom: 2),
+                  unselectedLabelColor: HexColor("#FF333333"),
+                  tabs: [
+                    Tab(
+                      text: S.of(context).map3_node_introduction,
+                    ),
+                    Tab(
+                      text: "Atlas",
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
