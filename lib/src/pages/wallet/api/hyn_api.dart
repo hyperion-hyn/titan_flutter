@@ -53,6 +53,7 @@ class HYNApi {
       message: message,
       isAtlasTrans: isAtlasTrans,
       gasLimit: gasLimit,
+      nonce: nonce,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -65,7 +66,7 @@ class HYNApi {
       IMessage message,
       bool isAtlasTrans = true,
       String gasPrice,
-        int nonce,
+      int nonce,
       int gasLimit}) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
