@@ -82,7 +82,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
       yield ActivatedWalletState(walletVo: _activatedWalletVo?.copyWith());
     } else if (event is UpdateActivatedWalletBalanceEvent) {
-      print("[object] --> UpdateActivatedWalletBalanceEvent");
+      //print("[object] --> UpdateActivatedWalletBalanceEvent");
 
       var nowTime = DateTime.now().millisecondsSinceEpoch;
       //30 second cache time

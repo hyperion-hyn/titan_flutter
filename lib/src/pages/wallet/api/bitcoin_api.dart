@@ -18,7 +18,7 @@ class BitcoinApi {
   static Future<dynamic> requestBitcoinBalance(String pubString) async {
     var response;
     try {
-      print("balance request $pubString");
+      //print("balance request $pubString");
       response = await HttpCore.instance.post(WalletConfig.getBitcoinApi() + "balance",
           data: {"pub": pubString}, options: RequestOptions(contentType: Headers.jsonContentType));
     } catch (exception) {

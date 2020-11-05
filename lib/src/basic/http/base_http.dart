@@ -182,7 +182,7 @@ class BaseHttpCore {
 
     var version  = packageInfo?.version ?? "";
     var buildNumber  = packageInfo?.buildNumber ?? "";
-    print("[base_http] header, version:$version, buildNumber:$buildNumber");
+    //print("[base_http] header, version:$version, buildNumber:$buildNumber");
 
     options.headers["versionCode"] =
         version  + "+" + buildNumber;

@@ -71,19 +71,19 @@ class _QuotesManagerState extends State<_QuotesManager> {
   Widget build(BuildContext context) {
     return BlocListener<QuotesCmpBloc, QuotesCmpState>(
       listener: (context, state) {
-        print(
-            "state is UpdatedQuotesSignState 111 = ${state is UpdatedQuotesSignState}");
+        // print(
+        //     "state is UpdatedQuotesSignState 111 = ${state is UpdatedQuotesSignState}");
         if (state is UpdatedQuotesSignState) {
           _quotesSign = state.sign;
         }
       },
       child: BlocBuilder<QuotesCmpBloc, QuotesCmpState>(
         builder: (ctx, state) {
-          print(
-              "state is UpdatedQuotesSignState 222 = ${state is UpdatedQuotesSignState}");
+          // print(
+          //     "state is UpdatedQuotesSignState 222 = ${state is UpdatedQuotesSignState}");
           if (state is UpdatedQuotesState) {
             _quotesModel = state.quoteModel;
-            print('QuotesComponent UpdatedQuotesState === receive');
+            // print('QuotesComponent UpdatedQuotesState === receive');
           }
           if (state is UpdatedQuotesSignState) {
             _quotesSign = state.sign;
