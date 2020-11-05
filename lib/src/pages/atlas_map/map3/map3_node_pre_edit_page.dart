@@ -147,7 +147,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     var map3NodeAddress = widget?.map3infoEntity?.address ?? "";
     _editMessage = ConfirmEditMap3NodeMessage(entity: createMap3Entity, map3NodeAddress: map3NodeAddress);
 
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(true);
 
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
     var _wallet = activatedWallet?.wallet;
