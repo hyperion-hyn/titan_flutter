@@ -1,31 +1,29 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/pages/node/model/contract_node_item.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/node_share_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/utils/format_util.dart';
-
 import 'dart:typed_data';
-
 import 'package:titan/src/widget/widget_shot.dart';
 
 class Map3NodeSharePage extends StatefulWidget {
-  final ContractNodeItem contractNodeItem;
+  final Map3InfoEntity map3InfoEntity;
 
-  Map3NodeSharePage(this.contractNodeItem);
+  Map3NodeSharePage(this.map3InfoEntity);
 
   @override
   _Map3NodeSharePageState createState() => new _Map3NodeSharePageState();
 }
 
-// todo: test_1026
 class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   final ShotController _shotController = new ShotController();
   List<String> imagesList = [];
@@ -37,17 +35,19 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
     var activityWallet = WalletInheritedModel.of(context).activatedWallet;
     if (activityWallet != null) {
       Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-      bool isFromOwn = wallet.getEthAccount().address == widget.contractNodeItem.owner;
+      bool isFromOwn = wallet.getEthAccount().address == widget.map3InfoEntity.address;
       NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
       String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-      shareData = "${widget.contractNodeItem.shareUrl}&key=$encodeStr";
+      shareData = "${widget.map3InfoEntity.shareUrl}&key=$encodeStr";
     } else {
-      shareData = "${widget.contractNodeItem.shareUrl}";
+      shareData = "${widget.map3InfoEntity.shareUrl}";
     }
     super.onCreated();
 
     Future.delayed(Duration(milliseconds: 500)).then((_) {
-      _shareQr(context);
+      if (context != null) {
+        _shareQr(context);
+      }
     });
   }
 
@@ -79,7 +79,7 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
   Widget _body(BuildContext context) {
 //    var userInfo = AccountInheritedModel.of(context, aspect: AccountAspect.userInfo).userInfo;
 
-   print("[map3]  shareData:$shareData");
+    print("[map3]  shareData:$shareData");
 
     var wallet = WalletInheritedModel.of(context).activatedWallet;
     return WidgetShot(
@@ -131,15 +131,12 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24.0, top: 40),
               child: Text(
-                '「${wallet?.wallet?.keystore?.name ?? ''}」在泰坦地图发现了海波利安节点, 邀请你前往围观！',
-                /*
                 S.of(context).contract_share_content(
-                    wallet?.wallet?.keystore?.name ?? '',
-                    S.of(context).app_name,
-                    widget?.contractNodeItem?.contract?.nodeName??"",
-                    FormatUtil.formatPercent(widget.contractNodeItem?.contract?.annualizedYield??0),
-                    widget.contractNodeItem?.contract?.duration?.toString()??""),
-                */
+                      wallet?.wallet?.keystore?.name ?? '',
+                      S.of(context).app_name,
+                      widget?.map3InfoEntity?.name ?? "",
+                      FormatUtil.formatPercent(double.parse(widget.map3InfoEntity.getFeeRate() ?? '0')),
+                    ),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),

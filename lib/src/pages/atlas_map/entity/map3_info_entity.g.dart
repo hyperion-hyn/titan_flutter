@@ -42,6 +42,7 @@ Map3InfoEntity _$Map3InfoEntityFromJson(Map<String, dynamic> json) {
     json['create_time'] as int,
     json['start_time'] as int,
     json['end_time'] as int,
+    json['share_url'] as String,
   );
 }
 
@@ -80,4 +81,5 @@ Map<String, dynamic> _$Map3InfoEntityToJson(Map3InfoEntity instance) => <String,
       'create_time': instance.createTime,
       'start_time': instance.startTime,
       'end_time': instance.endTime,
+      'share_url': instance.shareUrl,
     };

@@ -525,6 +525,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     LogUtil.printMessage("_currentEpoch: $_currentEpoch");
 
     List<Widget> actions = [];
+
+    Widget shareWidget = IconButton(
+      icon: Image.asset(
+        "res/drawable/map3_node_share.png",
+        width: 15,
+        height: 18,
+        color: HexColor("#999999"),
+      ),
+      tooltip: S.of(context).share,
+      onPressed: _shareAction,
+    );
+
     if (_canExit) {
       actions = [
         FlatButton(
@@ -538,9 +550,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             ),
           ),
         ),
+        shareWidget,
       ];
     } else {
-      actions = null;
+      actions = [
+        shareWidget,
+      ];
     }
     return WillPopScope(
       onWillPop: () async => true,
@@ -1798,13 +1813,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
         var map3Address = EthereumAddress.fromHex(_nodeAddress);
         _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-        for (Microdelegations item in _map3nodeInformationEntity?.microdelegations ?? []) {
+        /*for (Microdelegations item in _map3nodeInformationEntity?.microdelegations ?? []) {
           print("[_loadDetailData] --> microdelegations.renew:${item.renewal.toJson()}");
-        }
+        }*/
 
         _setupMicroDelegations();
-
-        print("[getMap3StakingLogList]  refresh, _currentPage:$_currentPage");
 
         List<HynTransferHistory> tempMemberList =
             await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
@@ -1916,11 +1929,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  /*
   void _shareAction() {
     Application.router.navigateTo(context,
-        Routes.map3node_share_page + "?contractNodeItem=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+        Routes.map3node_share_page + "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
+
+  /*
 
   void _divideAction() {
     if (_isNoWallet) {
@@ -2040,4 +2054,3 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 }
-

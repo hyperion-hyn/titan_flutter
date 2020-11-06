@@ -386,6 +386,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             map3introduceEntity: _introduceEntity,
           ),
           divider,
+          managerSpendWidgetConst(),
+          /*
           managerSpendWidget(
             context,
             _rateCoinController,
@@ -414,6 +416,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             minFeeRate: _minFeeRate,
             avgFeeRate: _avgFeeRate,
           ),
+          */
           divider,
         ]),
       ),

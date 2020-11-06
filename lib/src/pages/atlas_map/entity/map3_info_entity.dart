@@ -113,6 +113,9 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'end_time')
   int endTime;
 
+  @JsonKey(name: 'share_url')
+  String shareUrl;
+
   Map3InfoEntity(
     this.address,
     this.blsKey,
@@ -148,6 +151,7 @@ class Map3InfoEntity extends Object {
     this.createTime,
     this.startTime,
     this.endTime,
+    this.shareUrl,
   );
 
   String getFeeRate() {

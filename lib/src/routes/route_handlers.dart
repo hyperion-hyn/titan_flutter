@@ -52,7 +52,6 @@ import 'package:titan/src/pages/wallet/wallet_create_backup_notice_page.dart';
 import 'package:titan/src/pages/wallet/wallet_setting.dart';
 import 'package:titan/src/pages/wallet/wallet_show_resume_word_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
-import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/pages/contribution/contribution_finish_page.dart';
@@ -310,18 +309,15 @@ var map3NodeContractDetailHandlerV8 = Handler(handlerFunc: (context, params) {
   return Map3NodeContractDetailPageV8(int.parse(params['contractId']?.first));
 });
 
-
 var map3NodeShareHandler = Handler(handlerFunc: (context, params) {
-  ContractNodeItem contractNodeItem =
-      ContractNodeItem.fromJson(FluroConvertUtils.string2map(params['contractNodeItem']?.first));
-  return Map3NodeSharePage(contractNodeItem);
+  Map3InfoEntity map3infoEntity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
+  return Map3NodeSharePage(map3infoEntity);
 });
 
 var map3AtlasNodeShareHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
 
-  Map3InfoEntity entity = Map3InfoEntity.fromJson(
-      FluroConvertUtils.string2map(params['info']?.first));
+  Map3InfoEntity entity = Map3InfoEntity.fromJson(FluroConvertUtils.string2map(params['info']?.first));
 
   return Map3NodeDetailPage(entity);
 });
@@ -334,14 +330,12 @@ var map3NodeIntroductionHandler = Handler(handlerFunc: (context, params) {
 var map3NodeMyHandler = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return Map3NodeMyPage();
-
 });
 
 var map3NodeMyHandlerV8 = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
   return MyContractsPageV8();
 });
-
 
 var map3NodeMyHandlerReward = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);

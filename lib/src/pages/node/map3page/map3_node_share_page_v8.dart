@@ -130,12 +130,13 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
             Padding(
               padding: const EdgeInsets.only(left: 24, right: 24.0, top: 40),
               child: Text(
-                S.of(context).contract_share_content(
-                    wallet?.wallet?.keystore?.name ?? '',
-                    S.of(context).app_name,
-                    widget.contractNodeItem.contract.nodeName,
-                    FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield),
-                    widget.contractNodeItem.contract.duration.toString()),
+                // S.of(context).contract_share_content(
+                //     wallet?.wallet?.keystore?.name ?? '',
+                //     S.of(context).app_name,
+                //     widget.contractNodeItem.contract.nodeName,
+                //     FormatUtil.formatPercent(widget.contractNodeItem.contract.annualizedYield),
+                //     widget.contractNodeItem.contract.duration.toString()),
+                'xxx',
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
               ),

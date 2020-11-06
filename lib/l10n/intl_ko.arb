@@ -575,7 +575,7 @@
   "your_last_output_to_contract_func": "당신의 최신 인출: {input}, {task_pending}",
   "no_pengding_node_contract_hint": "가동 대기중인 노드 계약이 없습니다. \n새로운 계약을 만들수가 있습니다.",
   "delegation_full_will_active_hint": "저당이 만족되여 곧 작동됩니다.",
-  "contract_share_content": "\"{who}\"나는{appName}에서 헤벌리안{nodeName}계약을 발견하였습니다.연간 포상금액은 {annualized}으로,주기는 {duration}일이며 당신을 이곳으로 와서 관람하시도록 초대합니다！",
+  "contract_share_content": "\"{who}\"在{appName}上发现了海伯利安{nodeName}节点，管理费只需{annualized}，邀请你前往围观！",
   "reset_input_contract": "재투입",
   "reset_output_contract": "재인출",
   "contract_launch_fail_please_get_back": "계약 가동에 실패하였습니다.환불 신청을 해주십시요.",
