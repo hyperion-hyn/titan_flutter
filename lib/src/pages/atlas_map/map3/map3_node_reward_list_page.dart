@@ -12,16 +12,16 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-class RewardListPage extends StatefulWidget {
-  RewardListPage();
+class Map3NodeRewardListPage extends StatefulWidget {
+  Map3NodeRewardListPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _RewardListState();
+    return _Map3NodeRewardListState();
   }
 }
 
-class _RewardListState extends DataListState<RewardListPage> {
+class _Map3NodeRewardListState extends DataListState<Map3NodeRewardListPage> {
   AtlasApi api = AtlasApi();
   StreamSubscription _eventBusSubscription;
   var _address = "";
@@ -83,6 +83,8 @@ class _RewardListState extends DataListState<RewardListPage> {
     }
     TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(item, 0, "HYN");
 
+    //transactionDetail = null;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -135,7 +137,7 @@ class _RewardListState extends DataListState<RewardListPage> {
 
   @override
   Future<List> onLoadData(int page) async {
-    var list = await api.getRewardTxsList(_address);
+    var list = await api.getRewardTxsList(_address, page: page+1);
     return list;
   }
 
