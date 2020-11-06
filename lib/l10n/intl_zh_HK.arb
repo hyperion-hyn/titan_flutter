@@ -1047,7 +1047,7 @@
   "check_after_has_wallet": "請創建或導入錢包後查看",
   "my_nodes_empty": "沒有我的節點，您可以創建節點",
   "no_lastest_active_nodes": "沒有最新啟動的節點，您可以創建節點",
-  "check_reward": "查看收益",
+  "check_reward": "更多节点/我的收益",
   "check_more": "查看更多",
   "map3_nodes": "Map3地圖服務節點",
   "map3_nodes_v1": "Map3節點（v1.0）",

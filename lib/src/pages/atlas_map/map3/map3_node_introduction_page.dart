@@ -217,9 +217,9 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   Widget _delegateCountWidget() {
     var detail = FormatUtil.formatPrice(
         double.parse(_introduceEntity?.createMin ?? "0"));
-    var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
-    var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
-    var fee = "$feeMin%-$feeMax%";
+    // var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
+    // var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
+    var fee = '${(100 * double.parse(_introduceEntity?.feeFixed ?? "10")).toInt()}%'; // "$feeMin%-$feeMax%";
     var day = "${_introduceEntity?.days ?? 180}${S.of(context).epoch}";
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
