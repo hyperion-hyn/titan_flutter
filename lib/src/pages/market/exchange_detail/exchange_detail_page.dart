@@ -819,7 +819,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 4.0),
                                   child: Text(
-                                    "≈${getInputPriceQuote()} CNY",
+                                    "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
                                     style: TextStyle(fontSize: 10, color: DefaultColors.color999),
                                   ),
                                 )
