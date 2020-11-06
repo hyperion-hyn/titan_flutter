@@ -211,7 +211,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   // 1.纪元已经过7天；
   get _canExit => _isCreator && _isPending && _isOver7Epoch;
 
-  get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingEpoch > 0) && (_currentEpoch > 0);
+  get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
 
   get _canEditNode =>
       _isCreator &&
