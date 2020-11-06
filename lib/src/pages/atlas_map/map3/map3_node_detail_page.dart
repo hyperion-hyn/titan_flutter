@@ -705,6 +705,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _bottomBtnBarWidget() {
     LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
+    //get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending)); // 提取奖励 or 参与抵押
+
     var staking0 = (_isDelegator && _isOver7Epoch && _microDelegationsJoiner == null);
     if (!_visibleBottomBar || (!_isDelegator && _isOver7Epoch) || staking0) return Container();
 
