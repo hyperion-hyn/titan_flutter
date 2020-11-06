@@ -678,7 +678,7 @@ Widget editInfoItem(
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: detail.isNotEmpty ? 18 : 14, horizontal: 14),
+            padding: EdgeInsets.symmetric(vertical: detail?.isNotEmpty??false ? 18 : 14, horizontal: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -710,9 +710,9 @@ Widget editInfoItem(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      detail.isEmpty ? hint : detail,
+                      detail?.isEmpty??true ? hint : detail,
                       textAlign: TextAlign.start,
-                      style: TextStyle(color: detail.isEmpty ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
+                      style: TextStyle(color: detail?.isEmpty??true ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
                     ),
                   ),
                 ),

@@ -102,13 +102,15 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              Application.router
-                  .navigateTo(context, Routes.map3node_my_page_v8);
+              // Application.router
+              //     .navigateTo(context, Routes.map3node_my_page_v8);
 
-              //AtlasApi.goToAtlasMap3HelpPage(context);
+              Application.router
+                  .navigateTo(context, Routes.map3node_my_page_reward);
             },
             child: Text(
-              S.of(context).old_map3,
+              // S.of(context).old_map3,
+              '提币记录',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
