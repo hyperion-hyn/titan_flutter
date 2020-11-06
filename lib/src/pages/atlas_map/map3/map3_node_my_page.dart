@@ -110,7 +110,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
             },
             child: Text(
               // S.of(context).old_map3,
-              '提币记录',
+              '提取记录',
               style: TextStyle(
                 color: HexColor("#1F81FF"),
                 fontSize: 14,
