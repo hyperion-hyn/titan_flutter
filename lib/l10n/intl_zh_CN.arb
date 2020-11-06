@@ -575,7 +575,7 @@
   "no_pengding_node_contract_hint": "没有推荐抵押节点\n您可以创建节点",
   "delegation_full_will_active_hint": "抵押已满，即将启动",
   "expire_date": "期满可提",
-  "contract_share_content": "\"{who}\"在{appName}上发现了海伯利安{nodeName}节点，管理费只需{annualized}，邀请你前往围观！",
+  "contract_share_content": "\"{who}\"在{appName}上发现了海伯利安{nodeName}节点，邀请你前往围观！",
   "reset_input_contract": "重新投入",
   "reset_output_contract": "重新提取",
   "contract_launch_fail_please_get_back": "节点启动失败，请申请退款",

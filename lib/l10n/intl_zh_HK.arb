@@ -575,7 +575,7 @@
   "your_last_output_to_contract_func": "妳的最新提取：{input}, {task_pending}",
   "no_pengding_node_contract_hint": "沒有待啟動的節點合約\n您可以創建合約",
   "delegation_full_will_active_hint": "抵押已滿，即將啟動",
-  "contract_share_content": "\"{who}\"在{appName}上發現了海伯利安{nodeName}合約，管理费只需{annualized}，邀請妳前往圍觀！",
+  "contract_share_content": "\"{who}\"在{appName}上發現了海伯利安{nodeName}合約，邀請妳前往圍觀！",
   "reset_input_contract": "重新投入",
   "reset_output_contract": "重新提取",
   "contract_launch_fail_please_get_back": "合約啟動失敗，請申請退款",

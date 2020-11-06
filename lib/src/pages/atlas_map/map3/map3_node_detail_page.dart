@@ -1854,7 +1854,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       ]);
 
       _map3infoEntity = requestList[0];
-      print("!!!!!1111 ${json.encode(_map3infoEntity.toJson())}");
       _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
 
       if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {

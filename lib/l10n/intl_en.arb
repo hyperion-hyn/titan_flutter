@@ -578,7 +578,7 @@
   "delegation_full_will_active_hint": "Crowdfund successful, will launch node",
   "expire_date": "Deadline",
   "no_hash_found": "Transaction hash not found",
-  "contract_share_content": "\"{who}\"found{appName}Hyperion{nodeName}contract，with APY of {annualized}，you are invited to check it out！",
+  "contract_share_content": "\"{who}\"found{appName}Hyperion{nodeName}contract，you are invited to check it out！",
   "reset_input_contract": "Renew contract",
   "reset_output_contract": "Reset withdrawal",
   "contract_launch_fail_please_get_back": "Node failed, please refund",

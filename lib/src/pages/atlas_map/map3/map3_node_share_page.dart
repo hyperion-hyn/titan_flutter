@@ -135,7 +135,6 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
                       wallet?.wallet?.keystore?.name ?? '',
                       S.of(context).app_name,
                       widget?.map3InfoEntity?.name ?? "",
-                      FormatUtil.formatPercent(double.parse(widget.map3InfoEntity.getFeeRate() ?? '0')),
                     ),
                 style: TextStyle(color: Colors.white, fontSize: 16),
                 textAlign: TextAlign.center,
