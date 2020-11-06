@@ -431,9 +431,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   _minRemain() {
     print('[delegateMin]${_map3introduceEntity.delegateMin}');
     if (_map3infoEntity.isCreator()) {
-      var min = Decimal.parse(_nodeCreateMin()) *
-          ConvertTokenUnit.weiToEther(
-              weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
+      // var min = Decimal.parse(_nodeCreateMin()) *
+      //     ConvertTokenUnit.weiToEther(
+      //         weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
+      var min = Decimal.parse(_nodeCreateMin());
       print('_minRemain feeRate: ${_map3infoEntity.feeRate} min: $min');
       return min;
     } else {
