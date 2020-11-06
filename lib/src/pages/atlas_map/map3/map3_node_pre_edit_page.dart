@@ -67,15 +67,15 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   var _address = "";
   */
 
-  get _inputFeeRateValue {
-    var text = _rateCoinController?.text ?? '0';
-    if (text.isEmpty) {
-      text = '0';
-    }
-    var value = double.tryParse(text);
-    if (value == null) return 0;
-    return value;
-  }
+  // get _inputFeeRateValue {
+  //   var text = _rateCoinController?.text ?? '0';
+  //   if (text.isEmpty) {
+  //     text = '0';
+  //   }
+  //   var value = double.tryParse(text);
+  //   if (value == null) return 0;
+  //   return value;
+  // }
 
   ConfirmEditMap3NodeMessage _editMessage;
   Map3IntroduceEntity _map3introduceEntity;
@@ -279,7 +279,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
                           height: 0.5,
                         ),
                       ),
-                      _isJoiner ? _rateWidgetJoiner() : _rateWidgetCreator(),
+                      //_isJoiner ? _rateWidgetJoiner() : _rateWidgetCreator(),
                       divider,
                       _tipsWidget(),
                     ]),
@@ -430,18 +430,18 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       child: ClickOvalButton(
         S.of(context).confirm_mod,
         () {
-          if (!_isJoiner) {
-            if (_inputFeeRateValue <= _minFeeRate) {
-              Fluttertoast.showToast(msg: S.of(context).please_setup_manage_fee);
-              return;
-            }
-
-            var feeRate = _inputFeeRateValue;
-            if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
-              Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
-              return;
-            }
-          }
+          // if (!_isJoiner) {
+          //   if (_inputFeeRateValue <= _minFeeRate) {
+          //     Fluttertoast.showToast(msg: S.of(context).please_setup_manage_fee);
+          //     return;
+          //   }
+          //
+          //   var feeRate = _inputFeeRateValue;
+          //   if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
+          //     Fluttertoast.showToast(msg: S.of(context).manage_fee_range(_minFeeRate, _maxFeeRate));
+          //     return;
+          //   }
+          // }
 
           showAlertView();
         },
@@ -454,7 +454,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   showAlertView() {
     var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
-    var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
+    // var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
+    var feeRate = nextFeeRate;
 
     var content = "";
     if (!_isAutoRenew) {
@@ -465,9 +466,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       }
     } else {
       if (!_isJoiner) {
-        content = S.of(context).confirm_open_auto_renew(feeRate);
+        //content = S.of(context).confirm_open_auto_renew(feeRate);
+        content = '你将开启自动续约，修改后不能撤回，确定修改吗？';
       } else {
-        content = S.of(context).confirm_follow_renew;
+        //content = S.of(context).confirm_follow_renew;
+        content = '你将跟随续约，修改后不能撤回，确定修改吗？';
       }
     }
     UiUtil.showAlertView(

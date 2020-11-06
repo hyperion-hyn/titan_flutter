@@ -397,7 +397,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
               style: TextStyle(
                 color: DefaultColors.color999,
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -367,33 +367,32 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
 }
 
 
-Widget managerSpendWidgetConst() {
+Widget managerSpendWidgetConst({double fixedFeeRate = 10}) {
 
   return Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 14,
-      vertical: 10,
+    padding: const EdgeInsets.only(
+      left: 14,
+      right: 20,
+      top: 10,
+      bottom: 10,
     ),
     child: Row(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(right: 4,),
-          child: RichText(
-            text: TextSpan(
-                text: '管理费',
-                style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
-                children: [
-                  TextSpan(
-                    text: "",
-                    style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
-                  )
-                ]),
-          ),
+        RichText(
+          text: TextSpan(
+              text: '管理费',
+              style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
+              children: [
+                TextSpan(
+                  text: "",
+                  style: TextStyle(fontSize: 12, color: HexColor("#999999"), fontWeight: FontWeight.normal),
+                )
+              ]),
         ),
         Spacer(),
         RichText(
           text: TextSpan(
-              text: '10%',
+              text: '${fixedFeeRate.toInt()}%',
               style: TextStyle(fontSize: 16, color: HexColor("#333333"), fontWeight: FontWeight.normal),
               children: [
                 TextSpan(

@@ -85,57 +85,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
 
+  get statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
+  get statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
+
+  get isHiddenRenew => (statusCreator == 1 && _isDelegator && !_isCreator);
+
   get _notifyMessage {
-    var startMin = double.parse(_map3introduceEntity?.startMin ?? "0"); //最小启动所需
-    var staking = double.parse(_map3infoEntity?.getStaking() ?? "0"); //当前抵押量
-    var isFull = (startMin > 0) && (staking > 0) && (staking >= startMin);
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        if (isFull) {
+        if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return "抵押已满$startMinValue，将在下个纪元启动……";
+        } else {
+          if (_isOver7Epoch) {
+            return '该节点超过7纪元未满足启动所需，已停止新抵押。请节点主终止节点，已有抵押将全部返还抵押者';
+          }
         }
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
         return "节点已到期，将在下个纪元结算……";
         break;
-
-      /*
-      case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        if (_isDelegator) {
-          if (_isCreator) {
-            /*
-            * 没有设置过，开始提示
-            * */
-            var periodEpoch14 = _releaseEpoch - 14 + 1;
-            var periodEpoch7 = _releaseEpoch - 7;
-            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
-
-            var isOutActionPeriodCreator = (_currentEpoch < periodEpoch14);
-
-            if (statusCreator == 0 && isOutActionPeriodCreator) {
-              return "请在纪元$periodEpoch14 ~ $periodEpoch7内设置下期预设，是否自动续约";
-            }
-          } else {
-            /*
-            * 没有设置过，开始提示
-            * */
-            //var periodEpoch14 = _releaseEpoch - 14 + 1;
-            var periodEpoch7 = _releaseEpoch - 7 + 1;
-            var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-            var isOutActionPeriodJoiner = _currentEpoch < periodEpoch7;
-
-            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
-
-            if (statusJoiner == 0 && isOutActionPeriodJoiner && statusCreator == 0) {
-              return '请在纪元$periodEpoch7 ~ $_releaseEpoch内设置下期预设，是否跟随自动续约';
-            }
-          }
-        }
-
-        break;
-        */
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         if (_isDelegator) {
@@ -145,7 +115,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             * */
             var periodEpoch14 = _releaseEpoch - 14 + 1;
             //var periodEpoch7 = _releaseEpoch - 7;
-            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
 
             var leftEpoch = periodEpoch14 - _currentEpoch;
 
@@ -158,13 +127,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             * */
             //var periodEpoch14 = _releaseEpoch - 14 + 1;
             var periodEpoch7 = _releaseEpoch - 7 + 1;
-            var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
 
-            var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
             var leftEpoch = periodEpoch7 - _currentEpoch;
 
-            if (statusJoiner == 0 && leftEpoch > 0 && statusCreator == 0) {
-              return "距离可以设置下期续约还有$leftEpoch纪元";
+            if (statusJoiner == 0 && leftEpoch > 0) {
+              if (statusCreator == 0) {
+                return "距离可以设置下期续约还有$leftEpoch纪元";
+              } else if (statusCreator == 1) {
+                return _closeRenewDefaultText;
+              }
             }
           }
         }
@@ -178,7 +149,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return null;
   }
 
-  get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending && !_isFullDelegate)); // 提取奖励 or 参与抵押
+  get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending)); // 提取奖励 or 参与抵押
 
   get _isNoWallet => _address?.isEmpty ?? true;
 
@@ -191,6 +162,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
   get _pendingUnlockEpoch =>
       double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
+
+  get _closeRenewDefaultText => '节点主已经停止续约，该节点到期后自动终止';
 
   /*
   tips:
@@ -205,8 +178,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
 
-    var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
-
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
@@ -220,15 +191,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     // 参与者
-    var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
-
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
     LogUtil.printMessage("[statusJoiner] statusJoiner:$statusJoiner, statusCreator:$statusCreator");
 
     if (_isDelegator) {
       var isCreatorSetOpen = statusCreator == 2; //创建人已开启
+      var isCreatorSetClose = statusCreator == 1; //创建人已开启
 
-      if ((statusJoiner == 0 && isCreatorSetOpen) || (statusJoiner == 0 && isInActionPeriodJoiner)) {
+      if ((statusJoiner == 0 && isCreatorSetOpen) ||
+          (statusJoiner == 0 && isInActionPeriodJoiner && !isCreatorSetClose)) {
         return true;
       }
     }
@@ -236,12 +207,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     return false;
   }
 
-  get _canExit {
-    // 0.募集中
-    // 1.纪元已经过7天；
-    var isOver7Epoch = (_currentEpoch - _pendingUnlockEpoch) > 0;
-    return _isCreator && _isPending && isOver7Epoch;
-  }
+  // 0.募集中
+  // 1.纪元已经过7天；
+  get _canExit => _isCreator && _isPending && _isOver7Epoch;
+
+  get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingEpoch > 0) && (_currentEpoch > 0);
 
   get _canEditNode =>
       _isCreator &&
@@ -486,9 +456,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             fontSize: 16,
           ),
         ],
-        content: _isCreator
-            ? '请你设置下期预设是否自动续约，或设置管理费率。如果过期不设置，节点将在到期后自动续约'
-            : '节点主已经设置下期自动续约，请你设置下期是否跟随续约。如果过期不设置，节点将在到期后自动跟随续约。',
+        content:
+            _isCreator ? '请你设置下期预设是否自动续约。如果过期不设置，节点将在到期后自动续约' : '节点主已经设置下期自动续约，请你设置下期是否跟随续约。如果过期不设置，节点将在到期后自动跟随续约。',
       );
     }
   }
@@ -736,44 +705,79 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _bottomBtnBarWidget() {
     LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
-    if (!_visibleBottomBar) return Container();
+    var staking0 = (_isDelegator && _isOver7Epoch && _microDelegationsJoiner == null);
+    if (!_visibleBottomBar || (!_isDelegator && _isOver7Epoch) || staking0) return Container();
 
     List<Widget> children = [];
 
-    if (_isPending) {
-      children = <Widget>[
-        Spacer(),
-        ClickOvalButton(
-          "部分撤销",
-          _cancelAction,
-          width: 120,
-          height: 32,
-          fontSize: 14,
-          fontColor: HexColor("#999999"),
-          btnColor: Colors.transparent,
-        ),
-        Spacer(),
-        ClickOvalButton(
-          "抵押",
-          _joinAction,
-          width: 120,
-          height: 32,
-          fontSize: 14,
-        ),
-        Spacer(),
-      ];
-    } else {
-      children = <Widget>[
-        ClickOvalButton(
-          "提取奖励",
-          _collectAction,
-          width: 160,
-          height: 36,
-          fontSize: 14,
-          //btnColor: HexColor("#FFC900"),
-        )
-      ];
+    switch (_map3Status) {
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+        children = <Widget>[
+          ClickOvalButton(
+            "提取奖励",
+            _collectAction,
+            width: 160,
+            height: 36,
+            fontSize: 14,
+            //btnColor: HexColor("#FFC900"),
+          )
+        ];
+        break;
+
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+        if (_isOver7Epoch && !_isFullDelegate) {
+          if (_isDelegator) {
+            if (_isCreator) {
+              children = <Widget>[
+                ClickOvalButton(
+                  "终止节点",
+                  _exitAction,
+                  width: 160,
+                  height: 36,
+                  fontSize: 14,
+                ),
+              ];
+            } else {
+              children = <Widget>[
+                ClickOvalButton(
+                  "撤销抵押",
+                  _cancelAction,
+                  width: 160,
+                  height: 36,
+                  fontSize: 14,
+                ),
+              ];
+            }
+          }
+        } else {
+          children = <Widget>[
+            Spacer(),
+            ClickOvalButton(
+              "部分撤销",
+              _cancelAction,
+              width: 120,
+              height: 32,
+              fontSize: 14,
+              fontColor: HexColor("#999999"),
+              btnColor: Colors.transparent,
+            ),
+            Spacer(),
+            ClickOvalButton(
+              "抵押",
+              _joinAction,
+              width: 120,
+              height: 32,
+              fontSize: 14,
+            ),
+            Spacer(),
+          ];
+        }
+        break;
+
+      default:
+        break;
     }
+
     return Container(
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
@@ -796,8 +800,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var bgColor = _isRunning ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
-    var contentColor = _isRunning ? HexColor("#FFFFFF") : HexColor("#333333");
+    var bgColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch))
+        ? HexColor("#FF4C3B")
+        : HexColor("#1FB9C7").withOpacity(0.08);
+    var contentColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch)) ? HexColor("#FFFFFF") : HexColor("#333333");
     return Container(
       color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
@@ -1065,11 +1071,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   Widget _nodeNextPeriodWidget() {
-    var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
-    var status = currentMicroDelegations?.renewal?.status ?? 0;
     if (!_isRunning) {
       return Container();
     }
+
+    var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
+    var status = currentMicroDelegations?.renewal?.status ?? 0;
 
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
     var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
@@ -1125,10 +1132,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var periodEpoch7 = _releaseEpoch - 7;
 
     var editDateLimit = "";
-    if (_isDelegator) {
-      var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
-      var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0);
 
+    var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
+    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0);
+
+    if (_isDelegator) {
       if (_isCreator) {
         editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
         if (statueCreator != 0) {
@@ -1137,6 +1145,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       } else {
         if (statueCreator == 2) {
           editDateLimit = "（请在节点到期前设置）";
+        } else if (statueCreator == 1) {
+          editDateLimit = '';
         } else {
           if (statueJoiner != 0) {
             editDateLimit = "（设置完成）";
@@ -1157,6 +1167,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
     }
 
+    var isCloseRenew = (statueCreator == 1 && _isDelegator && !_isCreator);
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -1173,7 +1185,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               children: <Widget>[
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(text: editDateLimit, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: isCloseRenew ? '' : editDateLimit,
+                      style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1184,7 +1198,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                       onTap: _preNextAction,
                       child: Center(
                           child: Text(
-                        "设置",
+                        isCloseRenew ? '' : "设置",
                         style: TextStyle(
                           fontSize: 14,
                           color: _canEditNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
@@ -1195,58 +1209,90 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      _isCreator ? "自动续期" : "跟随续期",
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 14,
-                      ),
+            isCloseRenew
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          _closeRenewDefaultText,
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            _isCreator ? "自动续期" : "跟随续期",
+                            style: TextStyle(
+                              color: HexColor("#999999"),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            statusDesc,
+                            style: TextStyle(
+                              color: HexColor("#333333"),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      statusDesc,
-                      style: TextStyle(
-                        color: HexColor("#333333"),
-                        fontSize: 14,
-                      ),
+            isCloseRenew
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "你无需任何操作",
+                          style: TextStyle(
+                            color: HexColor("#999999"),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            "管理费",
+                            style: TextStyle(
+                              color: HexColor("#999999"),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            feeRate,
+                            style: TextStyle(
+                              color: HexColor("#333333"),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      "管理费",
-                      style: TextStyle(
-                        color: HexColor("#999999"),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      feeRate,
-                      style: TextStyle(
-                        color: HexColor("#333333"),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
@@ -1930,8 +1976,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   void _shareAction() {
-    Application.router.navigateTo(context,
-        Routes.map3node_share_page + "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
+    Application.router.navigateTo(
+        context, Routes.map3node_share_page + "?info=${FluroConvertUtils.object2string(_map3infoEntity.toJson())}");
   }
 
   /*
