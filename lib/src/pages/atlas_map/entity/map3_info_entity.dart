@@ -113,7 +113,7 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'end_time')
   int endTime;
 
-  @JsonKey(name: 'share_url')
+  @JsonKey(name: 'shareUrl')
   String shareUrl;
 
   Map3InfoEntity(

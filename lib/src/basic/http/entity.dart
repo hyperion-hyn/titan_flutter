@@ -33,8 +33,17 @@ class ResponseEntity<T> {
     } else if (json.containsKey('result')) {
       retData = json['result'];
     }
+    var rightRespon = true;
     if (factory != null && retData != null) {
-      retData = factory.constructor(retData);
+      if(retData is List && retData.length == 0){
+        rightRespon = false;
+      }
+      if(retData is Map && retData.length == 0){
+        rightRespon = false;
+      }
+      if(rightRespon){
+        retData = factory.constructor(retData);
+      }
     }
 
     var retCode = ResponseCode.FAILED;

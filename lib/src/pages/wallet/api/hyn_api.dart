@@ -420,7 +420,7 @@ class HYNApi {
       case MessageType.typeTerminateMap3:
         typeStr = S.of(context).msg_terminate_map3;
         String value = getDecodedAmount(transactionDetail);
-        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        amountStr = "${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
