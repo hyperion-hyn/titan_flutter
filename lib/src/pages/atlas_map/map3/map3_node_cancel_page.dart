@@ -358,6 +358,43 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           }
                                           return null;
                                         },
+                                        suffixIcon: InkWell(
+                                          borderRadius: BorderRadius.circular(30),
+                                          onTap: () {
+                                            if (!_canCancelDelegation) return;
+
+                                            var truncateBalance = _myStakingAmount().toString();
+                                            if (double.parse(truncateBalance) > 0) {
+                                              _textEditingController.text = truncateBalance.toString();
+                                              _textEditingController.selection = TextSelection.fromPosition(TextPosition(
+                                                affinity: TextAffinity.downstream,
+                                                offset: _textEditingController.text.length,
+                                              ));
+                                            }
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                // todo: test_HYN
+                                                  text: "  ",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: S.of(context).all,
+                                                      style: TextStyle(
+                                                        color: _canCancelDelegation?HexColor("#1F81FF"):HexColor("#999999"),
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -417,9 +454,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
             '${FormatUtil.clearScientificCounting((_microdelegations?.pendingDelegation?.amount ?? 0).toDouble())}'));
   }
 
-  bool _canCancelDelegation() {
-    return _remainEpoch() < Decimal.parse('0');
-  }
+  get _canCancelDelegation => _remainEpoch() < Decimal.parse('0');
 
   Decimal _remainEpoch() {
     return Decimal.parse('${_unlockEpoch ?? 0}') -
@@ -427,7 +462,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   _epochHint() {
-    if (!_canCancelDelegation()) {
+    if (!_canCancelDelegation) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32.0),
@@ -442,7 +477,27 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
-              )
+              ),
+              SizedBox(
+                height: 9,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16,),
+                      child: Text(
+                        '注：如果节点主终止节点，已有抵押将全部自动返还',
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -489,7 +544,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !_canCancelDelegation(),
+            isLoading: !_canCancelDelegation,
           ),
         ),
       ),

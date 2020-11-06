@@ -67,6 +67,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   double _maxFeeRate = 100;
   double _minFeeRate = 0;
   double _avgFeeRate = 0;
+  double _fixedFeeRate = 0;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
   List<String> _reCreateList = [];
@@ -107,7 +108,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
     //_currentFeeRate = _maxFeeRate;
     //_rateCoinController.addListener(_rateTextFieldChangeListener);
-    _rateCoinController.text = "$_currentFeeRate";
+    //_rateCoinController.text = "$_currentFeeRate";
 
     _filterSubject.debounceTime(Duration(milliseconds: 500)).listen((text) {
       _dealTextField(text);
@@ -386,7 +387,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
             map3introduceEntity: _introduceEntity,
           ),
           divider,
-          managerSpendWidgetConst(),
+          managerSpendWidgetConst(
+            fixedFeeRate: _fixedFeeRate,
+          ),
           /*
           managerSpendWidget(
             context,
@@ -529,11 +532,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
-    var feeRate = _inputFeeRateValue;
-    if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
-      Fluttertoast.showToast(msg: S.of(context).manage_fee_range('${_minFeeRate.toInt()}', '${_maxFeeRate.toInt()}'));
-      return;
-    }
+    // var feeRate = _inputFeeRateValue;
+    // if (feeRate < _minFeeRate || feeRate > _maxFeeRate) {
+    //   Fluttertoast.showToast(msg: S.of(context).manage_fee_range('${_minFeeRate.toInt()}', '${_maxFeeRate.toInt()}'));
+    //   return;
+    // }
 
     for (var index = 0; index < _titleList.length; index++) {
       var title = _titleList[index];
@@ -605,6 +608,8 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "100");
       _minFeeRate = 100 * double.parse(_introduceEntity?.feeMin ?? "0");
       _avgFeeRate = 100 * double.parse(_introduceEntity?.feeAvg ?? "0");
+      _fixedFeeRate = 100 * double.parse(_introduceEntity?.feeFixed ?? "0");
+
 
       selectNodeProvider(0, 0);
 
@@ -664,6 +669,9 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   }
 
   get _inputFeeRateValue {
+    return _fixedFeeRate;
+
+    /*
     var text = _rateCoinController?.text ?? '0';
     if (text.isEmpty) {
       text = '0';
@@ -671,6 +679,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     var value = double.tryParse(text);
     if (value == null) return 0;
     return value;
+    */
   }
 
   void _createTextFieldChangeListener() {

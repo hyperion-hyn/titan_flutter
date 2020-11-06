@@ -17,6 +17,7 @@ Map3IntroduceEntity _$Map3IntroduceEntityFromJson(Map<String, dynamic> json) {
     json['version'] as String,
     json['delegate_min'] as String,
     json['fee_avg'] as String,
+    json['fee_fixed'] as String,
   );
 }
 
@@ -30,4 +31,5 @@ Map<String, dynamic> _$Map3IntroduceEntityToJson(Map3IntroduceEntity instance) =
       'version': instance.version,
       'delegate_min': instance.delegateMin,
       'fee_avg': instance.feeAvg,
+      'fee_fixed': instance.feeFixed,
     };
