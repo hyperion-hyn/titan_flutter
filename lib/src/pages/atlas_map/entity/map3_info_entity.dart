@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'atlas_info_entity.dart';
@@ -102,6 +101,21 @@ class Map3InfoEntity extends Object {
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
+  @JsonKey(name: 'RateForNextPeriod')
+  String rateForNextPeriod;
+
+  @JsonKey(name: 'create_time')
+  int createTime;
+
+  @JsonKey(name: 'start_time')
+  int startTime;
+
+  @JsonKey(name: 'end_time')
+  int endTime;
+
+  @JsonKey(name: 'share_url')
+  String shareUrl;
+
   Map3InfoEntity(
     this.address,
     this.blsKey,
@@ -133,6 +147,11 @@ class Map3InfoEntity extends Object {
     this.updatedAt,
     this.startEpoch,
     this.endEpoch,
+    this.rateForNextPeriod,
+    this.createTime,
+    this.startTime,
+    this.endTime,
+    this.shareUrl,
   );
 
   String getFeeRate() {
@@ -147,14 +166,15 @@ class Map3InfoEntity extends Object {
     return mine?.creator == NodeJoinType.CREATOR.index;
   }
 
+  get isJoiner => mine?.creator != NodeJoinType.CREATOR.index;
+
   Map3InfoEntity.onlyNodeId(this.nodeId);
 
   Map3InfoEntity.onlyId(this.id);
 
   Map3InfoEntity.onlyStaking(this.staking, this.totalPendingStaking);
 
-  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) =>
-      _$Map3InfoEntityFromJson(srcJson);
+  factory Map3InfoEntity.fromJson(Map<String, dynamic> srcJson) => _$Map3InfoEntityFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Map3InfoEntityToJson(this);
 }

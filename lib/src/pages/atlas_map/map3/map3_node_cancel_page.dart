@@ -7,6 +7,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -105,26 +106,28 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   Future getNetworkData() async {
     try {
-      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
       var walletAddress = EthereumAddress.fromHex(_address);
       print("[${widget.runtimeType}] getNetworkData");
 
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
-      print('map3: $map3Address wallet: $walletAddress');
+      if (_map3infoEntity.mine != null &&
+          (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
+        var map3Address =
+            EthereumAddress.fromHex(widget.map3infoEntity.address);
+        print('map3: $map3Address wallet: $walletAddress');
 
-      _microdelegations = await _client.getMap3NodeDelegation(
-        map3Address,
-        walletAddress,
-      );
+        _microdelegations = await _client.getMap3NodeDelegation(
+          map3Address,
+          walletAddress,
+        );
+      }
 
       _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
-      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch;
+      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch ?? 0;
 
-      var _atlasHomeEntity = await _atlasApi.postAtlasHome(_address);
-
-      _currentEpoch = _atlasHomeEntity?.info?.epoch;
+      _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
 
       print(
           '[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
@@ -152,7 +155,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
         appBar: BaseAppBar(
-          baseTitle: '撤销抵押',
+          baseTitle: S.of(context).cancel_delegate,
         ),
         body: AllPageStateContainer(_currentState, () {
           setState(() {
@@ -164,11 +167,11 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
 
     var walletAddressStr =
-        "钱包地址 ${UiUtil.shortEthAddress(_walletAddress ?? "***", limitLength: 9)}";
+        "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_address) ?? "***", limitLength: 9)}";
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '撤销抵押',
+        baseTitle: S.of(context).cancel_delegate,
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -193,7 +196,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                   const EdgeInsets.only(left: 16.0, top: 18),
                               child: Row(
                                 children: <Widget>[
-                                  Text("到账钱包",
+                                  Text(S.of(context).receive_wallet,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16)),
@@ -260,7 +263,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                   const EdgeInsets.only(left: 16.0, top: 16),
                               child: Row(
                                 children: <Widget>[
-                                  Text("节点金额",
+                                  Text(S.of(context).node_amount,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15)),
@@ -273,10 +276,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                               child: profitListBigLightWidget(
                                 [
                                   {
-                                    "节点总抵押":
-                                        '${FormatUtil.formatPrice(double.parse(_nodeStartMin()))}'
+                                    S.of(context).node_total_staking:
+                                        '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
                                   },
-                                  {"我的抵押": '${_myStakingAmount()}'},
+                                  {S.of(context).my_staking: '${_myStakingAmount()}'},
                                 ],
                               ),
                             ),
@@ -285,7 +288,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                   const EdgeInsets.only(left: 16.0, top: 18),
                               child: Row(
                                 children: <Widget>[
-                                  Text("撤销数量",
+                                  Text(S.of(context).cancel_amount,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 15)),
@@ -318,7 +321,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                         controller: _textEditingController,
                                         keyboardType: TextInputType.number,
                                         //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                        hint: "请输入提币数量",
+                                        hint: S.of(context).please_enter_withdraw_amount,
                                         validator: (textStr) {
                                           if (textStr.length == 0) {
                                             return S
@@ -326,9 +329,14 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                                 .please_input_hyn_count;
                                           }
 
-                                          if (Decimal.parse(textStr) >
-                                              _myStakingAmount()) {
-                                            return '超过您的抵押量';
+                                          var inputValue =
+                                              Decimal.tryParse(textStr);
+                                          if (inputValue == null) {
+                                            return S.of(context).please_enter_correct_amount;
+                                          }
+
+                                          if (inputValue > _myStakingAmount()) {
+                                            return S.of(context).over_your_staking;
                                           }
 
                                           if (Decimal.parse(textStr) >
@@ -337,30 +345,56 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                                       _map3infoEntity
                                                               ?.staking ??
                                                           "0"))) {
-                                            return '超过节点总抵押';
+                                            return S.of(context).over_node_total_staking;
                                           }
 
                                           if (_map3infoEntity.isCreator() &&
                                               _myStakingAmount() -
                                                       Decimal.parse(textStr) <
                                                   _minRemain()) {
-                                            return '撤销后剩余量不能少于${_minRemain()}';
-                                          }
-
-                                          /*else if (minTotal == 0) {
-                                        return "抵押已满";
-                                      } else if (int.parse(textStr) < minTotal) {
-                                        return S.of(context).mintotal_hyn(FormatUtil.formatNumDecimal(minTotal));
-                                      } else if (int.parse(textStr) > remainTotal) {
-                                        return "不能超过剩余份额";
-                                      } else if (Decimal.parse(textStr) >
-                                          Decimal.parse(FormatUtil.coinBalanceHumanRead(coinVo))) {
-                                        return S.of(context).hyn_balance_no_enough;
-                                      }*/
-                                          else {
+                                            return S.of(context).remain_delegation_not_less_than('${_minRemain()}');
+                                          } else {
                                             return null;
                                           }
+                                          return null;
                                         },
+                                        suffixIcon: InkWell(
+                                          borderRadius: BorderRadius.circular(30),
+                                          onTap: () {
+                                            if (!_canCancelDelegation) return;
+
+                                            var truncateBalance = _myStakingAmount().toString();
+                                            if (double.parse(truncateBalance) > 0) {
+                                              _textEditingController.text = truncateBalance.toString();
+                                              _textEditingController.selection = TextSelection.fromPosition(TextPosition(
+                                                affinity: TextAffinity.downstream,
+                                                offset: _textEditingController.text.length,
+                                              ));
+                                            }
+                                          },
+                                          child: Container(
+                                            margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                // todo: test_HYN
+                                                  text: "  ",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF333333),
+                                                  ),
+                                                  children: [
+                                                    TextSpan(
+                                                      text: S.of(context).all,
+                                                      style: TextStyle(
+                                                        color: _canCancelDelegation?HexColor("#1F81FF"):HexColor("#999999"),
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -397,9 +431,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   _minRemain() {
     print('[delegateMin]${_map3introduceEntity.delegateMin}');
     if (_map3infoEntity.isCreator()) {
-      var min = Decimal.parse(_nodeStartMin()) *
-          ConvertTokenUnit.weiToEther(
-              weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
+      // var min = Decimal.parse(_nodeCreateMin()) *
+      //     ConvertTokenUnit.weiToEther(
+      //         weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
+      var min = Decimal.parse(_nodeCreateMin());
       print('_minRemain feeRate: ${_map3infoEntity.feeRate} min: $min');
       return min;
     } else {
@@ -407,19 +442,20 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
   }
 
-  String _nodeStartMin() {
-    return _map3introduceEntity.startMin ?? '0';
+  String _nodeCreateMin() {
+    return _map3introduceEntity.createMin ?? '0';
   }
 
   Decimal _myStakingAmount() {
+    if (_map3infoEntity.mine == null || _microdelegations == null)
+      return Decimal.parse("0");
+
     return ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
-            '${FormatUtil.clearScientificCounting(_microdelegations?.pendingDelegation?.amount)}'));
+            '${FormatUtil.clearScientificCounting((_microdelegations?.pendingDelegation?.amount ?? 0).toDouble())}'));
   }
 
-  bool _canCancelDelegation() {
-    return _remainEpoch() < Decimal.parse('0');
-  }
+  get _canCancelDelegation => _remainEpoch() < Decimal.parse('0');
 
   Decimal _remainEpoch() {
     return Decimal.parse('${_unlockEpoch ?? 0}') -
@@ -427,22 +463,42 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   _epochHint() {
-    if (!_canCancelDelegation()) {
+    if (!_canCancelDelegation) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32.0),
           child: Column(
             children: [
-              Text('节点创建7个纪元内不可撤销'),
+              Text(S.of(context).cant_cancel_staking),
               SizedBox(
                 height: 9,
               ),
               Text(
-                '剩余时间: ${_remainEpoch().toString()}个纪元',
+                S.of(context).unlock_remain_epoch('${(_remainEpoch().toInt()).toString()}'),
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
-              )
+              ),
+              SizedBox(
+                height: 9,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16,),
+                      child: Text(
+                        '注：如果节点主终止节点，已有抵押将全部自动返还',
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -459,7 +515,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
         padding: const EdgeInsets.only(bottom: 18.0, top: 10),
         child: Center(
           child: ClickOvalButton(
-            "确认撤销",
+            S.of(context).confirm_cancel,
             () {
               if (!_formKey.currentState.validate()) {
                 return;
@@ -489,7 +545,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !_canCancelDelegation(),
+            isLoading: !_canCancelDelegation,
           ),
         ),
       ),

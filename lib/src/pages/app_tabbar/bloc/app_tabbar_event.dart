@@ -20,3 +20,8 @@ class ChangeTabBarItemEvent extends AppTabBarEvent {
   int index;
   ChangeTabBarItemEvent({this.index});
 }
+
+class ChangeNodeTabBarItemEvent extends AppTabBarEvent {
+  int index;
+  ChangeNodeTabBarItemEvent({this.index});
+}

@@ -94,6 +94,9 @@ class AtlasInfoEntity extends Object {
   @JsonKey(name: 'updated_at')
   String updatedAt;
 
+  @JsonKey(name: 'seven_day_annualization')
+  String sevenDayAnnualization;
+
   AtlasInfoEntity(
     this.address,
     this.blockNum,
@@ -123,6 +126,7 @@ class AtlasInfoEntity extends Object {
     this.status,
     this.type,
     this.updatedAt,
+    this.sevenDayAnnualization,
   );
 
   AtlasInfoEntity.onlyId(this.id);

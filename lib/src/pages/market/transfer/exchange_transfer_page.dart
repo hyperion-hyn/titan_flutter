@@ -355,9 +355,9 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
 
   _getCoinNameBySymbol(String symbol) {
     if (symbol == SupportedTokens.HYN_Atlas.symbol) {
-      return 'HYN (ATLAS)';
+      return 'HYN';
     } else if (symbol == SupportedTokens.HYN_ERC20.symbol) {
-      return 'HYN (ERC-20)';
+      return 'HYN (ERC-20)(${S.of(context).mapping})';
     } else if (symbol == 'USDT') {
       return 'USDT';
     }
@@ -374,10 +374,10 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: _fromExchangeToWallet ? 170 : 220,
+            height: _fromExchangeToWallet ? 170 : 170,
             child: Column(
               children: <Widget>[
-                if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
+                //if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
                 _coinItem('HYN'),
 //                _coinItem('ETH'),
                 _coinItem('USDT'),
@@ -477,37 +477,61 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     var _minTransferText = _fromExchangeToWallet
         ? S.of(context).exchange_withdraw_min
         : S.of(context).exchange_deposit_min;
+
+    ///no limit in deposit
+    var _maxTransferText = S.of(context).exchange_withdraw_max;
+
     var _amountInputHint = _fromExchangeToWallet
         ? S.of(context).exchange_deposit_input_hint
         : S.of(context).exchange_withdraw_input_hint;
     var _minTransferAmount = _fromExchangeToWallet
         ? ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            ?.assetList
-            ?.getAsset(_selectedCoinSymbol)
-            ?.withdrawMin
+                .exchangeModel
+                .activeAccount
+                ?.assetList
+                ?.getAsset(_selectedCoinSymbol)
+                ?.withdrawMin ??
+            '0'
         : ExchangeInheritedModel.of(context)
+                .exchangeModel
+                .activeAccount
+                ?.assetList
+                ?.getAsset(_selectedCoinSymbol)
+                ?.rechargeMin ??
+            '0';
+    var _maxTransferAmount = ExchangeInheritedModel.of(context)
             .exchangeModel
             .activeAccount
-            ?.assetList
+            .assetList
             ?.getAsset(_selectedCoinSymbol)
-            ?.rechargeMin;
+            ?.withdrawMax ??
+        '0';
 
+    var minAndMaxAmountHint = '';
+
+    if (_fromExchangeToWallet) {
+      minAndMaxAmountHint =
+          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol' +
+              ',' +
+              '$_maxTransferText $_maxTransferAmount $_selectedCoinSymbol';
+    } else {
+      minAndMaxAmountHint =
+          '$_minTransferText $_minTransferAmount $_selectedCoinSymbol';
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.symmetric(vertical: 16.0),
           child: Wrap(
-            crossAxisAlignment: WrapCrossAlignment.end,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(S.of(context).exchange_transfer_amount),
               SizedBox(
-                width: 4.0,
+                width: 8.0,
               ),
               Text(
-                '($_minTransferText $_minTransferAmount $_selectedCoinSymbol)',
+                '($minAndMaxAmountHint)',
                 style: TextStyle(
                   color: HexColor('#FFAAAAAA'),
                   fontSize: 11,
@@ -537,6 +561,12 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     if (Decimal.parse(value) >
                         Decimal.parse(_availableAmount())) {
                       return S.of(context).input_count_over_balance;
+                    }
+
+                    if (Decimal.parse(value) >
+                            Decimal.parse(_maxTransferAmount) &&
+                        _fromExchangeToWallet) {
+                      return S.of(context).exchange_withdraw_over_than_max;
                     }
 
                     if (Decimal.parse(value) <
@@ -685,7 +715,11 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       if (_fromExchangeToWallet) {
         _withdraw();
       } else {
-        var ret = await _exchangeApi.getAddress(_selectedCoinSymbol);
+        ///HYN-Atlas and HYN-ERC20 both use symbol [HYN]
+        var symbol = _selectedCoinSymbol == SupportedTokens.HYN_ERC20.symbol
+            ? SupportedTokens.HYN_Atlas.symbol
+            : _selectedCoinSymbol;
+        var ret = await _exchangeApi.getAddress(symbol);
         var exchangeAddress = ret['address'];
         _deposit(exchangeAddress);
       }

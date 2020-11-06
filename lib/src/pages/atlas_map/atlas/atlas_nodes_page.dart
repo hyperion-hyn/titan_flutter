@@ -8,8 +8,10 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_my_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_detail_item.dart';
@@ -17,7 +19,9 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/skeleton/skeleton_atlas_node_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -57,12 +61,11 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   int _currentPage = 1;
   int _pageSize = 10;
 
-  bool _isAutoRefresh = false;
+  get _isNoWallet => _address.isEmpty;
+  var _address = "";
 
   @override
   bool get wantKeepAlive => true;
-
-  Timer _timer;
 
   @override
   void initState() {
@@ -73,26 +76,15 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       duration: Duration(seconds: 10),
     )..repeat();
 
-    _initTimer();
-  }
-
-  _initTimer() {
-    ///refresh epoch
-    ///
-    _timer = Timer.periodic(Duration(seconds: 7), (t) {
-      print('[AtlasNodePage] refresh epoch');
-      _getData();
-    });
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
   void dispose() {
-    if (_timer != null) {
-      if (_timer.isActive) {
-        _timer.cancel();
-      }
-    }
     super.dispose();
+    _ageIconAnimationController.dispose();
     _loadDataBloc.close();
   }
 
@@ -110,12 +102,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ?.address ??
             '',
       );
-      _isAutoRefresh = true;
       setState(() {});
     } catch (e) {
-      _isAutoRefresh = false;
       setState(() {});
-      print('[_getCommitteeInfo]: $e');
     }
   }
 
@@ -139,6 +128,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           onLoadingMore: () {
             _loadMoreData();
           },
+          onLoadSkeletonView: SkeletonAtlasNodePage(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverToBoxAdapter(
@@ -190,6 +180,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             vertical: 16,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
                 child: Column(
@@ -202,7 +193,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.epoch}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -225,12 +216,12 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                     ),
                     InkWell(
                       child: Text(
-                        '#${_atlasHomeEntity?.info?.blockNum}',
+                        '${AtlasInheritedModel.of(context).committeeInfo?.blockNum}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
+                          //color: Colors.blue,
+                          //decoration: TextDecoration.underline,
                         ),
                       ),
                       onTap: () {},
@@ -249,7 +240,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.elected}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.elected}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -269,7 +260,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       height: 8.0,
                     ),
                     Text(
-                      '${_atlasHomeEntity?.info?.candidate}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -286,22 +277,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   }
 
   _atlasMap() {
-    var _secPerBlock = _atlasHomeEntity?.info?.secPerBlock ?? 0;
-    var _blocksPerEpoch = _atlasHomeEntity?.info?.blockHeight ?? 0;
-    var _currentBlockNum = _atlasHomeEntity?.info?.blockNum ?? 0;
-    var _epochStartBlockNum = _atlasHomeEntity?.info?.blockNumStart ?? 0;
-
-    ///total time of 1 epoch:  blocksPerEpoch * secPerBlock
-    ///
-    var _secPerEpoch = _blocksPerEpoch * _secPerBlock;
-
-    ///remain time: remainBlockCount * secPerBlock
-    ///remainBlockCount = blocksPerEpoch - (currentBlockNum - startBlockNum)
-    ///
-    var _remainTime = _secPerBlock *
-        (_blocksPerEpoch - (_currentBlockNum - _epochStartBlockNum));
-
-    var points = json.decode(_atlasHomeEntity?.points ?? '{}');
+    var points = json.decode(_atlasHomeEntity?.points ?? '[]');
 
     return Container(
       width: double.infinity,
@@ -318,18 +294,35 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Atlas共识节点',
+                    S.of(context).atlas_consensus_node,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(
                     height: 8.0,
                   ),
                   Text(
-                    '为海伯利安生态提供共识保证',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                    S.of(context).consensus_guarantee_for_hyberion,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -341,8 +334,17 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 children: <Widget>[
                   Text(
                     S.of(context).atlas_next_age,
-                    style:
-                        TextStyle(color: HexColor('#FFFFFFFF'), fontSize: 10),
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 11,
+                      shadows: [
+                        BoxShadow(
+                          offset: const Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          spreadRadius: 2.0,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: 4),
                   Stack(
@@ -362,9 +364,19 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                           height: 60,
                         ),
                       ),
-                      TimerTextWidget(
-                        remainTime: _remainTime,
-                        loopTime: _secPerEpoch,
+                      Text(
+                        '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          shadows: [
+                            BoxShadow(
+                              offset: const Offset(1.0, 1.0),
+                              blurRadius: 2.0,
+                              spreadRadius: 2.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   )
@@ -406,20 +418,21 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ),
                 Expanded(
                   flex: 1,
-                  child: Center(
-                    child: InkWell(
-                      child: Text(
-                        S.of(context).atlas_launch_tutorial,
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                      ),
-                      onTap: () {
-                        AtlasApi.goToAtlasMap3HelpPage(context);
-                      },
-                    ),
-                  ),
+//                  child: Center(
+//                    child: InkWell(
+//                      child: Text(
+//                        S.of(context).atlas_launch_tutorial,
+//                        style: TextStyle(
+//                          color: DefaultColors.color999,
+//                          fontSize: 12,
+//                        ),
+//                      ),
+//                      onTap: () {
+//                        AtlasApi.goToAtlasMap3HelpPage(context);
+//                      },
+//                    ),
+//                  ),
+                  child: Container(),
                 ),
               ],
             ),
@@ -441,6 +454,13 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     );
   }
 
+  void _pushWalletManagerAction() {
+    Application.router.navigateTo(
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+  }
+
   _myNodes() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,19 +476,24 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                '我的节点',
+                S.of(context).my_nodes,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Spacer(),
               InkWell(
                 onTap: () {
+                  if (_isNoWallet) {
+                    _pushWalletManagerAction();
+                    return;
+                  }
+
                   Application.router.navigateTo(
                     context,
                     Routes.atlas_my_node_page,
                   );
                 },
                 child: Text(
-                  '查看更多',
+                  S.of(context).check_more,
                   style: TextStyle(
                     color: DefaultColors.color999,
                     fontSize: 12,
@@ -493,21 +518,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                       return _nodeInfoItem(index);
                     }),
               )
-            : Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Image.asset(
-                        'res/drawable/ic_empty_contract.png',
-                        width: 100,
-                        height: 100,
-                      ),
-                    ),
-                    Text('暂无记录'),
-                  ],
-                ),
-              ),
+            : _emptyListHint(),
       ],
     );
   }
@@ -523,12 +534,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       ));
     } else {
       return SliverToBoxAdapter(
-        child: Container(
-          height: 200,
-          child: Center(
-            child: Text(S.of(context).exchange_empty_list),
-          ),
-        ),
+        child: _emptyListHint(),
       );
     }
   }
@@ -613,6 +619,30 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     );
   }
 
+  _emptyListHint() {
+    return Center(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/ic_empty_contract.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Text(
+            S.of(context).exchange_empty_list,
+            style: TextStyle(
+              fontSize: 13,
+              color: DefaultColors.color999,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   _refreshData() async {
     _currentPage = 1;
     _atlasNodeList.clear();
@@ -629,9 +659,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       );
 
       if (_nodeList != null) {
+        _atlasNodeList.clear();
         _atlasNodeList.addAll(_nodeList);
       }
-
+      setState(() {});
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
@@ -653,16 +684,16 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         size: _pageSize,
       );
 
-      if (_nodeList != null) {
+      if (_nodeList != null && _nodeList.isNotEmpty) {
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
-
-      _loadDataBloc.add(LoadingMoreSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }

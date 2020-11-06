@@ -24,13 +24,10 @@ import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasJoinMap3Widget extends StatefulWidget {
   final String nodeId;
-  final String remainDay;
-  final String shareName;
-  final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  AtlasJoinMap3Widget(this.nodeId, this.remainDay, this.shareName, this.shareUrl,
+  AtlasJoinMap3Widget(this.nodeId,
       {this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
@@ -194,11 +191,11 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey[200],
-                  blurRadius: 40.0,
+                  blurRadius: 3.0,
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(right: 12),
+            margin: const EdgeInsets.only(left:6, right: 6),
             child: Stack(
               children: <Widget>[
                 Align(
@@ -220,7 +217,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                             style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
                       ),
                       Text(
-                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                          "${FormatUtil.stringFormatCoinNum(entity.getStaking() ?? "0")}",
                           style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
                     ],
                   ),

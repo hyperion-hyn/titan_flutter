@@ -33,6 +33,17 @@ class AssetHistory extends Object {
   @JsonKey(name: 'ctime')
   String ctime;
 
+  @JsonKey(name: 'chain')
+  String chain;
+
+  bool isAtlas() {
+    return chain == 'atlas';
+  }
+
+  bool isAbnormal() {
+    return status == '9';
+  }
+
   String getTypeText() {
     switch (name ?? '') {
       case 'recharge':
@@ -74,6 +85,8 @@ class AssetHistory extends Object {
           return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_7;
         case '8':
           return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_8;
+        case '9':
+          return S.of(Keys.rootKey.currentContext).exchange_withdraw_status_9;
         default:
           return '-';
       }
@@ -105,10 +118,18 @@ class AssetHistory extends Object {
     this.status,
     this.mtime,
     this.ctime,
+    this.chain,
   );
 
   factory AssetHistory.fromJson(Map<String, dynamic> srcJson) =>
       _$AssetHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AssetHistoryToJson(this);
+}
+
+class AbnormalTransferHistory {
+  List<AssetHistory> list = List();
+  String usdt;
+  String hyn;
+  String total;
 }

@@ -8,6 +8,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
@@ -30,16 +31,17 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
   int _pageSize = 30;
   Wallet _wallet;
   AtlasApi api = AtlasApi();
+  int _currentEpoch = 0;
 
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   var _address = "";
+  Map3IntroduceEntity _map3introduceEntity;
 
   @override
   void initState() {
     super.initState();
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+    setupData();
 
     if (!MemoryCache.hasNodePageData) {
       loadDataBloc.add(LoadingEvent());
@@ -47,6 +49,15 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
       _loadData();
     }
   }
+
+  setupData() async {
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+  }
+
 
   @override
   void didChangeDependencies() {
@@ -100,7 +111,8 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
         onLoadingMore: _loadMoreData,
         child: ListView.builder(
             itemBuilder: (context, index) {
-              return getMap3NodeWaitItem(context, _dataArray[index], AtlasApi.map3introduceEntity);
+              return getMap3NodeWaitItem(context, _dataArray[index], _map3introduceEntity,
+                  currentEpoch: _currentEpoch);
             },
             itemCount: _dataArray.length),
       ),
@@ -154,6 +166,9 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
     try {
       _currentPage = 1;
       List<Map3InfoEntity> dataList = [];
+
+      var _atlasHomeEntity = await AtlasApi().postAtlasHome(_address);
+      _currentEpoch = _atlasHomeEntity?.info?.epoch ?? 0;
 
       switch (widget.model.type) {
         case MyContractType.join:
@@ -214,7 +229,8 @@ class _Map3NodeListState extends State<Map3NodeListPage> {
 class MyContractModel {
   String name;
   MyContractType type;
-  MyContractModel(this.name, this.type);
+  int currentEpoch;
+  MyContractModel(this.name, this.type, {this.currentEpoch=0});
 }
 
 enum MyContractType {

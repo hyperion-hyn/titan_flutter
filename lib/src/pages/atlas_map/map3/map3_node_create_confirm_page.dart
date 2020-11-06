@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
@@ -22,16 +23,16 @@ class Map3NodeCreateConfirmPage extends StatefulWidget {
 
 class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   List<String> _titleList = [
-    "图标",
-    "名称",
-    "节点号",
-    "首次抵押",
-    "管理费",
-    "网址",
-    "安全联系",
-    "描述",
-    "云服务商",
-    "节点地址"
+    S.of(Keys.rootKey.currentContext).icon,
+    S.of(Keys.rootKey.currentContext).name,
+    S.of(Keys.rootKey.currentContext).node_num,
+    S.of(Keys.rootKey.currentContext).first_time_stake,
+    S.of(Keys.rootKey.currentContext).manage_fee,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).description,
+    S.of(Keys.rootKey.currentContext).cloud_provider,
+    S.of(Keys.rootKey.currentContext).node_addrees
   ];
   List<String> _detailList = [
     "",
@@ -59,52 +60,52 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
     var entity = widget.payload;
     if (entity.pic?.isNotEmpty ?? false) {
-      _titleList.add("图标");
+      _titleList.add(S.of(Keys.rootKey.currentContext).icon);
       _detailList.add(entity.pic);
     }
 
     if (entity.name?.isNotEmpty ?? false) {
-      _titleList.add("名称");
+      _titleList.add(S.of(Keys.rootKey.currentContext).name);
       _detailList.add(entity.name);
     }
 
     if (entity.nodeId?.isNotEmpty ?? false) {
-      _titleList.add("节点号");
+      _titleList.add(S.of(Keys.rootKey.currentContext).node_num);
       _detailList.add(entity.nodeId);
     }
 
     if (entity.staking?.isNotEmpty ?? false) {
-      _titleList.add("首次抵押");
-      _detailList.add(entity.staking);
+      _titleList.add(S.of(Keys.rootKey.currentContext).first_time_stake);
+      _detailList.add(entity.staking + " HYN");
     }
 
     if (entity.feeRate?.isNotEmpty ?? false) {
-      _titleList.add("管理费");
+      _titleList.add(S.of(Keys.rootKey.currentContext).manage_fee);
       _detailList.add(entity.feeRate + "%");
     }
 
     if (entity.home?.isNotEmpty ?? false) {
-      _titleList.add("网址");
+      _titleList.add(S.of(Keys.rootKey.currentContext).website);
       _detailList.add(entity.home);
     }
 
     if (entity.connect?.isNotEmpty ?? false) {
-      _titleList.add("安全联系");
+      _titleList.add(S.of(Keys.rootKey.currentContext).contact);
       _detailList.add(entity.connect);
     }
 
     if (entity.describe?.isNotEmpty ?? false) {
-      _titleList.add("描述");
+      _titleList.add(S.of(Keys.rootKey.currentContext).description);
       _detailList.add(entity.describe);
     }
 
     if (entity.providerName?.isNotEmpty ?? false) {
-      _titleList.add("云服务商");
+      _titleList.add(S.of(Keys.rootKey.currentContext).cloud_provider);
       _detailList.add(entity.providerName);
     }
 
     if (entity.regionName?.isNotEmpty ?? false) {
-      _titleList.add("节点选址");
+      _titleList.add(S.of(Keys.rootKey.currentContext).node_addrees);
       _detailList.add(entity.regionName);
     }
   }
@@ -113,7 +114,7 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: widget.payload.isEdit ? '确认编辑节点' : '确认创建节点',
+        baseTitle: S.of(context).confirm_create_node,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -149,7 +150,8 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              "你即将要${widget.payload.isEdit ? "编辑" : "创建"}如下Map3节点",
+              S.of(context).you_will_do_map3(
+                  '${S.of(context).create}'),
               style: TextStyle(
                 color: HexColor("#333333"),
                 fontSize: 16,
@@ -235,22 +237,13 @@ class _Map3NodeCreateConfirmState extends State<Map3NodeCreateConfirmPage> {
 
           // 2.编辑创建节点需要的基本信息
           AtlasMessage message;
-          if (!widget.payload.isEdit) {
-            CreateMap3Entity map3entity =
-                CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
-            map3entity.gasLimit = 600000;
-            map3entity.payload = widget.payload;
-            map3entity.amount = widget.payload.staking;
-            message = ConfirmCreateMap3NodeMessage(entity: map3entity);
-          } else {
-            CreateMap3Entity map3entity =
-                CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
-            map3entity.payload = widget.payload;
-            message = ConfirmEditMap3NodeMessage(
-                entity: map3entity, map3NodeAddress: "");
-          }
+          CreateMap3Entity map3entity =
+          CreateMap3Entity.onlyType(AtlasActionType.CREATE_MAP3_NODE);
+          map3entity.payload = widget.payload;
+          map3entity.amount = widget.payload.staking;
+          message = ConfirmCreateMap3NodeMessage(entity: map3entity);
 
-          Navigator.push(
+          await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => Map3NodeConfirmPage(

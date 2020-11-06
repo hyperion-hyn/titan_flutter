@@ -5,51 +5,85 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
-import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
-import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodeEditPage extends StatefulWidget {
-  final Map3InfoEntity entity;
-  Map3NodeEditPage({this.entity});
+  final Map3InfoEntity map3InfoEntity;
+
+  Map3NodeEditPage({this.map3InfoEntity});
 
   @override
-  _Map3NodeEditState createState() => new _Map3NodeEditState();
+  _Map3NodeEditState createState() => _Map3NodeEditState();
 }
 
 class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObserver {
-
-  CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
-
-  var _localImagePath = "";
-  var _titleList = ["名称", "节点号", "网址", "安全联系", "描述"];
+  var _titleList = [
+    S.of(Keys.rootKey.currentContext).node_num,
+    S.of(Keys.rootKey.currentContext).name,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).description,
+  ];
   List<String> _detailList = ["", "", "", "", ""];
-  List<String> _hintList = ["请输入节点名称", "请输入节点号", "请输入节点网址", "请输入节点的联系方式", "请输入节点描述"];
+  List<String> _hintList = [
+    S.of(Keys.rootKey.currentContext).please_input_node_num,
+    S.of(Keys.rootKey.currentContext).please_enter_node_name,
+    S.of(Keys.rootKey.currentContext).please_enter_node_address,
+    S.of(Keys.rootKey.currentContext).please_input_node_contact,
+    S.of(Keys.rootKey.currentContext).please_enter_node_description
+  ];
+
+  Map3IntroduceEntity _map3introduceEntity;
+  CreateMap3Payload _payload = CreateMap3Payload.onlyEditType(editType: 1);
 
   @override
   void initState() {
     _setupData();
+
     super.initState();
   }
 
-  _setupData() {
-    var entity = widget.entity;
+  /*
+  _setupPayload() async {
+    print("[dd0] payload.toJson():${widget.map3InfoEntity.toJson()}");
+    
+    // payload.name = widget.entity.name;
+    // payload.nodeId = widget.entity.nodeId;
+    // payload.home = widget.entity.home;
+    // payload.connect = widget.entity.contact;
+    // payload.describe = widget.entity.describe;
+    // payload.isEdit = true;
 
-    if (entity.name?.isNotEmpty ?? false) {
-      _detailList[0] = entity.name;
-    }
+    //print("[dd1] payload.toJson():${payload.toJson()}");
+
+    var blsKeySignEntity = await AtlasApi().getMap3Bls();
+    _payload.blsRemoveKey = widget?.map3InfoEntity?.blsKey;
+    _payload.blsAddSign = blsKeySignEntity?.blsSign ?? "";
+    _payload.blsAddKey = blsKeySignEntity?.blsKey ?? "";
+    print("[dd2] payload.toJson():${_payload.toJson()}");
+  }
+  */
+
+  _setupData() async {
+    var entity = widget.map3InfoEntity;
 
     if (entity.nodeId?.isNotEmpty ?? false) {
-      _detailList[1] = entity.nodeId;
+      _detailList[0] = entity.nodeId;
+    }
+
+    if (entity.name?.isNotEmpty ?? false) {
+      _detailList[1] = entity.name;
     }
 
     if (entity.home?.isNotEmpty ?? false) {
@@ -63,6 +97,9 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     if (entity.describe?.isNotEmpty ?? false) {
       _detailList[4] = entity.describe;
     }
+
+    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+    setState(() {});
   }
 
   @override
@@ -74,7 +111,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '编辑Map3节点',
+        baseTitle: S.of(context).edit_map3,
       ),
       backgroundColor: Colors.white,
       body: _pageView(context),
@@ -130,11 +167,14 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Expanded(child: Text("Map3云节点（V1.0）", style: TextStyle(fontWeight: FontWeight.bold))),
+                      Expanded(
+                          child: Text("${_map3introduceEntity?.name ?? ''}",
+                              style: TextStyle(fontWeight: FontWeight.bold))),
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: InkWell(
-                          child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                          child: Text(S.of(context).detailed_introduction,
+                              style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
                           onTap: () {
                             AtlasApi.goToAtlasMap3HelpPage(context);
                           },
@@ -147,7 +187,13 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("启动所需100万  ", style: TextStyles.textC99000000S13, maxLines: 1, softWrap: true),
+                        Text(
+                            S.of(context).active_still_need +
+                                " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
+                                S.of(context).ten_thousand,
+                            style: TextStyles.textC99000000S13,
+                            maxLines: 1,
+                            softWrap: true),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
@@ -157,7 +203,8 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                           child:
                               Text("  |  ", style: TextStyle(fontSize: 12, color: HexColor("000000").withOpacity(0.2))),
                         ),
-                        Text(S.of(context).n_day("180"), style: TextStyles.textC99000000S13)
+                        Text(S.of(context).n_day(_map3introduceEntity?.days ?? '180'),
+                            style: TextStyles.textC99000000S13)
                       ],
                     ),
                   ),
@@ -190,7 +237,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（选填）";
+          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -209,18 +256,25 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
               break;
           }
 
-          return editInfoItem(context, index, title, hint, detail, ({String value}){
-            if (index == 0) {
-              setState(() {
-                _localImagePath = value;
-                _detailList[index] = value;
-              });
-            } else {
-              setState(() {
-                _detailList[index] = value;
-              });
-            }
-          }, keyboardType: keyboardType, subtitle: subTitle, hasSubtitle: false);
+          return editInfoItem(
+            context,
+            index,
+            title,
+            hint,
+            detail,
+            ({String value}) {
+              var last = _detailList[index];
+              if (last != value) {
+                setState(() {
+                  _detailList[index] = value;
+                });
+              }
+            },
+            keyboardType: keyboardType,
+            subtitle: subTitle,
+            hasSubtitle: false,
+            canEdit: title != _titleList[0],
+          );
         },
         separatorBuilder: (context, index) {
           return Divider(
@@ -252,25 +306,53 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             return;
           }
 
+          var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
+          if (map3NodeAddress.isEmpty) {
+            return;
+          }
+
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
-            if (title == "名称") {
-              _payload.name = _detailList[0];
-            } else if (title == "节点号" && _detailList[1] != widget.entity.nodeId) {
-              _payload.nodeId = _detailList[1];
-            } else if (title == "网址") {
-              _payload.home = _detailList[2];
-            } else if (title == "安全联系") {
-              _payload.connect = _detailList[3];
-            } else if (title == "描述") {
-              _payload.describe = _detailList[4];
+
+            if (title == S.of(Keys.rootKey.currentContext).node_num) {
+              var last = widget.map3InfoEntity.nodeId;
+              var edit = _detailList[0];
+              if (last != edit) {
+                _payload.nodeId = edit;
+              }
+            } else if (title == S.of(Keys.rootKey.currentContext).name) {
+              var last = widget.map3InfoEntity.name;
+              var edit = _detailList[1];
+              if (last != edit) {
+                _payload.name = edit;
+              }
+            } else if (title == S.of(Keys.rootKey.currentContext).website) {
+              var last = widget.map3InfoEntity.home;
+              var edit = _detailList[2];
+              if (last != edit) {
+                _payload.home = edit;
+              }
+            } else if (title == S.of(Keys.rootKey.currentContext).contact) {
+              var last = widget.map3InfoEntity.home;
+              var edit = _detailList[3];
+              if (last != edit) {
+                _payload.connect = edit;
+              }
+            } else if (title == S.of(Keys.rootKey.currentContext).description) {
+              var last = widget.map3InfoEntity.describe;
+              var edit = _detailList[4];
+              if (last != edit) {
+                _payload.describe = edit;
+              }
             }
           }
-          _payload.isEdit = true;
+
+          print("[_payload] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");
 
           CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
           map3entity.payload = _payload;
-          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: widget.entity.address);
+
+          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: map3NodeAddress);
 
           Navigator.push(
               context,
@@ -279,7 +361,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
                   message: message,
                 ),
               ));
-
         },
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,

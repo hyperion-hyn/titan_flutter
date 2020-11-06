@@ -1,27 +1,48 @@
 import 'package:decimal/decimal.dart';
+import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 
 import 'package:web3dart/web3dart.dart';
 
 class HYNApi {
-  static Future<String> signTransferHYN(
-      String password, localWallet.Wallet wallet,
+  static Future<String> signTransferHYN(String password, localWallet.Wallet wallet,
       {String toAddress,
       BigInt amount,
       IMessage message,
       bool isAtlasTrans = true,
       String gasPrice,
+      int nonce,
       int gasLimit}) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      var walletAddress =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      if (message == null || message?.type == MessageType.typeNormal) {
+        gasLimit = 21000;
+      } else {
+        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+            data: message?.toRlp(),
+            txType: message?.type ?? MessageType.typeNormal);
+        gasLimit = gasLimitBitInt.toInt();*/
+        gasLimit = 100000;
+      }
     }
     final txHash = await wallet.signEthTransaction(
       password: password,
@@ -31,24 +52,38 @@ class HYNApi {
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
-      // todo: 需要动态设置
-      gasLimit: 600000,
+      gasLimit: gasLimit,
+      nonce: nonce,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
     return txHash;
   }
 
-  static Future<String> sendTransferHYN(
-      String password, localWallet.Wallet wallet,
+  static Future<String> sendTransferHYN(String password, localWallet.Wallet wallet,
       {String toAddress,
       BigInt amount,
       IMessage message,
       bool isAtlasTrans = true,
       String gasPrice,
+      int nonce,
       int gasLimit}) async {
     if (gasPrice == null) {
       gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      final client = WalletUtil.getWeb3Client(isAtlasTrans);
+      var walletAddress =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet.wallet.getAtlasAccount().address;
+      if (message == null || message?.type == MessageType.typeNormal) {
+        gasLimit = 21000;
+      } else {
+        /*var gasLimitBitInt = await client.estimateGas(sender: EthereumAddress.fromHex(walletAddress),
+            data: message?.toRlp(),
+            txType: message?.type ?? MessageType.typeNormal);
+        gasLimit = gasLimitBitInt.toInt();*/
+        gasLimit = 100000;
+      }
     }
     final txHash = await wallet.sendEthTransaction(
       password: password,
@@ -58,8 +93,8 @@ class HYNApi {
       type: message?.type ?? MessageType.typeNormal,
       message: message,
       isAtlasTrans: isAtlasTrans,
-      // todo: 需要动态设置
-      gasLimit: 600000,
+      gasLimit: gasLimit,
+      nonce: nonce,
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
@@ -72,13 +107,10 @@ class HYNApi {
     localWallet.Wallet wallet,
   ) async {
     var message = CreateAtlasNodeMessage(
-      maxChangeRate:
-          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateTrim),
-      maxRate:
-          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateMax),
+      maxChangeRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateTrim),
+      maxRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRateMax),
       rate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
-      maxTotalDelegation:
-          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
+      maxTotalDelegation: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
       description: NodeDescription(
           name: createAtlasEntity.payload.name,
           details: createAtlasEntity.payload.describe,
@@ -86,8 +118,7 @@ class HYNApi {
           securityContact: createAtlasEntity.payload.contact,
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
-      slotPubKey:
-          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotPubKey: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeySig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
     );
@@ -104,10 +135,8 @@ class HYNApi {
   ) async {
     var message = EditAtlasNodeMessage(
       validatorAddress: createAtlasEntity.payload.atlasAddress,
-      commissionRate:
-          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
-      maxTotalDelegation:
-          ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
+      commissionRate: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.feeRate),
+      maxTotalDelegation: ConvertTokenUnit.strToBigInt(createAtlasEntity.payload.maxStaking),
       description: NodeDescription(
           name: createAtlasEntity.payload.name,
           details: createAtlasEntity.payload.describe,
@@ -116,8 +145,7 @@ class HYNApi {
           website: createAtlasEntity.payload.home),
       operatorAddress: createAtlasEntity.payload.map3Address,
       slotKeyToRemove: "",
-      slotKeyToAdd:
-          '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
+      slotKeyToAdd: '2438b2439f5cec20d56c0948e557071a72d0ac9a113d627fafc1ad365802fb23919cd1bf07932ee0eb10e965147fe404',
       slotKeyToAddSig:
           '2a42c89854e15c8d5f6bde111217a53767c94c96ff061ea65a1f0f392fadafe383c6e94d1873956e399e0e869bb2cd11885fcb155eed2e783570a3b305b2c1c33ce846227458eec0abae735bf6460a25f70bf3d24da592790e59d826ca07e910',
       eposStatus: 0, //0、 Active 1、Inactive 2、Banned
@@ -134,8 +162,7 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = CollectAtlasRewardMessage(
-        delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message = CollectAtlasRewardMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -164,8 +191,7 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = ReDelegateAtlasMessage(
-        delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message = ReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -178,8 +204,7 @@ class HYNApi {
     String password,
     localWallet.Wallet wallet,
   ) async {
-    var message = UnReDelegateAtlasMessage(
-        delegatorAddress: map3Address, validatorAddress: atlasAddress);
+    var message = UnReDelegateAtlasMessage(delegatorAddress: map3Address, validatorAddress: atlasAddress);
     print(message);
 
     var rawTx = await signTransferHYN(password, wallet, message: message);
@@ -197,8 +222,7 @@ class HYNApi {
     print(payload.toJson());
 
     var amount = ConvertTokenUnit.decimalToWei(Decimal.parse(payload.staking));
-    var feeRate = ConvertTokenUnit.strToBigInt(entity.payload.feeRate) /
-        BigInt.parse('100');
+    var feeRate = ConvertTokenUnit.strToBigInt(entity.payload.feeRate) / BigInt.parse('100');
     var message = CreateMap3NodeMessage(
       amount: amount,
       commission: BigInt.from(feeRate),
@@ -214,11 +238,7 @@ class HYNApi {
     );
     print(message);
 
-    return signTransferHYN(password, wallet,
-        toAddress: entity.to,
-        message: message,
-        gasLimit: entity.gasLimit,
-        gasPrice: entity.price);
+    return signTransferHYN(password, wallet, toAddress: entity.to, message: message, gasPrice: entity.price);
   }
 
   static Future transEditMap3Node(
@@ -232,8 +252,8 @@ class HYNApi {
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: payload.name,
-          details: payload.describe,
+          name: payload.name, // ''
+          details: payload.describe, //''
           identity: payload.nodeId,
           securityContact: payload.connect,
           website: payload.home),
@@ -241,14 +261,18 @@ class HYNApi {
       nodeKeyToRemove: payload.blsRemoveKey,
       nodeKeyToAdd: payload.blsAddKey,
       nodeKeyToAddSig: payload.blsAddSign,
+      isEditBLS: payload.editType == 2,
     );
-    print(message);
+    print("[hyn_api] --> payload:${payload.toJson()}");
 
-    return signTransferHYN(password, wallet,
-        toAddress: entity.to,
-        message: message,
-        gasLimit: entity.gasLimit,
-        gasPrice: entity.price);
+    return signTransferHYN(
+      password,
+      wallet,
+      toAddress: entity.to,
+      message: message,
+      gasPrice: entity.price,
+      nonce: entity.nonce,
+    );
   }
 
   static Future transTerminateMap3Node(
@@ -317,9 +341,14 @@ class HYNApi {
     bool isRenew,
     String feeRate,
     String map3NodeAddress,
+    int nonce,
   ) async {
-    var newCommissionRate =
-        ConvertTokenUnit.decimalToWei(Decimal.parse(feeRate));
+    var newCommissionRate;
+    if (feeRate != null) {
+      var feeRateValue = ConvertTokenUnit.strToBigInt(feeRate) / BigInt.parse('100');
+
+      newCommissionRate = BigInt.from(feeRateValue);
+    }
 
     var message = RenewMap3NodeMessage(
       isRenew: isRenew,
@@ -329,51 +358,156 @@ class HYNApi {
     );
     print(message);
 
-    return sendTransferHYN(password, wallet, message: message);
+    return sendTransferHYN(password, wallet, message: message, nonce: nonce);
   }
 
-  static String getValueByHynType(int hynMessageType, {String amount = ""}) {
+  static String getValueByHynType(
+    int hynMessageType, {
+    TransactionDetailVo transactionDetail,
+    bool getTypeStr = false,
+    bool getAmountStr = false,
+    bool getRecordAmountStr = false,
+    bool formatComma = true,
+    Map<String, dynamic> dataDecoded,
+    String creatorAddress = '',
+  }) {
     String typeStr = "";
+    String amountStr = "0";
+    String recordAmountStr = "";
+
+    var context = Keys.rootKey.currentContext;
+
     switch (hynMessageType) {
       case MessageType.typeNormal:
-        typeStr = "转账";
+        typeStr = S.of(context).transfer;
+        if (transactionDetail != null) {
+          if (transactionDetail.type == TransactionType.TRANSFER_IN) {
+            amountStr =
+                "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+          } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
+            amountStr =
+                "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+          }
+        }
         break;
       case MessageType.typeCreateValidator:
-        typeStr = "创建Atlas";
+        typeStr = S.of(context).msg_create_atlas;
         break;
       case MessageType.typeEditValidator:
-        typeStr = "编辑Atlas";
+        typeStr = S.of(context).msg_edit_atlas;
         break;
       case MessageType.typeReDelegate:
-        typeStr = "复抵押";
+        typeStr = S.of(context).msg_re_delegation;
         break;
       case MessageType.typeUnReDelegate:
-        typeStr = "取消复抵押";
+        typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = "提取复抵押奖励" + " "+amount;
+        typeStr = S.of(context).msg_collect_re_delegation_reward;
+        String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCreateMap3:
-        typeStr = "创建Map3节点" + " "+amount;
+        typeStr = S.of(context).create_map_mortgage_contract;
+        String value = getDecodedAmount(transactionDetail);
+        amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeEditMap3:
-        typeStr = "编辑Map3节点";
+        typeStr = S.of(context).msg_edit_map3;
         break;
       case MessageType.typeTerminateMap3:
-        typeStr = "终止Map3节点";
+        typeStr = S.of(context).msg_terminate_map3;
+        String value = getDecodedAmount(transactionDetail);
+        amountStr = "${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeMicroDelegate:
-        typeStr = "微抵押" + " "+amount;
+        typeStr = S.of(context).msg_micro_delegate;
+        String value = getDecodedAmount(transactionDetail);
+        amountStr = "-${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeUnMicroDelegate:
-        typeStr = "取消微抵押";
+        typeStr = S.of(context).msg_un_micro_delegate;
+        String value = getDecodedAmount(transactionDetail);
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeCollectMicroStakingRewards:
-        typeStr = "提取微抵押奖励" + " "+amount;
+        typeStr = S.of(context).msg_collect_micro_staking_rewards;
+        String value = transactionDetail?.getMap3RewardAmount() ?? "0.0";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
+        break;
+      case MessageType.typeRenewMap3:
+
+        /*
+
+        * 根据角色，设置，如果是创建人， 设置true/false，展示： （下期预设，节点续约/停止续约），
+        * 如果是参与人， 设置true/false，展示： （下期预设，跟随续约/不跟随）
+        * */
+
+        LogUtil.printMessage("transactionDetail?.dataDecoded:${dataDecoded}");
+
+        if (dataDecoded != null) {
+          var map3NodeAddress = creatorAddress?.toLowerCase() ?? '';
+
+          var delegatorAddress = '';
+          if (dataDecoded.keys.contains('delegatorAddress')) {
+            delegatorAddress = (dataDecoded["delegatorAddress"] as String).toLowerCase();
+          }
+
+          var isCreator =
+              map3NodeAddress.isNotEmpty && delegatorAddress.isNotEmpty && map3NodeAddress == delegatorAddress;
+
+          var isRenew;
+          if (dataDecoded.keys.contains('isRenew')) {
+            isRenew = (dataDecoded["isRenew"] as bool);
+          }
+
+          if (isCreator) {
+            if (isRenew != null) {
+              typeStr = isRenew ? '下期预设，节点续约' : '下期预设，停止续约';
+            } else {
+              typeStr = S.of(context).msg_renew_map3;
+            }
+          } else {
+            if (isRenew != null) {
+              typeStr = isRenew ? '下期预设，跟随续约' : '下期预设，不跟随';
+            } else {
+              typeStr = S.of(context).msg_renew_map3;
+            }
+          }
+        } else {
+          typeStr = S.of(context).msg_renew_map3;
+        }
+
         break;
     }
 
-    return typeStr;
+    if (getTypeStr) {
+      return typeStr;
+    } else if (getAmountStr) {
+      return amountStr;
+    } else if (getRecordAmountStr) {
+      return recordAmountStr;
+    } else {
+      return "";
+    }
+  }
+
+  static String getDecodedAmount(TransactionDetailVo transactionDetail) {
+    return transactionDetail?.getDecodedAmount() ?? "0.0";
+  }
+
+  static String getTransRecordAmount(String value) {
+    var recordAmountStr = "";
+    if (Decimal.parse(value) > Decimal.fromInt(0)) {
+      recordAmountStr = FormatUtil.stringFormatCoinNum(value);
+    }
+    return recordAmountStr;
   }
 
   static String getHynToAddress(TransactionDetailVo transactionDetailVo) {

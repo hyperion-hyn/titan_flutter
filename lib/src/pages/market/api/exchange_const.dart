@@ -44,6 +44,11 @@ class ExchangeConst {
   static const PATH_USD_CNY = "/api/quotation/getUSDCNY"; // 美元兑换人民币汇率
   static const PATH_TYPE_TO_CURRENCY = "/api/quotation/getType2Currency";
 
+  ///Abnormal account
+  static const PATH_CHECK_ACCOUNT_ABNORMAL = '/api/account/isFix';
+  static const PATH_ABNORMAL_TRANSFER_LIST = "/api/account/fixList"; // 充提记录
+  static const PATH_FIX_ABNORMAL_ACCOUNT = '/api/account/fix';
+
   ///资金操作
   static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表
   static const PATH_TO_EXCHANGE = "/api/account/toExchange"; // 资金账户划转到交易账户

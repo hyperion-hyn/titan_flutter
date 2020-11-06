@@ -836,6 +836,8 @@ class HomePanelState extends State<HomePanel> {
 
   Future _scanAction() async {
     String scanStr = await BarcodeScanner.scan();
+    print("[扫描结果] scanStr:$scanStr");
+
     if (scanStr == null) {
       return;
     } else if (scanStr.contains("share?id=")) {
@@ -847,13 +849,9 @@ class HomePanelState extends State<HomePanel> {
       if(idList.length < 1){
         return;
       }
-
-      Map3InfoEntity infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
-      Application.router.navigateTo(
-        context,
-        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
-      );
-
+      var infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

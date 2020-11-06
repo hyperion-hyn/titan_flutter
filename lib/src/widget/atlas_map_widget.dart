@@ -116,8 +116,8 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
         showEffectOn: 'render',
         zlevel:2,
         rippleEffect: {
-              period: 10,
-              scale: 7,
+              period: 9,
+              scale: 10,
               brushType: 'fill'
               },
         hoverAnimation: true,

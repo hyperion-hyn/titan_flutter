@@ -31,6 +31,7 @@ import 'package:titan/src/pages/atlas_map/widget/simple_line_chart.dart';
 import 'package:titan/src/pages/atlas_map/widget/sliding_viewport_on_selection.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -64,7 +65,7 @@ class AtlasDetailPage extends StatefulWidget {
 class AtlasDetailPageState extends State<AtlasDetailPage> {
   AtlasApi _atlasApi = AtlasApi();
   final _client = WalletUtil.getWeb3Client(true);
-  List<Map3TxLogEntity> _delegateRecordList = List();
+  List<HynTransferHistory> _delegateRecordList = List();
   ValidatorInformationEntity _validatorInformationEntity;
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;
@@ -112,51 +113,61 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   }
 
   Future _refreshData() async {
+    showMyMap3 = false;
     infoContentList.clear();
-    _currentPage = 1;
     _delegateRecordList.clear();
+    showMap3List.clear();
+    _currentPage = 1;
 
     var hasWallet = _activatedWallet != null;
-//    try {
-    var resultList = await Future.wait([
-      _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
-      _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
-      _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
-      hasWallet ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000) : Future.delayed(Duration())
-    ]);
-    _atlasInfoEntity = resultList[0];
-    _delegateRecordList = resultList[1];
-    _validatorInformationEntity = resultList[2];
-    List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
+    try {
+      var resultList = await Future.wait([
+        _atlasApi.postAtlasInfo(_activatedWallet?.wallet?.getAtlasAccount()?.address ?? "", widget.atlasNodeId),
+        _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress),
+        _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
+        hasWallet
+            ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
+            : Future.delayed(Duration())
+      ]);
+      _atlasInfoEntity = resultList[0];
+      _delegateRecordList = resultList[1];
+      _validatorInformationEntity = resultList[2];
+      List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
 
-    if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
-      showMyMap3 = true;
-    }
+      if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
+        showMyMap3 = true;
+      }
 
-    if(hasWallet)
-      myMap3List.forEach((myElement) {
-        bool isShowMap3 = true;
-        if(_atlasInfoEntity.myMap3 != null){
-          _atlasInfoEntity.myMap3.forEach((atlasElement) {
-            if(myElement.address == atlasElement.address){
-              isShowMap3 = false;
-            }
-          });
-        }
-        if(isShowMap3){
-          showMap3List.add(myElement);
-        }
-      });
+      if (hasWallet)
+        myMap3List.forEach((myElement) {
+          bool isShowMap3 = true;
+          if (myElement.status != Map3InfoStatus.CONTRACT_HAS_STARTED.index) {
+            isShowMap3 = false;
+          }
+          if (_atlasInfoEntity.myMap3 != null) {
+            _atlasInfoEntity.myMap3.forEach((atlasMap3Element) {
+              if (myElement.address == atlasMap3Element.address || myElement.relative != null) {
+                isShowMap3 = false;
+              }
+            });
+          }
+          if (isShowMap3) {
+            showMap3List.add(myElement);
+          }
+        });
 
-    infoContentList.add("${_atlasInfoEntity.getMaxStaking()}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.home)}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.contact)}");
-    infoContentList.add("${getContentStr(_atlasInfoEntity.describe)}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}");
-    infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
+      var maxStaking = FormatUtil.formatPrice(double.parse(_atlasInfoEntity.getMaxStaking()));
+      infoContentList.add(maxStaking);
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.home)}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.contact)}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.describe)}");
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
 
-    /*_dataList.forEach((element) {
+      var feeRateMax = "${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}";
+      infoContentList.add(feeRateMax);
+      infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
+
+      /*_dataList.forEach((element) {
         element.name = "haha";
         element.address = "121112121";
         element.rewardRate = "11%";
@@ -166,26 +177,18 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
       });*/
 
-    if (mounted) {
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+        });
+        _loadDataBloc.add(RefreshSuccessEvent());
+      }
+    } catch (error) {
+      logger.e(error);
+      LogUtil.toastException(error);
       setState(() {
-        _currentState = null;
+        _currentState = all_page_state.LoadFailState();
       });
-      _loadDataBloc.add(RefreshSuccessEvent());
-    }
-//    }catch(error){
-//      logger.e(error);
-//      setState(() {
-//        _currentState = all_page_state.LoadFailState();
-//      });
-//    }
-
-  }
-
-  String getContentStr(String contentStr){
-    if(contentStr == null || contentStr.isEmpty){
-      return "暂无";
-    }else{
-      return contentStr;
     }
   }
 
@@ -248,7 +251,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   _delegateRecordList.isNotEmpty
                       ? SliverList(
                           delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(_delegateRecordList[index],isAtlasDetail: true);
+                          return delegateRecordItemWidget(_delegateRecordList[index], isAtlasDetail: true);
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
                   /*SliverList(
@@ -406,7 +409,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         return DropdownMenuItem(
           value: index,
           child: Text(
-            '${map3nodeEntity.name}的Map3节点',
+            '${map3nodeEntity.name}',
             style: TextStyles.textC333S14,
           ),
         );
@@ -416,19 +419,25 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     Decimal leftReward = Decimal.fromInt(0);
     Decimal historyReward = Decimal.fromInt(0);
     if (_validatorInformationEntity != null && _validatorInformationEntity.redelegations != null) {
-      if(showMyMap3){
+      if (showMyMap3) {
         _validatorInformationEntity.redelegations.forEach((element) {
-          if(_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address.toLowerCase() == element.delegatorAddress){
+          if (_atlasInfoEntity.myMap3[_selectedMap3NodeValue].address.toLowerCase() == element.delegatorAddress) {
             leftReward = leftReward + ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(element.reward));
           }
         });
       }
     }
 
-    if(_validatorInformationEntity != null){
+    if (_validatorInformationEntity != null) {
       historyReward = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.from(_validatorInformationEntity.blockReward));
     }
 
+    var totalStaking = FormatUtil.formatPrice(double.parse(_atlasInfoEntity.getTotalStaking() ?? '0'));
+    var stakingCreator = FormatUtil.formatPrice(double.parse(_atlasInfoEntity.getStakingCreator() ?? '0'));
+    var rewardRate =
+        "${double.parse(_atlasInfoEntity.rewardRate ?? '0') == 0 ? '--' : FormatUtil.formatPercent(double.parse(
+            _atlasInfoEntity.rewardRate,
+          ))}";
     return SliverToBoxAdapter(
       child: Stack(
         children: <Widget>[
@@ -490,6 +499,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               () {
                                 var entity = PledgeAtlasEntity.emptyEntity();
                                 AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
+                                  nodeName: _atlasInfoEntity.name,
                                   nodeId: _atlasInfoEntity.nodeId,
                                   map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
                                   atlasAddress: widget.atlasNodeAddress,
@@ -507,7 +517,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               fontSize: 16,
                             ),
                           ],
-                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率扣除管理费后分配到你的Map3节点抵押者。",
+                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率分配到你的Map3节点抵押者。",
                         );
 
                         break;
@@ -582,7 +592,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 padding: EdgeInsets.only(top: 4, bottom: 4, left: 10, right: 10),
                 child: RichText(
                     textAlign: TextAlign.center,
-                    text: TextSpan(text: "已产生奖励  ", style: TextStyles.textC333S10, children: [
+                    text: TextSpan(text: "节点累计奖励  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
                         text: "${FormatUtil.truncateDecimalNum(historyReward, 0)}",
                         style: TextStyles.textC333S12,
@@ -604,7 +614,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${_atlasInfoEntity.getTotalStaking()}", style: TextStyles.textC333S14),
+                                Text(totalStaking, style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -620,7 +630,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${_atlasInfoEntity.getStakingCreator()}", style: TextStyles.textC333S14),
+                                Text(stakingCreator, style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
@@ -636,12 +646,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Expanded(
                             child: Column(
                               children: <Widget>[
-                                Text("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.rewardRate))}",
-                                    style: TextStyles.textC333S14),
+                                Text(rewardRate, style: TextStyles.textC333S14),
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text("最近回报率", style: TextStyles.textC999S10)
+                                Text("昨日年化", style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
@@ -726,7 +735,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("可提奖励", style: TextStyles.textC999S12)
+                                      Text("可提往Map3", style: TextStyles.textC999S12)
                                     ],
                                   ),
                                 ),
@@ -926,7 +935,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          if(showMyMap3 && _atlasInfoEntity.myMap3[_selectedMap3NodeValue].isCreator())
+          if (showMyMap3 && _atlasInfoEntity.myMap3[_selectedMap3NodeValue].isCreator())
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 14),
               child: ClickOvalButton(
@@ -953,19 +962,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       ClickOvalButton(
                         "确定",
                         () {
-                          var entity = PledgeAtlasEntity.emptyEntity();
-                          AtlasMessage message = ConfirmAtlasUnStakeMessage(
-                            nodeId: _atlasInfoEntity.nodeId,
-                            atlasAddress: widget.atlasNodeAddress,
-                            map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
-                          );
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Map3NodeConfirmPage(
-                                  message: message,
-                                ),
-                              ));
+                          _cancelAction();
                         },
                         width: 120,
                         height: 38,
@@ -985,12 +982,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           ClickOvalButton(
             "抵押",
             () {
-              if (showMap3List.isEmpty) {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
-              } else {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity,showMap3List)));
-              }
+              _delegateAction();
             },
             width: 90,
             height: 32,
@@ -1004,19 +996,40 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     );
   }
 
+  _delegateAction() {
+    if (showMap3List.isEmpty) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => AtlasLookOverPage(_atlasInfoEntity)));
+    } else {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => AtlasStakeSelectPage(_atlasInfoEntity, showMap3List)));
+    }
+  }
+
+  _cancelAction() {
+    AtlasMessage message = ConfirmAtlasUnStakeMessage(
+      nodeName: _atlasInfoEntity.name,
+      nodeId: _atlasInfoEntity.nodeId,
+      atlasAddress: widget.atlasNodeAddress,
+      map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
+    );
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Map3NodeConfirmPage(
+            message: message,
+          ),
+        ));
+  }
+
   _joinMap3Widget() {
     return SliverToBoxAdapter(
-      child: Column(
-        children: <Widget>[
-          AtlasJoinMap3Widget(
-            "${_atlasInfoEntity.nodeId}",
-            "",
-            "",
-            "",
-            isShowInviteItem: false,
-            loadDataBloc: _loadDataBloc,
-          ),
-        ],
+      child: Material(
+        color: Colors.white,
+        child: AtlasJoinMap3Widget(
+          "${_atlasInfoEntity.nodeId}",
+          isShowInviteItem: false,
+          loadDataBloc: _loadDataBloc,
+        ),
       ),
     );
   }
@@ -1060,5 +1073,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         ),
       ),
     );
+  }
+}
+
+String getContentOrEmptyStr(String contentStr) {
+  if (contentStr == null || contentStr.isEmpty) {
+    return "暂无";
+  } else {
+    return contentStr;
   }
 }

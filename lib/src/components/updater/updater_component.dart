@@ -81,35 +81,45 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
 //        String btnLabel = hasDownloaded ? S.of(context).install_now : S.of(context).update_now;
         String btnLabelCancel = S.of(context).later;
         return Platform.isIOS
-            ? CupertinoAlertDialog(
-                title: Text(title),
-                content: Text(message),
-                actions: <Widget>[
-                  if (updateEntity.forceUpdate != 1)
+            ? WillPopScope(
+                onWillPop: () {
+                  return;
+                },
+                child: CupertinoAlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    if (updateEntity.forceUpdate != 1)
+                      FlatButton(
+                        child: Text(btnLabelCancel),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     FlatButton(
-                      child: Text(btnLabelCancel),
-                      onPressed: () => Navigator.maybePop(context),
+                      child: Text(S.of(context).update_now),
+                      onPressed: () => _launch(updateEntity),
                     ),
-                  FlatButton(
-                    child: Text(S.of(context).update_now),
-                    onPressed: () => _launch(updateEntity),
-                  ),
-                ],
+                  ],
+                ),
               )
-            : new AlertDialog(
-                title: Text(title),
-                content: Text(message),
-                actions: <Widget>[
-                  if (updateEntity.forceUpdate != 1)
+            : WillPopScope(
+                onWillPop: () {
+                  return;
+                },
+                child: new AlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    if (updateEntity.forceUpdate != 1)
+                      FlatButton(
+                        child: Text(btnLabelCancel),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     FlatButton(
-                      child: Text(btnLabelCancel),
-                      onPressed: () => Navigator.maybePop(context),
+                      child: Text(S.of(context).update_now),
+                      onPressed: () => _launch(updateEntity),
                     ),
-                  FlatButton(
-                    child: Text(S.of(context).update_now),
-                    onPressed: () => _launch(updateEntity),
-                  ),
-                ],
+                  ],
+                ),
               );
       },
     );
@@ -138,7 +148,6 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
       Navigator.pop(context);
     }
   }
-
 
 //  Future<bool> _hasDownloaded(UpdateEntity versionModel) async {
 //    var apkPath = await _getApkPath();

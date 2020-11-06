@@ -15,6 +15,7 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
+import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/quotes/bloc/bloc.dart';
 import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
 import 'package:titan/src/components/quotes/model.dart';
@@ -25,6 +26,10 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
+import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -51,6 +56,12 @@ class _WalletPageState extends BaseState<WalletPage>
 
   final LocalAuthentication auth = LocalAuthentication();
 
+  ExchangeApi _exchangeApi = ExchangeApi();
+
+  bool _isExchangeAccountAbnormal = false;
+
+  bool _isShowConfirmPolicy = false;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -60,14 +71,21 @@ class _WalletPageState extends BaseState<WalletPage>
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
     _postWalletBalance();
+
+    ///check dex account is abnormal
+    _checkDexAccount();
+
+    ///
+    _checkConfirmWalletPolicy();
   }
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      _showAtlasExchangeAlert();
-    });
+    _checkConfirmWalletPolicy();
+//    WidgetsBinding.instance.addPostFrameCallback((callback) {
+//      _showAtlasExchangeAlert();
+//    });
   }
 
   @override
@@ -76,26 +94,6 @@ class _WalletPageState extends BaseState<WalletPage>
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateActivatedWalletBalanceEvent());
     });
-  }
-
-  _showAtlasExchangeAlert() {
-    UiUtil.showAlertView(
-      context,
-      title: S.of(context).important_hint,
-      actions: [
-        ClickOvalButton(
-          S.of(context).got_it,
-          () {
-            Navigator.pop(context);
-          },
-          width: 160,
-          height: 38,
-          fontSize: 16,
-        ),
-      ],
-      content:
-          S.of(context).wallet_show_atlas_alert,
-    );
   }
 
   @override
@@ -107,11 +105,46 @@ class _WalletPageState extends BaseState<WalletPage>
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
 
+    print('WalletPage onCreated ======');
     listLoadingData();
+  }
+
+  _checkDexAccount() async {
+    var activatedWalletVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    ///get value from cache first
+    _isExchangeAccountAbnormal = await AppCache.getValue(
+          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo?.wallet?.getEthAccount()?.address ?? ""}',
+        ) ??
+        false;
+
+    setState(() {});
+
+    ///get value from server
+    try {
+      ///
+      var result = await _exchangeApi.checkAccountAbnormal(
+        activatedWalletVo.wallet.getEthAccount().address,
+      );
+
+      _isExchangeAccountAbnormal = result == '1';
+
+      await AppCache.saveValue(
+        '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo.wallet.getEthAccount().address}',
+        _isExchangeAccountAbnormal,
+      );
+
+      setState(() {});
+    } catch (e) {}
   }
 
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
+
+    if (context == null) return;
 
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
@@ -165,19 +198,177 @@ class _WalletPageState extends BaseState<WalletPage>
 //      ),
       body: Container(
         color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 16,
+        width: double.infinity,
+        child: _walletView(),
+      ),
+    );
+  }
+
+  _confirmPolicyView() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 32,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/safe_lock.png',
+              width: 100,
+              height: 100,
             ),
-            Expanded(child: _buildWalletView(context)),
-            //hyn quotes view
-            // hynQuotesView(),
-            //_authorizedView(),
-          ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Container(
+              width: 300,
+              child: Text(
+                S.of(context).please_read_and_agree_wallet_policy,
+                textAlign: TextAlign.center,
+                style: TextStyle(height: 1.8, fontSize: 15),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 32,
+          ),
+          Container(
+            width: 280,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: () async {
+                var result = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => PolicyConfirmPage(
+                    PolicyType.WALLET,
+                  ),
+                ));
+                _checkConfirmWalletPolicy();
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '查看',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _walletView() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 16,
+        ),
+        _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
+        Expanded(
+          child: _buildWalletView(context),
+        ),
+        //hyn quotes view
+        // hynQuotesView(),
+        //_authorizedView(),
+      ],
+    );
+  }
+
+  _checkConfirmWalletPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_WALLET_POLICY,
+    );
+    _isShowConfirmPolicy =
+        isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
+    setState(() {});
+  }
+
+  _abnormalAccountBanner() {
+    return InkWell(
+      onTap: () async {
+        _navigateToFixDexAccountPage();
+      },
+      child: Container(
+        color: HexColor('#FFFFF7F8'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8.0,
+            vertical: 8.0,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(
+                  Icons.warning,
+                  color: HexColor('#FFFF5041'),
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  '${S.of(context).wallet_show_dex_account_error} >>',
+                  style: TextStyle(
+                    color: HexColor('#FFCE1F0F'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  _navigateToFixDexAccountPage() async {
+    var activatedWalletVo = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+
+    var navigateToFixPage = () async {
+      await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ExchangeAbnormalTransferListPage(
+                    activatedWalletVo.wallet.getEthAccount().address,
+                  )));
+
+      ///check account is fixed when back to wallet page
+      _checkDexAccount();
+    };
+
+    if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
+      navigateToFixPage();
+    } else {
+      await Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+
+      ///if authorized, jump to fix error page
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
+        navigateToFixPage();
+      ;
+    }
   }
 
   Widget _buildWalletView(BuildContext context) {
@@ -185,21 +376,29 @@ class _WalletPageState extends BaseState<WalletPage>
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
     if (activatedWalletVo != null) {
-      return LoadDataContainer(
-        bloc: loadDataBloc,
-        enablePullUp: false,
-        showLoadingWidget: false,
-        onLoadData: () {
-          listLoadingData();
-        },
-        onRefresh: () async {
-          listLoadingData();
-        },
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: ShowWalletView(activatedWalletVo, loadDataBloc),
-        ),
-      );
+      if (_isShowConfirmPolicy) {
+        return _confirmPolicyView();
+      } else {
+        return LoadDataContainer(
+          bloc: loadDataBloc,
+          enablePullUp: false,
+          showLoadingWidget: false,
+          onLoadData: () {
+            //print('WalletPage LoadDataContainer onLoadData ======');
+            _checkDexAccount();
+            listLoadingData();
+          },
+          onRefresh: () async {
+            //print('WalletPage LoadDataContainer onRefresh ======');
+            _checkDexAccount();
+            listLoadingData();
+          },
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: ShowWalletView(activatedWalletVo, loadDataBloc),
+          ),
+        );
+      }
     }
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -218,6 +417,7 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   Future listLoadingData() async {
+    //print('WalletPage listLoadingData ===');
     //update quotes
     var quoteSignStr =
         await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);

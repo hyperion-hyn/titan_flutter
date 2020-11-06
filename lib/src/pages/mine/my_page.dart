@@ -8,14 +8,18 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
+import '../../../config.dart';
 import 'map3_contract_control.dart';
 import 'package:characters/characters.dart';
 
@@ -145,24 +149,47 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
+                  _buildMenuBar(
+                      "用户协议",
+                      Icons.report_problem,
+                          () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => InAppWebViewContainer(
+                                      initUrl: Config.WALLET_POLICY_CN_URL,
+                                      title: '用户协议',
+                                    )));
+
+                          }),
                   if ([
                     '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
-                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase()
+                    '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),
+                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
                     _buildMenuBar(
                         S.of(context).map_smart_contract_management,
                         Icons.book,
                         () => Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => Map3ContractControlPage()))),
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    Map3ContractControlPage()))),
                   Divider(
                     height: 0,
                   ),
                   if ([
                     '0x70247395aFFd13C2347aA8c748225f1bFeD2C32A'.toLowerCase(),
                     '0x9D05DDfC30bc83e7215EB3C5C3C7A443e7Ee1dB6'.toLowerCase(),
+                    '0x5AD1e746E6610401f598486d8747d9907Cf114b2'.toLowerCase(),
                   ].contains(_wallet?.getEthAccount()?.address?.toLowerCase()))
-                    _buildMenuBar('链上子钱包', Icons.account_balance_wallet,
-                        () => Navigator.push(context, MaterialPageRoute(builder: (context) => DexWalletManagerPage()))),
+                    _buildMenuBar(
+                        '链上子钱包',
+                        Icons.account_balance_wallet,
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DexWalletManagerPage()))),
                 ],
               ),
             ),
@@ -322,7 +349,10 @@ class _MyPageState extends State<MyPage> {
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
-                    shortBlockChainAddress(ethAccount.address,
+                    shortBlockChainAddress(
+                        WalletUtil.ethAddressToBech32Address(
+                          ethAccount.address,
+                        ),
                         limitCharsLength: 13),
                     style: TextStyle(fontSize: 14, color: Colors.white70),
                   ),

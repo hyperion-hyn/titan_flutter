@@ -20,7 +20,9 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -169,8 +171,15 @@ class _ExchangeWithdrawConfirmPageState
     _gasPriceEstimate =
         Decimal.parse(widget.withdrawFeeByGas) * _gasPriceEstimate;
 
-    var _gasPriceByToken = FormatUtil.truncateDoubleNum(
-        _gasPriceEstimate.toDouble() / _quotePrice, 8);
+    print(
+        'WithdrawConfirm: gasPriceEstimate: $_gasPriceEstimate quotePrice: $_quotePrice');
+
+    var _gasPriceByToken = '0';
+
+    try {
+      _gasPriceByToken = FormatUtil.truncateDoubleNum(
+          _gasPriceEstimate.toDouble() / _quotePrice, 8);
+    } catch (e) {}
 
     _gasPriceEstimateStr =
         " $_gasPriceByToken ${widget.coinVo.symbol} (≈ $_quoteSign${_gasPriceEstimate.toDouble()})";
@@ -306,7 +315,10 @@ class _ExchangeWithdrawConfirmPageState
                                 softWrap: true,
                               ),
                               Text(
-                                "(${shortBlockChainAddress(widget.coinVo.address)})",
+                                "(${shortBlockChainAddress(WalletUtil.formatToHynAddrIfAtlasChain(
+                                  widget.coinVo,
+                                  widget.coinVo.address,
+                                ))})",
                                 style: TextStyle(
                                     fontSize: 14,
                                     color: Color(0xFF999999),
@@ -495,10 +507,17 @@ class _ExchangeWithdrawConfirmPageState
         gasFee,
       );
       print('$ret');
-      Application.router.navigateTo(
-        context,
-        Routes.exchange_transfer_success_page,
-      );
+
+      var msg;
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
+        msg = S.of(context).atlas_transfer_broadcast_success_description;
+      } else {
+        msg = S.of(context).transfer_broadcase_success_description;
+      }
+      msg = FluroConvertUtils.fluroCnParamsEncode(msg);
+      Application.router
+          .navigateTo(context, Routes.confirm_success_papge + '?msg=$msg');
+
       setState(() {
         isTransferring = true;
       });

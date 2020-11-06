@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -28,6 +31,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   NodeApi _nodeApi = NodeApi();
   Map3IntroduceEntity _introduceEntity;
   List<NodeProviderEntity> _providerList = [];
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   @override
   void initState() {
@@ -40,7 +44,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: 'Map3节点介绍',
+        baseTitle: S.of(context).map3_introduce_title,
       ),
       backgroundColor: Color(0xffF3F0F5),
       body: _pageView(context),
@@ -58,11 +62,14 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       _providerList = requestList[1];
 
       setState(() {
+        _loadDataBloc.add(RefreshSuccessEvent());
         currentState = null;
       });
     } catch (e) {
       print(e);
       setState(() {
+        _loadDataBloc.add(RefreshFailEvent());
+
         currentState = LoadFailState();
       });
     }
@@ -90,17 +97,24 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       child: Column(
         children: <Widget>[
           Expanded(
-            child: SingleChildScrollView(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _nodeWidget(),
-              SizedBox(
-                height: 10,
-                child: Container(
-                  color: HexColor("#F4F4F4"),
-                ),
-              ),
-              _tipsWidget(),
-            ])),
+            child: LoadDataContainer(
+              bloc: _loadDataBloc,
+              enablePullUp: false,
+              onRefresh: getNetworkData,
+              child: SingleChildScrollView(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    _nodeWidget(),
+                    SizedBox(
+                      height: 10,
+                      child: Container(
+                        color: HexColor("#F4F4F4"),
+                      ),
+                    ),
+                    _tipsWidget(),
+                  ])),
+            ),
           ),
           _confirmButtonWidget(),
         ],
@@ -116,8 +130,16 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       AtlasApi.goToAtlasMap3HelpPage(context);
     };
 
-    var startMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.startMin ?? "0"));
-    var createMin = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? 0));
+    var startMinValue = double.parse(_introduceEntity?.startMin ?? "0");
+    var startMin = FormatUtil.formatPrice(startMinValue);
+    var createMin =
+        FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? 0));
+
+    var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
+    var amount =
+        " ${FormatUtil.formatTenThousandNoUnit(startMinValue.toString())}" +
+            S.of(context).ten_thousand;
+    var rateTips = S.of(context).map3_manage_fee_rule(amount, feeMax);
 
     return Container(
       color: Colors.white,
@@ -128,25 +150,28 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 16.0, bottom: 8),
-            child: Text("注意事项", style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
+            child: Text(S.of(context).precautions,
+                style: TextStyle(color: HexColor("#333333"), fontSize: 16)),
           ),
-          rowTipsItem("创建7天内不可撤销", top: 0),
-          rowTipsItem("需要总抵押满$startMin才能正式启动，你至少需要$createMin的HYN作为首次抵押，剩余的份额需要其他抵押者参加投入;你也可以一次性抵押$startMin即可启动节点"),
-          rowTipsItem("创建后默认是到期自动续约以获得等多奖励；你也可以在到期前7-14天关闭或开启自动续约开关"),
+          rowTipsItem(S.of(context).cant_cancel_within_7_epoch, top: 0),
           rowTipsItem(
-            "节点收益来自map3服务工作量证明和参与atlas权益共识出块证明，查看",
-            subTitle: "收益详细介绍",
+              S.of(context).activate_node_rule_total_staking(startMin, createMin)),
+          rowTipsItem(S.of(context).map3_auto_renew_hint),
+          rowTipsItem(
+            "${S.of(context).reward_comes_from_pow_and_pos}，${S.of(context).check}",
+            subTitle: S.of(context).reward_detailed_introduction,
             onTap: () {
-              onTap("收益详细介绍");
+              onTap(S.of(context).reward_detailed_introduction);
             },
           ),
-          rowTipsItem(
+          //rowTipsItem(rateTips),
+          /*rowTipsItem(
             "如果节点总抵押金额过大，你可以裂变节点以获得更优的收益方案，查看",
             subTitle: "扩容详细介绍",
             onTap: () {
               onTap("扩容详细介绍");
             },
-          ),
+          ),*/
         ],
       ),
     );
@@ -157,9 +182,10 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
       padding: const EdgeInsets.only(bottom: 18.0),
       child: Center(
         child: ClickOvalButton(
-          "立即创建",
+          S.of(context).create_now,
           () {
-            Application.router.navigateTo(context, Routes.map3node_create_contract_page + "?contractId=2");
+            Application.router.navigateTo(context,
+                Routes.map3node_create_contract_page + "?contractId=2");
           },
           height: 46,
           width: MediaQuery.of(context).size.width - 37 * 2,
@@ -189,18 +215,19 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
   }
 
   Widget _delegateCountWidget() {
-    var detail = FormatUtil.formatPrice(double.parse(_introduceEntity?.createMin ?? "0"));
-    var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
-    var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
-    var fee = "$feeMin%-$feeMax%";
-    var day = "${_introduceEntity?.days ?? 180}天";
+    var detail = FormatUtil.formatPrice(
+        double.parse(_introduceEntity?.createMin ?? "0"));
+    // var feeMin = (100 * double.parse(_introduceEntity?.feeMin ?? "10")).toInt();
+    // var feeMax = (100 * double.parse(_introduceEntity?.feeMax ?? "20")).toInt();
+    var fee = '${(100 * double.parse(_introduceEntity?.feeFixed ?? "10")).toInt()}%'; // "$feeMin%-$feeMax%";
+    var day = "${_introduceEntity?.days ?? 180}${S.of(context).epoch}";
     return Padding(
       padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
       child: profitListLightWidget(
         [
-          {"创建最低抵押": detail},
-          {"管理费": fee},
-          {"合约周期": day}
+          {S.of(context).map3_create_min_staking: detail},
+          {S.of(context).manage_fee: fee},
+          {S.of(context).contract_period: day}
         ],
       ),
     );
@@ -229,9 +256,13 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Expanded(child: Text(_introduceEntity?.name ?? "", style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(
+                        child: Text(_introduceEntity?.name ?? "",
+                            style: TextStyle(fontWeight: FontWeight.bold))),
                     InkWell(
-                      child: Text("详细介绍", style: TextStyle(fontSize: 14, color: HexColor("#1F81FF"))),
+                      child: Text(S.of(context).detailed_introduction,
+                          style: TextStyle(
+                              fontSize: 14, color: HexColor("#1F81FF"))),
                       onTap: () {
                         AtlasApi.goToAtlasMap3HelpPage(context);
                       },
@@ -244,7 +275,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                          "启动所需" +
+                          S.of(context).active_still_need +
                               " ${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
                               S.of(context).ten_thousand,
                           style: TextStyles.textC99000000S13,
@@ -252,7 +283,9 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
                           softWrap: true),
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),
+                        child: Text(" (HYN) ",
+                            style: TextStyle(
+                                fontSize: 10, color: HexColor("#999999"))),
                       ),
                     ],
                   ),
@@ -277,12 +310,12 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
           switch (value) {
             case 1:
               title = S.of(context).service_provider;
-              detail = _providerList?.first?.name ?? "亚马逊云";
+              detail = _providerList?.first?.name ?? S.of(context).amazon_cloud;
               break;
 
             case 2:
-              title = "服务片区";
-              detail = "根据云所在链路位置就近服务";
+              title = S.of(context).service_area;
+              detail = S.of(context).service_according_location;
               break;
 
             default:
@@ -297,7 +330,11 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(width: 80, child: Text(title, style: TextStyle(fontSize: 14, color: HexColor("#92979A")))),
+                Container(
+                    width: 80,
+                    child: Text(title,
+                        style: TextStyle(
+                            fontSize: 14, color: HexColor("#92979A")))),
                 Expanded(
                     child: Text(
                   detail,

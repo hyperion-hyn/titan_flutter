@@ -33,7 +33,7 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
   List<AtlasInfoEntity> _atlasNodeList = List();
 
   int _currentPage = 1;
-  int _pageSize = 30;
+  int _pageSize = 10;
 
   @override
   void initState() {
@@ -91,26 +91,33 @@ class AtlasMyNodeListPageState extends State<AtlasMyNodeListPage>
       );
     } else {
       return SliverToBoxAdapter(
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 32,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Image.asset(
-                  'res/drawable/ic_empty_contract.png',
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-              Text('暂无记录'),
-            ],
-          ),
-        ),
+        child: _emptyListHint(),
       );
     }
+  }
+
+  _emptyListHint() {
+    return Center(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/ic_empty_contract.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Text(
+            S.of(context).exchange_empty_list,
+            style: TextStyle(
+              fontSize: 13,
+              color: DefaultColors.color999,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   _refreshData() async {

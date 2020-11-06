@@ -148,7 +148,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
 
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if (clipboardData != null && clipboardData.text.contains("titan://contract/detail")) {
+    if (clipboardData != null && clipboardData.text.contains("titan://map3/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
     }
@@ -176,17 +176,14 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     var subType = values["subType"];
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
-    if (type == "contract" && subType == "detail") {
-      var nodeId = content["contractId"];
+    if (type == "map3" && subType == "detail") {
+      var nodeId = content["map3"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-
-      var item = Map3InfoEntity.onlyNodeId(nodeId);
-      Application.router.navigateTo(
-        context,
-        Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(item.toJson())}',
-      );
+      var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
+      Application.router.navigateTo(context,
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
 
      } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog

@@ -140,7 +140,7 @@ class AtlasStakeListPageState extends State<AtlasStakeListPage> {
                                 padding: const EdgeInsets.only(top: 2.0, bottom: 2),
                                 child: Text(map3InfoEntity.address,style: TextStyles.textC999S12),
                               ),
-                              Text("预期年化：${map3InfoEntity.rewardRate}",style: TextStyles.textC333S12),
+                              Text("昨日年化：${map3InfoEntity.rewardRate}",style: TextStyles.textC333S12),
                             ],
                           ),
                         ),

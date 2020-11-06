@@ -83,6 +83,9 @@ class ContractNodeItem extends Object {
   @JsonKey(name: 'state')
   String state;
 
+  @JsonKey(name: 'migrate')
+  int migrate;
+
   ContractNodeItem(
       this.id,
       this.contractCode,
@@ -108,6 +111,7 @@ class ContractNodeItem extends Object {
       this.announcement,
       this.commission,
       this.state,
+      this.migrate,
       );
 
   ContractNodeItem.onlyNodeItem(this.contract);
@@ -148,13 +152,21 @@ class ContractNodeItem extends Object {
 //    return FormatUtil.doubleFormatNum(totalRemain >= progress ? totalRemain - progress : 0);
 //  }
 
-  bool get isHalfCompleteSecondsLeft => true;
+
+  bool get isHalfCompleteSecondsLeft {
+    double now = (DateTime.now().millisecondsSinceEpoch * 0.001);
+    double totalDue = expectDueTime.toDouble() - instanceActiveTime;
+    double halfTotalDue = totalDue / 2;
+    double overDue = (now - instanceActiveTime);
+    double timeLeft = halfTotalDue - overDue;
+    return timeLeft <= 0;
+  }
 
   ///从启动到期满剩余时间
   double get completeSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     int timeLeft = expectDueTime - now;
-    var left =  timeLeft > 0 ? timeLeft : 0;
+    var left = timeLeft > 0 ? timeLeft : 0;
     return left.toDouble();
   }
 
@@ -174,6 +186,14 @@ class ContractNodeItem extends Object {
 //  }
 
   ///从启动到中期剩余时间
+  ///❌
+/*  double get halfCompleteSecondsLeft {
+    int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
+    double timeLeft = (expectDueTime - now.toDouble()) / 2;
+    return timeLeft > 0 ? timeLeft : 0;
+  }*/
+
+  /// 对
   double get halfCompleteSecondsLeft {
     int now = (DateTime.now().millisecondsSinceEpoch * 0.001).toInt();
     double timeLeft = (expectDueTime - now.toDouble()) / 2;
@@ -212,5 +232,4 @@ class ContractNodeItem extends Object {
   }
 
   ContractState get stateValue => enumContractStateFromString(state);
-
 }

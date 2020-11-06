@@ -47,6 +47,13 @@ class TimerTextState extends State<TimerTextWidget> {
       style: TextStyle(
         color: Colors.white,
         fontSize: 7,
+        shadows: [
+          BoxShadow(
+            offset: const Offset(1.0, 1.0),
+            blurRadius: 2.0,
+            spreadRadius: 2.0,
+          ),
+        ],
       ),
     );
   }

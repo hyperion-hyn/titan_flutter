@@ -40,7 +40,7 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle:'提取奖励',
+        baseTitle:S.of(context).collect_reward,
       ),
       backgroundColor: Colors.white,
       body: Column(
@@ -60,7 +60,7 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
-                              child: Text("到账钱包", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                              child: Text(S.of(context).receive_wallet, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                             ),
                           ],
                         ),

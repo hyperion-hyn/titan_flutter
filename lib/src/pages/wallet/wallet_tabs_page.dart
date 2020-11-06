@@ -45,74 +45,36 @@ class _WalletTabsPageState extends State<WalletTabsPage>
           child: Container(
             color: Colors.white,
             child: SafeArea(
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: TabBar(
-                      controller: _tabController,
-                      isScrollable: true,
-                      labelColor: Theme.of(context).primaryColor,
-                      labelStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorWeight: 3,
-                      indicatorPadding: EdgeInsets.only(bottom: 2),
-                      unselectedLabelColor: HexColor("#FF333333"),
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            S.of(context).wallet,
-                            style: TextStyle(),
-                          ),
-                        ),
-                        Tab(
-                          child: Text(
-                            S.of(context).exchange,
-                            style: TextStyle(),
-                          ),
-                        ),
-                      ],
-                    ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  labelColor: Theme.of(context).primaryColor,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
-//                  Positioned(
-//                    right: 16.0,
-//                    top: 16.0,
-//                    child: InkWell(
-//                      onTap: () {
-//                        Navigator.push(
-//                            context,
-//                            MaterialPageRoute(
-//                                builder: (context) => WebViewContainer(
-//                                      initUrl: Const.POI_POLICY,
-//                                      title: S.of(context).poi_upload_protocol,
-//                                    )));
-//                      },
-//                      child: Row(
-//                        children: <Widget>[
-//                          Image.asset(
-//                            'res/drawable/ic_wallet_qualification.png',
-//                            height: 16,
-//                            width: 16,
-//                          ),
-//                          SizedBox(
-//                            width: 8.0,
-//                          ),
-//                          Text(
-//                            '资质',
-//                            style: TextStyle(
-//                              color: Colors.black,
-//                              fontSize: 14,
-//                            ),
-//                          )
-//                        ],
-//                      ),
-//                    ),
-//                  )
-                ],
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: Theme.of(context).primaryColor,
+                  indicatorWeight: 3,
+                  indicatorPadding: EdgeInsets.only(bottom: 2),
+                  unselectedLabelColor: HexColor("#FF333333"),
+                  tabs: [
+                    Tab(
+                      child: Text(
+                        S.of(context).wallet,
+                        style: TextStyle(),
+                      ),
+                    ),
+                    Tab(
+                      child: Text(
+                        S.of(context).exchange,
+                        style: TextStyle(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -22,6 +22,7 @@ class LoadDataContainer extends StatefulWidget {
   final VoidCallback onRefresh;
   final VoidCallback onLoadingMore;
   final VoidCallback onLoadingMoreEmpty;
+  final Widget onLoadSkeletonView;
 
   LoadDataContainer({
     @required this.child,
@@ -34,7 +35,8 @@ class LoadDataContainer extends StatefulWidget {
     this.onLoadData,
     this.onRefresh,
     this.onLoadingMore,
-    this.onLoadingMoreEmpty
+    this.onLoadingMoreEmpty,
+    this.onLoadSkeletonView,
   });
 
   @override
@@ -56,14 +58,18 @@ class LoadDataContainerState extends State<LoadDataContainer> {
     return BlocBuilder<LoadDataBloc, LoadDataState>(
       bloc: widget.bloc,
       builder: (context, state) {
-        if(state is InitialLoadDataState){
-          if(widget.isStartLoading){
+        if (state is InitialLoadDataState) {
+          if (widget.isStartLoading) {
+            print('LoadDataContainer widget.isStartLoading ===');
             widget.bloc.add(LoadingEvent());
           }
           return Container();
         }
         if (state is LoadingState) {
-          widget.onLoadData();
+          print('LoadDataContainer LoadingState ===');
+          if (widget.onLoadData != null) {
+            widget.onLoadData();
+          }
         }
 
         return Stack(
@@ -71,7 +77,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           children: <Widget>[
             //loading\empty\fail
             if (state is LoadingState && widget.showLoadingWidget)
-                buildLoading(context)
+              widget.onLoadSkeletonView ?? buildLoading(context)
             else if (state is LoadEmptyState)
               buildEmpty(context)
             else if (state is LoadFailState)
@@ -167,7 +173,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
       controller.loadComplete();
     } else if (state is LoadMoreEmptyState) {
       controller.loadNoData();
-      if(widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
+      if (widget.onLoadingMoreEmpty != null) widget.onLoadingMoreEmpty();
     } else if (state is LoadMoreFailState) {
       controller.loadFailed();
     }
@@ -193,7 +199,7 @@ class LoadDataContainerState extends State<LoadDataContainer> {
           } else if (mode == LoadStatus.canLoading) {
             body = Container();
           } else {
-            if(widget.hasFootView){
+            if (widget.hasFootView) {
               body = Text(
                 S.of(context).no_more_data,
                 style: TextStyle(color: Colors.grey, fontSize: 14),

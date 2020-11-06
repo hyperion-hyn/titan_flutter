@@ -23,7 +23,8 @@ class HttpCore extends BaseHttpCore {
   }
 
   static var _dio = new Dio(BaseOptions(
-    baseUrl: Const.DOMAIN,
+    baseUrl:  Const.DOMAIN,
+    // baseUrl: env.buildType == BuildType.DEV ? Const.LOCAL_DOMAIN : Const.DOMAIN,
     connectTimeout: 5000,
     receiveTimeout: 5000,
 //    headers: {"user-agent": "dio", "api": "1.0.0"},

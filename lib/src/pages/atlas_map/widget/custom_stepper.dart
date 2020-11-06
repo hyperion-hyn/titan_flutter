@@ -772,6 +772,7 @@ class _StepperState extends State<CustomStepper> with TickerProviderStateMixin {
       double tickLeft = itemWidth * (widget.currentStep + 0.5 + widget.currentStepProgress);
       double tickRight = 0;
       if(isRightTick) {
+        // todo: jison_1024
         tickRight = maxWidth - tickLeft;
       }
 

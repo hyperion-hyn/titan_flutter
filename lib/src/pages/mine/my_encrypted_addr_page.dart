@@ -78,7 +78,6 @@ class _MyEncryptedAddrPageState extends BaseState<MyEncryptedAddrPage>
       walletSecurePubKey =
           '${SecurePrefsKey.WALLET_P2P_DECOMP_PUB_KEY_PREFIX}${_activeWallet.wallet.getEthAccount().address}';
       var walletPubKey = await AppCache.secureGetValue(walletSecurePubKey);
-      print("!!!!$walletPubKey");
       if (walletPubKey != null) {
         _walletPubKey = walletPubKey;
       }

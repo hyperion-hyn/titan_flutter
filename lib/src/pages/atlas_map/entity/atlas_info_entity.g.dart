@@ -40,6 +40,7 @@ AtlasInfoEntity _$AtlasInfoEntityFromJson(Map<String, dynamic> json) {
     json['status'] as int,
     json['type'] as int,
     json['updated_at'] as String,
+    json['seven_day_annualization'] as String,
   );
 }
 
@@ -73,4 +74,5 @@ Map<String, dynamic> _$AtlasInfoEntityToJson(AtlasInfoEntity instance) =>
       'status': instance.status,
       'type': instance.type,
       'updated_at': instance.updatedAt,
+      'seven_day_annualization': instance.sevenDayAnnualization,
     };

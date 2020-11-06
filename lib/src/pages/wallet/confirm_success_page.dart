@@ -55,6 +55,7 @@ class _ConfirmSuccessPage extends State<ConfirmSuccessPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
+                      // todo: from hyn wallet -> exchange ,6s
                       widget.msg ?? S.of(context).transfer_broadcase_success_description,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Color(0xFF9B9B9B)),

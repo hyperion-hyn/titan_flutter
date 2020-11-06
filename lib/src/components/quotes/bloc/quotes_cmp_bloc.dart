@@ -38,7 +38,7 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
           DateTime.now().millisecondsSinceEpoch - currentQuotesModel.lastUpdateTime > UPDATE_THRESHOLD) {
         yield UpdatingQuotesState();
 
-        try {
+//        try {
           var symbols = DEFAULT_SYMBOLS;
           final symbolString = symbols.reduce((value, element) => value + ',' + element);
 
@@ -58,12 +58,13 @@ class QuotesCmpBloc extends Bloc<QuotesCmpEvent, QuotesCmpState> {
           currentQuotesModel = QuotesModel(
               quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
+        // print('QuotesComponent UpdatedQuotesState === yield');
           yield UpdatedQuotesState(quoteModel: currentQuotesModel);
-        } catch (e) {
-          logger.e(e);
-
-          yield UpdateQuotesFailState();
-        }
+//        } catch (e) {
+//          logger.e(e);
+//
+//          yield UpdateQuotesFailState();
+//        }
       }
     } else if (event is UpdateQuotesSignEvent) {
       yield UpdatedQuotesSignState(sign: event.sign);

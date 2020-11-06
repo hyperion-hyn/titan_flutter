@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
@@ -17,6 +18,8 @@ import 'http_exception.dart';
 class BaseHttpCore {
   final Dio dio;
   var packageInfo;
+  var androidInfo;
+  var iosInfo;
 
   BaseHttpCore(this.dio) {
     //hack method
@@ -87,7 +90,7 @@ class BaseHttpCore {
         data: data, params: params, options: options, cancelToken: cancelToken);
     if (responseEntity.code != ResponseCode.SUCCESS &&
         responseEntity.code != 200) {
-      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg);
+      throw HttpResponseCodeNotSuccess(responseEntity.code, responseEntity.msg,subMsg: responseEntity.subMsg);
     }
     return responseEntity.data;
   }
@@ -176,17 +179,39 @@ class BaseHttpCore {
     if (packageInfo == null) {
       packageInfo = await PackageInfo.fromPlatform();
     }
+
+    var version  = packageInfo?.version ?? "";
+    var buildNumber  = packageInfo?.buildNumber ?? "";
+    //print("[base_http] header, version:$version, buildNumber:$buildNumber");
+
     options.headers["versionCode"] =
-        packageInfo?.version ?? "" + "+" + packageInfo?.buildNumber ?? "";
+        version  + "+" + buildNumber;
     options.headers["time"] = DateTime.now().millisecondsSinceEpoch;
     options.headers["walletAddress"] = Keys.rootKey.currentContext != null
         ? WalletInheritedModel.of(Keys.rootKey.currentContext)
                 ?.activatedWallet
                 ?.wallet
                 ?.getEthAccount()
-                ?.address ??
-            ''
-        : '';
+                ?.address ?? '' : '';
+    var deviceInfo = new DeviceInfoPlugin();
+    try {
+      androidInfo = await deviceInfo.androidInfo;
+    }catch(error){
+    }
+    try {
+      iosInfo = await deviceInfo.iosInfo;
+    }catch(error){
+    }
+
+    if (androidInfo != null) {
+      options.headers["model"] = androidInfo?.model ?? "";
+      options.headers["androidId"] = androidInfo?.androidId ?? "";
+    }
+    if (iosInfo != null) {
+      options.headers["model"] = iosInfo?.model ?? "";
+      options.headers["iosId"] = iosInfo?.identifierForVendor ?? "";
+    }
+    options.headers["androidId"] = androidInfo?.androidId ?? "";
 
     // todo rich add userid
 
@@ -205,8 +230,11 @@ class BaseHttpCore {
       response = await dio.get(url, options: options, cancelToken: cancelToken);
     } else if (method == POST) {
       if (params != null && params.isNotEmpty) {
-        LogUtil.printMessage(
-            "[base_http] post params = ${params.toString()} ***URL = $url");
+
+        if (url != '/v1/atlas/home') {
+          LogUtil.printMessage(
+              "[base_http] post params = ${params.toString()} ***URL = $url");
+        }
         /*params.forEach((key,value){
           print("[base_http] post params.key $key params.values $value");
         });*/
@@ -214,9 +242,7 @@ class BaseHttpCore {
         response = await dio.post(url,
             data: params, options: options, cancelToken: cancelToken);
 
-        /*if (url == '/v1/map3/info') {
-          print("[object] ---> code:${response.statusCode}");
-        }*/
+
       }  else if (data != null) {
         LogUtil.printMessage(
             "[base_http] post data = ${data.toString()} ***URL = $url");

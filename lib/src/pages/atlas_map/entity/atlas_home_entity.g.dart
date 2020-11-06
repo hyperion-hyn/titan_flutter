@@ -22,7 +22,7 @@ AtlasHomeEntity _$AtlasHomeEntityFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$AtlasHomeEntityToJson(AtlasHomeEntity instance) =>
     <String, dynamic>{
-      'info': instance.info,
+      'info': instance.info.toJson(),
       'my_nodes': instance.atlasHomeNodeList,
       'points': instance.points,
     };

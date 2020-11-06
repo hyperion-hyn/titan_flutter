@@ -42,5 +42,8 @@ class AppTabBarBloc extends Bloc<AppTabBarEvent, AppTabBarState> {
     } else if (event is ChangeTabBarItemEvent) {
       yield ChangeTabBarItemState(index: event.index);
     }
+    else if (event is ChangeNodeTabBarItemEvent) {
+      yield ChangeNodeTabBarItemState(index: event.index);
+    }
   }
 }

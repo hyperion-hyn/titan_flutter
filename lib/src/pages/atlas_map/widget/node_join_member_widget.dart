@@ -18,14 +18,10 @@ import 'package:titan/src/widget/wallet_widget.dart';
 
 class NodeJoinMemberWidget extends StatefulWidget {
   final String nodeId;
-  final String remainDay;
-  final String shareName;
-  final String shareUrl;
   final bool isShowInviteItem;
   final LoadDataBloc loadDataBloc;
 
-  NodeJoinMemberWidget(this.nodeId, this.remainDay, this.shareName, this.shareUrl,
-      {this.isShowInviteItem = true, this.loadDataBloc});
+  NodeJoinMemberWidget({this.nodeId, this.isShowInviteItem = true, this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -88,9 +84,14 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
   }
 
   void getJoinMemberMoreData() async {
+    _currentPage++;
+
     try {
-      _currentPage++;
-      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(widget.nodeId, page: _currentPage);
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
+        widget.nodeId,
+        page: _currentPage,
+        size: 10,
+      );
 
       if (tempMemberList.length > 0) {
         memberList.addAll(tempMemberList);
@@ -120,10 +121,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                   Expanded(
                       child:
                           Text(S.of(context).part_member, style: TextStyle(fontSize: 16, color: HexColor("#333333")))),
-                  /*Text(
-                    "剩余时间：${widget.remainDay}天",
-                    style: TextStyles.textC999S14,
-                  ),*/
                   Text(
                     S.of(context).total_member_count(memberList.length.toString()),
                     style: TextStyles.textC999S14,
@@ -170,84 +167,77 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
     if (showName.isNotEmpty) {
       showName = showName.characters.first;
     }
-    return InkWell(
-      onTap: () => _pushTransactionDetailAction(entity),
-      child: Padding(
-        padding: EdgeInsets.only(top: 4, bottom: 4.0),
-        child: SizedBox(
-          width: 91,
-          height: 111,
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey[200],
-                  blurRadius: 40.0,
+    return Padding(
+      padding: EdgeInsets.only(top: 4, bottom: 4.0),
+      child: SizedBox(
+        width: 91,
+        height: 111,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[200],
+                blurRadius: 3.0,
+              ),
+            ],
+          ),
+          margin: const EdgeInsets.only(right: 12),
+          child: Stack(
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                      child: walletHeaderWidget(
+                        showName,
+                        isShowShape: false,
+                        address: entity.address,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5.0, right: 5),
+                      child: Text(entity.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
+                    ),
+                    Text(
+                        "${FormatUtil.stringFormatCoinNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
+                        style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
+                  ],
                 ),
-              ],
-            ),
-            margin: const EdgeInsets.only(right: 12),
-            child: Stack(
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        child: walletHeaderWidget(
-                          showName,
-                          isShowShape: false,
-                          address: entity.address,
-                        ),
+              ),
+              if (entity.creator == 1)
+                Positioned(
+                  top: 15,
+                  right: 4,
+                  child: Container(
+                      padding: const EdgeInsets.only(left: 5, right: 5),
+                      decoration: BoxDecoration(
+                        color: DefaultColors.colorffdb58,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      SizedBox(
-                        height: 8,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5.0, right: 5),
-                        child: Text(entity.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: HexColor("#000000"))),
-                      ),
-                      Text(
-                          "${FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entity.staking)).toString())}",
-                          style: TextStyle(fontSize: 10, color: HexColor("#9B9B9B")))
-                    ],
-                  ),
-                ),
-                if (entity.creator == 1)
-                  Positioned(
-                    top: 15,
-                    right: 4,
-                    child: Container(
-                        padding: const EdgeInsets.only(left: 5, right: 5),
-                        decoration: BoxDecoration(
-                          color: DefaultColors.colorffdb58,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
-                  )
-              ],
-            ),
+                      child: Text(S.of(context).sponsor, style: TextStyle(fontSize: 8, color: HexColor("#322300")))),
+                )
+            ],
           ),
         ),
       ),
     );
   }
 
+  /*
   void _pushTransactionDetailAction(Map3UserEntity item) {
     var url = EtherscanApi.getAddressDetailUrl(
         item.address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
     if (url != null) {
-      /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
-      String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);
-      Application.router.navigateTo(context, Routes.toolspage_webview_page
-          + '?initUrl=$webUrl&title=$webTitle');*/
-
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -256,5 +246,6 @@ class _NodeJoinMemberState extends State<NodeJoinMemberWidget> {
                     title: "",
                   )));
     }
-  }
+  }*/
+
 }
