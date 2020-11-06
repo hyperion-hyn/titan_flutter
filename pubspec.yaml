@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 4.0.9+209
+version: 4.0.11+211
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -148,15 +148,18 @@ dependencies:
   vibration: 1.4.0
   #https://pub.dev/packages/oktoast
   oktoast: ^2.3.2
-  flutter_recaptcha_v2:
-    git:
-      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
+#  flutter_recaptcha_v2:
+#    git:
+#      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
   #K-Line Chart
   #https://github.com/lanceqiuz/flutter_k_chart
-  flutter_k_chart:
-    git:
-      url: git@github.com:hyperion-hyn/flutter_k_chart.git
+#  k_chart: ^0.1.1
+#  k_chart:
+#    git:
+#      url: git@github.com:hyperion-hyn/k_chart.git
+  k_chart:
+    path: ../k_chart
 
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0
