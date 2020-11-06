@@ -92,7 +92,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.maybePop(context),
+                        onPressed: () => Navigator.pop(context),
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),
@@ -112,7 +112,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.maybePop(context),
+                        onPressed: () => Navigator.pop(context),
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),
