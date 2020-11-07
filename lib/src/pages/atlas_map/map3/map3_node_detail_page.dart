@@ -109,6 +109,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         if (_isDelegator) {
+          if (_map3infoEntity.atlas == null) {
+            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+          }
+
           if (_isCreator) {
             /*
             * 没有设置过，开始提示

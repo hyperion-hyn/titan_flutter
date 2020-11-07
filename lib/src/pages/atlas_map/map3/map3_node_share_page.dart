@@ -32,23 +32,26 @@ class _Map3NodeSharePageState extends BaseState<Map3NodeSharePage> {
 
   @override
   void onCreated() {
-    var activityWallet = WalletInheritedModel.of(context).activatedWallet;
-    if (activityWallet != null) {
-      Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
-      bool isFromOwn = wallet.getEthAccount().address == widget.map3InfoEntity.address;
-      NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
-      String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
-      shareData = "${widget.map3InfoEntity.shareUrl}&key=$encodeStr";
-    } else {
-      shareData = "${widget.map3InfoEntity.shareUrl}";
-    }
-    super.onCreated();
-
-    Future.delayed(Duration(milliseconds: 500)).then((_) {
-      if (context != null) {
-        _shareQr(context);
+    if (context != null) {
+      var activityWallet = WalletInheritedModel.of(context).activatedWallet;
+      if (activityWallet != null) {
+        Wallet wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
+        bool isFromOwn = wallet.getEthAccount().address == widget.map3InfoEntity.address;
+        NodeShareEntity nodeShareEntity = NodeShareEntity(wallet.getEthAccount().address, "detail", isFromOwn);
+        String encodeStr = FormatUtil.encodeBase64(json.encode(nodeShareEntity));
+        shareData = "${widget.map3InfoEntity.shareUrl}&key=$encodeStr";
+      } else {
+        shareData = "${widget.map3InfoEntity.shareUrl}";
       }
-    });
+
+      Future.delayed(Duration(milliseconds: 500)).then((_) {
+        if (context != null) {
+          _shareQr(context);
+        }
+      });
+    }
+
+    super.onCreated();
   }
 
   @override
