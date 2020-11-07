@@ -218,7 +218,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canEditNode =>
       _isCreator &&
-      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT || _map3Status != Map3InfoStatus.CREATE_SUBMIT_ING);
+      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS && _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT && _map3Status != Map3InfoStatus.CREATE_SUBMIT_ING);
 
   /*
   角色分析：
