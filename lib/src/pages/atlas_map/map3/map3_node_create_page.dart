@@ -430,7 +430,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
+          var subTitle = index < 3 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -499,6 +499,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
 
     if (_detailList[1].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[1]);
+      return;
+    }
+
+    if (_detailList[2].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[2]);
       return;
     }
 

@@ -1020,8 +1020,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     ],
                   ),
                   Visibility(
-                    visible: false,
-                    //visible: _canEditNode,
+                    visible: _canEditNode,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: InkWell(
