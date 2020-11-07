@@ -33,7 +33,6 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
   @override
   void initState() {
     super.initState();
-    _checkUpdate();
 
     /*
     FlutterDownloader.registerCallback((id, status, progress) async {
