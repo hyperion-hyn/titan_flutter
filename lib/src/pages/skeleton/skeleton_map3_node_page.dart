@@ -35,6 +35,7 @@ class SkeletonMap3NodePageState extends State<SkeletonMap3NodePage> {
           highlightColor: Colors.grey[100],
           enabled: true,
           child: CustomScrollView(
+            physics: NeverScrollableScrollPhysics(),
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: _nodesInfo(),

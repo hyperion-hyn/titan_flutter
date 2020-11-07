@@ -28,6 +28,11 @@ import 'map3_node_list_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodePage extends StatefulWidget {
+
+  final LoadDataBloc loadDataBloc;
+
+  Map3NodePage({this.loadDataBloc});
+
   @override
   State<StatefulWidget> createState() {
     return _Map3NodeState();
@@ -35,7 +40,6 @@ class Map3NodePage extends StatefulWidget {
 }
 
 class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClientMixin {
-  LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 1;
   List<Map3InfoEntity> _lastActiveList = [];
@@ -65,16 +69,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     if (!MemoryCache.hasNodePageData) {
-      loadDataBloc.add(LoadingEvent());
+      widget.loadDataBloc.add(LoadingEvent());
     } else {
       onLoadData();
     }
-  }
-
-  @override
-  void dispose() {
-    loadDataBloc.close();
-    super.dispose();
   }
 
   @override
@@ -84,7 +82,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       child: LoadDataContainer(
         enablePullUp: _pendingList.isNotEmpty,
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
-        bloc: loadDataBloc,
+        bloc: widget.loadDataBloc,
         onLoadData: () async {
           onLoadData();
         },
@@ -96,6 +94,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         },
         onLoadSkeletonView: SkeletonMap3NodePage(),
         child: CustomScrollView(
+          physics: NeverScrollableScrollPhysics(),
           slivers: <Widget>[
             _map3HeadWidget(),
             _sectionTitleWidget(title: S.of(context).my_nodes, hasMore: true, isMine: true),
@@ -134,15 +133,15 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _myList = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
 
-        loadDataBloc.add(RefreshSuccessEvent());
+        widget.loadDataBloc.add(RefreshSuccessEvent());
       } else {
-        loadDataBloc.add(LoadEmptyEvent());
+        widget.loadDataBloc.add(LoadEmptyEvent());
       }
       setState(() {});
     } catch (e) {
       print(e);
 
-      loadDataBloc.add(RefreshFailEvent());
+      widget.loadDataBloc.add(RefreshFailEvent());
     }
   }
 
@@ -161,15 +160,15 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
         _pendingList = lastPendingList;
 
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        widget.loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        widget.loadDataBloc.add(LoadMoreEmptyEvent());
       }
       setState(() {});
     } catch (e) {
       print(e);
 
-      loadDataBloc.add(LoadMoreFailEvent());
+      widget.loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 

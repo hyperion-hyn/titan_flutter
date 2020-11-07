@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 
 import 'atlas_map_widget.dart';
@@ -36,18 +37,13 @@ class _WidgetDemoPageState extends State<WidgetDemoPage> {
           ),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Map3NodesWidget('{\"p1\":[12,12.5],\"p2\":[12,12.5]}'),
-          SizedBox(
-            height: 16,
-          ),
-//          Container(
-//            child: AtlasMapWidget(),
-//            width: double.infinity,
-//            height: 250,
-//          ),
-        ],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[],
+        ),
       ),
     );
   }

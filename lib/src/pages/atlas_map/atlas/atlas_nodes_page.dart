@@ -35,7 +35,9 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'atlas_my_node_page.dart';
 
 class AtlasNodesPage extends StatefulWidget {
-  AtlasNodesPage();
+  final LoadDataBloc loadDataBloc;
+
+  AtlasNodesPage({this.loadDataBloc});
 
   @override
   State<StatefulWidget> createState() {
@@ -45,8 +47,6 @@ class AtlasNodesPage extends StatefulWidget {
 
 class AtlasNodesPageState extends State<AtlasNodesPage>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
-
   ///
   AtlasApi _atlasApi = AtlasApi();
 
@@ -70,7 +70,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void initState() {
     super.initState();
-    _loadDataBloc.add(LoadingEvent());
+    widget.loadDataBloc.add(LoadingEvent());
     _ageIconAnimationController = new AnimationController(
       vsync: this,
       duration: Duration(seconds: 10),
@@ -79,13 +79,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     var activatedWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _ageIconAnimationController.dispose();
-    _loadDataBloc.close();
   }
 
   _getData() async {
@@ -115,7 +108,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       body: Container(
         color: Colors.white,
         child: LoadDataContainer(
-          bloc: _loadDataBloc,
+          bloc: widget.loadDataBloc,
           enablePullUp: _atlasNodeList.isNotEmpty,
           onLoadData: () async {
             await _getData();
@@ -130,6 +123,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           },
           onLoadSkeletonView: SkeletonAtlasNodePage(),
           child: CustomScrollView(
+            physics: NeverScrollableScrollPhysics(),
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: _atlasInfo(),
@@ -663,9 +657,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         _atlasNodeList.addAll(_nodeList);
       }
       setState(() {});
-      _loadDataBloc.add(RefreshSuccessEvent());
+      widget.loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
-      _loadDataBloc.add(RefreshFailEvent());
+      widget.loadDataBloc.add(RefreshFailEvent());
     }
 
     if (mounted) setState(() {});
@@ -687,12 +681,12 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       if (_nodeList != null && _nodeList.isNotEmpty) {
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
-        _loadDataBloc.add(LoadingMoreSuccessEvent());
+        widget.loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        _loadDataBloc.add(LoadMoreEmptyEvent());
+        widget.loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
-      _loadDataBloc.add(LoadMoreFailEvent());
+      widget.loadDataBloc.add(LoadMoreFailEvent());
     }
     if (mounted) setState(() {});
   }
