@@ -29,7 +29,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
   StreamSubscription _appBlocSubscription;
 
 //  String taskId;
-
+  int _lastCancelBuildNumber = 0;
+  
   @override
   void initState() {
     super.initState();
@@ -55,8 +56,13 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
         if (state is UpdateCheckState) {
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
-            if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
-              _showUpdateDialog(state.appData.updateEntity);
+            var newBuildNumber = state.appData.updateEntity.build;
+            if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
+              if (_lastCancelBuildNumber != newBuildNumber) {
+                _showUpdateDialog(state.appData.updateEntity);
+              } else {
+                print("_lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+              }
             } else {
               print('[updater] 已经是最新版本');
               if (state.isManual) {
@@ -91,11 +97,16 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          _lastCancelBuildNumber = updateEntity.build;
+                          Navigator.pop(context);
+                        },
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),
-                      onPressed: () => _launch(updateEntity),
+                      onPressed: () {
+                        _launch(updateEntity);
+                      },
                     ),
                   ],
                 ),
@@ -111,7 +122,10 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          _lastCancelBuildNumber = updateEntity.build;
+                          Navigator.pop(context);
+                        },
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),

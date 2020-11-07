@@ -96,15 +96,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return "抵押已满$startMinValue，将在下个纪元启动……";
-        } else {
-          if (_isOver7Epoch) {
-            return '该节点超过7纪元未满足启动所需，已停止新抵押。请节点主终止节点，已有抵押将全部返还抵押者';
-          }
         }
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        return "节点已到期，将在下个纪元结算……";
+        //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
+        if (_currentEpoch <= (_releaseEpoch +1)) {
+          return "节点已到期，将在下个纪元结算……";
+        }
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
@@ -709,10 +708,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _bottomBtnBarWidget() {
     LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
-    //get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending)); // 提取奖励 or 参与抵押
-
-    var staking0 = (_isDelegator && _isOver7Epoch && _microDelegationsJoiner == null);
-    if (!_visibleBottomBar || (!_isDelegator && _isOver7Epoch) || staking0) return Container();
+    if (!_visibleBottomBar) return Container();
 
     List<Widget> children = [];
 
@@ -731,53 +727,29 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        if (_isOver7Epoch && !_isFullDelegate) {
-          if (_isDelegator) {
-            if (_isCreator) {
-              children = <Widget>[
-                ClickOvalButton(
-                  "终止节点",
-                  _exitAction,
-                  width: 160,
-                  height: 36,
-                  fontSize: 14,
-                ),
-              ];
-            } else {
-              children = <Widget>[
-                ClickOvalButton(
-                  "撤销抵押",
-                  _cancelAction,
-                  width: 160,
-                  height: 36,
-                  fontSize: 14,
-                ),
-              ];
-            }
-          }
-        } else {
-          children = <Widget>[
-            Spacer(),
-            ClickOvalButton(
-              "部分撤销",
-              _cancelAction,
-              width: 120,
-              height: 32,
-              fontSize: 14,
-              fontColor: HexColor("#999999"),
-              btnColor: Colors.transparent,
-            ),
-            Spacer(),
-            ClickOvalButton(
-              "抵押",
-              _joinAction,
-              width: 120,
-              height: 32,
-              fontSize: 14,
-            ),
-            Spacer(),
-          ];
-        }
+
+        children = <Widget>[
+          Spacer(),
+          ClickOvalButton(
+            "部分撤销",
+            _cancelAction,
+            width: 120,
+            height: 32,
+            fontSize: 14,
+            fontColor: HexColor("#999999"),
+            btnColor: Colors.transparent,
+          ),
+          Spacer(),
+          ClickOvalButton(
+            "抵押",
+            _joinAction,
+            width: 120,
+            height: 32,
+            fontSize: 14,
+          ),
+          Spacer(),
+        ];
+
         break;
 
       default:
@@ -806,10 +778,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var bgColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch))
+    var bgColor = (_isRunning)
         ? HexColor("#FF4C3B")
         : HexColor("#1FB9C7").withOpacity(0.08);
-    var contentColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch)) ? HexColor("#FFFFFF") : HexColor("#333333");
+    var contentColor = (_isRunning) ? HexColor("#FFFFFF") : HexColor("#333333");
     return Container(
       color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
