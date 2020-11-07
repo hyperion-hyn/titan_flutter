@@ -279,7 +279,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                     S.of(context).node_total_staking:
                                         '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
                                   },
-                                  {S.of(context).my_staking: '${_myStakingAmount()}'},
+                                  {
+                                    S.of(context).my_staking:
+                                        '${_myStakingAmount()}'
+                                  },
                                 ],
                               ),
                             ),
@@ -321,7 +324,9 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                         controller: _textEditingController,
                                         keyboardType: TextInputType.number,
                                         //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                        hint: S.of(context).please_enter_withdraw_amount,
+                                        hint: S
+                                            .of(context)
+                                            .please_enter_withdraw_amount,
                                         validator: (textStr) {
                                           if (textStr.length == 0) {
                                             return S
@@ -332,11 +337,15 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                           var inputValue =
                                               Decimal.tryParse(textStr);
                                           if (inputValue == null) {
-                                            return S.of(context).please_enter_correct_amount;
+                                            return S
+                                                .of(context)
+                                                .please_enter_correct_amount;
                                           }
 
                                           if (inputValue > _myStakingAmount()) {
-                                            return S.of(context).over_your_staking;
+                                            return S
+                                                .of(context)
+                                                .over_your_staking;
                                           }
 
                                           if (Decimal.parse(textStr) >
@@ -345,41 +354,56 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                                       _map3infoEntity
                                                               ?.staking ??
                                                           "0"))) {
-                                            return S.of(context).over_node_total_staking;
+                                            return S
+                                                .of(context)
+                                                .over_node_total_staking;
                                           }
 
                                           if (_map3infoEntity.isCreator() &&
                                               _myStakingAmount() -
                                                       Decimal.parse(textStr) <
                                                   _minRemain()) {
-                                            return S.of(context).remain_delegation_not_less_than('${_minRemain()}');
+                                            return S
+                                                .of(context)
+                                                .remain_delegation_not_less_than(
+                                                    '${_minRemain()}');
                                           } else {
                                             return null;
                                           }
                                           return null;
                                         },
                                         suffixIcon: InkWell(
-                                          borderRadius: BorderRadius.circular(30),
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                           onTap: () {
                                             if (!_canCancelDelegation) return;
 
-                                            var truncateBalance = _myStakingAmount().toString();
-                                            if (double.parse(truncateBalance) > 0) {
-                                              _textEditingController.text = truncateBalance.toString();
-                                              _textEditingController.selection = TextSelection.fromPosition(TextPosition(
-                                                affinity: TextAffinity.downstream,
-                                                offset: _textEditingController.text.length,
+                                            var truncateBalance =
+                                                _myStakingAmount().toString();
+                                            if (double.parse(truncateBalance) >
+                                                0) {
+                                              _textEditingController.text =
+                                                  truncateBalance.toString();
+                                              _textEditingController.selection =
+                                                  TextSelection.fromPosition(
+                                                      TextPosition(
+                                                affinity:
+                                                    TextAffinity.downstream,
+                                                offset: _textEditingController
+                                                    .text.length,
                                               ));
                                             }
                                           },
                                           child: Container(
-                                            margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
+                                            margin: const EdgeInsets.only(
+                                                left: 16, right: 16, top: 14),
                                             child: RichText(
                                               text: TextSpan(
-                                                // todo: test_HYN
+                                                  // todo: test_HYN
                                                   text: "  ",
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.normal,
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                     fontSize: 14,
                                                     color: Color(0xFF333333),
                                                   ),
@@ -387,7 +411,12 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                                     TextSpan(
                                                       text: S.of(context).all,
                                                       style: TextStyle(
-                                                        color: _canCancelDelegation?HexColor("#1F81FF"):HexColor("#999999"),
+                                                        color:
+                                                            _canCancelDelegation
+                                                                ? HexColor(
+                                                                    "#1F81FF")
+                                                                : HexColor(
+                                                                    "#999999"),
                                                         fontSize: 14,
                                                       ),
                                                     ),
@@ -474,7 +503,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 height: 9,
               ),
               Text(
-                S.of(context).unlock_remain_epoch('${(_remainEpoch().toInt()).toString()}'),
+                S.of(context).unlock_remain_epoch(
+                    '${(_remainEpoch().toInt() + 1).toString()}'),
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
@@ -486,7 +516,9 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 children: <Widget>[
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16,),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
                       child: Text(
                         '注：如果节点主终止节点，已有抵押将全部自动返还',
                         style: TextStyle(
