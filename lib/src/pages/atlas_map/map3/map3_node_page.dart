@@ -117,7 +117,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   void onLoadData() async {
     _currentPage = 1;
-    print("[onLoadData] _currentPage ---> _currentPage : $_currentPage");
 
     try {
       var requestList = await Future.wait([
@@ -153,8 +152,6 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   void onLoadingMore() async {
     _currentPage++;
-
-    print("[onLoadingMore] _currentPage ---> _currentPage : $_currentPage");
 
     try {
       Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
