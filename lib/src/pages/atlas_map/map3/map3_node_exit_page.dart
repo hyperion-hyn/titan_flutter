@@ -480,10 +480,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 3:
               title = S.of(context).node_total_staking;
-              detail = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-                  weiBigInt: BigInt.parse(
-                widget.map3infoEntity?.staking ?? "0",
-              )).toString());
+              detail = FormatUtil.stringFormatCoinNum(widget.map3infoEntity?.getStaking());
 
               break;
 
