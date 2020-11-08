@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
@@ -27,8 +28,7 @@ class WalletComponent extends StatelessWidget {
     return RepositoryProvider(
       create: (ctx) => WalletRepository(),
       child: BlocProvider<WalletCmpBloc>(
-        create: (ctx) => WalletCmpBloc(
-            walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
+        create: (ctx) => WalletCmpBloc(walletRepository: RepositoryProvider.of<WalletRepository>(ctx)),
         child: _WalletManager(child: child),
       ),
     );
@@ -57,8 +57,7 @@ class _WalletManagerState extends State<_WalletManager> {
     super.initState();
 
     //load default wallet
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(LoadLocalDiskWalletAndActiveEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
   }
 
   @override
@@ -75,8 +74,13 @@ class _WalletManagerState extends State<_WalletManager> {
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
             setState(() {
-              this._activatedWallet =
-                  this._activatedWallet.copyWith(WalletVo(balance: balance));
+              if (_activatedWallet.wallet != null) {
+                var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+                var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
+                FlutterBugly.setUserId(address);
+              }
+
+              this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
             });
           }
         }
@@ -86,8 +90,7 @@ class _WalletManagerState extends State<_WalletManager> {
           if (state is WalletVoAwareCmpState) {
             _activatedWallet = state.walletVo;
             if (_activatedWallet != null) {
-              _activatedWallet.balance =
-                  _calculateTotalBalance(_activatedWallet);
+              _activatedWallet.balance = _calculateTotalBalance(_activatedWallet);
 
               ///Refresh bio-auth config
               BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
@@ -120,8 +123,7 @@ class _WalletManagerState extends State<_WalletManager> {
     return 0;
   }
 
-  SymbolQuoteVo _getQuoteVoPriceBySign(
-      CoinVo coinVo, QuotesModel quotesModel, QuotesSign quotesSign) {
+  SymbolQuoteVo _getQuoteVoPriceBySign(CoinVo coinVo, QuotesModel quotesModel, QuotesSign quotesSign) {
     for (var vo in quotesModel.quotes) {
       if (vo.quote == quotesSign.quote && vo.symbol == coinVo.symbol) {
         return vo;
@@ -145,8 +147,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   }) : super(key: key, child: child);
 
   static WalletInheritedModel of(BuildContext context, {WalletAspect aspect}) {
-    return InheritedModel.inheritFrom<WalletInheritedModel>(context,
-        aspect: aspect);
+    return InheritedModel.inheritFrom<WalletInheritedModel>(context, aspect: aspect);
   }
 
   String activatedHynAddress() {
@@ -188,10 +189,8 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
-    return (activatedWallet != oldWidget.activatedWallet &&
-        dependencies.contains(WalletAspect.activatedWallet));
+  bool updateShouldNotifyDependent(WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
+    return (activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet));
   }
 
 //  static String formatPrice(double price) {
