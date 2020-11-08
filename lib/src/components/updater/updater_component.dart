@@ -30,7 +30,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
 
 //  String taskId;
   int _lastCancelBuildNumber = 0;
-  
+  bool _lastHaveVisible = false;
+
   @override
   void initState() {
     super.initState();
@@ -54,14 +55,19 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
     if (_appBlocSubscription == null) {
       _appBlocSubscription = BlocProvider.of<UpdateBloc>(context)?.listen((UpdateState state) async {
         if (state is UpdateCheckState) {
+
+          var newBuildNumber = state?.appData?.updateEntity?.build??0;
+          //print("00_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
-            var newBuildNumber = state.appData.updateEntity.build;
             if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
-              if (_lastCancelBuildNumber != newBuildNumber) {
+              //print("11_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+
+              if (_lastCancelBuildNumber != newBuildNumber && !_lastHaveVisible) {
                 _showUpdateDialog(state.appData.updateEntity);
               } else {
-                print("_lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+                print("_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
               }
             } else {
               print('[updater] 已经是最新版本');
@@ -76,7 +82,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
   }
 
   void _showUpdateDialog(UpdateEntity updateEntity) async {
-//    var hasDownloaded = await _hasDownloaded(updateEntity);
+   _lastHaveVisible = true;
+
     await showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -99,6 +106,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                         child: Text(btnLabelCancel),
                         onPressed: () {
                           _lastCancelBuildNumber = updateEntity.build;
+                          _lastHaveVisible = false;
                           Navigator.pop(context);
                         },
                       ),
@@ -124,6 +132,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                         child: Text(btnLabelCancel),
                         onPressed: () {
                           _lastCancelBuildNumber = updateEntity.build;
+                          _lastHaveVisible = false;
                           Navigator.pop(context);
                         },
                       ),
@@ -152,6 +161,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
 //    }
 
 //      AppPlugin.openMarket();
+
+    _lastHaveVisible = false;
 
     Navigator.maybePop(context);
 

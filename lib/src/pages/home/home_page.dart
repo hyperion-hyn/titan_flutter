@@ -30,7 +30,7 @@ class HomePageState extends BaseState<HomePage> {
 
   @override
   void onCreated() async {
-    await Future.delayed(Duration(milliseconds: 1000));
+    await Future.delayed(Duration(milliseconds: 333));
     BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
     super.onCreated();
   }
