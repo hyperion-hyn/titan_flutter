@@ -10,8 +10,8 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
@@ -580,7 +580,7 @@ class _Map3NodeContractDetailStateV8 extends BaseState<Map3NodeContractDetailPag
     _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
     getContractDetailData();
 
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
 
     super.onCreated();
   }
@@ -1376,7 +1376,7 @@ class _Map3NodeContractDetailStateV8 extends BaseState<Map3NodeContractDetailPag
         });
       }
 
-      var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+      var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
       var gasPrice = gasPriceRecommend.average.toInt();
 
       var gasLimit = SettingInheritedModel.ofConfig(context).systemConfigEntity.collectMap3NodeCreatorGasLimit;

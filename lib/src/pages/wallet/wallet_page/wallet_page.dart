@@ -16,10 +16,9 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -68,15 +67,13 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+    var quoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
+    print("show quote ${quoteSign?.quoteVo?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
 
-    _postWalletBalance();
-
-    ///check dex account is abnormal
-    _checkDexAccount();
-
-    ///
     _checkConfirmWalletPolicy();
+    ///check dex account is abnormal
+//    _checkDexAccount();
+
   }
 
   @override
@@ -90,23 +87,27 @@ class _WalletPageState extends BaseState<WalletPage>
 
   @override
   void didPopNext() async {
+    listLoadingData();
+    /*print("!!!!000 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
     callLater((_) {
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateActivatedWalletBalanceEvent());
-    });
+    });*/
   }
 
   @override
   Future<void> onCreated() async {
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+    _postWalletBalance();
     //update quotes
-//    BlocProvider.of<QuotesCmpBloc>(context)
+//    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
 
-    print('WalletPage onCreated ======');
-    listLoadingData();
+//    print('WalletPage onCreated ======');
+//    listLoadingData();
   }
 
   _checkDexAccount() async {
@@ -385,12 +386,10 @@ class _WalletPageState extends BaseState<WalletPage>
           showLoadingWidget: false,
           onLoadData: () {
             //print('WalletPage LoadDataContainer onLoadData ======');
-            _checkDexAccount();
             listLoadingData();
           },
           onRefresh: () async {
             //print('WalletPage LoadDataContainer onRefresh ======');
-            _checkDexAccount();
             listLoadingData();
           },
           child: SingleChildScrollView(
@@ -419,20 +418,22 @@ class _WalletPageState extends BaseState<WalletPage>
   Future listLoadingData() async {
     //print('WalletPage listLoadingData ===');
     //update quotes
-    var quoteSignStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    /*var quoteSignStr =
+    await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
     QuotesSign quotesSign = quoteSignStr != null
         ? QuotesSign.fromJson(json.decode(quoteSignStr))
         : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
     BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+        .add(UpdateActivatedWalletBalanceEvent());*/
 
-    await Future.delayed(Duration(milliseconds: 700));
+    _checkDexAccount();
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+//    await Future.delayed(Duration(milliseconds: 700));
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -442,7 +443,7 @@ class _WalletPageState extends BaseState<WalletPage>
   Widget hynQuotesView() {
     //hyn quote
     ActiveQuoteVoAndSign hynQuoteSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),

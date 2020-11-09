@@ -8,10 +8,10 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/coin_market_api.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
-import 'package:titan/src/components/quotes/vo/symbol_quote_vo.dart';
+import 'package:titan/src/components/wallet/coin_market_api.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -188,7 +188,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
 
     var quotes = await _coinMarketApi.quotes(timestamp);
     SymbolQuoteVo hynQuote;
-    var quotesSign = QuotesInheritedModel.of(context).activeQuotesSign;
+    var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
     for (var quoteItem in quotes) {
       if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol && quoteItem.quote == quotesSign.quote) {
         hynQuote = quoteItem;

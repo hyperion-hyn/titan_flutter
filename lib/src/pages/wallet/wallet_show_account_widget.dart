@@ -12,8 +12,8 @@ import 'package:titan/src/basic/widget/data_list_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
@@ -149,7 +149,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   Widget build(BuildContext context) {
     //activated quote sign
     ActiveQuoteVoAndSign activeQuoteVoAndSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.coinVo.symbol);
 
     var coinVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet).getCoinVoBySymbol(widget.coinVo.symbol);
