@@ -279,6 +279,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmCreateMap3NodeMessage] catch, e:", e);
     }
 
     return false;
@@ -330,6 +331,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] catch, e:", e);
     }
 
     return false;
@@ -392,6 +394,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmPreEditMap3NodeMessage] catch, e:", e);
     }
     return false;
   }
@@ -429,6 +432,10 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       this.entity.rawTx = rawTx;
       print("[Confirm] rawTx:$rawTx");
 
+      var uploadRawText = '[ConfirmTerminateMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      print(uploadRawText);
+      LogUtil.uploadException("[ConfirmTerminateMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+
       TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
       print("[Confirm] rawTx:$rawTx, txHashEntity:${txHashEntity.txHash}");
       return txHashEntity.txHash.isNotEmpty;
@@ -436,6 +443,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmTerminateMap3NodeMessage] catch, e:", e);
     }
 
     return false;
@@ -472,6 +480,10 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       var rawTx = await HYNApi.transUnMicroMap3Node(this.amount, password, this.map3NodeAddress, wallet);
       this.entity.rawTx = rawTx;
 
+      var uploadRawText = '[ConfirmCancelMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      print(uploadRawText);
+      LogUtil.uploadException("[ConfirmCancelMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+
       TxHashEntity txHashEntity = await AtlasApi().postPledgeMap3(this.entity);
       print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
@@ -480,6 +492,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmCancelMap3NodeMessage] catch, e:", e);
     }
 
     return false;
@@ -533,6 +546,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmDelegateMap3NodeMessage] catch, e:", e);
       // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 
@@ -574,6 +588,11 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       var rawTx = await HYNApi.transCollectMap3Node(password, wallet);
 
       this.entity.rawTx = rawTx;
+
+      var uploadRawText = '[ConfirmCollectMap3NodeMessage] wallet:${wallet.toJson()}, rawTx:$rawTx';
+      print(uploadRawText);
+      LogUtil.uploadException("[ConfirmCollectMap3NodeMessage] action, uploadTxHashEntity", uploadRawText);
+
       TxHashEntity txHashEntity = await AtlasApi().getMap3Reward(this.entity);
       print("[Confirm] txHashEntity:${txHashEntity.txHash}");
 
@@ -582,6 +601,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
+      LogUtil.uploadException("[ConfirmCollectMap3NodeMessage] catch, e:", e);
     }
 
     return false;
