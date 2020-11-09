@@ -33,7 +33,7 @@ class ResponseEntity<T> {
     } else if (json.containsKey('result')) {
       retData = json['result'];
     }
-    if (factory != null) {
+    if (factory != null && retData != null) {
       retData = factory.constructor(retData);
     }
 
