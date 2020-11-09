@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 
 class MePricePage extends StatefulWidget {
@@ -28,7 +28,7 @@ class _MePriceState extends State<MePricePage> {
   @override
   Widget build(BuildContext context) {
     if (activeQuotesSign == null) {
-      activeQuotesSign = QuotesInheritedModel.of(context,aspect: QuotesAspect.quote).activeQuotesSign;
+      activeQuotesSign = WalletInheritedModel.of(context,aspect: WalletAspect.quote).activeQuotesSign;
     }
 
     return Scaffold(

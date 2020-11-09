@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/wallet/model.dart';
 
 import '../model.dart';
 import '../system_config_entity.dart';

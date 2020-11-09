@@ -7,9 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -70,18 +70,18 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   @override
   void onCreated() {
 //    var defaultSpeed = EthereumConst.FAST_SPEED;
-    activatedQuoteSign = QuotesInheritedModel.of(context)
+    activatedQuoteSign = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign(widget.coinVo.symbol);
 //    var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .btcGasPriceRecommend;
     } else {
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .gasPriceRecommend;
     }
     _speedOnTap(1);
@@ -91,7 +91,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
   }
 
   Decimal get gasPrice {
@@ -118,7 +118,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     var gasPriceEstimateStr = "";
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .btcGasPriceRecommend;
       var fees = ConvertTokenUnit.weiToDecimal(
           BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
@@ -128,13 +128,13 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
       gasPriceEstimateStr =
           "$fees BTC (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.ETHEREUM) {
-      var ethQuotePrice = QuotesInheritedModel.of(context)
+      var ethQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('ETH')
               ?.quoteVo
               ?.price ??
           0;
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .gasPriceRecommend;
       var gasLimit = widget.coinVo.symbol == "ETH"
           ? SettingInheritedModel.ofConfig(context)
@@ -152,7 +152,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
           "${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} GWEI (≈ $quoteSign${FormatUtil.formatPrice(gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = QuotesInheritedModel.of(context)
+      var hynQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('HYN')
               ?.quoteVo
               ?.price ??
