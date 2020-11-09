@@ -94,8 +94,13 @@ class _WalletManagerState extends State<_WalletManager> {
         if(state is UpdateWalletPageState){
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
-            _activatedWallet.balance =
-                _calculateTotalBalance(_activatedWallet);
+            var balance = _calculateTotalBalance(_activatedWallet);
+            if (_activatedWallet.wallet != null) {
+              var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+              var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
+              FlutterBugly.setUserId(address);
+            }
+            this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
 
             ///Refresh bio-auth config
             BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
@@ -108,10 +113,10 @@ class _WalletManagerState extends State<_WalletManager> {
           if (state.sign != null) {
             _quotesSign = state.sign;
           }
-        }else if (state is UpdatedQuotesState) {
+        }else if (state is UpdatedQuotesState) {//基本不用,一般使用UpdateWalletPageState
           _quotesModel = state.quoteModel;
           print('QuotesComponent UpdatedQuotesState === receive');
-        }else if (state is UpdatedQuotesSignState) {
+        }else if (state is UpdatedQuotesSignState) {//基本不用,一般使用UpdateWalletPageState
           _quotesSign = state.sign;
         }else if (state is GasPriceState) {
           if (state.status == Status.success && state.gasPriceRecommend != null) {
@@ -122,19 +127,17 @@ class _WalletManagerState extends State<_WalletManager> {
             _btcGasPriceRecommend = state.btcGasPriceRecommend;
           }
         } else if (state is UpdatedWalletBalanceState) {
-        } else if (state is WalletVoAwareCmpState) {
+        } else if (state is WalletVoAwareCmpState) {//基本不用,一般使用UpdateWalletPageState
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
-            setState(() {
-              if (_activatedWallet.wallet != null) {
-                var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
-                var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
-                FlutterBugly.setUserId(address);
-              }
+            if (_activatedWallet.wallet != null) {
+              var ethAddress = _activatedWallet?.wallet?.getEthAccount()?.address ?? '';
+              var address = _activatedWallet?.wallet?.getAtlasAccount()?.address ?? ethAddress;
+              FlutterBugly.setUserId(address);
+            }
 
-              this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
-            });
+            this._activatedWallet = this._activatedWallet.copyWith(WalletVo(balance: balance));
           }
         } else if (state is LoadingWalletState) {
           _activatedWallet = null;
@@ -142,20 +145,6 @@ class _WalletManagerState extends State<_WalletManager> {
       },
       child: BlocBuilder<WalletCmpBloc, WalletCmpState>(
         builder: (BuildContext context, WalletCmpState state) {
-          if (state is WalletVoAwareCmpState) {
-            _activatedWallet = state.walletVo;
-            if (_activatedWallet != null) {
-              _activatedWallet.balance = _calculateTotalBalance(_activatedWallet);
-
-              ///Refresh bio-auth config
-              BlocProvider.of<AuthBloc>(context).add(RefreshBioAuthConfigEvent(
-                _activatedWallet.wallet,
-              ));
-            }
-          } else if (state is LoadingWalletState) {
-            _activatedWallet = null;
-          } else if (state is UpdatedWalletBalanceState) {
-          }
           return WalletInheritedModel(
             activatedWallet: _activatedWallet,
             quotesModel: _quotesModel,

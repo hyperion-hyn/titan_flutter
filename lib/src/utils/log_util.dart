@@ -105,7 +105,6 @@ class LogUtil {
       FlutterBugly.uploadException(
           message: "[$errorPrefix]: $exceptionStr", detail: "[$errorPrefix]: $exceptionStr");
     }
-    print("!!!! $exceptionStr  $errorPrefix");
     logger.e("$exceptionStr  $errorPrefix");
   }
 
