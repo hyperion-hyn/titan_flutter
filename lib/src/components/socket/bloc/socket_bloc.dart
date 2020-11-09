@@ -45,8 +45,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       yield UnSubChannelState(channel: event.channel);
     } else if (event is ReceivedDataEvent) {
       var receivedData = event.data;
-      LogUtil.printMessage(
-          "[SocketBloc] mapEventToState, receivedData:$receivedData");
+      // LogUtil.printMessage(
+      //     "[SocketBloc] mapEventToState, receivedData:$receivedData");
 
       try {
         Map<String, dynamic> dataMap = json.decode(receivedData);
@@ -157,7 +157,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
 
 
   void _heartAction() {
-    LogUtil.printMessage('[WS] heart，发送心跳, date:${DateTime.now()}');
+    //LogUtil.printMessage('[WS] heart，发送心跳, date:${DateTime.now()}');
 
     var pong = "heart time fired!";
     socketChannel.sink.add(json.encode(pong));

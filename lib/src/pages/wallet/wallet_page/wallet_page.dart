@@ -70,7 +70,7 @@ class _WalletPageState extends BaseState<WalletPage>
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    _postWalletBalance();
+    // _postWalletBalance();
 
     ///check dex account is abnormal
     _checkDexAccount();
@@ -105,7 +105,9 @@ class _WalletPageState extends BaseState<WalletPage>
 //    BlocProvider.of<WalletCmpBloc>(context)
 //        .add(UpdateActivatedWalletBalanceEvent());
 
-    print('WalletPage onCreated ======');
+
+    _postWalletBalance();
+
     listLoadingData();
   }
 

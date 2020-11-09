@@ -220,8 +220,16 @@ class AtlasApi {
   }
 
   // 查询atlas概览数据
+  /*
+  this.request = true,
+  this.requestHeader = true,
+  this.requestBody = false,
+  this.responseHeader = true,
+  this.responseBody = false,
+  this.error = true,
+  */
   Future<AtlasHomeEntity> postAtlasHome(String address) async {
-    return AtlasHttpCore.instance.postEntity(
+    return AtlasHttpCoreNoLog.instance.postEntity(
         "/v1/atlas/home",
         EntityFactory<AtlasHomeEntity>(
           (json) => AtlasHomeEntity.fromJson(json),

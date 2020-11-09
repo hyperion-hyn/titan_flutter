@@ -706,7 +706,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   */
 
   Widget _bottomBtnBarWidget() {
-    LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
+    //LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
     if (!_visibleBottomBar) return Container();
 
@@ -823,6 +823,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var desc = (_map3infoEntity?.describe ?? "").isEmpty ?? false
         ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！"
         : _map3infoEntity.describe;
+
+
+    var lsss = WalletUtil.bech32ToEthAddress('hyn13ewafrn7523k05p5csqkzl4k0yv0ckql9flj7s');
+    print("lessss: $lsss");
 
     return Container(
       decoration: BoxDecoration(
@@ -1884,10 +1888,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   _setupMicroDelegations() {
-    LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
+    //LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
-      LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      //LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       return;
     }
@@ -1896,20 +1900,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity?.microdelegations ?? []) {
-      LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      //LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
-        LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+        //LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
         if (item.delegatorAddress == creatorAddress) {
           _microDelegationsCreator = item;
-          LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.renewal.toJson()}");
+          //LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.renewal.toJson()}");
         }
 
         if (item.delegatorAddress == joinerAddress) {
           _microDelegationsJoiner = item;
-          LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.renewal.toJson()}");
+          //LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.renewal.toJson()}");
         }
       }
     }
