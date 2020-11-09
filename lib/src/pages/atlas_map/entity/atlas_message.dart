@@ -279,7 +279,7 @@ class ConfirmCreateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmCreateMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmCreateMap3NodeMessage] catch, e:", e.toString());
     }
 
     return false;
@@ -331,7 +331,7 @@ class ConfirmEditMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmEditMap3NodeMessage] catch, e:", e.toString());
     }
 
     return false;
@@ -394,7 +394,7 @@ class ConfirmPreEditMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmPreEditMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmPreEditMap3NodeMessage] catch, e:", e.toString());
     }
     return false;
   }
@@ -443,7 +443,7 @@ class ConfirmTerminateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmTerminateMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmTerminateMap3NodeMessage] catch, e:", e.toString());
     }
 
     return false;
@@ -492,7 +492,7 @@ class ConfirmCancelMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmCancelMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmCancelMap3NodeMessage] catch, e:", e.toString());
     }
 
     return false;
@@ -546,7 +546,7 @@ class ConfirmDelegateMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmDelegateMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmDelegateMap3NodeMessage] catch, e:", e.toString());
       // todo: "code":-10000,"msg":"Unknown error","data":null,"subMsg":"-32000 | delegation amount too small"}
     }
 
@@ -601,7 +601,7 @@ class ConfirmCollectMap3NodeMessage implements AtlasMessage {
       print(e);
       LogUtil.toastException(e);
       LogUtil.uploadException(e);
-      LogUtil.uploadException("[ConfirmCollectMap3NodeMessage] catch, e:", e);
+      LogUtil.uploadException("[ConfirmCollectMap3NodeMessage] catch, e:", e.toString());
     }
 
     return false;

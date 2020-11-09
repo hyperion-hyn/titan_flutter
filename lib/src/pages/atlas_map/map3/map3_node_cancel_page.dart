@@ -321,6 +321,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                       }
                                       return null;
                                     },
+                                      /*
                                     suffixIcon: InkWell(
                                       borderRadius: BorderRadius.circular(30),
                                       onTap: () {
@@ -360,6 +361,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                         ),
                                       ),
                                     ),
+                                    */
                                   ),
                                 ),
                               ),
