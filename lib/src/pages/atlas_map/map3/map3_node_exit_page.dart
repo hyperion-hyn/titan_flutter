@@ -72,6 +72,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
   get _canExitDelegation => _remainEpoch < 0;
 
+  get _remainEpochInt => _remainEpoch().toInt() == 0?1:_remainEpoch().toInt();
+
   @override
   void onCreated() {
     var activatedWallet =
@@ -393,7 +395,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
               height: 9,
             ),
             Text(
-              S.of(context).unlock_remain_epoch(_remainEpoch),
+              S.of(context).unlock_remain_epoch(_remainEpochInt),
               style: TextStyle(
                 color: DefaultColors.color999,
               ),
@@ -478,10 +480,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 3:
               title = S.of(context).node_total_staking;
-              detail = FormatUtil.stringFormatNum(ConvertTokenUnit.weiToEther(
-                  weiBigInt: BigInt.parse(
-                widget.map3infoEntity?.staking ?? "0",
-              )).toString());
+              detail = FormatUtil.stringFormatCoinNum(widget.map3infoEntity?.getStaking());
 
               break;
 

@@ -89,16 +89,16 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   var _titleList = [
     S.of(Keys.rootKey.currentContext).name,
     S.of(Keys.rootKey.currentContext).node_num,
-    S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).description,
   ];
   List<String> _detailList = ["", "", "", "", ""];
   List<String> _hintList = [
     S.of(Keys.rootKey.currentContext).please_enter_node_name,
     S.of(Keys.rootKey.currentContext).please_input_node_num,
-    S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_input_node_contact,
+    S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_enter_node_description
   ];
 
@@ -430,7 +430,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
+          var subTitle = index < 3 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -502,6 +502,11 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       return;
     }
 
+    if (_detailList[2].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[2]);
+      return;
+    }
+
     var coinVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -545,10 +550,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
         _payload.name = _detailList[0];
       } else if (title == S.of(Keys.rootKey.currentContext).node_num) {
         _payload.nodeId = _detailList[1];
-      } else if (title == S.of(Keys.rootKey.currentContext).website) {
-        _payload.home = _detailList[2];
       } else if (title == S.of(Keys.rootKey.currentContext).contact) {
-        _payload.connect = _detailList[3];
+        _payload.connect = _detailList[2];
+      } else if (title == S.of(Keys.rootKey.currentContext).website) {
+        _payload.home = _detailList[3];
       } else if (title == S.of(Keys.rootKey.currentContext).description) {
         _payload.describe = _detailList[4];
       }

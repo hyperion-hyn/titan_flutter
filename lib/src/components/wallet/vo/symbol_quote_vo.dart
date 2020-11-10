@@ -1,10 +1,9 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'symbol_quote_vo.g.dart';
 
 @JsonSerializable()
-class SymbolQuoteVo extends Equatable {
+class SymbolQuoteVo {
   ///ETH, HYN etc..
   String symbol;
 

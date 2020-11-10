@@ -15,6 +15,7 @@ import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -126,6 +127,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
   }
 
   @override

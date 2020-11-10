@@ -21,6 +21,7 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:web3dart/web3dart.dart';
+import '../../../../env.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_list_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -33,8 +34,7 @@ class Map3NodeMyPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
-    with TickerProviderStateMixin {
+class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStateMixin {
   TabController _tabController;
   List<MyContractModel> _contractTypeModels;
   UserRewardEntity _rewardEntity;
@@ -76,16 +76,13 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
 
     if (_contractTypeModels?.isEmpty ?? true) {
       _contractTypeModels = [
-        MyContractModel(
-            S.of(context).my_initiated_map_contract, MyContractType.create),
+        MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
         MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
       ];
-      _tabController =
-          TabController(length: _contractTypeModels.length, vsync: this);
+      _tabController = TabController(length: _contractTypeModels.length, vsync: this);
     }
 
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -104,8 +101,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
               // Application.router
               //     .navigateTo(context, Routes.map3node_my_page_v8);
 
-              Application.router
-                  .navigateTo(context, Routes.map3node_my_page_reward);
+              Application.router.navigateTo(context, Routes.map3node_my_page_reward);
             },
             child: Text(
               // S.of(context).old_map3,
@@ -208,8 +204,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(
-                left: 15.0, right: 15, bottom: 20, top: 12),
+            margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20, top: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -328,9 +323,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
         child: TabBarView(
           controller: _tabController,
           //physics: NeverScrollableScrollPhysics(),
-          children: _contractTypeModels
-              .map((model) => Map3NodeListPage(model))
-              .toList(),
+          children: _contractTypeModels.map((model) => Map3NodeListPage(model)).toList(),
         ),
       ),
     );
@@ -343,9 +336,15 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
       return;
     }
 
-    var preText = count != 0
-        ? "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，"
-        : "";
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var isOver6second = now - lastCollectDate > 6000;
+    //print("isOver6second1: $isOver6second, lastCollectDate:$lastCollectDate, now:$now");
+    if (!isOver6second) {
+      Fluttertoast.showToast(msg: '提取申请正处理中，请稍后再发起新的提取请求！');
+      return;
+    }
+
+    var preText = count != 0 ? "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，" : "";
 
     UiUtil.showAlertView(context,
         title: S.of(context).collect_reward,
@@ -359,8 +358,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
                 amount: _balanceValue,
-                addressList:
-                    _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
               );
               Navigator.push(
                   context,
@@ -375,8 +373,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
             fontSize: 16,
           ),
         ],
-        content:
-            S.of(context).confirm_collect_reward_to_wallet(preText, _balance),
+        content: S.of(context).confirm_collect_reward_to_wallet(preText, _balance),
         boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),

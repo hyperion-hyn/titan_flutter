@@ -60,13 +60,13 @@ class LoadDataContainerState extends State<LoadDataContainer> {
       builder: (context, state) {
         if (state is InitialLoadDataState) {
           if (widget.isStartLoading) {
-            print('LoadDataContainer widget.isStartLoading ===');
+            //print('LoadDataContainer widget.isStartLoading ===');
             widget.bloc.add(LoadingEvent());
           }
           return Container();
         }
         if (state is LoadingState) {
-          print('LoadDataContainer LoadingState ===');
+          //print('LoadDataContainer LoadingState ===');
           if (widget.onLoadData != null) {
             widget.onLoadData();
           }

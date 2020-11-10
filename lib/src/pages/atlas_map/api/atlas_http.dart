@@ -33,3 +33,31 @@ class AtlasHttpCore extends BaseHttpCore {
     contentType: 'application/x-www-form-urlencoded',
   ));
 }
+
+
+// no log
+class AtlasHttpCoreNoLog extends BaseHttpCore {
+  factory AtlasHttpCoreNoLog() => _getInstance();
+
+  AtlasHttpCoreNoLog._internal() : super(_dio);
+
+  static AtlasHttpCoreNoLog get instance => _getInstance();
+  static AtlasHttpCoreNoLog _instance;
+
+  static AtlasHttpCoreNoLog _getInstance() {
+    if (_instance == null) {
+      _instance = AtlasHttpCoreNoLog._internal();
+    }
+    return _instance;
+  }
+
+  static var _dio = new Dio(BaseOptions(
+    baseUrl: Const.ATLAS_DOMAIN,
+    connectTimeout: 5000,
+    receiveTimeout: 5000,
+//    headers: {"user-agent": "dio", "api": "1.0.0"},
+    /*contentType: ContentType.JSON,
+      responseType: ResponseType.PLAIN*/
+    contentType: 'application/x-www-form-urlencoded',
+  ));
+}

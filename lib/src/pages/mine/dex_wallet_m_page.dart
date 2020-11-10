@@ -4,9 +4,8 @@ import 'package:ethereum_address/ethereum_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_k_chart/utils/date_format_util.dart';
 import 'package:titan/config.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -487,7 +486,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       web3.Transaction(
                                         to: web3.EthereumAddress.fromHex(_toAddress),
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
                                         maxGas: 21000,
                                         value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
                                       ),
@@ -552,7 +551,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                           ConvertTokenUnit.decimalToWei(_amount, decimals)
                                         ],
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
                                         maxGas: 65000,
                                       ),
                                       fetchChainIdFromNetworkId: true,

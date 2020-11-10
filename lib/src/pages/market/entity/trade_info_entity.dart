@@ -1,4 +1,5 @@
-import 'package:flutter_k_chart/flutter_k_chart.dart';
+
+import 'package:k_chart/flutter_k_chart.dart';
 
 class TradeInfoEntity {
   int date;
@@ -21,7 +22,7 @@ class DepthInfoEntity extends DepthEntity {
 
   @override
   String toString() {
-    return 'Data{price: $price, amount: $amount}, actionType:$actionType';
+    return 'Data{price: $price, amount: $vol}, actionType:$actionType';
   }
 
   String actionType;

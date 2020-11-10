@@ -11,8 +11,8 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -65,7 +65,7 @@ class _ExchangeAssetHistoryPageState
     // TODO: implement onCreated
     super.onCreated();
     symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _updateTypeToCurrency();
   }
 
@@ -556,7 +556,7 @@ class AssetItemState extends State<AssetItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                      '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign.quote})',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
