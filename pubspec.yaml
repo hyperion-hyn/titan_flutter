@@ -148,15 +148,16 @@ dependencies:
   vibration: 1.4.0
   #https://pub.dev/packages/oktoast
   oktoast: ^2.3.2
-  flutter_recaptcha_v2:
-    git:
-      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
+#  flutter_recaptcha_v2:
+#    git:
+#      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
   #K-Line Chart
   #https://github.com/lanceqiuz/flutter_k_chart
-  flutter_k_chart:
+#  k_chart: ^0.1.1
+  k_chart:
     git:
-      url: git@github.com:hyperion-hyn/flutter_k_chart.git
+      url: git@github.com:hyperion-hyn/k_chart.git
 
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0
