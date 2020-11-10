@@ -190,7 +190,7 @@ class InAppWebViewContainerState extends State<InAppWebViewContainer> {
 
         setState(() {
           this.progress = progress / 100;
-          print('[inapp] --> webView, progress:${progress}');
+          //print('[inapp] --> webView, progress:${progress}');
         });
       },
     );

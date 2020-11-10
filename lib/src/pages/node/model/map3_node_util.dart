@@ -269,7 +269,7 @@ class Map3NodeUtil {
         break;
     }
 
-    LogUtil.printMessage("[map3Status：$_map3Status]  _map3StatusDesc:$_map3StatusDesc");
+    //LogUtil.printMessage("[map3Status：$_map3Status]  _map3StatusDesc:$_map3StatusDesc");
 
     return _map3StatusDesc;
   }

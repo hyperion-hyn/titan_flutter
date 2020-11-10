@@ -96,19 +96,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return "抵押已满$startMinValue，将在下个纪元启动……";
-        } else {
-          if (_isOver7Epoch) {
-            return '该节点超过7纪元未满足启动所需，已停止新抵押。请节点主终止节点，已有抵押将全部返还抵押者';
-          }
         }
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        return "节点已到期，将在下个纪元结算……";
+        //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
+        if (_currentEpoch <= (_releaseEpoch +1)) {
+          return "节点已到期，将在下个纪元结算……";
+        }
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         if (_isDelegator) {
+          if (_map3infoEntity.atlas == null) {
+            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+          }
+
           if (_isCreator) {
             /*
             * 没有设置过，开始提示
@@ -215,7 +218,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canEditNode =>
       _isCreator &&
-      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS || _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT);
+      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS && _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT && _map3Status != Map3InfoStatus.CREATE_SUBMIT_ING);
 
   /*
   角色分析：
@@ -703,12 +706,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   */
 
   Widget _bottomBtnBarWidget() {
-    LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
+    //LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
-    //get _visibleBottomBar => ((_isRunning && _isDelegator) || (_isPending)); // 提取奖励 or 参与抵押
-
-    var staking0 = (_isDelegator && _isOver7Epoch && _microDelegationsJoiner == null);
-    if (!_visibleBottomBar || (!_isDelegator && _isOver7Epoch) || staking0) return Container();
+    if (!_visibleBottomBar) return Container();
 
     List<Widget> children = [];
 
@@ -727,53 +727,29 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-        if (_isOver7Epoch && !_isFullDelegate) {
-          if (_isDelegator) {
-            if (_isCreator) {
-              children = <Widget>[
-                ClickOvalButton(
-                  "终止节点",
-                  _exitAction,
-                  width: 160,
-                  height: 36,
-                  fontSize: 14,
-                ),
-              ];
-            } else {
-              children = <Widget>[
-                ClickOvalButton(
-                  "撤销抵押",
-                  _cancelAction,
-                  width: 160,
-                  height: 36,
-                  fontSize: 14,
-                ),
-              ];
-            }
-          }
-        } else {
-          children = <Widget>[
-            Spacer(),
-            ClickOvalButton(
-              "部分撤销",
-              _cancelAction,
-              width: 120,
-              height: 32,
-              fontSize: 14,
-              fontColor: HexColor("#999999"),
-              btnColor: Colors.transparent,
-            ),
-            Spacer(),
-            ClickOvalButton(
-              "抵押",
-              _joinAction,
-              width: 120,
-              height: 32,
-              fontSize: 14,
-            ),
-            Spacer(),
-          ];
-        }
+
+        children = <Widget>[
+          Spacer(),
+          ClickOvalButton(
+            "部分撤销",
+            _cancelAction,
+            width: 120,
+            height: 32,
+            fontSize: 14,
+            fontColor: HexColor("#999999"),
+            btnColor: Colors.transparent,
+          ),
+          Spacer(),
+          ClickOvalButton(
+            "抵押",
+            _joinAction,
+            width: 120,
+            height: 32,
+            fontSize: 14,
+          ),
+          Spacer(),
+        ];
+
         break;
 
       default:
@@ -802,10 +778,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var bgColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch))
+    var bgColor = (_isRunning)
         ? HexColor("#FF4C3B")
         : HexColor("#1FB9C7").withOpacity(0.08);
-    var contentColor = (_isRunning || (!_isFullDelegate && _isOver7Epoch)) ? HexColor("#FFFFFF") : HexColor("#333333");
+    var contentColor = (_isRunning) ? HexColor("#FFFFFF") : HexColor("#333333");
     return Container(
       color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
@@ -847,6 +823,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var desc = (_map3infoEntity?.describe ?? "").isEmpty ?? false
         ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！"
         : _map3infoEntity.describe;
+
+
+    var lsss = WalletUtil.bech32ToEthAddress('hyn13ewafrn7523k05p5csqkzl4k0yv0ckql9flj7s');
+    print("lessss: $lsss");
 
     return Container(
       decoration: BoxDecoration(
@@ -1044,8 +1024,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                     ],
                   ),
                   Visibility(
-                    visible: false,
-                    //visible: _canEditNode,
+                    visible: _canEditNode,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 12),
                       child: InkWell(
@@ -1909,10 +1888,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   _setupMicroDelegations() {
-    LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
+    //LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
-      LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      //LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       return;
     }
@@ -1921,20 +1900,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var joinerAddress = _address.toLowerCase();
 
     for (var item in _map3nodeInformationEntity?.microdelegations ?? []) {
-      LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
+      //LogUtil.printMessage("[object] --> 2micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
 
       var delegatorAddress = item.delegatorAddress.toLowerCase();
       if ((delegatorAddress == creatorAddress || delegatorAddress == joinerAddress)) {
-        LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
+        //LogUtil.printMessage("[object] --> creatorAddress:$creatorAddress, joinerAddress:$joinerAddress");
 
         if (item.delegatorAddress == creatorAddress) {
           _microDelegationsCreator = item;
-          LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.renewal.toJson()}");
+          //LogUtil.printMessage("[object] --> creator.reward:${_microDelegationsCreator.renewal.toJson()}");
         }
 
         if (item.delegatorAddress == joinerAddress) {
           _microDelegationsJoiner = item;
-          LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.renewal.toJson()}");
+          //LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.renewal.toJson()}");
         }
       }
     }

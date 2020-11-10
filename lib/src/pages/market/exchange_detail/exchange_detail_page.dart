@@ -15,8 +15,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -265,7 +265,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   Widget exchangePageView() {
     _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
-    selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
+    selectQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
     _realTimeQuotePrice =
         FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
@@ -336,7 +336,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 child: Text(
                   _realTimePricePercent == 0
                       ? "--"
-                      : (_realTimePricePercent >= 0 ? "+" : "-") +
+                      : (_realTimePricePercent >= 0 ? "+" : "") +
                           FormatUtil.truncateDoubleNum(_realTimePricePercent * 100, 2) +
                           "%",
                   style: TextStyle(
@@ -819,7 +819,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 4.0),
                                   child: Text(
-                                    "≈${getInputPriceQuote()} CNY",
+                                    "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
                                     style: TextStyle(fontSize: 10, color: DefaultColors.color999),
                                   ),
                                 )

@@ -1,6 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -97,7 +97,7 @@ class TransactionInteractor {
   }
 
   Future cancelTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,String password) async {
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
     var amount = ConvertTokenUnit.etherToWei(etherDouble: 0);
@@ -133,7 +133,7 @@ class TransactionInteractor {
   }
 
   Future speedTransaction(BuildContext context, TransactionDetailVo transactionDetailVo,String password) async {
-    var gasPriceRecommend = QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice).gasPriceRecommend;
+    var gasPriceRecommend = WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice).gasPriceRecommend;
     var walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
 
     Decimal maxGasPrice = gasPriceRecommend.fast;

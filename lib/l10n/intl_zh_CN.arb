@@ -1079,9 +1079,9 @@
   "msg_edit_atlas": "编辑Atlas",
   "msg_re_delegation": "复抵押",
   "msg_cancel_re_delegation": "取消复抵押",
-  "msg_collect_re_delegation_reward": "提取复抵押奖励",
+  "msg_collect_re_delegation_reward": "提出块奖励",
   "msg_create_map3": "创建Map3节点",
-  "msg_collect_micro_staking_rewards" :"提取微抵押奖励",
+  "msg_collect_micro_staking_rewards" :"提微抵押奖励",
   "msg_renew_map3": "下期预设",
   "msg_un_micro_delegate": "部分撤销",
   "msg_micro_delegate": "微抵押",
@@ -1223,5 +1223,7 @@
   "still_need_secs": "还需 {count} 秒",
   "user_policy": "用户协议",
   "contact_us": "联系我们",
-  "atlas_mapping_completed": "主网映射已结束，如有疑问请"
+  "atlas_mapping_completed": "主网映射已结束，如有疑问请",
+  "policy_hswap": "去中心化兌換服务协议",
+  "policy_wallet": "钱包服务协议"
 }

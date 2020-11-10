@@ -6,7 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -212,7 +212,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
   }
 
   Widget _headerWidget() {
-    var activatedQuoteSign = QuotesInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
+    var activatedQuoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 1;
     var quoteSign = activatedQuoteSign?.sign?.sign ?? "￥";
     var amountValue = double.parse(_amount ?? '0');

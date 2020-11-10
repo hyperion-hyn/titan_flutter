@@ -10,9 +10,9 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -111,9 +111,9 @@ class _ExchangePageState extends BaseState<ExchangePage>
     QuotesSign quotesSign = quoteSignStr != null
         ? QuotesSign.fromJson(json.decode(quoteSignStr))
         : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesEvent(isForceUpdate: true));
   }
 
@@ -358,7 +358,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _account() {
-    var quote = QuotesInheritedModel.of(context)
+    var quote = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
@@ -398,7 +398,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                         height: 20,
                         color: Theme.of(context).primaryColor,
                       )
-                    : QuotesInheritedModel.of(context)
+                    : WalletInheritedModel.of(context)
                                 .activatedQuoteVoAndSign('USDT')
                                 .sign
                                 .quote ==
@@ -452,11 +452,11 @@ class _ExchangePageState extends BaseState<ExchangePage>
         .activeAccount
         ?.assetList
         ?.getTotalUsdt();
-    var _coinQuotePrice = QuotesInheritedModel.of(context)
+    var _coinQuotePrice = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.quoteVo
         ?.price;
-    var _quoteSymbol = QuotesInheritedModel.of(context)
+    var _quoteSymbol = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
@@ -675,7 +675,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPrice = marketItemEntity.kLineEntity != null
         ? FormatUtil.truncateDecimalNum(
               Decimal.parse(
-                  marketItemEntity.kLineEntity?.close.toString() ?? '0'),
+                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
               4,
             ) ??
             '-'
@@ -683,7 +683,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPriceString = '$_latestPrice';
 
     var _selectedQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null

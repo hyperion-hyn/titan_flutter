@@ -11,6 +11,8 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
 
+import '../../../../env.dart';
+
 class Map3NodeBroadcastSuccessPage extends StatefulWidget {
   final Map3NodeActionEvent actionEvent;
   final Map3InfoEntity infoEntity;
@@ -68,6 +70,7 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
 
       case Map3NodeActionEvent.MAP3_COLLECT:
         action = S.of(context).action_map3_collect;
+        lastCollectDate = DateTime.now().millisecondsSinceEpoch;
         break;
 
       case Map3NodeActionEvent.MAP3_CANCEL:

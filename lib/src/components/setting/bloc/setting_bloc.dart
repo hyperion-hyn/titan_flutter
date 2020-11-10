@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/api/api.dart';
@@ -28,11 +28,8 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
       if (event.areaModel != null) {
         _saveAreaModel(event.areaModel);
       }
-      if (event.quotesSign != null) {
-        _saveQuoteSign(event.quotesSign);
-      }
       yield UpdatedSettingState(
-          languageModel: event.languageModel, areaModel: event.areaModel, quotesSign: event.quotesSign);
+          languageModel: event.languageModel, areaModel: event.areaModel);
     } else if (event is SystemConfigEvent) {
       var systemConfigStr = await AppCache.getValue<String>(PrefsKey.SETTING_SYSTEM_CONFIG);
 
@@ -54,10 +51,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingState> {
     return AppCache.saveValue(PrefsKey.SETTING_AREA, modelStr);
   }
 
-  Future<bool> _saveQuoteSign(QuotesSign quotesSign) {
-    var modelStr = json.encode(quotesSign.toJson());
-    return AppCache.saveValue(PrefsKey.SETTING_QUOTE_SIGN, modelStr);
-  }
+
 
   Future<bool> _saveSystemConfig(SystemConfigEntity systemConfigEntity) {
     var modelStr = json.encode(systemConfigEntity.toJson());

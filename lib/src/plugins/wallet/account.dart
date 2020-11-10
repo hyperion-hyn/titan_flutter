@@ -32,10 +32,10 @@ class Account {
       token = SupportedTokens.ETHEREUM;
       //active contract tokens
       if (netType == EthereumNetType.main) {
-        erc20Tokens.add(SupportedTokens.HYN_ERC20);
+//        erc20Tokens.add(SupportedTokens.HYN_ERC20);
         erc20Tokens.add(SupportedTokens.USDT_ERC20);
       } else if (netType == EthereumNetType.ropsten) {
-        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
+//        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
       } else if (netType == EthereumNetType.rinkeby) {
         erc20Tokens.add(SupportedTokens.HYN_RINKEBY);

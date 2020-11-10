@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
+import 'package:titan/src/basic/error/base_error.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -39,6 +40,12 @@ class LogUtil {
         var rpcReturn = MemoryCache.contractErrorStr(error.subMsg);
         if (rpcReturn != error.subMsg){
           Fluttertoast.showToast(msg: rpcReturn, toastLength: Toast.LENGTH_LONG);
+          return;
+        }
+
+        var atlasReturn = BaseError.getErrorCode(error.subMsg);
+        if (atlasReturn != error.subMsg){
+          Fluttertoast.showToast(msg: "转账异常 $atlasReturn", toastLength: Toast.LENGTH_LONG);
           return;
         }
       }
@@ -98,7 +105,7 @@ class LogUtil {
       FlutterBugly.uploadException(
           message: "[$errorPrefix]: $exceptionStr", detail: "[$errorPrefix]: $exceptionStr");
     }
-    logger.e(exceptionStr + errorPrefix);
+    logger.e("$exceptionStr  $errorPrefix");
   }
 
   static printMessage(dynamic message){

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 abstract class WalletCmpEvent {
@@ -20,3 +21,19 @@ class UpdateActivatedWalletBalanceEvent extends WalletCmpEvent {
 
   UpdateActivatedWalletBalanceEvent({this.symbol, this.contractAddress});
 }
+
+class UpdateWalletPageEvent extends WalletCmpEvent {}
+
+class UpdateQuotesEvent extends WalletCmpEvent {
+  final bool isForceUpdate;
+
+  UpdateQuotesEvent({this.isForceUpdate});
+}
+
+class UpdateQuotesSignEvent extends WalletCmpEvent {
+  final QuotesSign sign;
+
+  UpdateQuotesSignEvent({this.sign});
+}
+
+class UpdateGasPriceEvent extends WalletCmpEvent {}

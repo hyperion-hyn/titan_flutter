@@ -86,7 +86,7 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
                               child: Text(
-                                S.of(context).import_wallet,
+                                ' ' + S.of(context).import_wallet + ' ',
                                 style: TextStyle(
                                     fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                               ),

@@ -4,9 +4,8 @@ import 'package:ethereum_address/ethereum_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_k_chart/utils/date_format_util.dart';
 import 'package:titan/config.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
@@ -157,7 +156,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 //主hyn
                 ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.M_HYN}");
                 ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                var accountMain = await newAddressData(ethWallet, '主HYN 归/出', ethAddress, AddressIndex.M_HYN);
+                var accountMain = await newAddressData(ethWallet, 'HYN 归/出', ethAddress, AddressIndex.M_HYN);
                 accs.add(accountMain);
 
                 // u归2
@@ -172,10 +171,10 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                 var accountGas = await newAddressData(ethWallet, '归GAS', ethAddress, AddressIndex.GAS);
                 accs.add(accountGas);
 
-                ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_HYN}");
-                ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
-                account = await newAddressData(ethWallet, 'HYN 归/出', ethAddress, AddressIndex.C_HYN);
-                accs.add(account);
+                // ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_HYN}");
+                // ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
+                // account = await newAddressData(ethWallet, 'HYN 归/出', ethAddress, AddressIndex.C_HYN);
+                // accs.add(account);
 
                 // ethWallet = hdWallet.derivePath("${Config.M_Main_Path}${AddressIndex.C_USDT}");
                 // ethAddress = ethereumAddressFromPublicKey(hex.decode(ethWallet.pubKey));
@@ -487,7 +486,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       web3.Transaction(
                                         to: web3.EthereumAddress.fromHex(_toAddress),
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
                                         maxGas: 21000,
                                         value: web3.EtherAmount.inWei(ConvertTokenUnit.decimalToWei(_amount)),
                                       ),
@@ -552,7 +551,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                           ConvertTokenUnit.decimalToWei(_amount, decimals)
                                         ],
                                         gasPrice: web3.EtherAmount.inWei(BigInt.from(
-                                            QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+                                            WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
                                         maxGas: 65000,
                                       ),
                                       fetchChainIdFromNetworkId: true,

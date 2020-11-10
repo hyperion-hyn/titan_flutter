@@ -31,16 +31,16 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   var _titleList = [
     S.of(Keys.rootKey.currentContext).node_num,
     S.of(Keys.rootKey.currentContext).name,
-    S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).description,
   ];
   List<String> _detailList = ["", "", "", "", ""];
   List<String> _hintList = [
     S.of(Keys.rootKey.currentContext).please_input_node_num,
     S.of(Keys.rootKey.currentContext).please_enter_node_name,
-    S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_input_node_contact,
+    S.of(Keys.rootKey.currentContext).please_enter_node_address,
     S.of(Keys.rootKey.currentContext).please_enter_node_description
   ];
 
@@ -86,12 +86,12 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       _detailList[1] = entity.name;
     }
 
-    if (entity.home?.isNotEmpty ?? false) {
-      _detailList[2] = entity.home;
+    if (entity.contact?.isNotEmpty ?? false) {
+      _detailList[2] = entity.contact;
     }
 
-    if (entity.contact?.isNotEmpty ?? false) {
-      _detailList[3] = entity.contact;
+    if (entity.home?.isNotEmpty ?? false) {
+      _detailList[3] = entity.home;
     }
 
     if (entity.describe?.isNotEmpty ?? false) {
@@ -237,7 +237,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     return SliverToBoxAdapter(
       child: ListView.separated(
         itemBuilder: (context, index) {
-          var subTitle = index < 2 ? "" : "（${S.of(context).optional_input}）";
+          var subTitle = index < 3 ? "" : "（${S.of(context).optional_input}）";
           var title = _titleList[index];
           var detail = _detailList[index];
           var hint = _hintList[index];
@@ -264,7 +264,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             detail,
             ({String value}) {
               var last = _detailList[index];
-              if (last != value) {
+              if (last != value && value.isNotEmpty) {
                 setState(() {
                   _detailList[index] = value;
                 });
@@ -306,11 +306,21 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
             return;
           }
 
-          var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
-          if (map3NodeAddress.isEmpty) {
+          if (_detailList[2].isEmpty) {
+            Fluttertoast.showToast(msg: _hintList[2]);
             return;
           }
 
+          var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
+          print("map3NodeAddress: $map3NodeAddress");
+
+          if (map3NodeAddress.isEmpty) {
+            Fluttertoast.showToast(msg: '新创建的节点暂时不支持修改');
+            return;
+          }
+
+
+          var isEdit = false;
           for (var index = 0; index < _titleList.length; index++) {
             var title = _titleList[index];
 
@@ -319,32 +329,57 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
               var edit = _detailList[0];
               if (last != edit) {
                 _payload.nodeId = edit;
+
+                if (!isEdit) {
+                  isEdit = true;
+                }
               }
             } else if (title == S.of(Keys.rootKey.currentContext).name) {
               var last = widget.map3InfoEntity.name;
               var edit = _detailList[1];
               if (last != edit) {
                 _payload.name = edit;
+
+                if (!isEdit) {
+                  isEdit = true;
+                }
+              }
+            } else if (title == S.of(Keys.rootKey.currentContext).contact) {
+              var last = widget.map3InfoEntity.contact;
+              var edit = _detailList[2];
+              if (last != edit) {
+                _payload.connect = edit;
+
+                if (!isEdit) {
+                  isEdit = true;
+                }
               }
             } else if (title == S.of(Keys.rootKey.currentContext).website) {
               var last = widget.map3InfoEntity.home;
-              var edit = _detailList[2];
-              if (last != edit) {
-                _payload.home = edit;
-              }
-            } else if (title == S.of(Keys.rootKey.currentContext).contact) {
-              var last = widget.map3InfoEntity.home;
               var edit = _detailList[3];
               if (last != edit) {
-                _payload.connect = edit;
+                _payload.home = edit;
+
+                if (!isEdit) {
+                  isEdit = true;
+                }
               }
             } else if (title == S.of(Keys.rootKey.currentContext).description) {
               var last = widget.map3InfoEntity.describe;
               var edit = _detailList[4];
               if (last != edit) {
                 _payload.describe = edit;
+
+                if (!isEdit) {
+                  isEdit = true;
+                }
               }
             }
+          }
+
+          if (!isEdit) {
+            Fluttertoast.showToast(msg: '未修改节点信息');
+            return;
           }
 
           print("[_payload] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");

@@ -30,8 +30,7 @@ import 'map3_node_public_widget.dart';
 import 'package:titan/src/utils/log_util.dart';
 import '../../../global.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart'
-    as all_page_state;
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
@@ -70,9 +69,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   @override
   void onCreated() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext)
-        .activatedWallet
-        ?.wallet;
+    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet.getAtlasAccount().address;
     _nodeId = widget.map3infoEntity.nodeId;
 
@@ -111,10 +108,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
 
-      if (_map3infoEntity.mine != null &&
-          (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
-        var map3Address =
-            EthereumAddress.fromHex(widget.map3infoEntity.address);
+      if (_map3infoEntity.mine != null && (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
         print('map3: $map3Address wallet: $walletAddress');
 
         _microdelegations = await _client.getMap3NodeDelegation(
@@ -129,8 +124,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
 
-      print(
-          '[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
+      print('[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
 
       if (mounted) {
         setState(() {
@@ -184,241 +178,213 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
               child: BaseGestureDetector(
                 context: context,
                 child: SingleChildScrollView(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Container(
+                    color: Colors.white,
                     child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(S.of(context).receive_wallet,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 16, right: 8, bottom: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 42,
-                                    height: 42,
-                                    child: walletHeaderWidget(
-                                      _walletName,
-                                      isShowShape: false,
-                                      address: _walletAddress,
-                                      isCircle: true,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 6,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text.rich(TextSpan(children: [
-                                        TextSpan(
-                                            text: _walletName,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16)),
-                                        TextSpan(
-                                            text: "",
-                                            style: TextStyles.textC333S14bold),
-                                      ])),
-                                      Container(
-                                        height: 4,
-                                      ),
-                                      Text(walletAddressStr,
-                                          style: TextStyles.textC9b9b9bS12),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text(S.of(context).receive_wallet,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                        child: Container(
-                          color: HexColor("#F4F4F4"),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 8, bottom: 18),
+                          child: Row(
+                            children: <Widget>[
+                              SizedBox(
+                                width: 42,
+                                height: 42,
+                                child: walletHeaderWidget(
+                                  _walletName,
+                                  isShowShape: false,
+                                  address: _walletAddress,
+                                  isCircle: true,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 6,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text.rich(TextSpan(children: [
+                                    TextSpan(
+                                        text: _walletName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                                    TextSpan(text: "", style: TextStyles.textC333S14bold),
+                                  ])),
+                                  Container(
+                                    height: 4,
+                                  ),
+                                  Text(walletAddressStr, style: TextStyles.textC9b9b9bS12),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 16),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(S.of(context).node_amount,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15)),
-                                ],
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                    child: Container(
+                      color: HexColor("#F4F4F4"),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16),
+                          child: Row(
+                            children: <Widget>[
+                              Text(S.of(context).node_amount,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 12),
+                          child: profitListBigLightWidget(
+                            [
+                              {
+                                S.of(context).node_total_staking:
+                                    '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
+                              },
+                              {S.of(context).my_staking: '${_myStakingAmount()}'},
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 18),
+                          child: Row(
+                            children: <Widget>[
+                              Text(S.of(context).cancel_amount,
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 16, right: 18),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "HYN",
+                                style: TextStyle(fontSize: 18, color: HexColor("#35393E")),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 12),
-                              child: profitListBigLightWidget(
-                                [
-                                  {
-                                    S.of(context).node_total_staking:
-                                        '${FormatUtil.formatPrice(double.parse(_nodeCreateMin()))}'
-                                  },
-                                  {S.of(context).my_staking: '${_myStakingAmount()}'},
-                                ],
+                              SizedBox(
+                                width: 12,
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 16.0, top: 18),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(S.of(context).cancel_amount,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 15)),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 16, right: 18),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    "HYN",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        color: HexColor("#35393E")),
-                                  ),
-                                  SizedBox(
-                                    width: 12,
-                                  ),
-                                  Flexible(
-                                    flex: 1,
-                                    child: Form(
-                                      key: _formKey,
-                                      child: RoundBorderTextField(
-                                        onChanged: (text) {
-                                          _formKey.currentState.validate();
-                                        },
-                                        controller: _textEditingController,
-                                        keyboardType: TextInputType.number,
-                                        //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                                        hint: S.of(context).please_enter_withdraw_amount,
-                                        validator: (textStr) {
-                                          if (textStr.length == 0) {
-                                            return S
-                                                .of(context)
-                                                .please_input_hyn_count;
-                                          }
+                              Flexible(
+                                flex: 1,
+                                child: Form(
+                                  key: _formKey,
+                                  child: RoundBorderTextField(
+                                    onChanged: (text) {
+                                      _formKey.currentState.validate();
+                                    },
+                                    controller: _textEditingController,
+                                    keyboardType: TextInputType.number,
+                                    //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    hint: S.of(context).please_enter_withdraw_amount,
+                                    validator: (textStr) {
+                                      if (textStr.length == 0) {
+                                        return S.of(context).please_input_hyn_count;
+                                      }
 
-                                          var inputValue =
-                                              Decimal.tryParse(textStr);
-                                          if (inputValue == null) {
-                                            return S.of(context).please_enter_correct_amount;
-                                          }
+                                      var inputValue = Decimal.tryParse(textStr);
+                                      if (inputValue == null) {
+                                        return S.of(context).please_enter_correct_amount;
+                                      }
 
-                                          if (inputValue > _myStakingAmount()) {
-                                            return S.of(context).over_your_staking;
-                                          }
+                                      if (inputValue > _myStakingAmount()) {
+                                        return S.of(context).over_your_staking;
+                                      }
 
-                                          if (Decimal.parse(textStr) >
-                                              ConvertTokenUnit.weiToEther(
-                                                  weiBigInt: BigInt.parse(
-                                                      _map3infoEntity
-                                                              ?.staking ??
-                                                          "0"))) {
-                                            return S.of(context).over_node_total_staking;
-                                          }
+                                      if (Decimal.parse(textStr) >
+                                          ConvertTokenUnit.weiToEther(
+                                              weiBigInt: BigInt.parse(_map3infoEntity?.staking ?? "0"))) {
+                                        return S.of(context).over_node_total_staking;
+                                      }
 
-                                          if (_map3infoEntity.isCreator() &&
-                                              _myStakingAmount() -
-                                                      Decimal.parse(textStr) <
-                                                  _minRemain()) {
-                                            return S.of(context).remain_delegation_not_less_than('${_minRemain()}');
-                                          } else {
-                                            return null;
-                                          }
-                                          return null;
-                                        },
-                                        suffixIcon: InkWell(
-                                          borderRadius: BorderRadius.circular(30),
-                                          onTap: () {
-                                            if (!_canCancelDelegation) return;
+                                      if (_map3infoEntity.isCreator() &&
+                                          _myStakingAmount() - Decimal.parse(textStr) < _minRemain()) {
+                                        return S.of(context).remain_delegation_not_less_than('${_minRemain()}');
+                                      } else {
+                                        return null;
+                                      }
+                                      return null;
+                                    },
+                                      /*
+                                    suffixIcon: InkWell(
+                                      borderRadius: BorderRadius.circular(30),
+                                      onTap: () {
+                                        if (!_canCancelDelegation) return;
 
-                                            var truncateBalance = _myStakingAmount().toString();
-                                            if (double.parse(truncateBalance) > 0) {
-                                              _textEditingController.text = truncateBalance.toString();
-                                              _textEditingController.selection = TextSelection.fromPosition(TextPosition(
-                                                affinity: TextAffinity.downstream,
-                                                offset: _textEditingController.text.length,
-                                              ));
-                                            }
-                                          },
-                                          child: Container(
-                                            margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
-                                            child: RichText(
-                                              text: TextSpan(
-                                                // todo: test_HYN
-                                                  text: "  ",
+                                        var truncateBalance = _myStakingAmount().toString();
+                                        if (double.parse(truncateBalance) > 0) {
+                                          _textEditingController.text = truncateBalance.toString();
+                                          _textEditingController.selection = TextSelection.fromPosition(TextPosition(
+                                            affinity: TextAffinity.downstream,
+                                            offset: _textEditingController.text.length,
+                                          ));
+                                        }
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
+                                        child: RichText(
+                                          text: TextSpan(
+                                              // todo: test_HYN
+                                              text: "  ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 14,
+                                                color: Color(0xFF333333),
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                  text: S.of(context).all,
                                                   style: TextStyle(
-                                                    fontWeight: FontWeight.normal,
+                                                    color: _canCancelDelegation
+                                                        ? HexColor("#1F81FF")
+                                                        : HexColor("#999999"),
                                                     fontSize: 14,
-                                                    color: Color(0xFF333333),
                                                   ),
-                                                  children: [
-                                                    TextSpan(
-                                                      text: S.of(context).all,
-                                                      style: TextStyle(
-                                                        color: _canCancelDelegation?HexColor("#1F81FF"):HexColor("#999999"),
-                                                        fontSize: 14,
-                                                      ),
-                                                    ),
-                                                  ]),
-                                            ),
-                                          ),
+                                                ),
+                                              ]),
                                         ),
                                       ),
                                     ),
+                                    */
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16.0, top: 12, bottom: 18, right: 8),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 48,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      _epochHint(),
-                    ])),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0, top: 12, bottom: 18, right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                width: 48,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  _epochHint(),
+                ])),
               ),
             ),
           ),
@@ -431,11 +397,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   _minRemain() {
     print('[delegateMin]${_map3introduceEntity.delegateMin}');
     if (_map3infoEntity.isCreator()) {
-      // var min = Decimal.parse(_nodeCreateMin()) *
-      //     ConvertTokenUnit.weiToEther(
-      //         weiBigInt: BigInt.parse(_map3infoEntity.feeRate));
       var min = Decimal.parse(_nodeCreateMin());
-      print('_minRemain feeRate: ${_map3infoEntity.feeRate} min: $min');
       return min;
     } else {
       return Decimal.parse('0');
@@ -447,8 +409,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   Decimal _myStakingAmount() {
-    if (_map3infoEntity.mine == null || _microdelegations == null)
-      return Decimal.parse("0");
+    if (_map3infoEntity.mine == null || _microdelegations == null) return Decimal.parse("0");
 
     return ConvertTokenUnit.weiToEther(
         weiBigInt: BigInt.parse(
@@ -458,9 +419,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   get _canCancelDelegation => _remainEpoch() < Decimal.parse('0');
 
   Decimal _remainEpoch() {
-    return Decimal.parse('${_unlockEpoch ?? 0}') -
-        Decimal.parse('${_currentEpoch ?? 0}');
+    return Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
   }
+
+  get _remainEpochInt => _remainEpoch().toInt() == 0 ? 1 : _remainEpoch().toInt();
 
   _epochHint() {
     if (!_canCancelDelegation) {
@@ -474,30 +436,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                 height: 9,
               ),
               Text(
-                S.of(context).unlock_remain_epoch('${(_remainEpoch().toInt()).toString()}'),
+                S.of(context).unlock_remain_epoch(_remainEpochInt),
                 style: TextStyle(
                   color: DefaultColors.color999,
                 ),
-              ),
-              SizedBox(
-                height: 9,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16,),
-                      child: Text(
-                        '注：如果节点主终止节点，已有抵押将全部自动返还',
-                        style: TextStyle(
-                          color: DefaultColors.color999,
-                          fontSize: 12,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

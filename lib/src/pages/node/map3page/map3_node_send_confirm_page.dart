@@ -7,9 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -72,7 +72,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   @override
   void onCreated() {
-    activatedQuoteSign = QuotesInheritedModel.of(context)
+    activatedQuoteSign = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign(widget.coinVo.symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
@@ -82,12 +82,12 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
   }
 
   Decimal get gasPrice {
     var gasPriceRecommend =
-        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+        WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
             .gasPriceRecommend;
     switch (selectedPriceLevel) {
       case 0:
@@ -103,12 +103,12 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
 
   @override
   Widget build(BuildContext context) {
-    var activatedQuoteSign = QuotesInheritedModel.of(context)
+    var activatedQuoteSign = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign(widget.coinVo.symbol);
     var quotePrice = activatedQuoteSign?.quoteVo?.price ?? 0;
     var quoteSign = activatedQuoteSign?.sign?.sign;
     var gasPriceRecommend =
-        QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+        WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
             .gasPriceRecommend;
 
     var totalGasLimit = SettingInheritedModel.ofConfig(context)
@@ -121,7 +121,7 @@ class _Map3NodeSendConfirmState extends BaseState<Map3NodeSendConfirmPage> {
         weiBigInt: BigInt.parse(
             (gasPrice * Decimal.fromInt(totalGasLimit)).toStringAsFixed(0)));
 
-    var ethQuotePrice = QuotesInheritedModel.of(context)
+    var ethQuotePrice = WalletInheritedModel.of(context)
             .activatedQuoteVoAndSign('ETH')
             ?.quoteVo
             ?.price ?? 0; //

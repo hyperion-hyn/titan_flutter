@@ -29,11 +29,12 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
   StreamSubscription _appBlocSubscription;
 
 //  String taskId;
+  int _lastCancelBuildNumber = 0;
+  bool _lastHaveVisible = false;
 
   @override
   void initState() {
     super.initState();
-    _checkUpdate();
 
     /*
     FlutterDownloader.registerCallback((id, status, progress) async {
@@ -54,10 +55,20 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
     if (_appBlocSubscription == null) {
       _appBlocSubscription = BlocProvider.of<UpdateBloc>(context)?.listen((UpdateState state) async {
         if (state is UpdateCheckState) {
+
+          var newBuildNumber = state?.appData?.updateEntity?.build??0;
+          //print("00_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+
           if (state.appData.updateEntity != null) {
             PackageInfo packageInfo = await PackageInfo.fromPlatform();
-            if (int.parse(packageInfo.buildNumber) < state.appData.updateEntity.build) {
-              _showUpdateDialog(state.appData.updateEntity);
+            if (int.parse(packageInfo.buildNumber) < newBuildNumber) {
+              //print("11_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+
+              if (_lastCancelBuildNumber != newBuildNumber && !_lastHaveVisible) {
+                _showUpdateDialog(state.appData.updateEntity);
+              } else {
+                print("_lastHaveVisible:$_lastHaveVisible, _lastCancelBuildNumber:$_lastCancelBuildNumber, newBuildNumber:$newBuildNumber");
+              }
             } else {
               print('[updater] 已经是最新版本');
               if (state.isManual) {
@@ -71,7 +82,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
   }
 
   void _showUpdateDialog(UpdateEntity updateEntity) async {
-//    var hasDownloaded = await _hasDownloaded(updateEntity);
+   _lastHaveVisible = true;
+
     await showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -92,11 +104,17 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          _lastCancelBuildNumber = updateEntity.build;
+                          _lastHaveVisible = false;
+                          Navigator.pop(context);
+                        },
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),
-                      onPressed: () => _launch(updateEntity),
+                      onPressed: () {
+                        _launch(updateEntity);
+                      },
                     ),
                   ],
                 ),
@@ -112,7 +130,11 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
                     if (updateEntity.forceUpdate != 1)
                       FlatButton(
                         child: Text(btnLabelCancel),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          _lastCancelBuildNumber = updateEntity.build;
+                          _lastHaveVisible = false;
+                          Navigator.pop(context);
+                        },
                       ),
                     FlatButton(
                       child: Text(S.of(context).update_now),
@@ -139,6 +161,8 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
 //    }
 
 //      AppPlugin.openMarket();
+
+    _lastHaveVisible = false;
 
     Navigator.maybePop(context);
 

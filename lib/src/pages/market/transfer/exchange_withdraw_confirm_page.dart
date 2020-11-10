@@ -9,9 +9,9 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -62,17 +62,17 @@ class _ExchangeWithdrawConfirmPageState
 
   @override
   void onCreated() async {
-    activatedQuoteSign = QuotesInheritedModel.of(context)
+    activatedQuoteSign = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign(widget.coinVo.symbol);
     activatedWallet = WalletInheritedModel.of(context).activatedWallet;
 
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .btcGasPriceRecommend;
     } else {
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .gasPriceRecommend;
     }
   }
@@ -80,7 +80,7 @@ class _ExchangeWithdrawConfirmPageState
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
   }
 
   Decimal get gasPrice {
@@ -111,9 +111,9 @@ class _ExchangeWithdrawConfirmPageState
     var _gasPriceEstimateStr = "";
     var _gasPriceEstimate;
     if (widget.coinVo.coinType == CoinType.BITCOIN) {
-      gasPriceRecommend = QuotesInheritedModel.of(
+      gasPriceRecommend = WalletInheritedModel.of(
         context,
-        aspect: QuotesAspect.gasPrice,
+        aspect: WalletAspect.gasPrice,
       ).btcGasPriceRecommend;
       var fees = ConvertTokenUnit.weiToDecimal(
         BigInt.parse((gasPrice * Decimal.fromInt(BitcoinConst.BTC_RAWTX_SIZE))
@@ -125,7 +125,7 @@ class _ExchangeWithdrawConfirmPageState
           "$fees BTC (≈ $_quoteSign${FormatUtil.formatPrice(_gasPriceEstimate.toDouble())})";
     } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       // var gasPrice = Decimal.fromInt(1 * TokenUnit.G_WEI); // 1Gwei, TODO 写死1GWEI
-      var hynQuotePrice = QuotesInheritedModel.of(context)
+      var hynQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('HYN')
               ?.quoteVo
               ?.price ??
@@ -141,13 +141,13 @@ class _ExchangeWithdrawConfirmPageState
       _gasPriceEstimateStr =
           '${(gasPrice / Decimal.fromInt(TokenUnit.G_WEI)).toStringAsFixed(1)} G_DUST (≈ $_quoteSign${FormatUtil.formatCoinNum(_gasPriceEstimate.toDouble())})';
     } else {
-      var ethQuotePrice = QuotesInheritedModel.of(context)
+      var ethQuotePrice = WalletInheritedModel.of(context)
               .activatedQuoteVoAndSign('ETH')
               ?.quoteVo
               ?.price ??
           0;
       gasPriceRecommend =
-          QuotesInheritedModel.of(context, aspect: QuotesAspect.gasPrice)
+          WalletInheritedModel.of(context, aspect: WalletAspect.gasPrice)
               .gasPriceRecommend;
       var gasLimit = widget.coinVo.symbol == "ETH"
           ? SettingInheritedModel.ofConfig(context)

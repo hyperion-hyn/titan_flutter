@@ -1,62 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
-import 'me_area_page.dart';
-import 'me_language_page.dart';
-import 'me_price_page.dart';
+class PolicySelectPage extends StatefulWidget {
+  PolicySelectPage();
 
-class MeSettingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _MeSettingState();
+    return _PolicySelectPageState();
   }
 }
 
-class _MeSettingState extends State<MeSettingPage> {
+class _PolicySelectPageState extends State<PolicySelectPage> {
   @override
   Widget build(BuildContext context) {
-    var language =
-        SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            .languageModel
-            .name;
-    var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.quote)
-        .activeQuotesSign
-        ?.quote;
-    var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
-        .areaModel
-        .name(context);
-
     return Scaffold(
         appBar: AppBar(
           elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
           title: Text(
-            S.of(context).setting,
-            style: TextStyle(color: Colors.white),
+            S.of(context).user_policy,
+            style: TextStyle(color: Colors.black, fontSize: 18),
           ),
           centerTitle: true,
         ),
         body: Column(
           children: <Widget>[
-            _buildMenuBar(S.of(context).price_show, quoteStr, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MePricePage()));
+            SizedBox(
+              height: 16,
+            ),
+            Divider(
+              height: 1,
+            ),
+            _buildMenuBar(S.of(context).policy_wallet, '', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PolicyConfirmPage(
+                            PolicyType.WALLET,
+                            isShowConfirm: false,
+                          )));
             }),
             Divider(
               height: 1,
             ),
-            _buildMenuBar(S.of(context).language, language, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MeLanguagePage()));
-            }),
-            Divider(
-              height: 1,
-            ),
-            _buildMenuBar(S.of(context).app_area_setting, area, () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MeAreaPage()));
+            _buildMenuBar(S.of(context).policy_hswap, '', () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PolicyConfirmPage(
+                            PolicyType.DEX,
+                            isShowConfirm: false,
+                          )));
             }),
             Divider(
               height: 1,
@@ -79,7 +83,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Text(
-                title?.isNotEmpty??false?title:"",
+                title?.isNotEmpty ?? false ? title : "",
                 style: TextStyle(
                     color: HexColor("#333333"),
                     fontSize: 16,
@@ -88,7 +92,7 @@ Widget _buildMenuBar(String title, String subTitle, Function onTap) {
             ),
             Spacer(),
             Text(
-              subTitle?.isNotEmpty??false?subTitle:"",
+              subTitle?.isNotEmpty ?? false ? subTitle : "",
               style: TextStyle(color: HexColor("#AAAAAA"), fontSize: 16),
             ),
             Padding(

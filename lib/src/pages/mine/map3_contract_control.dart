@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
@@ -148,7 +148,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                   SizedBox(
                     width: 8,
                   ),
-                  _buildButton('转入', () {
+                  /*_buildButton('转入', () {
                     showDialogWidget(context,
                         title: Text('转入hyn到奖励池'),
                         content: _buildDepositProvisionForm(context, rewardAmount),
@@ -165,7 +165,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                                 }
                               })
                         ]);
-                  }),
+                  }),*/
                 ]),
                 Divider(
                   height: 1,
@@ -336,7 +336,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: stopMethod,
             parameters: [],
-            gasPrice: EtherAmount.inWei(BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 280000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -377,7 +377,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: setProvisionFun,
             parameters: [BigInt.from(type), BigInt.from(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -612,7 +612,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             approveToAddress: approveToAddress,
             amount: ConvertTokenUnit.decimalToWei(value),
             password: password,
-            gasPrice: BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
+            gasPrice: BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
             gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
             nonce: count);
         print('approve has: $approveHex');
@@ -626,7 +626,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
             nonce: count + 1,
           ),
@@ -675,7 +675,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -723,7 +723,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(QuotesInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,

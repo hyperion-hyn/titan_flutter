@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -79,6 +81,9 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     } else {
       onLoadData();
     }
+
+    BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+
   }
 
   @override
@@ -121,7 +126,6 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void onLoadData() async {
     _currentPage = 1;
-    print("[onLoadData] _currentPage ---> _currentPage : $_currentPage");
 
     try {
       var requestList = await Future.wait([
@@ -157,8 +161,6 @@ class _Map3NodeState extends BaseState<Map3NodePage>
 
   void onLoadingMore() async {
     _currentPage++;
-
-    print("[onLoadingMore] _currentPage ---> _currentPage : $_currentPage");
 
     try {
       Map3StakingEntity map3stakingEntity = await _atlasApi
