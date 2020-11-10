@@ -13,8 +13,12 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class PolicyConfirmPage extends StatefulWidget {
   final PolicyType policyType;
+  final bool isShowConfirm;
 
-  PolicyConfirmPage(this.policyType);
+  PolicyConfirmPage(
+    this.policyType, {
+    this.isShowConfirm = true,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -82,7 +86,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
           Expanded(
             child: _policyWebView(),
           ),
-          _confirmView(),
+          if (widget.isShowConfirm) _confirmView(),
         ],
       ),
     );
@@ -94,7 +98,7 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
       if (SettingInheritedModel.of(context).languageModel.isZh()) {
         policyUrl = Config.WALLET_POLICY_CN_URL;
       } else {
-        policyUrl = Config.WALLET_DEX_EN_URL;
+        policyUrl = Config.WALLET_POLICY_EN_URL;
       }
     } else if (widget.policyType == PolicyType.DEX) {
       if (SettingInheritedModel.of(context).languageModel.isZh()) {
