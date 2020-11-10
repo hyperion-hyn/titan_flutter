@@ -151,7 +151,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
 
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-    if (clipboardData != null && clipboardData.text.contains("titan://map3/detail")) {
+    if (clipboardData != null &&
+        clipboardData.text.contains("titan://map3/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
     }
@@ -185,10 +186,11 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
       var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
-
-     } else if (type == "location" && subType == 'share') {
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+    } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
       UiUtil.showDecryptDialog(context, () async {
@@ -535,7 +537,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         return WalletTabsPage();
 
       case 2:
-        return Map3NodeTabsPage();
+        return AtlasNodeTabsPage();
 
       case 3:
         return InformationPage();

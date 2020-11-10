@@ -28,10 +28,7 @@ import 'map3_node_list_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodePage extends StatefulWidget {
-
-  final LoadDataBloc loadDataBloc;
-
-  Map3NodePage({this.loadDataBloc});
+  Map3NodePage();
 
   @override
   State<StatefulWidget> createState() {
@@ -39,7 +36,9 @@ class Map3NodePage extends StatefulWidget {
   }
 }
 
-class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClientMixin {
+class _Map3NodeState extends BaseState<Map3NodePage>
+    with AutomaticKeepAliveClientMixin {
+  LoadDataBloc loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
   int _currentPage = 1;
   List<Map3InfoEntity> _lastActiveList = [];
@@ -62,14 +61,21 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   }
 
   @override
+  void dispose() {
+    loadDataBloc.close();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
 
     if (!MemoryCache.hasNodePageData) {
-      widget.loadDataBloc.add(LoadingEvent());
+      loadDataBloc.add(LoadingEvent());
     } else {
       onLoadData();
     }
@@ -82,7 +88,7 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
       child: LoadDataContainer(
         enablePullUp: _pendingList.isNotEmpty,
         //enablePullUp: (_nodePageEntityVo.contractNodeList != null && _nodePageEntityVo.contractNodeList.length > 0),
-        bloc: widget.loadDataBloc,
+        bloc: loadDataBloc,
         onLoadData: () async {
           onLoadData();
         },
@@ -97,11 +103,15 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           physics: NeverScrollableScrollPhysics(),
           slivers: <Widget>[
             _map3HeadWidget(),
-            _sectionTitleWidget(title: S.of(context).my_nodes, hasMore: true, isMine: true),
+            _sectionTitleWidget(
+                title: S.of(context).my_nodes, hasMore: true, isMine: true),
             _myNodeListWidget(),
-            _sectionTitleWidget(title: S.of(context).lastest_launched_nodes, hasMore: _lastActiveList.isNotEmpty),
+            _sectionTitleWidget(
+                title: S.of(context).lastest_launched_nodes,
+                hasMore: _lastActiveList.isNotEmpty),
             _lastActiveWidget(),
-            _sectionTitleWidget(title: S.of(context).wait_start_node_contract, hasMore: false),
+            _sectionTitleWidget(
+                title: S.of(context).wait_start_node_contract, hasMore: false),
             _pendingListWidget(),
           ],
         ),
@@ -133,15 +143,15 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
         _myList = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
 
-        widget.loadDataBloc.add(RefreshSuccessEvent());
+        loadDataBloc.add(RefreshSuccessEvent());
       } else {
-        widget.loadDataBloc.add(LoadEmptyEvent());
+        loadDataBloc.add(LoadEmptyEvent());
       }
       setState(() {});
     } catch (e) {
       print(e);
 
-      widget.loadDataBloc.add(RefreshFailEvent());
+      loadDataBloc.add(RefreshFailEvent());
     }
   }
 
@@ -151,7 +161,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     print("[onLoadingMore] _currentPage ---> _currentPage : $_currentPage");
 
     try {
-      Map3StakingEntity map3stakingEntity = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
+      Map3StakingEntity map3stakingEntity = await _atlasApi
+          .getMap3StakingList(_address, page: _currentPage, size: 10);
 
       if (map3stakingEntity != null && map3stakingEntity.map3Nodes.isNotEmpty) {
         List<Map3InfoEntity> lastPendingList = List.from(_pendingList);
@@ -160,21 +171,24 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
         _pendingList = lastPendingList;
 
-        widget.loadDataBloc.add(LoadingMoreSuccessEvent());
+        loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        widget.loadDataBloc.add(LoadMoreEmptyEvent());
+        loadDataBloc.add(LoadMoreEmptyEvent());
       }
       setState(() {});
     } catch (e) {
       print(e);
 
-      widget.loadDataBloc.add(LoadMoreFailEvent());
+      loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
-      return emptyListWidget(title: _address.isEmpty ? S.of(context).check_after_has_wallet : S.of(context).my_nodes_empty);
+      return emptyListWidget(
+          title: _address.isEmpty
+              ? S.of(context).check_after_has_wallet
+              : S.of(context).my_nodes_empty);
     }
 
     return SliverToBoxAdapter(
@@ -198,7 +212,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   Widget _pendingListWidget() {
     if (_pendingList.isEmpty) {
-      return emptyListWidget(title: S.of(context).no_pengding_node_contract_hint);
+      return emptyListWidget(
+          title: S.of(context).no_pengding_node_contract_hint);
     }
 
     return SliverList(
@@ -218,10 +233,16 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
 
   void _pushWalletManagerAction() {
     Application.router.navigateTo(
-        context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+        context,
+        Routes.map3node_create_wallet +
+            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
   }
 
-  Widget _sectionTitleWidget({String title, bool hasMore = true, bool isMine = false}) {
+  Widget _sectionTitleWidget({
+    String title,
+    bool hasMore = true,
+    bool isMine = false,
+  }) {
     return SliverToBoxAdapter(
       child: InkWell(
         onTap: () {
@@ -241,19 +262,22 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
           }
         },
         child: Container(
-          padding: const EdgeInsets.only(left: 15.0, right: 15, top: 16),
+          padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 16),
           color: Colors.white,
           child: Row(
             children: <Widget>[
               Expanded(
                   child: Text(
                 title,
-                style: TextStyle(fontWeight: FontWeight.w500, color: HexColor("#000000")),
+                style: TextStyle(
+                    fontWeight: FontWeight.w500, color: HexColor("#000000")),
               )),
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  isMine ? S.of(context).check_reward : S.of(context).check_more,
+                  isMine
+                      ? S.of(context).check_reward
+                      : S.of(context).check_more,
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -344,7 +368,10 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(title,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: DefaultColors.colorcc000000)),
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: DefaultColors.colorcc000000)),
                 Spacer(),
                 InkWell(
                   onTap: _pushWebViewAction,
@@ -365,14 +392,18 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
                 Padding(
                   padding: const EdgeInsets.only(top: 6),
                   child: ClipRRect(
-                    child:
-                        Image.asset("res/drawable/ic_map3_node_item_2.png", width: 80, height: 80, fit: BoxFit.cover),
+                    child: Image.asset("res/drawable/ic_map3_node_item_2.png",
+                        width: 80, height: 80, fit: BoxFit.cover),
                     borderRadius: BorderRadius.circular(4.0),
                   ),
                 ),
                 SizedBox(width: 16),
                 Flexible(
-                  child: Text(desc, style: TextStyle(fontSize: 12, height: 1.7, color: DefaultColors.color99000000)),
+                  child: Text(desc,
+                      style: TextStyle(
+                          fontSize: 12,
+                          height: 1.7,
+                          color: DefaultColors.color99000000)),
                 )
               ],
             ),
@@ -412,11 +443,14 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
     var walletList = await WalletUtil.scanWallets();
 
     if (walletList.length == 0) {
-      Application.router.navigateTo(context,
-          Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_create_wallet +
+              "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       // 1.push预创建
-      await Application.router.navigateTo(context, Routes.map3node_introduction_page);
+      await Application.router
+          .navigateTo(context, Routes.map3node_introduction_page);
     }
 
     // 2.创建成功回调的处理
@@ -437,7 +471,8 @@ class _Map3NodeState extends BaseState<Map3NodePage> with AutomaticKeepAliveClie
   Future _pushContractDetail(Map3InfoEntity infoEntity) async {
     Application.router.navigateTo(
       context,
-      Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
+      Routes.map3node_contract_detail_page +
+          '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}',
     );
   }
 }

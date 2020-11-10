@@ -50,8 +50,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   ///
   AtlasApi _atlasApi = AtlasApi();
 
-  AnimationController _ageIconAnimationController;
-
   List<AtlasInfoEntity> _atlasNodeList = List();
 
   AtlasHomeEntity _atlasHomeEntity;
@@ -71,14 +69,10 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   void initState() {
     super.initState();
     widget.loadDataBloc.add(LoadingEvent());
-    _ageIconAnimationController = new AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 10),
-    )..repeat();
 
     var activatedWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+    _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
   }
 
   _getData() async {
@@ -129,6 +123,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 child: _atlasInfo(),
               ),
               SliverToBoxAdapter(
+                child: _atlasIntro(),
+              ),
+              SliverToBoxAdapter(
                 child: _createNode(),
               ),
               SliverToBoxAdapter(
@@ -168,111 +165,73 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           padding: EdgeInsets.all(16.0),
           child: _atlasMap(),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_current_age,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).block_height,
+      ],
+    );
+  }
+
+  _atlasIntro() {
+    var title = 'Atlas节点';
+    var desc = 'Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。';
+    var guideTitle = S.of(context).tutorial;
+    return Container(
+      margin: const EdgeInsets.only(
+        left: 15,
+        right: 15,
+        top: 8,
+        bottom: 16,
+      ),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(title,
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: DefaultColors.colorcc000000)),
+                Spacer(),
+                InkWell(
+                  onTap: () {},
+                  child: Text(guideTitle,
                       style: TextStyle(
                         fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    InkWell(
-                      child: Text(
-                        '${AtlasInheritedModel.of(context).committeeInfo?.blockNum}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          //color: Colors.blue,
-                          //decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
+                        color: DefaultColors.color66000000,
+                      )),
+                )
+              ],
+            ),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ClipRRect(
+                child: Image.asset("res/drawable/ic_atlas_node_item.png",
+                    width: 80, height: 80, fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(4.0),
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_elected_nodes,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.elected}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              SizedBox(
+                width: 16,
               ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_candidate_nodes,
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+              Flexible(
+                child: Text(desc,
+                    style: TextStyle(
+                      fontSize: 12,
+                      height: 1.7,
+                      color: DefaultColors.color99000000,
+                    )),
               )
             ],
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 
   _atlasMap() {
     var points = json.decode(_atlasHomeEntity?.points ?? '[]');
-
     return Container(
       width: double.infinity,
       height: 162,
@@ -321,62 +280,6 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                 ],
               ),
             ),
-            Positioned(
-              right: 16,
-              top: 8,
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    S.of(context).atlas_next_age,
-                    style: TextStyle(
-                      color: DefaultColors.color999,
-                      fontSize: 11,
-                      shadows: [
-                        BoxShadow(
-                          offset: const Offset(1.0, 1.0),
-                          blurRadius: 2.0,
-                          spreadRadius: 2.0,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      AnimatedBuilder(
-                        animation: _ageIconAnimationController,
-                        builder: (_, child) {
-                          return Transform.rotate(
-                            angle: _ageIconAnimationController.value * 2 * 3.14,
-                            child: child,
-                          );
-                        },
-                        child: Image.asset(
-                          'res/drawable/ic_atlas_age.png',
-                          width: 60,
-                          height: 60,
-                        ),
-                      ),
-                      Text(
-                        '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          shadows: [
-                            BoxShadow(
-                              offset: const Offset(1.0, 1.0),
-                              blurRadius: 2.0,
-                              spreadRadius: 2.0,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            )
           ],
         ),
       ),
@@ -387,7 +290,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 24.0, bottom: 0),
+          padding: const EdgeInsets.only(top: 0.0, bottom: 0),
           child: Container(
             width: double.infinity,
             child: Row(
