@@ -1214,5 +1214,7 @@
   "still_need_secs": "{count} seconds are needed",
   "user_policy": "User Agreement",
   "contact_us": "Contact us",
-  "atlas_mapping_completed": "Mainnet migration is over, if you have any problem, please contact "
+  "atlas_mapping_completed": "Mainnet migration is over, if you have any problem, please contact ",
+  "policy_hswap": "Terms of Service for HSWAP",
+  "policy_wallet": "Terms of Service for Hyperion Wallet"
 }
