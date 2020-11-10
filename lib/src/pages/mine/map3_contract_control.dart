@@ -148,7 +148,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                   SizedBox(
                     width: 8,
                   ),
-                  _buildButton('转入', () {
+                  /*_buildButton('转入', () {
                     showDialogWidget(context,
                         title: Text('转入hyn到奖励池'),
                         content: _buildDepositProvisionForm(context, rewardAmount),
@@ -165,7 +165,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                                 }
                               })
                         ]);
-                  }),
+                  }),*/
                 ]),
                 Divider(
                   height: 1,
