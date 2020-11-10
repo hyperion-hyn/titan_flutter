@@ -75,7 +75,8 @@ class RootPageControlComponentState
         areaModel: areaModel,
         languageModel: languageModel));
 
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+    //faster show wallet
+    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
 
     //Future.delayed(Duration(milliseconds: 1500), () {
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
