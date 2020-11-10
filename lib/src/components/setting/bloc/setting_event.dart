@@ -9,9 +9,8 @@ abstract class SettingEvent {}
 class UpdateSettingEvent extends SettingEvent with EquatableMixin {
   final LanguageModel languageModel;
   final AreaModel areaModel;
-  final QuotesSign quotesSign;
 
-  UpdateSettingEvent({this.languageModel, this.areaModel, this.quotesSign});
+  UpdateSettingEvent({this.languageModel, this.areaModel});
 
   @override
   List<Object> get props => [languageModel, areaModel];
