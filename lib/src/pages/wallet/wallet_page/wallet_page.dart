@@ -364,7 +364,6 @@ class _WalletPageState extends BaseState<WalletPage>
       ///if authorized, jump to fix error page
       if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
         navigateToFixPage();
-      ;
     }
   }
 

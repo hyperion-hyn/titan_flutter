@@ -53,10 +53,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   int _lastUpdateBalanceTime = 0;
 
-  @override
+  /*@override
   Stream<Transition<WalletCmpEvent, WalletCmpState>> transformEvents(Stream<WalletCmpEvent> events, transitionFn) {
     return events.switchMap(transitionFn);
-  }
+  }*/
 
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
@@ -111,8 +111,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         }
       }
     } else if (event is LoadLocalDiskWalletAndActiveEvent) {
-      yield LoadingWalletState();
-
+//      yield LoadingWalletState();
       try {
         var wallet = await walletRepository.getActivatedWalletFormLocalDisk();
         //now active loaded wallet_vo. tips: maybe null
@@ -150,6 +149,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
             QuotesModel(quotes: quotes, symbolStr: symbolString, lastUpdateTime: DateTime.now().millisecondsSinceEpoch);
 
         if (_activatedWalletVo != null) {
+          //faster show quote
           yield UpdateWalletPageState(
               sign: quotesSign, quoteModel: currentQuotesModel, walletVo: _activatedWalletVo.copyWith());
           await walletRepository.updateWalletVoBalance(_activatedWalletVo);

@@ -84,7 +84,7 @@ class _WalletManagerState extends State<_WalletManager> {
     }
 
     //load default wallet
-    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
+//    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
   }
 
   @override
