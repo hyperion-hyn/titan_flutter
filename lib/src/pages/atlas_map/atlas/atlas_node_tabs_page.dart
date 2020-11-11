@@ -35,6 +35,7 @@ import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
+import 'package:titan/src/widget/clip_tab_bar.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 
@@ -153,117 +154,6 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     );
   }
 
-  _tabsView() {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(16.0),
-      ),
-      child: Column(
-        children: [
-          Container(
-            height: 50,
-            child: Stack(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                    ),
-                    Expanded(
-                        child: Container(
-                      color: Colors.black.withOpacity(0.5),
-                    ))
-                  ],
-                ),
-                Container(
-                  height: 50,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (_selectedNodeTab != NodeTab.map3) {
-                              _selectedNodeTab = NodeTab.map3;
-                            }
-                            _loadDataBloc.add(LoadingEvent());
-                            setState(() {});
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                              bottomRight: Radius.circular(16.0),
-                            ),
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Center(
-                                child: Text(
-                                  'Map3',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (_selectedNodeTab != NodeTab.atlas) {
-                              _selectedNodeTab = NodeTab.atlas;
-                            }
-                            _loadDataBloc.add(LoadingEvent());
-                            setState(() {});
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(16.0),
-                            ),
-                            child: Container(
-                              color: Colors.white,
-                              child: Center(
-                                child: Text(
-                                  'Atlas',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            height: 20,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.black.withOpacity(0.5),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
   List<Widget> _slivers() {
     List<Widget> slivers = [
       SliverToBoxAdapter(
@@ -289,11 +179,11 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                   ),
                   Stack(
                     children: [
-                      _tabsView(),
+                      _tabBar(),
                       Column(
                         children: [
                           Container(
-                            height: 50,
+                            height: 49.5,
                           ),
                           _mapWidget()
                         ],
@@ -314,6 +204,95 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     }
 
     return slivers;
+  }
+
+  _nodeTab({
+    @required bool selected,
+    @required String logoPath,
+    @required String name,
+  }) {
+    return Wrap(
+      children: [
+        Image.asset(
+          logoPath,
+          width: 20.0,
+          height: 20.0,
+          color: selected ? Theme.of(context).primaryColor : Colors.white,
+        ),
+        SizedBox(
+          width: 8.0,
+        ),
+        Text(
+          name,
+          style: TextStyle(
+            color: selected ? Theme.of(context).primaryColor : Colors.white,
+            fontSize: 18.0,
+          ),
+        )
+      ],
+    );
+  }
+
+  _tabBar() {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+          ),
+          child: ClipTabBar(
+            children: [
+              _nodeTab(
+                  selected: _selectedNodeTab == NodeTab.map3,
+                  logoPath: 'res/drawable/ic_map3_logo.png',
+                  name: 'Map3'),
+              _nodeTab(
+                  selected: _selectedNodeTab == NodeTab.atlas,
+                  logoPath: 'res/drawable/ic_atlas_logo.png',
+                  name: 'Atlas'),
+            ],
+            onTabChanged: (index) {
+              setState(() {
+                if (index == 0) {
+                  _selectedNodeTab = NodeTab.map3;
+                } else {
+                  _selectedNodeTab = NodeTab.atlas;
+                }
+              });
+            },
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
+          ),
+        ),
+        Container(
+          width: double.infinity,
+          height: 50,
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                    color: _selectedNodeTab == NodeTab.map3
+                        ? Colors.white
+                        : Colors.black.withOpacity(0.5)),
+              ),
+              Expanded(
+                child: Container(
+                  color: _selectedNodeTab == NodeTab.atlas
+                      ? Colors.white
+                      : Colors.black.withOpacity(0.5),
+                ),
+              )
+            ],
+          ),
+        )
+      ],
+    );
   }
 
   _mapWidget() {
