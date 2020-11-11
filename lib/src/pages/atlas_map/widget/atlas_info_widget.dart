@@ -11,10 +11,10 @@ import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/image_util.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 class AtlasInfoWidget extends StatefulWidget {
-
   AtlasInfoWidget();
 
   @override
@@ -47,8 +47,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
           height: 32,
         ),
         Padding(
-          padding:
-          const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -79,6 +78,23 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     ),
                   ],
                 ),
+              ),
+              Spacer(),
+              Image.asset(
+                'res/drawable/ic_hyn_coin.png',
+                width: 20,
+                height: 20,
+              ),
+              InkWell(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    '我的奖励',
+                    style:
+                        TextStyle(color: HexColor('#FFE4D17E'), fontSize: 13),
+                  ),
+                ),
+                onTap: () {},
               )
             ],
           ),
@@ -212,6 +228,4 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
       ],
     );
   }
-
-
 }
