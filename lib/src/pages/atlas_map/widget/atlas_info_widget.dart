@@ -90,8 +90,10 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   padding: EdgeInsets.only(left: 8.0),
                   child: Text(
                     '我的奖励',
-                    style:
-                        TextStyle(color: HexColor('#FFE4D17E'), fontSize: 13),
+                    style: TextStyle(
+                      color: HexColor('#FFE4D17E'),
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 onTap: () {},
@@ -110,7 +112,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      S.of(context).atlas_current_age,
+                      S.of(context).atlas_node,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white,
@@ -120,7 +122,36 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 20,
+                width: 1,
+                color: DefaultColors.color999,
+              ),
+              Expanded(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      S.of(context).map3_node,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count ?? 0}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -173,7 +204,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      S.of(context).atlas_elected_nodes,
+                      S.of(context).atlas_current_age,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white,
@@ -183,7 +214,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.elected}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -193,35 +224,6 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   ],
                 ),
               ),
-              Container(
-                height: 20,
-                width: 1,
-                color: DefaultColors.color999,
-              ),
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      S.of(context).atlas_candidate_nodes,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              )
             ],
           ),
         )

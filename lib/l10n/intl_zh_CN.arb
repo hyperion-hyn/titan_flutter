@@ -1225,5 +1225,7 @@
   "contact_us": "联系我们",
   "atlas_mapping_completed": "主网映射已结束，如有疑问请",
   "policy_hswap": "去中心化兌換服务协议",
-  "policy_wallet": "钱包服务协议"
+  "policy_wallet": "钱包服务协议",
+  "atlas_node": "Atlas节点",
+  "atlas_node_intro": "Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。"
 }

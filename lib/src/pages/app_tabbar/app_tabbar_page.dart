@@ -21,7 +21,6 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
-import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tab_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page.dart';

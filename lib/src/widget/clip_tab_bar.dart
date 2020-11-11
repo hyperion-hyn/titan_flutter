@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 
-typedef void OnTabChanged(int index);
+typedef void OnTabChanged(NodeTab nodeTab);
 
 class ClipTabBar extends StatefulWidget {
   final List<Widget> children;
@@ -37,9 +38,7 @@ class _LoadDataState extends State<ClipTabBar> {
             width: double.infinity,
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: widget.borderRadius
-            ),
+                color: Colors.white, borderRadius: widget.borderRadius),
           ),
           clipper: leftSelected ? LeftTabClipPath() : RightTabClipPath(),
         ),
@@ -58,7 +57,7 @@ class _LoadDataState extends State<ClipTabBar> {
                   onTap: () {
                     setState(() {
                       leftSelected = true;
-                      widget.onTabChanged(0);
+                      widget.onTabChanged(NodeTab.map3);
                     });
                   },
                 ),
@@ -73,7 +72,7 @@ class _LoadDataState extends State<ClipTabBar> {
                   onTap: () {
                     setState(() {
                       leftSelected = false;
-                      widget.onTabChanged(1);
+                      widget.onTabChanged(NodeTab.atlas);
                     });
                   },
                 ),

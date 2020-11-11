@@ -1216,5 +1216,7 @@
   "contact_us": "Contact us",
   "atlas_mapping_completed": "Mainnet migration is over, if you have any problem, please contact ",
   "policy_hswap": "Terms of Service for HSWAP",
-  "policy_wallet": "Terms of Service for Hyperion Wallet"
+  "policy_wallet": "Terms of Service for Hyperion Wallet",
+  "atlas_node": "Atlas节点",
+  "atlas_node_intro": "Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。"
 }

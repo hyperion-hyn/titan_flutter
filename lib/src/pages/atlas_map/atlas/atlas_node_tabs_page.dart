@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -29,6 +30,7 @@ import 'package:titan/src/pages/atlas_map/widget/atlas_info_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
+import 'package:titan/src/pages/skeleton/skeleton_node_tabs_content.dart';
 import 'package:titan/src/pages/skeleton/skeleton_node_tabs_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -75,6 +77,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   Map3StakingEntity _map3stakingEntity;
   Map3IntroduceEntity _map3introduceEntity;
 
+  bool _isShowLoading = true;
   int _currentPage = 1;
   int _pageSize = 10;
 
@@ -124,6 +127,9 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
           child: LoadDataContainer(
               bloc: _loadDataBloc,
               onRefresh: () {
+                setState(() {
+                  _isShowLoading = true;
+                });
                 if (_selectedNodeTab == NodeTab.atlas) {
                   _refreshAtlasData();
                 } else {
@@ -131,6 +137,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                 }
               },
               onLoadData: () {
+                _isShowLoading = true;
                 if (_selectedNodeTab == NodeTab.atlas) {
                   _refreshAtlasData();
                 } else {
@@ -138,6 +145,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                 }
               },
               onLoadingMore: () {
+                _isShowLoading = true;
                 if (_selectedNodeTab == NodeTab.atlas) {
                   _loadMoreAtlasData();
                 } else {
@@ -145,7 +153,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                 }
               },
               showLoadingWidget: false,
-              onLoadSkeletonView: SkeletonNodeTabsPage(),
+              enablePullUp: !_isShowLoading,
               child: CustomScrollView(
                 slivers: _slivers(),
               )),
@@ -197,12 +205,18 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
         ),
       ),
     ];
-    if (_selectedNodeTab == NodeTab.map3) {
-      slivers.addAll(_map3NodePageSlivers());
-    } else {
-      slivers.addAll(_atlasNodePageSlivers());
-    }
 
+    if (_isShowLoading) {
+      slivers.add(SliverToBoxAdapter(
+        child: SkeletonNodeTabsContent(),
+      ));
+    } else {
+      slivers.addAll(
+        _selectedNodeTab == NodeTab.map3
+            ? _map3NodePageSlivers()
+            : _atlasNodePageSlivers(),
+      );
+    }
     return slivers;
   }
 
@@ -247,21 +261,23 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
           child: ClipTabBar(
             children: [
               _nodeTab(
-                  selected: _selectedNodeTab == NodeTab.map3,
-                  logoPath: 'res/drawable/ic_map3_logo.png',
-                  name: 'Map3'),
+                selected: _selectedNodeTab == NodeTab.map3,
+                logoPath: 'res/drawable/ic_map3_logo.png',
+                name: 'Map3',
+              ),
               _nodeTab(
-                  selected: _selectedNodeTab == NodeTab.atlas,
-                  logoPath: 'res/drawable/ic_atlas_logo.png',
-                  name: 'Atlas'),
+                selected: _selectedNodeTab == NodeTab.atlas,
+                logoPath: 'res/drawable/ic_atlas_logo.png',
+                name: 'Atlas',
+              ),
             ],
-            onTabChanged: (index) {
+            onTabChanged: (nodeTab) {
               setState(() {
-                if (index == 0) {
-                  _selectedNodeTab = NodeTab.map3;
-                } else {
-                  _selectedNodeTab = NodeTab.atlas;
+                if (_selectedNodeTab != nodeTab) {
+                  _isShowLoading = true;
+                  _loadDataBloc.add(LoadingEvent());
                 }
+                _selectedNodeTab = nodeTab;
               });
             },
             borderRadius: BorderRadius.only(
@@ -295,11 +311,39 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     );
   }
 
+  _skeletonMap() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(
+          16.0,
+        )),
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300],
+          highlightColor: Colors.grey[100],
+          enabled: true,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16.0),
+            child: Container(
+              width: double.infinity,
+              height: 162,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   _mapWidget() {
-    if (_selectedNodeTab == NodeTab.map3) {
-      return _map3Map();
+    if (_isShowLoading) {
+      return _skeletonMap();
     } else {
-      return _atlasMap();
+      return _selectedNodeTab == NodeTab.map3 ? _map3Map() : _atlasMap();
     }
   }
 
@@ -581,8 +625,8 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   ///
 
   _atlasIntro() {
-    var title = 'Atlas节点';
-    var desc = 'Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。';
+    var title = S.of(context).atlas_node;
+    var desc = S.of(context).atlas_node_intro;
     var guideTitle = S.of(context).tutorial;
     return Container(
       margin: const EdgeInsets.only(
@@ -1027,6 +1071,9 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       print(e);
       _loadDataBloc.add(RefreshFailEvent());
     }
+
+    _isShowLoading = false;
+    if (mounted) setState(() {});
   }
 
   _map3OnLoadingMore() async {
@@ -1047,12 +1094,11 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {});
     } catch (e) {
-      print(e);
-
       _loadDataBloc.add(LoadMoreFailEvent());
     }
+    _isShowLoading = false;
+    if (mounted) setState(() {});
   }
 
   _refreshAtlasData() async {
@@ -1074,12 +1120,11 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
         _atlasNodeList.clear();
         _atlasNodeList.addAll(_nodeList);
       }
-      setState(() {});
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
     }
-
+    _isShowLoading = false;
     if (mounted) setState(() {});
   }
 
@@ -1106,6 +1151,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
+    _isShowLoading = false;
     if (mounted) setState(() {});
   }
 

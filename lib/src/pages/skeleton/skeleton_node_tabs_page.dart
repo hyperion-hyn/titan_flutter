@@ -34,17 +34,7 @@ class SkeletonNodeTabsPageState extends State<SkeletonNodeTabsPage> {
           baseColor: Colors.grey[300],
           highlightColor: Colors.grey[100],
           enabled: true,
-          child: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: _roundContainer(150),
-              ),
-              SliverToBoxAdapter(
-                child: _roundContainer(600),
-              ),
-            ],
-          )),
+          child: _roundContainer(600)),
     );
   }
 
