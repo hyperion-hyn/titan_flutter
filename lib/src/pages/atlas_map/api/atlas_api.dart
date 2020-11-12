@@ -628,7 +628,7 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  static Future<bool> checkLastTxIsPending(int type, {String map3Address = ''}) async {
+  static Future<bool> checkLastTxIsPending(int type, {String map3Address = '',String atlasAddress = '',}) async {
     try {
       var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var _wallet = activatedWallet?.wallet;
@@ -639,6 +639,7 @@ class AtlasApi {
         status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
         type: [type],
         map3Address: map3Address,
+        atlasAddress: atlasAddress,
       );
 
       var isNotEmpty = list?.isNotEmpty ?? false;
@@ -687,6 +688,27 @@ class AtlasApi {
           case MessageType.typeEditMap3:
             Fluttertoast.showToast(
               msg: '编辑请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeReDelegate:
+            Fluttertoast.showToast(
+              msg: '复抵押正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeUnReDelegate:
+            Fluttertoast.showToast(
+              msg: '取消复抵押正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeCollectReStakingReward:
+            Fluttertoast.showToast(
+              msg: '提取出块奖励正处理中!',
               gravity: ToastGravity.CENTER,
             );
             break;
