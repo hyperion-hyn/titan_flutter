@@ -14,6 +14,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -33,7 +34,8 @@ class Map3NodeMyPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStateMixin {
+class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
+    with TickerProviderStateMixin {
   TabController _tabController;
   List<MyContractModel> _contractTypeModels;
   UserRewardEntity _rewardEntity;
@@ -77,13 +79,16 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
 
     if (_contractTypeModels?.isEmpty ?? true) {
       _contractTypeModels = [
-        MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create),
+        MyContractModel(
+            S.of(context).my_initiated_map_contract, MyContractType.create),
         MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)
       ];
-      _tabController = TabController(length: _contractTypeModels.length, vsync: this);
+      _tabController =
+          TabController(length: _contractTypeModels.length, vsync: this);
     }
 
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
@@ -100,7 +105,10 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               // Application.router
               //     .navigateTo(context, Routes.map3node_my_page_v8);
 
-              Application.router.navigateTo(context, Routes.map3node_my_page_reward);
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      Map3NodeCollectRewardPage()));
+              // Application.router.navigateTo(context, Routes.map3node_my_page_reward);
             },
             child: Text(
               // S.of(context).old_map3,
@@ -208,7 +216,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
                 ),
               ],
             ),
-            margin: const EdgeInsets.only(left: 15.0, right: 15, bottom: 20, top: 12),
+            margin: const EdgeInsets.only(
+                left: 15.0, right: 15, bottom: 20, top: 12),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -325,7 +334,9 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         child: TabBarView(
           controller: _tabController,
           //physics: NeverScrollableScrollPhysics(),
-          children: _contractTypeModels.map((model) => Map3NodeListPage(model)).toList(),
+          children: _contractTypeModels
+              .map((model) => Map3NodeListPage(model))
+              .toList(),
         ),
       ),
     );
@@ -350,8 +361,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
         return;
       } else {
-        var lastTxIsPending =
-            await AtlasApi.checkLastTxIsPending(MessageType.typeCollectMicroStakingRewards);
+        var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+            MessageType.typeCollectMicroStakingRewards);
         if (lastTxIsPending) {
           return;
         }
@@ -365,7 +376,9 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
       return;
     }
 
-    var preText = count != 0 ? "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，" : "";
+    var preText = count != 0
+        ? "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，"
+        : "";
 
     UiUtil.showAlertView(context,
         title: S.of(context).collect_reward,
@@ -379,7 +392,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
               var message = ConfirmCollectMap3NodeMessage(
                 entity: entity,
                 amount: _balanceValue,
-                addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+                addressList:
+                    _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
               );
               Navigator.push(
                   context,
@@ -394,7 +408,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
             fontSize: 16,
           ),
         ],
-        content: S.of(context).confirm_collect_reward_to_wallet(preText, _balance),
+        content:
+            S.of(context).confirm_collect_reward_to_wallet(preText, _balance),
         boldContent: "($_walletName)",
         boldStyle: TextStyle(
           color: HexColor("#999999"),

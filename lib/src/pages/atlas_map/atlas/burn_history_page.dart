@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -17,8 +22,11 @@ class BurnHistoryPage extends StatefulWidget {
 }
 
 class BurnHistoryPageState extends State<BurnHistoryPage> {
-  List<String> _dataList = List();
+  List<BurnHistory> _burnHistoryList = List();
+  BurnMsg _burnMsg;
+
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  AtlasApi _atlasApi = AtlasApi();
 
   int _currentPage = 1;
   int _pageSize = 30;
@@ -26,6 +34,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
   @override
   void initState() {
     super.initState();
+    _getBurnMsg();
     _loadDataBloc.add(LoadingEvent());
   }
 
@@ -45,14 +54,16 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
       body: LoadDataContainer(
           bloc: _loadDataBloc,
           onLoadData: () async {
+            _getBurnMsg();
             await _refreshData();
           },
           onRefresh: () async {
+            _getBurnMsg();
             await _refreshData();
           },
-          onLoadingMore: () {
-            _loadMoreData();
-            setState(() {});
+          onLoadingMore: () async {
+            _getBurnMsg();
+            await _loadMoreData();
           },
           child: CustomScrollView(
             slivers: <Widget>[
@@ -83,10 +94,15 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                   ),
                 ),
               ),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                return _burnHistoryItem();
-              }, childCount: 10)),
+              _burnHistoryList.length != 0
+                  ? SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _burnHistoryItem(_burnHistoryList[index]);
+                      },
+                      childCount: _burnHistoryList.length,
+                    ))
+                  : _emptyListHint(),
             ],
           )),
     );
@@ -141,7 +157,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                '${FormatUtil.stringFormatNum('10000')} HYN',
+                '${FormatUtil.stringFormatNum(_burnMsg?.actualAmount ?? '0')} HYN',
                 style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 18,
@@ -154,7 +170,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
     );
   }
 
-  _burnHistoryItem() {
+  _burnHistoryItem(BurnHistory burnHistory) {
     return Padding(
       padding: EdgeInsets.only(
         left: 16.0,
@@ -162,7 +178,27 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
         bottom: 16.0,
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: () async {
+          try {
+            HynTransferHistory hynTransferHistory =
+                await _atlasApi.queryHYNTxDetail(
+              burnHistory.txHash,
+            );
+            var transactionType = 2;
+            var transactionDetailVo =
+                TransactionDetailVo.fromHynTransferHistory(
+              hynTransferHistory,
+              transactionType,
+              'HYN',
+            );
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      WalletShowAccountInfoPage(transactionDetailVo),
+                ));
+          } catch (e) {}
+        },
         child: Container(
           decoration: BoxDecoration(
               color: Colors.white,
@@ -177,13 +213,20 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                   children: [
                     Container(
                       width: 120,
-                      child: Text('第 40 纪元'),
+                      child: Text(
+                        '第 ${burnHistory.epoch} 纪元',
+                        style: TextStyle(fontSize: 13),
+                      ),
                     ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                            '燃烧 ${FormatUtil.stringFormatNum('11111111111')} HYN'),
+                          '燃烧 ${FormatUtil.stringFormatCoinNum(FormatUtil.weiToEtherStr(burnHistory.actualAmount))} HYN',
+                          style: TextStyle(
+                            fontSize: 11,
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -204,39 +247,80 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
     );
   }
 
-  Future _refreshData() async {
+  _getBurnMsg() async {
+    try {
+      _burnMsg = await _atlasApi.postBurnMsg();
+    } catch (e) {}
+    if (mounted) setState(() {});
+  }
+
+  _emptyListHint() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Image.asset(
+                'res/drawable/ic_empty_contract.png',
+                width: 100,
+                height: 100,
+              ),
+            ),
+            Text(
+              S.of(context).exchange_empty_list,
+              style: TextStyle(
+                fontSize: 13,
+                color: DefaultColors.color999,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _refreshData() async {
     _currentPage = 1;
-    _dataList.clear();
+    _burnHistoryList.clear();
+    try {
+      var _list = await _atlasApi.postBurnHistoryList(
+        status: 2,
+        page: _currentPage,
+        size: _pageSize,
+      );
 
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
-
-    if (networkList != null) {
-      _dataList.addAll(networkList);
+      if (_list != null) {
+        _burnHistoryList.clear();
+        _burnHistoryList.addAll(_list);
+      }
+      _loadDataBloc.add(RefreshSuccessEvent());
+    } catch (e) {
+      print('----burn $e');
+      _loadDataBloc.add(RefreshFailEvent());
     }
-
-    _loadDataBloc.add(RefreshSuccessEvent());
     if (mounted) setState(() {});
   }
 
   _loadMoreData() async {
-    _currentPage++;
+    try {
+      var _list = await _atlasApi.postBurnHistoryList(
+        status: 2,
+        page: _currentPage + 1,
+        size: _pageSize,
+      );
 
-    var networkList;
-    await Future.delayed(Duration(milliseconds: 1000), () {
-      networkList = List.generate(10, (index) {
-        return index.toString();
-      });
-    });
-
-    if (networkList != null) {
-      _dataList.addAll(networkList);
+      if (_list != null && _list.isNotEmpty) {
+        _burnHistoryList.addAll(_burnHistoryList);
+        _currentPage++;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+    } catch (e) {
+      print('----burn $e');
+      _loadDataBloc.add(LoadMoreFailEvent());
     }
-    _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});
   }
 }
