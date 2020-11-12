@@ -112,6 +112,29 @@ class NodeApi {
     return nodeProviderList;
   }
 
+  static List<NodeProviderEntity> _providerList;
+  static Future<Regions> getProviderEntity(String id) async {
+    if (id?.isEmpty ?? true) {
+      return null;
+    }
+
+    if (_providerList?.isEmpty ?? true) {
+      _providerList = await NodeApi().getNodeProviderList();
+    }
+
+    Regions _selectedRegion;
+    if (_providerList.isNotEmpty) {
+      var selectProviderEntity = _providerList[0];
+      for (var region in (selectProviderEntity?.regions ?? [])) {
+        if (region.id == id) {
+          _selectedRegion = region;
+          break;
+        }
+      }
+    }
+    return _selectedRegion;
+  }
+
   Future<ContractNodeItem> getContractItem(String contractId) async {
     var nodeItem =
         await NodeHttpCore.instance.getEntity("/contracts/detail/$contractId", EntityFactory<NodeItem>((data) {
