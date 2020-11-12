@@ -67,7 +67,7 @@ Widget iconMap3Widget(Map3InfoEntity infoEntity, {bool isCircle = false}) {
 }
 
 Widget iconWidget(String picture, String name, String address, {bool isCircle = false}) {
-  if (picture.isNotEmpty) {
+  if (picture?.isNotEmpty ?? false) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(4.0),
       child: FadeInImage.assetNetwork(
@@ -366,9 +366,7 @@ Widget getMap3NodeWaitItem(BuildContext context, Map3InfoEntity infoEntity, Map3
   );
 }
 
-
 Widget managerSpendWidgetConst({double fixedFeeRate = 10}) {
-
   return Padding(
     padding: const EdgeInsets.only(
       left: 14,
@@ -718,7 +716,7 @@ Widget editInfoItem(
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: detail?.isNotEmpty??false ? 18 : 14, horizontal: 14),
+            padding: EdgeInsets.symmetric(vertical: detail?.isNotEmpty ?? false ? 18 : 14, horizontal: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -750,9 +748,10 @@ Widget editInfoItem(
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      detail?.isEmpty??true ? hint : detail,
+                      detail?.isEmpty ?? true ? hint : detail,
                       textAlign: TextAlign.start,
-                      style: TextStyle(color: detail?.isEmpty??true ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
+                      style: TextStyle(
+                          color: detail?.isEmpty ?? true ? HexColor("#999999") : HexColor("#333333"), fontSize: 14),
                     ),
                   ),
                 ),
@@ -765,7 +764,9 @@ Widget editInfoItem(
                         ),
                       )
                     : Padding(
-                        padding: const EdgeInsets.only(right: 10,),
+                        padding: const EdgeInsets.only(
+                          right: 10,
+                        ),
                         child: Container(),
                       ),
               ],
