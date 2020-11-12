@@ -9,6 +9,7 @@ import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/mine/dex_wallet_m_page.dart';
 import 'package:titan/src/pages/mine/me_setting_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/policy/policy_select_apge.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -149,19 +150,14 @@ class _MyPageState extends State<MyPage> {
                   Divider(
                     height: 0,
                   ),
-                  _buildMenuBar(
-                      "用户协议",
-                      Icons.report_problem,
-                          () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => InAppWebViewContainer(
-                                      initUrl: Config.WALLET_POLICY_CN_URL,
-                                      title: '用户协议',
-                                    )));
-
-                          }),
+                  _buildMenuBar(S.of(context).user_policy, Icons.assignment,
+                      () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PolicySelectPage(),
+                        ));
+                  }),
                   if ([
                     '0x74Fa941242af2F76af1E5293Add5919f6881753a'.toLowerCase(),
                     '0xeeaa0ecc68bf39f87ae52486bfef983f7badda82'.toLowerCase(),

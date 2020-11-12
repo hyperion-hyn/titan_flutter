@@ -62,10 +62,6 @@ class _SettingManagerState extends BaseState<_SettingManager> {
           if (state.areaModel != null) {
             Config.updateConfig(state.areaModel);
           }
-          if (state.quotesSign != null) {
-            BlocProvider.of<WalletCmpBloc>(context)
-                .add(UpdateQuotesSignEvent(sign: state.quotesSign));
-          }
         }
       },
       child: BlocBuilder<SettingBloc, SettingState>(

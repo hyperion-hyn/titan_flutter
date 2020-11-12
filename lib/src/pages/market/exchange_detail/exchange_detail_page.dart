@@ -1017,7 +1017,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: Text(
-                    "${S.of(context).available}  ${getValidNum() == 0 ? "~" : getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
+                      !exchangeModel.isActiveAccountAndHasAssets() ? "授权后查看余额" : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
                     style: TextStyle(color: DefaultColors.color999, fontSize: 10),
                   ),
                 ),

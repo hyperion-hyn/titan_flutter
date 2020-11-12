@@ -111,6 +111,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       //print('[home] --> check new announcement');
       BlocProvider.of<AppTabBarBloc>(context).add(CheckNewAnnouncementEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
     });
 
     _clearBadgeSubcription = Application.eventBus.on().listen((event) {
@@ -128,7 +130,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       _urlLauncherAction(values);
     };
 
-    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
   }
 
   @override

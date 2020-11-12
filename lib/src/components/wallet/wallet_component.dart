@@ -84,7 +84,7 @@ class _WalletManagerState extends State<_WalletManager> {
     }
 
     //load default wallet
-    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
+//    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
   }
 
   @override
@@ -276,6 +276,11 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
             dependencies.contains(WalletAspect.gasPrice) ||
         btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
             dependencies.contains(WalletAspect.gasPrice));
+  }
+
+  static Future<bool> saveQuoteSign(QuotesSign quotesSign) {
+    var modelStr = json.encode(quotesSign.toJson());
+    return AppCache.saveValue(PrefsKey.SETTING_QUOTE_SIGN, modelStr);
   }
 
 //  static String formatPrice(double price) {

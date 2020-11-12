@@ -71,8 +71,16 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   int _currentPage = 1;
   int _pageSize = 30;
 
-  var infoTitleList = ["最大抵押量", "网址", "安全联系", "描述", "费率", "最大费率", "费率幅度"];
-  var infoContentList = ["12930903", "98%", "11.23%1", "欢迎参加我的合约，前10名参与者返10%管理费。", "98%", "11.23%", "11.23%"];
+  var infoTitleList = [
+    S.of(Keys.rootKey.currentContext).max_staking_num,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
+    S.of(Keys.rootKey.currentContext).description,
+    S.of(Keys.rootKey.currentContext).fee_rate,
+    S.of(Keys.rootKey.currentContext).max_fee_rate,
+    S.of(Keys.rootKey.currentContext).fee_rate_trim,
+  ];
+  List<String> infoContentList = [];
 
   ShakeAnimationController _shakeAnimationController;
   ShakeAnimationController _leftTextAnimationController;
@@ -107,7 +115,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: BaseAppBar(baseTitle: "节点详情"),
+      appBar: BaseAppBar(baseTitle: S.of(context).node_contract_detail),
       body: _pageWidget(context),
     );
   }
@@ -253,7 +261,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           delegate: SliverChildBuilderDelegate((context, index) {
                           return delegateRecordItemWidget(_delegateRecordList[index], isAtlasDetail: true);
                         }, childCount: _delegateRecordList.length))
-                      : emptyListWidget(title: "节点记录为空"),
+                      : emptyListWidget(title: S.of(context).node_record_empty),
                   /*SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                     return _joinMap3Item(index);
@@ -331,12 +339,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 Expanded(
                   child: Text.rich(
                     TextSpan(
-                      text: "该Atlas节点处于非活跃状态",
+                      text: S.of(context).this_atlas_node_is_inactive,
                       style: TextStyles.textC333S14,
                       children: [
-                        TextSpan(text: '(可能的原因是设备运行障碍/设备出块签名率低/节点主已经退出抵押)', style: TextStyles.textC999S12),
+                        TextSpan(text: S.of(context).reason_obstacles_sign_rate_withdrawn_mortgage, style: TextStyles.textC999S12),
                         TextSpan(
-                          text: '，如果你的设备已经恢复正常运行，请重新激活该节点。',
+                          text: S.of(context).your_device_normal_reactivate_node,
                           style: TextStyles.textC333S14,
                         )
                       ],
@@ -347,7 +355,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             ),
           ),
           ClickOvalButton(
-            "重新激活",
+            S.of(context).reactivate,
             () {
               var nodeJoinType;
               if (_atlasInfoEntity.myMap3 == null) {
@@ -359,10 +367,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 case NodeJoinType.JOINER:
                   UiUtil.showAlertView(
                     context,
-                    title: "激活节点",
+                    title: S.of(context).active_node,
                     actions: [
                       ClickOvalButton(
-                        "好的",
+                        S.of(context).ok,
                         () {
                           Navigator.pop(context);
                         },
@@ -371,7 +379,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         fontSize: 16,
                       ),
                     ],
-                    content: "只有节点主才能重新激活节点，请联系节点主激活",
+                    content: S.of(context).node_master_reactivate_contact_master,
                   );
                   break;
                 case NodeJoinType.CREATOR:
@@ -457,7 +465,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   if (!showMyMap3) {
                     UiUtil.showAlertView(
                       context,
-                      title: "领取奖励",
+                      title: S.of(context).receive_reward,
                       actions: [
                         ClickOvalButton(
                           "好的",
@@ -469,7 +477,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           fontSize: 16,
                         ),
                       ],
-                      content: "你还没有参与该Atlas节点抵押，不可以领取节点奖励。",
+                      content: S.of(context).dont_join_atlas_no_reward,
                     );
                   } else {
                     var nodeJoinType =
@@ -478,7 +486,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       case NodeJoinType.CREATOR:
                         UiUtil.showAlertView(
                           context,
-                          title: "领取奖励",
+                          title: S.of(context).receive_reward,
                           actions: [
                             ClickOvalButton(
                               S.of(context).cancel,
@@ -495,7 +503,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               width: 8,
                             ),
                             ClickOvalButton(
-                              "领取",
+                              S.of(context).receive,
                               () {
                                 var entity = PledgeAtlasEntity.emptyEntity();
                                 AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
@@ -517,17 +525,17 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               fontSize: 16,
                             ),
                           ],
-                          content: "你将提取当前Atlas奖励，奖励会按照抵押比率分配到你的Map3节点抵押者。",
+                          content: S.of(context).withdraw_atlas_reward_staking_rate_distribute,
                         );
 
                         break;
                       case NodeJoinType.JOINER:
                         UiUtil.showAlertView(
                           context,
-                          title: "领取奖励",
+                          title: S.of(context).receive_reward,
                           actions: [
                             ClickOvalButton(
-                              "好的",
+                              S.of(context).ok,
                               () {
                                 Navigator.pop(context);
                               },
@@ -536,7 +544,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                               fontSize: 16,
                             ),
                           ],
-                          content: "你不能领取节点奖励，你可以联系节点主去领取并分配节点奖励。",
+                          content: S.of(context).cant_receive_reward_contact_master_distribute,
                         );
                         break;
                     }
@@ -556,7 +564,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 shakeAnimationType: ShakeAnimationType.TopBottomShake,
                                 shakeRange: 0.3,
                                 child: Text(
-                                  "点击领取",
+                                  S.of(context).click_receive,
                                   style: TextStyle(fontSize: 16, color: HexColor("#C68A16")),
                                 )),
                           ),
@@ -592,7 +600,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 padding: EdgeInsets.only(top: 4, bottom: 4, left: 10, right: 10),
                 child: RichText(
                     textAlign: TextAlign.center,
-                    text: TextSpan(text: "节点累计奖励  ", style: TextStyles.textC333S10, children: [
+                    text: TextSpan(text: "${S.of(context).node_cumulative_reward}  ", style: TextStyles.textC333S10, children: [
                       TextSpan(
                         text: "${FormatUtil.truncateDecimalNum(historyReward, 0)}",
                         style: TextStyles.textC333S12,
@@ -618,7 +626,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text("总抵押", style: TextStyles.textC999S10)
+                                Text(S.of(context).total_staking, style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
@@ -634,7 +642,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text("管理节点抵押", style: TextStyles.textC999S10)
+                                Text(S.of(context).manage_node_staking, style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
@@ -650,7 +658,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                 SizedBox(
                                   height: 4,
                                 ),
-                                Text("昨日年化", style: TextStyles.textC999S10)
+                                Text(S.of(context).atlas_reward_rate, style: TextStyles.textC999S10)
                               ],
                             ),
                           ),
@@ -670,9 +678,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Padding(
                             padding: const EdgeInsets.only(left: 14, top: 24.0, bottom: 22),
                             child: RichText(
-                                text: TextSpan(text: "我的Map3  ", style: TextStyles.textC333S16, children: [
+                                text: TextSpan(text: "${S.of(context).my_map3}  ", style: TextStyles.textC333S16, children: [
                               TextSpan(
-                                text: "(切换查看不同Map3节点抵押情况)",
+                                text: S.of(context).switch_view_different_map3_staking_status,
                                 style: TextStyles.textC999S12,
                               ),
                             ])),
@@ -718,7 +726,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("Map3已抵押", style: TextStyles.textC999S12)
+                                      Text(S.of(context).map3_is_mortgaged, style: TextStyles.textC999S12)
                                     ],
                                   ),
                                 ),
@@ -735,7 +743,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                       SizedBox(
                                         height: 5,
                                       ),
-                                      Text("可提往Map3", style: TextStyles.textC999S12)
+                                      Text(S.of(context).can_withdraw_to_map3, style: TextStyles.textC999S12)
                                     ],
                                   ),
                                 ),
@@ -769,7 +777,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "节点信息",
+                  S.of(context).node_info,
                   style: TextStyles.textC333S16,
                 ),
                 Spacer(),
@@ -939,11 +947,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 14),
               child: ClickOvalButton(
-                "撤销抵押",
+                S.of(context).cancel_delegate,
                 () async {
                   UiUtil.showAlertView(
                     context,
-                    title: "撤销抵押",
+                    title: S.of(context).cancel_delegate,
                     actions: [
                       ClickOvalButton(
                         S.of(context).cancel,
@@ -960,7 +968,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         width: 8,
                       ),
                       ClickOvalButton(
-                        "确定",
+                        S.of(context).confirm,
                         () {
                           _cancelAction();
                         },
@@ -969,7 +977,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         fontSize: 16,
                       ),
                     ],
-                    content: "撤销抵押后将不再获得Atlas节点出块奖励，当前为止获得的奖励，将在Atlas节点主领取奖励时发送至您的钱包，撤销之后可以再次抵押，确定要撤销吗？",
+                    content: S.of(context).cancel_delegate_no_atlas_reward_confirm_cancel,
                   );
                 },
                 width: 90,
@@ -980,7 +988,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               ),
             ),
           ClickOvalButton(
-            "抵押",
+            S.of(context).delegate,
             () {
               _delegateAction();
             },
@@ -1067,7 +1075,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
           child: Row(
             children: <Widget>[
-              Text("节点记录", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
+              Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
             ],
           ),
         ),
@@ -1078,7 +1086,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
 String getContentOrEmptyStr(String contentStr) {
   if (contentStr == null || contentStr.isEmpty) {
-    return "暂无";
+    return S.of(Keys.rootKey.currentContext).no_data;
   } else {
     return contentStr;
   }

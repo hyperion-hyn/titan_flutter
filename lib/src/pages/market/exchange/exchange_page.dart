@@ -675,7 +675,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPrice = marketItemEntity.kLineEntity != null
         ? FormatUtil.truncateDecimalNum(
               Decimal.parse(
-                  marketItemEntity.kLineEntity?.close.toString() ?? '0'),
+                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
               4,
             ) ??
             '-'

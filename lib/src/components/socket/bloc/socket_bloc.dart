@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';

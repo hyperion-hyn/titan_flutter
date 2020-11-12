@@ -8,6 +8,7 @@ import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart'
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -120,7 +121,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                             if (_currentLanguage.isZh() == true) {
                               quoteSign = SupportedQuoteSigns.of('CNY');
                             }
-                            BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(quotesSign: quoteSign));
+                            WalletInheritedModel.saveQuoteSign(quoteSign);
 
                             var prefs = await SharedPreferences.getInstance();
                             await prefs.setBool(PrefsKey.FIRST_TIME_LAUNCHER_KEY, true);
