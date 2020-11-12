@@ -21,6 +21,7 @@ class TextStyles {
   static TextStyle textC333S12 = textStyle(fontSize: 12, color: DefaultColors.color333);
   static TextStyle textC333S13 = textStyle(fontSize: 13, color: DefaultColors.color333);
   static TextStyle textC333S16 = textStyle(fontSize: 16, color: DefaultColors.color333);
+  static TextStyle textC333S18 = textStyle(fontSize: 18, color: DefaultColors.color333);
   static TextStyle textC777S14 = textStyle(color: DefaultColors.color777);
   static TextStyle textC777S16 = textStyle(fontSize: 16, color: DefaultColors.color777);
   static TextStyle textC999S10 = textStyle(fontSize: 10, color: DefaultColors.color999);
@@ -56,7 +57,6 @@ class TextStyles {
   static TextStyle textCff4c3bS18 = textStyle(fontSize: 18, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
   static TextStyle textCff4c3bS20 = textStyle(fontSize: 20, color: DefaultColors.colorff4c3b,fontWeight: FontWeight.bold);//红
   static TextStyle textC7c5b00S12 = textStyle(fontSize: 12, color: DefaultColors.color7c5b00);//深土黄
-  static TextStyle textC333S18 = textStyle(fontSize: 18, color: DefaultColors.color333);//深土黄
 }
 
 class DefaultColors {
