@@ -75,6 +75,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
   get isPending => (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index);
 
+  bool isExit = false;
+
   @override
   void onCreated() {
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
@@ -111,11 +113,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var joinerAddress = _walletAddress.toLowerCase();
 
     for (var item in _map3nodeInformationEntity.microdelegations) {
-      if (item.delegatorAddress.isNotEmpty && item.delegatorAddress == joinerAddress) {
-        if (item.delegatorAddress.toLowerCase() == joinerAddress) {
-          _microDelegationsJoiner = item;
-          break;
-        }
+      var delegatorAddress = item.delegatorAddress;
+      if (delegatorAddress.isNotEmpty && (delegatorAddress.toLowerCase()) == joinerAddress) {
+        _microDelegationsJoiner = item;
+        break;
       }
     }
   }
@@ -171,8 +172,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    var oldYearValue = oldYear > 0 ? "  ${S.of(context).node_age}: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
+    // var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
+    // var oldYearValue = oldYear > 0 ? "  ${S.of(context).node_age}: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
+    var oldYearValue = '';
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 9)}";
 
@@ -381,7 +383,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !isPending || !_canExitDelegation,
+            isLoading: !isPending || !_canExitDelegation || isExit,
           ),
         ),
       ),
@@ -389,16 +391,19 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   _confirmAction() async {
+
     if (!isPending) {
       Fluttertoast.showToast(msg: S.of(context).canceling_node);
       return;
     }
-
-    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-      MessageType.typeTerminateMap3,
+    
+    isExit = await AtlasApi.checkIsExit(
       map3Address: _map3infoEntity?.address ?? '',
     );
-    if (lastTxIsPending) {
+    if (isExit) {
+      setState(() {
+
+      });
       return;
     }
 

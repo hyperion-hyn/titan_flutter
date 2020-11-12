@@ -108,7 +108,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return "抵押已满$startMinValue，将在下个纪元启动……";
         } else {
-          if (_isDelegate && _lastPendingTx != null) {
+          if (_lastPendingTx != null) {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeTerminateMap3:
@@ -936,9 +936,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var home = _map3nodeInformationEntity?.map3Node?.description?.website ?? _map3infoEntity?.home ?? '';
     var contact = _map3nodeInformationEntity?.map3Node?.description?.securityContact ?? _map3infoEntity?.contact ?? '';
 
-    // var lsss = WalletUtil.bech32ToEthAddress('hyn13ewafrn7523k05p5csqkzl4k0yv0ckql9flj7s');
-    // print("lessss: $lsss");
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -1673,7 +1670,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     var myRewardString = "0";
 
     Microdelegations _microDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
-
     if (_microDelegations != null) {
       var pendingAmount = _microDelegations?.pendingDelegation?.amount;
       var activeAmount = _microDelegations?.amount;
@@ -1687,6 +1683,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       var myRewardValue = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(myReward)).toDouble();
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
+
+    print("myDelegationString: --->$myDelegationString, _isDelegate:$_isDelegate");
 
     return Container(
       color: Colors.white,
@@ -1760,7 +1758,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 [
                   {"节点累计奖励": totalRewardString},
                   {"管理费": feeRate},
-                  {"我的抵押": _isDelegate ? myDelegationString : "未抵押"},
+                  {"我的抵押": (_isDelegate || myDelegationString != '0') ? myDelegationString : "未抵押"},
                 ],
               ),
             ),
@@ -2029,9 +2027,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   _loadLastPendingTxData() async {
-    if (!_isDelegate) {
-      return;
-    }
 
     if (_nodeAddress.isEmpty || _address.isEmpty) {
       return;
@@ -2042,6 +2037,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       map3Address: _nodeAddress,
       status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
     );
+
     if (pendingList?.isNotEmpty ?? false) {
       var firstObject = pendingList.first;
 
