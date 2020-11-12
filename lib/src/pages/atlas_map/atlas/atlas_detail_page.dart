@@ -988,7 +988,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               ),
             ),
           ClickOvalButton(
-            S.of(context).delegate,
+            S.of(context).staking,
             () {
               _delegateAction();
             },
