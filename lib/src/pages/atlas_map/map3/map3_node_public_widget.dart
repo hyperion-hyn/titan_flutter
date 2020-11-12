@@ -765,11 +765,8 @@ Widget editInfoItem(
                         ),
                       )
                     : Padding(
-                        padding: const EdgeInsets.only(left: 6),
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
-                        ),
+                        padding: const EdgeInsets.only(right: 10,),
+                        child: Container(),
                       ),
               ],
             ),

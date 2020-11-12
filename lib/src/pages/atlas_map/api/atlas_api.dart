@@ -10,6 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/bls_key_sign_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/committee_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
@@ -31,6 +32,7 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
+import 'package:web3dart/web3dart.dart';
 
 import '../../../../config.dart';
 
@@ -565,7 +567,6 @@ class AtlasApi {
   }
 
   // 获取账户交易记录
-
   Future<List<HynTransferHistory>> getRewardTxsList(String walletAddress, {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/wallet/reward_txs",
@@ -592,9 +593,128 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  // 上传用户信息同步
+  // 同步用户信息
   static Future postUserSync(UserPayloadWithAddressEntity userPayload) async {
     return AtlasHttpCore.instance.post("/v1/wallet/user_sync",
         data: userPayload.toJson(), options: RequestOptions(contentType: "application/json"));
+  }
+
+  // 获取交易列表
+  Future<List<HynTransferHistory>> getTxsList(
+    String walletAddress, {
+    int page = 1,
+    int size = 10,
+    String atlasAddress = '',
+    String map3Address = '',
+    String order = '',
+    // 自定义： 1.pending；2.pending_for_receipt; 3.success;4.fail;5.dropped&replaced
+    List<int> status,
+    // 0一般转账；1创建atlas节点；2修改atlas节点；3参与atlas节点抵押；4撤销atlas节点抵押；5领取atlas奖励；6创建map3节点；7编辑map3节点；8撤销map3节点；9参与map3抵押；10撤销map3抵押；11领取map3奖励；12裂变map3节点；13重新激活Atlas
+    List<int> type,
+  }) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/wallet/txs",
+        EntityFactory<List<HynTransferHistory>>(
+            (json) => (json as List).map((item) => HynTransferHistory.fromJson(item)).toList()),
+        params: {
+          "address": walletAddress,
+          "atlas_address": atlasAddress,
+          "map3_address": map3Address,
+          "page": page,
+          "size": size,
+          "status": status,
+          "type": type,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  static Future<bool> checkLastTxIsPending(int type, {String map3Address = ''}) async {
+    try {
+      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var _wallet = activatedWallet?.wallet;
+      var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+        type: [type],
+        map3Address: map3Address,
+      );
+
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        // 已经过去30秒的话，可以执行后面操作
+        var lastTransaction = list.first;
+        var now = DateTime.now().millisecondsSinceEpoch;
+        var last = lastTransaction.timestamp * 1000;
+        var isOver30Seconds = (now - last) > (30 * 1000);
+        //print("my--->now:$now, last:$last, isOver30Seconds:$isOver30Seconds");
+        if (isOver30Seconds) {
+          isNotEmpty = false;
+        }
+      }
+
+      if (isNotEmpty) {
+        switch (type) {
+          case MessageType.typeTerminateMap3:
+            Fluttertoast.showToast(
+              msg: '终止请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeUnMicroDelegate:
+            Fluttertoast.showToast(
+              msg: '部分撤销请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeCollectMicroStakingRewards:
+            Fluttertoast.showToast(
+              msg: '提取请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeRenewMap3:
+            Fluttertoast.showToast(
+              msg: '续约请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case MessageType.typeEditMap3:
+            Fluttertoast.showToast(
+              msg: '编辑请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+        }
+      }
+
+      return isNotEmpty;
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+        msg: '未知错误，请稍后重试!',
+        gravity: ToastGravity.CENTER,
+      );
+      return false;
+    }
+  }
+
+  // 查询map3ID是否在
+  Future<bool> checkNodeIdExist(String nodeId, {String address = ''}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/node_id_exist",
+        EntityFactory<bool>(
+          (haveExist) => haveExist,
+        ),
+        params: {
+          "address": address,
+          "node_id": nodeId,
+        },
+        options: RequestOptions(contentType: "application/json"));
   }
 }

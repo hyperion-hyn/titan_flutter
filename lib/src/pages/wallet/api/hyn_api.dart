@@ -449,7 +449,7 @@ class HYNApi {
         * 如果是参与人， 设置true/false，展示： （下期预设，跟随续约/不跟随）
         * */
 
-        LogUtil.printMessage("transactionDetail?.dataDecoded:${dataDecoded}");
+        //LogUtil.printMessage("transactionDetail?.dataDecoded:${dataDecoded}");
 
         if (dataDecoded != null) {
           var map3NodeAddress = creatorAddress?.toLowerCase() ?? '';

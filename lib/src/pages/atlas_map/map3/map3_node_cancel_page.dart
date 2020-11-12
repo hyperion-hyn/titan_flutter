@@ -25,6 +25,7 @@ import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'package:web3dart/credentials.dart';
+import 'package:web3dart/web3dart.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -57,8 +58,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   Microdelegations _microdelegations;
   Map3IntroduceEntity _map3introduceEntity;
   AtlasApi _atlasApi = AtlasApi();
-  var _address = "string";
-  var _nodeId = "string";
+
+  get _nodeId => _map3infoEntity?.nodeId??'';
   var _walletName = "";
   var _walletAddress = "";
 
@@ -69,23 +70,23 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   @override
   void onCreated() {
-    var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
-    _address = _wallet.getAtlasAccount().address;
-    _nodeId = widget.map3infoEntity.nodeId;
 
-    print("_nodeId:${widget.map3infoEntity.toJson()}");
+    _setupData();
+
+    getNetworkData();
+
+    super.onCreated();
+  }
+
+  _setupData() {
+    _map3infoEntity = widget.map3infoEntity;
 
     var activatedWallet = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
     ).activatedWallet;
-
     _walletName = activatedWallet.wallet.keystore.name;
     _walletAddress = activatedWallet.wallet.getEthAccount().address;
-
-    getNetworkData();
-
-    super.onCreated();
   }
 
   @override
@@ -103,15 +104,14 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   Future getNetworkData() async {
     try {
-      var walletAddress = EthereumAddress.fromHex(_address);
+      var walletAddress = EthereumAddress.fromHex(_walletAddress);
       print("[${widget.runtimeType}] getNetworkData");
 
-      _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+      _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
 
-      if (_map3infoEntity.mine != null && (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
-        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-        print('map3: $map3Address wallet: $walletAddress');
-
+      var map3NodeAddress = (widget?.map3infoEntity?.address ?? "");
+      if (_map3infoEntity.mine != null && map3NodeAddress.isNotEmpty) {
+        var map3Address = EthereumAddress.fromHex(map3NodeAddress);
         _microdelegations = await _client.getMap3NodeDelegation(
           map3Address,
           walletAddress,
@@ -161,7 +161,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
 
     var walletAddressStr =
-        "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_address) ?? "***", limitLength: 9)}";
+        "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -321,7 +321,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                       }
                                       return null;
                                     },
-                                      /*
+                                    /*
                                     suffixIcon: InkWell(
                                       borderRadius: BorderRadius.circular(30),
                                       onTap: () {
@@ -458,32 +458,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
         child: Center(
           child: ClickOvalButton(
             S.of(context).confirm_cancel,
-            () {
-              if (!_formKey.currentState.validate()) {
-                return;
-              }
-
-              var amount = _textEditingController?.text;
-
-              var entity = PledgeMap3Entity(
-                  payload: Payload(
-                userIdentity: widget.map3infoEntity.nodeId,
-              ));
-
-              var message = ConfirmCancelMap3NodeMessage(
-                entity: entity,
-                map3NodeAddress: widget.map3infoEntity.address,
-                amount: amount,
-              );
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Map3NodeConfirmPage(
-                      message: message,
-                    ),
-                  ));
-            },
+            _confirmAction,
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
@@ -492,5 +467,46 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
         ),
       ),
     );
+  }
+
+  _confirmAction() async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    var map3NodeAddress = (_map3infoEntity?.address ?? "");
+
+    if (map3NodeAddress.isEmpty) {
+      return;
+    }
+
+    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+      MessageType.typeUnMicroDelegate,
+      map3Address: map3NodeAddress,
+    );
+    if (lastTxIsPending) {
+      return;
+    }
+
+    var amount = _textEditingController?.text;
+
+    var entity = PledgeMap3Entity(
+        payload: Payload(
+      userIdentity: '',
+    ));
+
+    var message = ConfirmCancelMap3NodeMessage(
+      entity: entity,
+      map3NodeAddress: map3NodeAddress,
+      amount: amount,
+    );
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Map3NodeConfirmPage(
+            message: message,
+          ),
+        ));
   }
 }

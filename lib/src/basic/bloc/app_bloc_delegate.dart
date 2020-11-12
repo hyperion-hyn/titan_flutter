@@ -10,7 +10,7 @@ class AppBlocDelegate extends BlocDelegate {
   void onEvent(Bloc bloc, Object event) {
     super.onEvent(bloc, event);
 
-    if (ReceivedDataEvent != event.runtimeType) {
+    if (![HeartEvent, ReceivedDataEvent].contains(event.runtimeType)) {
       print('onEvent ${event.toString()}');
     }
   }
@@ -18,7 +18,7 @@ class AppBlocDelegate extends BlocDelegate {
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
 
-    if (![ReceivedDataSuccessState, ChannelKLine24HourState, HeartSuccessState].contains(transition.currentState.runtimeType)) {
+    if (![ReceivedDataSuccessState, ChannelKLine24HourState, HeartSuccessState, HeartState].contains(transition.currentState.runtimeType)) {
       print(transition);
     }
   }

@@ -21,7 +21,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:web3dart/web3dart.dart';
-import '../../../../env.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_list_page.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -68,6 +67,8 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
+    getNetworkData();
   }
 
   @override
@@ -85,8 +86,6 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
     var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
     _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
-
-    getNetworkData();
   }
 
   @override
@@ -150,26 +149,12 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
   void getNetworkData() async {
     try {
       _rewardEntity = await _atlasApi.getRewardInfo(_address);
-      print("[my] _address:$_address");
+      print("[my] _address:$_address, _rewardEntity:${_rewardEntity.toJson()}");
 
-      _rewardMap = await client.getAllMap3RewardByDelegatorAddress(
+      var rewardMap = await client.getAllMap3RewardByDelegatorAddress(
         EthereumAddress.fromHex(_address),
       );
-
-      Decimal value = Decimal.parse('0');
-      if (_rewardMap?.values?.isNotEmpty ?? false) {
-        BigInt totalReward = BigInt.from(0);
-        for (var value in _rewardMap?.values) {
-          var source = value ?? "0";
-          var bigIntValue = BigInt.tryParse(source) ?? BigInt.from(0);
-          totalReward += bigIntValue;
-        }
-        value = ConvertTokenUnit.weiToEther(weiBigInt: totalReward);
-      }
-      print("[my] _rewardMap:$_rewardMap");
-
-      _balance = "${FormatUtil.formatPrice(value.toDouble() ?? 0)}";
-      _balanceValue = "${value.toDouble()}";
+      _dealData(rewardMap);
 
       if (mounted) {
         setState(() {
@@ -185,6 +170,25 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
         });
       }
     }
+  }
+
+  _dealData(Map<String, dynamic> rewardMap) {
+    _rewardMap = rewardMap;
+
+    Decimal value = Decimal.parse('0');
+    if (_rewardMap?.values?.isNotEmpty ?? false) {
+      BigInt totalReward = BigInt.from(0);
+      for (var value in _rewardMap?.values) {
+        var source = value ?? "0";
+        var bigIntValue = BigInt.tryParse(source) ?? BigInt.from(0);
+        totalReward += bigIntValue;
+      }
+      value = ConvertTokenUnit.weiToEther(weiBigInt: totalReward);
+    }
+    print("[my] _rewardMap:$_rewardMap");
+
+    _balance = "${FormatUtil.formatPrice(value.toDouble() ?? 0)}";
+    _balanceValue = "${value.toDouble()}";
   }
 
   _myProfitWidget() {
@@ -267,9 +271,7 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
                   padding: const EdgeInsets.only(top: 28, bottom: 25),
                   child: ClickOvalButton(
                     S.of(context).collect_reward,
-                    () {
-                      _showAlertView();
-                    },
+                    _confirmAction,
                     height: 32,
                     width: 160,
                   ),
@@ -329,18 +331,37 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> with TickerProviderStat
     );
   }
 
-  _showAlertView() {
+  _confirmAction() async {
     var count = _rewardMap?.values?.length ?? 0;
     if (count == 0) {
       Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
       return;
     }
 
-    var now = DateTime.now().millisecondsSinceEpoch;
-    var isOver6second = now - lastCollectDate > 6000;
-    //print("isOver6second1: $isOver6second, lastCollectDate:$lastCollectDate, now:$now");
-    if (!isOver6second) {
-      Fluttertoast.showToast(msg: '提取申请正处理中，请稍后再发起新的提取请求！');
+    try {
+      var rewardMap = await client.getAllMap3RewardByDelegatorAddress(
+        EthereumAddress.fromHex(_address),
+      );
+
+      if (rewardMap?.values?.isEmpty ?? true) {
+        setState(() {
+          _dealData(rewardMap);
+        });
+        Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
+        return;
+      } else {
+        var lastTxIsPending =
+            await AtlasApi.checkLastTxIsPending(MessageType.typeCollectMicroStakingRewards);
+        if (lastTxIsPending) {
+          return;
+        }
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+        msg: '未知错误，请稍后重试！',
+        gravity: ToastGravity.CENTER,
+      );
       return;
     }
 

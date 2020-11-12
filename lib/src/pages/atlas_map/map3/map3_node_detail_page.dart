@@ -14,6 +14,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -63,7 +64,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   final client = WalletUtil.getWeb3Client(true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
-  Map3InfoStatus _map3Status = Map3InfoStatus.CREATE_SUBMIT_ING;
+  get _map3Status => Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
+
   Map3InfoEntity _map3infoEntity;
   Map3NodeInformationEntity _map3nodeInformationEntity;
 
@@ -73,14 +75,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   int _currentPage = 0;
   List<HynTransferHistory> _delegateRecordList = [];
 
+  HynTransferHistory _lastPendingTx;
+
   var _address = "";
-  var _nodeId = "";
-  var _nodeAddress = "";
+
+  String get _nodeId => _map3infoEntity?.nodeId ?? '';
+
+  String get _nodeAddress => _map3infoEntity?.address ?? '';
 
   NodeProviderEntity _selectProviderEntity;
   Regions _selectedRegion;
   var _haveShowedAlertView = false;
   Map3IntroduceEntity _map3introduceEntity;
+
+  bool _isLoading = false;
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
@@ -91,23 +99,63 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get isHiddenRenew => (statusCreator == 1 && _isDelegator && !_isCreator);
 
   get _notifyMessage {
+    _clearLastPendingTx();
+
+    if (_isLoading) {
+      return '数据加载中...';
+    }
+
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
           return "抵押已满$startMinValue，将在下个纪元启动……";
+        } else {
+          if (_isDelegator && _lastPendingTx != null) {
+            var type = _lastPendingTx.type;
+            switch (type) {
+              case MessageType.typeTerminateMap3:
+                return '终止请求正处理中...';
+                break;
+
+              case MessageType.typeUnMicroDelegate:
+                return '部分撤销请求正处理中...';
+                break;
+
+              case MessageType.typeEditMap3:
+                return '编辑请求正处理中...';
+                break;
+            }
+          }
         }
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
         //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
-        if (_currentEpoch <= (_releaseEpoch +1)) {
+        if (_currentEpoch <= (_releaseEpoch + 1)) {
           return "节点已到期，将在下个纪元结算……";
         }
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         if (_isDelegator) {
+          if (_lastPendingTx != null) {
+            var type = _lastPendingTx.type;
+            switch (type) {
+              case MessageType.typeCollectMicroStakingRewards:
+                return '提取请求正处理中...';
+                break;
+
+              case MessageType.typeRenewMap3:
+                return '续约请求正处理中...';
+                break;
+
+              case MessageType.typeEditMap3:
+                return '编辑请求正处理中...';
+                break;
+            }
+          }
+
           if (_map3infoEntity.atlas == null) {
             return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
           }
@@ -159,6 +207,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
   var _currentEpoch = 0;
+  var _currentBlockHeight = 0;
+
   // 到期纪元
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
@@ -184,7 +234,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     //  创建者
     if (_isCreator) {
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
-      LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
+      //LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
 
       if (isInActionPeriodCreator && statusCreator == 0) {
         //在可编辑时间内，且未修改过
@@ -195,7 +245,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     // 参与者
     var isInActionPeriodJoiner = _currentEpoch > periodEpoch7 && _currentEpoch <= _releaseEpoch;
-    LogUtil.printMessage("[statusJoiner] statusJoiner:$statusJoiner, statusCreator:$statusCreator");
+    //LogUtil.printMessage("[statusJoiner] statusJoiner:$statusJoiner, statusCreator:$statusCreator");
 
     if (_isDelegator) {
       var isCreatorSetOpen = statusCreator == 2; //创建人已开启
@@ -218,7 +268,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _canEditNode =>
       _isCreator &&
-      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS && _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT && _map3Status != Map3InfoStatus.CREATE_SUBMIT_ING);
+      (_map3Status != Map3InfoStatus.CANCEL_NODE_SUCCESS &&
+          _map3Status != Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT &&
+          _map3Status != Map3InfoStatus.CREATE_SUBMIT_ING);
 
   /*
   角色分析：
@@ -418,20 +470,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void onCreated() {
     super.onCreated();
 
-    _loadDetailData();
+    _loadLastData();
   }
 
   _setupData() async {
     _map3infoEntity = widget.map3infoEntity;
 
-    _nodeId = _map3infoEntity?.nodeId ?? "";
-    _nodeAddress = _map3infoEntity?.address ?? "";
-    _map3Status = Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
-
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
     _address = _wallet?.getEthAccount()?.address ?? "";
 
     _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+
+    if (_nodeAddress.isNotEmpty) {
+      print("[Map3Detail] --> _nodeAddress:$_nodeAddress");
+
+      _isLoading = true;
+
+      setState(() {
+        _currentState = null;
+        _loadDataBloc.add(RefreshSuccessEvent());
+      });
+    }
   }
 
   _showEditPreNextAlert() {
@@ -494,7 +553,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   Widget build(BuildContext context) {
     _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
-    LogUtil.printMessage("_currentEpoch: $_currentEpoch");
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockHeight ?? 0;
+
+    LogUtil.printMessage("[Map3NodeDetail] _currentEpoch: $_currentEpoch");
 
     List<Widget> actions = [];
 
@@ -508,6 +569,20 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       tooltip: S.of(context).share,
       onPressed: _shareAction,
     );
+
+    if (_isDelegator && _lastPendingTx != null) {
+      _loadTxData();
+
+      switch (_lastPendingTx.type) {
+        case MessageType.typeEditMap3:
+          _loadDetailData();
+          break;
+
+        case MessageType.typeRenewMap3:
+          _loadDetailDataInAtlas();
+          break;
+      }
+    }
 
     if (_canExit) {
       actions = [
@@ -549,7 +624,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         body: AllPageStateContainer(_currentState, () {
           setState(() {
             _currentState = all_page_state.LoadingState();
-            _loadDetailData();
+            _loadLastData();
           });
         }),
       );
@@ -563,7 +638,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               bloc: _loadDataBloc,
               //enablePullDown: false,
               enablePullUp: _nodeAddress.isNotEmpty,
-              onRefresh: _loadDetailData,
+              onRefresh: _loadLastData,
               onLoadingMore: _loadMoreData,
               child: CustomScrollView(
                 //physics: AlwaysScrollableScrollPhysics(),
@@ -727,7 +802,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
-
         children = <Widget>[
           Spacer(),
           ClickOvalButton(
@@ -778,21 +852,35 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       return Container();
     }
 
-    var bgColor = (_isRunning)
-        ? HexColor("#FF4C3B")
-        : HexColor("#1FB9C7").withOpacity(0.08);
+    var bgColor = (_isRunning) ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
     var contentColor = (_isRunning) ? HexColor("#FFFFFF") : HexColor("#333333");
+
+    if (_lastPendingTx != null) {
+      bgColor = HexColor("#1FB9C7").withOpacity(0.08);
+      contentColor = HexColor("#333333");
+    }
     return Container(
       color: bgColor,
       padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
       child: Row(
         children: <Widget>[
-          Image.asset(
-            "res/drawable/volume.png",
-            width: 15,
-            height: 14,
-            color: contentColor,
-          ),
+          _isLoading
+              ? SizedBox(
+                  width: 12,
+                  height: 12,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).primaryColor,
+                    ),
+                    strokeWidth: 1.5,
+                  ),
+                )
+              : Image.asset(
+                  "res/drawable/volume.png",
+                  width: 15,
+                  height: 14,
+                  color: contentColor,
+                ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -824,9 +912,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
         ? "大家快来参与我的节点吧，人帅靠谱，光干活不说话，奖励稳定，服务周到！"
         : _map3infoEntity.describe;
 
-
-    var lsss = WalletUtil.bech32ToEthAddress('hyn13ewafrn7523k05p5csqkzl4k0yv0ckql9flj7s');
-    print("lessss: $lsss");
+    // var lsss = WalletUtil.bech32ToEthAddress('hyn13ewafrn7523k05p5csqkzl4k0yv0ckql9flj7s');
+    // print("lessss: $lsss");
 
     return Container(
       decoration: BoxDecoration(
@@ -1823,49 +1910,21 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  Future _loadDetailData() async {
-    _currentPage = 1;
-
+  Future _loadLastData() async {
     try {
-      var requestList = await Future.wait([
-        _atlasApi.getMap3Info(_address, _nodeId),
-        _nodeApi.getNodeProviderList(),
-      ]);
+      await _loadDetailData();
 
-      _map3infoEntity = requestList[0];
-      _map3Status = Map3InfoStatus.values[_map3infoEntity.status];
+      await _loadDetailDataInAtlas();
 
-      if (_map3infoEntity != null && (_map3infoEntity?.address?.isNotEmpty ?? false)) {
-        _nodeAddress = _map3infoEntity.address;
+      _loadProviderData();
 
-        var map3Address = EthereumAddress.fromHex(_nodeAddress);
-        _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
-        /*for (Microdelegations item in _map3nodeInformationEntity?.microdelegations ?? []) {
-          print("[_loadDetailData] --> microdelegations.renew:${item.renewal.toJson()}");
-        }*/
+      _loadTxData();
 
-        _setupMicroDelegations();
+      _loadLastPendingTxData();
 
-        List<HynTransferHistory> tempMemberList =
-            await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
-        _delegateRecordList = tempMemberList;
-      }
-
-      var providerList = requestList[1] as List;
-      if (providerList.isNotEmpty) {
-        _selectProviderEntity = providerList[0];
-
-        for (var region in _selectProviderEntity.regions) {
-          if (region.id == _map3infoEntity.region) {
-            _selectedRegion = region;
-            break;
-          }
-        }
-      }
-
-      // 3.
       if (mounted) {
         setState(() {
+          _isLoading = false;
           _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
@@ -1887,8 +1946,41 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  _setupMicroDelegations() {
-    //LogUtil.printMessage("[object] --> micro:${_map3nodeInformationEntity != null}");
+  _loadDetailData() async {
+    _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+
+    if (mounted && _map3infoEntity != null) {
+      setState(() {});
+    }
+  }
+
+  _loadProviderData() async {
+    if (_map3infoEntity == null) return;
+
+    var providerList = await _nodeApi.getNodeProviderList();
+    if (providerList.isNotEmpty) {
+      _selectProviderEntity = providerList[0];
+
+      for (var region in _selectProviderEntity.regions) {
+        if (region.id == _map3infoEntity?.region ?? '') {
+          _selectedRegion = region;
+          break;
+        }
+      }
+
+      if (mounted && _selectedRegion != null) {
+        setState(() {});
+      }
+    }
+  }
+
+  _loadDetailDataInAtlas() async {
+    if (_nodeAddress.isEmpty) {
+      return;
+    }
+
+    var map3Address = EthereumAddress.fromHex(_nodeAddress);
+    _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
 
     if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
       //LogUtil.printMessage("[object] --> 1micro.length:${_map3nodeInformationEntity?.microdelegations?.length ?? 0}");
@@ -1916,6 +2008,62 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           //LogUtil.printMessage("[object] --> joiner.reward:${_microDelegationsJoiner.renewal.toJson()}");
         }
       }
+    }
+  }
+
+  _loadTxData() async {
+    if (_nodeAddress.isEmpty) {
+      return;
+    }
+
+    _currentPage = 1;
+    List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
+      _nodeAddress,
+      page: _currentPage,
+    );
+
+    if (mounted) {
+      setState(() {
+        _delegateRecordList = tempMemberList;
+      });
+    }
+  }
+
+  _loadLastPendingTxData() async {
+    if (!_isDelegator) {
+      return;
+    }
+
+    if (_nodeAddress.isEmpty || _address.isEmpty) {
+      return;
+    }
+
+    List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
+      _address,
+      map3Address: _nodeAddress,
+      status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+    );
+    if (pendingList?.isNotEmpty ?? false) {
+      _lastPendingTx = pendingList.first;
+      _clearLastPendingTx();
+    }
+
+    if (mounted && _lastPendingTx != null) {
+      setState(() {});
+    }
+  }
+
+  _clearLastPendingTx() {
+    if (_lastPendingTx == null) return;
+
+    var now = DateTime.now().millisecondsSinceEpoch;
+    var last = _lastPendingTx.timestamp * 1000;
+    var isOver6Seconds = (now - last) > (10 * 1000);
+    print(
+        "[Map3Detail] _clearLastPendingTx, now:$now, last:$last, over:${(now - last)},  isOver6Seconds:$isOver6Seconds");
+
+    if (isOver6Seconds) {
+      _lastPendingTx = null;
     }
   }
 
@@ -2029,7 +2177,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  var _haveEditNext = false;
   void _preNextAction() async {
     if (!_canEditNextPeriod) return;
 
@@ -2074,10 +2221,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void _nextAction({Map3NodeActionEvent action = Map3NodeActionEvent.MAP3_CREATE}) {
     final result = ModalRoute.of(context).settings?.arguments;
 
-    LogUtil.printMessage("[detail] _next action, result:$result");
+    LogUtil.printMessage("[Map3NodeDetail] _next action, result:$result");
 
     if (result != null && result is Map && result["result"] is bool) {
-      _loadDetailData();
+      _loadLastData();
     }
   }
 }

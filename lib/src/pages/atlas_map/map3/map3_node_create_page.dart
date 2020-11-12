@@ -45,7 +45,7 @@ class Map3NodeCreatePage extends StatefulWidget {
 
 class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBindingObserver {
   TextEditingController _inputTextController = new TextEditingController();
-  TextEditingController _rateCoinController = new TextEditingController();
+  //TextEditingController _rateCoinController = new TextEditingController();
 
   final _inputFormKey = GlobalKey<FormState>();
   AllPageState _currentState = LoadingState();
@@ -63,10 +63,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   List<DropdownMenuItem> _nodeList;
   List<NodeProviderEntity> _providerList = [];
   String _originInputStr = "";
-  double _currentFeeRate = 10;
-  double _maxFeeRate = 100;
-  double _minFeeRate = 0;
-  double _avgFeeRate = 0;
+  // double _currentFeeRate = 10;
+  // double _maxFeeRate = 100;
+  // double _minFeeRate = 0;
+  // double _avgFeeRate = 0;
   double _fixedFeeRate = 0;
 
   CreateMap3Payload _payload = CreateMap3Payload.onlyNodeId("ABC");
@@ -488,20 +488,35 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
   void _confirmAction() async {
     if (!_inputFormKey.currentState.validate()) {
       Fluttertoast.showToast(msg: S.of(context).please_input_hyn_count);
-
       return;
     }
 
+    // 节点名称
     if (_detailList[0].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[0]);
       return;
     }
 
+    // 节点id
     if (_detailList[1].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[1]);
       return;
     }
 
+    try {
+      var nodeId = _detailList[1];
+
+      var haveExist = await _atlasApi.checkNodeIdExist(nodeId);
+      if (haveExist) {
+        Fluttertoast.showToast(msg: '节点号已存在，请输入其他节点号');
+        return;
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: '未知错误，请稍后重试！');
+      return;
+    }
+
+    // 安全联系
     if (_detailList[2].isEmpty) {
       Fluttertoast.showToast(msg: _hintList[2]);
       return;
@@ -610,11 +625,10 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _blsKeySignEntity = requestList[2];
       _reCreateList = requestList[3];
 
-      _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "100");
-      _minFeeRate = 100 * double.parse(_introduceEntity?.feeMin ?? "0");
-      _avgFeeRate = 100 * double.parse(_introduceEntity?.feeAvg ?? "0");
+      // _maxFeeRate = 100 * double.parse(_introduceEntity?.feeMax ?? "100");
+      // _minFeeRate = 100 * double.parse(_introduceEntity?.feeMin ?? "0");
+      // _avgFeeRate = 100 * double.parse(_introduceEntity?.feeAvg ?? "0");
       _fixedFeeRate = 100 * double.parse(_introduceEntity?.feeFixed ?? "0");
-
 
       selectNodeProvider(0, 0);
 
