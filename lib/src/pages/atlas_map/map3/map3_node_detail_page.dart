@@ -40,7 +40,6 @@ import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:web3dart/web3dart.dart';
-import '../../../../env.dart';
 import '../../../global.dart';
 import 'map3_node_create_wallet_page.dart';
 import 'map3_node_public_widget.dart';
@@ -470,7 +469,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   void onCreated() {
     super.onCreated();
 
-    _loadLastData();
+    _refreshData();
   }
 
   _setupData() async {
@@ -619,6 +618,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   /// TODO:Widget
   Widget _pageWidget(BuildContext context) {
+    /*
     if (_currentState != null || _map3infoEntity == null) {
       return Scaffold(
         body: AllPageStateContainer(_currentState, () {
@@ -628,7 +628,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
           });
         }),
       );
-    }
+    }*/
 
     return Column(
       children: <Widget>[
@@ -638,7 +638,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               bloc: _loadDataBloc,
               //enablePullDown: false,
               enablePullUp: _nodeAddress.isNotEmpty,
-              onRefresh: _loadLastData,
+              onRefresh: _refreshData,
               onLoadingMore: _loadMoreData,
               child: CustomScrollView(
                 //physics: AlwaysScrollableScrollPhysics(),
@@ -1910,7 +1910,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
-  Future _loadLastData() async {
+  Future _refreshData() async {
     try {
       await _loadDetailData();
 
@@ -2224,7 +2224,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     LogUtil.printMessage("[Map3NodeDetail] _next action, result:$result");
 
     if (result != null && result is Map && result["result"] is bool) {
-      _loadLastData();
+      _refreshData();
     }
   }
 }
