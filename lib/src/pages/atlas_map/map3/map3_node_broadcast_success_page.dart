@@ -1,17 +1,12 @@
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
-import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
-
-import '../../../../env.dart';
 
 class Map3NodeBroadcastSuccessPage extends StatefulWidget {
   final Map3NodeActionEvent actionEvent;
@@ -70,7 +65,6 @@ class _Map3NodeBroadcastSuccessState extends State<Map3NodeBroadcastSuccessPage>
 
       case Map3NodeActionEvent.MAP3_COLLECT:
         action = S.of(context).action_map3_collect;
-        lastCollectDate = DateTime.now().millisecondsSinceEpoch;
         break;
 
       case Map3NodeActionEvent.MAP3_CANCEL:
