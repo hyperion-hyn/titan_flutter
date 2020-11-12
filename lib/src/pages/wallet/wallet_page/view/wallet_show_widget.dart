@@ -10,6 +10,8 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
+import 'package:titan/src/pages/atlas_map/widget/hyn_burn_banner.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
@@ -97,9 +99,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Material(
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 elevation: 10,
                 child: Container(
@@ -147,15 +147,15 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                               },
                               child: _isShowBalances
                                   ? Image.asset(
-                                'res/drawable/ic_wallet_show_balances.png',
-                                height: 20,
-                                width: 20,
-                              )
+                                      'res/drawable/ic_wallet_show_balances.png',
+                                      height: 20,
+                                      width: 20,
+                                    )
                                   : Image.asset(
-                                'res/drawable/ic_wallet_hide_balances.png',
-                                height: 20,
-                                width: 20,
-                              ),
+                                      'res/drawable/ic_wallet_hide_balances.png',
+                                      height: 20,
+                                      width: 20,
+                                    ),
                             )
                           ],
                         ),
@@ -209,7 +209,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];
                       var coinVoJsonStr =
-                      FluroConvertUtils.object2string(coinVo.toJson());
+                          FluroConvertUtils.object2string(coinVo.toJson());
                       Application.router.navigateTo(
                           context,
                           Routes.wallet_account_detail +
@@ -226,9 +226,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             Wrap(
               children: [
                 Text(
-                  S
-                      .of(context)
-                      .atlas_mapping_completed,
+                  S.of(context).atlas_mapping_completed,
                   style: TextStyle(fontSize: 12, color: DefaultColors.color999),
                 ),
                 SizedBox(
@@ -240,9 +238,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                         MaterialPageRoute(builder: (context) => AboutMePage()));
                   },
                   child: Text(
-                    S
-                        .of(context)
-                        .contact_us,
+                    S.of(context).contact_us,
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.blue,
@@ -251,7 +247,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 ),
               ],
             ),
-
+            SizedBox(
+              height: 16,
+            ),
+            HynBurnBanner(),
             if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
     );
@@ -271,9 +270,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 6),
                 child: Text(
-                  S
-                      .of(context)
-                      .exchange_main_block_hyn,
+                  S.of(context).exchange_main_block_hyn,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               ),
@@ -307,9 +304,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 6),
                 child: Text(
-                  S
-                      .of(context)
-                      .exchange_main_block_hyn,
+                  S.of(context).exchange_main_block_hyn,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               ),
@@ -375,9 +370,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               Padding(
                 padding: const EdgeInsets.only(left: 10, right: 16),
                 child: Text(
-                  S
-                      .of(context)
-                      .activate_btc,
+                  S.of(context).activate_btc,
                   style: TextStyle(fontSize: 14, color: HexColor("#1F81FF")),
                 ),
               )
@@ -402,27 +395,20 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           RaisedButton(
             child: Text('-测试申请0.05ETH'),
             onPressed: () async {
-              var time = DateTime
-                  .now()
-                  .millisecondsSinceEpoch;
+              var time = DateTime.now().millisecondsSinceEpoch;
               if (time - _lastRequestCoinTime < 60 * 1000) {
                 //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
               var activeWallet =
-                  WalletInheritedModel
-                      .of(context)
-                      .activatedWallet
-                      ?.wallet;
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-              await client.credentialsFromPrivateKey(privateKey);
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
-                var toAddress = activeWallet
-                    .getEthAccount()
-                    .address;
+                var toAddress = activeWallet.getEthAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 0.05);
                 var txHash = await client.sendTransaction(
                   credentials,
@@ -432,16 +418,13 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     gasPrice: EtherAmount.inWei(
                         BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
 //                    maxGas: EthereumConst.ETH_TRANSFER_GAS_LIMIT,
-                    maxGas: SettingInheritedModel
-                        .ofConfig(context)
+                    maxGas: SettingInheritedModel.ofConfig(context)
                         .systemConfigEntity
                         .ethTransferGasLimit,
                   ),
                   fetchChainIdFromNetworkId: true,
                 );
-                _lastRequestCoinTime = DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
+                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                 logger.i('has is $txHash');
                 UiUtil.toast('-申请ETH成功,请等待2-5分钟');
               }
@@ -450,32 +433,25 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           RaisedButton(
             child: Text('-测试申请20万HYN'),
             onPressed: () async {
-              var time = DateTime
-                  .now()
-                  .millisecondsSinceEpoch;
+              var time = DateTime.now().millisecondsSinceEpoch;
               if (time - _lastRequestCoinTime < 60 * 1000) {
                 //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
               var activeWallet =
-                  WalletInheritedModel
-                      .of(context)
-                      .activatedWallet
-                      ?.wallet;
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-              await client.credentialsFromPrivateKey(privateKey);
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
-                var toAddress = activeWallet
-                    .getEthAccount()
-                    .address;
+                var toAddress = activeWallet.getEthAccount().address;
 
                 var hynErc20Contract = WalletUtil.getHynErc20Contract(
                     ContractTestConfig.hynContractAddress);
                 var hynAmount =
-                ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
+                    ConvertTokenUnit.etherToWei(etherDouble: 600000); //二十万
                 var txHash = await client.sendTransaction(
                   credentials,
                   Transaction.callContract(
@@ -484,8 +460,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     parameters: [EthereumAddress.fromHex(toAddress), hynAmount],
                     gasPrice: EtherAmount.inWei(
                         BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel
-                        .ofConfig(context)
+                    maxGas: SettingInheritedModel.ofConfig(context)
                         .systemConfigEntity
                         .erc20TransferGasLimit,
                   ),
@@ -493,9 +468,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 );
                 logger.i('has is $txHash');
 
-                _lastRequestCoinTime = DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
+                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                 UiUtil.toast('-申请HYN成功, 请等待2-5分钟');
               }
             },
@@ -503,27 +476,20 @@ class _ShowWalletViewState extends State<ShowWalletView> {
           RaisedButton(
             child: Text('-测试申请100USDT'),
             onPressed: () async {
-              var time = DateTime
-                  .now()
-                  .millisecondsSinceEpoch;
+              var time = DateTime.now().millisecondsSinceEpoch;
               if (time - _lastRequestCoinTime < 60 * 1000) {
                 //1分钟
                 UiUtil.toast('-请等待1分钟以上再申请转账');
                 return;
               }
               var activeWallet =
-                  WalletInheritedModel
-                      .of(context)
-                      .activatedWallet
-                      ?.wallet;
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client();
               String privateKey = ContractTestConfig.privateKey;
               final credentials =
-              await client.credentialsFromPrivateKey(privateKey);
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
-                var toAddress = activeWallet
-                    .getEthAccount()
-                    .address;
+                var toAddress = activeWallet.getEthAccount().address;
 
                 var erc20Contract = WalletUtil.getHynErc20Contract(
                     ContractTestConfig.usdtContractAddress);
@@ -537,8 +503,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     parameters: [EthereumAddress.fromHex(toAddress), amount],
                     gasPrice: EtherAmount.inWei(
                         BigInt.from(EthereumConst.SUPER_FAST_SPEED)),
-                    maxGas: SettingInheritedModel
-                        .ofConfig(context)
+                    maxGas: SettingInheritedModel.ofConfig(context)
                         .systemConfigEntity
                         .erc20TransferGasLimit,
                   ),
@@ -546,9 +511,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                 );
                 logger.i('has is $txHash');
 
-                _lastRequestCoinTime = DateTime
-                    .now()
-                    .millisecondsSinceEpoch;
+                _lastRequestCoinTime = DateTime.now().millisecondsSinceEpoch;
                 UiUtil.toast('-申请USDT成功, 请等待2-5分钟');
               }
             },
@@ -567,7 +530,8 @@ class _ShowWalletViewState extends State<ShowWalletView> {
 
   Widget _buildAccountItem(BuildContext context, CoinVo coin) {
     var symbol = coin.symbol;
-    var symbolQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
+    var symbolQuote =
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
     var subSymbol = "";
 
     if (coin.coinType == CoinType.HYN_ATLAS) {
@@ -626,8 +590,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(
-                            symbolQuote?.quoteVo?.price ?? 0.0)}",
+                        "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
@@ -659,8 +622,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Text(
                       _isShowBalances
-                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(
-                          FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
+                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
                           : '${symbolQuote?.sign?.sign ?? ''} *****',
                       style: TextStyles.textC9b9b9bS12,
                     ),
@@ -722,19 +684,14 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('-测试申请55万主链HYN'),
             onPressed: () async {
               var activeWallet =
-                  WalletInheritedModel
-                      .of(context)
-                      .activatedWallet
-                      ?.wallet;
+                  WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client(true);
               String privateKey =
                   "0x80dd5684b4c5a7218cd97415ec652ed1f11b5b0734f46985b8ed15d3fe91fd33";
               final credentials =
-              await client.credentialsFromPrivateKey(privateKey);
+                  await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
-                var toAddress = activeWallet
-                    .getAtlasAccount()
-                    .address;
+                var toAddress = activeWallet.getAtlasAccount().address;
                 var amount = ConvertTokenUnit.etherToWei(etherDouble: 550000);
                 var txHash = await client.sendTransaction(
                   credentials,
@@ -757,22 +714,25 @@ class _ShowWalletViewState extends State<ShowWalletView> {
             child: Text('-一键回收主链HYN'),
             onPressed: () async {
               var activeWallet =
-                  WalletInheritedModel
-                      .of(context)
-                      .activatedWallet;
+                  WalletInheritedModel.of(context).activatedWallet;
               if (activeWallet != null) {
-                var balance = await activeWallet.wallet.getBalance(activeWallet.wallet.getAtlasAccount());
-                if(balance <= BigInt.from(5 * TokenUnit.ETHER)){
+                var balance = await activeWallet.wallet
+                    .getBalance(activeWallet.wallet.getAtlasAccount());
+                if (balance <= BigInt.from(5 * TokenUnit.ETHER)) {
                   return;
                 }
                 balance = balance - BigInt.from(5 * TokenUnit.ETHER);
-                var password = await UiUtil.showWalletPasswordDialogV2(context, activeWallet.wallet);
+                var password = await UiUtil.showWalletPasswordDialogV2(
+                    context, activeWallet.wallet);
                 if (password == null) {
                   return;
                 }
                 var txHash = await HYNApi.sendTransferHYN(
-                  password, activeWallet.wallet, toAddress: "0x5c24A14B797A01BCc8eD74092c31794dDD80FB44",
-                  amount: balance,);
+                  password,
+                  activeWallet.wallet,
+                  toAddress: "0x5c24A14B797A01BCc8eD74092c31794dDD80FB44",
+                  amount: balance,
+                );
                 logger.i('has is $txHash');
                 UiUtil.toast('-回收HYN成功,请等待6秒');
               }

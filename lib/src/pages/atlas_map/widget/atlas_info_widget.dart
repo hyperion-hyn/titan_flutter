@@ -96,7 +96,8 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     ),
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                },
               )
             ],
           ),
