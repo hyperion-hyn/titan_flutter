@@ -29,6 +29,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart'
     as all_page_state;
 import 'package:titan/src/widget/wallet_widget.dart';
+import 'package:web3dart/web3dart.dart';
 
 class AtlasStakeSelectPage extends StatefulWidget {
   final AtlasInfoEntity _atlasInfoEntity;
@@ -238,6 +239,16 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
       child: ClickOvalButton(
         S.of(context).confirm,
         () async {
+          var map3Address = widget.myMap3List[_selectedMap3NodeValue].address;
+          var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+            MessageType.typeReDelegate,
+            map3Address: map3Address,
+            atlasAddress: widget._atlasInfoEntity.address,
+          );
+          if (lastTxIsPending) {
+            return;
+          }
+
           AtlasMessage message = ConfirmAtlasStakeMessage(
             nodeName: widget._atlasInfoEntity.name,
             nodeId: widget._atlasInfoEntity.nodeId,

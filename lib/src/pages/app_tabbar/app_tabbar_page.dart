@@ -107,12 +107,15 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
+    Future.delayed(Duration(milliseconds: 1000)).then((value) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+    });
+
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       //print('[home] --> check new announcement');
       BlocProvider.of<AppTabBarBloc>(context).add(CheckNewAnnouncementEvent());
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
     });
 
     _clearBadgeSubcription = Application.eventBus.on().listen((event) {

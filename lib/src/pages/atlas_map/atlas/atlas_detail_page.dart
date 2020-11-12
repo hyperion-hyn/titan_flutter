@@ -504,12 +504,21 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                             ),
                             ClickOvalButton(
                               S.of(context).receive,
-                              () {
-                                var entity = PledgeAtlasEntity.emptyEntity();
+                              () async {
+                                var map3Address = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address;
+                                var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+                                  MessageType.typeCollectReStakingReward,
+                                  map3Address: map3Address,
+                                  atlasAddress: widget.atlasNodeAddress,
+                                );
+                                if (lastTxIsPending) {
+                                  return;
+                                }
+
                                 AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
                                   nodeName: _atlasInfoEntity.name,
                                   nodeId: _atlasInfoEntity.nodeId,
-                                  map3Address: _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address,
+                                  map3Address: map3Address,
                                   atlasAddress: widget.atlasNodeAddress,
                                 );
                                 Navigator.push(
@@ -969,8 +978,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       ),
                       ClickOvalButton(
                         S.of(context).confirm,
-                        () {
-                          _cancelAction();
+                        () async {
+                          await _cancelAction();
                         },
                         width: 120,
                         height: 38,
@@ -1013,7 +1022,17 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     }
   }
 
-  _cancelAction() {
+  Future _cancelAction() async {
+    var map3Address = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address;
+    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+      MessageType.typeUnReDelegate,
+      map3Address: map3Address,
+      atlasAddress: widget.atlasNodeAddress,
+    );
+    if (lastTxIsPending) {
+      return;
+    }
+
     AtlasMessage message = ConfirmAtlasUnStakeMessage(
       nodeName: _atlasInfoEntity.name,
       nodeId: _atlasInfoEntity.nodeId,

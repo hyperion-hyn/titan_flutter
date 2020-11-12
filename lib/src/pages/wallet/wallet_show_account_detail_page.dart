@@ -65,6 +65,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   @override
   void onCreated() async {
     print("[widget.isContain] ${widget.isContain}");
+    var toAddressTitle = S.of(context).tx_to_address + " ${HYNApi.toAddressHint(widget.transactionDetail.hynType)}";
 
     if (widget.isContain) {
       _dataTitleList = [
@@ -74,7 +75,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         "${S.of(context).tx_block}:",
         "${S.of(context).tx_time}:",
         "${S.of(context).tx_from_address}:",
-        "${S.of(context).tx_to_address}:",
+        "$toAddressTitle:",
         "${S.of(context).tx_to_address}（原以太链0X开头）:",
         "${S.of(context).tx_amount}:",
         "${S.of(context).transfer_gas_fee}:",
@@ -94,7 +95,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         "${S.of(context).tx_block}:",
         "${S.of(context).tx_time}:",
         "${S.of(context).tx_from_address}:",
-        "${S.of(context).tx_to_address}:",
+        "$toAddressTitle:",
         "${S.of(context).tx_amount}:",
         "${S.of(context).transfer_gas_fee}:",
         "Gas Price:",

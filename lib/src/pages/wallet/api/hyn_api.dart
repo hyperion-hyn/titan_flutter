@@ -418,6 +418,7 @@ class HYNApi {
         typeStr = S.of(context).msg_edit_map3;
         break;
       case MessageType.typeTerminateMap3:
+        //amount is zero
         typeStr = S.of(context).msg_terminate_map3;
         String value = getDecodedAmount(transactionDetail);
         amountStr = "${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
@@ -496,6 +497,28 @@ class HYNApi {
     } else {
       return "";
     }
+  }
+
+  static String toAddressHint(int hynMessageType){
+    switch (hynMessageType) {
+      case MessageType.typeNormal:
+        return "";
+      case MessageType.typeCreateMap3:
+      case MessageType.typeEditMap3:
+      case MessageType.typeTerminateMap3:
+      case MessageType.typeMicroDelegate:
+      case MessageType.typeUnMicroDelegate:
+      case MessageType.typeCollectMicroStakingRewards:
+      case MessageType.typeRenewMap3:
+        return "(Map3)";
+      case MessageType.typeCreateValidator:
+      case MessageType.typeEditValidator:
+      case MessageType.typeReDelegate:
+      case MessageType.typeUnReDelegate:
+      case MessageType.typeCollectReStakingReward:
+        return "(Atlas)";
+    }
+    return "";
   }
 
   static String getDecodedAmount(TransactionDetailVo transactionDetail) {
