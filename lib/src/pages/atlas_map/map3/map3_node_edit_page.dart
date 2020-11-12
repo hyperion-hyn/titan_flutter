@@ -5,6 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
@@ -14,9 +17,14 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:web3dart/web3dart.dart';
+import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 
 class Map3NodeEditPage extends StatefulWidget {
   final Map3InfoEntity map3InfoEntity;
@@ -46,9 +54,16 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
 
   Map3IntroduceEntity _map3introduceEntity;
   CreateMap3Payload _payload = CreateMap3Payload.onlyEditType(editType: 1);
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  Map3InfoEntity _map3InfoEntity;
+  get _nodeId => _map3InfoEntity?.nodeId ?? '';
+  var _walletAddress = "";
+  AtlasApi _atlasApi = AtlasApi();
+  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   @override
   void initState() {
+
     _setupData();
 
     super.initState();
@@ -57,7 +72,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   /*
   _setupPayload() async {
     print("[dd0] payload.toJson():${widget.map3InfoEntity.toJson()}");
-    
+
     // payload.name = widget.entity.name;
     // payload.nodeId = widget.entity.nodeId;
     // payload.home = widget.entity.home;
@@ -76,7 +91,27 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   */
 
   _setupData() async {
-    var entity = widget.map3InfoEntity;
+    _map3InfoEntity = widget.map3InfoEntity;
+
+    _setupWalletData();
+
+    _setupDetailList();
+
+    getNetworkData();
+  }
+
+  _setupWalletData() {
+    var activatedWallet = WalletInheritedModel.of(
+      Keys.rootKey.currentContext,
+      aspect: WalletAspect.activatedWallet,
+    ).activatedWallet;
+    _walletAddress = activatedWallet.wallet.getEthAccount().address;
+  }
+
+  _setupDetailList() {
+    var entity = _map3InfoEntity;
+
+    if (entity == null) return;
 
     if (entity.nodeId?.isNotEmpty ?? false) {
       _detailList[0] = entity.nodeId;
@@ -97,14 +132,31 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     if (entity.describe?.isNotEmpty ?? false) {
       _detailList[4] = entity.describe;
     }
-
-    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
-    setState(() {});
   }
 
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
+  Future getNetworkData() async {
+    try {
+      _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+      _map3InfoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
+
+      _setupDetailList();
+
+      if (mounted) {
+        setState(() {
+          _currentState = null;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _currentState = all_page_state.LoadFailState();
+        });
+      }
+    }
   }
 
   @override
@@ -118,22 +170,32 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Widget _pageView(BuildContext context) {
+    if (_currentState != null || _map3InfoEntity == null) {
+      return AllPageStateContainer(_currentState, () {
+        setState(() {
+          _currentState = all_page_state.LoadingState();
+        });
+        getNetworkData();
+      });
+    }
+
     return Column(
       children: <Widget>[
         Expanded(
-          child: BaseGestureDetector(
-            context: context,
-            child: CustomScrollView(
-              slivers: <Widget>[
-                _headerWidget(),
-                _contentWidget(),
-              ],
+          child: LoadDataContainer(
+            bloc: _loadDataBloc,
+            enablePullUp: false,
+            onRefresh: getNetworkData,
+            onLoadData: getNetworkData,
+            child: BaseGestureDetector(
+              context: context,
+              child: CustomScrollView(
+                slivers: <Widget>[
+                  _headerWidget(),
+                  _contentWidget(),
+                ],
+              ),
             ),
           ),
         ),
@@ -295,112 +357,121 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
         S.of(context).submit,
-        () async {
-          if (_detailList[0].isEmpty) {
-            Fluttertoast.showToast(msg: _hintList[0]);
-            return;
-          }
-
-          if (_detailList[1].isEmpty) {
-            Fluttertoast.showToast(msg: _hintList[1]);
-            return;
-          }
-
-          if (_detailList[2].isEmpty) {
-            Fluttertoast.showToast(msg: _hintList[2]);
-            return;
-          }
-
-          var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
-          print("map3NodeAddress: $map3NodeAddress");
-
-          if (map3NodeAddress.isEmpty) {
-            Fluttertoast.showToast(msg: '新创建的节点暂时不支持修改');
-            return;
-          }
-
-
-          var isEdit = false;
-          for (var index = 0; index < _titleList.length; index++) {
-            var title = _titleList[index];
-
-            if (title == S.of(Keys.rootKey.currentContext).node_num) {
-              var last = widget.map3InfoEntity.nodeId;
-              var edit = _detailList[0];
-              if (last != edit) {
-                _payload.nodeId = edit;
-
-                if (!isEdit) {
-                  isEdit = true;
-                }
-              }
-            } else if (title == S.of(Keys.rootKey.currentContext).name) {
-              var last = widget.map3InfoEntity.name;
-              var edit = _detailList[1];
-              if (last != edit) {
-                _payload.name = edit;
-
-                if (!isEdit) {
-                  isEdit = true;
-                }
-              }
-            } else if (title == S.of(Keys.rootKey.currentContext).contact) {
-              var last = widget.map3InfoEntity.contact;
-              var edit = _detailList[2];
-              if (last != edit) {
-                _payload.connect = edit;
-
-                if (!isEdit) {
-                  isEdit = true;
-                }
-              }
-            } else if (title == S.of(Keys.rootKey.currentContext).website) {
-              var last = widget.map3InfoEntity.home;
-              var edit = _detailList[3];
-              if (last != edit) {
-                _payload.home = edit;
-
-                if (!isEdit) {
-                  isEdit = true;
-                }
-              }
-            } else if (title == S.of(Keys.rootKey.currentContext).description) {
-              var last = widget.map3InfoEntity.describe;
-              var edit = _detailList[4];
-              if (last != edit) {
-                _payload.describe = edit;
-
-                if (!isEdit) {
-                  isEdit = true;
-                }
-              }
-            }
-          }
-
-          if (!isEdit) {
-            Fluttertoast.showToast(msg: '未修改节点信息');
-            return;
-          }
-
-          print("[_payload] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");
-
-          CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
-          map3entity.payload = _payload;
-
-          var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: map3NodeAddress);
-
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Map3NodeConfirmPage(
-                  message: message,
-                ),
-              ));
-        },
+        _confirmAction,
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
       ),
     );
+  }
+
+  _confirmAction() async {
+    if (_detailList[0].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[0]);
+      return;
+    }
+
+    if (_detailList[1].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[1]);
+      return;
+    }
+
+    if (_detailList[2].isEmpty) {
+      Fluttertoast.showToast(msg: _hintList[2]);
+      return;
+    }
+
+    var map3NodeAddress = widget?.map3InfoEntity?.address ?? "";
+    print("map3NodeAddress: $map3NodeAddress");
+
+    if (map3NodeAddress.isEmpty) {
+      Fluttertoast.showToast(msg: '新创建的节点暂时不支持修改');
+      return;
+    }
+
+    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+      MessageType.typeEditMap3,
+      map3Address: map3NodeAddress,
+    );
+    if (lastTxIsPending) {
+      return;
+    }
+
+    var isEdit = false;
+    for (var index = 0; index < _titleList.length; index++) {
+      var title = _titleList[index];
+
+      if (title == S.of(Keys.rootKey.currentContext).node_num) {
+        var last = _map3InfoEntity.nodeId;
+        var edit = _detailList[0];
+        if (last != edit) {
+          _payload.nodeId = edit;
+
+          if (!isEdit) {
+            isEdit = true;
+          }
+        }
+      } else if (title == S.of(Keys.rootKey.currentContext).name) {
+        var last = _map3InfoEntity.name;
+        var edit = _detailList[1];
+        if (last != edit) {
+          _payload.name = edit;
+
+          if (!isEdit) {
+            isEdit = true;
+          }
+        }
+      } else if (title == S.of(Keys.rootKey.currentContext).contact) {
+        var last = _map3InfoEntity.contact;
+        var edit = _detailList[2];
+        if (last != edit) {
+          _payload.connect = edit;
+
+          if (!isEdit) {
+            isEdit = true;
+          }
+        }
+      } else if (title == S.of(Keys.rootKey.currentContext).website) {
+        var last = _map3InfoEntity.home;
+        var edit = _detailList[3];
+        if (last != edit) {
+          _payload.home = edit;
+
+          if (!isEdit) {
+            isEdit = true;
+          }
+        }
+      } else if (title == S.of(Keys.rootKey.currentContext).description) {
+        var last = _map3InfoEntity.describe;
+        var edit = _detailList[4];
+        if (last != edit) {
+          _payload.describe = edit;
+
+          if (!isEdit) {
+            isEdit = true;
+          }
+        }
+      }
+    }
+
+    if (!isEdit) {
+      Fluttertoast.showToast(msg: '未修改节点信息');
+      return;
+    }
+
+    print("[Map3Edit] --->map3NodeAddress:$map3NodeAddress, payload: ${_payload.toJson()}");
+
+    CreateMap3Entity map3entity = CreateMap3Entity.onlyType(AtlasActionType.EDIT_MAP3_NODE);
+    map3entity.payload = _payload;
+
+    var message = ConfirmEditMap3NodeMessage(entity: map3entity, map3NodeAddress: map3NodeAddress);
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Map3NodeConfirmPage(
+            message: message,
+          ),
+        ));
   }
 }

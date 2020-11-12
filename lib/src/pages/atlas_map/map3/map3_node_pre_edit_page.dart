@@ -20,7 +20,7 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/web3dart.dart';
 import 'map3_node_public_widget.dart';
-
+import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:web3dart/credentials.dart';
 import 'map3_node_confirm_page.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -48,9 +48,9 @@ class Map3NodePreEditPage extends StatefulWidget {
 class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindingObserver {
   bool _isAutoRenew = true;
   double _currentFeeRate = 10;
-  double _maxFeeRate = 100;
-  double _minFeeRate = 0;
-  double _avgFeeRate = 0;
+  // double _maxFeeRate = 100;
+  // double _minFeeRate = 0;
+  // double _avgFeeRate = 0;
 
   TextEditingController _rateCoinController = TextEditingController();
 
@@ -59,9 +59,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   get _isEmptyBls => ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   /*
-  Microdelegations _microDelegations;
-  final _client = WalletUtil.getWeb3Client(true);
-
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   var _address = "";
@@ -79,7 +76,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   ConfirmEditMap3NodeMessage _editMessage;
   Map3IntroduceEntity _map3introduceEntity;
-
   int nonce;
 
   @override
@@ -112,11 +108,12 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
     _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
+    /*
     setState(() {
       _maxFeeRate = 100 * double.parse(_map3introduceEntity?.feeMax ?? "100");
       _minFeeRate = 100 * double.parse(_map3introduceEntity?.feeMin ?? "0");
       _avgFeeRate = 100 * double.parse(_map3introduceEntity?.feeAvg ?? "10");
-    });
+    });*/
   }
 
   getMap3Bls() async {
@@ -294,6 +291,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     );
   }
 
+  /*
   Widget _rateWidgetJoiner() {
     var nextFeeRate = FormatUtil.formatPercent(double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0"));
     if (nextFeeRate == '0%' || nextFeeRate == '0' || nextFeeRate.isEmpty || nextFeeRate == null) {
@@ -367,6 +365,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       avgFeeRate: _avgFeeRate,
     );
   }
+  */
 
   Widget _switchWidget() {
     return Padding(
@@ -429,6 +428,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       padding: const EdgeInsets.symmetric(horizontal: 37, vertical: 18),
       child: ClickOvalButton(
         S.of(context).confirm_mod,
+        _confirmAction,
+        /*
         () {
           // if (!_isJoiner) {
           //   if (_inputFeeRateValue <= _minFeeRate) {
@@ -443,8 +444,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           //   }
           // }
 
-          showAlertView();
+          //showAlertView();
         },
+        */
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
@@ -452,7 +454,44 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     );
   }
 
-  showAlertView() {
+  _confirmAction() async {
+    try {
+      if (widget?.map3infoEntity?.mine != null && (widget?.map3infoEntity?.address ?? "").isNotEmpty) {
+        var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+        var wallet = activatedWallet?.wallet;
+        var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
+        var walletAddress = EthereumAddress.fromHex(wallet?.getEthAccount()?.address ?? "");
+
+        var microDelegations = await WalletUtil.getWeb3Client(true).getMap3NodeDelegation(
+          map3Address,
+          walletAddress,
+        );
+        var status = (microDelegations?.renewal?.status ?? 0);
+        if (status > 0) {
+          Fluttertoast.showToast(
+            msg: '你的下期续约设置已完成！',
+            gravity: ToastGravity.CENTER,
+          );
+          return;
+        }
+      }
+
+      var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+        MessageType.typeRenewMap3,
+        map3Address: widget?.map3infoEntity?.address ?? '',
+      );
+      if (lastTxIsPending) {
+        return;
+      }
+    } catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+        msg: '未知错误，请稍后重试！',
+        gravity: ToastGravity.CENTER,
+      );
+      return;
+    }
+
     var nextFeeRate = 100 * double.parse(widget?.map3infoEntity?.rateForNextPeriod ?? "0");
     // var feeRate = _isJoiner ? nextFeeRate : (_inputFeeRateValue ?? _maxFeeRate);
     var feeRate = nextFeeRate;
@@ -473,6 +512,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         content = '你将跟随续约，修改后不能撤回，确定修改吗？';
       }
     }
+
     UiUtil.showAlertView(
       context,
       title: S.of(context).preset_for_next_period,
