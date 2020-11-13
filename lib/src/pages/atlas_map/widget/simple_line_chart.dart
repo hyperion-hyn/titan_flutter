@@ -34,12 +34,12 @@ class SimpleLineChart extends StatelessWidget {
             // The top tick label may extend upwards into the top margin region
             // if it is located at the top of the draw area.
             innerPadding: 18),*/
-        new charts.ChartTitle('Bottom title text',
+        new charts.ChartTitle('纪元',
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.bottom,
             titleOutsideJustification:
             charts.OutsideJustification.middleDrawArea),
-        new charts.ChartTitle('Start title',
+        new charts.ChartTitle('年化奖励',
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.start,
             titleOutsideJustification:
