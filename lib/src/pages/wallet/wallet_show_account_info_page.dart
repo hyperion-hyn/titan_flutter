@@ -33,9 +33,11 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = List();
   var gasPriceStr = "";
+  var isBillPage = false;
 
   @override
   void initState() {
+    isBillPage = widget.transactionDetail.hynType == MessageType.typeTerminateMap3Reward;
     super.initState();
   }
 
@@ -50,13 +52,23 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
     var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,false);
 
-    _dataTitleList = [
-      S.of(context).transfer_amount,
-      S.of(context).transfer_gas_fee,
-      fromAddressTitle,
-      toAddressTitle,
-      S.of(context).transfer_id,
-    ];
+    if(isBillPage){
+      _dataTitleList = [
+        S.of(context).transfer_amount,
+        fromAddressTitle,
+        toAddressTitle,
+        S.of(context).description,
+      ];
+    }else{
+      _dataTitleList = [
+        S.of(context).transfer_amount,
+        S.of(context).transfer_gas_fee,
+        fromAddressTitle,
+        toAddressTitle,
+        S.of(context).transfer_id,
+      ];
+    }
+
     var transDetail = widget.transactionDetail;
     var amountText =
         "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
@@ -74,13 +86,23 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
-    _dataInfoList = [
-      amountText,
-      gasEstimate,
-      _toAddress,
-      WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-      transDetail.hash,
-    ];
+    if(isBillPage){
+      _dataInfoList = [
+        amountText,
+        _toAddress,
+        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+        "节点终止结算",
+      ];
+    }else{
+      _dataInfoList = [
+        amountText,
+        gasEstimate,
+        _toAddress,
+        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+        transDetail.hash,
+      ];
+    }
+
     super.onCreated();
   }
 
@@ -142,57 +164,65 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                 delegate: SliverChildBuilderDelegate((context, index) {
               var leftText = _dataTitleList[index];
               var rightText = _dataInfoList[index];
-              if (index == 1) {
-                var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
-                return accountInfoItem(leftText, rightText, bottomText: bottomText);
-              } else if (index == 4) {
-                return accountInfoItem(leftText, rightText, normalLine: false);
-              } else {
-                return accountInfoItem(leftText, rightText);
+              if(isBillPage){
+                if (index == 0) {
+                  return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
+                } else if (index == 3) {
+                  return accountInfoItem(leftText, rightText, normalLine: false);
+                }
+              }else{
+                if (index == 1) {
+                  var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                  return accountInfoItem(leftText, rightText, bottomText: bottomText);
+                } else if (index == 4) {
+                  return accountInfoItem(leftText, rightText, normalLine: false);
+                }
               }
+              return accountInfoItem(leftText, rightText);
             }, childCount: _dataTitleList.length)),
-            SliverToBoxAdapter(
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => WalletShowAccountDetailPage(
-                                widget.transactionDetail,
-                                isContain: widget.isContain,
-                              )));
-                },
-                child: Container(
-                  color: Colors.white,
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
-                        child: Text(
-                          S.of(context).check_for_detail_info,
-                          style: TextStyles.textC333S13,
+            if(!isBillPage)
+              SliverToBoxAdapter(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WalletShowAccountDetailPage(
+                                  widget.transactionDetail,
+                                  isContain: widget.isContain,
+                                )));
+                  },
+                  child: Container(
+                    color: Colors.white,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+                          child: Text(
+                            S.of(context).check_for_detail_info,
+                            style: TextStyles.textC333S13,
+                          ),
                         ),
-                      ),
-                      Spacer(),
-                      Image.asset(
-                        "res/drawable/add_position_image_next.png",
-                        height: 13,
-                      ),
-                      SizedBox(
-                        width: 15,
-                      )
-                    ],
+                        Spacer(),
+                        Image.asset(
+                          "res/drawable/add_position_image_next.png",
+                          height: 13,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            )
+              )
           ],
         ),
       ),
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText, {String bottomText, bool normalLine = true}) {
+  Widget accountInfoItem(String leftText, String rightText, {String bottomText, bool normalLine = true,bool isBillItem = false}) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -221,6 +251,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
                           child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                        ),
+                      if(isBillItem)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Text("抵押 100 HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                        ),
+                      if(isBillItem)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2.0),
+                          child: Text("奖励 12.12 HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
                   ),
