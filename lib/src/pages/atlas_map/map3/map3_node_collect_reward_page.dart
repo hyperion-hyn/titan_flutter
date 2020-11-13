@@ -23,7 +23,7 @@ class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
 
   @override
   void initState() {
-    _tabController = TabController(initialIndex: 0, vsync: this, length: 2);
+    _tabController = TabController(initialIndex: 0, vsync: this, length: 1);
     super.initState();
   }
 
@@ -76,7 +76,7 @@ class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
                         isScrollable: true,
                         indicatorColor: HexColor("#228BA1"),
                         indicatorSize: TabBarIndicatorSize.label,
-                        indicatorWeight: 2,
+                        indicatorWeight: 1,
                         controller: _tabController,
                         labelColor: Theme.of(context).primaryColor,
                         unselectedLabelColor: HexColor("#333333"),
@@ -87,12 +87,12 @@ class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          Tab(
-                            child: Text(
-                              'Atlas奖励',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          )
+//                          Tab(
+//                            child: Text(
+//                              'Atlas奖励',
+//                              style: TextStyle(fontWeight: FontWeight.bold),
+//                            ),
+//                          )
                         ],
                       ),
                     ),
@@ -104,7 +104,7 @@ class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
                   controller: _tabController,
                   children: [
                     Map3CollectableListPage(),
-                    AtlasCollectableLisPage(),
+                    //AtlasCollectableLisPage(),
                   ],
                 ),
               ),

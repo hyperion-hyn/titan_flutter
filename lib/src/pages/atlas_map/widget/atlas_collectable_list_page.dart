@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 
 class AtlasCollectableLisPage extends StatefulWidget {
   AtlasCollectableLisPage();
@@ -13,7 +14,7 @@ class AtlasCollectableLisPage extends StatefulWidget {
 }
 
 class AtlasCollectableLisPageState extends State<AtlasCollectableLisPage> {
-  List<String> _dataList = List();
+  List<AtlasInfoEntity> _nodeList = List();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   int _currentPage = 1;
@@ -55,17 +56,17 @@ class AtlasCollectableLisPageState extends State<AtlasCollectableLisPage> {
                   delegate: SliverChildBuilderDelegate((context, index) {
                 return Container(
                   height: 60,
-                  child: Text(_dataList[index]),
                 );
-              }, childCount: _dataList.length))
+              }, childCount: _nodeList.length))
             ],
           )),
     );
   }
 
+
   Future _refreshData() async {
     _currentPage = 1;
-    _dataList.clear();
+    _nodeList.clear();
 
     var networkList;
     await Future.delayed(Duration(milliseconds: 1000), () {
@@ -75,7 +76,7 @@ class AtlasCollectableLisPageState extends State<AtlasCollectableLisPage> {
     });
 
     if (networkList != null) {
-      _dataList.addAll(networkList);
+      _nodeList.addAll(networkList);
     }
 
     _loadDataBloc.add(RefreshSuccessEvent());
@@ -93,7 +94,7 @@ class AtlasCollectableLisPageState extends State<AtlasCollectableLisPage> {
     });
 
     if (networkList != null) {
-      _dataList.addAll(networkList);
+      _nodeList.addAll(networkList);
     }
     _loadDataBloc.add(LoadingMoreSuccessEvent());
     if (mounted) setState(() {});

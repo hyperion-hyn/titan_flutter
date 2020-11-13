@@ -395,6 +395,7 @@ class AtlasApi {
     String address, {
     int page = 1,
     int size = 10,
+    List status,
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_i_create",
@@ -405,6 +406,7 @@ class AtlasApi {
           "address": address,
           "page": page,
           "size": size,
+          'status': status,
         },
         options: RequestOptions(contentType: "application/json"));
   }
@@ -414,6 +416,7 @@ class AtlasApi {
     String address, {
     int page = 1,
     int size = 10,
+    List status,
   }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/node_list_i_join",
@@ -424,6 +427,7 @@ class AtlasApi {
           "address": address,
           "page": page,
           "size": size,
+          'status': status,
         },
         options: RequestOptions(contentType: "application/json"));
   }
@@ -700,7 +704,11 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  static Future<bool> checkLastTxIsPending(int type, {String map3Address = '',String atlasAddress = '',}) async {
+  static Future<bool> checkLastTxIsPending(
+    int type, {
+    String map3Address = '',
+    String atlasAddress = '',
+  }) async {
     try {
       var activatedWallet =
           WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;

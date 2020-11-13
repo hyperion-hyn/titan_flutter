@@ -102,13 +102,11 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage>
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              // Application.router
-              //     .navigateTo(context, Routes.map3node_my_page_v8);
+//               Application.router
+//                   .navigateTo(context, Routes.map3node_my_page_v8);
 
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      Map3NodeCollectRewardPage()));
-              // Application.router.navigateTo(context, Routes.map3node_my_page_reward);
+              Application.router
+                  .navigateTo(context, Routes.map3node_my_page_reward);
             },
             child: Text(
               // S.of(context).old_map3,

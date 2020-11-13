@@ -6,6 +6,7 @@ import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -97,6 +98,10 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   ),
                 ),
                 onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        Map3NodeCollectRewardPage(),
+                  ));
                 },
               )
             ],

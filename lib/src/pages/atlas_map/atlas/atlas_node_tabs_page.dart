@@ -16,6 +16,7 @@ import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
@@ -28,6 +29,7 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/atlas_info_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
+import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
 import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 import 'package:titan/src/pages/skeleton/skeleton_node_tabs_content.dart';
@@ -469,9 +471,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  isMine
-                      ? S.of(context).check_reward
-                      : S.of(context).check_more,
+                  S.of(context).check_more,
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -489,6 +489,98 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     );
   }
 
+  _map3NodeInfoItem(Map3InfoEntity map3infoEntity) {
+    if (map3infoEntity == null) return Container();
+    var nodeName = map3infoEntity?.name ?? '';
+    var nodeId = map3infoEntity?.nodeId ?? '';
+    var status = Map3InfoStatus.values[map3infoEntity?.status ?? 0];
+    var statusColor = Map3NodeUtil.statusColor(status);
+    var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 16.0,
+        right: 16.0,
+        left: 16.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: HexColor('#FFFF4C3B')),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[200],
+              blurRadius: 15.0,
+            ),
+          ],
+        ),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                iconMap3Widget(map3infoEntity),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: nodeName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            )),
+                        TextSpan(text: "", style: TextStyles.textC333S14bold),
+                      ])),
+                      Container(
+                        height: 2,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '${S.of(context).node_num}: ${nodeId}',
+                            style: TextStyle(
+                              color: DefaultColors.color999,
+                              fontSize: 10,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 8,
+                  height: 8,
+                  //color: Colors.red,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: statusColor,
+                    border: Border.all(
+                      color: statusBorderColor,
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+                Text('')
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _myNodeListWidget() {
     if (_myList.isEmpty) {
       return emptyListWidget(
@@ -497,14 +589,13 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
               : S.of(context).my_nodes_empty);
     }
 
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0),
-        child: NodeActiveContractWidget(
-          contractList: _myList,
-        ),
-      ),
-    );
+    return SliverList(
+        delegate: SliverChildBuilderDelegate(
+      (context, index) {
+        return _map3NodeInfoItem(_myList[index]);
+      },
+      childCount: _myList.length,
+    ));
   }
 
   Widget _lastActiveWidget() {
