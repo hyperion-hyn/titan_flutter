@@ -58,7 +58,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   List<Map3UserEntity> _map3UserList = [];
 
 
-  double get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0').toDouble ?? 0;
+  double get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0') ?? 0;
   int _currentEpoch = 0;
 
   int get _remainEpochInt {
@@ -129,10 +129,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         _isHaveExit = _status >= TransactionStatus.pending && _status <= TransactionStatus.success;
       }
 
+      _map3UserList = await _atlasApi.getMap3UserList(_nodeId, size: 0);
+
       _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
       _setupMicroDelegations();
-
-      _map3UserList = await _atlasApi.getMap3UserList(_nodeId, size: 0);
 
       if (mounted) {
         setState(() {
@@ -182,12 +182,12 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var notification = '';
     switch (_status) {
       case TransactionStatus.pending:
-        notification = '终止请求正处理中...';
+        notification = '终止请求处理中...';
 
         break;
 
       case TransactionStatus.success:
-        notification = '终止请求已完成!';
+        notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
     }
 
@@ -203,7 +203,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           children: <Widget>[
             topNotifyWidget(
               notification: notification,
-              isWarning: true,
+              isWarning: false,
             ),
             Expanded(
               child: LoadDataContainer(
@@ -410,7 +410,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   _confirmAction() async {
-    if (!_canExit || _nodeAddress.isEmpty) {
+    if (!_canExit || (_nodeAddress?.isEmpty ?? true)) {
       return;
     }
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -18,9 +19,9 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
-import 'package:titan/src/pages/atlas_map/widget/node_join_member_widget.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
@@ -36,6 +37,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
@@ -54,9 +56,8 @@ class Map3NodeDetailPage extends StatefulWidget {
   _Map3NodeDetailState createState() => _Map3NodeDetailState();
 }
 
-class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
+class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProviderStateMixin {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
   AtlasApi _atlasApi = AtlasApi();
   final client = WalletUtil.getWeb3Client(true);
@@ -71,13 +72,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Microdelegations _microDelegationsJoiner;
 
   int _currentPage = 0;
-  List<HynTransferHistory> _delegateRecordList = [];
+  List<HynTransferHistory> _txLogList = [];
+  List<Map3UserEntity> _userList = [];
+
+  bool _showLoadingTxLog = true;
+  bool _showLoadingUserList = true;
 
   HynTransferHistory _lastPendingTx;
 
   var _address = "";
 
-  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity??'';
+  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
   String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
   String get _nodeCreatorAddress =>
       _map3infoEntity?.creator ?? _map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
@@ -91,6 +96,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _isRunning => _map3Status == Map3InfoStatus.CONTRACT_HAS_STARTED;
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
+  get _isTerminal => _map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS;
 
   get statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
   get statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
@@ -99,12 +105,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   get _notifyMessage {
     if (_isLoading) {
-      return '数据加载中...';
+      return '数据刷新中...';
     }
 
     switch (_map3Status) {
-      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+      case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+        return '终止请求处理中...';
+        break;
 
+      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+        return '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
@@ -116,7 +126,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeTerminateMap3:
-                return '终止请求正处理中...';
+                return '终止请求处理中...';
                 break;
 
               case MessageType.typeUnMicroDelegate:
@@ -127,7 +137,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求正处理中...';
+                return '编辑请求处理中...';
                 break;
 
               case MessageType.typeMicroDelegate:
@@ -273,7 +283,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   // 0.募集中
   // 1.纪元已经过7天；
-  get _canExit => _isCreator && _isPending && _isOver7Epoch;
+  // get _canExit => _isCreator && _isPending && _isOver7Epoch;
+  get _canExit => _isCreator && (_isPending || _isTerminal);
 
   get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
 
@@ -468,6 +479,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   // double _moreOffsetTop = 76;
   //double _moreSizeWidth = 100;
 
+  List<Map3NodeDetailTabBarModel> _delegateRecordTabModels;
+  TabController _detailTabController;
+  Map3NodeDetailType _detailCurrentIndex = Map3NodeDetailType.tx_log;
+
   @override
   void initState() {
     //WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
@@ -480,6 +495,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   @override
   void onCreated() {
     super.onCreated();
+
+    _delegateRecordTabModels = [
+      Map3NodeDetailTabBarModel('节点记录', Map3NodeDetailType.tx_log),
+      Map3NodeDetailTabBarModel('参与地址', Map3NodeDetailType.user_list),
+    ];
+    _detailTabController = TabController(length: _delegateRecordTabModels.length, vsync: this);
 
     _refreshData();
   }
@@ -500,7 +521,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       _isLoading = true;
 
       setState(() {
-        _currentState = null;
         _loadDataBloc.add(RefreshSuccessEvent());
       });
     }
@@ -625,19 +645,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  bool get _hasFootView {
+    if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
+      return !_showLoadingTxLog;
+    } else {
+      return !_showLoadingUserList;
+    }
+  }
+
   /// TODO:Widget
   Widget _pageWidget(BuildContext context) {
-    /*
-    if (_currentState != null || _map3infoEntity == null) {
-      return Scaffold(
-        body: AllPageStateContainer(_currentState, () {
-          setState(() {
-            _currentState = all_page_state.LoadingState();
-            _loadLastData();
-          });
-        }),
-      );
-    }*/
 
     return Column(
       children: <Widget>[
@@ -649,12 +666,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               bloc: _loadDataBloc,
               //enablePullDown: false,
               enablePullUp: _nodeAddress.isNotEmpty,
+              hasFootView: _hasFootView,
               onRefresh: _refreshData,
-              onLoadingMore: _loadMoreData,
+              onLoadingMore: _loadDelegateMoreData,
               child: CustomScrollView(
                 //physics: AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
-
                   // 1.合约介绍信息
                   SliverToBoxAdapter(
                     child: _map3NodeInfoItem(context),
@@ -683,6 +700,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   SliverToBoxAdapter(child: _contractProgressWidget()),
                   _spacer(),
 
+                  _detailTabWidget(),
+                  _detailWidget(),
+
+                  //_joinerListWidget(),
+                  /*
                   // 4.参与人员列表信息
                   SliverToBoxAdapter(
                     child: Material(
@@ -696,6 +718,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                   ),
                   _spacer(),
 
+
                   // 5.合约流水信息
                   SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
 
@@ -708,6 +731,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
                           );
                         }, childCount: _delegateRecordList.length))
                       : emptyListWidget(title: "节点记录为空"),
+
+                   */
                 ],
               )),
         ),
@@ -792,7 +817,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   Widget _bottomBtnBarWidget() {
     //LogUtil.printMessage("_invisibleBottomBar:$_visibleBottomBar");
 
-    if (!_visibleBottomBar) return Container();
+    if (!_visibleBottomBar || _map3nodeInformationEntity == null) return Container();
 
     List<Widget> children = [];
 
@@ -1893,6 +1918,262 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     );
   }
 
+  _detailTabWidget() {
+    return SliverToBoxAdapter(
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                ),
+                child: TabBar(
+                  controller: _detailTabController,
+                  isScrollable: true,
+                  labelColor: HexColor('#228BA1'),
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: HexColor('#228BA1'),
+                  indicatorWeight: 2,
+                  indicatorPadding: EdgeInsets.only(bottom: 2),
+                  unselectedLabelColor: HexColor("#333333"),
+                  onTap: (int index) {
+                    var type = Map3NodeDetailType.values[index];
+                    setState(() {
+                      _detailCurrentIndex = type;
+                    });
+
+                    if (type == Map3NodeDetailType.tx_log) {
+                      if (_txLogList.isEmpty) {
+                        _loadTxLogData();
+                      }
+                    } else {
+                      if (_userList.isEmpty) {
+                        _loadUserListData();
+                      }
+                    }
+                  },
+                  tabs: _delegateRecordTabModels
+                      .map((model) => Tab(
+                            child: Text(
+                              model.name,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailWidget() {
+    return SliverToBoxAdapter(
+      child: Stack(
+        children: [
+          Visibility(
+            visible: _detailCurrentIndex == Map3NodeDetailType.tx_log,
+            child: Stack(
+              children: <Widget>[
+                Visibility(
+                  visible: !_showLoadingTxLog,
+                  child: _txLogView(),
+                ),
+                _loadingWidget(visible: _showLoadingTxLog),
+              ],
+            ),
+          ),
+          Visibility(
+            visible: _detailCurrentIndex == Map3NodeDetailType.user_list,
+            child: Stack(
+              children: <Widget>[
+                Visibility(
+                  visible: !_showLoadingUserList,
+                  child: _userListView(),
+                ),
+                _loadingWidget(visible: _showLoadingUserList),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _txLogView() {
+    if (_txLogList.isEmpty) {
+      return emptyListWidget(title: "节点记录为空");
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        return delegateRecordItemWidget(
+          _txLogList[index],
+          map3CreatorAddress: _nodeCreatorAddress,
+        );
+      },
+      itemCount: _txLogList.length,
+    );
+  }
+
+  _userListView() {
+    if (_userList.isEmpty) {
+      return emptyListWidget(title: "参与地址为空");
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        var item = _userList[index];
+
+        var itemAddress = item.address.toLowerCase();
+        var isYou = itemAddress == _address;
+        var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
+        var recordName =
+            "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
+
+        var amount = FormatUtil.stringFormatCoinNum(
+            ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString());
+
+        amount += ' HYN';
+        return Container(
+          color: Colors.white,
+          child: Stack(
+            children: <Widget>[
+              InkWell(
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: iconWidget("", item.name, item.address, isCircle: true),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 2,
+                                    child: RichText(
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: item.name,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: HexColor("#000000"),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        children: [
+                                          TextSpan(
+                                            text: recordName,
+                                            style: TextStyle(
+                                                fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                height: 8.0,
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Text(
+                                    shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
+                                        limitCharsLength: 8),
+                                    style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Text(
+                        amount,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: HexColor('#333333'),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 40,
+                right: 8,
+                child: Container(
+                  height: 0.5,
+                  color: DefaultColors.colorf5f5f5,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      itemCount: _userList.length,
+    );
+  }
+
+  Widget _loadingWidget({bool visible = true, double height = 100}) {
+    return Visibility(
+      visible: visible,
+      child: Container(
+          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator()),
+    );
+  }
+
+  _delegateRecordTabChildrenWidget1() {
+    return SliverToBoxAdapter(
+      child: Expanded(
+        child: RefreshConfiguration.copyAncestor(
+          enableLoadingWhenFailed: true,
+          context: context,
+          headerBuilder: () => WaterDropMaterialHeader(
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+          footerTriggerDistance: 30.0,
+          child: TabBarView(
+            controller: _detailTabController,
+            //physics: NeverScrollableScrollPhysics(),
+            children: [emptyListWidget(title: "节点记录为空"), emptyListWidget(title: "节点记录为空")],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _delegateRecordHeaderWidget() {
     return Container(
       color: Colors.white,
@@ -1908,7 +2189,45 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
   }
 
   /// TODO:Request
-  Future _loadMoreData() async {
+
+  void _loadDelegateMoreData() {
+    if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
+      _loadTxLogMoreData();
+    } else {
+      _loadUserListMoreData();
+    }
+  }
+
+  _refreshDelegateData() {
+    if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
+      _loadTxLogData();
+    } else {
+      _loadUserListData();
+    }
+  }
+
+  // txLog
+  _loadTxLogData() async {
+    if (_nodeAddress.isEmpty) {
+      return;
+    }
+
+    _currentPage = 1;
+    List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
+      _nodeAddress,
+      page: _currentPage,
+    );
+
+    if (mounted) {
+      setState(() {
+        _showLoadingTxLog = false;
+        _txLogList = tempMemberList;
+        _loadDataBloc.add(RefreshSuccessEvent());
+      });
+    }
+  }
+
+  Future _loadTxLogMoreData() async {
     try {
       _currentPage++;
       print("[getMap3StakingLogList]  more, _currentPage:$_currentPage");
@@ -1916,7 +2235,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
 
       if (tempMemberList.length > 0) {
-        _delegateRecordList.addAll(tempMemberList);
+        _txLogList.addAll(tempMemberList);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
@@ -1934,20 +2253,103 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
   }
 
+  // userList
+  void _loadUserListData() async {
+    _currentPage = 1;
+    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
+      _nodeId,
+      page: _currentPage,
+    );
+
+    // print("[widget] --> build, length:${tempMemberList.length}");
+    if (mounted) {
+      setState(() {
+        _showLoadingUserList = false;
+
+        if (tempMemberList.length > 0) {
+          _userList = [];
+        }
+        _userList.addAll(tempMemberList);
+        _loadDataBloc.add(RefreshSuccessEvent());
+      });
+    }
+  }
+
+  void _loadUserListMoreData() async {
+    _currentPage++;
+
+    try {
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
+        _nodeId,
+        page: _currentPage,
+        size: 10,
+      );
+
+      if (tempMemberList.length > 0) {
+        _userList.addAll(tempMemberList);
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+      setState(() {});
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(LoadMoreFailEvent());
+        });
+      }
+    }
+  }
+
+  // lastTx
+  _loadLastPendingTxData() async {
+    if (_nodeAddress.isEmpty || _address.isEmpty) {
+      return;
+    }
+
+    List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
+      _address,
+      map3Address: _nodeAddress,
+      status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+    );
+
+    if (pendingList?.isNotEmpty ?? false) {
+      var firstObject = pendingList.first;
+
+      var now = DateTime.now().millisecondsSinceEpoch;
+      var last = firstObject.timestamp * 1000;
+      var isOver6Seconds = (now - last) > (10 * 1000);
+      print(
+          "[Map3Detail] _clearLastPendingTx, now:$now, last:$last, over:${(now - last)},  isOver6Seconds:$isOver6Seconds");
+
+      if (isOver6Seconds) {
+        _lastPendingTx = null;
+      } else {
+        _lastPendingTx = firstObject;
+      }
+    } else {
+      _lastPendingTx = null;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  // refresh
   Future _refreshData() async {
     try {
       await _loadDetailData();
 
-      await _loadDetailDataInAtlas();
+      //await _loadDetailDataInAtlas();
 
-      _loadTxData();
+      _refreshDelegateData();
 
       _loadLastPendingTxData();
 
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
 
@@ -1961,7 +2363,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
       if (mounted) {
         setState(() {
-          _currentState = all_page_state.LoadFailState();
           _loadDataBloc.add(RefreshFailEvent());
         });
       }
@@ -2009,59 +2410,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
       if (tag == 2) {
         break;
       }
-    }
-  }
-
-  _loadTxData() async {
-    if (_nodeAddress.isEmpty) {
-      return;
-    }
-
-    _currentPage = 1;
-    List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
-      _nodeAddress,
-      page: _currentPage,
-    );
-
-    if (mounted) {
-      setState(() {
-        _delegateRecordList = tempMemberList;
-      });
-    }
-  }
-
-  _loadLastPendingTxData() async {
-
-    if (_nodeAddress.isEmpty || _address.isEmpty) {
-      return;
-    }
-
-    List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
-      _address,
-      map3Address: _nodeAddress,
-      status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
-    );
-
-    if (pendingList?.isNotEmpty ?? false) {
-      var firstObject = pendingList.first;
-
-      var now = DateTime.now().millisecondsSinceEpoch;
-      var last = firstObject.timestamp * 1000;
-      var isOver6Seconds = (now - last) > (10 * 1000);
-      print(
-          "[Map3Detail] _clearLastPendingTx, now:$now, last:$last, over:${(now - last)},  isOver6Seconds:$isOver6Seconds");
-
-      if (isOver6Seconds) {
-        _lastPendingTx = null;
-      } else {
-        _lastPendingTx = firstObject;
-      }
-    } else {
-      _lastPendingTx = null;
-    }
-
-    if (mounted) {
-      setState(() {});
     }
   }
 
@@ -2223,7 +2571,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     if (result != null && result is Map && result["result"] is bool) {
       _loadLastPendingTxData();
-      _loadTxData();
+      _refreshDelegateData();
     }
   }
+}
+
+class Map3NodeDetailTabBarModel {
+  String name;
+  Map3NodeDetailType type;
+  Map3NodeDetailTabBarModel(this.name, this.type);
+}
+
+enum Map3NodeDetailType {
+  tx_log,
+  user_list,
 }
