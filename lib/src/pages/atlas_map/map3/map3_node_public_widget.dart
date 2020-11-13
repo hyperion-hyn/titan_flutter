@@ -1263,3 +1263,36 @@ Widget _billStateWidget(HynTransferHistory item) {
       break;
   }
 }
+
+Widget topNotifyWidget({String notification = '', bool isWarning = false}) {
+  if (notification?.isEmpty ?? true) {
+    return Container();
+  }
+
+  var bgColor = (isWarning) ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
+  var contentColor = (isWarning) ? HexColor("#FFFFFF") : HexColor("#333333");
+
+  return Container(
+    color: bgColor,
+    padding: const EdgeInsets.fromLTRB(23, 0, 16, 0),
+    child: Row(
+      children: <Widget>[
+        Image.asset(
+          "res/drawable/volume.png",
+          width: 15,
+          height: 14,
+          color: contentColor,
+        ),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(
+              notification,
+              style: TextStyle(fontSize: 12, color: contentColor),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}

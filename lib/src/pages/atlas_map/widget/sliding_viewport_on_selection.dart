@@ -1,5 +1,6 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:charts_common/common.dart';
 
 class SlidingViewportOnSelection extends StatelessWidget {
   final List<charts.Series> seriesList;
@@ -34,17 +35,17 @@ class SlidingViewportOnSelection extends StatelessWidget {
             // The top tick label may extend upwards into the top margin region
             // if it is located at the top of the draw area.
             innerPadding: 18),*/
-        new charts.ChartTitle('Bottom title text',
+        new charts.ChartTitle('纪元',
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.bottom,
             titleOutsideJustification:
             charts.OutsideJustification.middleDrawArea),
-        new charts.ChartTitle('Start title',
+        new charts.ChartTitle('抵押量',
             titleStyleSpec: charts.TextStyleSpec(fontSize: 12),
             behaviorPosition: charts.BehaviorPosition.start,
             titleOutsideJustification:
             charts.OutsideJustification.middleDrawArea),
-        charts.SeriesLegend(entryTextStyle: charts.TextStyleSpec(fontSize: 12)),
+//        charts.SeriesLegend(entryTextStyle: charts.TextStyleSpec(fontSize: 12)),
       ],
       primaryMeasureAxis: new charts.NumericAxisSpec(
         tickProviderSpec: new charts.BasicNumericTickProviderSpec(desiredTickCount: 5),
@@ -83,17 +84,17 @@ class SlidingViewportOnSelection extends StatelessWidget {
 
     return [
       new charts.Series<OrdinalSales, String>(
-        id: 'Desktop',
+        id: '节点总抵押',
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
         data: desktopSalesData,
       ),
-      new charts.Series<OrdinalSales, String>(
-        id: 'Tablet',
+      /*new charts.Series<OrdinalSales, String>(
+        id: '发起者抵押量',
         domainFn: (OrdinalSales sales, _) => sales.year,
         measureFn: (OrdinalSales sales, _) => sales.sales,
         data: tableSalesData,
-      ),
+      ),*/
     ];
   }
 }

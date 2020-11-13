@@ -399,8 +399,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _tipsWidget() {
-    var amount = " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
-        S.of(context).ten_thousand;
+    //var amount = " ${FormatUtil.formatTenThousandNoUnit(_map3introduceEntity?.startMin?.toString() ?? "0")}" +
+    //     S.of(context).ten_thousand;
     //var tip1 = S.of(context).map3_manage_fee_rule(amount, 20);
 
     var tip2 = _isJoiner
@@ -485,10 +485,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       }
     } catch (e) {
       print(e);
-      Fluttertoast.showToast(
-        msg: '未知错误，请稍后重试！',
-        gravity: ToastGravity.CENTER,
-      );
+      // Fluttertoast.showToast(
+      //   msg: '未知错误，请稍后重试！',
+      //   gravity: ToastGravity.CENTER,
+      // );
       return;
     }
 

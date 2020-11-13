@@ -7,12 +7,12 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -415,7 +415,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         map3infoEntity.describe = payload.describe;
         map3infoEntity.region = payload.region;
         map3infoEntity.provider = payload.provider;
-        map3infoEntity.staking = payload.staking;
+        map3infoEntity.staking = ConvertTokenUnit.strToBigInt(payload.staking).toString();
         map3infoEntity.contact = payload.connect;
       }
       Application.router.navigateTo(

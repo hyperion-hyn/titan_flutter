@@ -225,3 +225,5 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_intl:
   enabled: true
+  localizely:
+    project_id: 5c316930-0e06-48c6-8e03-9ebd4f304276

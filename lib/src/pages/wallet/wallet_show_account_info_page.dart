@@ -47,11 +47,14 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   @override
   void onCreated() async {
+    var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
+    var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,false);
+
     _dataTitleList = [
       S.of(context).transfer_amount,
       S.of(context).transfer_gas_fee,
-      S.of(context).from_address,
-      S.of(context).transfer_to_address,
+      fromAddressTitle,
+      toAddressTitle,
       S.of(context).transfer_id,
     ];
     var transDetail = widget.transactionDetail;

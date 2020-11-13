@@ -372,7 +372,6 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList,
                   child: Row(
                     children: <Widget>[
                       Expanded(
-                        flex: 2,
                         child: Padding(
                           padding: const EdgeInsets.only(left: 14),
                           child: Text(
@@ -383,11 +382,11 @@ Widget stakeInfoView(List<String> infoTitleList, List<String> infoContentList,
                         ),
                       ),
                       Expanded(
-                        flex: 3,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 14),
                           child: Text(
                             infoContentList[index],
+                            textAlign: TextAlign.end,
                             style: TextStyle(
                                 fontSize: 14, color: HexColor("#333333")),
                           ),

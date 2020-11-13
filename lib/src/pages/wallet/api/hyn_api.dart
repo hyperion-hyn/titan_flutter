@@ -499,10 +499,11 @@ class HYNApi {
     }
   }
 
-  static String toAddressHint(int hynMessageType){
+  static String toAddressHint(int hynMessageType,bool isFrom){
+    var titleStr = isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
     switch (hynMessageType) {
       case MessageType.typeNormal:
-        return "";
+        return titleStr;
       case MessageType.typeCreateMap3:
       case MessageType.typeEditMap3:
       case MessageType.typeTerminateMap3:
@@ -510,15 +511,15 @@ class HYNApi {
       case MessageType.typeUnMicroDelegate:
       case MessageType.typeCollectMicroStakingRewards:
       case MessageType.typeRenewMap3:
-        return "(Map3)";
+        return "$titleStr${isFrom ? "" : "(Map3)"}";
       case MessageType.typeCreateValidator:
       case MessageType.typeEditValidator:
       case MessageType.typeReDelegate:
       case MessageType.typeUnReDelegate:
       case MessageType.typeCollectReStakingReward:
-        return "(Atlas)";
+        return "$titleStr${isFrom ? "" : "(Atlas)"}";
     }
-    return "";
+    return titleStr;
   }
 
   static String getDecodedAmount(TransactionDetailVo transactionDetail) {
