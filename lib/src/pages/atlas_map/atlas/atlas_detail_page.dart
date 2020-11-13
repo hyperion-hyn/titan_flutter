@@ -70,15 +70,16 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   int _currentPage = 1;
   int _pageSize = 30;
+  bool isShowAll = false;
 
   var infoTitleList = [
+    "当前管理费",
+    S.of(Keys.rootKey.currentContext).description,
+    "可设最高管理费",
+    "单纪元可调管理费幅度",
     S.of(Keys.rootKey.currentContext).max_staking_num,
     S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
-    S.of(Keys.rootKey.currentContext).description,
-    S.of(Keys.rootKey.currentContext).fee_rate,
-    S.of(Keys.rootKey.currentContext).max_fee_rate,
-    S.of(Keys.rootKey.currentContext).fee_rate_trim,
   ];
   List<String> infoContentList = [];
 
@@ -165,15 +166,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         });
 
       var maxStaking = FormatUtil.formatPrice(double.parse(_atlasInfoEntity.getMaxStaking()));
-      infoContentList.add(maxStaking);
-      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.home)}");
-      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.contact)}");
-      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.describe)}");
       infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRate()))}");
-
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.describe)}");
       var feeRateMax = "${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateMax()))}";
       infoContentList.add(feeRateMax);
       infoContentList.add("${FormatUtil.formatPercent(double.parse(_atlasInfoEntity.getFeeRateTrim()))}");
+      infoContentList.add(maxStaking);
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.home)}");
+      infoContentList.add("${getContentOrEmptyStr(_atlasInfoEntity.contact)}");
 
       /*_dataList.forEach((element) {
         element.name = "haha";
@@ -192,7 +192,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         _loadDataBloc.add(RefreshSuccessEvent());
       }
     } catch (error) {
-      logger.e(error);
       LogUtil.toastException(error);
       setState(() {
         _currentState = all_page_state.LoadFailState();
@@ -204,16 +203,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     _currentPage++;
 
     var _netDataList = await _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress, page: _currentPage);
-
-    /*_netDataList.forEach((element) {
-      element.name = "haha";
-      element.address = "121112121";
-      element.rewardRate = "11%";
-      element.staking = "2313123";
-      element.home = "http://www.missyuan.net/uploads/allimg/190815/14342Q051-0.png";
-      element.relative = Map3AtlasEntity.onlyId(11, 1);
-      element.relative.status = Map3InfoStatus.CREATE_SUBMIT_ING.index;
-    });*/
 
     if (_netDataList != null) {
       _delegateRecordList.addAll(_netDataList);
@@ -253,7 +242,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
-//                  _chartDetailWidget(),
+                  _chartDetailWidget(),
                   _joinMap3Widget(),
                   _nodeRecordHeader(),
                   _delegateRecordList.isNotEmpty
@@ -813,7 +802,11 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               ],
             ),
           ),
-          stakeInfoView(infoTitleList, infoContentList, true, null),
+          stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
+            setState(() {
+              isShowAll = true;
+            });
+          }),
         ],
       ),
     );
@@ -1065,18 +1058,26 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
     return SliverToBoxAdapter(
       child: Column(
         children: <Widget>[
-          Container(
-              height: 303,
-              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 23, bottom: 23),
-              child: SlidingViewportOnSelection.withSampleData()),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: Container(
+                height: 303,
+                width: MediaQuery.of(context).size.width - 32,
+                padding: const EdgeInsets.only(top: 23, bottom: 23),
+                child: SlidingViewportOnSelection.withSampleData()),
+          ),
           Container(
             height: 10,
             color: HexColor("#F2F2F2"),
           ),
-          Container(
-              height: 303,
-              padding: const EdgeInsets.only(left: 16.0, right: 16, top: 23, bottom: 23),
-              child: SimpleLineChart.withSampleData()),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(0),
+            child: Container(
+                height: 303,
+                width: MediaQuery.of(context).size.width - 32,
+                padding: const EdgeInsets.only(top: 23, bottom: 23),
+                child: SimpleLineChart.withSampleData()),
+          ),
           Container(
             height: 10,
             color: HexColor("#F2F2F2"),
