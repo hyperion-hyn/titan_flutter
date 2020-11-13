@@ -482,10 +482,11 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
     var amount = _textEditingController?.text;
 
-    var entity = PledgeMap3Entity(
-        payload: Payload(
-      userIdentity: '',
-    ));
+    var entity = await createPledgeMap3Entity(
+      context,
+      _nodeId,
+      action: 'cancel',
+    );
 
     var message = ConfirmCancelMap3NodeMessage(
       entity: entity,

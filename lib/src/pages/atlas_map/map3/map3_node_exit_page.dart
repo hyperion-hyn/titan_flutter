@@ -414,11 +414,11 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       return;
     }
 
-    var entity = PledgeMap3Entity(
-        payload: Payload(
-      userName: _walletName,
-      userIdentity: _nodeId,
-    ));
+    var entity = await createPledgeMap3Entity(
+      context,
+      _nodeId,
+      action: 'exit',
+    );
 
     var message = ConfirmTerminateMap3NodeMessage(
       entity: entity,

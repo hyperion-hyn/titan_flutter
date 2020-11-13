@@ -593,13 +593,13 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
       _payload.blsAddSign = _blsKeySignEntity.blsSign;
       _payload.blsRemoveKey = "";
 
-      var activatedWallet = WalletInheritedModel.of(
+      var pledgeMap3Entity = await createPledgeMap3Entity(
         context,
-        aspect: WalletAspect.activatedWallet,
-      ).activatedWallet;
+        _payload.nodeId,
+        action: 'create',
+      );
 
-      var walletName = activatedWallet.wallet.keystore.name;
-      _payload.userName = walletName;
+      _payload.userName = pledgeMap3Entity.payload.userName;
 
       _payload.userIdentity = '';
       _payload.userEmail = "";

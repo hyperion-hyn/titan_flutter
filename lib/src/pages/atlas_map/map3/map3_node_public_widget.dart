@@ -15,6 +15,7 @@ import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
@@ -1262,6 +1263,28 @@ Widget _billStateWidget(HynTransferHistory item) {
 
       break;
   }
+}
+
+
+Future<PledgeMap3Entity> createPledgeMap3Entity(BuildContext context, String nodeId, {String action = ''}) async {
+
+  var activatedWallet = WalletInheritedModel.of(
+    context,
+    aspect: WalletAspect.activatedWallet,
+  ).activatedWallet;
+  var userName = activatedWallet?.wallet?.keystore?.name ?? "";
+
+  var payload = Payload(
+    userIdentity: '',
+    userEmail: '',
+    userName: userName,
+    userPic: '',
+  );
+
+  var entity = PledgeMap3Entity(payload: payload);
+  print("[Public] nodeId:$nodeId, createPledgeMap3Entity, action:$action, payload:${payload.toJson()}");
+
+  return entity;
 }
 
 Widget topNotifyWidget({String notification = '', bool isWarning = false}) {
