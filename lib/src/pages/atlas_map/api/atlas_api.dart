@@ -726,6 +726,47 @@ class AtlasApi {
     }
   }
 
+  static Future<bool> checkIsExit({String map3Address = ''}) async {
+    try {
+      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var _wallet = activatedWallet?.wallet;
+      var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        type: [MessageType.typeTerminateMap3],
+        map3Address: map3Address,
+      );
+
+      var isNotEmpty = list?.isNotEmpty ?? false;
+
+      if (isNotEmpty) {
+        var status = list.first.status;
+        switch (status) {
+          case TransactionStatus.pending:
+            Fluttertoast.showToast(
+              msg: '终止请求正处理中!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+
+          case TransactionStatus.success:
+            Fluttertoast.showToast(
+              msg: '终止请求已完成!',
+              gravity: ToastGravity.CENTER,
+            );
+            break;
+        }
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   // 查询map3ID是否在
   Future<bool> checkNodeIdExist(String nodeId, {String address = ''}) async {
     return AtlasHttpCore.instance.postEntity(

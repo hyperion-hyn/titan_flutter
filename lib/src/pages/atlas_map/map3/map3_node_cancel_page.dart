@@ -12,9 +12,12 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
+import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -30,8 +33,6 @@ import 'map3_node_confirm_page.dart';
 import 'map3_node_public_widget.dart';
 import 'package:titan/src/utils/log_util.dart';
 import '../../../global.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
@@ -53,45 +54,83 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   double remainTotal = 0;
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   Map3InfoEntity _map3infoEntity;
-  Microdelegations _microdelegations;
+  Microdelegations _microDelegationsJoiner;
   Map3IntroduceEntity _map3introduceEntity;
+  Map3NodeInformationEntity _map3nodeInformationEntity;
   AtlasApi _atlasApi = AtlasApi();
 
-  get _nodeId => _map3infoEntity?.nodeId??'';
+  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
+  String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
+
   var _walletName = "";
   var _walletAddress = "";
 
-  var _currentEpoch;
-  var _unlockEpoch;
+  double get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0') ?? 0;
+  int _currentEpoch = 0;
+  var _currentBlockHeight = 0;
+
+  int get _remainEpochInt {
+    var remain = _unlockEpoch - _currentEpoch.toDouble();
+    if (remain >= 1) {
+      return remain.toInt();
+    } else if (remain > 0 && remain < 1) {
+      return 1;
+    }
+    return 0;
+  }
 
   final _client = WalletUtil.getWeb3Client(true);
 
-  @override
-  void onCreated() {
+  _minRemain() {
+    if (_map3infoEntity?.isCreator() ?? false) {
+      return Decimal.tryParse(_nodeCreateMin()) ?? Decimal.parse('0');
+    } else {
+      return Decimal.parse('0');
+    }
+  }
 
+  String _nodeCreateMin() {
+    return _map3introduceEntity?.createMin ?? '0';
+  }
+
+  Decimal _myStakingAmount() {
+    if (_map3infoEntity.mine == null || _microDelegationsJoiner == null) return Decimal.parse("0");
+
+    return ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse(
+            '${FormatUtil.clearScientificCounting((_microDelegationsJoiner?.pendingDelegation?.amount ?? 0).toDouble())}'));
+  }
+
+  get _canCancel =>
+      (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) &&
+      (_remainEpochInt <= 0) &&
+      (_map3infoEntity?.mine != null ?? false) &&
+      (_lastPendingTx == null);
+
+  HynTransferHistory _lastPendingTx;
+
+  @override
+  void initState() {
     _setupData();
 
+    super.initState();
+  }
+
+  @override
+  void onCreated() {
     getNetworkData();
 
     super.onCreated();
   }
 
   _setupData() {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var _wallet = activatedWallet?.wallet;
+    _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+    _walletName = _wallet?.keystore?.name ?? "";
+
     _map3infoEntity = widget.map3infoEntity;
-
-    var activatedWallet = WalletInheritedModel.of(
-      context,
-      aspect: WalletAspect.activatedWallet,
-    ).activatedWallet;
-    _walletName = activatedWallet.wallet.keystore.name;
-    _walletAddress = activatedWallet.wallet.getEthAccount().address;
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
@@ -104,31 +143,40 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
   Future getNetworkData() async {
     try {
-      var walletAddress = EthereumAddress.fromHex(_walletAddress);
-      print("[${widget.runtimeType}] getNetworkData");
-
+      var map3Address = EthereumAddress.fromHex(_nodeAddress);
       _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
 
-      var map3NodeAddress = (widget?.map3infoEntity?.address ?? "");
-      if (_map3infoEntity.mine != null && map3NodeAddress.isNotEmpty) {
-        var map3Address = EthereumAddress.fromHex(map3NodeAddress);
-        _microdelegations = await _client.getMap3NodeDelegation(
-          map3Address,
-          walletAddress,
-        );
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        type: [MessageType.typeUnMicroDelegate],
+        status: [TransactionStatus.pending],
+        map3Address: _nodeAddress,
+      );
+
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        // 已经过去30秒的话，可以执行后面操作
+        var lastTransaction = list.first;
+        var now = DateTime.now().millisecondsSinceEpoch;
+        var last = lastTransaction.timestamp * 1000;
+        var isOver30Seconds = (now - last) > (30 * 1000);
+        //print("my--->now:$now, last:$last, isOver30Seconds:$isOver30Seconds");
+        if (isOver30Seconds) {
+          _lastPendingTx = null;
+        } else {
+          _lastPendingTx = lastTransaction;
+        }
+      } else {
+        _lastPendingTx = null;
       }
+
+      _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
+      _setupMicroDelegations();
 
       _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
-      _unlockEpoch = _microdelegations?.pendingDelegation?.unlockedEpoch ?? 0;
-
-      _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
-
-      print('[Map3-node-cancel] UnlockEpoch(client): $_unlockEpoch CurrentEpoch(api): $_currentEpoch');
-
       if (mounted) {
         setState(() {
-          _currentState = null;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
       }
@@ -138,30 +186,56 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
       if (mounted) {
         setState(() {
-          _currentState = all_page_state.LoadFailState();
+          _loadDataBloc.add(RefreshFailEvent());
         });
       }
     }
   }
 
+  _setupMicroDelegations() {
+    if (_map3nodeInformationEntity?.microdelegations?.isEmpty ?? true) {
+      return;
+    }
+
+    var joinerAddress = _walletAddress.toLowerCase();
+
+    for (var item in _map3nodeInformationEntity.microdelegations) {
+      var delegatorAddress = item.delegatorAddress;
+      if (delegatorAddress.isNotEmpty && (delegatorAddress.toLowerCase()) == joinerAddress) {
+        _microDelegationsJoiner = item;
+        break;
+      }
+    }
+  }
+
+  get _notifyMessage {
+    if (_lastPendingTx == null) return null;
+
+    TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
+    var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
+
+    return '部分撤销${amount}HYN请求正处理中...';
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_currentState != null || _map3infoEntity == null) {
-      return Scaffold(
-        appBar: BaseAppBar(
-          baseTitle: S.of(context).cancel_delegate,
-        ),
-        body: AllPageStateContainer(_currentState, () {
-          setState(() {
-            _currentState = all_page_state.LoadingState();
-          });
-          getNetworkData();
-        }),
-      );
+    var _lastCurrentBlockHeight = _currentBlockHeight;
+    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
+
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    if (_lastCurrentBlockHeight == 0) {
+      _lastCurrentBlockHeight = _currentBlockHeight;
     }
+    LogUtil.printMessage(
+        "[${widget.runtimeType}] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
 
     var walletAddressStr =
         "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";
+
+    if (((_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) && (_lastPendingTx != null)) &&
+        (_currentBlockHeight > _lastCurrentBlockHeight)) {
+      getNetworkData();
+    }
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -170,6 +244,10 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
       backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
+          topNotifyWidget(
+            notification: _notifyMessage,
+            isWarning: false,
+          ),
           Expanded(
             child: LoadDataContainer(
               bloc: _loadDataBloc,
@@ -290,7 +368,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                       _formKey.currentState.validate();
                                     },
                                     controller: _textEditingController,
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.numberWithOptions(decimal: true),
                                     //inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                                     hint: S.of(context).please_enter_withdraw_amount,
                                     validator: (textStr) {
@@ -319,49 +397,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
                                       } else {
                                         return null;
                                       }
-                                      return null;
                                     },
-                                    /*
-                                    suffixIcon: InkWell(
-                                      borderRadius: BorderRadius.circular(30),
-                                      onTap: () {
-                                        if (!_canCancelDelegation) return;
-
-                                        var truncateBalance = _myStakingAmount().toString();
-                                        if (double.parse(truncateBalance) > 0) {
-                                          _textEditingController.text = truncateBalance.toString();
-                                          _textEditingController.selection = TextSelection.fromPosition(TextPosition(
-                                            affinity: TextAffinity.downstream,
-                                            offset: _textEditingController.text.length,
-                                          ));
-                                        }
-                                      },
-                                      child: Container(
-                                        margin: const EdgeInsets.only(left: 16, right: 16, top: 14),
-                                        child: RichText(
-                                          text: TextSpan(
-                                              // todo: test_HYN
-                                              text: "  ",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 14,
-                                                color: Color(0xFF333333),
-                                              ),
-                                              children: [
-                                                TextSpan(
-                                                  text: S.of(context).all,
-                                                  style: TextStyle(
-                                                    color: _canCancelDelegation
-                                                        ? HexColor("#1F81FF")
-                                                        : HexColor("#999999"),
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ]),
-                                        ),
-                                      ),
-                                    ),
-                                    */
                                   ),
                                 ),
                               ),
@@ -394,63 +430,33 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     );
   }
 
-  _minRemain() {
-    print('[delegateMin]${_map3introduceEntity.delegateMin}');
-    if (_map3infoEntity.isCreator()) {
-      var min = Decimal.parse(_nodeCreateMin());
-      return min;
-    } else {
-      return Decimal.parse('0');
-    }
-  }
-
-  String _nodeCreateMin() {
-    return _map3introduceEntity.createMin ?? '0';
-  }
-
-  Decimal _myStakingAmount() {
-    if (_map3infoEntity.mine == null || _microdelegations == null) return Decimal.parse("0");
-
-    return ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(
-            '${FormatUtil.clearScientificCounting((_microdelegations?.pendingDelegation?.amount ?? 0).toDouble())}'));
-  }
-
-  get _canCancelDelegation => _remainEpoch() < Decimal.parse('0');
-
-  Decimal _remainEpoch() {
-    return Decimal.parse('${_unlockEpoch ?? 0}') - Decimal.parse('${_currentEpoch ?? 0}');
-  }
-
-  get _remainEpochInt => _remainEpoch().toInt() == 0 ? 1 : _remainEpoch().toInt();
-
   _epochHint() {
-    if (!_canCancelDelegation) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
-          child: Column(
-            children: [
-              Text(S.of(context).cant_cancel_staking),
-              SizedBox(
-                height: 9,
+    if (_remainEpochInt == 0) return Container();
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32.0),
+        child: Column(
+          children: [
+            Text(S.of(context).cant_cancel_staking),
+            SizedBox(
+              height: 9,
+            ),
+            Text(
+              S.of(context).unlock_remain_epoch(_remainEpochInt),
+              style: TextStyle(
+                color: DefaultColors.color999,
               ),
-              Text(
-                S.of(context).unlock_remain_epoch(_remainEpochInt),
-                style: TextStyle(
-                  color: DefaultColors.color999,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    } else {
-      return SizedBox();
-    }
+      ),
+    );
   }
 
   Widget _confirmButtonWidget() {
+    if (_map3nodeInformationEntity == null ?? true) return Container();
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -462,7 +468,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !_canCancelDelegation,
+            isLoading: !_canCancel,
           ),
         ),
       ),
@@ -470,21 +476,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
   }
 
   _confirmAction() async {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
-
-    var map3NodeAddress = (_map3infoEntity?.address ?? "");
-
-    if (map3NodeAddress.isEmpty) {
-      return;
-    }
-
-    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-      MessageType.typeUnMicroDelegate,
-      map3Address: map3NodeAddress,
-    );
-    if (lastTxIsPending) {
+    if (!_formKey.currentState.validate() || _nodeAddress.isEmpty) {
       return;
     }
 
@@ -497,7 +489,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
 
     var message = ConfirmCancelMap3NodeMessage(
       entity: entity,
-      map3NodeAddress: map3NodeAddress,
+      map3NodeAddress: _nodeAddress,
       amount: amount,
     );
 
