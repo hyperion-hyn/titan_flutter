@@ -39,12 +39,6 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> {
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
-                      child: RichText(
-                        text: TextSpan(
-                          text: "历史奖励",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: HexColor("#333333"),
                       indicatorSize: TabBarIndicatorSize.label,
                       indicatorColor: HexColor('#FF228BA1'),
                       indicatorWeight: 2,
