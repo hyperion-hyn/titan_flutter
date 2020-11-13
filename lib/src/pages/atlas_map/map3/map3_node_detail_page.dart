@@ -647,15 +647,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   bool get _hasFootView {
     if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
-      return !_showLoadingTxLog;
+      if (_showLoadingTxLog) {
+        return false;
+      } else {
+        if (_txLogList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     } else {
-      return !_showLoadingUserList;
+      if (_showLoadingUserList) {
+        return false;
+      } else {
+        if (_userList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     }
   }
 
   /// TODO:Widget
   Widget _pageWidget(BuildContext context) {
-
     return Column(
       children: <Widget>[
         // 0.通知
@@ -665,7 +680,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           child: LoadDataContainer(
               bloc: _loadDataBloc,
               //enablePullDown: false,
-              enablePullUp: _nodeAddress.isNotEmpty,
+              enablePullUp: _nodeAddress?.isNotEmpty ?? false,
               hasFootView: _hasFootView,
               onRefresh: _refreshData,
               onLoadingMore: _loadDelegateMoreData,
@@ -703,7 +718,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   _detailTabWidget(),
                   _detailWidget(),
 
-                  //_joinerListWidget(),
+
                   /*
                   // 4.参与人员列表信息
                   SliverToBoxAdapter(
@@ -2013,8 +2028,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   _txLogView() {
     if (_txLogList.isEmpty) {
-      return emptyListWidget(title: "节点记录为空");
+      return Container(
+        width: double.infinity,
+        child: emptyListWidget(
+          title: "节点记录为空",
+          isAdapter: false,
+        ),
+      );
     }
+
+    _txLogList = [];
 
     return ListView.builder(
       shrinkWrap: true,
@@ -2032,8 +2055,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   _userListView() {
     if (_userList.isEmpty) {
-      return emptyListWidget(title: "参与地址为空");
+      return Container(
+        width: double.infinity,
+        child: emptyListWidget(
+          title: "参与地址为空",
+          isAdapter: false,
+        ),
+      );
     }
+
+    // todo
+    _userList = [];
 
     return ListView.builder(
       shrinkWrap: true,
@@ -2049,9 +2081,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
 
         var amount = FormatUtil.stringFormatCoinNum(
-            ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString());
+                ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
+            ' HYN';
 
-        amount += ' HYN';
         return Container(
           color: Colors.white,
           child: Stack(
@@ -2151,40 +2183,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       visible: visible,
       child: Container(
           width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator()),
-    );
-  }
-
-  _delegateRecordTabChildrenWidget1() {
-    return SliverToBoxAdapter(
-      child: Expanded(
-        child: RefreshConfiguration.copyAncestor(
-          enableLoadingWhenFailed: true,
-          context: context,
-          headerBuilder: () => WaterDropMaterialHeader(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          footerTriggerDistance: 30.0,
-          child: TabBarView(
-            controller: _detailTabController,
-            //physics: NeverScrollableScrollPhysics(),
-            children: [emptyListWidget(title: "节点记录为空"), emptyListWidget(title: "节点记录为空")],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _delegateRecordHeaderWidget() {
-    return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-        child: Row(
-          children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-          ],
-        ),
-      ),
     );
   }
 
