@@ -1,7 +1,6 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -9,11 +8,11 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
-
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_message.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
@@ -29,9 +28,6 @@ import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/web3dart.dart';
 import '../../../global.dart';
 import 'map3_node_confirm_page.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
-
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 
@@ -48,53 +44,65 @@ class Map3NodeExitPage extends StatefulWidget {
 
 class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  all_page_state.AllPageState _currentState = all_page_state.LoadingState();
   Map3InfoEntity _map3infoEntity;
+  Map3NodeInformationEntity _map3nodeInformationEntity;
   AtlasApi _atlasApi = AtlasApi();
 
-  var _nodeId = "";
+  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
+  String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
+
   var _walletName = "";
   var _walletAddress = "";
   Microdelegations _microDelegationsJoiner;
   final _client = WalletUtil.getWeb3Client(true);
   List<Map3UserEntity> _map3UserList = [];
-  Map3NodeInformationEntity _map3nodeInformationEntity;
 
-  get _unlockEpoch => _microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0';
+
+  double get _unlockEpoch => double.tryParse(_microDelegationsJoiner?.pendingDelegation?.unlockedEpoch ?? '0').toDouble ?? 0;
   int _currentEpoch = 0;
 
-  get _remainEpoch {
-    var unlockEpoch = double.tryParse(_unlockEpoch)?.toInt() ?? 0;
-
-    return unlockEpoch - _currentEpoch;
+  int get _remainEpochInt {
+    var remain = _unlockEpoch - _currentEpoch.toDouble();
+    if (remain >= 1) {
+      return remain.toInt();
+    } else if (remain > 0 && remain < 1) {
+      return 1;
+    }
+    return 0;
   }
 
-  get _canExitDelegation => _remainEpoch < 0;
+  int _status = 0;
+  bool _isHaveExit = false;
 
-  get _remainEpochInt => _remainEpoch().toInt() == 0 ? 1 : _remainEpoch().toInt();
+  get _canExit =>
+      (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index) &&
+      (_remainEpochInt <= 0) &&
+      (_map3infoEntity?.isCreator() ?? false) &&
+      (_map3UserList?.isNotEmpty ?? false) &&
+      (!_isHaveExit);
 
-  get isPending => (_map3infoEntity.status == Map3InfoStatus.FUNDRAISING_NO_CANCEL.index);
 
-  bool isExit = false;
+  @override
+  void initState() {
+    _setupData();
+
+    super.initState();
+  }
 
   @override
   void onCreated() {
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    var _wallet = activatedWallet?.wallet;
-    _walletAddress = _wallet?.getEthAccount()?.address ?? "";
-    _walletName = _wallet?.keystore?.name ?? "";
-    _nodeId = widget?.map3infoEntity?.nodeId ?? "";
-
     getNetworkData();
-
-    _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
 
     super.onCreated();
   }
 
-  @override
-  void initState() {
-    super.initState();
+  _setupData() {
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    var _wallet = activatedWallet?.wallet;
+    _walletAddress = _wallet?.getEthAccount()?.address ?? "";
+    _walletName = _wallet?.keystore?.name ?? "";
+
+    _map3infoEntity = widget.map3infoEntity;
   }
 
   @override
@@ -103,6 +111,44 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
     _loadDataBloc.close();
     super.dispose();
+  }
+
+  Future getNetworkData() async {
+    try {
+      var map3Address = EthereumAddress.fromHex(_nodeAddress);
+      _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
+
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        type: [MessageType.typeTerminateMap3],
+        map3Address: _nodeAddress,
+      );
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        _status = list.first.status;
+        _isHaveExit = _status >= TransactionStatus.pending && _status <= TransactionStatus.success;
+      }
+
+      _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
+      _setupMicroDelegations();
+
+      _map3UserList = await _atlasApi.getMap3UserList(_nodeId, size: 0);
+
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      logger.e(e);
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshFailEvent());
+        });
+      }
+    }
   }
 
   _setupMicroDelegations() {
@@ -121,62 +167,29 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     }
   }
 
-  Future getNetworkData() async {
-    try {
-      var map3Address = EthereumAddress.fromHex(widget.map3infoEntity.address);
-
-      _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
-
-      _map3nodeInformationEntity = await _client.getMap3NodeInformation(map3Address);
-      _setupMicroDelegations();
-
-      print('[Exit] UnlockEpoch(client): $_unlockEpoch, CurrentEpoch(api): $_currentEpoch');
-
-      _map3UserList = await _atlasApi.getMap3UserList(widget.map3infoEntity.nodeId, size: 0);
-
-      if (mounted) {
-        setState(() {
-          _currentState = null;
-          _loadDataBloc.add(RefreshSuccessEvent());
-        });
-      }
-    } catch (e) {
-      logger.e(e);
-      LogUtil.toastException(e);
-
-      if (mounted) {
-        setState(() {
-          _currentState = all_page_state.LoadFailState();
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_currentState != null || _map3infoEntity == null) {
-      return Scaffold(
-        appBar: BaseAppBar(
-          baseTitle: S.of(context).terminate_node,
-        ),
-        body: AllPageStateContainer(_currentState, () {
-          setState(() {
-            _currentState = all_page_state.LoadingState();
-          });
-          getNetworkData();
-        }),
-      );
-    }
+    _currentEpoch = AtlasInheritedModel.of(context).currentEpoch;
 
     var walletAddressStr =
         "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";
 
     var nodeName = _map3infoEntity?.name ?? "***";
-    // var oldYear = double.parse(_map3nodeInformationEntity?.map3Node?.age ?? "0").toInt();
-    // var oldYearValue = oldYear > 0 ? "  ${S.of(context).node_age}: ${FormatUtil.formatPrice(oldYear.toDouble())}" : "";
     var oldYearValue = '';
     var nodeAddress =
-        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_map3infoEntity?.address) ?? "***", limitLength: 9)}";
+        "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 9)}";
+
+    var notification = '';
+    switch (_status) {
+      case TransactionStatus.pending:
+        notification = '终止请求正处理中...';
+
+        break;
+
+      case TransactionStatus.success:
+        notification = '终止请求已完成!';
+        break;
+    }
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -188,6 +201,10 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         color: Colors.white,
         child: Column(
           children: <Widget>[
+            topNotifyWidget(
+              notification: notification,
+              isWarning: true,
+            ),
             Expanded(
               child: LoadDataContainer(
                 bloc: _loadDataBloc,
@@ -207,9 +224,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
                                 width: 42,
                                 height: 42,
                                 child: walletHeaderWidget(
-                                  _map3infoEntity.name,
+                                  _map3infoEntity?.name ?? '',
                                   isShowShape: false,
-                                  address: _map3infoEntity.address,
+                                  address: _map3infoEntity?.address ?? '',
                                   isCircle: false,
                                 ),
                               ),
@@ -348,7 +365,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   _epochHint() {
-    if (_canExitDelegation) return Container();
+    if (_remainEpochInt == 0) return Container();
 
     return Center(
       child: Padding(
@@ -372,6 +389,8 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   Widget _confirmButtonWidget() {
+    if (_map3UserList?.isEmpty ?? true) return Container();
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -383,7 +402,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
             height: 46,
             width: MediaQuery.of(context).size.width - 37 * 2,
             fontSize: 18,
-            isLoading: !isPending || !_canExitDelegation || isExit,
+            isLoading: !_canExit,
           ),
         ),
       ),
@@ -391,31 +410,19 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
   }
 
   _confirmAction() async {
-
-    if (!isPending) {
-      Fluttertoast.showToast(msg: S.of(context).canceling_node);
-      return;
-    }
-    
-    isExit = await AtlasApi.checkIsExit(
-      map3Address: _map3infoEntity?.address ?? '',
-    );
-    if (isExit) {
-      setState(() {
-
-      });
+    if (!_canExit || _nodeAddress.isEmpty) {
       return;
     }
 
     var entity = PledgeMap3Entity(
         payload: Payload(
       userName: _walletName,
-      userIdentity: widget.map3infoEntity.nodeId,
+      userIdentity: _nodeId,
     ));
 
     var message = ConfirmTerminateMap3NodeMessage(
       entity: entity,
-      map3NodeAddress: widget.map3infoEntity.address,
+      map3NodeAddress: _nodeAddress,
     );
 
     Navigator.push(
@@ -440,7 +447,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
           switch (value) {
             case 1:
               title = S.of(context).create_date;
-              detail = FormatUtil.newFormatUTCDateStr(widget.map3infoEntity.createdAt, isSecond: true);
+              detail = FormatUtil.newFormatUTCDateStr(_map3infoEntity.createdAt, isSecond: true);
 
               break;
 
@@ -451,14 +458,14 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
 
             case 3:
               title = S.of(context).node_total_staking;
-              detail = FormatUtil.stringFormatCoinNum(widget.map3infoEntity?.getStaking());
+              detail = FormatUtil.stringFormatCoinNum(_map3infoEntity?.getStaking());
 
               break;
 
             case 4:
               title = S.of(context).my_staking;
 
-              var isStart = widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index;
+              var isStart = _map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index;
               var pendingAmount = _microDelegationsJoiner?.pendingDelegation?.amount;
               var activeAmount = _microDelegationsJoiner?.amount;
               var myAmount = isStart ? activeAmount : pendingAmount;

@@ -77,7 +77,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
   var _address = "";
 
-  String get _nodeId => _map3infoEntity?.nodeId ?? '';
+  String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity??'';
   String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
   String get _nodeCreatorAddress =>
       _map3infoEntity?.creator ?? _map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
@@ -103,6 +103,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
     }
 
     switch (_map3Status) {
+      case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+
+        break;
+
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
@@ -637,7 +641,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
 
     return Column(
       children: <Widget>[
+        // 0.通知
         _topNextEpisodeNotifyWidget(),
+
         Expanded(
           child: LoadDataContainer(
               bloc: _loadDataBloc,
@@ -648,8 +654,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> {
               child: CustomScrollView(
                 //physics: AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
-                  // 0.通知
-                  //SliverToBoxAdapter(child: _topNextEpisodeNotifyWidget()),
 
                   // 1.合约介绍信息
                   SliverToBoxAdapter(
