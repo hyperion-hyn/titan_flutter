@@ -718,7 +718,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   _detailTabWidget(),
                   _detailWidget(),
 
-
                   /*
                   // 4.参与人员列表信息
                   SliverToBoxAdapter(
@@ -2037,8 +2036,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    _txLogList = [];
-
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -2063,9 +2060,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         ),
       );
     }
-
-    // todo
-    _userList = [];
 
     return ListView.builder(
       shrinkWrap: true,
