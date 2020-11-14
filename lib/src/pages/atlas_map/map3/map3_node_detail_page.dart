@@ -2333,7 +2333,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     try {
       await _loadDetailData();
 
-      //await _loadDetailDataInAtlas();
+      await _loadDetailDataInAtlas();
 
       _refreshDelegateData();
 
