@@ -1,15 +1,15 @@
-import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:image_pickers/UIConfig.dart';
 import 'package:image_pickers/image_pickers.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/atlas_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
@@ -21,7 +21,6 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -32,6 +31,7 @@ import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/round_border_textfield.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'map3_node_pronounce_page.dart';
+import 'package:web3dart/src/models/map3_node_information_entity.dart';
 
 Widget iconEmptyDefault() {
   return ClipRRect(
@@ -1265,9 +1265,7 @@ Widget _billStateWidget(HynTransferHistory item) {
   }
 }
 
-
 Future<PledgeMap3Entity> createPledgeMap3Entity(BuildContext context, String nodeId, {String action = ''}) async {
-
   var activatedWallet = WalletInheritedModel.of(
     context,
     aspect: WalletAspect.activatedWallet,
@@ -1318,4 +1316,159 @@ Widget topNotifyWidget({String notification = '', bool isWarning = false}) {
       ],
     ),
   );
+}
+
+Future<String> _reminderMessage(
+  Map3InfoEntity map3infoEntity,
+  Map3NodeInformationEntity map3nodeInformationEntity,
+) async {
+  var context = Keys.rootKey.currentContext;
+  var _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
+  var _releaseEpoch = (map3infoEntity?.endEpoch ?? 0);
+
+  var _map3Status = Map3InfoStatus.values[map3infoEntity?.status ?? 1];
+
+  switch (_map3Status) {
+    case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
+      return '终止请求处理中...';
+      break;
+
+    case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+      return '终止请求已完成, 请前往【钱包】查看退款情况!';
+      break;
+
+    case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
+      Map3IntroduceEntity _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+
+      //最小启动所需
+      var startMin = double.tryParse(_map3introduceEntity?.startMin ?? "0") ?? 0;
+
+      //当前抵押量
+      var staking = double.tryParse(map3infoEntity?.getStaking() ?? "0") ?? 0;
+
+      var _isFullDelegate = (startMin > 0) && (staking > 0) && (staking >= startMin);
+
+      if (_isFullDelegate) {
+        var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
+        return "抵押已满$startMinValue，将在下个纪元启动";
+      } else {
+        var remain = startMin - staking;
+        return '还差' + FormatUtil.formatPrice(remain >= 0 ? remain : 0) + 'HYN';
+      }
+      break;
+
+    case Map3InfoStatus.CONTRACT_IS_END:
+      if (_currentEpoch <= (_releaseEpoch + 1)) {
+        return "节点已到期，将在下个纪元结算";
+      }
+      break;
+
+    case Map3InfoStatus.CONTRACT_HAS_STARTED:
+      var remainEpoch = _releaseEpoch - _currentEpoch + 1;
+      var remainDefaultText = '剩余 ${remainEpoch > 0 ? remainEpoch : 0}纪元';
+
+      var _isCreator = map3infoEntity?.isCreator() ?? false;
+      var _isDelegate = map3infoEntity?.mine != null;
+
+      Microdelegations _microDelegationsCreator;
+      Microdelegations _microDelegationsJoiner;
+      var microDelegations = map3nodeInformationEntity?.microdelegations ?? [];
+      if (microDelegations?.isNotEmpty ?? false) {
+        var _wallet = WalletInheritedModel.of(context).activatedWallet?.wallet;
+        var _address = _wallet?.getEthAccount()?.address ?? "";
+
+        String _nodeCreatorAddress =
+            map3infoEntity?.creator ?? map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
+
+        var creatorAddress = _nodeCreatorAddress.toLowerCase();
+        var joinerAddress = _address.toLowerCase();
+
+        int tag = 0;
+        for (var item in microDelegations) {
+          var delegateAddress = item.delegatorAddress.toLowerCase();
+
+          if (delegateAddress == creatorAddress) {
+            _microDelegationsCreator = item;
+            tag += 1;
+          }
+
+          if (delegateAddress == joinerAddress) {
+            _microDelegationsJoiner = item;
+            tag += 1;
+          }
+
+          if (tag == 2) {
+            break;
+          }
+        }
+      }
+      var statusCreator = _microDelegationsCreator?.renewal?.status ?? 0;
+      var statusJoiner = _microDelegationsJoiner?.renewal?.status ?? 0;
+
+      if (_isDelegate) {
+        if (map3infoEntity?.atlas == null) {
+          if (_isCreator) {
+            return '您还未复投Atlas节点，复投可获得出块奖励';
+          } else {
+            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+          }
+        }
+
+        if (_isCreator) {
+          var periodEpoch14 = _releaseEpoch - 14 + 1;
+          var periodEpoch7 = _releaseEpoch - 7;
+
+          var leftEpoch = periodEpoch14 - _currentEpoch;
+
+          // 没有设置过
+          if (statusCreator == 0) {
+            if (_currentEpoch < periodEpoch14) {
+              return "距离可以设置下期续约还有$leftEpoch纪元";
+            } else if (_currentEpoch >= periodEpoch14 && _currentEpoch < periodEpoch7) {
+              return '节点即将结束，请尽快设置下期续约';
+            } else {
+              return remainDefaultText;
+            }
+          }
+          // 已设置过
+          else {
+            return remainDefaultText;
+          }
+        } else {
+          var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+          var leftEpoch = periodEpoch7 - _currentEpoch;
+
+          if (statusJoiner == 0) {
+            if (statusCreator == 0) {
+              if (_currentEpoch < periodEpoch7) {
+                return "距离可以设置下期续约还有$leftEpoch纪元";
+              } else if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                return '节点即将结束，请尽快设置下期是否跟随续约';
+              } else {
+                return remainDefaultText;
+              }
+            } else if (statusCreator == 1) {
+              return '节点主已经停止续约，该节点到期后自动终止';
+            } else if (statusCreator == 2) {
+              if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                return '节点即将结束，请尽快设置下期是否跟随续约';
+              }
+              return '节点主已设置下期自动续约，请你设置下期是否跟随续约';
+            }
+          } else {
+            return remainDefaultText;
+          }
+        }
+      } else {
+        return remainDefaultText;
+      }
+
+      break;
+
+    default:
+      break;
+  }
+
+  return null;
 }

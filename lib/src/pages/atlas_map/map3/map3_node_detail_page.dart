@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -38,7 +36,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:web3dart/web3dart.dart';
@@ -101,7 +98,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   get statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
   get statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
 
-  get isHiddenRenew => (statusCreator == 1 && _isDelegate && !_isCreator);
+  // get isHiddenRenew => (statusCreator == 1 && _isDelegate && !_isCreator);
 
   get _notifyMessage {
     if (_isLoading) {
@@ -154,7 +151,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_IS_END:
         //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
         if (_currentEpoch <= (_releaseEpoch + 1)) {
-          return "节点已到期，将在下个纪元结算……";
+          return "节点已到期，将在下个纪元结算";
         }
         break;
 
