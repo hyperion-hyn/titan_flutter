@@ -7,6 +7,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -15,6 +16,7 @@ import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -57,13 +59,16 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   Map3InfoEntity _map3InfoEntity;
   get _nodeId => _map3InfoEntity?.nodeId ?? '';
+  get _nodeAddress => _map3InfoEntity?.address ?? '';
+
   var _walletAddress = "";
   AtlasApi _atlasApi = AtlasApi();
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
+  bool lastTxIsPending = false;
+  var _currentBlockHeight = 0;
 
   @override
   void initState() {
-
     _setupData();
 
     super.initState();
@@ -138,8 +143,31 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     try {
       _map3introduceEntity = await AtlasApi.getIntroduceEntity();
       _map3InfoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
-
       _setupDetailList();
+
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        type: [MessageType.typeEditMap3],
+        map3Address: _nodeAddress,
+        status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+        size: 1,
+      );
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        // 已经过去30秒的话，可以执行后面操作
+        var lastTransaction = list.first;
+        var now = DateTime.now().millisecondsSinceEpoch;
+        var last = lastTransaction.timestamp * 1000;
+        var isOver30Seconds = (now - last) > (30 * 1000);
+        //print("my--->now:$now, last:$last, isOver30Seconds:$isOver30Seconds");
+        if (isOver30Seconds) {
+          lastTxIsPending = false;
+        } else {
+          lastTxIsPending = true;
+        }
+      } else {
+        lastTxIsPending = false;
+      }
 
       if (mounted) {
         setState(() {
@@ -180,8 +208,28 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
       });
     }
 
+    var notification = lastTxIsPending ? '编辑请求正处理中...' : '';
+
+    var _lastCurrentBlockHeight = _currentBlockHeight;
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    if (_lastCurrentBlockHeight == 0) {
+      _lastCurrentBlockHeight = _currentBlockHeight;
+    }
+    LogUtil.printMessage(
+        "[${widget.runtimeType}] _lastCurrentBlockHeight: $_lastCurrentBlockHeight, _currentBlockHeight:$_currentBlockHeight");
+
+    if (lastTxIsPending && (_currentBlockHeight > _lastCurrentBlockHeight)) {
+      LogUtil.printMessage("[${widget.runtimeType}] _dddddddddddd");
+
+      getNetworkData();
+    }
+
     return Column(
       children: <Widget>[
+        topNotifyWidget(
+          notification: notification,
+          isWarning: false,
+        ),
         Expanded(
           child: LoadDataContainer(
             bloc: _loadDataBloc,
@@ -361,6 +409,7 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
+        isLoading: lastTxIsPending,
       ),
     );
   }
@@ -386,14 +435,6 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
 
     if (map3NodeAddress.isEmpty) {
       Fluttertoast.showToast(msg: '新创建的节点暂时不支持修改');
-      return;
-    }
-
-    var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-      MessageType.typeEditMap3,
-      map3Address: map3NodeAddress,
-    );
-    if (lastTxIsPending) {
       return;
     }
 

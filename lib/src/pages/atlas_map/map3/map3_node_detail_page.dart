@@ -245,6 +245,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -283,7 +284,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // get _canExit => _isCreator && _isPending && _isOver7Epoch;
   get _canExit => _isCreator && (_isPending || _isTerminal);
 
-  get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
+  //get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
 
   get _canEditNode =>
       _isCreator &&
@@ -1724,7 +1725,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
 
-    print("myDelegationString: --->$myDelegationString, _isDelegate:$_isDelegate");
+    //print("myDelegationString: --->$myDelegationString, _isDelegate:$_isDelegate");
 
     return Container(
       color: Colors.white,
