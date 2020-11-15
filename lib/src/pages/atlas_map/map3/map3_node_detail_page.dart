@@ -111,7 +111,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        return '终止请求已完成, 请前往【钱包】查看退款情况!';
+        return '节点已终止，抵押金额已返回您的钱包';
+        //return '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
