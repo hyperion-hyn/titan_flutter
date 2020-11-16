@@ -13,11 +13,12 @@ class Map3NodeUtil {
   static String getManagerTip(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
-    double doubleSpendManager = (double.parse(contract.minTotalDelegation) - inputValue) *
-        contract.annualizedYield *
-        contract.duration /
-        365 *
-        contract.commission;
+    double doubleSpendManager =
+        (double.parse(contract.minTotalDelegation) - inputValue) *
+            contract.annualizedYield *
+            contract.duration /
+            365 *
+            contract.commission;
     return FormatUtil.formatNumDecimal(doubleSpendManager);
   }
 
@@ -26,14 +27,21 @@ class Map3NodeUtil {
   static String spendManagerTip(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
-    double tip = (inputValue) * contract.annualizedYield * contract.duration / 365 * contract.commission;
+    double tip = (inputValue) *
+        contract.annualizedYield *
+        contract.duration /
+        365 *
+        contract.commission;
     return FormatUtil.formatNumDecimal(tip);
   }
 
-  static String managerTip(NodeItem contract, double inputValue, {bool isOwner = false}) {
+  static String managerTip(NodeItem contract, double inputValue,
+      {bool isOwner = false}) {
     if (contract == null) return "*";
 
-    return isOwner ? getManagerTip(contract, inputValue) : spendManagerTip(contract, inputValue);
+    return isOwner
+        ? getManagerTip(contract, inputValue)
+        : spendManagerTip(contract, inputValue);
   }
 
   // expect yeild
@@ -41,7 +49,8 @@ class Map3NodeUtil {
   static String getExpectYield(NodeItem contract, double inputValue) {
     if (contract == null) return "*";
 
-    double out = (inputValue) * contract.annualizedYield * contract.duration / 365;
+    double out =
+        (inputValue) * contract.annualizedYield * contract.duration / 365;
     return FormatUtil.formatNumDecimal(out);
   }
 
@@ -49,7 +58,9 @@ class Map3NodeUtil {
   static String getEndProfit(NodeItem contract, double inputValue) {
     if (contract == null) return FormatUtil.formatNumDecimal(inputValue);
 
-    double profit = inputValue * (contract.annualizedYield) * contract.duration / 365 + inputValue;
+    double profit =
+        inputValue * (contract.annualizedYield) * contract.duration / 365 +
+            inputValue;
     return FormatUtil.formatNumDecimal(profit);
   }
 
@@ -169,7 +180,7 @@ class Map3NodeUtil {
 
       case Map3InfoStatus.CREATE_FAIL:
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusColor = HexColor("#CB3021");
+        _map3StatusColor = HexColor("#999999");
         break;
 
       default:
@@ -192,7 +203,6 @@ class Map3NodeUtil {
         _map3StatusColor = HexColor("#CEE3FF");
         break;
 
-
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         _map3StatusColor = HexColor("#CBF6FF");
         break;
@@ -203,7 +213,7 @@ class Map3NodeUtil {
 
       case Map3InfoStatus.CREATE_FAIL:
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        _map3StatusColor = HexColor("#EACAC7");
+        _map3StatusColor = HexColor("#999999");
         break;
 
       default:

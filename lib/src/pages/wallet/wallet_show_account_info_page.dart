@@ -37,7 +37,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   @override
   void initState() {
-    isBillPage = widget.transactionDetail.hynType == MessageType.typeTerminateMap3Reward;
+    isBillPage = widget.transactionDetail.hynType == MessageType.typeTerminateMap3Return;
     super.initState();
   }
 

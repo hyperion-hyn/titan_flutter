@@ -28,6 +28,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/atlas_map/widget/atlas_info_widget.dart';
+import 'package:titan/src/pages/atlas_map/widget/my_map3_node_info_item_v2.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_head_entity.dart';
@@ -606,7 +607,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     return SliverList(
         delegate: SliverChildBuilderDelegate(
       (context, index) {
-        return _map3NodeInfoItem(_myMap3List[index]);
+        return MyMap3NodeInfoItemV2(_myMap3List[index]);
       },
       childCount: _myMap3List.length,
     ));

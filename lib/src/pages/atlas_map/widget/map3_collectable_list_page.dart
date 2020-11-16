@@ -46,7 +46,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
   String _address = '';
 
   Map<String, dynamic> _rewardMap = {};
-  String _totalAmount = '0';
+  Decimal _totalAmount = Decimal.fromInt(0);
 
   int _currentPage = 1;
   int _pageSize = 30;
@@ -257,17 +257,17 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
     }
 
     try {
-      if (_rewardMap?.values?.isEmpty ?? true) {
-        if (_rewardMap?.values?.isNotEmpty ?? false) {
-          BigInt totalReward = BigInt.from(0);
-          for (var value in _rewardMap?.values) {
-            var source = value ?? '0';
-            var bigIntValue = BigInt.tryParse(source) ?? BigInt.from(0);
-            totalReward += bigIntValue;
-          }
-          _totalAmount =
-              ConvertTokenUnit.weiToEther(weiBigInt: totalReward).toString();
-        }
+      if (_rewardMap.isNotEmpty) {
+        ///clear amount first;
+        _totalAmount = Decimal.fromInt(0);
+
+        _rewardMap.forEach((key, value) {
+          var bigIntValue = BigInt.tryParse(value) ?? BigInt.from(0);
+          Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+            weiBigInt: bigIntValue,
+          );
+          _totalAmount = _totalAmount + valueByDecimal;
+        });
       } else {
         var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
             MessageType.typeCollectMicroStakingRewards);
@@ -288,45 +288,47 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
     var preText =
         "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，";
 
-    UiUtil.showAlertView(context,
-        title: S.of(context).collect_reward,
-        actions: [
-          ClickOvalButton(
-            S.of(context).confirm_collect,
-            () {
-              Navigator.pop(context);
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).collect_reward,
+      actions: [
+        ClickOvalButton(
+          S.of(context).confirm_collect,
+          () {
+            Navigator.pop(context);
 
-              var entity = PledgeMap3Entity();
-              var message = ConfirmCollectMap3NodeMessage(
-                entity: entity,
-                amount: _totalAmount,
-                addressList:
-                    _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
-              );
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Map3NodeConfirmPage(
-                      message: message,
-                    ),
-                  ));
-            },
-            width: 200,
-            height: 38,
-            fontSize: 16,
-          ),
-        ],
-        content: S.of(context).confirm_collect_reward_to_wallet(
-              preText,
-              "${FormatUtil.stringFormatCoinNum(_totalAmount)}",
-            ),
-        boldContent: "($_walletName)",
-        boldStyle: TextStyle(
-          color: HexColor("#999999"),
-          fontSize: 12,
-          height: 1.8,
+            var entity = PledgeMap3Entity();
+            var message = ConfirmCollectMap3NodeMessage(
+              entity: entity,
+              amount: _totalAmount.toString(),
+              addressList:
+                  _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+            );
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Map3NodeConfirmPage(
+                    message: message,
+                  ),
+                ));
+          },
+          width: 200,
+          height: 38,
+          fontSize: 16,
         ),
-        suffixContent: " ？");
+      ],
+      content: S.of(context).confirm_collect_reward_to_wallet(
+            preText,
+            "${FormatUtil.stringFormatCoinNum(_totalAmount.toString())}",
+          ),
+      boldContent: "($_walletName)",
+      boldStyle: TextStyle(
+        color: HexColor("#999999"),
+        fontSize: 12,
+        height: 1.8,
+      ),
+      suffixContent: " ？",
+    );
   }
 
   _refreshData() async {
@@ -379,10 +381,9 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
       WalletUtil.ethAddressToBech32Address(map3infoEntity?.address ?? ""),
       limitLength: 8,
     )}';
-
     var valueInRewardMap =
-        _rewardMap?.containsKey(map3infoEntity.address) ?? false
-            ? _rewardMap[map3infoEntity.address]
+        _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
+            ? _rewardMap[map3infoEntity.address?.toLowerCase()]
             : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
     var _collectable = ConvertTokenUnit.weiToEther(
