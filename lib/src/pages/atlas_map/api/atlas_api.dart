@@ -73,6 +73,7 @@ class AtlasApi {
   }
 
   static Map3IntroduceEntity _map3introduceEntity;
+
   static Future<Map3IntroduceEntity> getIntroduceEntity() async {
     if (_map3introduceEntity != null) {
       return _map3introduceEntity;
@@ -294,12 +295,11 @@ class AtlasApi {
   }
 
   // atlas节点图表数据
-  Future<RewardHistoryEntity> postAtlasChartHistory(String nodeAddress,{int page = 1,int size = 20}) async {
+  Future<List<RewardHistoryEntity>> postAtlasChartHistory(String nodeAddress, {int page = 1, int size = 20}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward_history",
-        EntityFactory<RewardHistoryEntity>(
-              (json) => RewardHistoryEntity.fromJson(json),
-        ),
+        EntityFactory<List<RewardHistoryEntity>>(
+            (list) => (list['data'] as List).map((item) => RewardHistoryEntity.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -647,7 +647,11 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  static Future<bool> checkLastTxIsPending(int type, {String map3Address = '',String atlasAddress = '',}) async {
+  static Future<bool> checkLastTxIsPending(
+    int type, {
+    String map3Address = '',
+    String atlasAddress = '',
+  }) async {
     try {
       var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var _wallet = activatedWallet?.wallet;
@@ -745,30 +749,30 @@ class AtlasApi {
     }
   }
 
-  static bool isTransferBill(int type){
-    return (type == MessageType.typeUnMicrostakingReturn
-        || type == MessageType.typeTerminateMap3Return);
+  static bool isTransferBill(int type) {
+    return (type == MessageType.typeUnMicrostakingReturn || type == MessageType.typeTerminateMap3Return);
   }
 
   static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
-    var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) + Decimal.parse(hynTransferHistory.payload.reward)).toString();
-    return ConvertTokenUnit.weiToEther(
-        weiBigInt: BigInt.parse(amountStr)).toDouble();
+    var amountStr =
+        (Decimal.parse(hynTransferHistory.payload.amount) + Decimal.parse(hynTransferHistory.payload.reward))
+            .toString();
+    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr)).toDouble();
   }
 
-  static bool isTransferMap3Atlas(int type){
-    return (type == MessageType.typeCreateValidator
-        || type == MessageType.typeEditValidator
-        || type == MessageType.typeReDelegate
-        || type == MessageType.typeUnReDelegate
-        || type == MessageType.typeCollectReStakingReward
-        || type == MessageType.typeCreateMap3
-        || type == MessageType.typeEditMap3
-        || type == MessageType.typeTerminateMap3
-        || type == MessageType.typeMicroDelegate
-        || type == MessageType.typeUnMicroDelegate
-        || type == MessageType.typeCollectMicroStakingRewards
-        || type == MessageType.typeRenewMap3);
+  static bool isTransferMap3Atlas(int type) {
+    return (type == MessageType.typeCreateValidator ||
+        type == MessageType.typeEditValidator ||
+        type == MessageType.typeReDelegate ||
+        type == MessageType.typeUnReDelegate ||
+        type == MessageType.typeCollectReStakingReward ||
+        type == MessageType.typeCreateMap3 ||
+        type == MessageType.typeEditMap3 ||
+        type == MessageType.typeTerminateMap3 ||
+        type == MessageType.typeMicroDelegate ||
+        type == MessageType.typeUnMicroDelegate ||
+        type == MessageType.typeCollectMicroStakingRewards ||
+        type == MessageType.typeRenewMap3);
   }
 
   static Future<bool> checkIsExit({String map3Address = ''}) async {

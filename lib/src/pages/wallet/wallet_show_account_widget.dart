@@ -725,7 +725,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       return retList;
     }
 
-//    try {
+    try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
 
       //delete local transaction
@@ -743,9 +743,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       }
 
       retList.addAll(transferList);
-//    } catch (e) {
-//      logger.e(e);
-//    }
+    } catch (e) {
+      logger.e(e);
+    }
     return retList;
   }
 

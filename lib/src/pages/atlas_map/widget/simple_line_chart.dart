@@ -1,5 +1,7 @@
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
+import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 
 class SimpleLineChart extends StatelessWidget {
   final List<charts.Series> seriesList;
@@ -9,9 +11,9 @@ class SimpleLineChart extends StatelessWidget {
   SimpleLineChart(this.seriesList, {this.animate});
 
   /// Creates a [LineChart] with sample data and no transition.
-  factory SimpleLineChart.withSampleData() {
+  factory SimpleLineChart.withSampleData(List<RewardHistoryEntity> rewardHistoryList) {
     return new SimpleLineChart(
-      _createSampleData(),
+      _createSampleData(rewardHistoryList),
       animate: false,
     );
   }
@@ -49,13 +51,23 @@ class SimpleLineChart extends StatelessWidget {
         tickFormatterSpec: simpleCurrencyFormatter,
         tickProviderSpec: new charts.BasicNumericTickProviderSpec(desiredTickCount: 5),
         /*viewport: new charts.NumericExtents(0, 100)*/),
-      domainAxis: new charts.NumericAxisSpec(viewport: new charts.NumericExtents(5, 9)),
+//      domainAxis: new charts.NumericAxisSpec(viewport: new charts.NumericExtents(5, 9)),
     );
   }
 
   /// Create one series with sample hard coded data.
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final data = [
+  static List<charts.Series<LinearSales, int>> _createSampleData(List<RewardHistoryEntity> rewardHistoryList) {
+    final data = List.generate(rewardHistoryList.length, (index) {
+      var rewardItem = rewardHistoryList[index];
+      var delegation = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(rewardItem.totalDelegation)).toInt();
+      print("!!!!22 ${rewardItem.epoch}   $delegation");
+//      if(index == (rewardHistoryList.length - 1)){
+//        lastRewardOrdinal = OrdinalSales("${rewardItem.epoch}",delegation);
+//      }
+      return LinearSales(rewardItem.epoch,delegation);
+    }).toList();
+
+    /*final data = [
       new LinearSales(0, 50),
       new LinearSales(1, 25),
       new LinearSales(2, 100),
@@ -66,7 +78,7 @@ class SimpleLineChart extends StatelessWidget {
       new LinearSales(7, 74),
       new LinearSales(8, 33),
       new LinearSales(9, 97),
-    ];
+    ];*/
 
     return [
       new charts.Series<LinearSales, int>(
