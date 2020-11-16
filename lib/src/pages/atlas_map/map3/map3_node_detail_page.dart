@@ -2060,114 +2060,134 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index) {
-        var item = _userList[index];
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12,),
+                color: Colors.white,
+                child: Text('共 ${_userList?.length??0}个', style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 16,
+                  color: HexColor('#999999'),
+                )),
+              ),
+            ),
+          ],
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            var item = _userList[index];
 
-        var itemAddress = item.address.toLowerCase();
-        var isYou = itemAddress == _address;
-        var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
-        var recordName =
-            "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
+            var itemAddress = item.address.toLowerCase();
+            var isYou = itemAddress == _address;
+            var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
+            var recordName =
+                "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
 
-        var amount = FormatUtil.stringFormatCoinNum(
-                ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
-            ' HYN';
+            var amount = FormatUtil.stringFormatCoinNum(
+                    ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
+                ' HYN';
 
-        return Container(
-          color: Colors.white,
-          child: Stack(
-            children: <Widget>[
-              InkWell(
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: iconWidget("", item.name, item.address, isCircle: true),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: RichText(
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: item.name,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor("#000000"),
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: recordName,
-                                            style: TextStyle(
-                                                fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                height: 8.0,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
-                                        limitCharsLength: 8),
-                                    style: TextStyle(fontSize: 12, color: HexColor("#999999")),
-                                  ),
-                                ],
-                              ),
-                            ],
+            return Container(
+              color: Colors.white,
+              child: Stack(
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: iconWidget("", item.name, item.address, isCircle: true),
                           ),
-                        ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 2,
+                                        child: RichText(
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                            text: item.name,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: HexColor("#000000"),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: recordName,
+                                                style: TextStyle(
+                                                    fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    height: 8.0,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
+                                            limitCharsLength: 8),
+                                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            amount,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: HexColor('#333333'),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        ],
                       ),
-                      Text(
-                        amount,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: HexColor('#333333'),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    left: 40,
+                    right: 8,
+                    child: Container(
+                      height: 0.5,
+                      color: DefaultColors.colorf5f5f5,
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: 0,
-                left: 40,
-                right: 8,
-                child: Container(
-                  height: 0.5,
-                  color: DefaultColors.colorf5f5f5,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      itemCount: _userList.length,
+            );
+          },
+          itemCount: _userList.length,
+        ),
+      ],
     );
   }
 
