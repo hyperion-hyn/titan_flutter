@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'dart:convert' as jsonUtils;
 
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
@@ -84,9 +85,8 @@ class TransactionDetailVo {
     this.logsDecoded,
   });
 
-  String getDecodedAmount(){
-
-    if(dataDecoded == null){
+  String getDecodedAmount() {
+    if (dataDecoded == null) {
       return "0.0";
     }
 
@@ -95,20 +95,27 @@ class TransactionDetailVo {
       bigAmount = dataDecoded['amount'] ?? '0';
     }
 
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount)).toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount))
+        .toString();
     return amount;
   }
 
-  String getAtlasRewardAmount(){
-    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+  String getAtlasRewardAmount() {
+    if (logsDecoded == null ||
+        logsDecoded.rewards == null ||
+        logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
+    var amount = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount))
+        .toString();
     return amount;
   }
 
-  String getMap3RewardAmount(){
-    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+  String getMap3RewardAmount() {
+    if (logsDecoded == null ||
+        logsDecoded.rewards == null ||
+        logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
     BigInt amount = BigInt.parse("0");
@@ -150,6 +157,7 @@ class TransactionDetailVo {
       logsDecoded: hynTransferHistory.logsDecoded,
     );
   }
+
 
   factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
       _$TransactionDetailVoFromJson(json);

@@ -137,13 +137,17 @@ class AtlasApi {
   }
 
   // 查询燃烧信息
-  Future<BurnMsg> postBurnMsg() async {
+  Future<BurnMsg> postBurnMsg({
+    int status = 2,
+  }) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/burn_msg",
         EntityFactory<BurnMsg>(
           (json) => BurnMsg.fromJson(json),
         ),
-        params: {},
+        params: {
+          'status': status,
+        },
         options: RequestOptions(contentType: "application/json"));
   }
 
@@ -560,7 +564,8 @@ class AtlasApi {
   }
 
   // 获取节点的抵押人地址列表
-  Future<List<Map3UserEntity>> getMap3UserList(String nodeId, {int page = 1, int size = 10}) async {
+  Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
+      {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/user_list",
         EntityFactory<List<Map3UserEntity>>((list) => (list as List)
@@ -811,7 +816,8 @@ class AtlasApi {
 
   static Future<bool> checkIsExit({String map3Address = ''}) async {
     try {
-      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var activatedWallet =
+          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var _wallet = activatedWallet?.wallet;
       var _walletAddress = _wallet?.getEthAccount()?.address ?? "";
 

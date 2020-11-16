@@ -62,7 +62,7 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
           builder: (BuildContext context) => BurnHistoryPage(),
         ));
       },
-      child: _burnMsg != null
+      child: _burnMsg?.latestBurnHistory != null
           ? Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Container(

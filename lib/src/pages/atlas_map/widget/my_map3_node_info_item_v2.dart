@@ -36,7 +36,8 @@ class MyMap3NodeInfoItemV2 extends StatefulWidget {
   }
 }
 
-class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> {
+class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
+    with AutomaticKeepAliveClientMixin {
   bool _isLoading = true;
   Map3NodeInformationEntity _map3nodeInformationEntity;
   var nodeName = '';
@@ -53,6 +54,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> {
   String _reminderText = '';
 
   final _client = WalletUtil.getWeb3Client(true);
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -117,97 +121,93 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Center(
-              child: SizedBox(
-                height: 40,
-                width: 40,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                ),
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 16.0,
+        right: 16.0,
+        left: 16.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: _isShowBorderHint
+              ? Border.all(
+                  color: HexColor('#FFFF4C3B').withOpacity(
+                  0.5,
+                ))
+              : null,
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[200],
+              blurRadius: 15.0,
             ),
-          )
-        : InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Map3NodeDetailPage(
-                      widget._map3infoEntity,
-                    ),
-                  ));
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 16.0,
-                right: 16.0,
-                left: 16.0,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: _isShowBorderHint
-                      ? Border.all(color: HexColor('#FFFF4C3B'))
-                      : null,
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey[200],
-                      blurRadius: 15.0,
-                    ),
-                  ],
+          ],
+        ),
+        child: InkWell(
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 12.0,
+              vertical: 8.0,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                iconMap3Widget(widget._map3infoEntity),
+                SizedBox(
+                  width: 8,
                 ),
-                child: InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12.0,
-                      vertical: 8.0,
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        iconMap3Widget(widget._map3infoEntity),
-                        SizedBox(
-                          width: 8,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '$nodeName',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
                         ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                '$nodeName',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Container(
-                                height: 2,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    '${S.of(context).node_num}: ${nodeId}',
-                                    style: TextStyle(
-                                      color: DefaultColors.color999,
-                                      fontSize: 10,
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
+                      ),
+                      Container(
+                        height: 2,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '${S.of(context).node_num}: ${nodeId}',
+                            style: TextStyle(
+                              color: DefaultColors.color999,
+                              fontSize: 10,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                _isLoading
+                    ? Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: SizedBox(
+                            height: 16,
+                            width: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
                           ),
                         ),
-                        Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Spacer(),
-                              Container(
+                      )
+                    : Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Spacer(),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Container(
                                 width: 8,
                                 height: 8,
                                 decoration: BoxDecoration(
@@ -220,25 +220,25 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> {
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 8,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Container(
+                              constraints: BoxConstraints(
+                                maxWidth: 100,
                               ),
-                              Container(
-                                constraints: BoxConstraints(
-                                  maxWidth: 100,
-                                ),
-                                child: _reminderTextWidget(),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+                              child: _reminderTextWidget(),
+                            )
+                          ],
+                        ),
+                      )
+              ],
             ),
-          );
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _reminderTextWidget() {
@@ -264,8 +264,6 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> {
     bool _hasRenew = (_microDelegations?.renewal?.status ?? 0) != 0;
 
     var _hasReDelegation = widget._map3infoEntity?.atlas != null;
-
-    _isShowBorderHint = !_hasRenew || !_hasReDelegation;
 
     setState(() {
       _isLoading = false;

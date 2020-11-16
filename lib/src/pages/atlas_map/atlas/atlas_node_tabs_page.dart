@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -23,6 +24,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_page.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_nodes_page.dart';
@@ -607,7 +609,19 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     return SliverList(
         delegate: SliverChildBuilderDelegate(
       (context, index) {
-        return MyMap3NodeInfoItemV2(_myMap3List[index]);
+        return GestureDetector(
+          child: MyMap3NodeInfoItemV2(_myMap3List[index]),
+          onTap: () {
+            Fluttertoast.showToast(msg: 'MyMap3NodeInfoItemV2');
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Map3NodeDetailPage(
+                    _myMap3List[index],
+                  ),
+                ));
+          },
+        );
       },
       childCount: _myMap3List.length,
     ));
