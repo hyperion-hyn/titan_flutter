@@ -172,6 +172,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               case MessageType.typeEditMap3:
                 return '编辑请求正处理中...';
                 break;
+
+              case MessageType.typeReDelegate:
+                return '复抵押请求正处理中...';
+                break;
+
+              case MessageType.typeUnReDelegate:
+                return '取消复抵押请求正处理中...';
+                break;
+
+              case MessageType.typeCollectReStakingReward:
+                return '提取Atlas奖励请求正处理中...';
+                break;
             }
           }
 
@@ -245,8 +257,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   ”抵押者“显示编辑： 倒数7纪元后  且 （“创建者”设置为【已开启】或【未设置】） 且  自己状态为未设置，    或“创建者”已设置为【已开启】 且 自己状态为未设置，  开始显示。
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
-  get _canEditNextPeriod {
-
+  get _canRenewNextPeriod {
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -325,11 +336,63 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        value = 1;
+
+        if (_isDelegate) {
+          if (_isCreator) {
+            var periodEpoch14 = _releaseEpoch - 14 + 1;
+            var periodEpoch7 = _releaseEpoch - 7;
+
+            var leftEpoch = periodEpoch14 - _currentEpoch;
+
+            // 没有设置过
+            if (statusCreator == 0) {
+              if (_currentEpoch < periodEpoch14) {
+                value = 1;
+              } else if (_currentEpoch >= periodEpoch14 && _currentEpoch < periodEpoch7) {
+                value = 2;
+              } else {
+                value = 2;
+              }
+            }
+            // 已设置过
+            else {
+              value = 2;
+            }
+          } else {
+            var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+            var leftEpoch = periodEpoch7 - _currentEpoch;
+
+            if (statusJoiner == 0) {
+              if (statusCreator == 0) {
+                if (_currentEpoch < periodEpoch7) {
+                  value = 1;
+                } else if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                  value = 2;
+                } else {
+                  value = 2;
+                }
+              } else if (statusCreator == 1) {
+                value = 1;
+              } else if (statusCreator == 2) {
+                if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                  value = 2;
+                }
+                value = 2;
+              }
+            } else {
+              value = 2;
+            }
+          }
+        } else {
+          value = 2;
+        }
+
         break;
 
+
       case Map3InfoStatus.CONTRACT_IS_END:
-        value = 2;
+        value = 3;
         break;
 
       default:
@@ -1294,7 +1357,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       editDateLimit = "";
     }
 
-    if (_isDelegate && _canEditNextPeriod) {
+    if (_isDelegate && _canRenewNextPeriod) {
       _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
     }
 
@@ -1332,7 +1395,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         isCloseRenew ? '' : "设置",
                         style: TextStyle(
                           fontSize: 14,
-                          color: _canEditNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
+                          color: _canRenewNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
                         ),
                       )),
                     ),
@@ -1448,16 +1511,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
-                  child: Text.rich(
-                    TextSpan(children: [
-                      TextSpan(
-                          text: "暂未复投Atlas节点，复投Atlas节点可以获得出块奖励",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor("#333333"),
-                          )),
-                    ]),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 3,
+                        ),
+                        child: Icon(
+                          Icons.report_problem,
+                          color: HexColor('#FF5041'),
+                          size: 15,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                                text: "尚未复投Atlas节点，请尽快复投Atlas节点以获得出块奖励",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: HexColor("#333333"),
+                                )),
+                          ]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Visibility(
@@ -1824,36 +1904,51 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               children: <Widget>[
                 Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 18, right: 8.0),
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        //color: Colors.red,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _statusColor,
-                          border: Border.all(
-                            color: Map3NodeUtil.statusBorderColor(_map3Status),
-                            width: 1.0,
-                          ),
-                        ),
+                Text.rich(
+                  TextSpan(children: [
+                    TextSpan(
+                      text: '当前纪元 ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: HexColor('#999999'),
                       ),
                     ),
-                    Text.rich(
-                      TextSpan(children: [
-                        TextSpan(
-                          text: _stateDescText,
-                          style: TextStyle(fontSize: 12, color: _statusColor),
-                        ),
-                      ]),
+                    TextSpan(
+                      text: '$_currentEpoch',
+                      style: TextStyle(fontSize: 14, color: HexColor('#1096B1')),
                     ),
-                  ],
+                  ]),
                 ),
               ],
             ),
+          ),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 18, right: 8.0),
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  //color: Colors.red,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _statusColor,
+                    border: Border.all(
+                      color: Map3NodeUtil.statusBorderColor(_map3Status),
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+              Text.rich(
+                TextSpan(children: [
+                  TextSpan(
+                    text: _stateDescText,
+                    style: TextStyle(fontSize: 12, color: _statusColor),
+                  ),
+                ]),
+              ),
+            ],
           ),
           Container(
             height: 140,
@@ -1866,9 +1961,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   Widget _customStepperWidget() {
+    var periodEpoch14 = _releaseEpoch - 14 + 1;
+    var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+    var renewEpoch = _isCreator ? periodEpoch14 : periodEpoch7;
+    if (_currentStep == 2 && statusCreator == 2) {
+      renewEpoch = periodEpoch14;
+    }
     var titles = [
       _pendingEpoch > 0 ? "创建 #$_pendingEpoch" : "创建",
       _activeEpoch > 0 ? "启动 #$_activeEpoch" : "启动",
+      renewEpoch > 0 ? '续期 #$renewEpoch' : '续期',
       _releaseEpoch > 0 ? "到期 #$_releaseEpoch" : "到期",
     ];
 
@@ -1880,11 +1983,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       createdAt,
       startTime,
       endTime,
+      '',
     ];
     var progressHints = [
-      "",
-      "${_map3introduceEntity?.days}纪元",
-      "",
+      '',
+      '', //"${_map3introduceEntity?.days}纪元",
+      '',
+      '',
     ];
 
     return CustomStepper(
@@ -2060,114 +2165,140 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index) {
-        var item = _userList[index];
+    return Column(
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 12,
+                ),
+                color: Colors.white,
+                child: Text('共 ${_userList?.length ?? 0}个',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                      color: HexColor('#999999'),
+                    )),
+              ),
+            ),
+          ],
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            var item = _userList[index];
 
-        var itemAddress = item.address.toLowerCase();
-        var isYou = itemAddress == _address;
-        var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
-        var recordName =
-            "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
+            var itemAddress = item.address.toLowerCase();
+            var isYou = itemAddress == _address;
+            var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
+            var recordName =
+                "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
 
-        var amount = FormatUtil.stringFormatCoinNum(
-                ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
-            ' HYN';
+            var amount = FormatUtil.stringFormatCoinNum(
+                    ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
+                ' HYN';
 
-        return Container(
-          color: Colors.white,
-          child: Stack(
-            children: <Widget>[
-              InkWell(
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: iconWidget("", item.name, item.address, isCircle: true),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: RichText(
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: item.name,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: HexColor("#000000"),
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: recordName,
-                                            style: TextStyle(
-                                                fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Container(
-                                height: 8.0,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Text(
-                                    shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
-                                        limitCharsLength: 8),
-                                    style: TextStyle(fontSize: 12, color: HexColor("#999999")),
-                                  ),
-                                ],
-                              ),
-                            ],
+            return Container(
+              color: Colors.white,
+              child: Stack(
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: iconWidget("", item.name, item.address, isCircle: true),
                           ),
-                        ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        flex: 2,
+                                        child: RichText(
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          text: TextSpan(
+                                            text: item.name,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: HexColor("#000000"),
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: recordName,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: HexColor("#999999"),
+                                                    fontWeight: FontWeight.w500),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    height: 8.0,
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Text(
+                                        shortBlockChainAddress("${WalletUtil.ethAddressToBech32Address(itemAddress)}",
+                                            limitCharsLength: 8),
+                                        style: TextStyle(fontSize: 12, color: HexColor("#999999")),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Text(
+                            amount,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: HexColor('#333333'),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          )
+                        ],
                       ),
-                      Text(
-                        amount,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: HexColor('#333333'),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    left: 40,
+                    right: 8,
+                    child: Container(
+                      height: 0.5,
+                      color: DefaultColors.colorf5f5f5,
+                    ),
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: 0,
-                left: 40,
-                right: 8,
-                child: Container(
-                  height: 0.5,
-                  color: DefaultColors.colorf5f5f5,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      itemCount: _userList.length,
+            );
+          },
+          itemCount: _userList.length,
+        ),
+      ],
     );
   }
 
@@ -2301,7 +2432,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
       _address,
       map3Address: _nodeAddress,
+      // status: [TransactionStatus.success],
       status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+      size: 1,
     );
 
     if (pendingList?.isNotEmpty ?? false) {
@@ -2344,7 +2477,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           _loadDataBloc.add(RefreshSuccessEvent());
         });
 
-        if (_canEditNextPeriod) {
+        if (_canRenewNextPeriod) {
           _showEditPreNextAlert();
         }
       }
@@ -2515,7 +2648,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   void _renewAction() async {
-    if (!_canEditNextPeriod) return;
+    if (!_canRenewNextPeriod) return;
 
     if (_map3infoEntity != null) {
       var uploadInfo = 'currentEpoch:$_currentEpoch, info:${_map3infoEntity.toJson()}';
