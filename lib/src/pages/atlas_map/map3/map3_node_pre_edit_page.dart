@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -58,6 +59,9 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   get _isEmptyBls => ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
+  int _status = 0;
+  bool _isHaveRenew = false;
+
   /*
   all_page_state.AllPageState _currentState = all_page_state.LoadingState();
 
@@ -75,8 +79,11 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   // }
 
   ConfirmEditMap3NodeMessage _editMessage;
-  Map3IntroduceEntity _map3introduceEntity;
+  //Map3IntroduceEntity _map3introduceEntity;
   int nonce;
+
+  get _canRenew =>
+      (widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) && _isJoiner && (!_isHaveRenew);
 
   @override
   void initState() {
@@ -89,6 +96,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       print("_currentFeeRate: $_currentFeeRate");
     }
     */
+
+    getNetworkData();
 
     getMap3Bls();
 
@@ -106,7 +115,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     print(uploadStatus);
     LogUtil.uploadException("[Map3NodePreEditPage] initState, uploadStatus", uploadStatus);
 
-    _map3introduceEntity = await AtlasApi.getIntroduceEntity();
+    //_map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
     /*
     setState(() {
@@ -225,6 +234,54 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
   */
 
+  Future getNetworkData() async {
+    try {
+      var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
+      var _walletAddress = _wallet.getAtlasAccount().address;
+      var _nodeAddress = widget?.map3infoEntity?.address ?? '';
+
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _walletAddress,
+        type: [MessageType.typeRenewMap3],
+        map3Address: _nodeAddress,
+        size: 1,
+      );
+      LogUtil.printMessage("[${widget.runtimeType}]--->list.length:${list.length}");
+
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        // 是否是当前这期的设置
+        var lastTransaction = list.first;
+        var epoch = lastTransaction.epoch;
+        var startEpoch = widget.map3infoEntity.startEpoch;
+        var endEpoch = widget.map3infoEntity.endEpoch;
+
+        var inCurrentPeriod = epoch > startEpoch && epoch < endEpoch;
+        if (inCurrentPeriod) {
+          _status = lastTransaction.status;
+          _isHaveRenew = _status >= TransactionStatus.pending && _status <= TransactionStatus.success;
+
+          if ((lastTransaction?.dataDecoded ?? {}).keys.contains('isRenew')) {
+            _isAutoRenew = (lastTransaction.dataDecoded["isRenew"] as bool);
+          }
+
+        } else {
+          LogUtil.printMessage("[${widget.runtimeType}]--->epoch:$epoch, startEpoch:$startEpoch, endEpoch:$endEpoch");
+        }
+      }
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,20 +294,17 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _pageView(BuildContext context) {
-    /*
-    if (!_isJoiner) {
-      if (_currentState != null || _microDelegations == null) {
-        return Scaffold(
-          body: AllPageStateContainer(_currentState, () {
-            setState(() {
-              _currentState = all_page_state.LoadingState();
-            });
-            getNetworkData();
-          }),
-        );
-      }
+    var notification = '';
+    switch (_status) {
+      case TransactionStatus.pending:
+        notification = '续约请求正处理中...';
+
+        break;
+
+      case TransactionStatus.success:
+        notification = '续约请求已完成';
+        break;
     }
-    */
 
     var divider = Container(
       color: HexColor("#F4F4F4"),
@@ -258,6 +312,10 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     );
     return Column(
       children: <Widget>[
+        topNotifyWidget(
+          notification: notification,
+          isWarning: false,
+        ),
         Expanded(
           child: BaseGestureDetector(
             context: context,
@@ -387,11 +445,13 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
             value: _isAutoRenew,
             activeColor: Theme.of(context).primaryColor,
             activeTrackColor: Theme.of(context).primaryColor,
-            onChanged: (bool newValue) {
-              setState(() {
-                _isAutoRenew = newValue;
-              });
-            },
+            onChanged: _canRenew
+                ? (bool newValue) {
+                    setState(() {
+                      _isAutoRenew = newValue;
+                    });
+                  }
+                : null,
           ),
         ],
       ),
@@ -450,6 +510,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         height: 46,
         width: MediaQuery.of(context).size.width - 37 * 2,
         fontSize: 18,
+        isLoading: !_canRenew,
       ),
     );
   }

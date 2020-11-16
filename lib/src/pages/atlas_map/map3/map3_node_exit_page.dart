@@ -187,7 +187,9 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         break;
 
       case TransactionStatus.success:
-        notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
+        notification = '节点已终止，抵押金额已返回您的钱包';
+
+        //notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
     }
 
@@ -414,11 +416,11 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       return;
     }
 
-    var entity = PledgeMap3Entity(
-        payload: Payload(
-      userName: _walletName,
-      userIdentity: _nodeId,
-    ));
+    var entity = await createPledgeMap3Entity(
+      context,
+      _nodeId,
+      action: 'exit',
+    );
 
     var message = ConfirmTerminateMap3NodeMessage(
       entity: entity,

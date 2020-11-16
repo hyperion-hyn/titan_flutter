@@ -334,7 +334,7 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
         child: Center(
           child: ClickOvalButton(
             "确定",
-            () {
+            () async{
               if (!(_joinCoinFormKey.currentState?.validate() ?? false)) {
                 return;
               }
@@ -377,17 +377,11 @@ class _Map3NodeJoinState extends BaseState<Map3NodeJoinPage> {
                 return;
               }
 
-              var payload = Payload(
-                userIdentity: '',
-              );
-
-              var entity = PledgeMap3Entity(payload: payload);
-              var activatedWallet = WalletInheritedModel.of(
+              var entity = await createPledgeMap3Entity(
                 context,
-                aspect: WalletAspect.activatedWallet,
-              ).activatedWallet;
-              var walletName = activatedWallet?.wallet?.keystore?.name ?? "";
-              payload.userName = walletName;
+                widget.map3infoEntity.nodeId,
+                action: 'join',
+              );
 
               var message = ConfirmDelegateMap3NodeMessage(
                 entity: entity,

@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -38,7 +36,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
-import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page_state;
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/map3_nodes_widget.dart';
 import 'package:web3dart/web3dart.dart';
@@ -101,7 +98,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   get statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
   get statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
 
-  get isHiddenRenew => (statusCreator == 1 && _isDelegate && !_isCreator);
+  // get isHiddenRenew => (statusCreator == 1 && _isDelegate && !_isCreator);
 
   get _notifyMessage {
     if (_isLoading) {
@@ -114,7 +111,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        return '终止请求已完成, 请前往【钱包】查看退款情况!';
+        return '节点已终止，抵押金额已返回您的钱包';
+        //return '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
@@ -154,7 +152,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_IS_END:
         //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
         if (_currentEpoch <= (_releaseEpoch + 1)) {
-          return "节点已到期，将在下个纪元结算……";
+          return "节点已到期，将在下个纪元结算";
         }
         break;
 
@@ -248,6 +246,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
+
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -286,7 +285,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // get _canExit => _isCreator && _isPending && _isOver7Epoch;
   get _canExit => _isCreator && (_isPending || _isTerminal);
 
-  get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
+  //get _isOver7Epoch => (_currentEpoch - _pendingUnlockEpoch) > 0 && (_pendingUnlockEpoch > 0) && (_currentEpoch > 0);
 
   get _canEditNode =>
       _isCreator &&
@@ -647,15 +646,30 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   bool get _hasFootView {
     if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
-      return !_showLoadingTxLog;
+      if (_showLoadingTxLog) {
+        return false;
+      } else {
+        if (_txLogList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     } else {
-      return !_showLoadingUserList;
+      if (_showLoadingUserList) {
+        return false;
+      } else {
+        if (_userList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
     }
   }
 
   /// TODO:Widget
   Widget _pageWidget(BuildContext context) {
-
     return Column(
       children: <Widget>[
         // 0.通知
@@ -665,7 +679,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           child: LoadDataContainer(
               bloc: _loadDataBloc,
               //enablePullDown: false,
-              enablePullUp: _nodeAddress.isNotEmpty,
+              enablePullUp: _nodeAddress?.isNotEmpty ?? false,
               hasFootView: _hasFootView,
               onRefresh: _refreshData,
               onLoadingMore: _loadDelegateMoreData,
@@ -703,7 +717,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   _detailTabWidget(),
                   _detailWidget(),
 
-                  //_joinerListWidget(),
                   /*
                   // 4.参与人员列表信息
                   SliverToBoxAdapter(
@@ -1713,7 +1726,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       myRewardString = FormatUtil.formatPrice(myRewardValue);
     }
 
-    print("myDelegationString: --->$myDelegationString, _isDelegate:$_isDelegate");
+    //print("myDelegationString: --->$myDelegationString, _isDelegate:$_isDelegate");
 
     return Container(
       color: Colors.white,
@@ -2013,7 +2026,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   _txLogView() {
     if (_txLogList.isEmpty) {
-      return emptyListWidget(title: "节点记录为空");
+      return Container(
+        width: double.infinity,
+        child: emptyListWidget(
+          title: "节点记录为空",
+          isAdapter: false,
+        ),
+      );
     }
 
     return ListView.builder(
@@ -2032,7 +2051,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   _userListView() {
     if (_userList.isEmpty) {
-      return emptyListWidget(title: "参与地址为空");
+      return Container(
+        width: double.infinity,
+        child: emptyListWidget(
+          title: "参与地址为空",
+          isAdapter: false,
+        ),
+      );
     }
 
     return ListView.builder(
@@ -2049,9 +2074,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
 
         var amount = FormatUtil.stringFormatCoinNum(
-            ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString());
+                ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(item.staking)).toString()) +
+            ' HYN';
 
-        amount += ' HYN';
         return Container(
           color: Colors.white,
           child: Stack(
@@ -2151,40 +2176,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       visible: visible,
       child: Container(
           width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator()),
-    );
-  }
-
-  _delegateRecordTabChildrenWidget1() {
-    return SliverToBoxAdapter(
-      child: Expanded(
-        child: RefreshConfiguration.copyAncestor(
-          enableLoadingWhenFailed: true,
-          context: context,
-          headerBuilder: () => WaterDropMaterialHeader(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          footerTriggerDistance: 30.0,
-          child: TabBarView(
-            controller: _detailTabController,
-            //physics: NeverScrollableScrollPhysics(),
-            children: [emptyListWidget(title: "节点记录为空"), emptyListWidget(title: "节点记录为空")],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _delegateRecordHeaderWidget() {
-    return Container(
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-        child: Row(
-          children: <Widget>[
-            Text(S.of(context).account_flow, style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-          ],
-        ),
-      ),
     );
   }
 
@@ -2341,7 +2332,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     try {
       await _loadDetailData();
 
-      //await _loadDetailDataInAtlas();
+      await _loadDetailDataInAtlas();
 
       _refreshDelegateData();
 
