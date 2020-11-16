@@ -72,8 +72,11 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> {
           ),
           body: TabBarView(
             children: [
-              Map3NodeListPage(MyContractModel(S.of(context).my_initiated_map_contract, MyContractType.create)),
-              Map3NodeListPage(MyContractModel(S.of(context).my_join_map_contract, MyContractType.join)),
+              Map3NodeListPage(MyContractModel(
+                  S.of(context).my_initiated_map_contract,
+                  MyContractType.create)),
+              Map3NodeListPage(MyContractModel(
+                  S.of(context).my_join_map_contract, MyContractType.join)),
             ],
           ),
         ),

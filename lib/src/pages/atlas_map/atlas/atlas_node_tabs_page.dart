@@ -74,7 +74,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   ///Map3
   Map3HomeEntity _map3homeEntity;
   List<Map3InfoEntity> _lastActiveList = [];
-  List<Map3InfoEntity> _myList = [];
+  List<Map3InfoEntity> _myMap3List = [];
   List<Map3InfoEntity> _pendingList = [];
   Map3StakingEntity _map3stakingEntity;
   Map3IntroduceEntity _map3introduceEntity;
@@ -353,7 +353,10 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     List<Widget> slivers = [
       _nodeIntroduceWidget(),
       _sectionTitleWidget(
-          title: S.of(context).my_nodes, hasMore: true, isMine: true),
+        title: S.of(context).my_map3_nodes,
+        hasMore: true,
+        isMine: true,
+      ),
       _myNodeListWidget(),
       _sectionTitleWidget(
           title: S.of(context).lastest_launched_nodes,
@@ -494,8 +497,13 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     var nodeName = map3infoEntity?.name ?? '';
     var nodeId = map3infoEntity?.nodeId ?? '';
     var status = Map3InfoStatus.values[map3infoEntity?.status ?? 0];
+    var stateDescText = Map3NodeUtil.stateDescText(status);
     var statusColor = Map3NodeUtil.statusColor(status);
     var statusBorderColor = Map3NodeUtil.statusBorderColor(status);
+
+    var hasReDelegation = map3infoEntity?.atlas != null;
+
+    var isShowHint = false;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -506,7 +514,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border.all(color: HexColor('#FFFF4C3B')),
+          border: isShowHint ? Border.all(color: HexColor('#FFFF4C3B')) : null,
           borderRadius: BorderRadius.circular(6),
           boxShadow: [
             BoxShadow(
@@ -533,15 +541,13 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text.rich(TextSpan(children: [
-                        TextSpan(
-                            text: nodeName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            )),
-                        TextSpan(text: "", style: TextStyles.textC333S14bold),
-                      ])),
+                      Text(
+                        '$nodeName',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
                       Container(
                         height: 2,
                       ),
@@ -572,7 +578,15 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                     ),
                   ),
                 ),
-                Text('')
+                SizedBox(
+                  width: 8,
+                ),
+                isShowHint
+                    ? Text('')
+                    : Text(
+                        stateDescText,
+                        style: TextStyle(fontSize: 13, color: statusColor),
+                      )
               ],
             ),
           ),
@@ -582,7 +596,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   }
 
   Widget _myNodeListWidget() {
-    if (_myList.isEmpty) {
+    if (_myMap3List.isEmpty) {
       return emptyListWidget(
           title: _address.isEmpty
               ? S.of(context).check_after_has_wallet
@@ -592,9 +606,9 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     return SliverList(
         delegate: SliverChildBuilderDelegate(
       (context, index) {
-        return _map3NodeInfoItem(_myList[index]);
+        return _map3NodeInfoItem(_myMap3List[index]);
       },
-      childCount: _myList.length,
+      childCount: _myMap3List.length,
     ));
   }
 
@@ -692,16 +706,25 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
         child: Row(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
+              padding: EdgeInsets.only(
+                left: 16,
+                right: 8,
+                top: 8,
+                bottom: 8,
               ),
               child: Text(
-                '节点列表',
+                S.of(context).atlas_node_list,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+            ),
+            Text(
+              '(${AtlasInheritedModel.of(context).atlasHomeEntity?.info?.candidate}个)',
+              style: TextStyle(
+                fontSize: 13,
+                color: DefaultColors.color999,
               ),
             ),
           ],
@@ -714,7 +737,6 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
 
   ///Atlas
   ///
-
   _atlasIntro() {
     var title = S.of(context).atlas_node;
     var desc = S.of(context).atlas_node_intro;
@@ -971,7 +993,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                S.of(context).my_nodes,
+                S.of(context).my_atlas_nodes,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Spacer(),
@@ -1150,7 +1172,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
 
       if (_map3stakingEntity != null) {
         _lastActiveList = _map3homeEntity.newStartNodes;
-        _myList = _map3homeEntity.myNodes;
+        _myMap3List = _map3homeEntity.myNodes;
         _pendingList = _map3stakingEntity.map3Nodes;
 
         _loadDataBloc.add(RefreshSuccessEvent());
