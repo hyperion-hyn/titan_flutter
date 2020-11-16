@@ -65,6 +65,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
   DateFormat _dateFormat = new DateFormat("HH:mm MM/dd");
 
   AccountTransferService _accountTransferService = AccountTransferService();
+  bool shouldRefresh = false;
 
   @override
   int getStartPage() {
@@ -78,7 +79,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
   @override
   void didPopNext() {
-    if (mounted) {
+    if (mounted && shouldRefresh) {
+      shouldRefresh = false;
       onWidgetRefreshCallback();
     }
 
@@ -263,6 +265,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                             return;
                                           }
                                         }
+
+                                        shouldRefresh = true;
                                         Application.router.navigateTo(
                                             context,
                                             Routes.wallet_account_send_transaction +
@@ -272,8 +276,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                         children: <Widget>[
                                           Image.asset(
                                             "res/drawable/ic_wallet_account_list_send.png",
-                                            width: 21,
-                                            height: 21,
+                                            width: 20,
+                                            height: 20,
                                           ),
                                           /*Icon(
                                             ExtendsIconFont.send,
@@ -304,8 +308,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                         children: <Widget>[
                                           Image.asset(
                                             "res/drawable/ic_wallet_account_list_receiver.png",
-                                            width: 21,
-                                            height: 21,
+                                            width: 20,
+                                            height: 20,
                                           ),
                                           /*Icon(
                                             ExtendsIconFont.receiver,
@@ -350,8 +354,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                             children: <Widget>[
                                               Image.asset(
                                                 "res/drawable/ic_wallet_account_list_exchange.png",
-                                                width: 21,
-                                                height: 21,
+                                                width: 20,
+                                                height: 20,
                                               ),
                                               /*Icon(
                                                 ExtendsIconFont.copy_content,
@@ -452,6 +456,12 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       }
     }
 
+    if(AtlasApi.isTransferBill(transactionDetail.hynType)){
+      iconPath = "res/drawable/ic_wallet_account_list_bill.png";
+    }else if(AtlasApi.isTransferMap3Atlas(transactionDetail.hynType)){
+      iconPath = "res/drawable/ic_wallet_account_list_map3_atlas.png";
+    }
+
     if ((transactionDetail.state == null) ||
         (transactionDetail.state != null &&
             transactionDetail.state >= 0 &&
@@ -535,8 +545,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                   children: <Widget>[
                     Image.asset(
                       iconPath,
-                      width: 18,
-                      height: 18,
+                      width: 20,
+                      height: 20,
                     ),
                     SizedBox(
                       width: 13,
@@ -715,7 +725,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       return retList;
     }
 
-    try {
+//    try {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
 
       //delete local transaction
@@ -733,9 +743,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       }
 
       retList.addAll(transferList);
-    } catch (e) {
-      logger.e(e);
-    }
+//    } catch (e) {
+//      logger.e(e);
+//    }
     return retList;
   }
 

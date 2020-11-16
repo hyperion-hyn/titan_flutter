@@ -37,7 +37,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   @override
   void initState() {
-    isBillPage = widget.transactionDetail.hynType == MessageType.typeTerminateMap3Reward;
+    isBillPage = (widget.transactionDetail.hynType == MessageType.typeUnMicrostakingReturn
+        || widget.transactionDetail.hynType == MessageType.typeTerminateMap3Return);
     super.initState();
   }
 
@@ -89,16 +90,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     if(isBillPage){
       _dataInfoList = [
         amountText,
-        _toAddress,
         WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-        "节点终止结算",
+        _toAddress,
+        "结算(节点终止)",
       ];
     }else{
       _dataInfoList = [
         amountText,
         gasEstimate,
-        _toAddress,
         WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
+        _toAddress,
         transDetail.hash,
       ];
     }
@@ -255,12 +256,12 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       if(isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 100 HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text("抵押 ${widget.transactionDetail.getBillDelegate()} HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                       if(isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("奖励 12.12 HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text("奖励 ${widget.transactionDetail.getBillReward()} HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
                   ),

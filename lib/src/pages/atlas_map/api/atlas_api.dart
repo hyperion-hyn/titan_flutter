@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,11 +25,14 @@ import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -39,7 +43,7 @@ import '../../../../config.dart';
 class AtlasApi {
   Future<List<HynTransferHistory>> queryHYNHistory(String address, int page) async {
     Map result = await AtlasHttpCore.instance.post(
-      "v1/wallet/account_txs",
+      "v1/wallet/account_txs_all",
       data: "{\"address\": \"$address\",\"page\": $page,\"size\": 20}",
     );
 
@@ -285,6 +289,21 @@ class AtlasApi {
         ),
         params: {
           "raw_tx": rawTx,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  // atlas节点图表数据
+  Future<RewardHistoryEntity> postAtlasChartHistory(String nodeAddress,{int page = 1,int size = 20}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/atlas/reward_history",
+        EntityFactory<RewardHistoryEntity>(
+              (json) => RewardHistoryEntity.fromJson(json),
+        ),
+        params: {
+          "node_address": nodeAddress,
+          "page": page,
+          "size": size,
         },
         options: RequestOptions(contentType: "application/json"));
   }
@@ -724,6 +743,32 @@ class AtlasApi {
       );
       return false;
     }
+  }
+
+  static bool isTransferBill(int type){
+    return (type == MessageType.typeUnMicrostakingReturn
+        || type == MessageType.typeTerminateMap3Return);
+  }
+
+  static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
+    var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) + Decimal.parse(hynTransferHistory.payload.reward)).toString();
+    return ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse(amountStr)).toDouble();
+  }
+
+  static bool isTransferMap3Atlas(int type){
+    return (type == MessageType.typeCreateValidator
+        || type == MessageType.typeEditValidator
+        || type == MessageType.typeReDelegate
+        || type == MessageType.typeUnReDelegate
+        || type == MessageType.typeCollectReStakingReward
+        || type == MessageType.typeCreateMap3
+        || type == MessageType.typeEditMap3
+        || type == MessageType.typeTerminateMap3
+        || type == MessageType.typeMicroDelegate
+        || type == MessageType.typeUnMicroDelegate
+        || type == MessageType.typeCollectMicroStakingRewards
+        || type == MessageType.typeRenewMap3);
   }
 
   static Future<bool> checkIsExit({String map3Address = ''}) async {

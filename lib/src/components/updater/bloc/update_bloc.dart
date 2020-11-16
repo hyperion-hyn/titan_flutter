@@ -37,7 +37,6 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
           platform = "ios";
         }
         var versionModel = await injector.repository.checkNewVersion(channel, event.lang, platform);
-print("!!!!!111 ${json.encode(versionModel.toJson())}");
         yield UpdateCheckState(isChecking: false, updateEntity: versionModel, isManual: event.isManual);
       } catch (err) {
         logger.e(err);

@@ -136,7 +136,8 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
         hasWallet
             ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
-            : Future.delayed(Duration())
+            : Future.delayed(Duration()),
+        _atlasApi.postAtlasChartHistory(widget.atlasNodeAddress)
       ]);
       _atlasInfoEntity = resultList[0];
       _delegateRecordList = resultList[1];

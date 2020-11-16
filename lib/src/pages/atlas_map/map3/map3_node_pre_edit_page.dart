@@ -246,7 +246,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         map3Address: _nodeAddress,
         size: 1,
       );
-      LogUtil.printMessage("[${widget.runtimeType}]--->list.length:${list.length}");
+//      LogUtil.printMessage("[${widget.runtimeType}]--->list.length:${list.length}");
 
       var isNotEmpty = list?.isNotEmpty ?? false;
       if (isNotEmpty) {

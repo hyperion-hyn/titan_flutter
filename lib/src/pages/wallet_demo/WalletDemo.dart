@@ -78,9 +78,9 @@ class _WalletDemoState extends State<WalletDemo> {
 //              _mnemonic = 'enrich rail nature figure legend bright bird habit page project silk wrap'; //3
 //              _mnemonic = 'rifle beyond crime insect spider mention mirror ripple mixed pulse perfect nerve';//4
 //              _mnemonic = 'like parent salmon record drop weapon friend obey planet raven desert grit';  //5
-//              _mnemonic = 'post diamond chimney type armed seed absurd doll dream law fan hollow';//6
-//              _mnemonic = 'park vapor mind eagle depth witness liquid effort helmet margin attitude topple';//7
-//              _mnemonic = 'rebel stand list ladder argue sentence night episode aisle steel amateur bid';//8
+//              _mnemonic = 'post diamond chimney type armed seed absurd doll dream law fan hollow';//6 0x9068736a8f1aFaeBf9231c2d979CDCe3235f4eEE
+//              _mnemonic = 'park vapor mind eagle depth witness liquid effort helmet margin attitude topple';//7 0xA167fa1e7B240B70b30861a819CF37C8F7fccE94
+//              _mnemonic = 'rebel stand list ladder argue sentence night episode aisle steel amateur bid';//8 0x68846029FE9907612A656c6b24b8c17697786676
 
               if (!bip39.validateMnemonic(_mnemonic)) {
                 Fluttertoast.showToast(msg: '不是合法的助记词');
