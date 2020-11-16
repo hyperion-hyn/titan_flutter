@@ -8,7 +8,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
-import 'package:titan/src/pages/atlas_map/atlas/burn_detail_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
@@ -160,7 +160,7 @@ class _ApiDemoState extends State {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => BurnDetailPage(
+                    builder: (context) => TokenBurnInfoPage(
                           BurnHistory.fromJson({}),
                         )),
               );

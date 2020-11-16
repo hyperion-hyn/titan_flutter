@@ -6,24 +6,25 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/components/wallet/coin_market_api.dart';
 import 'package:titan/src/components/wallet/vo/symbol_quote_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/pages/atlas_map/atlas/token_burn_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
-class BurnDetailPage extends StatefulWidget {
+class TokenBurnInfoPage extends StatefulWidget {
   final BurnHistory _burnHistory;
 
-  BurnDetailPage(this._burnHistory);
+  TokenBurnInfoPage(this._burnHistory);
 
   @override
   State<StatefulWidget> createState() {
-    return _BurnDetailPageState();
+    return _TokenBurnInfoPageState();
   }
 }
 
-class _BurnDetailPageState extends State<BurnDetailPage> {
+class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
   @override
@@ -113,7 +114,15 @@ class _BurnDetailPageState extends State<BurnDetailPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TokenBurnDetailPage(
+                            widget._burnHistory,
+                          )),
+                );
+              },
               child: Text(
                 '查看',
                 style: TextStyle(color: Colors.blue),
