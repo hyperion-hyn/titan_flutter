@@ -115,7 +115,7 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.amount)))).toString();
-    return amount;
+    return FormatUtil.stringFormatCoinNum(amount);
   }
 
   String getBillReward(){
@@ -123,7 +123,7 @@ class TransactionDetailVo {
       return "0";
     }
     var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(payload.reward)).toString();
-    return amount;
+    return FormatUtil.stringFormatCoinNum(amount);
   }
 
   String getMap3RewardAmount(){
