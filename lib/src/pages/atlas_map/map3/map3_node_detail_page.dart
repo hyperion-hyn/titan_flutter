@@ -172,6 +172,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               case MessageType.typeEditMap3:
                 return '编辑请求正处理中...';
                 break;
+
+              case MessageType.typeReDelegate:
+                return '复抵押请求正处理中...';
+                break;
+
+              case MessageType.typeUnReDelegate:
+                return '取消复抵押请求正处理中...';
+                break;
+
+              case MessageType.typeCollectReStakingReward:
+                return '提取Atlas奖励请求正处理中...';
+                break;
             }
           }
 
@@ -245,7 +257,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   ”抵押者“显示编辑： 倒数7纪元后  且 （“创建者”设置为【已开启】或【未设置】） 且  自己状态为未设置，    或“创建者”已设置为【已开启】 且 自己状态为未设置，  开始显示。
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
-  get _canEditNextPeriod {
+  get _canRenewNextPeriod {
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -324,10 +336,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        value = 1;
-        break;
 
-      case Map3InfoStatus.CONTRACT_IS_END:
         if (_isDelegate) {
           if (_isCreator) {
             var periodEpoch14 = _releaseEpoch - 14 + 1;
@@ -338,16 +347,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             // 没有设置过
             if (statusCreator == 0) {
               if (_currentEpoch < periodEpoch14) {
-                value = 2;
+                value = 1;
               } else if (_currentEpoch >= periodEpoch14 && _currentEpoch < periodEpoch7) {
-                value = 3;
+                value = 2;
               } else {
-                value = 3;
+                value = 2;
               }
             }
             // 已设置过
             else {
-              value = 3;
+              value = 2;
             }
           } else {
             var periodEpoch7 = _releaseEpoch - 7 + 1;
@@ -357,28 +366,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             if (statusJoiner == 0) {
               if (statusCreator == 0) {
                 if (_currentEpoch < periodEpoch7) {
-                  value = 2;
+                  value = 1;
                 } else if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
-                  value = 3;
+                  value = 2;
                 } else {
-                  value = 3;
+                  value = 2;
                 }
               } else if (statusCreator == 1) {
-                value = 3;
+                value = 1;
               } else if (statusCreator == 2) {
                 if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
-                  value = 3;
+                  value = 2;
                 }
-                value = 3;
+                value = 2;
               }
             } else {
-              value = 3;
+              value = 2;
             }
           }
         } else {
-          value = 3;
+          value = 2;
         }
 
+        break;
+
+
+      case Map3InfoStatus.CONTRACT_IS_END:
+        value = 3;
         break;
 
       default:
@@ -1343,7 +1357,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       editDateLimit = "";
     }
 
-    if (_isDelegate && _canEditNextPeriod) {
+    if (_isDelegate && _canRenewNextPeriod) {
       _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
     }
 
@@ -1381,7 +1395,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         isCloseRenew ? '' : "设置",
                         style: TextStyle(
                           fontSize: 14,
-                          color: _canEditNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
+                          color: _canRenewNextPeriod ? HexColor("#1F81FF") : HexColor("#999999"),
                         ),
                       )),
                     ),
@@ -1951,7 +1965,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var periodEpoch7 = _releaseEpoch - 7 + 1;
 
     var renewEpoch = _isCreator ? periodEpoch14 : periodEpoch7;
-    if (_currentStep == 3 && statusCreator == 2) {
+    if (_currentStep == 2 && statusCreator == 2) {
       renewEpoch = periodEpoch14;
     }
     var titles = [
@@ -2418,7 +2432,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
       _address,
       map3Address: _nodeAddress,
+      // status: [TransactionStatus.success],
       status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
+      size: 1,
     );
 
     if (pendingList?.isNotEmpty ?? false) {
@@ -2461,7 +2477,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           _loadDataBloc.add(RefreshSuccessEvent());
         });
 
-        if (_canEditNextPeriod) {
+        if (_canRenewNextPeriod) {
           _showEditPreNextAlert();
         }
       }
@@ -2632,7 +2648,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   void _renewAction() async {
-    if (!_canEditNextPeriod) return;
+    if (!_canRenewNextPeriod) return;
 
     if (_map3infoEntity != null) {
       var uploadInfo = 'currentEpoch:$_currentEpoch, info:${_map3infoEntity.toJson()}';
