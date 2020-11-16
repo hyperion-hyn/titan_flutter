@@ -52,7 +52,6 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
   Microdelegations _microDelegations;
   bool hasReDelegation = false;
   bool _isShowBorderHint = false;
-  String _reminderText = '';
 
   final _client = WalletUtil.getWeb3Client(true);
 
@@ -264,10 +263,10 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
     var _creatorCanEditEpoch = _releaseEpoch - 14 + 1;
     var _joinerCanEditEpoch = _releaseEpoch - 7 + 1;
 
-    bool _creatorCanEdit = (_currentEpoch > _creatorCanEditEpoch) &&
+    bool _creatorCanEdit = (_currentEpoch >= _creatorCanEditEpoch) &&
         (_currentEpoch < _joinerCanEditEpoch);
 
-    bool _joinerCanEdit = (_currentEpoch > _joinerCanEditEpoch) &&
+    bool _joinerCanEdit = (_currentEpoch >= _joinerCanEditEpoch) &&
         (_currentEpoch < _releaseEpoch);
 
     bool _hasRenew = (_microDelegations?.renewal?.status ?? 0) != 0;
