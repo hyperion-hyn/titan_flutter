@@ -1451,7 +1451,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   child: Text.rich(
                     TextSpan(children: [
                       TextSpan(
-                          text: "暂未复投Atlas节点，复投Atlas节点可以获得出块奖励",
+                          text: "尚未复投Atlas节点，请尽快复投Atlas节点以获得出块奖励",
                           style: TextStyle(
                             fontSize: 14,
                             color: HexColor("#333333"),
