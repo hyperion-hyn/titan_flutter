@@ -246,7 +246,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   如果已经设置了关闭，就显示【关闭】，其他情况显示【已开启】
   */
   get _canEditNextPeriod {
-
     // 周期
     var periodEpoch14 = (_releaseEpoch - 14) > 0 ? _releaseEpoch - 14 : 0;
     var periodEpoch7 = _releaseEpoch - 7 > 0 ? _releaseEpoch - 7 : 0;
@@ -329,7 +328,57 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CONTRACT_IS_END:
-        value = 2;
+        if (_isDelegate) {
+          if (_isCreator) {
+            var periodEpoch14 = _releaseEpoch - 14 + 1;
+            var periodEpoch7 = _releaseEpoch - 7;
+
+            var leftEpoch = periodEpoch14 - _currentEpoch;
+
+            // 没有设置过
+            if (statusCreator == 0) {
+              if (_currentEpoch < periodEpoch14) {
+                value = 2;
+              } else if (_currentEpoch >= periodEpoch14 && _currentEpoch < periodEpoch7) {
+                value = 3;
+              } else {
+                value = 3;
+              }
+            }
+            // 已设置过
+            else {
+              value = 3;
+            }
+          } else {
+            var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+            var leftEpoch = periodEpoch7 - _currentEpoch;
+
+            if (statusJoiner == 0) {
+              if (statusCreator == 0) {
+                if (_currentEpoch < periodEpoch7) {
+                  value = 2;
+                } else if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                  value = 3;
+                } else {
+                  value = 3;
+                }
+              } else if (statusCreator == 1) {
+                value = 3;
+              } else if (statusCreator == 2) {
+                if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
+                  value = 3;
+                }
+                value = 3;
+              }
+            } else {
+              value = 3;
+            }
+          }
+        } else {
+          value = 3;
+        }
+
         break;
 
       default:
@@ -1448,16 +1497,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 36),
-                  child: Text.rich(
-                    TextSpan(children: [
-                      TextSpan(
-                          text: "尚未复投Atlas节点，请尽快复投Atlas节点以获得出块奖励",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: HexColor("#333333"),
-                          )),
-                    ]),
-                    textAlign: TextAlign.center,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 3,
+                        ),
+                        child: Icon(
+                          Icons.report_problem,
+                          color: HexColor('#FF5041'),
+                          size: 15,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(children: [
+                            TextSpan(
+                                text: "尚未复投Atlas节点，请尽快复投Atlas节点以获得出块奖励",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: HexColor("#333333"),
+                                )),
+                          ]),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Visibility(
@@ -1824,36 +1890,51 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               children: <Widget>[
                 Text("节点进度", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
                 Spacer(),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 18, right: 8.0),
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        //color: Colors.red,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _statusColor,
-                          border: Border.all(
-                            color: Map3NodeUtil.statusBorderColor(_map3Status),
-                            width: 1.0,
-                          ),
-                        ),
+                Text.rich(
+                  TextSpan(children: [
+                    TextSpan(
+                      text: '当前纪元 ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: HexColor('#999999'),
                       ),
                     ),
-                    Text.rich(
-                      TextSpan(children: [
-                        TextSpan(
-                          text: _stateDescText,
-                          style: TextStyle(fontSize: 12, color: _statusColor),
-                        ),
-                      ]),
+                    TextSpan(
+                      text: '$_currentEpoch',
+                      style: TextStyle(fontSize: 14, color: HexColor('#1096B1')),
                     ),
-                  ],
+                  ]),
                 ),
               ],
             ),
+          ),
+          Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 18, right: 8.0),
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  //color: Colors.red,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _statusColor,
+                    border: Border.all(
+                      color: Map3NodeUtil.statusBorderColor(_map3Status),
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+              ),
+              Text.rich(
+                TextSpan(children: [
+                  TextSpan(
+                    text: _stateDescText,
+                    style: TextStyle(fontSize: 12, color: _statusColor),
+                  ),
+                ]),
+              ),
+            ],
           ),
           Container(
             height: 140,
@@ -1866,9 +1947,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   Widget _customStepperWidget() {
+    var periodEpoch14 = _releaseEpoch - 14 + 1;
+    var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+    var renewEpoch = _isCreator ? periodEpoch14 : periodEpoch7;
+    if (_currentStep == 3 && statusCreator == 2) {
+      renewEpoch = periodEpoch14;
+    }
     var titles = [
       _pendingEpoch > 0 ? "创建 #$_pendingEpoch" : "创建",
       _activeEpoch > 0 ? "启动 #$_activeEpoch" : "启动",
+      renewEpoch > 0 ? '续期 #$renewEpoch' : '续期',
       _releaseEpoch > 0 ? "到期 #$_releaseEpoch" : "到期",
     ];
 
@@ -1880,11 +1969,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       createdAt,
       startTime,
       endTime,
+      '',
     ];
     var progressHints = [
-      "",
-      "${_map3introduceEntity?.days}纪元",
-      "",
+      '',
+      '', //"${_map3introduceEntity?.days}纪元",
+      '',
+      '',
     ];
 
     return CustomStepper(
@@ -2067,13 +2158,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           children: <Widget>[
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12,),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 12,
+                ),
                 color: Colors.white,
-                child: Text('共 ${_userList?.length??0}个', style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 16,
-                  color: HexColor('#999999'),
-                )),
+                child: Text('共 ${_userList?.length ?? 0}个',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                      color: HexColor('#999999'),
+                    )),
               ),
             ),
           ],
@@ -2136,7 +2231,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                                               TextSpan(
                                                 text: recordName,
                                                 style: TextStyle(
-                                                    fontSize: 14, color: HexColor("#999999"), fontWeight: FontWeight.w500),
+                                                    fontSize: 14,
+                                                    color: HexColor("#999999"),
+                                                    fontWeight: FontWeight.w500),
                                               )
                                             ],
                                           ),
