@@ -609,19 +609,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     return SliverList(
         delegate: SliverChildBuilderDelegate(
       (context, index) {
-        return GestureDetector(
-          child: MyMap3NodeInfoItemV2(_myMap3List[index]),
-          onTap: () {
-            Fluttertoast.showToast(msg: 'MyMap3NodeInfoItemV2');
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Map3NodeDetailPage(
-                    _myMap3List[index],
-                  ),
-                ));
-          },
-        );
+        return MyMap3NodeInfoItemV2(_myMap3List[index]);
       },
       childCount: _myMap3List.length,
     ));

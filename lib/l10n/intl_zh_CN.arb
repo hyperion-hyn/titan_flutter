@@ -1199,7 +1199,7 @@
   "current_reward_zero": "当前可提奖励为零!",
   "you_create_or_join_node": "您一共创建或参与了{num}个Map3节点",
   "confirm_collect": "确认提取",
-  "confirm_collect_reward_to_wallet": "{pretext}截止当前可提奖励为: {balance} HYN 确定全部提取到钱包",
+  "confirm_collect_reward_to_wallet": "{pretext} 截止当前可提奖励为: {balance} HYN 确定全部提取到钱包",
   "preset_for_next_period": "下期预设",
   "map3_next_period_manage_fee": "下期管理费",
   "confirm_mod": "确认修改",

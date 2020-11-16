@@ -1190,7 +1190,7 @@
   "current_reward_zero": "Current reward is Null!",
   "you_create_or_join_node": "You initiated or delegated {num}Map3 nodes in total",
   "confirm_collect": "Confirm withdraw",
-  "confirm_collect_reward_to_wallet": "From{pretext}, current rewards are: {balance} HYN confirm withdrawal",
+  "confirm_collect_reward_to_wallet": "{pretext} Current rewards are: {balance} HYN confirm withdrawal",
   "preset_for_next_period": "Preset for the renewal node ",
   "map3_next_period_manage_fee": "Commission for the renewal node",
   "confirm_mod": "Confirm a change",

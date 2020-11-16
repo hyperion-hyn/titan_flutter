@@ -13,6 +13,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/mine/about_me_page.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -121,31 +122,39 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 16.0,
-        right: 16.0,
-        left: 16.0,
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: _isShowBorderHint
-              ? Border.all(
-                  color: HexColor('#FFFF4C3B').withOpacity(
-                  0.5,
-                ))
-              : null,
-          borderRadius: BorderRadius.circular(6),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[200],
-              blurRadius: 15.0,
-            ),
-          ],
+    return InkWell(
+      onTap: () {
+        Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(
+                widget._map3infoEntity.toJson(),
+              )}',
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 16.0,
+          right: 16.0,
+          left: 16.0,
         ),
-        child: InkWell(
-          onTap: () {},
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: _isShowBorderHint
+                ? Border.all(
+                    color: HexColor('#FFFF4C3B').withOpacity(
+                    0.5,
+                  ))
+                : null,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[200],
+                blurRadius: 15.0,
+              ),
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12.0,

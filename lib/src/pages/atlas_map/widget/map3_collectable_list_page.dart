@@ -318,7 +318,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
         ),
       ],
       content: S.of(context).confirm_collect_reward_to_wallet(
-            preText,
+            '',
             "${FormatUtil.stringFormatCoinNum(_totalAmount.toString())}",
           ),
       boldContent: "($_walletName)",
