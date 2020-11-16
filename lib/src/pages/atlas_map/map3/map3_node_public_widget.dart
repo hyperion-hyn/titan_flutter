@@ -1053,6 +1053,10 @@ Widget delegateRecordItemWidget(HynTransferHistory item, {bool isAtlasDetail = f
     dataDecoded: item.dataDecoded,
     creatorAddress: map3CreatorAddress,
   );
+  if(AtlasApi.isTransferBill(item.type)){
+    item.from = item.payload.delegator;
+  }
+
   var isCreator = map3CreatorAddress.toLowerCase() == item.from.toLowerCase();
   detail = detail +
       " ${HYNApi.getValueByHynType(

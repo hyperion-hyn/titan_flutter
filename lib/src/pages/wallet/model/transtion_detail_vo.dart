@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'dart:convert' as jsonUtils;
 
@@ -57,6 +58,7 @@ class TransactionDetailVo {
   int transactionIndex;
   int hynType;
   LogsDecoded logsDecoded;
+  TransferPayload payload;
 
   TransactionDetailVo({
     this.id,
@@ -83,6 +85,7 @@ class TransactionDetailVo {
     this.transactionIndex,
     this.hynType,
     this.logsDecoded,
+    this.payload,
   });
 
   String getDecodedAmount() {
@@ -112,6 +115,27 @@ class TransactionDetailVo {
     return amount;
   }
 
+  String getBillDelegate() {
+    if (payload == null || payload.delegator == null) {
+      return "0";
+    }
+    var amount = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(
+                double.parse(payload.amount))))
+        .toString();
+    return FormatUtil.stringFormatCoinNum(amount);
+  }
+
+  String getBillReward() {
+    if (payload == null || payload.reward == null || payload.reward == "0") {
+      return "0";
+    }
+    var amount =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(payload.reward))
+            .toString();
+    return FormatUtil.stringFormatCoinNum(amount);
+  }
+
   String getMap3RewardAmount() {
     if (logsDecoded == null ||
         logsDecoded.rewards == null ||
@@ -134,12 +158,18 @@ class TransactionDetailVo {
     return TransactionDetailVo(
       type: transactionType,
       state: hynTransferHistory.status,
-      amount: ConvertTokenUnit.weiToEther(
-              weiBigInt: BigInt.parse(hynTransferHistory.value))
-          .toDouble(),
+      amount: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? AtlasApi.getTransferBillAmount(hynTransferHistory)
+          : ConvertTokenUnit.weiToEther(
+                  weiBigInt: BigInt.parse(hynTransferHistory.value))
+              .toDouble(),
       symbol: symbol,
-      fromAddress: hynTransferHistory.from,
-      toAddress: hynTransferHistory.to,
+      fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.map3Node
+          : hynTransferHistory.from,
+      toAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.delegator
+          : hynTransferHistory.to,
       time: hynTransferHistory.timestamp * 1000,
       hash: hynTransferHistory.txHash,
       gasPrice: hynTransferHistory.gasPrice,
@@ -155,9 +185,9 @@ class TransactionDetailVo {
       transactionIndex: hynTransferHistory.transactionIndex,
       hynType: hynTransferHistory.type,
       logsDecoded: hynTransferHistory.logsDecoded,
+      payload: hynTransferHistory.payload,
     );
   }
-
 
   factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
       _$TransactionDetailVoFromJson(json);

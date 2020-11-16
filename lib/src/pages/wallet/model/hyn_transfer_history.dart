@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'hyn_transfer_history.g.dart';
@@ -82,6 +84,9 @@ class HynTransferHistory extends Object {
   @JsonKey(name: 'value')
   String value;
 
+  @JsonKey(name: 'payload')
+  TransferPayload payload;
+
   HynTransferHistory(
     this.atlasAddress,
     this.blockHash,
@@ -109,6 +114,7 @@ class HynTransferHistory extends Object {
     this.type,
     this.updatedAt,
     this.value,
+    this.payload,
   );
 
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
@@ -214,4 +220,27 @@ class Rewards extends Object {
   factory Rewards.fromJson(Map<String, dynamic> srcJson) => _$RewardsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RewardsToJson(this);
+}
+
+@JsonSerializable()
+class TransferPayload extends Object {
+
+  @JsonKey(name: 'Delegator')
+  String delegator;
+
+  @JsonKey(name: 'Map3Node')
+  String map3Node;
+
+  @JsonKey(name: 'Amount')
+  String amount;
+
+  @JsonKey(name: 'Reward')
+  String reward;
+
+  TransferPayload(this.delegator,this.map3Node,this.amount,this.reward,);
+
+  factory TransferPayload.fromJson(Map<String, dynamic> srcJson) => _$TransferPayloadFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$TransferPayloadToJson(this);
+
 }

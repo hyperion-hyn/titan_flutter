@@ -22,6 +22,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
@@ -92,6 +93,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   WalletVo _activatedWallet;
   var showMyMap3 = false;
   List<Map3InfoEntity> showMap3List = [];
+  List<RewardHistoryEntity> rewardHistoryList = [];
 
   @override
   void initState() {
@@ -136,12 +138,14 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
         _client.getValidatorInformation(EthereumAddress.fromHex(widget.atlasNodeAddress)),
         hasWallet
             ? _atlasApi.getMap3NodeListByMyCreate(_activatedWallet.wallet.getAtlasAccount().address, size: 10000)
-            : Future.delayed(Duration())
+            : Future.delayed(Duration()),
+//        _atlasApi.postAtlasChartHistory(widget.atlasNodeAddress)
       ]);
       _atlasInfoEntity = resultList[0];
       _delegateRecordList = resultList[1];
       _validatorInformationEntity = resultList[2];
       List<Map3InfoEntity> myMap3List = hasWallet ? resultList[3] : null;
+//      rewardHistoryList = resultList[4];
 
       if (_atlasInfoEntity.myMap3 != null && _atlasInfoEntity.myMap3.length > 0) {
         showMyMap3 = true;
@@ -242,7 +246,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                     _activeAtlasNode(),
                   _moneyWidget(),
                   _nodeInfoWidget(),
-                  _chartDetailWidget(),
+//                  _chartDetailWidget(),
                   _joinMap3Widget(),
                   _nodeRecordHeader(),
                   _delegateRecordList.isNotEmpty
@@ -331,7 +335,9 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       text: S.of(context).this_atlas_node_is_inactive,
                       style: TextStyles.textC333S14,
                       children: [
-                        TextSpan(text: S.of(context).reason_obstacles_sign_rate_withdrawn_mortgage, style: TextStyles.textC999S12),
+                        TextSpan(
+                            text: S.of(context).reason_obstacles_sign_rate_withdrawn_mortgage,
+                            style: TextStyles.textC999S12),
                         TextSpan(
                           text: S.of(context).your_device_normal_reactivate_node,
                           style: TextStyles.textC333S14,
@@ -598,12 +604,15 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 padding: EdgeInsets.only(top: 4, bottom: 4, left: 10, right: 10),
                 child: RichText(
                     textAlign: TextAlign.center,
-                    text: TextSpan(text: "${S.of(context).node_cumulative_reward}  ", style: TextStyles.textC333S10, children: [
-                      TextSpan(
-                        text: "${FormatUtil.truncateDecimalNum(historyReward, 0)}",
-                        style: TextStyles.textC333S12,
-                      ),
-                    ])),
+                    text: TextSpan(
+                        text: "${S.of(context).node_cumulative_reward}  ",
+                        style: TextStyles.textC333S10,
+                        children: [
+                          TextSpan(
+                            text: "${FormatUtil.truncateDecimalNum(historyReward, 0)}",
+                            style: TextStyles.textC333S12,
+                          ),
+                        ])),
               ),
               Container(
                 margin: EdgeInsets.only(left: 10, right: 10),
@@ -676,12 +685,15 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           Padding(
                             padding: const EdgeInsets.only(left: 14, top: 24.0, bottom: 22),
                             child: RichText(
-                                text: TextSpan(text: "${S.of(context).my_map3}  ", style: TextStyles.textC333S16, children: [
-                              TextSpan(
-                                text: S.of(context).switch_view_different_map3_staking_status,
-                                style: TextStyles.textC999S12,
-                              ),
-                            ])),
+                                text: TextSpan(
+                                    text: "${S.of(context).my_map3}  ",
+                                    style: TextStyles.textC333S16,
+                                    children: [
+                                  TextSpan(
+                                    text: S.of(context).switch_view_different_map3_staking_status,
+                                    style: TextStyles.textC999S12,
+                                  ),
+                                ])),
                           ),
                           Container(
                             margin: const EdgeInsets.only(left: 14, right: 14),
@@ -802,11 +814,12 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               ],
             ),
           ),
-          stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
-            setState(() {
-              isShowAll = true;
-            });
-          }),
+          if(infoContentList.length != 0)
+            stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
+              setState(() {
+                isShowAll = true;
+              });
+            }),
         ],
       ),
     );
@@ -1064,7 +1077,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 height: 303,
                 width: MediaQuery.of(context).size.width - 32,
                 padding: const EdgeInsets.only(top: 23, bottom: 23),
-                child: SlidingViewportOnSelection.withSampleData()),
+                child: SlidingViewportOnSelection.withSampleData(rewardHistoryList)),
           ),
           Container(
             height: 10,
@@ -1076,7 +1089,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 height: 303,
                 width: MediaQuery.of(context).size.width - 32,
                 padding: const EdgeInsets.only(top: 23, bottom: 23),
-                child: SimpleLineChart.withSampleData()),
+                child: SimpleLineChart.withSampleData(rewardHistoryList)),
           ),
           Container(
             height: 10,

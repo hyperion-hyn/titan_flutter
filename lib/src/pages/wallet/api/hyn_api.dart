@@ -7,6 +7,7 @@ import 'package:titan/src/pages/atlas_map/entity/create_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -486,6 +487,13 @@ class HYNApi {
         }
 
         break;
+      case MessageType.typeUnMicrostakingReturn:
+      case MessageType.typeTerminateMap3Return:
+        typeStr = "结算(节点终止)";
+        String value = transactionDetail?.amount?.toString() ?? "0.0";
+        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+        recordAmountStr = getTransRecordAmount(value);
+        break;
     }
 
     if (getTypeStr) {
@@ -518,6 +526,9 @@ class HYNApi {
       case MessageType.typeUnReDelegate:
       case MessageType.typeCollectReStakingReward:
         return "$titleStr${isFrom ? "" : "(Atlas)"}";
+      case MessageType.typeUnMicrostakingReturn:
+      case MessageType.typeTerminateMap3Return:
+        return "$titleStr${isFrom ? "(Map3)" : ""}";
     }
     return titleStr;
   }
@@ -538,6 +549,8 @@ class HYNApi {
     String toAddressStr;
     switch (transactionDetailVo.hynType) {
       case MessageType.typeNormal:
+      case MessageType.typeUnMicrostakingReturn:
+      case MessageType.typeTerminateMap3Return:
         toAddressStr = transactionDetailVo.toAddress;
         break;
       default:

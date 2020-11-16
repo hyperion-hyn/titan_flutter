@@ -57,6 +57,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   get _isJoiner => widget?.map3infoEntity?.isJoiner ?? true;
 
+  get _isDelegate => widget?.map3infoEntity?.mine != null;
+
   get _isEmptyBls => ((widget?.map3infoEntity?.blsKey?.isEmpty ?? true));
 
   int _status = 0;
@@ -83,7 +85,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   int nonce;
 
   get _canRenew =>
-      (widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) && _isJoiner && (!_isHaveRenew);
+      (widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) && _isDelegate && (!_isHaveRenew);
 
   @override
   void initState() {
@@ -246,8 +248,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         map3Address: _nodeAddress,
         size: 1,
       );
-      LogUtil.printMessage("[${widget.runtimeType}]--->list.length:${list.length}");
-
       var isNotEmpty = list?.isNotEmpty ?? false;
       if (isNotEmpty) {
         // 是否是当前这期的设置
@@ -264,7 +264,6 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
           if ((lastTransaction?.dataDecoded ?? {}).keys.contains('isRenew')) {
             _isAutoRenew = (lastTransaction.dataDecoded["isRenew"] as bool);
           }
-
         } else {
           LogUtil.printMessage("[${widget.runtimeType}]--->epoch:$epoch, startEpoch:$startEpoch, endEpoch:$endEpoch");
         }
@@ -529,6 +528,13 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         );
         var status = (microDelegations?.renewal?.status ?? 0);
         if (status > 0) {
+          if (mounted) {
+            setState(() {
+              _status = status;
+              _isHaveRenew = true;
+            });
+          }
+
           Fluttertoast.showToast(
             msg: '你的下期续约设置已完成！',
             gravity: ToastGravity.CENTER,

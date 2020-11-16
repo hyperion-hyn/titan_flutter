@@ -179,7 +179,7 @@ class Map3NodeUtil {
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+      // case Map3InfoStatus.CANCEL_NODE_SUCCESS:
         _map3StatusColor = HexColor("#999999");
         break;
 
@@ -212,7 +212,8 @@ class Map3NodeUtil {
         break;
 
       case Map3InfoStatus.CREATE_FAIL:
-      case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+      // case Map3InfoStatus.CANCEL_NODE_SUCCESS:
+
         _map3StatusColor = HexColor("#F2F2F2");
         break;
 
