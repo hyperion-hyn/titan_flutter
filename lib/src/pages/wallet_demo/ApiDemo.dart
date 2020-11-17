@@ -161,7 +161,24 @@ class _ApiDemoState extends State {
                 context,
                 MaterialPageRoute(
                     builder: (context) => TokenBurnInfoPage(
-                          BurnHistory.fromJson({}),
+                          BurnHistory.fromJson({
+                            "id": 1,
+                            "created_at": "2020-11-17T08:24:41Z",
+                            "updated_at": "2020-11-17T08:24:41Z",
+                            "hash":
+                                "0xf50a2d3993a9cea9350e1f04a26706326e6429ab244ac30c6dbb8bc51745069a",
+                            "foundation":
+                                "0x0b85c10a2382c858ba2b4acc693f00b1c30599d3",
+                            "epoch": 1,
+                            "block": 2,
+                            "internal_amount": "510000000000000000000000000",
+                            "external_amount": "0",
+                            "total_amount": "510000000000000000000000000",
+                            "timestamp": 1605601413,
+                            "burn_rate": "0.051",
+                            "hyn_supply": "9490000000000000000000000000",
+                            "type": 0
+                          }),
                         )),
               );
               ;

@@ -224,8 +224,8 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
                                     shape: BoxShape.circle,
                                     color: Map3NodeUtil.statusColor(status),
                                     border: Border.all(
-                                      color:
-                                          Map3NodeUtil.statusBorderColor(status),
+                                      color: Map3NodeUtil.statusBorderColor(
+                                          status),
                                       width: 1.0,
                                     ),
                                   ),
@@ -274,7 +274,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
 
     bool _hasRenew = (_microDelegations?.renewal?.status ?? 0) != 0;
 
-    var _hasReDelegation = widget._map3infoEntity?.atlas != null;
+    var _hasReDelegation =
+        (_map3nodeInformationEntity?.redelegationReference ?? '') !=
+            '0x0000000000000000000000000000000000000000';
 
     setState(() {
       _isLoading = false;
@@ -312,12 +314,12 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
       _content = '节点即将结束，请尽快设置下期是否跟随续约';
     }
 
-//    if (!_hasReDelegation) {
-//    _isShowBorderHint = true;
-//      _content = _isNodeCreator
-//          ? '暂未复投Atlas节点，复投Atlas节点可以获得出块奖励'
-//          : '请节点主尽快复抵押至atlas节点以享受出块奖励';
-//    }
+    if (!_hasReDelegation) {
+      _isShowBorderHint = true;
+      _content = _isNodeCreator
+          ? '暂未复投Atlas节点,复投Atlas节点可以获得出块奖励'
+          : '请节点主尽快复抵押至atlas节点以享受出块奖励';
+    }
 
     if (_content.isNotEmpty) {
       return Text(

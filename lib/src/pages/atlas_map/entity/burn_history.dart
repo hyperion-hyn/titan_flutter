@@ -51,6 +51,14 @@ class BurnHistory extends Object {
     return FormatUtil.weiToEtherStr(totalAmount);
   }
 
+  String getTotalAmountStr() {
+    return FormatUtil.stringFormatCoinNum(getTotalAmount());
+  }
+
+  String getHynSupply() {
+    return FormatUtil.weiToEtherStr(hynSupply);
+  }
+
   BurnHistory(
     this.id,
     this.createdAt,
