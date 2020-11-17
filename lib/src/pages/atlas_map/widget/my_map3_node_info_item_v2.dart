@@ -110,6 +110,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _initData();
   }
 
   @override
@@ -133,11 +134,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 8.0,
-            right: 8.0,
-            left: 8.0,
-            bottom: 8.0
-          ),
+              top: 8.0, right: 8.0, left: 8.0, bottom: 8.0),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -315,9 +312,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
 
     if (!_hasReDelegation) {
       _isShowBorderHint = true;
-      _content = _isNodeCreator
-          ? '尚未复投Atlas节点'
-          : '请节点主尽快复抵押至atlas节点以享受出块奖励';
+      _content = _isNodeCreator ? '尚未复投Atlas节点' : '请节点主尽快复抵押至atlas节点以享受出块奖励';
     }
 
     if (_content.isNotEmpty) {

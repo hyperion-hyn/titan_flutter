@@ -137,7 +137,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
                 );
               },
               child: Text(
-                '查看',
+                '查看账单',
                 style: TextStyle(color: Colors.blue),
               ),
             ),

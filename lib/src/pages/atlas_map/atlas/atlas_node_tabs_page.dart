@@ -81,9 +81,10 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   _listenEventBus() {
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is UpdateMap3TabsPageIndexEvent) {
-        this.setState(() {
-          _pageController.jumpToPage(event.index);
-        });
+//        this.setState(() {
+//          _selectedNodeTab = event.index == 0 ? NodeTab.map3 : NodeTab.atlas;
+//          _pageController.jumpToPage(event.index);
+//        });
       }
     });
   }
@@ -93,9 +94,10 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     return BlocListener<AppTabBarBloc, AppTabBarState>(
       listener: (context, state) {
         if (state is ChangeNodeTabBarItemState) {
-          this.setState(() {
-            _pageController.jumpToPage(state.index);
-          });
+//          this.setState(() {
+//            _selectedNodeTab = state.index == 0 ? NodeTab.map3 : NodeTab.atlas;
+//            _pageController.jumpToPage(state.index);
+//          });
         }
       },
       child: Scaffold(
