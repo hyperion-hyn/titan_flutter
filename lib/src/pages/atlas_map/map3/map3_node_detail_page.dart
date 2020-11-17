@@ -1281,8 +1281,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var alertContent = "";
 
     var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
-    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0);
-
+    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0); // 未参与：-1
+    if (!_isDelegate) {
+      statueJoiner = -1;
+    }
     var _renewRemainEpoch = 0;
 
     // 参与者，没设置，没到期
@@ -1294,71 +1296,74 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var isCloseRenew = (statueCreator == 1 && _isDelegate && !_isCreator);
 
     switch (statueJoiner) {
+      case -1:
+        statusDesc = "未参与抵押，不能设置";
+
+        alertContent = '';
+        isShowAlert = false;
+        feeRate = lastFeeRate;
+
+        break;
+
       case 0: // 未编辑，默认，开启，取上传rate
-        if (_isDelegate) {
-          if (_isCreator) {
-            //var periodEpoch14 = _releaseEpoch - 14 + 1;
-            var periodEpoch7 = _releaseEpoch - 7;
 
-            var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
+        if (_isCreator) {
+          //var periodEpoch14 = _releaseEpoch - 14 + 1;
+          var periodEpoch7 = _releaseEpoch - 7;
 
-            isShowEpoch = !isOutActionPeriodCreator;
+          var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
 
-            if (isOutActionPeriodCreator) {
-              statusDesc = '设置期已过，到期后将默认续期';
-              alertColor = HexColor('999999');
-            } else {
-              statusDesc = "未设置，到期后将默认续期";
-              alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
-            }
+          isShowEpoch = !isOutActionPeriodCreator;
 
-            alertContent = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
-
-            if (_canRenewNextPeriod) {
-              _renewRemainEpoch = periodEpoch7 - _currentEpoch;
-            } else {
-              _renewRemainEpoch = periodEpoch14 - _currentEpoch;
-            }
+          if (isOutActionPeriodCreator) {
+            statusDesc = '设置期已过，到期后将默认续期';
+            alertColor = HexColor('999999');
           } else {
-            //var periodEpoch14 = _releaseEpoch - 14 + 1;
-            //var periodEpoch7 = _releaseEpoch - 7 + 1;
-            var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
-
-            isShowEpoch = !isOutActionPeriodJoiner;
-
-            if (isOutActionPeriodJoiner) {
-              statusDesc = '设置期已过，到期后默认续期';
-              alertColor = HexColor('999999');
-            } else {
-              statusDesc = "未设置，到期后将默认续期";
-              alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
-            }
-
-            alertContent = "（请在纪元$periodEpoch7 ~ $_releaseEpoch内设置）";
-
-            if (_canRenewNextPeriod) {
-              _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
-            } else {
-              _renewRemainEpoch = periodEpoch7 - _currentEpoch;
-            }
-
-            if (statueCreator == 2 && _canRenewNextPeriod) {
-              alertContent = "（请在节点到期前设置）";
-              _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
-            }
+            statusDesc = "未设置，到期后将默认续期";
+            alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          isShowAlert = true;
+          alertContent = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
 
-          if (isCloseRenew) {
-            isShowAlert = false;
-            alertContent = '';
+          if (_canRenewNextPeriod) {
+            _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+          } else {
+            _renewRemainEpoch = periodEpoch14 - _currentEpoch;
           }
         } else {
-          statusDesc = "未参与抵押，不能设置";
+          //var periodEpoch14 = _releaseEpoch - 14 + 1;
+          //var periodEpoch7 = _releaseEpoch - 7 + 1;
+          var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
 
-          alertContent = '';
+          isShowEpoch = !isOutActionPeriodJoiner;
+
+          if (isOutActionPeriodJoiner) {
+            statusDesc = '设置期已过，到期后默认续期';
+            alertColor = HexColor('999999');
+          } else {
+            statusDesc = "未设置，到期后将默认续期";
+            alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
+          }
+
+          alertContent = "（请在纪元$periodEpoch7 ~ $_releaseEpoch内设置）";
+
+          if (_canRenewNextPeriod) {
+            _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
+          } else {
+            _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+          }
+
+          if (statueCreator == 2 && _canRenewNextPeriod) {
+            alertContent = "（请在节点到期前设置）";
+            _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
+          }
+        }
+
+        isShowAlert = true;
+
+        if (isCloseRenew) {
           isShowAlert = false;
+          alertContent = '';
         }
 
         feeRate = lastFeeRate;
@@ -1368,10 +1373,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         statusDesc = "已关闭，到期后停止续期";
         feeRate = newFeeRate;
 
-        if (_isDelegate) {
-          alertContent = "（设置完成）";
-          isShowAlert = false;
-        }
+        alertContent = "（设置完成）";
+        isShowAlert = false;
 
         break;
 
@@ -1379,10 +1382,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         statusDesc = "已开启，到期后自动续期";
         feeRate = newFeeRate;
 
-        if (_isDelegate) {
-          alertContent = "（设置完成）";
-          isShowAlert = false;
-        }
+        alertContent = "（设置完成）";
+        isShowAlert = false;
+
         break;
     }
 
