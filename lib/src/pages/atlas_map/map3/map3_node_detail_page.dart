@@ -654,7 +654,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
-    LogUtil.printMessage("[Map3NodeDetail] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
+    //LogUtil.printMessage("[Map3NodeDetail] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
 
     List<Widget> actions = [];
 
@@ -1528,7 +1528,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         child: Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                                text: "尚未复投Atlas节点，请尽快复投Atlas节点以获得出块奖励",
+                                text: "尚未复投Atlas节点，请节点主尽快复投Atlas节点以获得出块奖励",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: HexColor("#333333"),
