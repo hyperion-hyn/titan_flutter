@@ -39,6 +39,7 @@ class SkeletonAtlasNodePageState extends State<SkeletonAtlasNodePage> {
           highlightColor: Colors.grey[100],
           enabled: true,
           child: CustomScrollView(
+            physics: NeverScrollableScrollPhysics(),
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: _atlasInfo(),

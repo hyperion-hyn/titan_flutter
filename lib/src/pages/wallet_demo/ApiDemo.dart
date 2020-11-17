@@ -8,6 +8,8 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/global.dart';
+import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -152,6 +154,19 @@ class _ApiDemoState extends State {
               );
             },
             child: Text('清除用户协议确认记录'),
+          ),
+          RaisedButton(
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TokenBurnInfoPage(
+                          BurnHistory.fromJson({}),
+                        )),
+              );
+              ;
+            },
+            child: Text('BurnDetail'),
           ),
           /*
           RaisedButton(

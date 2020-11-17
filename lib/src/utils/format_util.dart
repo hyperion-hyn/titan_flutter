@@ -17,7 +17,8 @@ class FormatUtil {
   }
 
   static String stringFormatCoinNum(String numValue) {
-    return NumberFormat("#,###,###,###.######").format(Decimal.parse(numValue).toDouble());
+    return NumberFormat("#,###,###,###.######")
+        .format(Decimal.parse(numValue).toDouble());
   }
 
   static String doubleFormatNum(double numValue) {
@@ -43,8 +44,9 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
-    if (timestamp <= 0) return "";
+  static String formatDate(int timestamp,
+      {bool isSecond = false, bool isMillisecond = false}) {
+    if ((timestamp ?? 0) <= 0) return "";
 
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
@@ -73,12 +75,13 @@ class FormatUtil {
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
-    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    return DateFormat("yyyy.MM.dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
   }
 
   // utc时间：2020-10-27 13:32:37   ->  local: 2020-10-27 21:32
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
-
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
 
     var dateTime = DateFormat(format).parse(utcStr, true);
@@ -92,7 +95,6 @@ class FormatUtil {
 
   // utc时间：2020-10-27T08:20:49Z  --> local: 2020-10-27 16:20
   static String newFormatUTCDateStr(String utcStr, {bool isSecond = true}) {
-
     if (utcStr == null || utcStr.isEmpty || utcStr == "0") return "";
 
     var utc = DateTime.parse(utcStr);
@@ -107,21 +109,28 @@ class FormatUtil {
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
-    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
+    return DateFormat("HH:mm MM/dd")
+            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
+        "";
   }
 
   static String formatTimer(int seconds) {
     int hour = seconds ~/ 3600;
     int minute = seconds % 3600 ~/ 60;
     int second = seconds % 60;
-    return formatTimeNum(hour) + ":" + formatTimeNum(minute) + ":" + formatTimeNum(second);
+    return formatTimeNum(hour) +
+        ":" +
+        formatTimeNum(minute) +
+        ":" +
+        formatTimeNum(second);
   }
 
   static String formatTimeNum(int timeNum) {
     return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
   }
 
-  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
+  static String amountToString(String amount) =>
+      FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
@@ -134,16 +143,21 @@ class FormatUtil {
   }
 
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toString();
+    return ConvertTokenUnit.weiToDecimal(
+            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+        .toString();
   }
 
   static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
     return truncateDecimalNum(
-      ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      ConvertTokenUnit.weiToDecimal(
+          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
       decimal,
     );
   }
@@ -293,13 +307,19 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
-      var result =
-          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       result = FormatUtil.strClearZero(result);
       return result;
     } else {
-      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      var result = number
+          .toString()
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       result = FormatUtil.strClearZero(result);
       return result;
     }
@@ -309,12 +329,18 @@ class FormatUtil {
     if (number == null) {
       return null;
     }
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
-      var result =
-          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
+        decimal) {
+      var result = number
+          .toStringAsFixed(decimal)
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       return result;
     } else {
-      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
+      var result = number
+          .toString()
+          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
+          .toString();
       return result;
     }
   }
@@ -330,15 +356,16 @@ class FormatUtil {
     return Decimal.parse(value.toString()).toString();
   }
 
-  static String weiToEtherStr(dynamic entityParam){
-    if(entityParam == null){
+  static String weiToEtherStr(dynamic entityParam) {
+    if (entityParam == null) {
       return entityParam;
     }
-    if(entityParam is String){
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
-    }else if(entityParam is int){
+    if (entityParam is String) {
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam))
+          .toString();
+    } else if (entityParam is int) {
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
-    }else{
+    } else {
       return "0";
     }
   }

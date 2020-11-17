@@ -3,96 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class SkeletonMap3NodePage extends StatefulWidget {
-  SkeletonMap3NodePage();
-
-  @override
-  State<StatefulWidget> createState() {
-    return SkeletonMap3NodePageState();
-  }
-}
-
-class SkeletonMap3NodePageState extends State<SkeletonMap3NodePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class SkeletonNodeTabsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Shimmer.fromColors(
-          baseColor: Colors.grey[300],
-          highlightColor: Colors.grey[100],
-          enabled: true,
-          child: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: _nodesInfo(),
-              ),
-              SliverToBoxAdapter(
-                child: _createNode(),
-              ),
-              SliverToBoxAdapter(
-                child: _myNodes(),
-              ),
-              SliverToBoxAdapter(
-                child: _myNodes(),
-              ),
-              SliverToBoxAdapter(
-                child: Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      child: Container(
-                        color: Colors.white,
-                        child: Text(
-                          '节点列表',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+    return Shimmer.fromColors(
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[100],
+        enabled: true,
+        child: Column(
+          children: [
+            _createNode(),
+            _myNodes(),
+            _myNodes(),
+            Row(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: Container(
+                    color: Colors.white,
+                    child: Text(
+                      '节点列表',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-              _atlasNodeListView()
-            ],
-          )),
-    );
-  }
-
-  _nodesInfo() {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: _nodesMap(),
-    );
-  }
-
-  _nodesMap() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16.0),
-      child: Container(
-        width: double.infinity,
-        height: 162,
-        color: Colors.white,
-      ),
-    );
+              ],
+            ),
+            _nodeDetailItem(),
+            _nodeDetailItem(),
+            _nodeDetailItem()
+          ],
+        ));
   }
 
   _createNode() {
@@ -173,10 +125,10 @@ class SkeletonMap3NodePageState extends State<SkeletonMap3NodePage> {
                 Expanded(
                   flex: 2,
                   child: ClickOvalButton(
-                    S.of(context).atlas_create_node,
+                    S.of(Keys.rootKey.currentContext).atlas_create_node,
                     () {
                       Application.router.navigateTo(
-                        context,
+                        Keys.rootKey.currentContext,
                         Routes.atlas_create_node_page,
                       );
                     },
@@ -213,7 +165,7 @@ class SkeletonMap3NodePageState extends State<SkeletonMap3NodePage> {
               Container(
                 color: Colors.white,
                 child: Text(
-                  S.of(context).my_nodes,
+                  S.of(Keys.rootKey.currentContext).my_nodes,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

@@ -17,6 +17,7 @@ AtlasHomeEntity _$AtlasHomeEntityFromJson(Map<String, dynamic> json) {
             : AtlasHomeNode.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['points'] as String,
+    json['map3_num'] as int,
   );
 }
 
@@ -25,6 +26,7 @@ Map<String, dynamic> _$AtlasHomeEntityToJson(AtlasHomeEntity instance) =>
       'info': instance.info.toJson(),
       'my_nodes': instance.atlasHomeNodeList,
       'points': instance.points,
+      'map3_num': instance.map3Count,
     };
 
 CommitteeInfoEntity _$CommitteeInfoEntityFromJson(Map<String, dynamic> json) {
