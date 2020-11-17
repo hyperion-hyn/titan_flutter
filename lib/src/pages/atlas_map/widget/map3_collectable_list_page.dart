@@ -6,6 +6,7 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -15,10 +16,12 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
@@ -51,13 +54,16 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
   int _currentPage = 1;
   int _pageSize = 30;
 
+  HynTransferHistory _lastPendingTx;
+  var _currentBlockHeight = 0;
+
   @override
   void initState() {
     super.initState();
-    var activatedWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
+
     _getData();
     _loadDataBloc.add(LoadingEvent());
   }
@@ -71,6 +77,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
   _getData() {
     _getCreatedNodeList();
     _getRewardMap();
+    _getLastTxData();
   }
 
   _getCreatedNodeList() async {
@@ -94,6 +101,44 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
     if (mounted) setState(() {});
   }
 
+  Future _getLastTxData() async {
+    try {
+      List<HynTransferHistory> list = await AtlasApi().getTxsList(
+        _address,
+        type: [MessageType.typeCollectMicroStakingRewards],
+        status: [TransactionStatus.pending],
+        size: 1,
+      );
+
+      var isNotEmpty = list?.isNotEmpty ?? false;
+      if (isNotEmpty) {
+        // 已经过去30秒的话，可以执行后面操作
+        var lastTransaction = list.first;
+        var now = DateTime.now().millisecondsSinceEpoch;
+        var last = lastTransaction.timestamp * 1000;
+        var isOver30Seconds = (now - last) > (30 * 1000);
+        //print("my--->now:$now, last:$last, isOver30Seconds:$isOver30Seconds");
+        if (isOver30Seconds) {
+          _lastPendingTx = null;
+        } else {
+          _lastPendingTx = lastTransaction;
+        }
+      } else {
+        _lastPendingTx = null;
+      }
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      //LogUtil.toastException(e);
+
+      if (mounted) {
+        setState(() {});
+      }
+    }
+  }
+
   _getRewardMap() async {
     _rewardMap = await _client.getAllMap3RewardByDelegatorAddress(
       EthereumAddress.fromHex(_address),
@@ -104,85 +149,107 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
 
   @override
   Widget build(BuildContext context) {
+    var _lastCurrentBlockHeight = _currentBlockHeight;
+
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    if (_lastCurrentBlockHeight == 0) {
+      _lastCurrentBlockHeight = _currentBlockHeight;
+    }
+
+    LogUtil.printMessage("[${widget.runtimeType}]   _currentBlockHeight:$_currentBlockHeight");
+
+    if ((_lastPendingTx != null) && (_currentBlockHeight > _lastCurrentBlockHeight)) {
+      _getData();
+    }
+
     return Scaffold(
       body: Container(
         color: Colors.white,
-        child: Stack(
+        child: Column(
           children: [
-            LoadDataContainer(
-                bloc: _loadDataBloc,
-                onLoadData: () async {
-                  await _refreshData();
-                },
-                onRefresh: () async {
-                  _getData();
-                  await _refreshData();
-                },
-                onLoadingMore: () {
-                  _loadMoreData();
-                  setState(() {});
-                },
-                child: CustomScrollView(
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(
-                          16.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              '我创建的',
-                              style: TextStyle(
-                                color: DefaultColors.color999,
+            topNotifyWidget(
+              notification: _lastPendingTx == null ? null : '提取Map3奖励请求处理中...',
+              isWarning: false,
+            ),
+            Expanded(
+              child: LoadDataContainer(
+                  bloc: _loadDataBloc,
+                  onLoadData: () async {
+                    await _refreshData();
+                  },
+                  onRefresh: () async {
+                    _getData();
+                    await _refreshData();
+                  },
+                  onLoadingMore: () {
+                    _loadMoreData();
+                    setState(() {});
+                  },
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(
+                            16.0,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                '我创建的',
+                                style: TextStyle(
+                                  color: DefaultColors.color999,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    _myCreateNodeList(),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(
-                          16.0,
-                        ),
-                        child: Row(
-                          children: [
-                            Text(
-                              '我参与的',
-                              style: TextStyle(
-                                color: DefaultColors.color999,
+                      _myCreateNodeList(),
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.all(
+                            16.0,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                '我参与的',
+                                style: TextStyle(
+                                  color: DefaultColors.color999,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    _myJoinNodeList(),
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 50,
-                      ),
-                    )
-                  ],
-                )),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                child: ClickOvalButton(
-                  '全部提取',
-                  _collect,
-                  radius: 0,
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            )
+                      _myJoinNodeList(),
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 50,
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+            _confirmButtonWidget(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _confirmButtonWidget() {
+    if (_joinNodeList == null) return Container();
+
+    return Container(
+      width: double.infinity,
+      height: 50,
+      child: ClickOvalButton(
+        '全部提取',
+        _collect,
+        radius: 0,
+        fontSize: 16,
+        fontWeight: FontWeight.normal,
       ),
     );
   }
@@ -270,8 +337,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
           _totalAmount = _totalAmount + valueByDecimal;
         });
       } else {
-        var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-            MessageType.typeCollectMicroStakingRewards);
+        var lastTxIsPending = await AtlasApi.checkLastTxIsPending(MessageType.typeCollectMicroStakingRewards);
         if (lastTxIsPending) {
           Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
           return;
@@ -279,15 +345,16 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
       }
     } catch (e) {
       print(e);
-      Fluttertoast.showToast(
+
+      LogUtil.toastException(e);
+      /*Fluttertoast.showToast(
         msg: '未知错误，请稍后重试！',
         gravity: ToastGravity.CENTER,
-      );
+      );*/
       return;
     }
 
-    var preText =
-        "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，";
+    //var preText = "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，";
 
     UiUtil.showAlertView(
       context,
@@ -302,8 +369,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
             var message = ConfirmCollectMap3NodeMessage(
               entity: entity,
               amount: _totalAmount.toString(),
-              addressList:
-                  _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+              addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
             );
             Navigator.push(
                 context,
@@ -335,12 +401,9 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
   _refreshData() async {
     _currentPage = 1;
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
-          page: _currentPage,
-          size: _pageSize,
-          status: [
-            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-          ]);
+      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address, page: _currentPage, size: _pageSize, status: [
+        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+      ]);
 
       if (_list != null) {
         _joinNodeList.clear();
@@ -355,12 +418,9 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
 
   _loadMoreData() async {
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
-          page: _currentPage + 1,
-          size: _pageSize,
-          status: [
-            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-          ]);
+      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address, page: _currentPage + 1, size: _pageSize, status: [
+        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+      ]);
 
       if (_list != null && _list.isNotEmpty) {
         _joinNodeList.addAll(_list);
@@ -382,10 +442,9 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
       WalletUtil.ethAddressToBech32Address(map3infoEntity?.address ?? ""),
       limitLength: 8,
     )}';
-    var valueInRewardMap =
-        _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
-            ? _rewardMap[map3infoEntity.address?.toLowerCase()]
-            : '0';
+    var valueInRewardMap = _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
+        ? _rewardMap[map3infoEntity.address?.toLowerCase()]
+        : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
     var _collectable = ConvertTokenUnit.weiToEther(
       weiBigInt: bigIntValue,
@@ -408,7 +467,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
                   TextSpan(
                       text: nodeName,
                       style: TextStyle(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                         fontSize: 16,
                       )),
                   TextSpan(text: "", style: TextStyles.textC333S14bold),
@@ -420,8 +479,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
                   children: <Widget>[
                     Text(
                       '${S.of(context).node_addrees}: ${nodeAddress}',
-                      style: TextStyle(
-                          color: DefaultColors.color999, fontSize: 11),
+                      style: TextStyle(color: DefaultColors.color999, fontSize: 11),
                     )
                   ],
                 )
@@ -438,7 +496,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
