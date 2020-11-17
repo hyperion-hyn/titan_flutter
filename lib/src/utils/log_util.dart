@@ -43,7 +43,7 @@ class LogUtil {
           return;
         }
 
-        var atlasReturn = BaseError.getErrorCode(error.subMsg);
+        var atlasReturn = BaseError.getChainErrorReturn(error.subMsg);
         if (atlasReturn != error.subMsg){
           Fluttertoast.showToast(msg: "$atlasReturn", toastLength: Toast.LENGTH_LONG);
           return;
