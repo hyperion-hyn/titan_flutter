@@ -177,6 +177,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
                   _collect,
                   radius: 0,
                   fontSize: 16,
+                  fontWeight: FontWeight.normal,
                 ),
               ),
             )

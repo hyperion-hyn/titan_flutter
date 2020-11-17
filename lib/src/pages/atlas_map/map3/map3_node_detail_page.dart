@@ -19,6 +19,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -960,8 +961,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return Container();
     }
 
-    var bgColor = (_isRunning) ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
-    var contentColor = (_isRunning) ? HexColor("#FFFFFF") : HexColor("#333333");
+    // var bgColor = (_isRunning) ? HexColor("#FF4C3B") : HexColor("#1FB9C7").withOpacity(0.08);
+    // var contentColor = (_isRunning) ? HexColor("#FFFFFF") : HexColor("#333333");
+
+    var bgColor = HexColor("#1FB9C7").withOpacity(0.08);
+    var contentColor = HexColor("#333333");
 
     if (_lastPendingTx != null || _isLoading) {
       bgColor = HexColor("#1FB9C7").withOpacity(0.08);
@@ -1560,6 +1564,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                         color: HexColor("#1096B1"),
                         fontWeight: FontWeight.w600,
                       )),
+                  TextSpan(text: ' 纪元', style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                 ])),
               ),
           ],
@@ -2385,7 +2390,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     return Visibility(
       visible: visible,
       child: Container(
-          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator()),
+        width: double.infinity,
+        height: height,
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(
+          strokeWidth: 1.5,
+        ),
+      ),
     );
   }
 
@@ -2698,7 +2709,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return;
     }
 
-    Application.router.navigateTo(context, Routes.map3node_my_page);
+    Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
   }
 
   void _editAction() async {

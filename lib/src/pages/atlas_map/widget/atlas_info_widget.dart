@@ -114,10 +114,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        Map3NodeCollectRewardPage(),
-                  ));
+                  Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
                 },
               )
             ],
