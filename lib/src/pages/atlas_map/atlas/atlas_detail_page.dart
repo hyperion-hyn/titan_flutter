@@ -165,7 +165,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               }
             });
           }
-          if (isShowMap3) {
+          if (isShowMap3 && myElement.relative == null) {
             showMap3List.add(myElement);
           }
         });
