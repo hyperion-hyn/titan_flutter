@@ -1203,7 +1203,7 @@
   "current_reward_zero": "Current reward is Null!",
   "you_create_or_join_node": "You initiated or delegated {num}Map3 nodes in total",
   "confirm_collect": "Confirm withdraw",
-  "confirm_collect_reward_to_wallet": "From{pretext}, current rewards are: {balance} HYN confirm withdrawal",
+  "confirm_collect_reward_to_wallet": "{pretext} Current rewards are: {balance} HYN confirm withdrawal",
   "preset_for_next_period": "Preset for the renewal node ",
   "map3_next_period_manage_fee": "Commission for the renewal node",
   "confirm_mod": "Confirm a change",
@@ -1256,5 +1256,10 @@
   "can_withdraw_to_map3": "可提往Map3",
   "node_info": "节点信息",
   "cancel_delegate_no_atlas_reward_confirm_cancel": "撤销抵押后将不再获得Atlas节点出块奖励，当前为止获得的奖励，将在Atlas节点主领取奖励时发送至您的钱包，撤销之后可以再次抵押，确定要撤销吗？",
-  "staking": "抵押"
+  "staking": "抵押",
+  "atlas_node": "Atlas Node",
+  "atlas_node_intro": "Atlas网络层由Atlas节点组成，并按照抵押量降序选出88个出块节点进行验证、出块、清算、并获取出块奖励。",
+  "my_map3_nodes": "我的Map3节点",
+  "my_atlas_nodes": "我的Atlas节点",
+  "atlas_node_list": "Atlas节点列表"
 }

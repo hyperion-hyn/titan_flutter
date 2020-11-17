@@ -50,7 +50,7 @@ class _NodeActiveContractState extends State<NodeActiveContractWidget> {
         children: <Widget>[
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
               separatorBuilder: (context, index) {
                 return SizedBox(
                   width: 16,

@@ -474,7 +474,8 @@ class _WalletPageState extends BaseState<WalletPage>
                 ),
               ],
             ),
-          )
+          ),
+          Image.asset('res/drawable/bg_banner_hyn_burn.png')
         ],
       ),
     );
