@@ -3,19 +3,18 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 
 typedef void OnTabChanged(NodeTab nodeTab);
 typedef void OnTabDoubleTap(NodeTab nodeTab);
-typedef void UpdateTap(NodeTab nodeTab);
 
 class ClipTabBar extends StatefulWidget {
+  final NodeTab selectedNodeTab;
   final List<Widget> children;
   final OnTabChanged onTabChanged;
   final OnTabDoubleTap onTabDoubleTap;
-  final UpdateTap updateTap;
   final BorderRadiusGeometry borderRadius;
 
   ClipTabBar({
+    @required this.selectedNodeTab,
     @required this.children,
     @required this.onTabChanged,
-    this.updateTap,
     this.onTabDoubleTap,
     this.borderRadius,
   });
@@ -27,8 +26,6 @@ class ClipTabBar extends StatefulWidget {
 }
 
 class _LoadDataState extends State<ClipTabBar> {
-  bool leftSelected = true;
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +47,9 @@ class _LoadDataState extends State<ClipTabBar> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: widget.borderRadius),
           ),
-          clipper: leftSelected ? LeftTabClipPath() : RightTabClipPath(),
+          clipper: widget.selectedNodeTab == NodeTab.map3
+              ? LeftTabClipPath()
+              : RightTabClipPath(),
         ),
         Container(
           width: double.infinity,
@@ -66,13 +65,11 @@ class _LoadDataState extends State<ClipTabBar> {
                   ),
                   onTap: () {
                     setState(() {
-                      leftSelected = true;
                       widget.onTabChanged(NodeTab.map3);
                     });
                   },
                   onDoubleTap: () {
                     setState(() {
-                      leftSelected = true;
                       widget.onTabDoubleTap(NodeTab.map3);
                     });
                   },
@@ -87,13 +84,11 @@ class _LoadDataState extends State<ClipTabBar> {
                   ),
                   onTap: () {
                     setState(() {
-                      leftSelected = false;
                       widget.onTabChanged(NodeTab.atlas);
                     });
                   },
                   onDoubleTap: () {
                     setState(() {
-                      leftSelected = false;
                       widget.onTabDoubleTap(NodeTab.atlas);
                     });
                   },
