@@ -59,7 +59,12 @@ class AtlasNodeTabsPage extends StatefulWidget {
 
 class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  PageController _pageController;
+  PageController _pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+  ScrollController _scrollController = ScrollController();
+
   StreamSubscription _eventBusSubscription;
 
   NodeTab _selectedNodeTab = NodeTab.map3;
@@ -69,10 +74,6 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
 
   @override
   void initState() {
-    _pageController = PageController(
-      initialPage: 0,
-      keepPage: true,
-    );
     super.initState();
     _listenEventBus();
   }
@@ -143,8 +144,12 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                                       controller: _pageController,
                                       physics: NeverScrollableScrollPhysics(),
                                       children: [
-                                        Map3NodePage(),
-                                        AtlasNodesPage(),
+                                        Map3NodePage(
+                                          scrollController: _scrollController,
+                                        ),
+                                        AtlasNodesPage(
+                                          scrollController: _scrollController,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -223,6 +228,19 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
               _pageController.jumpToPage(
                 _selectedNodeTab == NodeTab.map3 ? 0 : 1,
               );
+            },
+            onTabDoubleTap: (nodeTab) {
+              setState(() {
+                _selectedNodeTab = nodeTab;
+              });
+              _pageController.jumpToPage(
+                _selectedNodeTab == NodeTab.map3 ? 0 : 1,
+              );
+              _scrollController.animateTo(0.0,
+                  duration: Duration(
+                    milliseconds: 300,
+                  ),
+                  curve: Curves.decelerate);
             },
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0),

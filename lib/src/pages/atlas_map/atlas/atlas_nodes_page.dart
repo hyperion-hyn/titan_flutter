@@ -28,8 +28,13 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+
 class AtlasNodesPage extends StatefulWidget {
-  AtlasNodesPage();
+  final ScrollController scrollController;
+
+  AtlasNodesPage({
+    this.scrollController,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -110,6 +115,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           },
           onLoadSkeletonView: SkeletonMap3NodePage(),
           child: CustomScrollView(
+            controller: widget.scrollController,
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: _atlasInfo(),

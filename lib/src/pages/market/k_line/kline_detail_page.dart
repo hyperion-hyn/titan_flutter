@@ -898,7 +898,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     return Visibility(
       visible: visible,
       child: Container(
-          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator()),
+          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator(
+        strokeWidth: 1.5,
+      )),
     );
   }
 

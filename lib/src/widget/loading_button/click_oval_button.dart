@@ -13,6 +13,7 @@ class ClickOvalButton extends StatefulWidget {
   Color fontColor;
   double radius;
   String loadingText;
+  FontWeight fontWeight = FontWeight.w500;
 
   ClickOvalButton(
     this.text,
@@ -25,6 +26,7 @@ class ClickOvalButton extends StatefulWidget {
     this.radius,
     this.isLoading = false,
     this.loadingText,
+        this.fontWeight,
   });
 
   @override
@@ -54,6 +56,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
                   ? widget.loadingText ?? widget.text
                   : widget.text,
               style: TextStyle(
+                fontWeight: widget.fontWeight,
                 fontSize: widget.fontSize,
                 color: widget.isLoading
                     ? DefaultColors.color999

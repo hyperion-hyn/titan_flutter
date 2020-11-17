@@ -68,6 +68,7 @@ class Routes {
 
   static const String map3node_my_page_v8 = '/map3node/my_page_v8';
   static const String map3node_my_page_reward = '/map3node/my_page_reward';
+  static const String map3node_my_page_reward_new = '/map3node/my_page_reward_new';
 
   static const String map3node_list_page = '/map3node/list_page';
   static const String map3node_exit_page = '/map3node/exit_page';
@@ -257,6 +258,12 @@ class Routes {
     router.define(
       map3node_my_page_reward,
       handler: map3NodeMyHandlerReward,
+      transitionType: pushNewPageTransitionType,
+    );
+
+    router.define(
+      map3node_my_page_reward_new,
+      handler: map3NodeMyHandlerRewardNew,
       transitionType: pushNewPageTransitionType,
     );
 

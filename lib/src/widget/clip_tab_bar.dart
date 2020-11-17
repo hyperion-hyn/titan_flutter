@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 
 typedef void OnTabChanged(NodeTab nodeTab);
+typedef void OnTabDoubleTap(NodeTab nodeTab);
 
 class ClipTabBar extends StatefulWidget {
   final List<Widget> children;
   final OnTabChanged onTabChanged;
+  final OnTabDoubleTap onTabDoubleTap;
   final BorderRadiusGeometry borderRadius;
 
   ClipTabBar({
     @required this.children,
     @required this.onTabChanged,
+    this.onTabDoubleTap,
     this.borderRadius,
   });
 
@@ -60,6 +63,12 @@ class _LoadDataState extends State<ClipTabBar> {
                       widget.onTabChanged(NodeTab.map3);
                     });
                   },
+                  onDoubleTap: () {
+                    setState(() {
+                      leftSelected = true;
+                      widget.onTabDoubleTap(NodeTab.map3);
+                    });
+                  },
                 ),
               ),
               Expanded(
@@ -73,6 +82,12 @@ class _LoadDataState extends State<ClipTabBar> {
                     setState(() {
                       leftSelected = false;
                       widget.onTabChanged(NodeTab.atlas);
+                    });
+                  },
+                  onDoubleTap: () {
+                    setState(() {
+                      leftSelected = false;
+                      widget.onTabDoubleTap(NodeTab.atlas);
                     });
                   },
                 ),
