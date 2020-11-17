@@ -58,7 +58,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
     var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') *
         Decimal.fromInt(100);
     var _burnTokenValue = Decimal.parse('${hynQuote?.price ?? 0}') *
-        Decimal.parse(widget._burnHistory.totalAmount);
+        Decimal.parse(widget._burnHistory.getTotalAmount());
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -99,7 +99,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '燃烧量',
-            '${widget._burnHistory.totalAmount}',
+            '${widget._burnHistory.getTotalAmount()}',
           ),
           _optionItem(
             'HYN价格',

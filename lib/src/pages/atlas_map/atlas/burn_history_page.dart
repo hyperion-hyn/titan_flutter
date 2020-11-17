@@ -222,7 +222,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          '燃烧 ${FormatUtil.stringFormatCoinNum(FormatUtil.weiToEtherStr(burnHistory.totalAmount))} HYN',
+                          '燃烧 ${FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())} HYN',
                           style: TextStyle(
                             fontSize: 11,
                           ),

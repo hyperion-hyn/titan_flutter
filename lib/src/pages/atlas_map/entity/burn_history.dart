@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 part 'burn_history.g.dart';
 
 @JsonSerializable()
 class BurnHistory extends Object {
-
   @JsonKey(name: 'id')
   int id;
 
@@ -47,14 +47,32 @@ class BurnHistory extends Object {
   @JsonKey(name: 'type')
   int type;
 
-  BurnHistory(this.id,this.createdAt,this.updatedAt,this.hash,this.foundation,this.epoch,this.block,this.internalAmount,this.externalAmount,this.totalAmount,this.timestamp,this.burnRate,this.hynSupply,this.type,);
+  String getTotalAmount() {
+    return FormatUtil.weiToEtherStr(totalAmount);
+  }
 
-  factory BurnHistory.fromJson(Map<String, dynamic> srcJson) => _$BurnHistoryFromJson(srcJson);
+  BurnHistory(
+    this.id,
+    this.createdAt,
+    this.updatedAt,
+    this.hash,
+    this.foundation,
+    this.epoch,
+    this.block,
+    this.internalAmount,
+    this.externalAmount,
+    this.totalAmount,
+    this.timestamp,
+    this.burnRate,
+    this.hynSupply,
+    this.type,
+  );
+
+  factory BurnHistory.fromJson(Map<String, dynamic> srcJson) =>
+      _$BurnHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$BurnHistoryToJson(this);
-
 }
-
 
 @JsonSerializable()
 class BurnMsg extends Object {

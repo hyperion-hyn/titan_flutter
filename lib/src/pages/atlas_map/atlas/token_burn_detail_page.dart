@@ -46,9 +46,9 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
 
     _dataInfoList = [
       widget.burnHistory.hash,
-      widget.burnHistory.totalAmount,
-      '',
-      '_toAddress',
+      widget.burnHistory.getTotalAmount(),
+      widget.burnHistory.foundation,
+      '0x00',
       "HYN燃烧",
     ];
 
@@ -92,8 +92,10 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 2.0, bottom: 34),
                       child: Text(
-                        FormatUtil.formatDate(widget.burnHistory.timestamp,
-                            isSecond: true, isMillisecond: true),
+                        FormatUtil.formatDate(
+                          widget.burnHistory.timestamp,
+                          isSecond: true,
+                        ),
                         style: TextStyle(
                             color: DefaultColors.color999, fontSize: 13),
                       ),
