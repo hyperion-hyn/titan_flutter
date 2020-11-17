@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:glitters/glitters.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
@@ -73,10 +74,33 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                 ),
               ),
               Spacer(),
-              Image.asset(
-                'res/drawable/ic_hyn_coin.png',
-                width: 20,
-                height: 20,
+              Container(
+                width: 30,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Image.asset(
+                        'res/drawable/ic_hyn_coin.png',
+                        width: 20,
+                        height: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0, top: 4),
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        child: Glitters(
+                          duration: Duration(
+                            milliseconds: 600,
+                          ),
+                          maxOpacity: 0.5,
+                          color: HexColor('#FFE4D17E'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               InkWell(
                 child: Padding(
