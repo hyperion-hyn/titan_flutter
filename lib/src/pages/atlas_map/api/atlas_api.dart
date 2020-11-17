@@ -90,7 +90,7 @@ class AtlasApi {
 
   static goToAtlasMap3HelpPage(BuildContext context) {
     String webUrl = FluroConvertUtils.fluroCnParamsEncode(
-        "http://ec2-46-137-195-189.ap-southeast-1.compute.amazonaws.com/helpPage");
+        "http://h.hyn.space/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,

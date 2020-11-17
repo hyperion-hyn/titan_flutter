@@ -204,7 +204,7 @@ class _AtlasJoinMap3State extends State<AtlasJoinMap3Widget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                        child: iconMap3Widget(entity,isCircle: true),
+                        child: iconMap3Widget(entity),
                       ),
                       SizedBox(
                         height: 8,
