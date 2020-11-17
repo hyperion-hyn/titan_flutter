@@ -317,7 +317,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
     if (!_hasReDelegation) {
       _isShowBorderHint = true;
       _content = _isNodeCreator
-          ? '暂未复投Atlas节点,复投Atlas节点可以获得出块奖励'
+          ? '尚未复投Atlas节点'
           : '请节点主尽快复抵押至atlas节点以享受出块奖励';
     }
 

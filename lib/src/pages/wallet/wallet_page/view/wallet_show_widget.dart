@@ -217,7 +217,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     },
                     child: _buildAccountItem(context, coinVo));
               },
-              itemCount: widget.walletVo.coins.length - 1,
+              itemCount: widget.walletVo.coins.length,
             ),
             if (widget.walletVo.wallet.getBitcoinAccount() == null)
               _bitcoinEmptyView(context),
