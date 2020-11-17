@@ -2566,7 +2566,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           _loadDataBloc.add(RefreshSuccessEvent());
         });
 
-        if (_canRenewNextPeriod) {
+        if (_canRenewNextPeriod && _lastPendingTx == null) {
           _showEditPreNextAlert();
         }
       }
