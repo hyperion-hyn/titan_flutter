@@ -566,7 +566,7 @@ class AtlasApi {
   }
 
   // 获取节点的抵押流水
-  Future<List<HynTransferHistory>> getMap3StakingLogList(String nodeAddress,
+  Future<List<HynTransferHistory>> getMap3StakingLogListOld(String nodeAddress,
       {int page = 1, int size = 10}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/map3/tx_log",
@@ -580,6 +580,23 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
+  // 获取节点的抵押流水 (v2)
+  Future<List<HynTransferHistory>> getMap3StakingLogList(String nodeAddress,
+      {int page = 1, int size = 10}) async {
+    return AtlasHttpCore.instance.postEntity(
+        "/v1/map3/tx_log_all",
+        EntityFactory<List<HynTransferHistory>>((list) => (list as List)
+            .map((item) => HynTransferHistory.fromJson(item))
+            .toList()),
+        params: {
+          "node_address": nodeAddress,
+          "page": page,
+          "size": size,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
 
   // 获取节点的抵押人地址列表
   Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
