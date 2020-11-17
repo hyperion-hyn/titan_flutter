@@ -122,7 +122,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var gasPriceWithHyn = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceStr = "$gasPriceWithHyn Hyn ($gasPriceGwei Gdust)";
 
-    var gasLimit = Decimal.parse(transDetail.gas);
+    var gasLimit = Decimal.parse(transDetail.gasUsed);
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
