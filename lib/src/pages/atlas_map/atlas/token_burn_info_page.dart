@@ -13,6 +13,7 @@ import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 class TokenBurnInfoPage extends StatefulWidget {
   final BurnHistory _burnHistory;
@@ -57,9 +58,15 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
     var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') *
         Decimal.fromInt(100);
-    var _burnTokenValue = Decimal.parse('${hynQuote?.price ?? 0}') *
-        Decimal.parse(widget._burnHistory.getTotalAmount());
 
+    var _burnTokenAmountStr =
+        FormatUtil.stringFormatCoinNum(widget._burnHistory.getTotalAmount());
+    var _burnTokenPriceValue = Decimal.parse('${hynQuote?.price ?? 0}') *
+        Decimal.parse(widget._burnHistory.getTotalAmount());
+    var _burnTokenPriceStr =
+        FormatUtil.stringFormatCoinNum(_burnTokenPriceValue.toString());
+    var _hynSupplyAmountStr =
+        FormatUtil.stringFormatCoinNum(widget._burnHistory.getHynSupply());
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 32.0,
@@ -99,7 +106,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '燃烧量',
-            '${widget._burnHistory.getTotalAmount()}',
+            '$_burnTokenAmountStr',
           ),
           _optionItem(
             'HYN价格',
@@ -107,7 +114,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '价值(相当于)',
-            '$_burnTokenValue',
+            '${quotesSign.sign} $_burnTokenPriceStr',
           ),
           _optionItem(
             '占总供应量',
@@ -115,7 +122,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '燃烧后HYN总供应量',
-            '${widget._burnHistory.hynSupply}',
+            '$_hynSupplyAmountStr',
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),

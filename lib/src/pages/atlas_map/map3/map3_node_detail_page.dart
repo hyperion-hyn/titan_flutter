@@ -56,8 +56,8 @@ class Map3NodeDetailPage extends StatefulWidget {
 class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProviderStateMixin {
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
-  AtlasApi _atlasApi = AtlasApi();
-  final client = WalletUtil.getWeb3Client(true);
+  final AtlasApi _atlasApi = AtlasApi();
+  final _web3Client = WalletUtil.getWeb3Client(true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   get _map3Status => Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
@@ -77,7 +77,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   HynTransferHistory _lastPendingTx;
 
-  var _address = "";
+  var _walletAddress = "";
 
   String get _nodeId => _map3infoEntity?.nodeId ?? _map3nodeInformationEntity?.map3Node?.description?.identity ?? '';
   String get _nodeAddress => _map3infoEntity?.address ?? _map3nodeInformationEntity?.map3Node?.map3Address ?? '';
@@ -131,7 +131,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '部分撤销${amount}HYN请求正处理中...';
+                return '部分撤销${amount}HYN请求处理中...';
                 break;
 
               case MessageType.typeEditMap3:
@@ -142,7 +142,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '抵押${amount}HYN请求正处理中...';
+                return '抵押${amount}HYN请求处理中...';
                 break;
             }
           }
@@ -162,27 +162,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeCollectMicroStakingRewards:
-                return '提取请求正处理中...';
+                return '提取请求处理中...';
                 break;
 
               case MessageType.typeRenewMap3:
-                return '续约请求正处理中...';
+                return '续约请求处理中...';
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求正处理中...';
+                return '编辑请求处理中...';
                 break;
 
               case MessageType.typeReDelegate:
-                return '复抵押请求正处理中...';
+                return '复抵押请求处理中...';
                 break;
 
               case MessageType.typeUnReDelegate:
-                return '取消复抵押请求正处理中...';
+                return '取消复抵押请求处理中...';
                 break;
 
               case MessageType.typeCollectReStakingReward:
-                return '提取Atlas奖励请求正处理中...';
+                return '提取Atlas奖励请求处理中...';
                 break;
             }
           }
@@ -233,7 +233,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   get _visibleBottomBar => ((_isRunning && _isDelegate) || (_isPending)); // 提取奖励 or 参与抵押
 
-  get _isNoWallet => _address?.isEmpty ?? true;
+  get _isNoWallet => _walletAddress?.isEmpty ?? true;
 
   get _endRemainEpoch => (_releaseEpoch ?? 0) - (_currentEpoch ?? 0) + 1;
 
@@ -336,7 +336,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-
         if (_isDelegate) {
           if (_isCreator) {
             var periodEpoch14 = _releaseEpoch - 14 + 1;
@@ -389,7 +388,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         }
 
         break;
-
 
       case Map3InfoStatus.CONTRACT_IS_END:
         value = 3;
@@ -571,7 +569,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     _map3infoEntity = widget.map3infoEntity;
 
     var _wallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet?.wallet;
-    _address = _wallet?.getEthAccount()?.address ?? "";
+    _walletAddress = _wallet?.getEthAccount()?.address ?? "";
 
     _map3introduceEntity = await AtlasApi.getIntroduceEntity();
 
@@ -1269,16 +1267,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return Container();
     }
 
-    var currentMicroDelegations = _isCreator ? _microDelegationsCreator : _microDelegationsJoiner;
-    var status = currentMicroDelegations?.renewal?.status ?? 0;
-
     var lastFeeRate = FormatUtil.formatPercent(double.parse(_map3infoEntity?.getFeeRate() ?? "0"));
     var rateForNextPeriod = _map3nodeInformationEntity?.map3Node?.commission?.rateForNextPeriod ?? "0";
     var newFeeRate = FormatUtil.formatPercent(double.parse(rateForNextPeriod));
 
     var statusDesc = "已开启";
     var feeRate = lastFeeRate;
-    switch (status) {
+
+    // 周期
+    var periodEpoch14 = _releaseEpoch - 14 + 1;
+    var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+    var alertContent = "";
+
+    var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
+    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0);
+
+    var _renewRemainEpoch = 0;
+
+    // 参与者，没设置，没到期
+    bool isShowEpoch = false;
+    bool isShowAlert = false;
+
+    HexColor alertColor = HexColor('999999');
+
+    var isCloseRenew = (statueCreator == 1 && _isDelegate && !_isCreator);
+
+    switch (statueJoiner) {
       case 0: // 未编辑，默认，开启，取上传rate
         if (_isDelegate) {
           if (_isCreator) {
@@ -1287,81 +1302,97 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
 
+            isShowEpoch = !isOutActionPeriodCreator;
+
             if (isOutActionPeriodCreator) {
-              statusDesc = '设置期已过，将默认续约';
+              statusDesc = '设置期已过，到期后将默认续期';
+              alertColor = HexColor('999999');
             } else {
-              statusDesc = "未设置，过期将默认续约";
+              statusDesc = "未设置，到期后将默认续期";
+              alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
+            }
+
+            alertContent = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
+
+            if (_canRenewNextPeriod) {
+              _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+            } else {
+              _renewRemainEpoch = periodEpoch14 - _currentEpoch;
             }
           } else {
             //var periodEpoch14 = _releaseEpoch - 14 + 1;
             //var periodEpoch7 = _releaseEpoch - 7 + 1;
             var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
 
+            isShowEpoch = !isOutActionPeriodJoiner;
+
             if (isOutActionPeriodJoiner) {
-              statusDesc = '设置期已过，将默认续约';
+              statusDesc = '设置期已过，到期后默认续期';
+              alertColor = HexColor('999999');
             } else {
-              statusDesc = "未设置，过期将默认续约";
+              statusDesc = "未设置，到期后将默认续期";
+              alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
             }
+
+            alertContent = "（请在纪元$periodEpoch7 ~ $_releaseEpoch内设置）";
+
+            if (_canRenewNextPeriod) {
+              _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
+            } else {
+              _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+            }
+
+            if (statueCreator == 2 && _canRenewNextPeriod) {
+              alertContent = "（请在节点到期前设置）";
+              _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
+            }
+          }
+
+          isShowAlert = true;
+
+          if (isCloseRenew) {
+            isShowAlert = false;
+            alertContent = '';
           }
         } else {
           statusDesc = "未参与抵押，不能设置";
+
+          alertContent = '';
+          isShowAlert = false;
         }
 
         feeRate = lastFeeRate;
         break;
 
       case 1:
-        statusDesc = "停止续约";
+        statusDesc = "已关闭，到期后停止续期";
         feeRate = newFeeRate;
+
+        if (_isDelegate) {
+          alertContent = "（设置完成）";
+          isShowAlert = false;
+        }
+
         break;
 
       case 2:
-        statusDesc = "已开启续约";
+        statusDesc = "已开启，到期后自动续期";
         feeRate = newFeeRate;
+
+        if (_isDelegate) {
+          alertContent = "（设置完成）";
+          isShowAlert = false;
+        }
         break;
     }
 
-    // 周期
-    var periodEpoch14 = _releaseEpoch - 14 + 1;
-    var periodEpoch7 = _releaseEpoch - 7;
-
-    var editDateLimit = "";
-
-    var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
-    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0);
-
-    if (_isDelegate) {
-      if (_isCreator) {
-        editDateLimit = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
-        if (statueCreator != 0) {
-          editDateLimit = "（设置完成）";
-        }
-      } else {
-        if (statueCreator == 2) {
-          editDateLimit = "（请在节点到期前设置）";
-        } else if (statueCreator == 1) {
-          editDateLimit = '';
-        } else {
-          if (statueJoiner != 0) {
-            editDateLimit = "（设置完成）";
-          } else {
-            editDateLimit = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内设置）";
-          }
-        }
-      }
-    } else {
-      editDateLimit = "";
-    }
-
     if (periodEpoch14 < 0 || periodEpoch7 < 0) {
-      editDateLimit = "";
+      alertContent = "";
     }
 
     if (_isDelegate && _canRenewNextPeriod) {
       _map3infoEntity.rateForNextPeriod = rateForNextPeriod;
     }
-
-    var isCloseRenew = (statueCreator == 1 && _isDelegate && !_isCreator);
 
     return Container(
       color: Colors.white,
@@ -1369,19 +1400,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         padding: const EdgeInsets.only(left: 15, right: 15, top: 20, bottom: 20),
         child: Column(
           children: <Widget>[
-            Visibility(
-              visible: _isDelegate,
-              child: Text(
-                "当前纪元：$_currentEpoch",
-              ),
-            ),
             Row(
               children: <Widget>[
                 Text.rich(TextSpan(children: [
                   TextSpan(text: "下期预设", style: TextStyle(fontSize: 16, color: HexColor("#333333"))),
-                  TextSpan(
-                      text: isCloseRenew ? '' : editDateLimit,
-                      style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
+                ])),
+                Visibility(
+                  visible: isShowAlert,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 3,
+                      left: 4,
+                    ),
+                    child: Icon(
+                      Icons.report_problem,
+                      color: alertColor,
+                      size: 15,
+                    ),
+                  ),
+                ),
+                Text.rich(TextSpan(children: [
+                  TextSpan(text: alertContent, style: TextStyle(fontSize: 12, color: HexColor("#999999"))),
                 ])),
                 Spacer(),
                 Visibility(
@@ -1487,6 +1526,40 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       ],
                     ),
                   ),
+            if (isShowEpoch)
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 16,
+                ),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: "当前纪元 ", style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: '$_currentEpoch',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: HexColor("#1096B1"),
+                        fontWeight: FontWeight.w600,
+                      )),
+                ])),
+              ),
+            if (isShowEpoch)
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 10,
+                ),
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(
+                      text: _canRenewNextPeriod ? '剩余可设置只有 ' : '距离可设置还有 ',
+                      style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
+                  TextSpan(
+                      text: '$_renewRemainEpoch',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: HexColor("#1096B1"),
+                        fontWeight: FontWeight.w600,
+                      )),
+                ])),
+              ),
           ],
         ),
       ),
@@ -2067,10 +2140,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     });
 
                     if (type == Map3NodeDetailType.tx_log) {
+                      //_showLoadingUserList = false;
+
                       if (_txLogList.isEmpty) {
                         _loadTxLogData();
                       }
                     } else {
+                      //_showLoadingTxLog = false;
+
                       if (_userList.isEmpty) {
                         _loadUserListData();
                       }
@@ -2195,7 +2272,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var item = _userList[index];
 
             var itemAddress = item.address.toLowerCase();
-            var isYou = itemAddress == _address;
+            var isYou = itemAddress == _walletAddress;
             var isCreator = itemAddress == _nodeCreatorAddress.toLowerCase();
             var recordName =
                 "${isCreator && !isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}${!isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).you})" : ""}${isCreator && isYou ? " (${S.of(Keys.rootKey.currentContext).creator})" : ""}";
@@ -2334,18 +2411,25 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return;
     }
 
-    _currentPage = 1;
-    List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
-      _nodeAddress,
-      page: _currentPage,
-    );
+    try {
+      _currentPage = 1;
+      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
+        _nodeAddress,
+        page: _currentPage,
+      );
 
-    if (mounted) {
-      setState(() {
-        _showLoadingTxLog = false;
-        _txLogList = tempMemberList;
-        _loadDataBloc.add(RefreshSuccessEvent());
-      });
+      if (mounted) {
+        setState(() {
+          _showLoadingTxLog = false;
+          _txLogList = tempMemberList;
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      // setState(() {
+      //   _showLoadingTxLog = false;
+      //   _loadDataBloc.add(RefreshFailEvent());
+      // });
     }
   }
 
@@ -2425,12 +2509,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // lastTx
   _loadLastPendingTxData() async {
-    if (_nodeAddress.isEmpty || _address.isEmpty) {
+    if (_nodeAddress.isEmpty || _walletAddress.isEmpty) {
       return;
     }
 
     List<HynTransferHistory> pendingList = await AtlasApi().getTxsList(
-      _address,
+      _walletAddress,
       map3Address: _nodeAddress,
       // status: [TransactionStatus.success],
       status: [TransactionStatus.pending, TransactionStatus.pending_for_receipt],
@@ -2494,7 +2578,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   _loadDetailData() async {
-    _map3infoEntity = await _atlasApi.getMap3Info(_address, _nodeId);
+    _map3infoEntity = await _atlasApi.getMap3Info(_walletAddress, _nodeId);
 
     if (mounted && _map3infoEntity != null) {
       setState(() {});
@@ -2502,12 +2586,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   _loadDetailDataInAtlas() async {
-    if (_nodeAddress.isEmpty || _address.isEmpty) {
+    if (_nodeAddress.isEmpty || _walletAddress.isEmpty) {
       return;
     }
 
     var map3Address = EthereumAddress.fromHex(_nodeAddress);
-    _map3nodeInformationEntity = await client.getMap3NodeInformation(map3Address);
+    _map3nodeInformationEntity = await _web3Client.getMap3NodeInformation(map3Address);
 
     var microDelegations = _map3nodeInformationEntity?.microdelegations ?? [];
     if (microDelegations?.isEmpty ?? true) {
@@ -2515,7 +2599,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
 
     var creatorAddress = _nodeCreatorAddress.toLowerCase();
-    var joinerAddress = _address.toLowerCase();
+    var joinerAddress = _walletAddress.toLowerCase();
 
     int tag = 0;
     for (var item in microDelegations) {
