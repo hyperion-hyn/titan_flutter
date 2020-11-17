@@ -22,22 +22,14 @@ import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/skeleton/skeleton_atlas_node_page.dart';
-import 'package:titan/src/pages/webview/webview.dart';
-import 'package:titan/src/plugins/wallet/wallet.dart';
+import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/atlas_map_widget.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
-import 'package:titan/src/widget/timer_text.dart';
-import 'package:titan/src/widget/wallet_widget.dart';
-
-import 'atlas_my_node_page.dart';
-
 class AtlasNodesPage extends StatefulWidget {
-  final LoadDataBloc loadDataBloc;
-
-  AtlasNodesPage({this.loadDataBloc});
+  AtlasNodesPage();
 
   @override
   State<StatefulWidget> createState() {
@@ -48,6 +40,7 @@ class AtlasNodesPage extends StatefulWidget {
 class AtlasNodesPageState extends State<AtlasNodesPage>
     with AutomaticKeepAliveClientMixin, SingleTickerProviderStateMixin {
   ///
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
   AtlasApi _atlasApi = AtlasApi();
 
   List<AtlasInfoEntity> _atlasNodeList = List();
@@ -68,7 +61,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
   @override
   void initState() {
     super.initState();
-    widget.loadDataBloc.add(LoadingEvent());
+    _loadDataBloc.add(LoadingEvent());
 
     var activatedWallet =
         WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
@@ -102,7 +95,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       body: Container(
         color: Colors.white,
         child: LoadDataContainer(
-          bloc: widget.loadDataBloc,
+          bloc: _loadDataBloc,
           enablePullUp: _atlasNodeList.isNotEmpty,
           onLoadData: () async {
             await _getData();
@@ -115,9 +108,8 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
           onLoadingMore: () {
             _loadMoreData();
           },
-          onLoadSkeletonView: SkeletonAtlasNodePage(),
+          onLoadSkeletonView: SkeletonMap3NodePage(),
           child: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: _atlasInfo(),
@@ -193,14 +185,14 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
                         fontWeight: FontWeight.w500,
                         color: DefaultColors.colorcc000000)),
                 Spacer(),
-                InkWell(
-                  onTap: () {},
-                  child: Text(guideTitle,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: DefaultColors.color66000000,
-                      )),
-                )
+//                InkWell(
+//                  onTap: () {},
+//                  child: Text(guideTitle,
+//                      style: TextStyle(
+//                        fontSize: 12,
+//                        color: DefaultColors.color66000000,
+//                      )),
+//                )
               ],
             ),
           ),
@@ -560,9 +552,9 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
         _atlasNodeList.addAll(_nodeList);
       }
       setState(() {});
-      widget.loadDataBloc.add(RefreshSuccessEvent());
+      _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
-      widget.loadDataBloc.add(RefreshFailEvent());
+      _loadDataBloc.add(RefreshFailEvent());
     }
 
     if (mounted) setState(() {});
@@ -584,12 +576,12 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
       if (_nodeList != null && _nodeList.isNotEmpty) {
         _atlasNodeList.addAll(_nodeList);
         _currentPage++;
-        widget.loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        widget.loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
-      widget.loadDataBloc.add(LoadMoreFailEvent());
+      _loadDataBloc.add(LoadMoreFailEvent());
     }
     if (mounted) setState(() {});
   }

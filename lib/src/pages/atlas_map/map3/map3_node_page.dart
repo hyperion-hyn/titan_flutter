@@ -17,6 +17,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
+import 'package:titan/src/pages/atlas_map/widget/my_map3_node_info_item_v2.dart';
 import 'package:titan/src/pages/atlas_map/widget/node_active_contract_widget.dart';
 import 'package:titan/src/pages/skeleton/skeleton_map3_node_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -82,8 +83,8 @@ class _Map3NodeState extends BaseState<Map3NodePage>
       onLoadData();
     }
 
-    BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
-
+    BlocProvider.of<UpdateBloc>(context)
+        .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
   }
 
   @override
@@ -105,7 +106,6 @@ class _Map3NodeState extends BaseState<Map3NodePage>
         },
         onLoadSkeletonView: SkeletonMap3NodePage(),
         child: CustomScrollView(
-          physics: NeverScrollableScrollPhysics(),
           slivers: <Widget>[
             _map3HeadWidget(),
             _sectionTitleWidget(
@@ -193,11 +193,13 @@ class _Map3NodeState extends BaseState<Map3NodePage>
               : S.of(context).my_nodes_empty);
     }
 
-    return SliverToBoxAdapter(
-      child: NodeActiveContractWidget(
-        contractList: _myList,
-      ),
-    );
+    return SliverList(
+        delegate: SliverChildBuilderDelegate(
+      (context, index) {
+        return MyMap3NodeInfoItemV2(_myList[index]);
+      },
+      childCount: _myList.length,
+    ));
   }
 
   Widget _lastActiveWidget() {
@@ -264,7 +266,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
           }
         },
         child: Container(
-          padding: const EdgeInsets.only(left: 0.0, right: 0.0, top: 16),
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 16),
           color: Colors.white,
           child: Row(
             children: <Widget>[
@@ -277,9 +279,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
               Visibility(
                 visible: hasMore,
                 child: Text(
-                  isMine
-                      ? S.of(context).check_reward
-                      : S.of(context).check_more,
+                  isMine ? S.of(context).check_more : S.of(context).check_more,
                   style: TextStyles.textC999S12,
                 ),
               ),
@@ -361,7 +361,7 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     var guideTitle = S.of(context).tutorial;
     return Container(
       color: Colors.white24,
-      margin: const EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 16),
+      margin: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 16),
       child: Column(
         children: <Widget>[
           Padding(
@@ -387,7 +387,11 @@ class _Map3NodeState extends BaseState<Map3NodePage>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.only(
+              bottom: 12,
+              left: 8,
+              right: 8,
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
