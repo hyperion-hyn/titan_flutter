@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -27,6 +28,8 @@ class TokenBurnInfoPage extends StatefulWidget {
 class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
   CoinMarketApi _coinMarketApi = CoinMarketApi();
 
+  SymbolQuoteVo hynQuote;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -52,6 +55,10 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
 
   _content() {
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
+    var _burnRate = Decimal.parse(widget._burnHistory.burnRate ?? '0') *
+        Decimal.fromInt(100);
+    var _burnTokenValue = Decimal.parse('${hynQuote?.price ?? 0}') *
+        Decimal.parse(widget._burnHistory.totalAmount);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -74,8 +81,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
                 width: 16,
               ),
               Expanded(
-                child: Text(
-                    '根据经济白皮书约定，Atlas主链已经自动完成第${widget._burnHistory.epoch}纪元燃烧计划'),
+                child: Text('Atlas主链已经自动完成第${widget._burnHistory.epoch}纪元燃烧计划'),
               ),
             ],
           ),
@@ -85,7 +91,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '区块高度',
-            '${0}',
+            '${widget._burnHistory.block}',
           ),
           _optionItem(
             '燃烧纪元',
@@ -93,23 +99,23 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
           ),
           _optionItem(
             '燃烧量',
-            '${widget._burnHistory.actualAmount}',
+            '${widget._burnHistory.totalAmount}',
           ),
           _optionItem(
             'HYN价格',
-            '${quotesSign.sign} ',
+            '${quotesSign.sign} ${hynQuote?.price ?? '--'}',
           ),
           _optionItem(
             '价值(相当于)',
-            '${widget._burnHistory.epoch}',
+            '$_burnTokenValue',
           ),
           _optionItem(
             '占总供应量',
-            '${widget._burnHistory.epoch}',
+            '$_burnRate %',
           ),
           _optionItem(
             '燃烧后HYN总供应量',
-            '${widget._burnHistory.epoch}',
+            '${widget._burnHistory.hynSupply}',
           ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -181,7 +187,6 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
 
   _getHynQuote() async {
     var quotes = await _coinMarketApi.quotes(widget._burnHistory.timestamp);
-    SymbolQuoteVo hynQuote;
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
     for (var quoteItem in quotes) {
       if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
@@ -189,6 +194,6 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
         hynQuote = quoteItem;
       }
     }
-    if (hynQuote != null) {}
+    setState(() {});
   }
 }

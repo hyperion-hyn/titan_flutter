@@ -45,8 +45,8 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
     ];
 
     _dataInfoList = [
-      widget.burnHistory.txHash,
-      widget.burnHistory.actualAmount,
+      widget.burnHistory.hash,
+      widget.burnHistory.totalAmount,
       '',
       '_toAddress',
       "HYN燃烧",

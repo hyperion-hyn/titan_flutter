@@ -8,29 +8,40 @@ part of 'burn_history.dart';
 
 BurnHistory _$BurnHistoryFromJson(Map<String, dynamic> json) {
   return BurnHistory(
-    json['actualAmount'] as String,
-    json['created_at'] as String,
-    json['epoch'] as int,
-    json['estimateAmount'] as String,
     json['id'] as int,
-    json['status'] as int,
-    json['timestamp'] as int,
-    json['tx_hash'] as String,
+    json['created_at'] as String,
     json['updated_at'] as String,
+    json['hash'] as String,
+    json['foundation'] as String,
+    json['epoch'] as int,
+    json['block'] as int,
+    json['internal_amount'] as String,
+    json['external_amount'] as String,
+    json['total_amount'] as String,
+    json['timestamp'] as int,
+    json['burn_rate'] as String,
+    json['hyn_supply'] as String,
+    json['type'] as int,
   );
 }
 
+
 Map<String, dynamic> _$BurnHistoryToJson(BurnHistory instance) =>
     <String, dynamic>{
-      'actualAmount': instance.actualAmount,
-      'created_at': instance.createdAt,
-      'epoch': instance.epoch,
-      'estimateAmount': instance.estimateAmount,
       'id': instance.id,
-      'status': instance.status,
-      'timestamp': instance.timestamp,
-      'tx_hash': instance.txHash,
+      'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
+      'hash': instance.hash,
+      'foundation': instance.foundation,
+      'epoch': instance.epoch,
+      'block': instance.block,
+      'internal_amount': instance.internalAmount,
+      'external_amount': instance.externalAmount,
+      'total_amount': instance.totalAmount,
+      'timestamp': instance.timestamp,
+      'burn_rate': instance.burnRate,
+      'hyn_supply': instance.hynSupply,
+      'type': instance.type,
     };
 
 BurnMsg _$BurnMsgFromJson(Map<String, dynamic> json) {
@@ -42,8 +53,7 @@ BurnMsg _$BurnMsgFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$BurnMsgToJson(BurnMsg instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$BurnMsgToJson(BurnMsg instance) => <String, dynamic>{
       'actualAmount': instance.actualAmount,
       'latest': instance.latestBurnHistory,
     };
