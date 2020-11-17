@@ -166,7 +166,7 @@ dependencies:
   charts_flutter: ^0.9.0
   device_info: ^0.4.0+1
   shimmer:  1.1.2
-  glitters: ^0.1.4
+  glitters: 0.1.3
 
 dev_dependencies:
   flutter_driver:
