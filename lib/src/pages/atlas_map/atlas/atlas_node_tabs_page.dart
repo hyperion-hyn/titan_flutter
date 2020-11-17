@@ -59,7 +59,7 @@ class AtlasNodeTabsPage extends StatefulWidget {
 
 class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  TabController _tabController;
+  PageController _pageController;
   StreamSubscription _eventBusSubscription;
 
   LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -91,7 +91,10 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
 
   @override
   void initState() {
-    _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
+    _pageController = PageController(
+      initialPage: 0,
+      keepPage: true,
+    );
     super.initState();
     _listenEventBus();
     _loadDataBloc.add(LoadingEvent());
@@ -104,7 +107,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is UpdateMap3TabsPageIndexEvent) {
         this.setState(() {
-          _tabController.index = event.index;
+          _pageController.jumpToPage(event.index);
         });
       }
     });
@@ -122,46 +125,73 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       listener: (context, state) {
         if (state is ChangeNodeTabBarItemState) {
           this.setState(() {
-            _tabController.index = state.index;
+            _pageController.jumpToPage(state.index);
           });
         }
       },
       child: Scaffold(
         body: Container(
           color: Colors.white,
-          child: LoadDataContainer(
-              bloc: _loadDataBloc,
-              onRefresh: () {
-                setState(() {
-                  _isShowLoading = true;
-                });
-                if (_selectedNodeTab == NodeTab.atlas) {
-                  _refreshAtlasData();
-                } else {
-                  _map3OnLoadData();
-                }
-              },
-              onLoadData: () {
-                _isShowLoading = true;
-                if (_selectedNodeTab == NodeTab.atlas) {
-                  _refreshAtlasData();
-                } else {
-                  _map3OnLoadData();
-                }
-              },
-              onLoadingMore: () {
-                _isShowLoading = true;
-                if (_selectedNodeTab == NodeTab.atlas) {
-                  _loadMoreAtlasData();
-                } else {
-                  _map3OnLoadingMore();
-                }
-              },
-              showLoadingWidget: false,
-              enablePullUp: !_isShowLoading,
-              child: CustomScrollView(
-                slivers: _slivers(),
-              )),
+          child: Stack(
+            children: [
+              Container(
+                width: double.infinity,
+                child: Image.asset(
+                  'res/drawable/bg_node_page_header.png',
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: AtlasInfoWidget(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 135,
+                    ),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          _tabBar(),
+                          Column(
+                            children: [
+                              Container(
+                                height: 49.5,
+                              ),
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(
+                                    16.0,
+                                  )),
+                                  child: Container(
+                                    color: Colors.white,
+                                    padding: EdgeInsets.only(top: 4),
+                                    width: double.infinity,
+                                    child: PageView(
+                                      controller: _pageController,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      children: [
+                                        Map3NodePage(),
+                                        AtlasNodesPage(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -278,12 +308,15 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
             ],
             onTabChanged: (nodeTab) {
               setState(() {
-                if (_selectedNodeTab != nodeTab) {
-                  _isShowLoading = true;
-                  _loadDataBloc.add(LoadingEvent());
-                }
+//                if (_selectedNodeTab != nodeTab) {
+//                  _isShowLoading = true;
+//                  _loadDataBloc.add(LoadingEvent());
+//                }
                 _selectedNodeTab = nodeTab;
               });
+              _pageController.jumpToPage(
+                _selectedNodeTab == NodeTab.map3 ? 0 : 1,
+              );
             },
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(16.0),
