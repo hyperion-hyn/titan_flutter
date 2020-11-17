@@ -89,9 +89,7 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
           children: [
             //SkeletonMap3NodePage(),
             Map3NodePage(),
-            AtlasNodesPage(
-              loadDataBloc: LoadDataBloc(),
-            ),
+            AtlasNodesPage(),
           ],
         ),
       ),

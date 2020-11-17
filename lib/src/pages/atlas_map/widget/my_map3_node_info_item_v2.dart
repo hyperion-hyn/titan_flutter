@@ -131,117 +131,120 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
               )}',
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 16.0,
-          right: 16.0,
-          left: 16.0,
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: _isShowBorderHint
-                ? Border.all(
-                    color: HexColor('#FFFF4C3B').withOpacity(
-                    0.5,
-                  ))
-                : null,
-            borderRadius: BorderRadius.circular(6),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey[200],
-                blurRadius: 15.0,
-              ),
-            ],
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 16.0,
+            right: 8.0,
+            left: 8.0,
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12.0,
-              vertical: 8.0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: _isShowBorderHint
+                  ? Border.all(
+                      color: HexColor('#FFFF4C3B').withOpacity(
+                      0.5,
+                    ))
+                  : null,
+              borderRadius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey[200],
+                  blurRadius: 15.0,
+                ),
+              ],
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                iconMap3Widget(widget._map3infoEntity),
-                SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '$nodeName',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Container(
-                        height: 2,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            '${S.of(context).node_num}: ${nodeId}',
-                            style: TextStyle(
-                              color: DefaultColors.color999,
-                              fontSize: 10,
-                            ),
-                          )
-                        ],
-                      )
-                    ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8.0,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  iconMap3Widget(widget._map3infoEntity),
+                  SizedBox(
+                    width: 8,
                   ),
-                ),
-                _isLoading
-                    ? Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Center(
-                          child: SizedBox(
-                            height: 16,
-                            width: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '$nodeName',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
                           ),
                         ),
-                      )
-                    : Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Spacer(),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Map3NodeUtil.statusColor(status),
-                                  border: Border.all(
-                                    color:
-                                        Map3NodeUtil.statusBorderColor(status),
-                                    width: 1.0,
+                        Container(
+                          height: 2,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              '${S.of(context).node_num}: ${nodeId}',
+                              style: TextStyle(
+                                color: DefaultColors.color999,
+                                fontSize: 10,
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  _isLoading
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Center(
+                            child: SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Spacer(),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Map3NodeUtil.statusColor(status),
+                                    border: Border.all(
+                                      color:
+                                          Map3NodeUtil.statusBorderColor(status),
+                                      width: 1.0,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Container(
-                              constraints: BoxConstraints(
-                                maxWidth: 100,
+                              SizedBox(
+                                width: 8,
                               ),
-                              child: _reminderTextWidget(),
-                            )
-                          ],
-                        ),
-                      )
-              ],
+                              Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: 100,
+                                ),
+                                child: _reminderTextWidget(),
+                              )
+                            ],
+                          ),
+                        )
+                ],
+              ),
             ),
           ),
         ),

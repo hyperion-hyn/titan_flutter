@@ -57,27 +57,19 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 11,
-                  shadows: [
-                    BoxShadow(
-                      offset: const Offset(1.0, 1.0),
-                      blurRadius: 2.0,
-                      spreadRadius: 2.0,
-                    ),
-                  ],
                 ),
               ),
-              Text(
-                '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  shadows: [
-                    BoxShadow(
-                      offset: const Offset(1.0, 1.0),
-                      blurRadius: 2.0,
-                      spreadRadius: 2.0,
-                    ),
-                  ],
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 3.0,
+                  left: 2,
+                ),
+                child: Text(
+                  '${AtlasInheritedModel.of(context).remainBlockTillNextEpoch}',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               Spacer(),
