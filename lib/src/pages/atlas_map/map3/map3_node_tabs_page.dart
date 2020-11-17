@@ -21,6 +21,7 @@ class Map3NodeTabsPage extends StatefulWidget {
 class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  ScrollController _scrollController = ScrollController();
   StreamSubscription _eventBusSubscription;
 
   @override
