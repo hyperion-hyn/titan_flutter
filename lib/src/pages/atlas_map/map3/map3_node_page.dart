@@ -31,7 +31,11 @@ import 'map3_node_list_page.dart';
 import 'map3_node_public_widget.dart';
 
 class Map3NodePage extends StatefulWidget {
-  Map3NodePage();
+  final ScrollController scrollController;
+
+  Map3NodePage({
+    this.scrollController,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -106,10 +110,13 @@ class _Map3NodeState extends BaseState<Map3NodePage>
         },
         onLoadSkeletonView: SkeletonMap3NodePage(),
         child: CustomScrollView(
+          controller: widget.scrollController,
           slivers: <Widget>[
             _map3HeadWidget(),
             _sectionTitleWidget(
-                title: S.of(context).my_map3_nodes, hasMore: true, isMine: true),
+                title: S.of(context).my_map3_nodes,
+                hasMore: true,
+                isMine: true),
             _sizedBox(),
             _myNodeListWidget(),
             _sectionTitleWidget(
@@ -125,9 +132,11 @@ class _Map3NodeState extends BaseState<Map3NodePage>
     );
   }
 
-  _sizedBox(){
+  _sizedBox() {
     return SliverToBoxAdapter(
-      child: SizedBox(height: 8,),
+      child: SizedBox(
+        height: 8,
+      ),
     );
   }
 
