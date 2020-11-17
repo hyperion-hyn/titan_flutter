@@ -515,6 +515,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                   return;
                                 }
 
+                                Navigator.pop(context);
                                 AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
                                   nodeName: _atlasInfoEntity.name,
                                   nodeId: _atlasInfoEntity.nodeId,

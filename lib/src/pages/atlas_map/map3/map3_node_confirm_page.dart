@@ -375,14 +375,14 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
         } else {
           print("[Map3NodeConfirmPage]: 启动定时器， 1");
 
-          _initTimer(() {
-            _formalAction(password);
+          _initTimer(() async {
+            await _formalAction(password);
           });
         }
       } else {
         print("[Map3NodeConfirmPage]: 不用启动定时器， 2");
 
-        _formalAction(password);
+        await _formalAction(password);
       }
     } catch (error) {
       setState(() {
@@ -393,7 +393,7 @@ class _Map3NodeConfirmState extends BaseState<Map3NodeConfirmPage> {
     }
   }
 
-  void _formalAction(String password) async {
+  Future _formalAction(String password) async {
     print("[Map3NodeConfirmPage]: 正式执行Message，Action。。。。");
 
     var result = await widget.message.action(password);
