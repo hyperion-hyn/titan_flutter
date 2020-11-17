@@ -14,10 +14,14 @@ class AtlasHomeEntity extends Object {
   @JsonKey(name: 'points')
   String points;
 
+  @JsonKey(name: 'map3_num')
+  int map3Count;
+
   AtlasHomeEntity(
     this.info,
     this.atlasHomeNodeList,
     this.points,
+    this.map3Count,
   );
 
   factory AtlasHomeEntity.fromJson(Map<String, dynamic> srcJson) =>

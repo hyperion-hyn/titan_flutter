@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 class BaseAppBar extends AppBar {
   final String baseTitle;
+
   //final List<Widget> baseActions;
   final List<Widget> actions;
   final Widget leading;
+  final Color backgroundColor;
 
-  BaseAppBar({this.baseTitle, this.actions, this.leading})
-      : super(
+  BaseAppBar({
+    this.baseTitle,
+    this.actions,
+    this.leading,
+    this.backgroundColor = Colors.white,
+  }) : super(
           title: Text(
             baseTitle,
             style: TextStyle(
@@ -17,7 +23,7 @@ class BaseAppBar extends AppBar {
             ),
           ),
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: backgroundColor,
           centerTitle: true,
           iconTheme: IconThemeData(color: Colors.black),
           actions: actions,

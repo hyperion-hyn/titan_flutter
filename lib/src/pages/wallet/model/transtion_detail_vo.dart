@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'dart:convert' as jsonUtils;
 
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
@@ -87,9 +88,8 @@ class TransactionDetailVo {
     this.payload,
   });
 
-  String getDecodedAmount(){
-
-    if(dataDecoded == null){
+  String getDecodedAmount() {
+    if (dataDecoded == null) {
       return "0.0";
     }
 
@@ -98,36 +98,48 @@ class TransactionDetailVo {
       bigAmount = dataDecoded['amount'] ?? '0';
     }
 
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount)).toString();
+    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(bigAmount))
+        .toString();
     return amount;
   }
 
-  String getAtlasRewardAmount(){
-    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+  String getAtlasRewardAmount() {
+    if (logsDecoded == null ||
+        logsDecoded.rewards == null ||
+        logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount)).toString();
+    var amount = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(logsDecoded.rewards[0].amount))
+        .toString();
     return amount;
   }
 
-  String getBillDelegate(){
-    if(payload == null || payload.delegator == null){
+  String getBillDelegate() {
+    if (payload == null || payload.delegator == null) {
       return "0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(double.parse(payload.amount)))).toString();
+    var amount = ConvertTokenUnit.weiToEther(
+            weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(
+                double.parse(payload.amount))))
+        .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
 
-  String getBillReward(){
-    if(payload == null || payload.reward == null || payload.reward == "0"){
+  String getBillReward() {
+    if (payload == null || payload.reward == null || payload.reward == "0") {
       return "0";
     }
-    var amount = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(payload.reward)).toString();
+    var amount =
+        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(payload.reward))
+            .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
 
-  String getMap3RewardAmount(){
-    if(logsDecoded == null || logsDecoded.rewards == null || logsDecoded.rewards.isEmpty){
+  String getMap3RewardAmount() {
+    if (logsDecoded == null ||
+        logsDecoded.rewards == null ||
+        logsDecoded.rewards.isEmpty) {
       return "0.0";
     }
     BigInt amount = BigInt.parse("0");
@@ -146,12 +158,18 @@ class TransactionDetailVo {
     return TransactionDetailVo(
       type: transactionType,
       state: hynTransferHistory.status,
-      amount: AtlasApi.isTransferBill(hynTransferHistory.type) ?  AtlasApi.getTransferBillAmount(hynTransferHistory) : ConvertTokenUnit.weiToEther(
-              weiBigInt: BigInt.parse(hynTransferHistory.value))
-          .toDouble(),
+      amount: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? AtlasApi.getTransferBillAmount(hynTransferHistory)
+          : ConvertTokenUnit.weiToEther(
+                  weiBigInt: BigInt.parse(hynTransferHistory.value))
+              .toDouble(),
       symbol: symbol,
-      fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type) ?  hynTransferHistory.payload.map3Node : hynTransferHistory.from,
-      toAddress: AtlasApi.isTransferBill(hynTransferHistory.type) ?  hynTransferHistory.payload.delegator : hynTransferHistory.to,
+      fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.map3Node
+          : hynTransferHistory.from,
+      toAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.delegator
+          : hynTransferHistory.to,
       time: hynTransferHistory.timestamp * 1000,
       hash: hynTransferHistory.txHash,
       gasPrice: hynTransferHistory.gasPrice,

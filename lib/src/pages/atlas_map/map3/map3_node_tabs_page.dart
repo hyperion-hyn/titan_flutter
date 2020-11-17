@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
+import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
@@ -87,7 +89,9 @@ class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
           children: [
             //SkeletonMap3NodePage(),
             Map3NodePage(),
-            AtlasNodesPage(),
+            AtlasNodesPage(
+              loadDataBloc: LoadDataBloc(),
+            ),
           ],
         ),
       ),
