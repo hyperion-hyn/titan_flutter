@@ -21,6 +21,11 @@ class FormatUtil {
         .format(Decimal.parse(numValue).toDouble());
   }
 
+  static String stringFormatCoinNumWithFour(String numValue) {
+    return NumberFormat("#,###,###,###.####")
+        .format(Decimal.parse(numValue).toDouble());
+  }
+
   static String doubleFormatNum(double numValue) {
     return NumberFormat("#,###,###,###").format(numValue);
   }
