@@ -45,6 +45,11 @@ class _MePriceState extends State<MePricePage> {
           InkWell(
             onTap: () {
               WalletInheritedModel.saveQuoteSign(activeQuotesSign);
+              BlocProvider.of<WalletCmpBloc>(context)
+                  .add(UpdateQuotesSignEvent(sign: activeQuotesSign));
+              BlocProvider.of<WalletCmpBloc>(context)
+                  .add(UpdateQuotesEvent(isForceUpdate: true));
+
               Navigator.pop(context);
             },
             child: Container(
