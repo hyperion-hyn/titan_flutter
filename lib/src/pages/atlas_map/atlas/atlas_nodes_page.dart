@@ -365,7 +365,7 @@ class AtlasNodesPageState extends State<AtlasNodesPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
-                S.of(context).my_nodes,
+                S.of(context).my_atlas_nodes,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Spacer(),

@@ -109,7 +109,8 @@ class _Map3NodeState extends BaseState<Map3NodePage>
           slivers: <Widget>[
             _map3HeadWidget(),
             _sectionTitleWidget(
-                title: S.of(context).my_nodes, hasMore: true, isMine: true),
+                title: S.of(context).my_map3_nodes, hasMore: true, isMine: true),
+            _sizedBox(),
             _myNodeListWidget(),
             _sectionTitleWidget(
                 title: S.of(context).lastest_launched_nodes,
@@ -121,6 +122,12 @@ class _Map3NodeState extends BaseState<Map3NodePage>
           ],
         ),
       ),
+    );
+  }
+
+  _sizedBox(){
+    return SliverToBoxAdapter(
+      child: SizedBox(height: 8,),
     );
   }
 

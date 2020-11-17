@@ -50,7 +50,6 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
   var stateDescText = '';
 
   Microdelegations _microDelegations;
-  bool hasReDelegation = false;
   bool _isShowBorderHint = false;
 
   final _client = WalletUtil.getWeb3Client(true);
@@ -70,7 +69,6 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
       nodeId = widget._map3infoEntity?.nodeId ?? '';
       status = Map3InfoStatus.values[widget._map3infoEntity?.status ?? 0];
       stateDescText = Map3NodeUtil.stateDescText(status);
-      hasReDelegation = widget._map3infoEntity?.atlas != null;
 
       var activatedWallet =
           WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
@@ -135,9 +133,10 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
         color: Colors.white,
         child: Padding(
           padding: const EdgeInsets.only(
-            top: 16.0,
+            top: 8.0,
             right: 8.0,
             left: 8.0,
+            bottom: 8.0
           ),
           child: Container(
             decoration: BoxDecoration(
