@@ -45,7 +45,7 @@ class LogUtil {
 
         var atlasReturn = BaseError.getErrorCode(error.subMsg);
         if (atlasReturn != error.subMsg){
-          Fluttertoast.showToast(msg: "转账异常 $atlasReturn", toastLength: Toast.LENGTH_LONG);
+          Fluttertoast.showToast(msg: "$atlasReturn", toastLength: Toast.LENGTH_LONG);
           return;
         }
       }

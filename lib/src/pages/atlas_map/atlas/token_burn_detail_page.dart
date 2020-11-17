@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
@@ -10,6 +11,7 @@ import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
 import 'package:web3dart/web3dart.dart';
 
 class TokenBurnDetailPage extends StatefulWidget {
@@ -45,10 +47,10 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
     ];
 
     _dataInfoList = [
-      widget.burnHistory.txHash,
-      widget.burnHistory.actualAmount,
-      '',
-      '_toAddress',
+      widget.burnHistory.hash,
+      '${widget.burnHistory.getTotalAmountStr()} HYN',
+      WalletUtil.ethAddressToBech32Address(widget.burnHistory.foundation),
+      '0x00',
       "HYN燃烧",
     ];
 
@@ -90,10 +92,12 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 2.0, bottom: 34),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 34),
                       child: Text(
-                        FormatUtil.formatDate(widget.burnHistory.timestamp,
-                            isSecond: true, isMillisecond: true),
+                        FormatUtil.formatDate(
+                          widget.burnHistory.timestamp,
+                          isSecond: true,
+                        ),
                         style: TextStyle(
                             color: DefaultColors.color999, fontSize: 13),
                       ),
@@ -110,7 +114,13 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
                 delegate: SliverChildBuilderDelegate((context, index) {
               var leftText = _dataTitleList[index];
               var rightText = _dataInfoList[index];
-
+              if (index == 2) {
+                return accountInfoItem(
+                  leftText,
+                  rightText,
+                  hasCopy: true,
+                );
+              }
               return accountInfoItem(leftText, rightText);
             }, childCount: _dataTitleList.length))
           ],
@@ -124,6 +134,7 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
     String rightText, {
     String bottomText,
     bool normalLine = true,
+    bool hasCopy = false,
   }) {
     return Container(
       color: Colors.white,
@@ -150,6 +161,22 @@ class TokenBurnDetailPageState extends BaseState<TokenBurnDetailPage> {
                         style: TextStyles.textC333S13,
                         textAlign: TextAlign.end,
                       ),
+                      if (hasCopy)
+                        InkWell(
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: rightText));
+                            UiUtil.toast(S.of(context).copyed);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 7.0, left: 7, bottom: 7),
+                            child: Image.asset(
+                              "res/drawable/ic_copy.png",
+                              width: 18,
+                              height: 17,
+                            ),
+                          ),
+                        ),
                       if (bottomText != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),

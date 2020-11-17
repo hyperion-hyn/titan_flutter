@@ -182,7 +182,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
           try {
             HynTransferHistory hynTransferHistory =
                 await _atlasApi.queryHYNTxDetail(
-              burnHistory.txHash,
+              burnHistory.hash,
             );
             var transactionType = 2;
             var transactionDetailVo =
@@ -222,7 +222,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          '燃烧 ${FormatUtil.stringFormatCoinNum(FormatUtil.weiToEtherStr(burnHistory.actualAmount))} HYN',
+                          '燃烧 ${FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())} HYN',
                           style: TextStyle(
                             fontSize: 11,
                           ),
@@ -239,6 +239,7 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                     )
                   ],
                 ),
+                if ((burnHistory.type ?? 1) == 0) Text('创世燃烧'),
               ],
             ),
           ),
