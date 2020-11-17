@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -507,6 +508,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                                   atlasAddress: widget.atlasNodeAddress,
                                 );
                                 if (lastTxIsPending) {
+                                  return;
+                                }
+                                if(leftReward <= Decimal.fromInt(0)){
+                                  Fluttertoast.showToast(msg: "当前可提金额为0");
                                   return;
                                 }
 
