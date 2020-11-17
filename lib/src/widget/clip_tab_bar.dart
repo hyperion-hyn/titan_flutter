@@ -3,16 +3,19 @@ import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
 
 typedef void OnTabChanged(NodeTab nodeTab);
 typedef void OnTabDoubleTap(NodeTab nodeTab);
+typedef void UpdateTap(NodeTab nodeTab);
 
 class ClipTabBar extends StatefulWidget {
   final List<Widget> children;
   final OnTabChanged onTabChanged;
   final OnTabDoubleTap onTabDoubleTap;
+  final UpdateTap updateTap;
   final BorderRadiusGeometry borderRadius;
 
   ClipTabBar({
     @required this.children,
     @required this.onTabChanged,
+    this.updateTap,
     this.onTabDoubleTap,
     this.borderRadius,
   });
@@ -28,8 +31,12 @@ class _LoadDataState extends State<ClipTabBar> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   @override

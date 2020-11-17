@@ -957,7 +957,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   Widget _topNextEpisodeNotifyWidget() {
     var notification = _notifyMessage;
-    if (notification == null) {
+    if (notification == null || _map3nodeInformationEntity == null) {
       return Container();
     }
 

@@ -84,16 +84,24 @@ class BurnHistory extends Object {
 
 @JsonSerializable()
 class BurnMsg extends Object {
-  @JsonKey(name: 'actualAmount')
-  String actualAmount;
+  @JsonKey(name: 'total')
+  String totalAmount;
 
   @JsonKey(name: 'latest')
   BurnHistory latestBurnHistory;
 
   BurnMsg(
-    this.actualAmount,
+    this.totalAmount,
     this.latestBurnHistory,
   );
+
+  String getTotalAmount() {
+    return FormatUtil.weiToEtherStr(totalAmount);
+  }
+
+  String getTotalAmountStr() {
+    return FormatUtil.stringFormatCoinNum(getTotalAmount());
+  }
 
   factory BurnMsg.fromJson(Map<String, dynamic> srcJson) =>
       _$BurnMsgFromJson(srcJson);

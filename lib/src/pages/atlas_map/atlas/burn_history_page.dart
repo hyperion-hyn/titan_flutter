@@ -5,6 +5,7 @@ import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/atlas_map/atlas/token_burn_info_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/burn_history.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
@@ -157,13 +158,27 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                '${FormatUtil.stringFormatNum(_burnMsg?.actualAmount ?? '0')} HYN',
+                '${_burnMsg?.getTotalAmountStr()} HYN',
                 style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
-            )
+            ),
+            Padding(
+                padding: EdgeInsets.only(
+                  bottom: 24.0,
+                  right: 16.0,
+                  left: 16.0,
+                ),
+                child: Text(
+                  '通过内燃和外燃机制持续降低HYN供给总量，从而提升HYN价值。每过30个纪元燃烧一次，并展示本轮燃烧总量。',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: DefaultColors.color999,
+                  ),
+                )),
           ],
         ),
       ),
@@ -179,25 +194,11 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
       ),
       child: InkWell(
         onTap: () async {
-          try {
-            HynTransferHistory hynTransferHistory =
-                await _atlasApi.queryHYNTxDetail(
-              burnHistory.hash,
-            );
-            var transactionType = 2;
-            var transactionDetailVo =
-                TransactionDetailVo.fromHynTransferHistory(
-              hynTransferHistory,
-              transactionType,
-              'HYN',
-            );
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      WalletShowAccountInfoPage(transactionDetailVo),
-                ));
-          } catch (e) {}
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TokenBurnInfoPage(burnHistory),
+              ));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -221,11 +222,30 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: Text(
-                          '燃烧 ${FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())} HYN',
-                          style: TextStyle(
-                            fontSize: 11,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '燃烧 ${FormatUtil.stringFormatCoinNum(burnHistory.getTotalAmount())} HYN',
+                              style: TextStyle(
+                                fontSize: 11,
+                              ),
+                            ),
+                            if ((burnHistory.type ?? 1) == 0)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 4.0,
+                                  right: 4.0,
+                                ),
+                                child: Text(
+                                  '创世燃烧',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              )
+                          ],
                         ),
                       ),
                     ),
@@ -239,7 +259,6 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                     )
                   ],
                 ),
-                if ((burnHistory.type ?? 1) == 0) Text('创世燃烧'),
               ],
             ),
           ),

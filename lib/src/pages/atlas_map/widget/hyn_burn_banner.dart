@@ -74,7 +74,7 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
                       height: 50,
                     ),
                     Container(
-                      height: 50,
+                      height: 60,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -85,7 +85,7 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
                             child: Text(
                               '第${_burnMsg.latestBurnHistory?.epoch}纪元 HYN燃烧完成',
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13,
                                 color: Theme.of(context).primaryColor,
                               ),
                             ),
