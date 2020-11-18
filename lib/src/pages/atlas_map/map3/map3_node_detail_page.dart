@@ -2155,9 +2155,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                     });
 
                     if (type == Map3NodeDetailType.tx_log) {
-                      _loadTxLogData();
+                      if (_txLogList.isEmpty) {
+                        _loadTxLogData();
+                      }
                     } else {
-                      _loadUserListData();
+                      if (_userList.isEmpty) {
+                        _loadUserListData();
+                      }
                     }
                   },
                   tabs: _delegateRecordTabModels
