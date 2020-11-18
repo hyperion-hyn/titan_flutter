@@ -96,8 +96,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   get _isPending => _map3Status == Map3InfoStatus.FUNDRAISING_NO_CANCEL;
   get _isTerminal => _map3Status == Map3InfoStatus.CANCEL_NODE_SUCCESS;
 
-  get statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
-  get statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
+  get _statusCreator => _microDelegationsCreator?.renewal?.status ?? 0;
+  get _statusJoiner => _microDelegationsJoiner?.renewal?.status ?? 0;
 
   // get isHiddenRenew => (statusCreator == 1 && _isDelegate && !_isCreator);
 
@@ -201,8 +201,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             var leftEpoch = periodEpoch14 - _currentEpoch;
 
-            if (statusCreator == 0 && leftEpoch > 0) {
-              return "距离可以设置下期续约还有$leftEpoch纪元";
+            if (_statusCreator == 0 && leftEpoch > 0) {
+              return "距离可以设置下期续约还需$leftEpoch纪元";
             }
           } else {
             /*
@@ -213,10 +213,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             var leftEpoch = periodEpoch7 - _currentEpoch;
 
-            if (statusJoiner == 0 && leftEpoch > 0) {
-              if (statusCreator == 0) {
-                return "距离可以设置下期续约还有$leftEpoch纪元";
-              } else if (statusCreator == 1) {
+            if (_statusJoiner == 0 && leftEpoch > 0) {
+              if (_statusCreator == 0) {
+                return "距离可以设置下期续约还需$leftEpoch纪元";
+              } else if (_statusCreator == 1) {
                 return _closeRenewDefaultText;
               }
             }
@@ -245,8 +245,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
   get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
   get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
-  get _pendingUnlockEpoch =>
-      double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
+  // get _pendingUnlockEpoch =>
+  //     double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
   get _closeRenewDefaultText => '节点主已经停止续约，该节点到期后自动终止';
 
@@ -268,7 +268,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       var isInActionPeriodCreator = (_currentEpoch > periodEpoch14) && (_currentEpoch <= periodEpoch7);
       //LogUtil.printMessage("【isCreator】statusCreator:$statusCreator, isInActionPeriodCreator:$isInActionPeriodCreator");
 
-      if (isInActionPeriodCreator && statusCreator == 0) {
+      if (isInActionPeriodCreator && _statusCreator == 0) {
         //在可编辑时间内，且未修改过
         return true;
       }
@@ -280,11 +280,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     //LogUtil.printMessage("[statusJoiner] statusJoiner:$statusJoiner, statusCreator:$statusCreator");
 
     if (_isDelegate) {
-      var isCreatorSetOpen = statusCreator == 2; //创建人已开启
-      var isCreatorSetClose = statusCreator == 1; //创建人已开启
+      var isCreatorSetOpen = _statusCreator == 2; //创建人已开启
+      var isCreatorSetClose = _statusCreator == 1; //创建人已开启
 
-      if ((statusJoiner == 0 && isCreatorSetOpen) ||
-          (statusJoiner == 0 && isInActionPeriodJoiner && !isCreatorSetClose)) {
+      if ((_statusJoiner == 0 && isCreatorSetOpen) ||
+          (_statusJoiner == 0 && isInActionPeriodJoiner && !isCreatorSetClose)) {
         return true;
       }
     }
@@ -337,55 +337,40 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         break;
 
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
-        if (_isDelegate) {
-          if (_isCreator) {
-            var periodEpoch14 = _releaseEpoch - 14 + 1;
-            var periodEpoch7 = _releaseEpoch - 7;
+        if (_isCreator) {
+          var periodEpoch14 = _releaseEpoch - 14 + 1;
+          var periodEpoch7 = _releaseEpoch - 7;
 
-            var leftEpoch = periodEpoch14 - _currentEpoch;
-
-            // 没有设置过
-            if (statusCreator == 0) {
-              if (_currentEpoch < periodEpoch14) {
-                value = 1;
-              } else if (_currentEpoch >= periodEpoch14 && _currentEpoch < periodEpoch7) {
-                value = 2;
-              } else {
-                value = 2;
-              }
-            }
-            // 已设置过
-            else {
-              value = 2;
-            }
-          } else {
-            var periodEpoch7 = _releaseEpoch - 7 + 1;
-
-            var leftEpoch = periodEpoch7 - _currentEpoch;
-
-            if (statusJoiner == 0) {
-              if (statusCreator == 0) {
-                if (_currentEpoch < periodEpoch7) {
-                  value = 1;
-                } else if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
-                  value = 2;
-                } else {
-                  value = 2;
-                }
-              } else if (statusCreator == 1) {
-                value = 1;
-              } else if (statusCreator == 2) {
-                if (_currentEpoch >= periodEpoch7 && _currentEpoch < _releaseEpoch) {
-                  value = 2;
-                }
-                value = 2;
-              }
+          // 没有设置过
+          if (_statusCreator == 0) {
+            if (_currentEpoch < periodEpoch14) {
+              value = 1;
             } else {
               value = 2;
             }
           }
+          // 已设置过
+          else {
+            value = 2;
+          }
         } else {
-          value = 2;
+          var periodEpoch7 = _releaseEpoch - 7 + 1;
+
+          if (_statusJoiner == 0) {
+            if (_statusCreator == 0) {
+              if (_currentEpoch < periodEpoch7) {
+                value = 1;
+              } else {
+                value = 2;
+              }
+            } else if (_statusCreator == 1) {
+              value = 1;
+            } else if (_statusCreator == 2) {
+              value = 2;
+            }
+          } else {
+            value = 2;
+          }
         }
 
         break;
@@ -447,11 +432,34 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           value = 0.1;
         } else if (left > 0.1 && left < 1.0) {
           value = left;
+
+          if (_currentStep == 2) {
+            left = (_currentEpoch - _renewEpoch).toDouble() / (_releaseEpoch - _renewEpoch).toDouble();
+          } else {
+            left = (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
+          }
         } else {
           value = 1.0;
         }
 
         break;
+
+      /*
+      case Map3InfoStatus.CONTRACT_HAS_STARTED:
+        value = 0.5;
+
+        var left = (_currentEpoch - _activeEpoch).toDouble() / (_releaseEpoch - _activeEpoch).toDouble();
+
+        if (left <= 0.1) {
+          value = 0.1;
+        } else if (left > 0.1 && left < 1.0) {
+          value = left;
+        } else {
+          value = 1.0;
+        }
+
+        break;
+       */
 
       case Map3InfoStatus.CONTRACT_IS_END:
         value = 0.5;
@@ -490,7 +498,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          _map3StatusDesc = "距离到期还有$_endRemainEpochValue纪元";
+          _map3StatusDesc = "距离到期还需$_endRemainEpochValue纪元";
         } else {
           _map3StatusDesc = "距离到期仅剩1个纪元";
         }
@@ -1278,28 +1286,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var statusDesc = "已开启";
     var feeRate = lastFeeRate;
 
-    // 周期
-    var periodEpoch14 = _releaseEpoch - 14 + 1;
-    var periodEpoch7 = _releaseEpoch - 7 + 1;
-
-    var alertContent = "";
-
-    var statueCreator = (_microDelegationsCreator?.renewal?.status ?? 0);
-    var statueJoiner = (_microDelegationsJoiner?.renewal?.status ?? 0); // 未参与：-1
-    if (!_isDelegate) {
-      statueJoiner = -1;
-    }
-    var _renewRemainEpoch = 0;
-
     // 参与者，没设置，没到期
     bool isShowEpoch = false;
     bool isShowAlert = false;
-
+    var alertContent = "";
+    var _renewRemainEpoch = 0;
     HexColor alertColor = HexColor('999999');
 
-    var isCloseRenew = (statueCreator == 1 && _isDelegate && !_isCreator);
+    var isCloseRenew = (_statusCreator == 1 && _isDelegate && !_isCreator);
 
-    switch (statueJoiner) {
+    var status = _isDelegate ? _statusJoiner : -1;
+
+    switch (status) {
       case -1:
         statusDesc = "未参与抵押，不能设置";
 
@@ -1311,11 +1309,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       case 0: // 未编辑，默认，开启，取上传rate
 
-        if (_isCreator) {
-          //var periodEpoch14 = _releaseEpoch - 14 + 1;
-          var periodEpoch7 = _releaseEpoch - 7;
+        // 周期
+        var periodEpoch14 = _releaseEpoch - 14;
+        var periodEpoch7 = _releaseEpoch - 7;
 
-          var isOutActionPeriodCreator = (_currentEpoch > periodEpoch7);
+        if (_isCreator) {
+          var isOutActionPeriodCreator = _currentEpoch > periodEpoch7;
 
           isShowEpoch = !isOutActionPeriodCreator;
 
@@ -1327,16 +1326,14 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（请在纪元$periodEpoch14 ~ $periodEpoch7内设置）";
+          alertContent = "（请在纪元${periodEpoch14 + 1} ~ $periodEpoch7内设置）";
 
           if (_canRenewNextPeriod) {
-            _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+            _renewRemainEpoch = periodEpoch7 - _currentEpoch + 1;
           } else {
-            _renewRemainEpoch = periodEpoch14 - _currentEpoch;
+            _renewRemainEpoch = periodEpoch14 - _currentEpoch + 1;
           }
         } else {
-          //var periodEpoch14 = _releaseEpoch - 14 + 1;
-          //var periodEpoch7 = _releaseEpoch - 7 + 1;
           var isOutActionPeriodJoiner = _currentEpoch > _releaseEpoch;
 
           isShowEpoch = !isOutActionPeriodJoiner;
@@ -1349,18 +1346,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             alertColor = _canRenewNextPeriod ? HexColor('#FF5041') : HexColor('#FEC500');
           }
 
-          alertContent = "（请在纪元$periodEpoch7 ~ $_releaseEpoch内设置）";
+          alertContent = "（请在纪元${periodEpoch7 + 1} ~ $_releaseEpoch内设置）";
 
           if (_canRenewNextPeriod) {
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
           } else {
-            _renewRemainEpoch = periodEpoch7 - _currentEpoch;
+            _renewRemainEpoch = periodEpoch7 - _currentEpoch + 1;
           }
 
-          if (statueCreator == 2 && _canRenewNextPeriod) {
+          if (_statusCreator == 2 && _canRenewNextPeriod) {
             alertContent = "（请在节点到期前设置）";
             _renewRemainEpoch = _releaseEpoch - _currentEpoch + 1;
           }
+        }
+
+        // 保险起见：
+        if (_renewRemainEpoch <= 0) {
+          isShowEpoch = false;
+        }
+
+        if (periodEpoch14 < 0 || periodEpoch7 < 0) {
+          alertContent = "";
         }
 
         isShowAlert = true;
@@ -1390,10 +1396,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         isShowAlert = false;
 
         break;
-    }
-
-    if (periodEpoch14 < 0 || periodEpoch7 < 0) {
-      alertContent = "";
     }
 
     if (_isDelegate && _canRenewNextPeriod) {
@@ -1555,7 +1557,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 ),
                 child: Text.rich(TextSpan(children: [
                   TextSpan(
-                      text: _canRenewNextPeriod ? '剩余可设置只有 ' : '距离可设置还有 ',
+                      text: _canRenewNextPeriod ? '剩余可设置只有 ' : '距离可设置还需 ',
                       style: TextStyle(fontSize: 14, color: HexColor("#999999"))),
                   TextSpan(
                       text: '$_renewRemainEpoch',
@@ -2040,18 +2042,22 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     );
   }
 
-  Widget _customStepperWidget() {
+  int get _renewEpoch {
     var periodEpoch14 = _releaseEpoch - 14 + 1;
     var periodEpoch7 = _releaseEpoch - 7 + 1;
 
     var renewEpoch = _isCreator ? periodEpoch14 : periodEpoch7;
-    if (_currentStep == 2 && statusCreator == 2) {
+    if (_currentStep == 2 && _statusCreator == 2) {
       renewEpoch = periodEpoch14;
     }
+    return renewEpoch;
+  }
+
+  Widget _customStepperWidget() {
     var titles = [
       _pendingEpoch > 0 ? "创建 #$_pendingEpoch" : "创建",
       _activeEpoch > 0 ? "启动 #$_activeEpoch" : "启动",
-      renewEpoch > 0 ? '续期 #$renewEpoch' : '续期',
+      _renewEpoch > 0 ? '续期 #$_renewEpoch' : '续期',
       _releaseEpoch > 0 ? "到期 #$_releaseEpoch" : "到期",
     ];
 

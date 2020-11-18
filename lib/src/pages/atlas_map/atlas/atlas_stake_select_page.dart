@@ -46,15 +46,14 @@ class AtlasStakeSelectPage extends StatefulWidget {
 class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
   var infoTitleList = [
     "总抵押",
-    "签名率",
     "昨日年化",
-    "最大抵押量",
-    "网址",
-    "安全联系",
-    "描述",
-    "费率",
-    "最大费率",
-    "费率幅度",
+    "当前管理费",
+    S.of(Keys.rootKey.currentContext).description,
+    "可设最高管理费",
+    "单纪元可调管理费幅度",
+    S.of(Keys.rootKey.currentContext).max_staking_num,
+    S.of(Keys.rootKey.currentContext).website,
+    S.of(Keys.rootKey.currentContext).contact,
   ];
   List<String> infoContentList = [];
   bool isShowAll = false;
@@ -214,17 +213,14 @@ class _AtlasStakeSelectPageState extends State<AtlasStakeSelectPage> {
     var atlasInfo = widget._atlasInfoEntity;
     infoContentList = [
       "${atlasInfo.getTotalStaking()}",
-      "${atlasInfo.signRate}",
       "${atlasInfo.rewardRate}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRate()))}",
+      "${getContentOrEmptyStr(atlasInfo.describe)}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateMax()))}",
+      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateTrim()))}",
       "${atlasInfo.getMaxStaking()}",
       "${getContentOrEmptyStr(atlasInfo.home)}",
       "${getContentOrEmptyStr(atlasInfo.contact)}",
-      "${getContentOrEmptyStr(atlasInfo.describe)}",
-      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRate()))}",
-      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateMax()))}",
-      "${FormatUtil.formatPercent(double.parse(atlasInfo.getFeeRateTrim()))}",
-      "${atlasInfo.blsKey}",
-      "${atlasInfo.blsSign}"
     ];
 
     if (mounted)
