@@ -101,10 +101,6 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
             '${widget._burnHistory.block}',
           ),
           _optionItem(
-            '燃烧纪元',
-            '${widget._burnHistory.epoch}',
-          ),
-          _optionItem(
             '燃烧量',
             '$_burnTokenAmountStr',
           ),
