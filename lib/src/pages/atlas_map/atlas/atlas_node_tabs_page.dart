@@ -82,7 +82,9 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
     _eventBusSubscription = Application.eventBus.on().listen((event) async {
       if (event is UpdateMap3TabsPageIndexEvent) {
         _selectedNodeTab = event.index == 0 ? NodeTab.map3 : NodeTab.atlas;
-        _pageController.jumpToPage(event.index);
+        if (_pageController.hasClients) {
+          _pageController.jumpToPage(event.index);
+        }
         if (mounted) setState(() {});
       }
     });
@@ -94,7 +96,9 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       listener: (context, state) {
         if (state is ChangeNodeTabBarItemState) {
           _selectedNodeTab = state.index == 0 ? NodeTab.map3 : NodeTab.atlas;
-          _pageController.jumpToPage(state.index);
+          if (_pageController.hasClients) {
+            _pageController.jumpToPage(state.index);
+          }
           if (mounted) setState(() {});
         }
       },

@@ -291,6 +291,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
     }
 
 //    print(
+//        '[map3] ${widget._map3infoEntity?.name} addr ${widget._map3infoEntity?.address} endEpoch: ${widget._map3infoEntity.endEpoch} releaseEpoch: ${_map3nodeInformationEntity?.map3Node?.releaseEpoch}');
+//
+//    print(
 //        '${widget._map3infoEntity?.name} creator: $_isNodeCreator joiner: $_isJoiner currentEpoch: $_currentEpoch endEpoch: ${widget._map3infoEntity.endEpoch} creatorCanEditEpoch: $_creatorCanEditEpoch creatorCanEdit: $_creatorCanEdit hasRenew: $_hasRenew');
 
     ///creator edit hint
