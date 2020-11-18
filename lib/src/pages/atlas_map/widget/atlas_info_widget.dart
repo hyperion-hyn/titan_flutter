@@ -62,6 +62,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       'res/drawable/ic_burn.png',
                       width: 15,
                       height: 15,
+                      color: HexColor('#FFFF5151'),
                     ),
                     SizedBox(
                       width: 4,
