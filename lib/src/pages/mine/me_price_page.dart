@@ -28,7 +28,7 @@ class _MePriceState extends State<MePricePage> {
   @override
   Widget build(BuildContext context) {
     if (activeQuotesSign == null) {
-      activeQuotesSign = WalletInheritedModel.of(context,aspect: WalletAspect.quote).activeQuotesSign;
+      activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign;
     }
 
     return Scaffold(
@@ -44,11 +44,11 @@ class _MePriceState extends State<MePricePage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              WalletInheritedModel.saveQuoteSign(activeQuotesSign);
-              BlocProvider.of<WalletCmpBloc>(context)
-                  .add(UpdateQuotesSignEvent(sign: activeQuotesSign));
-              BlocProvider.of<WalletCmpBloc>(context)
-                  .add(UpdateQuotesEvent(isForceUpdate: true));
+              if (activeQuotesSign != null) {
+                WalletInheritedModel.saveQuoteSign(activeQuotesSign);
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: activeQuotesSign));
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+              }
 
               Navigator.pop(context);
             },
@@ -103,7 +103,7 @@ class _MePriceState extends State<MePricePage> {
                 ),
                 Spacer(),
                 Visibility(
-                  visible: quotesSign.quote == activeQuotesSign.quote,
+                  visible: quotesSign.quote == activeQuotesSign?.quote ?? '',
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                     child: Icon(
