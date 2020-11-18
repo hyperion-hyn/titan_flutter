@@ -273,32 +273,4 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
       ],
     );
   }
-
-  _skeletonMap() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(
-          16.0,
-        )),
-        color: Colors.white,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300],
-          highlightColor: Colors.grey[100],
-          enabled: true,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16.0),
-            child: Container(
-              width: double.infinity,
-              height: 162,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
