@@ -65,20 +65,16 @@ class _WalletManagerState extends State<_WalletManager> {
   }
 
   void initData() async {
-    var gasPriceEntityStr =
-    await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
+    var gasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_GAS_PRICE_KEY);
     if (gasPriceEntityStr != null) {
-      _gasPriceRecommend =
-          GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
+      _gasPriceRecommend = GasPriceRecommend.fromJson(json.decode(gasPriceEntityStr));
     } else {
       _gasPriceRecommend = GasPriceRecommend.defaultValue();
     }
 
-    var btcGasPriceEntityStr =
-    await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
+    var btcGasPriceEntityStr = await AppCache.getValue(PrefsKey.SHARED_PREF_BTC_GAS_PRICE_KEY);
     if (btcGasPriceEntityStr != null) {
-      _btcGasPriceRecommend =
-          BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
+      _btcGasPriceRecommend = BTCGasPriceRecommend.fromJson(json.decode(btcGasPriceEntityStr));
     } else {
       _btcGasPriceRecommend = BTCGasPriceRecommend.defaultValue();
     }
@@ -91,7 +87,7 @@ class _WalletManagerState extends State<_WalletManager> {
   Widget build(BuildContext context) {
     return BlocListener<WalletCmpBloc, WalletCmpState>(
       listener: (context, state) {
-        if(state is UpdateWalletPageState){
+        if (state is UpdateWalletPageState) {
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
@@ -113,21 +109,23 @@ class _WalletManagerState extends State<_WalletManager> {
           if (state.sign != null) {
             _quotesSign = state.sign;
           }
-        }else if (state is UpdatedQuotesState) {//基本不用,一般使用UpdateWalletPageState
+        } else if (state is UpdatedQuotesState) {
+          //基本不用,一般使用UpdateWalletPageState
           _quotesModel = state.quoteModel;
           print('QuotesComponent UpdatedQuotesState === receive');
-        }else if (state is UpdatedQuotesSignState) {//基本不用,一般使用UpdateWalletPageState
+        } else if (state is UpdatedQuotesSignState) {
+          //基本不用,一般使用UpdateWalletPageState
           _quotesSign = state.sign;
-        }else if (state is GasPriceState) {
+        } else if (state is GasPriceState) {
           if (state.status == Status.success && state.gasPriceRecommend != null) {
             _gasPriceRecommend = state.gasPriceRecommend;
           }
-          if (state.status == Status.success &&
-              state.btcGasPriceRecommend != null) {
+          if (state.status == Status.success && state.btcGasPriceRecommend != null) {
             _btcGasPriceRecommend = state.btcGasPriceRecommend;
           }
         } else if (state is UpdatedWalletBalanceState) {
-        } else if (state is WalletVoAwareCmpState) {//基本不用,一般使用UpdateWalletPageState
+        } else if (state is WalletVoAwareCmpState) {
+          //基本不用,一般使用UpdateWalletPageState
           _activatedWallet = state.walletVo;
           if (_activatedWallet != null) {
             var balance = _calculateTotalBalance(_activatedWallet);
@@ -182,12 +180,7 @@ class _WalletManagerState extends State<_WalletManager> {
   }
 }
 
-enum WalletAspect {
-  activatedWallet,
-  quote,
-  sign,
-  gasPrice
-}
+enum WalletAspect { activatedWallet, quote, sign, gasPrice }
 
 class WalletInheritedModel extends InheritedModel<WalletAspect> {
   final WalletVo activatedWallet;
@@ -224,7 +217,7 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   String activatedHynAddress() {
     if (this.activatedWallet != null) {
       for (var coin in this.activatedWallet.coins) {
-        if (coin.symbol == SupportedTokens.HYN_ERC20.symbol) {
+        if (coin.symbol == SupportedTokens.ETHEREUM.symbol) {
           return coin.address;
         }
       }
@@ -264,18 +257,12 @@ class WalletInheritedModel extends InheritedModel<WalletAspect> {
   }
 
   @override
-  bool updateShouldNotifyDependent(
-      WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
-    return ((activatedWallet != oldWidget.activatedWallet &&
-        dependencies.contains(WalletAspect.activatedWallet)) ||
-        (quotesModel != oldWidget.quotesModel &&
-            dependencies.contains(WalletAspect.quote)) ||
-        (activeQuotesSign != oldWidget.activeQuotesSign &&
-                dependencies.contains(WalletAspect.sign)) ||
-        gasPriceRecommend != oldWidget.gasPriceRecommend &&
-            dependencies.contains(WalletAspect.gasPrice) ||
-        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend &&
-            dependencies.contains(WalletAspect.gasPrice));
+  bool updateShouldNotifyDependent(WalletInheritedModel oldWidget, Set<WalletAspect> dependencies) {
+    return ((activatedWallet != oldWidget.activatedWallet && dependencies.contains(WalletAspect.activatedWallet)) ||
+        (quotesModel != oldWidget.quotesModel && dependencies.contains(WalletAspect.quote)) ||
+        (activeQuotesSign != oldWidget.activeQuotesSign && dependencies.contains(WalletAspect.sign)) ||
+        gasPriceRecommend != oldWidget.gasPriceRecommend && dependencies.contains(WalletAspect.gasPrice) ||
+        btcGasPriceRecommend != oldWidget.btcGasPriceRecommend && dependencies.contains(WalletAspect.gasPrice));
   }
 
   static Future<bool> saveQuoteSign(QuotesSign quotesSign) {

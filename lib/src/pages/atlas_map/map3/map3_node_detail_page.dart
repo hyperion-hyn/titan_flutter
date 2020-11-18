@@ -69,7 +69,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   Microdelegations _microDelegationsCreator;
   Microdelegations _microDelegationsJoiner;
 
-  int _currentPage = 0;
+  int _currentPageTxLog = 0;
+  int _currentPageUserList = 0;
   List<HynTransferHistory> _txLogList = [];
   List<Map3UserEntity> _userList = [];
 
@@ -429,16 +430,16 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
         var left = (_currentEpoch - _activeEpoch).toDouble() / (_releaseEpoch - _activeEpoch).toDouble();
 
+        if (_currentStep == 2) {
+          left = (_currentEpoch - _renewEpoch).toDouble() / (_releaseEpoch - _renewEpoch).toDouble();
+        } else {
+          left = (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
+        }
+
         if (left <= 0.1) {
           value = 0.1;
         } else if (left > 0.1 && left < 1.0) {
           value = left;
-
-          if (_currentStep == 2) {
-            left = (_currentEpoch - _renewEpoch).toDouble() / (_releaseEpoch - _renewEpoch).toDouble();
-          } else {
-            left = (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
-          }
         } else {
           value = 1.0;
         }
@@ -2429,10 +2430,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
 
     try {
-      _currentPage = 1;
+      _currentPageTxLog = 1;
       List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
         _nodeAddress,
-        page: _currentPage,
+        page: _currentPageTxLog,
       );
 
       if (mounted) {
@@ -2452,10 +2453,13 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   Future _loadTxLogMoreData() async {
     try {
-      _currentPage++;
-      print("[getMap3StakingLogList]  more, _currentPage:$_currentPage");
+      _currentPageTxLog++;
+      print("[getMap3StakingLogList]  more, _currentPage:$_currentPageTxLog");
 
-      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(_nodeAddress, page: _currentPage);
+      List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
+        _nodeAddress,
+        page: _currentPageTxLog,
+      );
 
       if (tempMemberList.length > 0) {
         _txLogList.addAll(tempMemberList);
@@ -2478,10 +2482,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // userList
   void _loadUserListData() async {
-    _currentPage = 1;
+    _currentPageUserList = 1;
     List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
       _nodeId,
-      page: _currentPage,
+      page: _currentPageUserList,
     );
 
     // print("[widget] --> build, length:${tempMemberList.length}");
@@ -2499,12 +2503,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   void _loadUserListMoreData() async {
-    _currentPage++;
+    _currentPageUserList++;
 
     try {
       List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
         _nodeId,
-        page: _currentPage,
+        page: _currentPageUserList,
         size: 10,
       );
 

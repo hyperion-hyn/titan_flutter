@@ -19,6 +19,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v3.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/data/entity/converter/model_converter.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
@@ -308,7 +309,8 @@ class _DataContributionState extends State<ContributionTasksPage> with RouteAwar
                 SizedBox(
                   width: 150,
                   child: Text(
-                    shortBlockChainAddress(activeWalletVo?.wallet?.getEthAccount()?.address) ?? "",
+                    shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+                            activeWalletVo?.wallet?.getEthAccount()?.address ?? "")),
                     style: TextStyle(fontWeight: FontWeight.normal, color: Color(0xFF9B9B9B), fontSize: 12),
                   ),
                 )
