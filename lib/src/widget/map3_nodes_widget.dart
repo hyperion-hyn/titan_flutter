@@ -27,7 +27,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
   Widget build(BuildContext context) {
     var _eChartOption = '''
 {
-    backgroundColor: '#313947',
+    backgroundColor: '#3D444A',
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
@@ -44,8 +44,8 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
       },
       itemStyle: {
         normal: {
-          areaColor: '#323c48',
-          borderColor: '#111'
+          areaColor: '#577176',
+          borderColor: '#485F64'
         },
         emphasis: {
           areaColor: '#2a333d'
@@ -76,7 +76,7 @@ class _Map3NodesWidgetState extends State<Map3NodesWidget> {
           }
         },
         itemStyle: {
-          color: '#0ca8ad',
+          color: '#00AFD3',
           emphasis: {
             borderColor: '#fff',
             borderWidth: 1

@@ -352,18 +352,20 @@ class WalletUtil {
     return _map3StakingContract;
   }
 
-  static web3.Web3Client getWeb3Client([bool isAtlas = false]) {
+  static web3.Web3Client getWeb3Client([bool isAtlas = false, bool isPrint = false]) {
     if (isAtlas) {
       if (WalletConfig.netType == EthereumNetType.main) {
         if (_web3AtlasClientMain == null) {
           _web3AtlasClientMain =
               WalletUtil._newWeb3Client(WalletConfig.ATLAS_API);
+          _web3AtlasClientMain.printResponse = isPrint;
         }
         return _web3AtlasClientMain;
       } else {
         if (_web3AtlasClientTest == null) {
           _web3AtlasClientTest =
               WalletUtil._newWeb3Client(WalletConfig.ATLAS_API_TEST);
+          _web3AtlasClientTest.printResponse = isPrint;
         }
         return _web3AtlasClientTest;
       }
