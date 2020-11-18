@@ -2603,7 +2603,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   _loadDetailDataInAtlas() async {
-    if (_nodeAddress.isEmpty || _walletAddress.isEmpty) {
+    if (_nodeAddress.isEmpty) {
       return;
     }
 
@@ -2627,7 +2627,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         tag += 1;
       }
 
-      if (delegateAddress == joinerAddress) {
+      if (delegateAddress == joinerAddress && _walletAddress.isNotEmpty) {
         _microDelegationsJoiner = item;
         tag += 1;
       }
