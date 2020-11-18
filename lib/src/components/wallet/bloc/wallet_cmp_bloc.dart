@@ -53,10 +53,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
 
   int _lastUpdateBalanceTime = 0;
 
-  /*@override
+  @override
   Stream<Transition<WalletCmpEvent, WalletCmpState>> transformEvents(Stream<WalletCmpEvent> events, transitionFn) {
     return events.switchMap(transitionFn);
-  }*/
+  }
 
   @override
   Stream<WalletCmpState> mapEventToState(WalletCmpEvent event) async* {
