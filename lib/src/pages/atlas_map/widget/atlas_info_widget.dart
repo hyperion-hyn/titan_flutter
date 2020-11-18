@@ -80,6 +80,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
                   },
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
                         width: 30,
@@ -147,7 +148,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate?.toString()??'---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -176,7 +177,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count ?? 0}',
+                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count?.toString()??'---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -206,7 +207,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     ),
                     InkWell(
                       child: Text(
-                        '${AtlasInheritedModel.of(context).committeeInfo?.blockNum}',
+                        '${AtlasInheritedModel.of(context).committeeInfo?.blockNum?.toString()??'---'}',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -239,7 +240,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch?.toString()??'---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
