@@ -53,8 +53,8 @@ import 'package:web3dart/src/models/validator_information_entity.dart';
 import 'package:web3dart/web3dart.dart';
 
 class AtlasDetailPage extends StatefulWidget {
-  String atlasNodeId;
-  String atlasNodeAddress;
+  final String atlasNodeId;
+  final String atlasNodeAddress;
 
   AtlasDetailPage(this.atlasNodeId, this.atlasNodeAddress);
 
@@ -209,7 +209,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
 
     var _netDataList = await _atlasApi.getAtlasStakingLogList(widget.atlasNodeAddress, page: _currentPage);
 
-    if (_netDataList != null) {
+    if (_netDataList != null && _netDataList.length != 0) {
       _delegateRecordList.addAll(_netDataList);
       _loadDataBloc.add(LoadingMoreSuccessEvent());
     } else {

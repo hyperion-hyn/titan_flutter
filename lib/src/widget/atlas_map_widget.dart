@@ -84,7 +84,7 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
 
     _eChartOption = '''
 {
-    backgroundColor: '#313947',
+    backgroundColor: '#3D444A',
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
@@ -101,8 +101,8 @@ class _AtlasMapWidgetState extends State<AtlasMapWidget> {
       },
       itemStyle: {
         normal: {
-          areaColor: '#323c48',
-          borderColor: '#111'
+          areaColor: '#577176',
+          borderColor: '#485F64'
         },
         emphasis: {
           areaColor: '#2a333d'

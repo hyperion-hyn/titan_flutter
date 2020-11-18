@@ -290,6 +290,9 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
       );
     }
 
+//    print(
+//        '${widget._map3infoEntity?.name} creator: $_isNodeCreator joiner: $_isJoiner currentEpoch: $_currentEpoch endEpoch: ${widget._map3infoEntity.endEpoch} creatorCanEditEpoch: $_creatorCanEditEpoch creatorCanEdit: $_creatorCanEdit hasRenew: $_hasRenew');
+
     ///creator edit hint
     if (_isNodeCreator && _currentEpoch < _creatorCanEditEpoch) {
       _content = '距离可以设置下期续约还有${_creatorCanEditEpoch - _currentEpoch}纪元';
