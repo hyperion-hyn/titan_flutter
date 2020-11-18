@@ -43,7 +43,7 @@ class _LoadDataState extends State<ClipTabBar> {
         ClipPath(
           child: Container(
             width: double.infinity,
-            height: 50,
+            height: 70,
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: widget.borderRadius),
           ),
@@ -114,12 +114,13 @@ class LeftTabClipPath extends CustomClipper<Path> {
       clockwise: true,
       radius: Radius.circular(radius),
     );
-    path.lineTo(size.width / 2, size.height - 15);
+    path.lineTo(size.width / 2, size.height - 35);
     path.arcToPoint(
-      Offset(size.width / 2 + 15, size.height),
+      Offset(size.width / 2 + 15, size.height - 20),
       clockwise: false,
       radius: Radius.circular(radius),
     );
+    path.lineTo(size.width / 2 + 15, size.height);
     path.lineTo(0, size.height);
     return path;
   }
@@ -141,12 +142,13 @@ class RightTabClipPath extends CustomClipper<Path> {
       clockwise: false,
       radius: Radius.circular(radius),
     );
-    path.lineTo(size.width / 2, size.height - 15);
+    path.lineTo(size.width / 2, size.height - 35);
     path.arcToPoint(
-      Offset(size.width / 2 - 15, size.height),
+      Offset(size.width / 2 - 15, size.height - 20),
       clockwise: true,
       radius: Radius.circular(radius),
     );
+    path.lineTo(size.width / 2 - 15, size.height);
     path.lineTo(size.width, size.height);
     return path;
   }
