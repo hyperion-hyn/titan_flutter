@@ -197,7 +197,7 @@ class _TokenBurnInfoPageState extends State<TokenBurnInfoPage> {
     var quotesSign = WalletInheritedModel.of(context).activeQuotesSign;
     for (var quoteItem in quotes) {
       if (quoteItem.symbol == SupportedTokens.HYN_Atlas.symbol &&
-          quoteItem.quote == quotesSign.quote) {
+          quoteItem.quote == quotesSign?.quote) {
         hynQuote = quoteItem;
       }
     }

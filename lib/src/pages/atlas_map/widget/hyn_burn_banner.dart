@@ -83,7 +83,7 @@ class _HynBurnBannerState extends State<HynBurnBanner> {
                           ),
                           Expanded(
                             child: Text(
-                              '第${_burnMsg.latestBurnHistory?.epoch}纪元 HYN燃烧完成',
+                              '第${_burnMsg.latestBurnHistory?.id}轮 HYN燃烧完成',
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Theme.of(context).primaryColor,

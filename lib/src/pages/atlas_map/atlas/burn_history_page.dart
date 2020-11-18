@@ -214,9 +214,26 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
                   children: [
                     Container(
                       width: 120,
-                      child: Text(
-                        '第 ${burnHistory.epoch} 纪元',
-                        style: TextStyle(fontSize: 13),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '第 ${burnHistory.id} 轮',
+                            style: TextStyle(fontSize: 13),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 4.0,
+                            ),
+                            child: Text(
+                              '区块高度 ${burnHistory.block}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DefaultColors.color999,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
@@ -316,7 +333,6 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
       }
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
-      print('----burn $e');
       _loadDataBloc.add(RefreshFailEvent());
     }
     if (mounted) setState(() {});
@@ -338,7 +354,6 @@ class BurnHistoryPageState extends State<BurnHistoryPage> {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
-      print('----burn $e');
       _loadDataBloc.add(LoadMoreFailEvent());
     }
     if (mounted) setState(() {});
