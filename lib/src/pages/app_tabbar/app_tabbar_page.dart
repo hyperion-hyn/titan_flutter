@@ -109,10 +109,13 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
-    Future.delayed(Duration(milliseconds: 1000)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
     });
+
+//    Future.delayed(Duration(milliseconds: 2000)).then((value) {
+//      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+//    });
 
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {

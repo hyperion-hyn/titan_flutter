@@ -22,7 +22,10 @@ class UpdateActivatedWalletBalanceEvent extends WalletCmpEvent {
   UpdateActivatedWalletBalanceEvent({this.symbol, this.contractAddress});
 }
 
-class UpdateWalletPageEvent extends WalletCmpEvent {}
+class UpdateWalletPageEvent extends WalletCmpEvent {
+  final bool updateGasPrice;
+  UpdateWalletPageEvent({this.updateGasPrice = false});
+}
 
 class UpdateQuotesEvent extends WalletCmpEvent {
   final bool isForceUpdate;

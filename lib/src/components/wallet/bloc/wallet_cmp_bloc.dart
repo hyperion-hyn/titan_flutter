@@ -160,6 +160,10 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
         } else {
           yield UpdateWalletPageState(sign: quotesSign, quoteModel: currentQuotesModel);
         }
+
+        if(event.updateGasPrice){
+          BlocProvider.of<WalletCmpBloc>(Keys.rootKey.currentContext).add(UpdateGasPriceEvent());
+        }
       } catch (e) {
         LogUtil.toastException(e);
       }
