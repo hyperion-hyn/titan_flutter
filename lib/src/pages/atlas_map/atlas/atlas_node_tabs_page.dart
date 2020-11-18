@@ -132,7 +132,7 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
                           Column(
                             children: [
                               Container(
-                                height: 49.5,
+                                height: 50,
                               ),
                               Expanded(
                                 child: ClipRRect(
@@ -202,79 +202,54 @@ class _AtlasNodeTabsPageState extends State<AtlasNodeTabsPage>
   }
 
   _tabBar() {
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
-            ),
-          ),
-          child: ClipTabBar(
-            selectedNodeTab: _selectedNodeTab,
-            children: [
-              _nodeTab(
-                selected: _selectedNodeTab == NodeTab.map3,
-                logoPath: 'res/drawable/ic_map3_logo.png',
-                name: 'Map3',
-              ),
-              _nodeTab(
-                selected: _selectedNodeTab == NodeTab.atlas,
-                logoPath: 'res/drawable/ic_atlas_logo.png',
-                name: 'Atlas',
-              ),
-            ],
-            onTabChanged: (nodeTab) {
-              setState(() {
-                _selectedNodeTab = nodeTab;
-              });
-              _pageController.jumpToPage(
-                _selectedNodeTab == NodeTab.map3 ? 0 : 1,
-              );
-            },
-            onTabDoubleTap: (nodeTab) {
-              setState(() {
-                _selectedNodeTab = nodeTab;
-              });
-              _pageController.jumpToPage(
-                _selectedNodeTab == NodeTab.map3 ? 0 : 1,
-              );
-              _scrollController.animateTo(0.0,
-                  duration: Duration(
-                    milliseconds: 300,
-                  ),
-                  curve: Curves.decelerate);
-            },
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
-            ),
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
-        Container(
-          width: double.infinity,
-          height: 50,
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                    color: _selectedNodeTab == NodeTab.map3
-                        ? Colors.white
-                        : Colors.black.withOpacity(0.5)),
-              ),
-              Expanded(
-                child: Container(
-                  color: _selectedNodeTab == NodeTab.atlas
-                      ? Colors.white
-                      : Colors.black.withOpacity(0.5),
-                ),
-              )
-            ],
+      ),
+      child: ClipTabBar(
+        selectedNodeTab: _selectedNodeTab,
+        children: [
+          _nodeTab(
+            selected: _selectedNodeTab == NodeTab.map3,
+            logoPath: 'res/drawable/ic_map3_logo.png',
+            name: 'Map3',
           ),
-        )
-      ],
+          _nodeTab(
+            selected: _selectedNodeTab == NodeTab.atlas,
+            logoPath: 'res/drawable/ic_atlas_logo.png',
+            name: 'Atlas',
+          ),
+        ],
+        onTabChanged: (nodeTab) {
+          setState(() {
+            _selectedNodeTab = nodeTab;
+          });
+          _pageController.jumpToPage(
+            _selectedNodeTab == NodeTab.map3 ? 0 : 1,
+          );
+        },
+        onTabDoubleTap: (nodeTab) {
+          setState(() {
+            _selectedNodeTab = nodeTab;
+          });
+          _pageController.jumpToPage(
+            _selectedNodeTab == NodeTab.map3 ? 0 : 1,
+          );
+          _scrollController.animateTo(0.0,
+              duration: Duration(
+                milliseconds: 300,
+              ),
+              curve: Curves.decelerate);
+        },
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
     );
   }
 }
