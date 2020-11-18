@@ -26,7 +26,7 @@ class ClickOvalButton extends StatefulWidget {
     this.radius,
     this.isLoading = false,
     this.loadingText,
-        this.fontWeight,
+    this.fontWeight,
   });
 
   @override
@@ -42,8 +42,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(
-            widget.radius != null ? widget.radius : widget.height / 2)),
+        borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
         gradient: getGradient(),
       ),
       child: FlatButton(
@@ -51,29 +50,28 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
             borderRadius: BorderRadius.all(Radius.circular(widget.radius != null ? widget.radius : widget.height / 2)),
           ),
           padding: const EdgeInsets.all(0.0),
-          child: Text(
-              widget.isLoading
-                  ? widget.loadingText ?? widget.text
-                  : widget.text,
+          child: Text(widget.isLoading ? widget.loadingText ?? widget.text : widget.text,
               style: TextStyle(
                 fontWeight: widget.fontWeight,
                 fontSize: widget.fontSize,
                 color: widget.isLoading
                     ? DefaultColors.color999
-                    : widget.fontColor != null
-                        ? widget.fontColor
-                        : Colors.white,
+                    : widget.fontColor != null ? widget.fontColor : Colors.white,
               )),
           onPressed: (widget.onTap == null || widget.isLoading)
               ? null
               : () async {
-                  setState(() {
-                    widget.isLoading = true;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      widget.isLoading = true;
+                    });
+                  }
                   await widget.onTap();
-                  setState(() {
-                    widget.isLoading = false;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      widget.isLoading = false;
+                    });
+                  }
                 }),
     );
   }

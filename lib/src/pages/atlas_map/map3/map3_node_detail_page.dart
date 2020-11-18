@@ -58,7 +58,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   final AtlasApi _atlasApi = AtlasApi();
-  final _web3Client = WalletUtil.getWeb3Client(true);
+  final _web3Client = WalletUtil.getWeb3Client(true, true);
 
   // 0映射中;1 创建提交中；2创建失败; 3募资中,没在撤销节点;4募资中，撤销节点提交中，如果撤销失败将回到3状态；5撤销节点成功；6合约已启动；7合约期满终止；
   get _map3Status => Map3InfoStatus.values[_map3infoEntity?.status ?? 1];
@@ -242,8 +242,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   var _currentBlockHeight = 0;
 
   // 到期纪元
-  get _releaseEpoch => double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
-  get _activeEpoch => _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
+  get _releaseEpoch =>
+      _map3infoEntity?.endEpoch ?? double.parse(_map3nodeInformationEntity?.map3Node?.releaseEpoch ?? "0").toInt();
+  get _activeEpoch => _map3infoEntity?.startEpoch ?? _map3nodeInformationEntity?.map3Node?.activationEpoch ?? 0;
   get _pendingEpoch => _map3nodeInformationEntity?.map3Node?.pendingEpoch ?? 0;
   // get _pendingUnlockEpoch =>
   //     double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
@@ -661,7 +662,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
-    //LogUtil.printMessage("[Map3NodeDetail] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
+    LogUtil.printMessage(
+        "[Map3NodeDetail] _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
 
     List<Widget> actions = [];
 
