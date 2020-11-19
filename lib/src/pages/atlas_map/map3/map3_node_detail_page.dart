@@ -437,6 +437,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           left = (_currentEpoch - _activeEpoch).toDouble() / (_renewEpoch - _activeEpoch).toDouble();
         }
 
+        if (left.isNaN) {
+          left = 0.1;
+        }
+
         if (left <= 0.1) {
           value = 0.1;
         } else if (left > 0.1 && left < 1.0) {
