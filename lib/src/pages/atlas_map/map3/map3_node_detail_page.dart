@@ -390,10 +390,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   //最小启动所需
-  get startMin => double.tryParse(_map3introduceEntity?.startMin ?? "0") ?? 0;
+  double get startMin => double.tryParse(_map3introduceEntity?.startMin ?? "0") ?? 0;
 
   //当前抵押量
-  get staking => double.tryParse(_map3infoEntity?.getStaking() ?? "0") ?? 0;
+  double get staking => double.tryParse(_map3infoEntity?.getStaking() ?? "0") ?? 0;
 
   get _isFullDelegate => (startMin > 0) && (staking > 0) && (staking >= startMin);
 
@@ -405,6 +405,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         var left = staking / startMin;
+
+        if (left.isNaN) {
+          left = 0.1;
+        }
 
         if (_isFullDelegate) {
           value = 0.95;
