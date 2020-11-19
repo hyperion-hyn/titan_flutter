@@ -9,6 +9,7 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -664,23 +665,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
     LogUtil.printMessage(
-        "[Map3NodeDetail] _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
+        "[${widget.runtimeType}] _currentEpoch:$_currentEpoch, _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
 
     List<Widget> actions = [];
 
-    Widget shareWidget = IconButton(
-      icon: Image.asset(
-        "res/drawable/map3_node_share.png",
-        width: 15,
-        height: 18,
-        color: HexColor("#999999"),
-      ),
-      tooltip: S.of(context).share,
-      onPressed: _shareAction,
-    );
+    var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+    var hasShare = config?.canShareMap3Node ?? true;
+    print("config?.canShareMap3Node:${config?.canShareMap3Node}");
 
     if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
-        (_currentBlockHeight > _lastCurrentBlockHeight)) {
+            (_currentBlockHeight > _lastCurrentBlockHeight) ||
+        (_currentEpoch > _releaseEpoch && _currentEpoch > 0 && _releaseEpoch > 0)) {
+      LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
       _refreshData();
     }
 
@@ -697,13 +693,24 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             ),
           ),
         ),
-        shareWidget,
-      ];
-    } else {
-      actions = [
-        shareWidget,
       ];
     }
+
+    if (hasShare) {
+      Widget shareWidget = IconButton(
+        icon: Image.asset(
+          "res/drawable/map3_node_share.png",
+          width: 15,
+          height: 18,
+          color: HexColor("#999999"),
+        ),
+        tooltip: S.of(context).share,
+        onPressed: _shareAction,
+      );
+
+      actions.add(shareWidget);
+    }
+
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
@@ -1439,7 +1446,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   child: SizedBox(
                     height: 30,
                     child: InkWell(
-                      onTap: _renewAction,
+                      onTap: _canRenewNextPeriod ? _renewAction : null,
                       child: Center(
                           child: Text(
                         isCloseRenew ? '' : "设置",

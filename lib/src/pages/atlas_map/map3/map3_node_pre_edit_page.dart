@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/components/atlas/atlas_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
@@ -83,6 +84,8 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   get _canRenew =>
       (widget.map3infoEntity.status == Map3InfoStatus.CONTRACT_HAS_STARTED.index) && _isDelegate && (!_isHaveRenew);
+
+  var _currentBlockHeight = 0;
 
   @override
   void initState() {
@@ -246,20 +249,30 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
         size: 1,
       );
       var isNotEmpty = list?.isNotEmpty ?? false;
+      print("[${widget.runtimeType}], isNotEmpty:$isNotEmpty");
       if (isNotEmpty) {
         // 是否是当前这期的设置
         var lastTransaction = list.first;
         var epoch = lastTransaction.epoch;
-        var startEpoch = widget.map3infoEntity.startEpoch;
-        var endEpoch = widget.map3infoEntity.endEpoch;
-
+        var startEpoch = widget.map3infoEntity?.startEpoch ?? 0;
+        var endEpoch = widget.map3infoEntity?.endEpoch ?? 0;
         var inCurrentPeriod = epoch > startEpoch && epoch < endEpoch;
-        if (inCurrentPeriod) {
+
+        // 已经过去30秒的话，可以执行后面操作
+        var now = DateTime.now().millisecondsSinceEpoch;
+        var last = lastTransaction.timestamp * 1000;
+        var isOver30Seconds = (now - last) > (30 * 1000);
+
+        //print("[${widget.runtimeType}],isOver30Seconds:$isOver30Seconds, inCurrentPeriod:$inCurrentPeriod");
+
+        if (inCurrentPeriod || !isOver30Seconds) {
           _status = lastTransaction.status;
           _isHaveRenew = _status >= TransactionStatus.pending && _status <= TransactionStatus.success;
+          //print("[${widget.runtimeType}], _status:$_status, _isHaveRenew:$_isHaveRenew");
 
           if ((lastTransaction?.dataDecoded ?? {}).keys.contains('isRenew')) {
             _isAutoRenew = (lastTransaction.dataDecoded["isRenew"] as bool);
+            //print("[${widget.runtimeType}], _status:$_status, _isHaveRenew:$_isHaveRenew, _isAutoRenew:$_isAutoRenew");
           }
         } else {
           LogUtil.printMessage("[${widget.runtimeType}]--->epoch:$epoch, startEpoch:$startEpoch, endEpoch:$endEpoch");
@@ -300,6 +313,17 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
       case TransactionStatus.success:
         notification = '续约请求已完成';
         break;
+    }
+
+    var _lastCurrentBlockHeight = _currentBlockHeight;
+
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    if (_lastCurrentBlockHeight == 0) {
+      _lastCurrentBlockHeight = _currentBlockHeight;
+    }
+
+    if (_status == TransactionStatus.pending && (_currentBlockHeight > _lastCurrentBlockHeight)) {
+      getNetworkData();
     }
 
     var divider = Container(

@@ -35,12 +35,6 @@ class _PolicySelectPageState extends State<PolicySelectPage> {
         ),
         body: Column(
           children: <Widget>[
-            SizedBox(
-              height: 16,
-            ),
-            Divider(
-              height: 1,
-            ),
             _buildMenuBar(S.of(context).policy_wallet, '', () {
               Navigator.push(
                   context,

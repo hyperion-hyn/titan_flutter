@@ -2,16 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
-import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/setting/model.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/api/api.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import '../system_config_entity.dart';
 import './bloc.dart';
 
 class SettingBloc extends Bloc<SettingEvent, SettingState> {
-  Api api = Api();
+  AtlasApi api = AtlasApi();
   final BuildContext context;
 
   SettingBloc({this.context});

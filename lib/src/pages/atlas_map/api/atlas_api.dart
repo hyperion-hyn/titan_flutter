@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:decimal/decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/setting/system_config_entity.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
@@ -22,9 +25,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_home_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_staking_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_tx_log_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/pledge_atlas_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/reward_history_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
@@ -32,7 +33,6 @@ import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
-import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -929,5 +929,16 @@ class AtlasApi {
           "node_id": nodeId,
         },
         options: RequestOptions(contentType: "application/json"));
+  }
+
+
+  Future<SystemConfigEntity> getSystemConfigData() async {
+    var configEntity =
+    await AtlasHttpCore.instance.postEntity('/v1/app/config', EntityFactory<SystemConfigEntity>((data) {
+      return SystemConfigEntity.fromJson(json.decode(data));
+    }), params: {
+      "key": 'app:config',
+    }, options: RequestOptions(contentType: "application/json"));
+    return configEntity;
   }
 }
