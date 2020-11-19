@@ -56,11 +56,10 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 
   @override
   void onCreated() {
-    // TODO: implement onCreated
-    super.onCreated();
     symbolQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
+    super.onCreated();
   }
 
   @override
@@ -261,7 +260,9 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                         ),
                         Text(
                           _isShowBalances
-                              ? _usdtToCurrency == null || _totalByHyn == null
+                              ? _usdtToCurrency == null ||
+                                      _totalByHyn == null ||
+                                      _totalByUsdt == null
                                   ? '--'
                                   : '≈ ${FormatUtil.truncateDecimalNum(
                                       _usdtToCurrency * _totalByUsdt,
@@ -532,6 +533,23 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
+    var exchangeAvailable = '-';
+    var exchangeFreeze = '-';
+    var balanceByCurrency = '-';
+    try {
+      exchangeAvailable = Decimal.parse(
+        widget._assetType.exchangeAvailable,
+      ).toString();
+
+      exchangeFreeze = Decimal.parse(
+        widget._assetType.exchangeFreeze,
+      ).toString();
+
+      balanceByCurrency = FormatUtil.truncateDecimalNum(
+        Decimal.parse(widget._assetType.usdt) * widget._usdtToCurrency,
+        4,
+      );
+    } catch (e) {}
     return InkWell(
       onTap: () {
         Navigator.push(
@@ -600,11 +618,7 @@ class AssetItemState extends State<AssetItem> {
                           height: 8.0,
                         ),
                         Text(
-                          widget._isShowBalances
-                              ? Decimal.parse(
-                                      widget._assetType.exchangeAvailable)
-                                  .toString()
-                              : '*****',
+                          widget._isShowBalances ? exchangeAvailable : '*****',
                           maxLines: 2,
                           style: TextStyle(
                               fontWeight: FontWeight.w500, fontSize: 12),
@@ -629,10 +643,7 @@ class AssetItemState extends State<AssetItem> {
                         height: 8.0,
                       ),
                       Text(
-                        widget._isShowBalances
-                            ? Decimal.parse(widget._assetType.exchangeFreeze)
-                                .toString()
-                            : '*****',
+                        widget._isShowBalances ? exchangeFreeze : '*****',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 12,
@@ -663,15 +674,7 @@ class AssetItemState extends State<AssetItem> {
                               ExchangeInheritedModel.of(context)
                                       .exchangeModel
                                       .isShowBalances
-                                  ? widget._assetType.usdt != null &&
-                                          widget._usdtToCurrency != null
-                                      ? '${FormatUtil.truncateDecimalNum(
-                                          Decimal.parse(
-                                                  widget._assetType.usdt) *
-                                              widget._usdtToCurrency,
-                                          4,
-                                        )}'
-                                      : '-'
+                                  ? balanceByCurrency
                                   : '*****',
                               textAlign: TextAlign.end,
                               style: TextStyle(
