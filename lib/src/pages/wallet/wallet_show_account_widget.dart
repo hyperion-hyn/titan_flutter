@@ -417,8 +417,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
 
     if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       amountText =
-          "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true)}";
-      amountSubText = " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true)}";
+          "${HYNApi.getValueByHynType(transactionDetail.hynType, transactionDetail: transactionDetail, getAmountStr: true, isWallet: true)}";
+      amountSubText = " ${HYNApi.getValueByHynType(transactionDetail.hynType, getTypeStr: true, isWallet: true)}";
     } else if (transactionDetail.type == TransactionType.TRANSFER_IN) {
       if (transactionDetail.amount > 0) {
         amountColor = HexColor("#FF259B24");

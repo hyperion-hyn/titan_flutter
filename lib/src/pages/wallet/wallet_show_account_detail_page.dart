@@ -111,7 +111,8 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
 
     var transDetail = widget.transactionDetail;
     var amountText =
-        "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
+        "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true, isWallet: true,
+    )}";
     /*var amountText = "";
     if (transDetail.type == TransactionType.TRANSFER_IN) {
       amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
@@ -135,6 +136,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       transDetail.hynType,
       getTypeStr: true,
       creatorAddress: transDetail.fromAddress,
+      isWallet: true,
     );
 
     if (widget.isContain) {

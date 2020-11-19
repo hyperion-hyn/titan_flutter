@@ -371,6 +371,7 @@ class HYNApi {
     bool formatComma = true,
     Map<String, dynamic> dataDecoded,
     String creatorAddress = '',
+    bool isWallet = false,
   }) {
     String typeStr = "";
     String amountStr = "0";
@@ -404,10 +405,17 @@ class HYNApi {
         typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        typeStr = S.of(context).msg_collect_re_delegation_reward;
-        String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
-        amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
-        recordAmountStr = getTransRecordAmount(value);
+        if(isWallet){
+          typeStr = S.of(context).msg_collect_re_delegation_reward + "至Map3";
+          String value = "0";
+          amountStr = "$value";
+          recordAmountStr = getTransRecordAmount(value);
+        }else{
+          typeStr = S.of(context).msg_collect_re_delegation_reward;
+          String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
+          amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
+          recordAmountStr = getTransRecordAmount(value);
+        }
         break;
       case MessageType.typeCreateMap3:
         typeStr = S.of(context).create_map_mortgage_contract;
