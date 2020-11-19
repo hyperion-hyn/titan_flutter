@@ -542,6 +542,24 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
+    var exchangeAvailable = '-';
+    var exchangeFreeze = '-';
+    var balanceByCurrency = '-';
+
+    try {
+      exchangeAvailable = Decimal.parse(
+        widget._assetType.exchangeAvailable,
+      ).toString();
+
+      exchangeFreeze = Decimal.parse(
+        widget._assetType.exchangeFreeze,
+      ).toString();
+
+      balanceByCurrency = FormatUtil.truncateDecimalNum(
+        Decimal.parse(widget._assetType.usdt) * widget._usdtToCurrency,
+        4,
+      );
+    } catch (e) {}
     return Column(
       children: <Widget>[
         SizedBox(
@@ -566,14 +584,7 @@ class AssetItemState extends State<AssetItem> {
                       height: 8.0,
                     ),
                     Text(
-                      widget._assetType.usdt != null &&
-                              widget._usdtToCurrency != null
-                          ? '${FormatUtil.truncateDecimalNum(
-                              Decimal.parse(widget._assetType.usdt) *
-                                  widget._usdtToCurrency,
-                              4,
-                            )}'
-                          : '-',
+                      balanceByCurrency,
                       maxLines: 2,
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
@@ -598,8 +609,7 @@ class AssetItemState extends State<AssetItem> {
                     height: 8.0,
                   ),
                   Text(
-                    Decimal.parse(widget._assetType.exchangeAvailable)
-                        .toString(),
+                    exchangeAvailable,
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                   ),
                 ],
@@ -621,7 +631,7 @@ class AssetItemState extends State<AssetItem> {
                     height: 8.0,
                   ),
                   Text(
-                    Decimal.parse(widget._assetType.exchangeFreeze).toString(),
+                    exchangeFreeze,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
