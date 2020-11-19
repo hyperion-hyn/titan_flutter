@@ -58,6 +58,7 @@ import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:vibration/vibration.dart';
 import 'package:web3dart/web3dart.dart';
 
+import '../../../../../config.dart';
 import '../../../../../env.dart';
 import '../../../../global.dart';
 
@@ -686,8 +687,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               var activeWallet =
                   WalletInheritedModel.of(context).activatedWallet?.wallet;
               final client = WalletUtil.getWeb3Client(true);
-              String privateKey =
-                  "0x80dd5684b4c5a7218cd97415ec652ed1f11b5b0734f46985b8ed15d3fe91fd33";
+              String privateKey = Config.TEST_WALLET_PRIVATE_KEY;
               final credentials =
                   await client.credentialsFromPrivateKey(privateKey);
               if (activeWallet != null) {
