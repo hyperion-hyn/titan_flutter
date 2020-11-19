@@ -664,19 +664,18 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
-    LogUtil.printMessage(
-        "[${widget.runtimeType}] _currentEpoch:$_currentEpoch, _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
+    // LogUtil.printMessage(
+    //     "[${widget.runtimeType}] _currentEpoch:$_currentEpoch, _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
 
     List<Widget> actions = [];
 
     var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
     var hasShare = config?.canShareMap3Node ?? true;
-    print("config?.canShareMap3Node:${config?.canShareMap3Node}");
 
     if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
             (_currentBlockHeight > _lastCurrentBlockHeight) ||
         (_currentEpoch > _releaseEpoch && _currentEpoch > 0 && _releaseEpoch > 0)) {
-      LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
+      // LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
       _refreshData();
     }
 
