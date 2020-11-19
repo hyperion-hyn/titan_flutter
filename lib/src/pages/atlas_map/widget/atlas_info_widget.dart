@@ -5,11 +5,14 @@ import 'package:shimmer/shimmer.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/atlas/atlas_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/atlas/burn_history_page.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -69,10 +72,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                     ),
                     Text(
                       'HYN燃烧',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600),
+                      style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
                     )
                   ],
                 ),
@@ -85,8 +85,17 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
               Spacer(),
               InkWell(
                 onTap: () {
-                  Application.router
-                      .navigateTo(context, Routes.map3node_my_page_reward_new);
+                  var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+                  var _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+                  if (_address.isEmpty) {
+                    Application.router.navigateTo(
+                        context,
+                        Routes.map3node_create_wallet +
+                            "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_JOIN}");
+                    return;
+                  }
+
+                  Application.router.navigateTo(context, Routes.map3node_my_page_reward_new);
                 },
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,7 +162,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate?.toString()??'---'}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.candidate?.toString() ?? '---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -182,7 +191,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count?.toString()??'---'}',
+                      '${AtlasInheritedModel.of(context).atlasHomeEntity?.map3Count?.toString() ?? '---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -216,7 +225,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                         baseColor: Colors.white,
                         highlightColor: HexColor('#3D444A'),
                         child: Text(
-                          '${AtlasInheritedModel.of(context).committeeInfo?.blockNum?.toString()??'---'}',
+                          '${AtlasInheritedModel.of(context).committeeInfo?.blockNum?.toString() ?? '---'}',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -250,7 +259,7 @@ class _AtlasInfoWidgetState extends State<AtlasInfoWidget> {
                       height: 8.0,
                     ),
                     Text(
-                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch?.toString()??'---'}',
+                      '${AtlasInheritedModel.of(context).committeeInfo?.epoch?.toString() ?? '---'}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
