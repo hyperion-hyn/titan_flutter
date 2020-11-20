@@ -480,6 +480,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         NodeJoinType.values[_atlasInfoEntity.myMap3[_selectedMap3NodeValue].mine.creator];
                     switch (nodeJoinType) {
                       case NodeJoinType.CREATOR:
+                      case NodeJoinType.JOINER:
                         UiUtil.showAlertView(
                           context,
                           title: S.of(context).receive_reward,
@@ -539,7 +540,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         );
 
                         break;
-                      case NodeJoinType.JOINER:
+                      /*case NodeJoinType.JOINER:
                         UiUtil.showAlertView(
                           context,
                           title: S.of(context).receive_reward,
@@ -556,7 +557,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                           ],
                           content: S.of(context).cant_receive_reward_contact_master_distribute,
                         );
-                        break;
+                        break;*/
                     }
                   }
                 },
