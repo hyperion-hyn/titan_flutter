@@ -51,12 +51,12 @@ class _Map3NodeMyState extends BaseState<Map3NodeMyPage> {
                       tabs: [
                         Tab(
                           child: Text(
-                            '我发起的',
+                            S.of(context).my_initiated_map_contract,
                           ),
                         ),
                         Tab(
                           child: Text(
-                            '我参与的',
+                              S.of(context).my_join_map_contract,
                           ),
                         ),
                       ],
