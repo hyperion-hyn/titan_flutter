@@ -8,6 +8,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../../../env.dart';
 import '../../../main.dart';
@@ -74,13 +75,19 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
 
         print("[$runtimeType] env.buildType:${env.buildType.toString()}");
 
+        ExchangeConst.EXCHANGE_DOMAIN = Const.EXCHANGE_DOMAIN;
+        ExchangeConst.WS_DOMAIN = Const.WS_DOMAIN;
+
         AtlasHttpCore.clearInstance();
         AtlasHttpCoreNoLog.clearInstance();
         ExchangeHttp.clearInstance();
         WalletConfig.clearNetType();
         ExchangeApi().init();
+
+
         Keys.componentKey = GlobalKey(debugLabel: '__component__');
         Keys.materialAppKey = GlobalKey(debugLabel: '__app__');
+
 
         Navigator.pop(context);
 

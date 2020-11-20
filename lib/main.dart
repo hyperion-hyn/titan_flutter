@@ -47,10 +47,7 @@ void main() {
   FlutterBugly.postCatchedException(
       () => runApp(RestartWidget(
             child: Injector(
-              child: Container(
-                key: Keys.componentKey,
-                child: App(),
-              ),
+              child: App(),
               repository: repository,
               searchInteractor: searchInteractor,
               transactionInteractor: transactionInteractor,
