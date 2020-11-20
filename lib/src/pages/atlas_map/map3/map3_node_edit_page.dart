@@ -215,12 +215,10 @@ class _Map3NodeEditState extends State<Map3NodeEditPage> with WidgetsBindingObse
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
-    LogUtil.printMessage(
-        "[${widget.runtimeType}] _lastCurrentBlockHeight: $_lastCurrentBlockHeight, _currentBlockHeight:$_currentBlockHeight");
+    // LogUtil.printMessage(
+    //     "[${widget.runtimeType}] _lastCurrentBlockHeight: $_lastCurrentBlockHeight, _currentBlockHeight:$_currentBlockHeight");
 
     if (lastTxIsPending && (_currentBlockHeight > _lastCurrentBlockHeight)) {
-      LogUtil.printMessage("[${widget.runtimeType}] _dddddddddddd");
-
       getNetworkData();
     }
 

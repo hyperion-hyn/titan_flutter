@@ -174,7 +174,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
 
-    LogUtil.printMessage("[${widget.runtimeType}]   _currentBlockHeight:$_currentBlockHeight");
+    //LogUtil.printMessage("[${widget.runtimeType}]   _currentBlockHeight:$_currentBlockHeight");
 
     if ((_lastPendingTx != null) && (_currentBlockHeight > _lastCurrentBlockHeight)) {
       _getData();
