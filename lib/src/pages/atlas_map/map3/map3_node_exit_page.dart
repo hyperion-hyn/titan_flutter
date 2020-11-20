@@ -17,7 +17,6 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:web3dart/src/models/map3_node_information_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/entity/pledge_map3_entity.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -81,6 +80,22 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
       (_map3UserList?.isNotEmpty ?? false) &&
       (!_isHaveExit);
 
+  String get _notification {
+    var notification = '';
+    switch (_status) {
+      case TransactionStatus.pending:
+        notification = '终止请求处理中...';
+
+        break;
+
+      case TransactionStatus.success:
+        notification = '节点已终止，抵押金额已返回您的钱包';
+
+        //notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
+        break;
+    }
+    return notification;
+  }
 
   @override
   void initState() {
@@ -179,19 +194,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
     var nodeAddress =
         "${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_nodeAddress) ?? "***", limitLength: 9)}";
 
-    var notification = '';
-    switch (_status) {
-      case TransactionStatus.pending:
-        notification = '终止请求处理中...';
 
-        break;
-
-      case TransactionStatus.success:
-        notification = '节点已终止，抵押金额已返回您的钱包';
-
-        //notification = '终止请求已完成, 请前往【钱包】查看退款情况!';
-        break;
-    }
 
     return Scaffold(
       appBar: BaseAppBar(
@@ -204,7 +207,7 @@ class _Map3NodeExitState extends BaseState<Map3NodeExitPage> {
         child: Column(
           children: <Widget>[
             topNotifyWidget(
-              notification: notification,
+              notification: _notification,
               isWarning: false,
             ),
             Expanded(

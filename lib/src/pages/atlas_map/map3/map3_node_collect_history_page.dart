@@ -12,16 +12,16 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/utils/format_util.dart';
 
-class Map3NodeRewardListPage extends StatefulWidget {
-  Map3NodeRewardListPage();
+class Map3NodeCollectHistoryPage extends StatefulWidget {
+  Map3NodeCollectHistoryPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeRewardListState();
+    return _Map3NodeCollectHistoryState();
   }
 }
 
-class _Map3NodeRewardListState extends DataListState<Map3NodeRewardListPage> {
+class _Map3NodeCollectHistoryState extends DataListState<Map3NodeCollectHistoryPage> {
   AtlasApi api = AtlasApi();
   StreamSubscription _eventBusSubscription;
   var _address = "";

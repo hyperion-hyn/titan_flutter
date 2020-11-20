@@ -57,6 +57,24 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
   HynTransferHistory _lastPendingTx;
   var _currentBlockHeight = 0;
 
+  String get _notification {
+    var notification = '';
+    if (_lastPendingTx == null) return null;
+    
+    switch (_lastPendingTx.status) {
+      case TransactionStatus.pending:
+      case TransactionStatus.pending_for_receipt:
+        notification = '提取Map3奖励请求处理中...';
+
+        break;
+
+      case TransactionStatus.success:
+        notification = '提取成功，Map3奖励已发送您的钱包';
+        break;
+    }
+    return notification;
+  }
+  
   @override
   void initState() {
     super.initState();
@@ -106,7 +124,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
       List<HynTransferHistory> list = await AtlasApi().getTxsList(
         _address,
         type: [MessageType.typeCollectMicroStakingRewards],
-        status: [TransactionStatus.pending],
+        //status: [TransactionStatus.pending,TransactionStatus.pending_for_receipt],
         size: 1,
       );
 
@@ -168,7 +186,7 @@ class Map3CollectableListPageState extends State<Map3CollectableListPage> {
         child: Column(
           children: [
             topNotifyWidget(
-              notification: _lastPendingTx == null ? null : '提取Map3奖励请求处理中...',
+              notification: _notification,
               isWarning: false,
             ),
             Expanded(

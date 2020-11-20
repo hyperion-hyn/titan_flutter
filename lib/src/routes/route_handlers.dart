@@ -33,7 +33,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_list_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_my_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_pre_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_share_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_list_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_history_page.dart';
 import 'package:titan/src/pages/contribution/add_poi/position_finish_page.dart';
 import 'package:titan/src/pages/market/exchange_assets_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_deposit_confirm_page.dart';
@@ -340,7 +340,7 @@ var map3NodeMyHandlerV8 = Handler(handlerFunc: (context, params) {
 
 var map3NodeMyHandlerReward = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeRewardListPage();
+  return Map3NodeCollectHistoryPage();
 });
 
 var map3NodeMyHandlerRewardNew = Handler(handlerFunc: (context, params) {
