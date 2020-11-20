@@ -37,8 +37,7 @@ class MyMap3NodeInfoItemV2 extends StatefulWidget {
   }
 }
 
-class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
-    with AutomaticKeepAliveClientMixin {
+class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2> with AutomaticKeepAliveClientMixin {
   bool _isLoading = true;
   Map3NodeInformationEntity _map3nodeInformationEntity;
   var nodeName = '';
@@ -70,8 +69,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
       status = Map3InfoStatus.values[widget._map3infoEntity?.status ?? 0];
       stateDescText = Map3NodeUtil.stateDescText(status);
 
-      var activatedWallet =
-          WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
       var wallet = activatedWallet?.wallet;
 
       var map3Address = EthereumAddress.fromHex(
@@ -85,25 +83,27 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
         map3Address,
       );
 
-      String _nodeCreatorAddress = widget._map3infoEntity?.creator ??
-          _map3nodeInformationEntity?.map3Node?.operatorAddress ??
-          '';
+      String _nodeCreatorAddress =
+          widget._map3infoEntity?.creator ?? _map3nodeInformationEntity?.map3Node?.operatorAddress ?? '';
 
-      _isNodeCreator =
-          _nodeCreatorAddress == wallet?.getAtlasAccount()?.address ?? '';
+      _isNodeCreator = _nodeCreatorAddress == wallet?.getAtlasAccount()?.address ?? '';
 
       _microDelegations = await _client.getMap3NodeDelegation(
         map3Address,
         walletAddress,
       );
 
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -133,8 +133,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
       child: Container(
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.only(
-              top: 8.0, right: 8.0, left: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.only(top: 8.0, right: 8.0, left: 8.0, bottom: 8.0),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -211,8 +210,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
                             children: [
                               Spacer(),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 4.0),
+                                padding: const EdgeInsets.symmetric(vertical: 4.0),
                                 child: Container(
                                   width: 8,
                                   height: 8,
@@ -220,8 +218,7 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
                                     shape: BoxShape.circle,
                                     color: Map3NodeUtil.statusColor(status),
                                     border: Border.all(
-                                      color: Map3NodeUtil.statusBorderColor(
-                                          status),
+                                      color: Map3NodeUtil.statusBorderColor(status),
                                       width: 1.0,
                                     ),
                                   ),
@@ -262,17 +259,14 @@ class _MyMap3NodeInfoItemV2State extends State<MyMap3NodeInfoItemV2>
     var _creatorCanEditEpoch = _releaseEpoch - 14 + 1;
     var _joinerCanEditEpoch = _releaseEpoch - 7 + 1;
 
-    bool _creatorCanEdit = (_currentEpoch >= _creatorCanEditEpoch) &&
-        (_currentEpoch < _joinerCanEditEpoch);
+    bool _creatorCanEdit = (_currentEpoch >= _creatorCanEditEpoch) && (_currentEpoch < _joinerCanEditEpoch);
 
-    bool _joinerCanEdit = (_currentEpoch >= _joinerCanEditEpoch) &&
-        (_currentEpoch < _releaseEpoch);
+    bool _joinerCanEdit = (_currentEpoch >= _joinerCanEditEpoch) && (_currentEpoch < _releaseEpoch);
 
     bool _hasRenew = (_microDelegations?.renewal?.status ?? 0) != 0;
 
     var _hasReDelegation =
-        (_map3nodeInformationEntity?.redelegationReference ?? '') !=
-            '0x0000000000000000000000000000000000000000';
+        (_map3nodeInformationEntity?.redelegationReference ?? '') != '0x0000000000000000000000000000000000000000';
 
     setState(() {
       _isLoading = false;
