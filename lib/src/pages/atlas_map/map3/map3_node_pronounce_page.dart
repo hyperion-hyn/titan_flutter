@@ -46,9 +46,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
         actions: <Widget>[
           FlatButton(
             onPressed: () {
-              print("[Pronounce] text:1111111");
-
-              print("[Pronounce] text:${_controller.text}");
+              print("[${widget.runtimeType}] text:${_controller?.text??''}");
               Navigator.of(context).pop(_controller.text);
             },
             child: Text(
@@ -83,7 +81,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
               }
             },
             onChanged: (value) {
-              print("[NodePronounce] value:$value");
+              print("[${widget.runtimeType}] value:${value??''}");
             },
           ),
         ),

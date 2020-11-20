@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
-import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/app_tabbar/bloc/bloc.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
@@ -18,27 +16,13 @@ class Map3NodeTabsPage extends StatefulWidget {
   }
 }
 
-class _Map3NodeTabsPageState extends State<Map3NodeTabsPage>
-    with SingleTickerProviderStateMixin {
+class _Map3NodeTabsPageState extends State<Map3NodeTabsPage> with SingleTickerProviderStateMixin {
   TabController _tabController;
-  ScrollController _scrollController = ScrollController();
-  StreamSubscription _eventBusSubscription;
 
   @override
   void initState() {
     _tabController = new TabController(initialIndex: 0, vsync: this, length: 2);
     super.initState();
-    _listenEventBus();
-  }
-
-  _listenEventBus() {
-    _eventBusSubscription = Application.eventBus.on().listen((event) async {
-      if (event is UpdateMap3TabsPageIndexEvent) {
-        this.setState(() {
-          _tabController.index = event.index;
-        });
-      }
-    });
   }
 
   @override
