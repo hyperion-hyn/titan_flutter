@@ -82,8 +82,6 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
         Keys.componentKey = GlobalKey(debugLabel: '__component__');
         Keys.materialAppKey = GlobalKey(debugLabel: '__app__');
 
-
-
         Navigator.pop(context);
 
         RestartWidget.restartApp(context);
