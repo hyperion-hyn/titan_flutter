@@ -207,7 +207,7 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     }
   }
 
-  get _notifyMessage {
+  String get _notifyMessage {
     if (_lastPendingTx == null) return null;
 
     TransactionDetailVo transactionDetail = TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");

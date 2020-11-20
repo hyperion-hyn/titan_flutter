@@ -87,6 +87,21 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
 
   var _currentBlockHeight = 0;
 
+  String get _notification {
+    var notification = '';
+    switch (_status) {
+      case TransactionStatus.pending:
+        notification = '续约请求正处理中...';
+
+        break;
+
+      case TransactionStatus.success:
+        notification = '续约请求已完成';
+        break;
+    }
+    return notification;
+  }
+
   @override
   void initState() {
     setupData();
@@ -303,17 +318,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
   }
 
   Widget _pageView(BuildContext context) {
-    var notification = '';
-    switch (_status) {
-      case TransactionStatus.pending:
-        notification = '续约请求正处理中...';
 
-        break;
-
-      case TransactionStatus.success:
-        notification = '续约请求已完成';
-        break;
-    }
 
     var _lastCurrentBlockHeight = _currentBlockHeight;
 
@@ -333,7 +338,7 @@ class _Map3NodePreEditState extends State<Map3NodePreEditPage> with WidgetsBindi
     return Column(
       children: <Widget>[
         topNotifyWidget(
-          notification: notification,
+          notification: _notification,
           isWarning: false,
         ),
         Expanded(
