@@ -95,13 +95,13 @@ class _PolicyConfirmPageState extends BaseState<PolicyConfirmPage> {
   _policyWebView() {
     var policyUrl = '';
     if (widget.policyType == PolicyType.WALLET) {
-      if (SettingInheritedModel.of(context).languageModel.isZh()) {
+      if (SettingInheritedModel.of(context)?.languageModel?.isZh()??true) {
         policyUrl = Config.WALLET_POLICY_CN_URL;
       } else {
         policyUrl = Config.WALLET_POLICY_EN_URL;
       }
     } else if (widget.policyType == PolicyType.DEX) {
-      if (SettingInheritedModel.of(context).languageModel.isZh()) {
+      if (SettingInheritedModel.of(context)?.languageModel?.isZh()??true) {
         policyUrl = Config.WALLET_DEX_CN_URL;
       } else {
         policyUrl = Config.WALLET_DEX_EN_URL;
