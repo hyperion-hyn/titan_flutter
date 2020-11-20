@@ -98,7 +98,8 @@ class Const {
 }
 
 class Keys {
-  static final materialAppKey = GlobalKey(debugLabel: '__app__');
+  static var componentKey = GlobalKey(debugLabel: '__component__');
+  static var materialAppKey = GlobalKey(debugLabel: '__app__');
   static final rootKey = GlobalKey(debugLabel: '__root_page__');
   static final homePageKey = GlobalKey(debugLabel: '__home_page__');
   static final scaffoldMap = GlobalKey(debugLabel: '__scaffold_map__');

@@ -30,13 +30,15 @@ class ExchangeHttp extends BaseHttpCore {
 
   ExchangeHttp._internal()
       : super(
-          Dio(
-            BaseOptions(
-              baseUrl: ExchangeConst.EXCHANGE_DOMAIN,
-              contentType: 'application/x-www-form-urlencoded',
-            ),
-          ), //cookie 存在内存而已
+          _dio, //cookie 存在内存而已
         );
+
+  static var _dio = Dio(
+    BaseOptions(
+      baseUrl: ExchangeConst.EXCHANGE_DOMAIN,
+      contentType: 'application/x-www-form-urlencoded',
+    ),
+  );
 
   static ExchangeHttp _instance;
 
@@ -47,11 +49,23 @@ class ExchangeHttp extends BaseHttpCore {
       _instance = ExchangeHttp._internal();
 
       if (showLog) {
-        _instance.dio.interceptors
-            .add(LogInterceptor(responseBody: true, requestBody: true));
+        _instance.dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
       }
     }
     return _instance;
+  }
+
+  static void clearInstance() {
+    _instance = null;
+
+    print("[Exchange_api] --clear instance, env.buildType:${env.buildType}");
+    _dio = null;
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: ExchangeConst.EXCHANGE_DOMAIN,
+        contentType: 'application/x-www-form-urlencoded',
+      ),
+    );
   }
 }
 
@@ -66,10 +80,7 @@ class ExchangeApi {
     exchangeHttp = ExchangeHttp.instance;
 
     getCookieDir()
-        .then((value) => {
-              exchangeHttp.dio.interceptors
-                  .add(CookieManager(PersistCookieJar(dir: value)))
-            })
+        .then((value) => {exchangeHttp.dio.interceptors.add(CookieManager(PersistCookieJar(dir: value)))})
         .catchError((e) {
       LogUtil.printMessage(e);
 
@@ -77,6 +88,7 @@ class ExchangeApi {
       exchangeHttp.dio.interceptors.add(CookieManager(CookieJar()));
     });
   }
+
 
   Future<dynamic> checkAccountAbnormal(String walletAddress) async {
     return await exchangeHttp.postEntity(
@@ -102,9 +114,8 @@ class ExchangeApi {
   Future<AbnormalTransferHistory> getAbnormalTransferHistory(
     String address,
   ) async {
-    return await exchangeHttp
-        .postEntity(ExchangeConst.PATH_ABNORMAL_TRANSFER_LIST,
-            EntityFactory<AbnormalTransferHistory>(
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ABNORMAL_TRANSFER_LIST,
+        EntityFactory<AbnormalTransferHistory>(
       (response) {
         var abnormalTransferHistory = AbnormalTransferHistory();
         if (response is Map && response.length == 0) {
@@ -163,8 +174,7 @@ class ExchangeApi {
   }
 
   Future<List<ExchangeBanner>> getBannerList() async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_BANNER_LIST,
-        EntityFactory<List<ExchangeBanner>>((data) {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_BANNER_LIST, EntityFactory<List<ExchangeBanner>>((data) {
       var bannerList = List<ExchangeBanner>();
 
       (data as List).forEach((item) {
@@ -238,8 +248,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> testRecharge(String type, double balance) async {
-    return await exchangeHttp
-        .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
       "type": type,
       "balance": balance,
     });
@@ -276,8 +285,7 @@ class ExchangeApi {
   Future<MarketInfoEntity> getMarketInfo(String market) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_MARKET_INFO,
-      EntityFactory<MarketInfoEntity>(
-          (marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
+      EntityFactory<MarketInfoEntity>((marketInfo) => MarketInfoEntity.fromJson(marketInfo)),
       params: {
         "market": market,
       },
@@ -292,8 +300,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutLimit(
-      String market, exchangeType, String price, String amount) async {
+  Future<dynamic> orderPutLimit(String market, exchangeType, String price, String amount) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_LIMIT,
       null,
@@ -307,8 +314,7 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderPutMarket(
-      String market, exchangeType, String amount) async {
+  Future<dynamic> orderPutMarket(String market, exchangeType, String amount) async {
     return await exchangeHttp.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,
@@ -356,8 +362,7 @@ class ExchangeApi {
     int size,
     String method,
   ) async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_ORDER_LIST,
-        EntityFactory<List<Order>>((response) {
+    return await exchangeHttp.postEntity(ExchangeConst.PATH_ORDER_LIST, EntityFactory<List<Order>>((response) {
       var orderList = List<Order>();
       if (response is Map && response.length == 0) {
         return orderList;

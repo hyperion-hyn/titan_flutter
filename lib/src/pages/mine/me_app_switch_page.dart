@@ -4,8 +4,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/main.dart' as Main;
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../../../env.dart';
 import '../../../main.dart';
@@ -28,7 +30,7 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
   @override
   Widget build(BuildContext context) {
     if (selectedAppArea == null) {
-      selectedAppArea = env.buildType == BuildType.DEV ? '测试环境':'正式环境';
+      selectedAppArea = env.buildType == BuildType.DEV ? '测试环境' : '正式环境';
     }
 
     return Scaffold(
@@ -74,7 +76,13 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
 
         AtlasHttpCore.clearInstance();
         AtlasHttpCoreNoLog.clearInstance();
+        ExchangeHttp.clearInstance();
         WalletConfig.clearNetType();
+        ExchangeApi().init();
+        Keys.componentKey = GlobalKey(debugLabel: '__component__');
+        Keys.materialAppKey = GlobalKey(debugLabel: '__app__');
+
+
 
         Navigator.pop(context);
 

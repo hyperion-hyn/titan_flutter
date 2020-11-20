@@ -45,8 +45,7 @@ class ExchangePage extends StatefulWidget {
   }
 }
 
-class _ExchangePageState extends BaseState<ExchangePage>
-    with AutomaticKeepAliveClientMixin {
+class _ExchangePageState extends BaseState<ExchangePage> {
   var _selectedCoin = 'USDT';
   var _exchangeType = ExchangeType.BUY;
 
@@ -56,9 +55,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
   RefreshController _refreshController = RefreshController(
     initialRefresh: true,
   );
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -106,15 +102,11 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _updateQuotes() async {
-    var quoteSignStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
-    QuotesSign quotesSign = quoteSignStr != null
-        ? QuotesSign.fromJson(json.decode(quoteSignStr))
-        : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateQuotesEvent(isForceUpdate: true));
+    var quoteSignStr = await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    QuotesSign quotesSign =
+        quoteSignStr != null ? QuotesSign.fromJson(json.decode(quoteSignStr)) : SupportedQuoteSigns.defaultQuotesSign;
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: quotesSign));
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
   }
 
   _setupMarketItemList() {
@@ -158,11 +150,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
               },
               onRefresh: () async {
                 ///update assets if logged in
-                if (ExchangeInheritedModel.of(context)
-                    .exchangeModel
-                    .hasActiveAccount()) {
-                  BlocProvider.of<ExchangeCmpBloc>(context)
-                      .add(UpdateAssetsEvent());
+                if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
+                  BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
                 }
 
                 ///update symbol list
@@ -211,9 +200,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
       _getMarketItem(_selectedCoin)?.kLineEntity?.close,
       4,
     );
-    if (_hynToSelectedCoin != null &&
-        _hynToSelectedCoin != "null" &&
-        double.parse(_hynToSelectedCoin) > 0) {
+    if (_hynToSelectedCoin != null && _hynToSelectedCoin != "null" && double.parse(_hynToSelectedCoin) > 0) {
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
             Decimal.fromInt(1) /
                 (Decimal.parse(
@@ -251,9 +238,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                       ),
                       onPressed: () {
                         setState(() {
-                          _exchangeType = (_exchangeType == ExchangeType.BUY
-                              ? ExchangeType.SELL
-                              : ExchangeType.BUY);
+                          _exchangeType = (_exchangeType == ExchangeType.BUY ? ExchangeType.SELL : ExchangeType.BUY);
                         });
                       },
                     ),
@@ -282,9 +267,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ExchangeDetailPage(
-                                selectedCoin: _selectedCoin,
-                                exchangeType: _exchangeType)));
+                            builder: (context) =>
+                                ExchangeDetailPage(selectedCoin: _selectedCoin, exchangeType: _exchangeType)));
                   }
                 },
                 width: 88,
@@ -358,25 +342,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _account() {
-    var quote = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.sign
-        ?.quote;
+    var quote = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
     return InkWell(
       onTap: () async {
         if (await _checkShowConfirmPolicy()) {
           _showConfirmDexPolicy();
         } else {
-          if (ExchangeInheritedModel.of(context)
-              .exchangeModel
-              .hasActiveAccount()) {
-            Application.router.navigateTo(
-                context,
-                Routes.exchange_assets_page +
-                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
+            Application.router.navigateTo(context,
+                Routes.exchange_assets_page + '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
           } else {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           }
         }
       },
@@ -398,11 +374,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                         height: 20,
                         color: Theme.of(context).primaryColor,
                       )
-                    : WalletInheritedModel.of(context)
-                                .activatedQuoteVoAndSign('USDT')
-                                .sign
-                                .quote ==
-                            'CNY'
+                    : WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT').sign.quote == 'CNY'
                         ? Image.asset(
                             'res/drawable/ic_exchange_account_cny.png',
                             width: 18,
@@ -447,21 +419,10 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _assetView() {
-    var _totalByUsdt = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalUsdt();
-    var _coinQuotePrice = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.quoteVo
-        ?.price;
-    var _quoteSymbol = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.sign
-        ?.quote;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
-        null) {
+    var _totalByUsdt = ExchangeInheritedModel.of(context).exchangeModel.activeAccount?.assetList?.getTotalUsdt();
+    var _coinQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.quoteVo?.price;
+    var _quoteSymbol = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
       var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
           ? FormatUtil.truncateDecimalNum(
               // ignore: null_aware_before_operator
@@ -472,11 +433,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
-                  ? _usdtTotalQuotePrice
-                  : '*****',
+              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _usdtTotalQuotePrice : '*****',
               style: TextStyle(
                 fontSize: 12,
               )),
@@ -665,8 +622,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _symbolName = '/${marketItemEntity.symbolName}';
 
     // 24hour
-    var _amount24Hour =
-        '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
+    var _amount24Hour = '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(
       marketItemEntity.kLineEntity?.amount,
       2,
     )}';
@@ -674,16 +630,14 @@ class _ExchangePageState extends BaseState<ExchangePage>
     // price
     var _latestPrice = marketItemEntity.kLineEntity != null
         ? FormatUtil.truncateDecimalNum(
-              Decimal.parse(
-                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
+              Decimal.parse(marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
               4,
             ) ??
             '-'
         : '-';
     var _latestPriceString = '$_latestPrice';
 
-    var _selectedQuote =
-        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
+    var _selectedQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
@@ -692,19 +646,16 @@ class _ExchangePageState extends BaseState<ExchangePage>
             double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
             4,
           );
-    var _latestRmbPriceString =
-        '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    var _latestRmbPriceString = '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
 
     // _latestPercent
-    double _latestPercent =
-        MarketInheritedModel.of(context).getRealTimePricePercent(
+    double _latestPercent = MarketInheritedModel.of(context).getRealTimePricePercent(
       marketItemEntity.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
         ? HexColor('#FF999999')
         : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
-    var _latestPercentString =
-        '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
+    var _latestPercentString = '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
       _latestPercent * 100.0,
       2,
     )}%';
@@ -735,8 +686,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
               }
             },
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
               child: Column(
                 children: <Widget>[
                   Row(
@@ -819,10 +769,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               child: Center(
                                 child: Text(
                                   _latestPercentString,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12),
+                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 12),
                                 ),
                               ),
                             )

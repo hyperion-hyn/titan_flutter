@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
@@ -37,28 +38,29 @@ void main() {
   BlocSupervisor.delegate = AppBlocDelegate();
 
 //  if (env.buildType == BuildType.PROD) {
-    FlutterBugly.init(
-      androidAppId: Config.BUGLY_ANDROID_APPID,
-      iOSAppId: Config.BUGLY_IOS_APPID,
-    );
+  FlutterBugly.init(
+    androidAppId: Config.BUGLY_ANDROID_APPID,
+    iOSAppId: Config.BUGLY_IOS_APPID,
+  );
 //  }
 
   FlutterBugly.postCatchedException(
-    () => runApp(RestartWidget(
-      child: Injector(
-        child: App(),
-        repository: repository,
-        searchInteractor: searchInteractor,
-        transactionInteractor: transactionInteractor,
+      () => runApp(RestartWidget(
+            child: Injector(
+              child: Container(
+                key: Keys.componentKey,
+                child: App(),
+              ),
+              repository: repository,
+              searchInteractor: searchInteractor,
+              transactionInteractor: transactionInteractor,
 //      mapStore: ScaffoldMapStore(),
-      ),
-    )),
-    debugUpload: env.buildType == BuildType.PROD,
-    handler: (FlutterErrorDetails detail) {
-      print(detail.toString());
-      logger.e(detail.exception?.message, detail.exception, detail.stack);
-    }
-  );
+            ),
+          )),
+      debugUpload: env.buildType == BuildType.PROD, handler: (FlutterErrorDetails detail) {
+    print(detail.toString());
+    logger.e(detail.exception?.message, detail.exception, detail.stack);
+  });
 }
 
 class RestartWidget extends StatefulWidget {
