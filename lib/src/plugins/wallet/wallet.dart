@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:titan/src/basic/http/http_exception.dart';
 import 'package:titan/src/components/inject/injector.dart';
@@ -308,6 +309,14 @@ class Wallet {
     }
 //    nonce = await getCurrentWalletNonce(nonce: nonce);
 
+    var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
+
+    var gasFees = BigInt.from(gasLimit) * gasPrice;
+    if(gasFees > ethBalance){
+      Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
+      return null;
+    }
+
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
@@ -325,10 +334,21 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    nonce = await getCurrentWalletNonce();
-    await transactionInteractor.insertTransactionDB(
-        txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
-        id: id, contractAddress: contractAddress);
+    if(txHash != null) {
+      nonce = await getCurrentWalletNonce();
+      await transactionInteractor.insertTransactionDB(
+          txHash,
+          toAddress,
+          value,
+          gasPrice,
+          gasLimit,
+          LocalTransferType.LOCAL_TRANSFER_HYN_USDT,
+          nonce,
+          id: id,
+          contractAddress: contractAddress);
+    }else{
+      Fluttertoast.showToast(msg: "广播异常");
+    }
     return txHash;
   }
 
