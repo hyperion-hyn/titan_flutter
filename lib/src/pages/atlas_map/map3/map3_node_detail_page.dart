@@ -2440,6 +2440,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // txLog
   _loadTxLogData() async {
     if (_nodeAddress.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _showLoadingTxLog = false;
+        });
+      }
       return;
     }
 
@@ -2466,6 +2471,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   Future _loadTxLogMoreData() async {
+    if (_nodeAddress.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _showLoadingTxLog = false;
+        });
+      }
+      return;
+    }
+
     try {
       _currentPageTxLog++;
       print("[getMap3StakingLogList]  more, _currentPage:$_currentPageTxLog");
@@ -2496,6 +2510,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // userList
   void _loadUserListData() async {
+    if (_nodeAddress.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _showLoadingUserList = false;
+        });
+      }
+      return;
+    }
+
     _currentPageUserList = 1;
     List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
       _nodeId,
@@ -2517,6 +2540,15 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   void _loadUserListMoreData() async {
+    if (_nodeAddress.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _showLoadingUserList = false;
+        });
+      }
+      return;
+    }
+
     _currentPageUserList++;
 
     try {
