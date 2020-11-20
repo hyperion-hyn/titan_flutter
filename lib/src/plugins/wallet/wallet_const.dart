@@ -97,6 +97,11 @@ class WalletConfig {
 
   static BitcoinNetType bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
 
+  static clearNetType() {
+     netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
+    bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
+  }
+
   static String get map3ContractAddress {
     switch (netType) {
       case EthereumNetType.main:

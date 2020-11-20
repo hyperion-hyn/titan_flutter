@@ -19,4 +19,10 @@ class BuildEnvironment {
   /// Sets up the top-level [env] getter on the first call only.
   static void init({@required channel, @required buildType}) =>
       _env ??= BuildEnvironment._init(channel: channel, buildType: buildType);
+
+  static void switchEnv({@required channel, @required buildType}) {
+    _env = null;
+
+    _env = BuildEnvironment._init(channel: channel, buildType: buildType);
+  }
 }

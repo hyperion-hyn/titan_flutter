@@ -32,6 +32,18 @@ class AtlasHttpCore extends BaseHttpCore {
       responseType: ResponseType.PLAIN*/
     contentType: 'application/x-www-form-urlencoded',
   ));
+
+  static void clearInstance() {
+    _instance = null;
+
+    _dio = null;
+    _dio = new Dio(BaseOptions(
+      baseUrl: Const.ATLAS_DOMAIN,
+      connectTimeout: 5000,
+      receiveTimeout: 5000,
+      contentType: 'application/x-www-form-urlencoded',
+    ));
+  }
 }
 
 
@@ -60,4 +72,16 @@ class AtlasHttpCoreNoLog extends BaseHttpCore {
       responseType: ResponseType.PLAIN*/
     contentType: 'application/x-www-form-urlencoded',
   ));
+
+  static void clearInstance() {
+    _instance = null;
+
+    _dio = null;
+    _dio = new Dio(BaseOptions(
+      baseUrl: Const.ATLAS_DOMAIN,
+      connectTimeout: 5000,
+      receiveTimeout: 5000,
+      contentType: 'application/x-www-form-urlencoded',
+    ));
+  }
 }

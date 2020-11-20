@@ -42,6 +42,8 @@ class Const {
   }
 
   static String get ATLAS_DOMAIN {
+    print("[Consts] env.buildType:${env.buildType.toString()}");
+
     if (env.buildType == BuildType.DEV) {
       return Config.ATLAS_API_URL_TEST;
     } else {

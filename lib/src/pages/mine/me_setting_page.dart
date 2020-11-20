@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/pages/mine/me_app_switch_page.dart';
 
 import 'me_area_page.dart';
 import 'me_language_page.dart';
@@ -20,14 +22,14 @@ class _MeSettingState extends State<MeSettingPage> {
   Widget build(BuildContext context) {
     var language =
         SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            .languageModel
-            .name;
+            ?.languageModel
+            ?.name??'';
     var quoteStr = WalletInheritedModel.of(context, aspect: WalletAspect.quote)
         .activeQuotesSign
         ?.quote;
     var area = SettingInheritedModel.of(context, aspect: SettingAspect.area)
         .areaModel
-        .name(context);
+        ?.name(context)??'';
 
     return Scaffold(
         appBar: AppBar(
@@ -57,6 +59,13 @@ class _MeSettingState extends State<MeSettingPage> {
             _buildMenuBar(S.of(context).app_area_setting, area, () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => MeAreaPage()));
+            }),
+            Divider(
+              height: 1,
+            ),
+            _buildMenuBar('切换App环境', env.buildType == BuildType.DEV ? '测试环境':'正式环境', () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MeAppSwitchPage()));
             }),
             Divider(
               height: 1,
