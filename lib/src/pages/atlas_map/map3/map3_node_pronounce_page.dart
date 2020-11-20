@@ -42,7 +42,7 @@ class _May3NodePronounceState extends State<Map3NodePronouncePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(
-        baseTitle: S.of(context).edit + widget.title ?? S.of(context).create_map3_node,
+        baseTitle: S.of(context).edit + ' ' + widget.title ?? S.of(context).create_map3_node,
         actions: <Widget>[
           FlatButton(
             onPressed: () {

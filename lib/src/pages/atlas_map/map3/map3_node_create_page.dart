@@ -275,13 +275,15 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                                S.of(context).active_still_need +
-                                    "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
-                                    S.of(context).ten_thousand,
-                                style: TextStyles.textC99000000S13,
-                                maxLines: 2,
-                                softWrap: true),
+                            Expanded(
+                              child: Text(
+                                  S.of(context).active_still_need +
+                                      "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
+                                      S.of(context).ten_thousand,
+                                  style: TextStyles.textC99000000S13,
+                                  maxLines: 2,
+                                  softWrap: true),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(top: 4.0),
                               child: Text(" (HYN) ", style: TextStyle(fontSize: 10, color: HexColor("#999999"))),

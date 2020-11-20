@@ -976,7 +976,8 @@ Widget profitListLightWidget(List<Map> list) {
               style: TextStyle(
                   fontSize: 16,
                   color: HexColor("#333333"),
-                  fontWeight: FontWeight.normal)),
+                  fontWeight: FontWeight.normal),
+          ),
           Container(
             height: 4,
           ),

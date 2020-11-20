@@ -17,14 +17,16 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
         appBar: BaseAppBar(
           baseTitle: S.of(context).wallet_account,
         ),
+        backgroundColor: Colors.white,
         body: Container(
           color: Colors.white,
-          child: Center(
+          width: double.infinity,
+          child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.all(50.0),
+                  padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 55,),
                   child: Container(
                     width: 73,
                     height: 86,
@@ -44,58 +46,72 @@ class Map3NodeCreateWalletPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 70),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      FlatButton(
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Theme.of(context).primaryColor),
-                            borderRadius: BorderRadius.circular(36)),
-                        onPressed: () {
-                          Application.router.navigateTo(
-                              context,
-                              Routes.wallet_create +
-                                  '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
-                        },
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-                            child: Text(
-                              S.of(context).create_wallet,
-                              style: TextStyle(
-                                  fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        color: Colors.white,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Theme.of(context).primaryColor),
-                              borderRadius: BorderRadius.circular(36)),
-                          onPressed: () {
-                            Application.router.navigateTo(
-                                context,
-                                Routes.wallet_import +
-                                    '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
-                          },
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
-                              child: Text(
-                                ' ' + S.of(context).import_wallet + ' ',
-                                style: TextStyle(
-                                    fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                  padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 55),
+                  child: Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Theme.of(context).primaryColor),
+                                    borderRadius: BorderRadius.circular(36)),
+                                onPressed: () {
+                                  Application.router.navigateTo(
+                                      context,
+                                      Routes.wallet_create +
+                                          '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
+                                },
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                                    child: Text(
+                                      S.of(context).create_wallet,
+                                      style: TextStyle(
+                                          fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                                color: Colors.white,
                               ),
                             ),
-                          ),
-                          color: Colors.white,
+                          ],
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Theme.of(context).primaryColor),
+                                      borderRadius: BorderRadius.circular(36)),
+                                  onPressed: () {
+                                    Application.router.navigateTo(
+                                        context,
+                                        Routes.wallet_import +
+                                            '?entryRouteName=${Uri.encodeComponent(Routes.map3node_product_list)}');
+                                  },
+                                  child: Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 12.0),
+                                      child: Text(
+                                        ' ' + S.of(context).import_wallet + ' ',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ],

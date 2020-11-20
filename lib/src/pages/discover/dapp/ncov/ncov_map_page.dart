@@ -173,7 +173,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                 color: Colors.white,
                 tooltip: S.of(context).share,
                 onPressed: () {
-                  if (SettingInheritedModel.of(context).languageModel.isZh()) {
+                  if (SettingInheritedModel.of(context)?.languageModel?.isZh()??true) {
                     Share.text(S.of(context).share, 'https://www.hyn.mobi/ncov.html', 'text/plain');
                   } else {
                     Share.text(S.of(context).share, 'https://www.hyn.space/ncov-en.html', 'text/plain');
@@ -199,7 +199,7 @@ class NcovMapPageState extends State<NcovMapPage> with SingleTickerProviderState
                       left: 16,
                       child: InkWell(
                         onTap: () {
-                          if (SettingInheritedModel.of(context).languageModel.isZh()) {
+                          if (SettingInheritedModel.of(context)?.languageModel?.isZh()??true) {
                             launchUrl('https://www.hyn.mobi/cn/titan/ncov-data-source/');
                           } else {
                             launchUrl('https://www.hyn.space/titan/ncov-data-source/');

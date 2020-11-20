@@ -239,8 +239,8 @@ class NewsState extends InfoState<NewsPage> with AutomaticKeepAliveClientMixin{
       String categories, int tags, int page) async {
     var isZhLanguage =
         SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            .languageModel
-            .isZh();
+            ?.languageModel
+            ?.isZh()??true;
     var requestCatetory = NewsTagUtils.getCategory(isZhLanguage, categories);
     var requestTags = NewsTagUtils.getNewsTag(isZhLanguage, tags);
     var newsResponseList =

@@ -155,7 +155,7 @@ class FormatUtil {
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
     return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+            coinVo?.balance ?? BigInt.from(0), coinVo?.decimals ?? 0)
         .toString();
   }
 
@@ -168,7 +168,7 @@ class FormatUtil {
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
-    var value = double.parse(coinBalanceHumanRead(coinVo));
+    var value = double.tryParse(coinBalanceHumanRead(coinVo))??0;
     if (isFloor) {
       value = (value * 1000000).floor() / 1000000;
     }
