@@ -143,7 +143,7 @@ class ScaffoldMapBloc extends Bloc<ScaffoldMapEvent, ScaffoldMapState> {
 
           if (SettingInheritedModel.of(context, aspect: SettingAspect.area)
                   .areaModel
-                  ?.isChinaMainland ==
+                  ?.isChinaMainland??true ==
               true) {
             model = await _api.searchByGaode(
                 lat: event.center.latitude,

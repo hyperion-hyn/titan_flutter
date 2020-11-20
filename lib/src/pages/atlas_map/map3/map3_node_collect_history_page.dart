@@ -137,6 +137,9 @@ class _Map3NodeCollectHistoryState extends DataListState<Map3NodeCollectHistoryP
 
   @override
   Future<List> onLoadData(int page) async {
+
+    if (_address.isEmpty) return [];
+
     var list = await api.getRewardTxsList(_address, page: page+1);
     return list;
   }

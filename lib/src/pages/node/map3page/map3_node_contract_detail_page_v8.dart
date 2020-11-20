@@ -1457,7 +1457,7 @@ class _Map3NodeContractDetailStateV8 extends BaseState<Map3NodeContractDetailPag
   }
 
   void _pushTransactionDetailAction(ContractDelegateRecordItem item) {
-    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ??true == true;
     var url = EtherscanApi.getTxDetailUrl(item.txHash, isChinaMainland);
     if (url != null) {
       Navigator.push(

@@ -524,7 +524,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                   isContain: _isContain(transactionDetail),
                                 )));
                   } else {
-                    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland == true;
+                    var isChinaMainland = SettingInheritedModel.of(context).areaModel?.isChinaMainland ?? true == true;
                     var url = EtherscanApi.getTxDetailUrl(transactionDetail.hash, isChinaMainland);
                     if (url != null) {
                       Navigator.push(

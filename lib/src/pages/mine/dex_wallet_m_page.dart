@@ -609,7 +609,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
 
   void openAddressWebPage(address) {
     var url = EtherscanApi.getAddressDetailUrl(
-        address, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+        address, SettingInheritedModel.of(context, aspect: SettingAspect.area)?.areaModel?.isChinaMainland??true);
     if (url != null) {
       Navigator.push(
           context,

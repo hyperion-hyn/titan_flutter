@@ -256,7 +256,7 @@ class _NodeJoinMemberStateV8 extends State<NodeJoinMemberWidgetV8> {
 
   void _pushTransactionDetailAction(ContractDelegatorItem item) {
     var url = EtherscanApi.getAddressDetailUrl(
-        item.userAddress, SettingInheritedModel.of(context, aspect: SettingAspect.area).areaModel.isChinaMainland);
+        item.userAddress, SettingInheritedModel.of(context, aspect: SettingAspect.area)?.areaModel?.isChinaMainland??true);
     if (url != null) {
       /* String webUrl = FluroConvertUtils.fluroCnParamsEncode(url);
       String webTitle = FluroConvertUtils.fluroCnParamsEncode(S.of(context).detail);

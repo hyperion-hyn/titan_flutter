@@ -334,7 +334,7 @@ class _ExchangeAssetHistoryPageState
                       WalletShowAccountInfoPage(transactionDetailVo)));
         } else {
           var isChinaMainland =
-              SettingInheritedModel.of(context).areaModel?.isChinaMainland ==
+              SettingInheritedModel.of(context).areaModel?.isChinaMainland??true ==
                   true;
           var url = EtherscanApi.getTxDetailUrl(
             assetHistory.txId,

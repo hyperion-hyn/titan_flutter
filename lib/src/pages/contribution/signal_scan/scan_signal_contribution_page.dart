@@ -506,7 +506,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   Widget _mapView() {
     var style =
-        SettingInheritedModel.of(context).areaModel.isChinaMainland ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
+        SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
 
     return MapboxMap(
       compassEnabled: false,
