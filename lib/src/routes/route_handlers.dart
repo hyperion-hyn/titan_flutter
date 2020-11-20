@@ -26,7 +26,7 @@ import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_add_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_exit_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_formal_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_formal_confirm_page_deprecated.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_join_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_list_page.dart';
