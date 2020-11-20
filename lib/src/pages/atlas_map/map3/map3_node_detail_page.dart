@@ -20,7 +20,7 @@ import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';

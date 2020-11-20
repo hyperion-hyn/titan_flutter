@@ -27,16 +27,16 @@ import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:web3dart/credentials.dart';
 import 'package:web3dart/web3dart.dart';
 
-class Map3CollectableListPage extends StatefulWidget {
-  Map3CollectableListPage();
+class Map3NodeRewardListPage extends StatefulWidget {
+  Map3NodeRewardListPage();
 
   @override
   State<StatefulWidget> createState() {
-    return Map3CollectableListPageState();
+    return Map3NodeRewardListPageState();
   }
 }
 
-class Map3CollectableListPageState extends State<Map3CollectableListPage> {
+class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   AtlasApi _atlasApi = AtlasApi();
   final _client = WalletUtil.getWeb3Client(true);
 

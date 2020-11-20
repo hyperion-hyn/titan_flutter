@@ -4,20 +4,20 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/atlas_map/widget/atlas_collectable_list_page.dart';
-import 'package:titan/src/pages/atlas_map/widget/map3_collectable_list_page.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_collectable_list_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_list_page.dart';
 import 'package:titan/src/routes/routes.dart';
 
-class Map3NodeCollectRewardPage extends StatefulWidget {
-  Map3NodeCollectRewardPage();
+class Map3NodeRewardTabsPage extends StatefulWidget {
+  Map3NodeRewardTabsPage();
 
   @override
   State<StatefulWidget> createState() {
-    return _Map3NodeCollectRewardPageState();
+    return _Map3NodeRewardTabsPageState();
   }
 }
 
-class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
+class _Map3NodeRewardTabsPageState extends State<Map3NodeRewardTabsPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
@@ -103,7 +103,7 @@ class _Map3NodeCollectRewardPageState extends State<Map3NodeCollectRewardPage>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    Map3CollectableListPage(),
+                    Map3NodeRewardListPage(),
                     //AtlasCollectableLisPage(),
                   ],
                 ),

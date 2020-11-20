@@ -10,7 +10,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/entity/enum_atlas_type.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/mine/about_me_page.dart';
