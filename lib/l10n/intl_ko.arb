@@ -1150,7 +1150,7 @@
   "please_enter_node_description": "Please enter a description for your node",
   "create_map3_node": "Create a Map3 node",
   "detailed_introduction": "Details",
-  "active_still_need": "HYN is needed",
+  "active_still_need": "HYN is needed ",
   "manage_fee_range": "Commission should be from{min}%to{max}%",
   "optional_input": "Optional",
   "submit_create": "Submit",
