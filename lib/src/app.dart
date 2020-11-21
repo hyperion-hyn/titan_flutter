@@ -43,7 +43,7 @@ class _AppState extends State<App> {
           child: AuthComponent(
             child: SettingComponent(
                 child: ExchangeComponent(
-                  child: WalletComponent(
+                    child: WalletComponent(
               child: SocketComponent(
                   child: AtlasComponent(
                     child: MultiBlocProvider(
@@ -95,7 +95,8 @@ class _AppState extends State<App> {
                   ),
               ),
             ),
-                )),
+                ),
+            ),
           ),
       ),
     );
