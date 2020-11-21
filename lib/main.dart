@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bugly/flutter_bugly.dart';
 import 'package:titan/config.dart';
 import 'package:titan/src/app.dart';
-import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/db/transfer_history_dao.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/global.dart';
