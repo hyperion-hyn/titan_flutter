@@ -130,9 +130,10 @@ class TransactionDetailVo {
     if (payload == null || payload.reward == null || payload.reward == "0") {
       return "0";
     }
-    var amount =
-        ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(payload.reward))
-            .toString();
+    var amount = ConvertTokenUnit.weiToEther(
+        weiBigInt: BigInt.parse(FormatUtil.clearScientificCounting(
+            double.parse(payload.reward))))
+        .toString();
     return FormatUtil.stringFormatCoinNum(amount);
   }
 

@@ -511,7 +511,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         if (_endRemainEpochValue > 0) {
           _map3StatusDesc = "距离到期还需$_endRemainEpochValue纪元";
         } else {
-          _map3StatusDesc = "距离到期仅剩1个纪元";
+          //_map3StatusDesc = "距离到期仅剩1个纪元";
+          _map3StatusDesc = "";
         }
 
         break;
@@ -681,8 +682,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var hasShare = config?.canShareMap3Node ?? true;
 
     if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
-            (_currentBlockHeight > _lastCurrentBlockHeight) ||
-        (_currentEpoch > _releaseEpoch && _currentEpoch > 0 && _releaseEpoch > 0)) {
+            (_currentBlockHeight > _lastCurrentBlockHeight)) {
       // LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
       _refreshData();
     }
