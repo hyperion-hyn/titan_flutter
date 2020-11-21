@@ -275,7 +275,7 @@ class _Map3NodeCreateState extends State<Map3NodeCreatePage> with WidgetsBinding
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Expanded(
+                            Flexible(
                               child: Text(
                                   S.of(context).active_still_need +
                                       "${FormatUtil.formatTenThousandNoUnit(_introduceEntity?.startMin?.toString() ?? "0")}" +
