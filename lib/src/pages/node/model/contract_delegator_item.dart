@@ -18,6 +18,8 @@ part 'contract_delegator_item.g.dart';
   @JsonKey(name: 'createAt')
   int createAt;
 
+  ContractDelegatorItem.onlyUserName(this.userName);
+
   ContractDelegatorItem(this.userAddress, this.userName,this.amountDelegation,this.createAt,);
 
   factory ContractDelegatorItem.fromJson(Map<String, dynamic> srcJson) => _$ContractDelegatorItemFromJson(srcJson);

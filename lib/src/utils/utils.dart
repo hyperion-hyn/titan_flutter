@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:sprintf/sprintf.dart';
@@ -30,10 +31,20 @@ String shortBlockChainAddress(String address, {int limitCharsLength=9}) {
   if (address == null || address == "") {
     return "";
   }
-  if (address.length < limitCharsLength) {
+  if (address.length <= limitCharsLength) {
     return address;
   }
   return address.substring(0, limitCharsLength) + "..." + address.substring(address.length - limitCharsLength, address.length);
+}
+
+String shortName(String name, {int limitCharsLength=9}) {
+  if (name == null || name == "") {
+    return "";
+  }
+  if (name.length < limitCharsLength) {
+    return name;
+  }
+  return name.substring(0, limitCharsLength) + "..." ;
 }
 
 String shortEmail(String email) {
@@ -76,4 +87,21 @@ Future launchUrl(String url) async {
   }
 }
 
+void printAction(dynamic input, {bool isEncode = false}) {
+  const encoder = JsonEncoder.withIndent('  ');
 
+  dynamic obj = input;
+
+  print('obj.runtimeType: ${obj.runtimeType}');
+
+  if (isEncode) {
+    if (input is String) {
+      const decoder = JsonDecoder();
+      obj = decoder.convert(input);
+    }
+
+    obj = encoder.convert(obj);
+  }
+
+  print(obj);
+}

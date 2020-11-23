@@ -11,7 +11,7 @@ description: Titan Flutter application.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.0.16+116
+version: 4.0.17+2017
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -91,7 +91,10 @@ dependencies:
   decimal: ^0.3.5
   #https://pub.dev/packages/carousel_pro
   carousel_pro: ^1.0.0
-  web3dart: ^1.2.3
+  web3dart:
+    git:
+      url: git@github.com:hyperion-hyn/web3dart.git
+      ref: stable
   bip39: ^1.0.3
   intl: ^0.16.0
   webview_flutter: ^0.3.20+2
@@ -113,17 +116,17 @@ dependencies:
   #      url: git@github.com:moyaying/flutter_bugly.git
   android_intent: ^0.3.4
   app_settings: ^3.0.0
-  fluro: ^1.5.1
+  fluro: 1.6.3
   #https://pub:dev/packages/image_pickers#-readme-tab-
 #  image_pickers:
 #    git:
 #      url: git@github.com:moyaying/image_pickers.git
-  image_pickers: ^1.0.7+6
+  image_pickers: 1.0.7+6
 
   bordered_text: ^1.0.0
   #  video_player: ^0.10.8+1
   #  https://pub:dev/packages/flutter_echarts#-installing-tab-
-  flutter_echarts: ^1.3.0
+  flutter_echarts: ^1.3.5
   #  multi_image_picker: ^4.6.7
   #  flutter_absolute_path: ^1.0.6
   #  flutter_native_image: ^0.0.5
@@ -145,20 +148,25 @@ dependencies:
   vibration: 1.4.0
   #https://pub.dev/packages/oktoast
   oktoast: ^2.3.2
-  flutter_recaptcha_v2:
-    git:
-      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
+#  flutter_recaptcha_v2:
+#    git:
+#      url: git@github.com:hyperion-hyn/flutter_recaptcha_v2.git
 
   #K-Line Chart
   #https://github.com/lanceqiuz/flutter_k_chart
-  flutter_k_chart:
+#  k_chart: ^0.1.1
+  k_chart:
     git:
-      url: git@github.com:hyperion-hyn/flutter_k_chart.git
+      url: git@github.com:hyperion-hyn/k_chart.git
 
   # WebSocket: https://pub.dev/packages/web_socket_channel
   web_socket_channel: 1.1.0
   ethereum_address: ^1.0.1
   bitcoin_flutter: ^2.0.1
+  charts_flutter: ^0.9.0
+  device_info: ^0.4.0+1
+  shimmer:  1.1.2
+  glitters: 0.1.3
 
 dev_dependencies:
   flutter_driver:
@@ -218,3 +226,5 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_intl:
   enabled: true
+  localizely:
+    project_id: 5c316930-0e06-48c6-8e03-9ebd4f304276

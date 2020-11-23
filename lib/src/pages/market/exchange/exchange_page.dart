@@ -10,9 +10,9 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -25,9 +25,13 @@ import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_banner.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
+import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/loading_button/click_oval_icon_button.dart';
 
 import '../k_line/kline_detail_page.dart';
@@ -76,15 +80,40 @@ class _ExchangePageState extends BaseState<ExchangePage>
     _setupMarketItemList();
   }
 
+  _showConfirmDexPolicy() {
+    UiUtil.showAlertView(
+      context,
+      title: S.of(context).important_hint,
+      actions: [
+        ClickOvalButton(
+          S.of(context).check,
+          () async {
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => PolicyConfirmPage(
+                PolicyType.DEX,
+              ),
+            ));
+          },
+          width: 160,
+          height: 38,
+          fontSize: 16,
+        ),
+      ],
+      content: S.of(context).please_read_and_agress_dex_policy,
+      barrierDismissible: false,
+    );
+  }
+
   _updateQuotes() async {
     var quoteSignStr =
         await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
     QuotesSign quotesSign = quoteSignStr != null
         ? QuotesSign.fromJson(json.decode(quoteSignStr))
         : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesEvent(isForceUpdate: true));
   }
 
@@ -176,17 +205,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
-  _contentView() {
-    return Column(
-      children: <Widget>[
-        _account(),
-        _exchange(),
-        _divider(),
-        _quotesTabs(),
-      ],
-    );
-  }
-
   _exchange() {
     var _selectedCoinToHYN = "--";
     var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
@@ -257,13 +275,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
               Spacer(),
               ClickOvalIconButton(
                 S.of(context).exchange_trade,
-                () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ExchangeDetailPage(
-                              selectedCoin: _selectedCoin,
-                              exchangeType: _exchangeType)));
+                () async {
+                  if (await _checkShowConfirmPolicy()) {
+                    _showConfirmDexPolicy();
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ExchangeDetailPage(
+                                selectedCoin: _selectedCoin,
+                                exchangeType: _exchangeType)));
+                  }
                 },
                 width: 88,
                 height: 38,
@@ -336,22 +358,26 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _account() {
-    var quote = QuotesInheritedModel.of(context)
+    var quote = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
     return InkWell(
-      onTap: () {
-        if (ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .hasActiveAccount()) {
-          Application.router.navigateTo(
-              context,
-              Routes.exchange_assets_page +
-                  '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+      onTap: () async {
+        if (await _checkShowConfirmPolicy()) {
+          _showConfirmDexPolicy();
         } else {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          if (ExchangeInheritedModel.of(context)
+              .exchangeModel
+              .hasActiveAccount()) {
+            Application.router.navigateTo(
+                context,
+                Routes.exchange_assets_page +
+                    '?entryRouteName=${Uri.encodeComponent(Routes.exchange_assets_page)}');
+          } else {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+          }
         }
       },
       child: Container(
@@ -372,7 +398,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                         height: 20,
                         color: Theme.of(context).primaryColor,
                       )
-                    : QuotesInheritedModel.of(context)
+                    : WalletInheritedModel.of(context)
                                 .activatedQuoteVoAndSign('USDT')
                                 .sign
                                 .quote ==
@@ -413,17 +439,24 @@ class _ExchangePageState extends BaseState<ExchangePage>
     );
   }
 
+  Future<bool> _checkShowConfirmPolicy() async {
+    var isConfirmDexPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_DEX_POLICY,
+    );
+    return isConfirmDexPolicy == null || !isConfirmDexPolicy;
+  }
+
   _assetView() {
     var _totalByUsdt = ExchangeInheritedModel.of(context)
         .exchangeModel
         .activeAccount
         ?.assetList
         ?.getTotalUsdt();
-    var _coinQuotePrice = QuotesInheritedModel.of(context)
+    var _coinQuotePrice = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.quoteVo
         ?.price;
-    var _quoteSymbol = QuotesInheritedModel.of(context)
+    var _quoteSymbol = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
@@ -478,7 +511,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   if (_exchangeType == ExchangeType.SELL) Spacer(),
                   _coinItem(
                     'HYN',
-                    SupportedTokens.HYN.logo,
+                    SupportedTokens.HYN_Atlas.logo,
                     false,
                   ),
                   if (_exchangeType == ExchangeType.SELL) Spacer(),
@@ -642,7 +675,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPrice = marketItemEntity.kLineEntity != null
         ? FormatUtil.truncateDecimalNum(
               Decimal.parse(
-                  marketItemEntity.kLineEntity?.close.toString() ?? '0'),
+                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
               4,
             ) ??
             '-'
@@ -650,7 +683,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
     var _latestPriceString = '$_latestPrice';
 
     var _selectedQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
@@ -681,22 +714,25 @@ class _ExchangePageState extends BaseState<ExchangePage>
       children: <Widget>[
         InkWell(
             onTap: () async {
-              var prefs = await SharedPreferences.getInstance();
-              int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
-              var periodCurrentIndex = 0;
-              if (index != null && index < 4) {
-                periodCurrentIndex = index;
+              if (await _checkShowConfirmPolicy()) {
+                _showConfirmDexPolicy();
+              } else {
+                var prefs = await SharedPreferences.getInstance();
+                int index = prefs.getInt(PrefsKey.PERIOD_CURRENT_INDEX);
+                var periodCurrentIndex = 0;
+                if (index != null && index < 4) {
+                  periodCurrentIndex = index;
+                }
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => KLineDetailPage(
+                              symbol: marketItemEntity.symbol,
+                              symbolName: marketItemEntity.symbolName,
+                              isPop: false,
+                              periodCurrentIndex: periodCurrentIndex,
+                            )));
               }
-
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => KLineDetailPage(
-                            symbol: marketItemEntity.symbol,
-                            symbolName: marketItemEntity.symbolName,
-                            isPop: false,
-                            periodCurrentIndex: periodCurrentIndex,
-                          )));
             },
             child: Padding(
               padding:

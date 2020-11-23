@@ -58,16 +58,24 @@ class LanguageModel extends Equatable {
   Map<String, Object> toJson() {
     return <String, dynamic>{
       'name': name,
-      'local': {'languageCode': locale?.languageCode, 'countryCode': locale?.countryCode}
+      'local': {'languageCode': (locale?.languageCode??'zh'), 'countryCode': locale?.countryCode}
     };
   }
 
   bool isKo() {
-    return locale?.languageCode == 'ko';
+    return (locale?.languageCode??'zh') == 'ko';
   }
 
   bool isZh() {
-    return locale?.languageCode == 'zh';
+    return (locale?.languageCode??'zh') == 'zh';
+  }
+
+  String getLocaleName(){
+    if(isZh()){
+      return "${(locale?.languageCode??'zh')}_${locale.countryCode}";
+    }else{
+      return "${(locale?.languageCode??'zh')}";
+    }
   }
 
   factory LanguageModel.fromJson(Map<String, Object> json) {

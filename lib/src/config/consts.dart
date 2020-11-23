@@ -11,6 +11,10 @@ class Const {
     return 'https://api.hyn.space/';
   }
 
+  static String get LOCAL_DOMAIN {
+    return Config.ATLAS_API_URL_TEST;
+  }
+
   static const String MARKET_DOMAIN = 'https://api.huobi.br.com/';
 
   static String get NODE_DOMAIN {
@@ -34,6 +38,14 @@ class Const {
       return Config.WS_DOMAIN_TEST;
     } else {
       return Config.WS_DOMAIN;
+    }
+  }
+
+  static String get ATLAS_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.ATLAS_API_URL_TEST;
+    } else {
+      return Config.ATLAS_API_URL;
     }
   }
 
@@ -150,6 +162,10 @@ class PrefsKey {
   static const String PENDING_TRANSFER_KEY_PREFIX = 'pending_transfer_key_';
 
   static const String EXCHANGE_ACCOUNT_ABNORMAL = 'exchange_account_abnormal_';
+
+  ///Policy
+  static const String IS_CONFIRM_WALLET_POLICY = 'wallet_policy_confirmed';
+  static const String IS_CONFIRM_DEX_POLICY = 'dex_policy_confirmed';
 }
 
 class SecurePrefsKey {

@@ -12,16 +12,14 @@ class AssetToken {
   final String logo;
   final String contractAddress;
 
-  const AssetToken(
-      {this.name, this.decimals, this.contractAddress, this.symbol, this.logo});
+  const AssetToken({this.name, this.decimals, this.contractAddress, this.symbol, this.logo});
 
   @override
   String toString() {
     return 'AssetToken{decimals: $decimals, name: $name, symbol: $symbol, logo: $logo, contractAddress: $contractAddress}';
   }
 
-  factory AssetToken.fromJson(Map<String, dynamic> json) =>
-      _$AssetTokenFromJson(json);
+  factory AssetToken.fromJson(Map<String, dynamic> json) => _$AssetTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$AssetTokenToJson(this);
 }
@@ -35,6 +33,7 @@ class SupportedTokens {
     logo: 'res/drawable/ic_btc_logo_large.png',
     symbol: 'BTC',
   );
+
   static const ETHEREUM = const AssetToken(
     name: 'Ethereum',
     decimals: 18,
@@ -43,12 +42,21 @@ class SupportedTokens {
     symbol: 'ETH',
   );
 
-  static const HYN = const AssetToken(
-      name: 'Hyperion',
-      decimals: 18,
-      contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
-      logo: "res/drawable/ic_hyn_logo_new.png",
-      symbol: 'HYN');
+  static const HYN_Atlas = const AssetToken(
+    name: "Hyperion",
+    decimals: 18,
+    contractAddress: null,
+    logo: "res/drawable/ic_hyn_logo_new.png",
+    symbol: 'HYN',
+  );
+
+  static const HYN_ERC20 = const AssetToken(
+    name: 'Hyperion',
+    decimals: 18,
+    contractAddress: '0xe99a894a69d7c2e3c92e61b64c505a6a57d2bc07',
+    logo: "res/drawable/ic_hyn_logo_empty.png",
+    symbol: 'HYN ERC20',
+  );
 
   static const USDT_ERC20 = const AssetToken(
     name: 'Tether USD',
@@ -72,26 +80,26 @@ class SupportedTokens {
       decimals: 18,
       //contractAddress: '0xaebbada2bece10c84cbeac637c438cb63e1446c9',
       contractAddress: '0xE2Ba724b516Bacca8646Ad72796d23Af39C610A6',
-      logo: "res/drawable/ic_hyn_logo_new.png",
-      symbol: 'HYN');
+      logo: "res/drawable/ic_hyn_logo_empty.png",
+      symbol: 'HYN ERC20');
 
   static const HYN_RINKEBY = const AssetToken(
       name: 'Hyperion RINKEBY',
       decimals: 18,
       contractAddress: '0x97B9e0EfeF243720FB024C823a39cBD73C25D601',
       logo: "res/drawable/ic_hyn_logo_new.png",
-      symbol: 'HYN');
+      symbol: 'HYN ERC20');
 
   static final HYN_LOCAL = AssetToken(
       name: 'Hyperion LOCAL',
       decimals: 18,
       contractAddress: ContractTestConfig.hynContractAddress,
       logo: "res/drawable/ic_hyn_logo_new.png",
-      symbol: 'HYN');
+      symbol: 'HYN ERC20');
 
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
-      return [HYN, USDT_ERC20];
+      return [HYN_ERC20, USDT_ERC20];
     } else if (netType == EthereumNetType.ropsten) {
       return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
     } else if (netType == EthereumNetType.rinkeby) {

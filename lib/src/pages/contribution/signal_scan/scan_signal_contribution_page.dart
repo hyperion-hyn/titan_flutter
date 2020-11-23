@@ -506,7 +506,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
 
   Widget _mapView() {
     var style =
-        SettingInheritedModel.of(context).areaModel.isChinaMainland ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
+        SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true ? Const.kBlackMapStyleCn : Const.kBlackMapStyle;
 
     return MapboxMap(
       compassEnabled: false,
@@ -536,17 +536,7 @@ class _ContributionState extends State<ScanSignalContributionPage> {
     contributionLatlng.LatLng _latlng = contributionLatlng.LatLng(uploadPosition.latitude, uploadPosition.longitude);
     SignalCollector _signalCollector = SignalCollector(_latlng, _collectData);
 
-    var activatedWalletVo = WalletInheritedModel.of(context).activatedWallet;
-    var hynAddress;
-    if (activatedWalletVo != null) {
-      for (var coin in activatedWalletVo?.coins) {
-        if (coin.symbol == SupportedTokens.HYN.symbol) {
-          hynAddress = coin.address;
-          break;
-        }
-      }
-    }
-
+    var hynAddress = WalletInheritedModel.of(context).activatedHynAddress();
     if (hynAddress == null) {
       Fluttertoast.showToast(msg: S.of(context).scan_hyn_is_empty);
       return false;

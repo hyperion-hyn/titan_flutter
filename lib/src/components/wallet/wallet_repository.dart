@@ -12,23 +12,22 @@ import 'vo/coin_vo.dart';
 import 'vo/wallet_vo.dart';
 
 class WalletRepository {
-  Future updateWalletVoBalance(WalletVo walletVo, [String symbol]) {
+  Future updateWalletVoBalance(WalletVo walletVo, [String symbol, String contractAddress]) {
     return Future.wait(walletVo.coins
-        .where((coin) => symbol == null || coin.symbol == symbol)
+        .where((coin) => symbol == null || (coin.symbol == symbol && coin.contractAddress == contractAddress))
         .map((coin) => updateCoinBalance(walletVo.wallet, coin))
         .toList());
   }
 
   Future updateCoinBalance(Wallet wallet, CoinVo coin) async {
     var balance = BigInt.from(0);
-    if(coin.coinType == CoinType.ETHEREUM) {
+    if (coin.coinType == CoinType.ETHEREUM || coin.coinType == CoinType.HYN_ATLAS) {
       try {
         balance = await wallet.getBalanceByCoinTypeAndAddress(coin.coinType, coin.address, coin.contractAddress);
       } catch (exception) {
         LogUtil.uploadException(exception, 'update Coin Balance!');
       }
-
-    }else if(coin.coinType == CoinType.BITCOIN){
+    } else if (coin.coinType == CoinType.BITCOIN) {
       balance = await wallet.getBitcoinBalance(wallet.getBitcoinZPub());
     }
     coin.balance = balance;

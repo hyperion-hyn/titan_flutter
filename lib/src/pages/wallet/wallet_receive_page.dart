@@ -7,6 +7,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_util.dart';
 
 class WalletReceivePage extends StatelessWidget {
   final CoinVo coinVo;
@@ -46,14 +48,20 @@ class WalletReceivePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     QrImage(
-                      data: coinVo.address,
+                      data: WalletUtil.formatToHynAddrIfAtlasChain(
+                        coinVo,
+                        coinVo.address,
+                      ),
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.grey[800],
                       version: 4,
                       size: 180,
                     ),
                     Text(
-                      coinVo.address,
+                      WalletUtil.formatToHynAddrIfAtlasChain(
+                        coinVo,
+                        coinVo.address,
+                      ),
                       softWrap: true,
                       style: TextStyle(color: Colors.grey[500], fontSize: 16),
                     )
@@ -73,8 +81,12 @@ class WalletReceivePage extends StatelessWidget {
                     builder: (BuildContext context) {
                       return InkWell(
                         onTap: () {
-                          Clipboard.setData(
-                              ClipboardData(text: coinVo.address));
+                          Clipboard.setData(ClipboardData(
+                            text: WalletUtil.formatToHynAddrIfAtlasChain(
+                              coinVo,
+                              coinVo.address,
+                            ),
+                          ));
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text(S.of(context).address_copied)));
                         },
@@ -106,8 +118,14 @@ class WalletReceivePage extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Share.text(S.of(context).my_symbol_address(coinVo.symbol),
-                          coinVo.address, "text/plain");
+                      Share.text(
+                        S.of(context).my_symbol_address(coinVo.symbol),
+                        WalletUtil.formatToHynAddrIfAtlasChain(
+                          coinVo,
+                          coinVo.address,
+                        ),
+                        "text/plain",
+                      );
                     },
                     child: Row(
                       children: <Widget>[

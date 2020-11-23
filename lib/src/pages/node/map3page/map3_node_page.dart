@@ -8,14 +8,16 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
 import 'package:titan/src/pages/node/model/map3_node_util.dart';
 import 'package:titan/src/pages/node/model/node_page_entity_vo.dart';
-import 'package:titan/src/pages/node/widget/node_active_contract_widget.dart';
+import 'package:titan/src/pages/node/widget/node_active_contract_widget_v8.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -77,7 +79,7 @@ class _Map3NodeState extends State<Map3NodePage> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: NodeActiveContractWidget(loadDataBloc),
+                  child: NodeActiveContractWidgetV8(loadDataBloc),
                 ),
               ),
             SliverToBoxAdapter(
@@ -145,17 +147,17 @@ class _Map3NodeState extends State<Map3NodePage> {
         delegate: SliverChildBuilderDelegate((context, index) {
       var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
 
-      var canCheck = config?.canCheckMap3Node ?? true;
-      if (index == 0) {
-        canCheck = true;
-      }
-      print("[object] --> canCheck:$canCheck");
-
-      // todo: test_10_03
+      var canCheck = false;
+      var canCheckMap3Node = config?.canCheckMap3Node ?? false;
       var canCheckMap3NodeCount = config?.canCheckMap3NodeCount ?? 1;
-      print("[object] --> canCheckMap3NodeCount:$canCheckMap3NodeCount");
-      if (index < canCheckMap3NodeCount) {
+      //print("[object] --> canCheckMap3Node:$canCheckMap3Node, canCheckMap3NodeCount:$canCheckMap3NodeCount");
+
+      if (canCheckMap3Node) {
         canCheck = true;
+      } else {
+        if (index < canCheckMap3NodeCount) {
+          canCheck = true;
+        }
       }
 
       return Container(
@@ -370,22 +372,49 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
   var fullDesc = "";
   var dateDesc = "";
   var isPending = false;
+  var address =
+      WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet?.wallet?.getEthAccount()?.address ?? "";
+  bool isMine = contractNodeItem.owner == address;
+  var fullStyle = TextStyles.textC9b9b9bS12;
+
+  setFullDesc() {
+    if (isMine) {
+      if (contractNodeItem.migrate == 0) {
+        fullDesc = "未映射";
+      } else if (contractNodeItem.migrate == 1) {
+        fullDesc = "映射中";
+        fullStyle = TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).primaryColor,
+        );
+      } else if (contractNodeItem.migrate == 2) {
+        fullDesc = "映射完成";
+      }
+    }
+  }
+
   switch (state) {
     case ContractState.PRE_CREATE:
     case ContractState.PENDING:
-      dateDesc = S.of(context).left + FormatUtil.timeStringSimple(context, contractNodeItem.launcherSecondsLeft);
+      dateDesc = S.of(context).left + FormatUtil.timeStringSimpleV8(context, contractNodeItem.launcherSecondsLeft);
       dateDesc = S.of(context).active + " " + dateDesc;
       fullDesc = !isNotFull ? S.of(context).delegation_amount_full : "";
       isPending = true;
       break;
 
     case ContractState.ACTIVE:
-      dateDesc = S.of(context).left + " " + FormatUtil.timeStringSimple(context, contractNodeItem.completeSecondsLeft);
+      dateDesc = S.of(context).left + " " + FormatUtil.timeStringSimpleV8(context, contractNodeItem.completeSecondsLeft);
       dateDesc = S.of(context).expired + " " + dateDesc;
+
+      setFullDesc();
+
       break;
 
     case ContractState.DUE:
       dateDesc = S.of(context).contract_had_expired;
+
+      setFullDesc();
+
       break;
 
     case ContractState.CANCELLED:
@@ -400,6 +429,13 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
 
     default:
       break;
+  }
+
+  pushDetailAction() {
+    if (!canCheck) return;
+
+    Application.router.navigateTo(
+        context, Routes.map3node_contract_detail_page_v8 + "?contractId=${contractNodeItem.id}");
   }
 
   return Container(
@@ -458,11 +494,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
-                    onTap: () {
-                      if (!canCheck) return;
-                      Application.router.navigateTo(
-                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
-                    },
+                    onTap: pushDetailAction,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -541,7 +573,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                     )
                   : Expanded(
                       child: RichText(
-                        text: TextSpan(text: fullDesc, style: TextStyles.textC9b9b9bS12, children: <TextSpan>[]),
+                        text: TextSpan(text: fullDesc, style: fullStyle, children: <TextSpan>[]),
                       ),
                     ),
               Visibility(
@@ -552,10 +584,7 @@ Widget getMap3NodeWaitItem(BuildContext context, ContractNodeItem contractNodeIt
                   child: FlatButton(
                     color: HexColor("#FF15B2D2"),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                    onPressed: () {
-                      Application.router.navigateTo(
-                          context, Routes.map3node_contract_detail_page + "?contractId=${contractNodeItem.id}");
-                    },
+                    onPressed: pushDetailAction,
                     child: Text(isPending ? S.of(context).check_join : S.of(context).detail,
                         style: TextStyle(fontSize: 13, color: Colors.white)),
                     //style: TextStyles.textC906b00S13),

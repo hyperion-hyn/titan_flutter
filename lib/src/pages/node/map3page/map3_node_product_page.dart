@@ -17,7 +17,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 
-import 'map3_node_create_wallet_page.dart';
+import 'map3_node_create_wallet_page_v8.dart';
 
 class Map3NodeProductPage extends StatefulWidget {
   @override
@@ -207,7 +207,7 @@ class _Map3NodeProductState extends State<Map3NodeProductPage> {
 
     var walletList = await WalletUtil.scanWallets();
     if (walletList.length == 0) {
-      Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPage.CREATE_WALLET_PAGE_TYPE_CREATE}");
+      Application.router.navigateTo(context, Routes.map3node_create_wallet + "?pageType=${Map3NodeCreateWalletPageV8.CREATE_WALLET_PAGE_TYPE_CREATE}");
     } else {
       await Application.router
           .navigateTo(context, Routes.map3node_create_contract_page + "?contractId=${nodeItem.id}");

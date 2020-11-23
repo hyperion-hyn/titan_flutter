@@ -46,7 +46,7 @@ class ExchangeHttp extends BaseHttpCore {
     if (_instance == null) {
       _instance = ExchangeHttp._internal();
 
-      if (env.buildType == BuildType.DEV) {
+      if (showLog) {
         _instance.dio.interceptors
             .add(LogInterceptor(responseBody: true, requestBody: true));
       }

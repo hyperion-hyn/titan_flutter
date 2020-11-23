@@ -175,7 +175,7 @@ class ScaffoldCmpMapState extends State<ScaffoldMap> {
       //set map
       //---------------------------
       String style;
-      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+      if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
         style = Const.kWhiteMapStyleCn;
       } else {
         style = Const.kWhiteMapStyle;

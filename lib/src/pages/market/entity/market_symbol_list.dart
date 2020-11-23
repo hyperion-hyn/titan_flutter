@@ -1,4 +1,5 @@
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
+
+import 'package:k_chart/flutter_k_chart.dart';
 
 class MarketSymbolList {
   dynamic baseCurrency;

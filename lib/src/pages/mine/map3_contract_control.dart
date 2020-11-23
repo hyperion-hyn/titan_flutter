@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/global.dart';
@@ -28,6 +28,8 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   bool _isLoading = false;
   bool _isCommitting = false;
 
+  bool _isContractStopped = true;
+
   Decimal rewardAmount = Decimal.fromInt(0);
   Decimal maxTotalDelegation = Decimal.fromInt(0);
   Decimal annualized30 = Decimal.fromInt(0);
@@ -42,12 +44,9 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
   GlobalKey<FormState> _formKey30 = GlobalKey<FormState>(debugLabel: '30天年化');
   GlobalKey<FormState> _formKey90 = GlobalKey<FormState>(debugLabel: '90天年化');
   GlobalKey<FormState> _formKey180 = GlobalKey<FormState>(debugLabel: '90天年化');
-  GlobalKey<FormState> _formKeyMaxTotalDelegation =
-      GlobalKey<FormState>(debugLabel: '最大抵押量');
-  GlobalKey<FormState> _formKeyWithdrawProvision =
-      GlobalKey<FormState>(debugLabel: '取回');
-  GlobalKey<FormState> _formKeyDepositProvision =
-      GlobalKey<FormState>(debugLabel: '存入');
+  GlobalKey<FormState> _formKeyMaxTotalDelegation = GlobalKey<FormState>(debugLabel: '最大抵押量');
+  GlobalKey<FormState> _formKeyWithdrawProvision = GlobalKey<FormState>(debugLabel: '取回');
+  GlobalKey<FormState> _formKeyDepositProvision = GlobalKey<FormState>(debugLabel: '存入');
 
   var textEditorController = TextEditingController();
 
@@ -70,37 +69,31 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         _isLoading = true;
       });
 
-      var contract =
-          WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+      var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
       var provisionFun = contract.function('provision');
       var maxTotalDelegationFun = contract.function('maxTotalDelegation');
       var getAnnualizedYieldFun = contract.function('getAnnualizedYield');
+      var isStopped = contract.function('paused');
       var rets = await Future.wait([
-        WalletUtil.getWeb3Client()
-            .call(contract: contract, function: provisionFun, params: []),
-        WalletUtil.getWeb3Client().call(
-            contract: contract, function: maxTotalDelegationFun, params: []),
-        WalletUtil.getWeb3Client().call(
-            contract: contract,
-            function: getAnnualizedYieldFun,
-            params: [BigInt.from(0)]),
-        WalletUtil.getWeb3Client().call(
-            contract: contract,
-            function: getAnnualizedYieldFun,
-            params: [BigInt.from(1)]),
-        WalletUtil.getWeb3Client().call(
-            contract: contract,
-            function: getAnnualizedYieldFun,
-            params: [BigInt.from(2)]),
+        WalletUtil.getWeb3Client().call(contract: contract, function: provisionFun, params: []),
+        WalletUtil.getWeb3Client().call(contract: contract, function: maxTotalDelegationFun, params: []),
+        WalletUtil.getWeb3Client().call(contract: contract, function: getAnnualizedYieldFun, params: [BigInt.from(0)]),
+        WalletUtil.getWeb3Client().call(contract: contract, function: getAnnualizedYieldFun, params: [BigInt.from(1)]),
+        WalletUtil.getWeb3Client().call(contract: contract, function: getAnnualizedYieldFun, params: [BigInt.from(2)]),
+        WalletUtil.getWeb3Client().call(contract: contract, function: isStopped, params: []),
       ]);
       rewardAmount = ConvertTokenUnit.weiToDecimal(rets[0].first);
       maxTotalDelegation = ConvertTokenUnit.weiToDecimal(rets[1].first);
       annualized30 = ConvertTokenUnit.weiToDecimal(rets[2].first, 2);
       annualized90 = ConvertTokenUnit.weiToDecimal(rets[3].first, 2);
       annualized180 = ConvertTokenUnit.weiToDecimal(rets[4].first, 2);
+      var paused = rets[5].first;
+      print('xxx');
+      print(paused);
 
       setState(() {
         _isLoading = false;
+        _isContractStopped = paused;
       });
     } else {
       UiUtil.toast('-请先导入钱包');
@@ -132,96 +125,79 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _buildItem(
-                    '奖励池剩: ${FormatUtil.formatCoinNum(rewardAmount.toDouble())} hyn',
-                    [
-                      _buildButton('取回', () {
-                        textEditorController.text = '';
-                        UiUtil.showDialogWidget(context,
-                            title: Text('从奖励池取回hyn'),
-                            content: _buildWithdrawProvisionForm(
-                                context, rewardAmount),
-                            actions: [
-                              FlatButton(
-                                  child: Text('提交'),
-                                  onPressed: () async {
-                                    if (_formKeyWithdrawProvision.currentState
-                                        .validate()) {
-                                      _formKeyWithdrawProvision.currentState
-                                          .save();
+                _buildItem('奖励池剩: ${FormatUtil.formatCoinNum(rewardAmount.toDouble())} hyn', [
+                  _buildButton('取回', () {
+                    textEditorController.text = '';
+                    showDialogWidget(context,
+                        title: Text('从奖励池取回hyn'),
+                        content: _buildWithdrawProvisionForm(context, rewardAmount),
+                        actions: [
+                          FlatButton(
+                              child: Text('提交'),
+                              onPressed: () async {
+                                if (_formKeyWithdrawProvision.currentState.validate()) {
+                                  _formKeyWithdrawProvision.currentState.save();
 
-                                      Navigator.pop(context);
+                                  Navigator.pop(context);
 
-                                      handleCommitWithdraw(context,
-                                          Decimal.parse(withdrawValue));
-                                    }
-                                  })
-                            ]);
-                      }),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      _buildButton('转入', () {
-                        UiUtil.showDialogWidget(context,
-                            title: Text('转入hyn到奖励池'),
-                            content: _buildDepositProvisionForm(
-                                context, rewardAmount),
-                            actions: [
-                              FlatButton(
-                                  child: Text('提交'),
-                                  onPressed: () async {
-                                    if (_formKeyDepositProvision.currentState
-                                        .validate()) {
-                                      _formKeyDepositProvision.currentState
-                                          .save();
+                                  handleCommitWithdraw(context, Decimal.parse(withdrawValue));
+                                }
+                              })
+                        ]);
+                  }),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  /*_buildButton('转入', () {
+                    showDialogWidget(context,
+                        title: Text('转入hyn到奖励池'),
+                        content: _buildDepositProvisionForm(context, rewardAmount),
+                        actions: [
+                          FlatButton(
+                              child: Text('提交'),
+                              onPressed: () async {
+                                if (_formKeyDepositProvision.currentState.validate()) {
+                                  _formKeyDepositProvision.currentState.save();
 
-                                      Navigator.pop(context);
+                                  Navigator.pop(context);
 
-                                      handleCommitDeposit(
-                                          context, Decimal.parse(depositValue));
-                                    }
-                                  })
-                            ]);
-                      }),
-                    ]),
+                                  handleCommitDeposit(context, Decimal.parse(depositValue));
+                                }
+                              })
+                        ]);
+                  }),*/
+                ]),
                 Divider(
                   height: 1,
                 ),
-                _buildItem(
-                    '最大抵押量: ${FormatUtil.formatCoinNum(maxTotalDelegation.toDouble())} hyn',
-                    [
-                      _buildButton('修改', () {
-                        UiUtil.showDialogWidget(context,
-                            title: Text('修改最大抵押量'),
-                            content: _buildChangeMaxDelegationForm(
-                                context, maxTotalDelegation),
-                            actions: [
-                              FlatButton(
-                                  child: Text('提交'),
-                                  onPressed: () async {
-                                    if (_formKeyMaxTotalDelegation.currentState
-                                        .validate()) {
-                                      _formKeyMaxTotalDelegation.currentState
-                                          .save();
+                _buildItem('最大抵押量: ${FormatUtil.formatCoinNum(maxTotalDelegation.toDouble())} hyn', [
+                  _buildButton('修改', () {
+                    showDialogWidget(context,
+                        title: Text('修改最大抵押量'),
+                        content: _buildChangeMaxDelegationForm(context, maxTotalDelegation),
+                        actions: [
+                          FlatButton(
+                              child: Text('提交'),
+                              onPressed: () async {
+                                if (_formKeyMaxTotalDelegation.currentState.validate()) {
+                                  _formKeyMaxTotalDelegation.currentState.save();
 
-                                      Navigator.pop(context);
+                                  Navigator.pop(context);
 
-                                      handleCommitChangeMaxDelegation(context,
-                                          Decimal.parse(maxDelegationValue));
-                                    }
-                                  })
-                            ]);
-                      }),
-                    ]),
+                                  handleCommitChangeMaxDelegation(context, Decimal.parse(maxDelegationValue));
+                                }
+                              })
+                        ]);
+                  }),
+                ]),
                 Divider(
                   height: 1,
                 ),
                 _buildItem('180天年化: $annualized180%', [
                   _buildButton('修改', () {
-                    UiUtil.showDialogWidget(context,
+                    showDialogWidget(context,
                         title: Text('修改180天年化'),
-                        content: _buildAnnualizedForm(
-                            annualized180.toString(), _formKey180),
+                        content: _buildAnnualizedForm(annualized180.toString(), _formKey180),
                         actions: [
                           FlatButton(
                               child: Text('提交'),
@@ -231,11 +207,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
                                   Navigator.pop(context);
 
-                                  handleCommitAnnualized(
-                                      context,
-                                      2,
-                                      (double.parse(annualizedToCommit) * 100)
-                                          .toInt());
+                                  handleCommitAnnualized(context, 2, (double.parse(annualizedToCommit) * 100).toInt());
                                 }
                               })
                         ]);
@@ -246,10 +218,9 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                 ),
                 _buildItem('90天年化: $annualized90%', [
                   _buildButton('修改', () {
-                    UiUtil.showDialogWidget(context,
+                    showDialogWidget(context,
                         title: Text('修改90天年化'),
-                        content: _buildAnnualizedForm(
-                            annualized90.toString(), _formKey90),
+                        content: _buildAnnualizedForm(annualized90.toString(), _formKey90),
                         actions: [
                           FlatButton(
                               child: Text('提交'),
@@ -259,11 +230,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
 
                                   Navigator.pop(context);
 
-                                  handleCommitAnnualized(
-                                      context,
-                                      1,
-                                      (double.parse(annualizedToCommit) * 100)
-                                          .toInt());
+                                  handleCommitAnnualized(context, 1, (double.parse(annualizedToCommit) * 100).toInt());
                                 }
                               })
                         ]);
@@ -276,10 +243,9 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                   _buildButton(
                     '修改',
                     () {
-                      UiUtil.showDialogWidget(context,
+                      showDialogWidget(context,
                           title: Text('修改30天年化'),
-                          content: _buildAnnualizedForm(
-                              annualized30.toString(), _formKey30),
+                          content: _buildAnnualizedForm(annualized30.toString(), _formKey30),
                           actions: [
                             FlatButton(
                                 child: Text('提交'),
@@ -290,13 +256,33 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
                                     Navigator.pop(context);
 
                                     handleCommitAnnualized(
-                                        context,
-                                        0,
-                                        (double.parse(annualizedToCommit) * 100)
-                                            .toInt());
+                                        context, 0, (double.parse(annualizedToCommit) * 100).toInt());
                                   }
                                 })
                           ]);
+                    },
+                  ),
+                ]),
+                Divider(
+                  height: 1,
+                ),
+                _buildItem('停止合约: (${_isContractStopped ? "已停止" : "运行中"})', [
+                  _buildButton(
+                    '停止',
+                    () {
+                      showDialogWidget(context, title: Text('停止合约'), content: Text('确定要停止合约吗?'), actions: [
+                        FlatButton(
+                          child: Text('取消'),
+                          onPressed: () async {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        FlatButton(
+                            child: Text('提交'),
+                            onPressed: () async {
+                              handleStopContract(context);
+                            })
+                      ]);
                     },
                   ),
                 ]),
@@ -329,6 +315,47 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
     );
   }
 
+  void handleStopContract(context) async {
+    var password = await UiUtil.showWalletPasswordDialogV2(
+      context,
+      wallet,
+    );
+    if (password != null) {
+      setState(() {
+        _isCommitting = true;
+      });
+
+      var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+      var stopMethod = contract.function('pause');
+      try {
+        final client = WalletUtil.getWeb3Client();
+        var credentials = await wallet.getCredentials(password);
+        var response = await client.sendTransaction(
+          credentials,
+          Transaction.callContract(
+            contract: contract,
+            function: stopMethod,
+            parameters: [],
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
+            maxGas: 280000,
+          ),
+          fetchChainIdFromNetworkId: true,
+        );
+
+        print('-提交成功 hash $response');
+
+        UiUtil.showSnackBar(context, '提交成功');
+      } catch (e) {
+        logger.e(e);
+        UiUtil.toast(e.message);
+      }
+
+      setState(() {
+        _isCommitting = false;
+      });
+    }
+  }
+
   void handleCommitAnnualized(context, type, int value) async {
     var password = await UiUtil.showWalletPasswordDialogV2(
       context,
@@ -339,8 +366,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         _isCommitting = true;
       });
 
-      var contract =
-          WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+      var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
       var setProvisionFun = contract.function('setAnnualizedYield');
       try {
         final client = WalletUtil.getWeb3Client();
@@ -351,11 +377,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: setProvisionFun,
             parameters: [BigInt.from(type), BigInt.from(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(
-                QuotesInheritedModel.of(context)
-                    .gasPriceRecommend
-                    .fast
-                    .toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -508,8 +530,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           SizedBox(
             height: 8,
           ),
-          Text(
-              '当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
+          Text('当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
         ],
       ),
     );
@@ -562,8 +583,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           SizedBox(
             height: 8,
           ),
-          Text(
-              '当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
+          Text('当前奖励池 ${FormatUtil.formatCoinNum(currentValue.toDouble())} hyn'),
         ],
       ),
     );
@@ -585,26 +605,19 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         var approveToAddress = WalletConfig.map3ContractAddress;
 
         final client = WalletUtil.getWeb3Client();
-        var count = await client.getTransactionCount(
-            EthereumAddress.fromHex(wallet.getEthAccount().address));
+        var count = await client.getTransactionCount(EthereumAddress.fromHex(wallet.getEthAccount().address));
 
         var approveHex = await wallet.sendApproveErc20Token(
             contractAddress: hynErc20ContractAddress,
             approveToAddress: approveToAddress,
             amount: ConvertTokenUnit.decimalToWei(value),
             password: password,
-            gasPrice: BigInt.from(QuotesInheritedModel.of(context)
-                .gasPriceRecommend
-                .fast
-                .toInt()),
-            gasLimit: SettingInheritedModel.ofConfig(context)
-                .systemConfigEntity
-                .erc20ApproveGasLimit,
+            gasPrice: BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt()),
+            gasLimit: SettingInheritedModel.ofConfig(context).systemConfigEntity.erc20ApproveGasLimit,
             nonce: count);
         print('approve has: $approveHex');
 
-        var contract =
-            WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+        var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
         var contractFun = contract.function('depositProvision');
         var credentials = await wallet.getCredentials(password);
         var response = await client.sendTransaction(
@@ -613,11 +626,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(
-                QuotesInheritedModel.of(context)
-                    .gasPriceRecommend
-                    .fast
-                    .toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
             nonce: count + 1,
           ),
@@ -655,8 +664,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         _isCommitting = true;
       });
 
-      var contract =
-          WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+      var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
       var contractFun = contract.function('withdrawProvision');
       try {
         final client = WalletUtil.getWeb3Client();
@@ -667,11 +675,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(
-                QuotesInheritedModel.of(context)
-                    .gasPriceRecommend
-                    .fast
-                    .toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -708,8 +712,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
         _isCommitting = true;
       });
 
-      var contract =
-          WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
+      var contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
       var contractFun = contract.function('setMaxTotalDelegation');
       try {
         final client = WalletUtil.getWeb3Client();
@@ -720,11 +723,7 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
             contract: contract,
             function: contractFun,
             parameters: [ConvertTokenUnit.decimalToWei(value)],
-            gasPrice: EtherAmount.inWei(BigInt.from(
-                QuotesInheritedModel.of(context)
-                    .gasPriceRecommend
-                    .fast
-                    .toInt())),
+            gasPrice: EtherAmount.inWei(BigInt.from(WalletInheritedModel.of(context).gasPriceRecommend.fast.toInt())),
             maxGas: 2800000,
           ),
           fetchChainIdFromNetworkId: true,
@@ -773,6 +772,24 @@ class Map3ContractControlPageState extends BaseState<Map3ContractControlPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<T> showDialogWidget<T>(
+    BuildContext context, {
+    Widget title,
+    Widget content,
+    List<Widget> actions,
+  }) {
+    return showDialog<T>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: title,
+          content: content,
+          actions: actions,
+        );
+      },
     );
   }
 }

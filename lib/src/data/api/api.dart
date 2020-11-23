@@ -167,6 +167,7 @@ class Api {
     return list;
   }
 
+  // todo: jison_1026
   Future<List<Signal>> getPoiDaily({String language = "zh-Hans"}) async {
     var list = await HttpCore.instance.getEntity('map-collector/poi/count/daily', EntityFactory<List<Signal>>((json) {
       return (json as List).map((levelInfoJson) {

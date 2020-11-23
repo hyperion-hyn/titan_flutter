@@ -97,7 +97,7 @@ class _VerifyPositionState extends State<VerifyPositionPage> {
 
   Widget _mapView() {
     var style;
-    if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
       style = Const.kWhiteWithoutMapStyleCn;
     } else {
       style = Const.kWhiteWithoutMapStyle;

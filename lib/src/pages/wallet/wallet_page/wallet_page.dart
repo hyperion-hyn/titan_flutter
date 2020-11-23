@@ -16,10 +16,9 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/bloc/quotes_cmp_bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -29,6 +28,7 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/pages/market/transfer/exchange_abnormal_transfer_list_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -37,6 +37,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/auth_dialog/SetBioAuthDialog.dart';
 import 'package:titan/src/widget/auth_dialog/bio_auth_dialog.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'view/wallet_empty_widget.dart';
 import 'view/wallet_show_widget.dart';
@@ -58,52 +59,54 @@ class _WalletPageState extends BaseState<WalletPage>
 
   bool _isExchangeAccountAbnormal = false;
 
+  bool _isShowConfirmPolicy = false;
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
+    var quoteSign = WalletInheritedModel.of(context).activatedQuoteVoAndSign("HYN");
+    print("show quote ${quoteSign?.quoteVo?.price ?? "no value"}  ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
+
+    _checkConfirmWalletPolicy();
     ///check dex account is abnormal
-    _checkDexAccount();
+//    _checkDexAccount();
+
   }
 
   @override
   void initState() {
     super.initState();
+    _checkConfirmWalletPolicy();
+//    WidgetsBinding.instance.addPostFrameCallback((callback) {
+//      _showAtlasExchangeAlert();
+//    });
   }
 
   @override
   void didPopNext() async {
+    listLoadingData();
+    /*print("!!!!000 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
     callLater((_) {
       BlocProvider.of<WalletCmpBloc>(context)
           .add(UpdateActivatedWalletBalanceEvent());
-    });
+    });*/
   }
 
   @override
   Future<void> onCreated() async {
-    //update quotes
-//    BlocProvider.of<QuotesCmpBloc>(context)
-//        .add(UpdateQuotesEvent(isForceUpdate: true));
-    //update all coin balance
-//    BlocProvider.of<WalletCmpBloc>(context)
-//        .add(UpdateActivatedWalletBalanceEvent());
-    Future.delayed(Duration(milliseconds: 3000), () {
-      _postWalletBalance();
-    });
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    ///check dex account is abnormal
-    _checkDexAccount();
+    _postWalletBalance();
 
     listLoadingData();
+
   }
 
   _checkDexAccount() async {
-    setState(() {});
-
     var activatedWalletVo = WalletInheritedModel.of(
       context,
       aspect: WalletAspect.activatedWallet,
@@ -111,7 +114,7 @@ class _WalletPageState extends BaseState<WalletPage>
 
     ///get value from cache first
     _isExchangeAccountAbnormal = await AppCache.getValue(
-          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo.wallet.getEthAccount().address}',
+          '${PrefsKey.EXCHANGE_ACCOUNT_ABNORMAL}${activatedWalletVo?.wallet?.getEthAccount()?.address ?? ""}',
         ) ??
         false;
 
@@ -138,9 +141,11 @@ class _WalletPageState extends BaseState<WalletPage>
   Future<void> _postWalletBalance() async {
     //appType:  0:titan; 1:star
 
+    if (context == null) return;
+
     var activatedWalletVo =
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
-            .activatedWallet;
+            ?.activatedWallet;
 
     if (activatedWalletVo == null) return;
 
@@ -190,22 +195,109 @@ class _WalletPageState extends BaseState<WalletPage>
 //      ),
       body: Container(
         color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 16,
-            ),
-            _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
-            Expanded(
-              child: _buildWalletView(context),
-            ),
-            //hyn quotes view
-            // hynQuotesView(),
-            _authorizedView(),
-          ],
-        ),
+        width: double.infinity,
+        child: _walletView(),
       ),
     );
+  }
+
+  _confirmPolicyView() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            height: 32,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              'res/drawable/safe_lock.png',
+              width: 100,
+              height: 100,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Container(
+              width: 300,
+              child: Text(
+                S.of(context).please_read_and_agree_wallet_policy,
+                textAlign: TextAlign.center,
+                style: TextStyle(height: 1.8, fontSize: 15),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 32,
+          ),
+          Container(
+            width: 280,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              disabledColor: Colors.grey[600],
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              disabledTextColor: Colors.white,
+              onPressed: () async {
+                var result = await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => PolicyConfirmPage(
+                    PolicyType.WALLET,
+                  ),
+                ));
+                _checkConfirmWalletPolicy();
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      '查看',
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _walletView() {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 16,
+        ),
+        _isExchangeAccountAbnormal ? _abnormalAccountBanner() : SizedBox(),
+        Expanded(
+          child: _buildWalletView(context),
+        ),
+        //hyn quotes view
+        // hynQuotesView(),
+        //_authorizedView(),
+      ],
+    );
+  }
+
+  _checkConfirmWalletPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_WALLET_POLICY,
+    );
+    _isShowConfirmPolicy =
+        isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
+    setState(() {});
   }
 
   _abnormalAccountBanner() {
@@ -272,7 +364,6 @@ class _WalletPageState extends BaseState<WalletPage>
       ///if authorized, jump to fix error page
       if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount())
         navigateToFixPage();
-      ;
     }
   }
 
@@ -281,23 +372,27 @@ class _WalletPageState extends BaseState<WalletPage>
         WalletInheritedModel.of(context, aspect: WalletAspect.activatedWallet)
             .activatedWallet;
     if (activatedWalletVo != null) {
-      return LoadDataContainer(
+      if (_isShowConfirmPolicy) {
+        return _confirmPolicyView();
+      } else {
+        return LoadDataContainer(
           bloc: loadDataBloc,
           enablePullUp: false,
+          showLoadingWidget: false,
           onLoadData: () {
-            _checkDexAccount();
+            //print('WalletPage LoadDataContainer onLoadData ======');
             listLoadingData();
           },
           onRefresh: () async {
-            _checkDexAccount();
+            //print('WalletPage LoadDataContainer onRefresh ======');
             listLoadingData();
           },
           child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: ShowWalletView(
-                activatedWalletVo,
-                loadDataBloc,
-              )));
+            scrollDirection: Axis.vertical,
+            child: ShowWalletView(activatedWalletVo, loadDataBloc),
+          ),
+        );
+      }
     }
 
     return BlocListener<WalletCmpBloc, WalletCmpState>(
@@ -316,21 +411,24 @@ class _WalletPageState extends BaseState<WalletPage>
   }
 
   Future listLoadingData() async {
+    //print('WalletPage listLoadingData ===');
     //update quotes
-    var quoteSignStr =
-        await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
+    /*var quoteSignStr =
+    await AppCache.getValue<String>(PrefsKey.SETTING_QUOTE_SIGN);
     QuotesSign quotesSign = quoteSignStr != null
         ? QuotesSign.fromJson(json.decode(quoteSignStr))
         : SupportedQuoteSigns.defaultQuotesSign;
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesSignEvent(sign: quotesSign));
-    BlocProvider.of<QuotesCmpBloc>(context)
+    BlocProvider.of<WalletCmpBloc>(context)
         .add(UpdateQuotesEvent(isForceUpdate: true));
     //update all coin balance
     BlocProvider.of<WalletCmpBloc>(context)
-        .add(UpdateActivatedWalletBalanceEvent());
+        .add(UpdateActivatedWalletBalanceEvent());*/
 
-    await Future.delayed(Duration(milliseconds: 700));
+    _checkDexAccount();
+    BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent());
+//    await Future.delayed(Duration(milliseconds: 700));
 
     if (mounted) {
       loadDataBloc.add(RefreshSuccessEvent());
@@ -340,7 +438,7 @@ class _WalletPageState extends BaseState<WalletPage>
   Widget hynQuotesView() {
     //hyn quote
     ActiveQuoteVoAndSign hynQuoteSign =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign('HYN');
     return Container(
       padding: EdgeInsets.all(8),
       color: Color(0xFFF5F5F5),
@@ -376,7 +474,8 @@ class _WalletPageState extends BaseState<WalletPage>
                 ),
               ],
             ),
-          )
+          ),
+          Image.asset('res/drawable/bg_banner_hyn_burn.png')
         ],
       ),
     );

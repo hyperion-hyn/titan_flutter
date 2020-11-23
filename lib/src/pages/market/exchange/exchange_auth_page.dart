@@ -8,8 +8,10 @@ import 'package:titan/src/components/auth/auth_component.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/auth_util.dart';
@@ -138,7 +140,8 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
                       _startLogin();
                     },
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -186,23 +189,31 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   _startLogin() async {
     var _wallet = WalletInheritedModel.of(context).activatedWallet.wallet;
     if (_wallet != null) {
-      var address = _wallet.getEthAccount().address;
-      var walletPassword = await UiUtil.showWalletPasswordDialogV2(
-        context,
-        _wallet,
-        authType: AuthType.exchange,
-      );
-      if (walletPassword != null) {
-        BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
-          _wallet,
-          walletPassword,
-          address,
+      if (await checkConfirmWalletPolicy()) {
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => PolicyConfirmPage(
+            PolicyType.WALLET,
+          ),
         ));
-        setState(() {
-          isLoggingIn = true;
-        });
+      } else {
+        var address = _wallet.getEthAccount().address;
+        var walletPassword = await UiUtil.showWalletPasswordDialogV2(
+          context,
+          _wallet,
+          authType: AuthType.exchange,
+        );
+        if (walletPassword != null) {
+          BlocProvider.of<ExchangeCmpBloc>(context).add(LoginEvent(
+            _wallet,
+            walletPassword,
+            address,
+          ));
+          setState(() {
+            isLoggingIn = true;
+          });
+        }
       }
-    }else {
+    } else {
       Fluttertoast.showToast(msg: 'Wallet is null');
     }
   }
@@ -256,4 +267,14 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
       ),
     );
   }
+
+
+}
+
+
+Future<bool> checkConfirmWalletPolicy() async {
+  var isConfirmWalletPolicy = await AppCache.getValue(
+    PrefsKey.IS_CONFIRM_WALLET_POLICY,
+  );
+  return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
 }

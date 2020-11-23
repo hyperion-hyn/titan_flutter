@@ -49,6 +49,9 @@ class SystemConfigEntity extends Object {
   @JsonKey(name: 'canCheckMap3NodeCount')
   int canCheckMap3NodeCount = 1;
 
+  @JsonKey(name: 'isOpenReStakingReward')
+  bool isOpenReStakingReward = false;
+
   SystemConfigEntity(
     this.ethTransferGasLimit,
     this.erc20TransferGasLimit,
@@ -65,6 +68,7 @@ class SystemConfigEntity extends Object {
     this.canShareMap3Node,
     this.canCheckMap3Node,
     this.canCheckMap3NodeCount,
+    this.isOpenReStakingReward,
   );
 
   SystemConfigEntity.def();

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
+import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -205,7 +205,7 @@ class _SocketState extends State<_SocketManager> {
     marketItemList.forEach((element) {
       var marketItemJsonStr = json.encode(MarketItemEntity(
         element.symbol,
-        KLineEntity.emptyItem(),
+        KLineEntity.fromCustom(),
         symbolName: element.symbolName,
       ).toJson());
       _emptyMarketItemStrList.add(marketItemJsonStr);

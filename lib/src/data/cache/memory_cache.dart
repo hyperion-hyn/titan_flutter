@@ -12,6 +12,7 @@ import 'package:titan/src/pages/node/model/node_product_page_vo.dart';
 class MemoryCache {
   static var NODE_SHARE_USER_KEY = "node_share_user_key";
   static var NODE_PAGE_DATA_CACHE_KEY = "node_page_data_cache_key";
+  static var MAP3_PAGE_DATA_CACHE_KEY = "map3_page_data_cache_key";
   static var NODE_PRODUCT_PAGE_DATA_CACHE_KEY = "node_product_page_data_cache_key";
   static var CONTRACT_ERROR_TRANSLATION = "contract_error_translation";
   static var instance = MemoryCache();
@@ -43,6 +44,16 @@ class MemoryCache {
     }
     return nodePageEntityVo;
   }
+
+  static Map3PageEntityVo get map3PageData {
+    String map3PageDataStr = instance.getMemoryMap(MAP3_PAGE_DATA_CACHE_KEY);
+    Map3PageEntityVo map3PageEntityVo = Map3PageEntityVo(null,List());
+    if(map3PageDataStr.length > 0){
+      map3PageEntityVo = Map3PageEntityVo.fromJson(json.decode(map3PageDataStr));
+    }
+    return map3PageEntityVo;
+  }
+
 
   static get hasNodePageData {
     String nodePageDataStr = instance.getMemoryMap(NODE_PAGE_DATA_CACHE_KEY);
@@ -84,7 +95,7 @@ class MemoryCache {
     map["nonce too high"] = S.of(Keys.rootKey.currentContext).nonce_too_high_hint;
     map["gas limit reached"] = S.of(Keys.rootKey.currentContext).gas_limit_reached_hint;
     map["insufficient funds for transfer"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_transfer_hint;
-    map["insufficient funds for gas * price + value"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_gas_price_value_hint;
+    map["insufficient funds for gas"] = S.of(Keys.rootKey.currentContext).insufficient_funds_for_gas_price_value_hint;
     map["intrinsic gas too low"] = S.of(Keys.rootKey.currentContext).intrinsic_gas_too_low_hint;
     map["Already imported"] = S.of(Keys.rootKey.currentContext).already_imported_hint;
     map["No longer valid"] = S.of(Keys.rootKey.currentContext).no_longer_valid_hint;
@@ -107,6 +118,7 @@ class MemoryCache {
     map["already collected"] = S.of(Keys.rootKey.currentContext).already_collected_hint;
     map["not half time to collect"] = S.of(Keys.rootKey.currentContext).not_half_time_to_collect_hint;
     map["provision insufficient"] = S.of(Keys.rootKey.currentContext).provision_insufficient_hint;
+    map["map3 node identity exists"] = S.of(Keys.rootKey.currentContext).duplicate_identity_hint;
     instance.setMemoryMap(CONTRACT_ERROR_TRANSLATION, json.encode(map));
   }
 
@@ -129,6 +141,12 @@ class MemoryCache {
     }
     if(errorStr.indexOf("Gas limit exceeded.") == 0){
       return errorMap["Gas limit exceeded."];
+    }
+    if(errorStr.indexOf("map3 node identity exists") == 0){
+      return errorMap["map3 node identity exists"];
+    }
+    if(errorStr.contains("insufficient funds for gas")){
+      return errorMap["insufficient funds for gas"];
     }
     if(errorMap.containsKey(errorStr)){
       return errorMap[errorStr];

@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:titan/env.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,23 +61,29 @@ class _AboueMeState extends BaseState<AboutMePage> {
           ),
           Ink(
             color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    S.of(context).app_version,
-                    style: TextStyle(color: Colors.black, fontSize: 15),
-                  ),
-                  Spacer(),
-                  Text(
-                    version,
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  if(env.buildType != BuildType.PROD)
-                    Text("(Test1.3)")
-                ],
+            child: InkWell(
+              onTap: (){
+                BlocProvider.of<UpdateBloc>(context)
+                    .add(CheckUpdate(lang: Localizations.localeOf(context).languageCode, isManual: true));
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      S.of(context).app_version,
+                      style: TextStyle(color: Colors.black, fontSize: 15),
+                    ),
+                    Spacer(),
+                    Text(
+                      version,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    if(env.buildType != BuildType.PROD)
+                      Text("(Test1.3)")
+                  ],
+                ),
               ),
             ),
           ),

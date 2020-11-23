@@ -23,6 +23,7 @@ SystemConfigEntity _$SystemConfigEntityFromJson(Map<String, dynamic> json) {
     json['canShareMap3Node'] as bool ?? true,
     json['canCheckMap3Node'] as bool ?? true,
     json['canCheckMap3NodeCount'] as int ?? 1,
+    json['isOpenReStakingReward'] as bool ?? false,
   );
 }
 
@@ -42,4 +43,5 @@ Map<String, dynamic> _$SystemConfigEntityToJson(SystemConfigEntity instance) => 
       'canShareMap3Node': instance.canShareMap3Node,
       'canCheckMap3Node': instance.canCheckMap3Node,
       'canCheckMap3NodeCount': instance.canCheckMap3NodeCount,
+      'isOpenReStakingReward': instance.isOpenReStakingReward,
     };
