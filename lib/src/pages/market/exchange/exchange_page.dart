@@ -679,44 +679,39 @@ class _ExchangePageState extends BaseState<ExchangePage>
     )}';
 
     // price
-    var _latestPrice = marketItemEntity.kLineEntity != null
-        ? FormatUtil.truncateDecimalNum(
-              Decimal.parse(
-                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
-              4,
-            ) ??
-            '-'
-        : '-';
-    var _latestPriceString = '$_latestPrice';
-
     var _selectedQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
-    var _latestQuotePrice = _selectedQuote == null
-        ? '--'
-        : FormatUtil.truncateDoubleNum(
-            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-            4,
-          );
-    var _latestRmbPriceString =
-        '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    var _latestPrice = '-';
+    var _latestQuotePriceString = '-';
+    var _latestPercentString = '-';
+    var _latestPercentBgColor = HexColor('#FF53AE86');
 
-    // _latestPercent
-    double _latestPercent =
-        MarketInheritedModel.of(context).getRealTimePricePercent(
-      marketItemEntity.symbol,
-    );
-    var _latestPercentBgColor = _latestPercent == 0
-        ? HexColor('#FF999999')
-        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
-    var _latestPercentString =
-        '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
-      _latestPercent * 100.0,
-      2,
-    )}%';
+    try {
+      _latestPrice = FormatUtil.truncateDecimalNum(
+        Decimal.parse(marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
+        4,
+      );
 
-    //print("[marketItemEntity] symbol:${marketItemEntity.symbolName}, amount:${marketItemEntity.kLineEntity.amount}");
+      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        4,
+      );
+
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+
+      double _latestPercent =
+          MarketInheritedModel.of(context).getRealTimePricePercent(
+        marketItemEntity.symbol,
+      );
+      _latestPercentBgColor =
+          _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
+      _latestPercentString =
+          '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+    } catch (e) {}
+
     return Column(
       children: <Widget>[
         InkWell(
@@ -790,7 +785,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  _latestPriceString ?? '--',
+                                  _latestPrice,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -800,7 +795,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                                   height: 4,
                                 ),
                                 Text(
-                                  _latestRmbPriceString,
+                                  _latestQuotePriceString,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
