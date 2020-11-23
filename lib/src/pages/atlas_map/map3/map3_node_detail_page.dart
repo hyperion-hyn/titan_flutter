@@ -21,6 +21,8 @@ import 'package:titan/src/pages/atlas_map/entity/map3_introduce_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_user_entity.dart';
 import 'package:titan/src/pages/atlas_map/event/node_event.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_tx_logs_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_user_list_page.dart';
 import 'package:titan/src/pages/atlas_map/widget/custom_stepper.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
 import 'package:titan/src/pages/node/model/enum_state.dart';
@@ -564,6 +566,69 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   TabController _detailTabController;
   Map3NodeDetailType _detailCurrentIndex = Map3NodeDetailType.tx_log;
 
+  List<Widget> get _actions {
+    List<Widget> actions = [];
+
+    var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
+    var hasShare = config?.canShareMap3Node ?? true;
+
+    if (_canExit) {
+      actions = [
+        FlatButton(
+          onPressed: _exitAction,
+          child: Text(
+            "终止",
+            style: TextStyle(
+              color: HexColor("#999999"),
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      ];
+    }
+
+    if (hasShare) {
+      Widget shareWidget = IconButton(
+        icon: Image.asset(
+          "res/drawable/map3_node_share.png",
+          width: 15,
+          height: 18,
+          color: HexColor("#999999"),
+        ),
+        tooltip: S.of(context).share,
+        onPressed: _shareAction,
+      );
+
+      actions.add(shareWidget);
+    }
+    return actions;
+  }
+
+  bool get _hasFootView {
+    if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
+      if (_showLoadingTxLog) {
+        return false;
+      } else {
+        if (_txLogList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    } else {
+      if (_showLoadingUserList) {
+        return false;
+      } else {
+        if (_userList.isEmpty) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    }
+  }
+
   @override
   void initState() {
     //WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
@@ -638,6 +703,27 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
+    var _lastCurrentBlockHeight = _currentBlockHeight;
+    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
+
+    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    if (_lastCurrentBlockHeight == 0) {
+      _lastCurrentBlockHeight = _currentBlockHeight;
+    }
+    // LogUtil.printMessage(
+    //     "[${widget.runtimeType}] _currentEpoch:$_currentEpoch, _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
+    if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
+        (_currentBlockHeight > _lastCurrentBlockHeight)) {
+      // LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
+      _refreshData();
+    }
+  }
+
   /*
   void _afterLayout(_) {
     _getMorePosition();
@@ -666,93 +752,17 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   Widget build(BuildContext context) {
-    var _lastCurrentBlockHeight = _currentBlockHeight;
-    _currentEpoch = AtlasInheritedModel.of(context).committeeInfo?.epoch ?? 0;
-
-    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
-    if (_lastCurrentBlockHeight == 0) {
-      _lastCurrentBlockHeight = _currentBlockHeight;
-    }
-    // LogUtil.printMessage(
-    //     "[${widget.runtimeType}] _currentEpoch:$_currentEpoch, _releaseEpoch: $_releaseEpoch, endEpoch:${_map3infoEntity.endEpoch}, _activeEpoch:$_activeEpoch, startEpoch:${_map3infoEntity.startEpoch}");
-
-    List<Widget> actions = [];
-
-    var config = SettingInheritedModel.ofConfig(context).systemConfigEntity;
-    var hasShare = config?.canShareMap3Node ?? true;
-
-    if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
-            (_currentBlockHeight > _lastCurrentBlockHeight)) {
-      // LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
-      _refreshData();
-    }
-
-    if (_canExit) {
-      actions = [
-        FlatButton(
-          onPressed: _exitAction,
-          child: Text(
-            "终止",
-            style: TextStyle(
-              color: HexColor("#999999"),
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
-      ];
-    }
-
-    if (hasShare) {
-      Widget shareWidget = IconButton(
-        icon: Image.asset(
-          "res/drawable/map3_node_share.png",
-          width: 15,
-          height: 18,
-          color: HexColor("#999999"),
-        ),
-        tooltip: S.of(context).share,
-        onPressed: _shareAction,
-      );
-
-      actions.add(shareWidget);
-    }
-
     return WillPopScope(
       onWillPop: () async => true,
       child: Scaffold(
         backgroundColor: DefaultColors.colorf5f5f5,
         appBar: BaseAppBar(
           baseTitle: S.of(context).node_contract_detail,
-          actions: actions,
+          actions: _actions,
         ),
         body: _pageWidget(context),
       ),
     );
-  }
-
-  bool get _hasFootView {
-    if (_detailCurrentIndex == Map3NodeDetailType.tx_log) {
-      if (_showLoadingTxLog) {
-        return false;
-      } else {
-        if (_txLogList.isEmpty) {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    } else {
-      if (_showLoadingUserList) {
-        return false;
-      } else {
-        if (_userList.isEmpty) {
-          return false;
-        } else {
-          return true;
-        }
-      }
-    }
   }
 
   /// TODO:Widget
@@ -767,7 +777,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               bloc: _loadDataBloc,
               //enablePullDown: false,
               enablePullUp: _nodeAddress?.isNotEmpty ?? false,
-              hasFootView: _hasFootView,
+              //hasFootView: _hasFootView,
               onRefresh: _refreshData,
               onLoadingMore: _loadDelegateMoreData,
               child: CustomScrollView(
@@ -801,38 +811,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                   SliverToBoxAdapter(child: _contractProgressWidget()),
                   _spacer(),
 
+                  // 3.3流水
                   _detailTabWidget(),
                   _detailWidget(),
-
-                  /*
-                  // 4.参与人员列表信息
-                  SliverToBoxAdapter(
-                    child: Material(
-                      color: Colors.white,
-                      child: NodeJoinMemberWidget(
-                        nodeId: _nodeId,
-                        isShowInviteItem: false,
-                        loadDataBloc: _loadDataBloc,
-                      ),
-                    ),
-                  ),
-                  _spacer(),
-
-
-                  // 5.合约流水信息
-                  SliverToBoxAdapter(child: _delegateRecordHeaderWidget()),
-
-                  (_delegateRecordList?.isNotEmpty ?? false)
-                      ? SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                          return delegateRecordItemWidget(
-                            _delegateRecordList[index],
-                            map3CreatorAddress: _nodeCreatorAddress,
-                          );
-                        }, childCount: _delegateRecordList.length))
-                      : emptyListWidget(title: "节点记录为空"),
-
-                   */
                 ],
               )),
         ),
@@ -2205,27 +2186,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         children: [
           Visibility(
             visible: _detailCurrentIndex == Map3NodeDetailType.tx_log,
-            child: Stack(
-              children: <Widget>[
-                Visibility(
-                  visible: !_showLoadingTxLog,
-                  child: _txLogView(),
-                ),
-                _loadingWidget(visible: _showLoadingTxLog),
-              ],
-            ),
+            child: _txLogView(),
           ),
           Visibility(
             visible: _detailCurrentIndex == Map3NodeDetailType.user_list,
-            child: Stack(
-              children: <Widget>[
-                Visibility(
-                  visible: !_showLoadingUserList,
-                  child: _userListView(),
-                ),
-                _loadingWidget(visible: _showLoadingUserList),
-              ],
-            ),
+            child: _userListView(),
           ),
         ],
       ),
@@ -2233,6 +2198,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   _txLogView() {
+    return Map3NodeTxLogsPage(_map3infoEntity, _loadDataBloc);
+
     if (_txLogList.isEmpty) {
       return Container(
         width: double.infinity,
@@ -2258,6 +2225,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   }
 
   _userListView() {
+    return Map3NodeUserListPage(_map3infoEntity, _loadDataBloc);
+
     if (_userList.isEmpty) {
       return Container(
         width: double.infinity,
@@ -2447,6 +2416,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       }
       return;
     }
+    return;
 
     try {
       _currentPageTxLog = 1;
@@ -2479,6 +2449,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       }
       return;
     }
+    return;
 
     try {
       _currentPageTxLog++;
@@ -2510,6 +2481,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // userList
   void _loadUserListData() async {
+
     if (_nodeAddress.isEmpty) {
       if (mounted) {
         setState(() {
@@ -2518,6 +2490,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       }
       return;
     }
+    return;
 
     _currentPageUserList = 1;
     List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
@@ -2548,6 +2521,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       }
       return;
     }
+    return;
 
     _currentPageUserList++;
 
