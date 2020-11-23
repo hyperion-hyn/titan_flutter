@@ -447,28 +447,35 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _assetView() {
-    var _totalByUsdt = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalUsdt();
-    var _coinQuotePrice = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.quoteVo
-        ?.price;
+    var _usdtTotalQuotePrice = '--';
+
+    try {
+      var _totalByUSDT = ExchangeInheritedModel.of(context)
+          .exchangeModel
+          .activeAccount
+          ?.assetList
+          ?.getTotalUsdt();
+
+      var _coinQuotePrice = WalletInheritedModel.of(context)
+          .activatedQuoteVoAndSign('USDT')
+          ?.quoteVo
+          ?.price;
+
+      _usdtTotalQuotePrice = FormatUtil.truncateDecimalNum(
+        _totalByUSDT *
+            Decimal.parse(
+              '$_coinQuotePrice',
+            ),
+        4,
+      );
+    } catch (e) {}
+
     var _quoteSymbol = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
-          ? FormatUtil.truncateDecimalNum(
-              // ignore: null_aware_before_operator
-              _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
-              4,
-            )
-          : '--';
       return Text.rich(
         TextSpan(children: [
           TextSpan(
@@ -481,7 +488,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 fontSize: 12,
               )),
           TextSpan(
-            text: ' ${_quoteSymbol != null ? '($_quoteSymbol)' : ''}',
+            text: ' (${_quoteSymbol ?? ''})',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
