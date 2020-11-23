@@ -207,22 +207,18 @@ class _ExchangePageState extends BaseState<ExchangePage>
 
   _exchange() {
     var _selectedCoinToHYN = "--";
-    var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
-      _getMarketItem(_selectedCoin)?.kLineEntity?.close,
-      4,
-    );
-    if (_hynToSelectedCoin != null &&
-        _hynToSelectedCoin != "null" &&
-        double.parse(_hynToSelectedCoin) > 0) {
+    var _hynToSelectedCoin = '--';
+
+    try {
+      _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
+        _getMarketItem(_selectedCoin)?.kLineEntity?.close,
+        4,
+      );
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
-            Decimal.fromInt(1) /
-                (Decimal.parse(
-                  _hynToSelectedCoin.toString(),
-                )),
-            4,
-          ) ??
-          '--';
-    }
+        (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)),
+        4,
+      );
+    } catch (e) {}
 
     return Column(
       children: <Widget>[
