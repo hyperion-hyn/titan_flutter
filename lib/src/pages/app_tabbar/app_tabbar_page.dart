@@ -350,7 +350,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   builder: (context, state) {
                 if (state is CheckNewAnnouncementState &&
                     state.announcement != null) {
-                  //todo maprich _isShowAnnounceDialog 为 true
                   _isShowAnnounceDialog = false;
                   Application.isUpdateAnnounce = true;
                 }
