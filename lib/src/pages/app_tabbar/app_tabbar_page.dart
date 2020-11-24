@@ -60,7 +60,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
-  var _fabsHeight = 56;
+  var _fabsHeight = 136;
 
   int _currentTabIndex = 0;
 
@@ -110,7 +110,8 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     Future.delayed(Duration(milliseconds: 500)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
+      BlocProvider.of<WalletCmpBloc>(context)
+          .add(UpdateWalletPageEvent(updateGasPrice: true));
     });
 
 //    Future.delayed(Duration(milliseconds: 2000)).then((value) {
@@ -137,7 +138,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
-
   }
 
   @override

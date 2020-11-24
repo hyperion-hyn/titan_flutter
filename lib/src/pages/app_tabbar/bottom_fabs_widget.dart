@@ -42,20 +42,20 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
 
   void _showFireModalBottomSheet(context) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
-        ),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
         context: context,
         builder: (ctx) {
           return Container(
 //            decoration: BoxDecoration(
 //            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),),
-            margin: EdgeInsets.only(top: 12,bottom: 31),
+            margin: EdgeInsets.only(top: 12, bottom: 31),
             child: new Wrap(
               children: <Widget>[
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(ctx);
                     showDialog(
                         context: context,
@@ -66,18 +66,27 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      children: <Widget>[
-                        SizedBox(width: 20,),
-                        Image.asset('res/drawable/ic_home_clear.png',width: 15,),
-                        SizedBox(width: 12,),
-                        Text(S.of(context).Clean,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
-                      ]
-                    ),
+                    child: Row(children: <Widget>[
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Image.asset(
+                        'res/drawable/ic_home_clear.png',
+                        width: 15,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Text(
+                        S.of(context).Clean,
+                        style:
+                            TextStyle(fontSize: 15, color: HexColor("#333333")),
+                      ),
+                    ]),
                   ),
                 ),
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.pop(ctx);
                   },
                   child: Padding(
@@ -85,10 +94,21 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
 //                    padding: const EdgeInsets.only(top:5,bottom: 10,left: 10,right: 10),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(width: 21,),
-                        Image.asset('res/drawable/ic_close.png',width: 12,),
-                        SizedBox(width: 15,),
-                        Text(S.of(context).cancel,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
+                        SizedBox(
+                          width: 21,
+                        ),
+                        Image.asset(
+                          'res/drawable/ic_close.png',
+                          width: 12,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(
+                          S.of(context).cancel,
+                          style: TextStyle(
+                              fontSize: 15, color: HexColor("#333333")),
+                        ),
                       ],
                     ),
                   ),
@@ -123,35 +143,49 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
     if (_isShow == true) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            if (widget.showBurnBtn == true)
-              FloatingActionButton(
-                onPressed: () => _showFireModalBottomSheet(context),
-                mini: true,
-                heroTag: 'cleanData',
-                backgroundColor: Colors.white,
-                child: Image.asset(
-                  'res/drawable/ic_logo.png',
-                  width: 24,
-                  color: Colors.black87,
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Spacer(),
+                Container(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  child: Image.asset('res/drawable/ic_hyn_coin.png'),
                 ),
-              ),
-            Spacer(),
-            FloatingActionButton(
-              onPressed: () {
-                Application.eventBus.fire(ToMyLocationEvent());
-                //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
-              },
-              mini: true,
-              heroTag: 'myLocation',
-              backgroundColor: Colors.white,
-              child: Icon(
-                Icons.my_location,
-                color: Colors.black87,
-                size: 24,
-              ),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                if (widget.showBurnBtn == true)
+                  FloatingActionButton(
+                    onPressed: () => _showFireModalBottomSheet(context),
+                    mini: true,
+                    heroTag: 'cleanData',
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      'res/drawable/ic_logo.png',
+                      width: 24,
+                      color: Colors.black87,
+                    ),
+                  ),
+                Spacer(),
+                FloatingActionButton(
+                  onPressed: () {
+                    Application.eventBus.fire(ToMyLocationEvent());
+                    //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
+                  },
+                  mini: true,
+                  heroTag: 'myLocation',
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.my_location,
+                    color: Colors.black87,
+                    size: 24,
+                  ),
+                )
+              ],
             )
           ],
         ),
