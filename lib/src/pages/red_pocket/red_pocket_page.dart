@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_exchange_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -405,7 +406,15 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   children: [
                     Expanded(
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RedPocketExchangePage(),
+                            ),
+                          );
+                        },
                         child: Row(
                           children: [
                             Column(
