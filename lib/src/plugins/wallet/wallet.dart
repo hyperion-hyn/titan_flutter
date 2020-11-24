@@ -374,8 +374,9 @@ class Wallet {
           parameters: [web3.EthereumAddress.fromHex(toAddress), value],
           gasPrice: web3.EtherAmount.inWei(gasPrice),
           maxGas: gasLimit,
-          nonce: nonce),
-      fetchChainIdFromNetworkId: true,
+          nonce: nonce,
+          type: MessageType.typeNormal),
+      fetchChainIdFromNetworkId: false,
     );
 
     return txHash;
