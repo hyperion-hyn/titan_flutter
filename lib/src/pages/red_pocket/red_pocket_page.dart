@@ -622,7 +622,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     rowTipsItem('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
                     rowTipsItem('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
                     rowTipsItem('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
-                    rowTipsItem('RP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。')
+                    rowTipsItem('RP总发行量为100万枚，在红包HRC30智能合约内进行传导和空投，无预挖，无预售。')
                   ],
                 ),
                 SizedBox(
