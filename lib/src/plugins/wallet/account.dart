@@ -46,6 +46,7 @@ class Account {
       token = SupportedTokens.BTC;
     } else if (json['coinType'] == CoinType.HYN_ATLAS){
       token = SupportedTokens.HYN_Atlas;
+      erc20Tokens.add(SupportedTokens.HYN_RP_ERC30_ROPSTEN);
     }
     return Account(
       address: json['address'],
