@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:intl/intl.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+
 
 class RedPocketExchangeRecordsPage extends StatefulWidget {
   @override
@@ -19,19 +21,17 @@ class RedPocketExchangeRecordsPage extends StatefulWidget {
 class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
-  int currentPage = 0;
+  int _currentPage = 0;
   final AtlasApi _atlasApi = AtlasApi();
-  Map<String, dynamic> _response;
-
-  get _flatTextStyle => TextStyle(
-        color: HexColor("#1F81FF"),
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      );
+  var _address = "";
+  List<Map3InfoEntity> _dataList = [];
 
   @override
   void initState() {
     super.initState();
+
+    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = activatedWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
@@ -41,19 +41,17 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
 
   void getNetworkData() async {
     try {
-      var netData;
-      _response = netData.data;
-      if (netData != null) {
-        _response = netData.data;
-      }
-      if (mounted) {
-        setState(() {
-          if (_response.isEmpty) {
-            loadDataBloc.add(LoadEmptyEvent());
-          } else {
+      var netData = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
+
+      if (netData?.map3Nodes?.isNotEmpty??false) {
+        _dataList = netData.map3Nodes;
+        if (mounted) {
+          setState(() {
             loadDataBloc.add(RefreshSuccessEvent());
-          }
-        });
+          });
+        }
+      } else {
+        loadDataBloc.add(LoadFailEvent());
       }
     } catch (e) {
       loadDataBloc.add(LoadFailEvent());
@@ -62,11 +60,11 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
 
   void getMoreNetworkData() async {
     try {
-      currentPage = currentPage + 1;
-      var netData;
+      _currentPage = _currentPage + 1;
+      var netData = await _atlasApi.getMap3StakingList(_address, page: _currentPage, size: 10);
 
-      if (netData != null) {
-        _response = netData.data;
+      if (netData?.map3Nodes?.isNotEmpty??false) {
+        _dataList = netData.map3Nodes;
         loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         loadDataBloc.add(LoadMoreEmptyEvent());
@@ -86,15 +84,10 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text(
-          '新的申请',
-          style: TextStyle(color: Colors.white),
-        ),
+      backgroundColor: HexColor('#F8F8F8'),
+      appBar: BaseAppBar(
+        baseTitle: '传导明细',
+        backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
     );
@@ -117,13 +110,11 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) {
-              
-
               var key = '昨天';
               return Container(
-                color: Colors.white,
+                color: HexColor('#F8F8F8'),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
+                  horizontal: 16,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,12 +123,13 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
                         ? Padding(
                             padding: const EdgeInsets.only(
                               top: 16,
+                              left: 12,
                             ),
                             child: Text(
                               key ?? '',
                               style: TextStyle(
                                 color: HexColor("#999999"),
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.normal,
                               ),
                             ),
@@ -146,52 +138,101 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
                     ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: 2,
+                        itemCount: _dataList.length,
                         itemBuilder: (context, index) {
-                        
-                          
                           var createAt = DateTime.now().millisecondsSinceEpoch;
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: Container(
-                              padding: const EdgeInsets.all(
-                                16,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 12,
                               ),
                               decoration: BoxDecoration(
-                                color: HexColor('#F2F2F2'),
+                                color: HexColor('#FFFFFF'),
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(6.0),
                                 ), //设置四周圆角 角度
                               ),
                               child: Row(
                                 children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 10,
+                                    ),
+                                    child: Image.asset(
+                                      "res/drawable/red_pocket_coins.png",
+                                      width: 28,
+                                      height: 28,
+                                    ),
+                                  ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      Text(
-                                        'kk',
-                                        style: TextStyle(
-                                          color: HexColor("#333333"),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.normal,
-                                        ),
+                                      Row(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 6,
+                                            ),
+                                            child: Text(
+                                              '2 份',
+                                              style: TextStyle(
+                                                color: HexColor("#333333"),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            '共 1000 HYN',
+                                            style: TextStyle(
+                                              color: HexColor("#999999"),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      if (createAt > 0)
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            top: 6,
-                                          ),
-                                          child: Text(
-                                            DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                                            style: TextStyle(fontSize: 12, color: Colors.black54),
-                                            textAlign: TextAlign.left,
-                                          ),
+                                      SizedBox(height: 6,),
+                                      Text(
+                                        '抵押ID：3',
+                                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: HexColor('#333333'),
                                         ),
+                                        textAlign: TextAlign.left,
+                                      ),
                                     ],
                                   ),
                                   Spacer(),
-                                  
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        '+ 10RP',
+                                        style: TextStyle(
+                                          color: HexColor("#333333"),
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      SizedBox(height: 6,),
+                                      Text(
+                                        '21:21:21',
+                                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: HexColor('#999999'),
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -201,11 +242,10 @@ class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsP
                 ),
               );
             },
-            childCount: _response?.keys?.length ?? 0,
+            childCount: 10,
           ))
         ],
       ),
     );
   }
-
 }
