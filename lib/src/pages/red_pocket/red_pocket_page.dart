@@ -398,49 +398,81 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$myStaking HYN',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '$myStaking HYN',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                Text(
+                                  '我的抵押',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '我的抵押',
-                            style: TextStyle(
-                              fontSize: 13,
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 15,
                               color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$rpYesterday RP',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  '$rpYesterday RP',
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                Text(
+                                  '昨日获得',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '昨日获得',
-                            style: TextStyle(
-                              fontSize: 13,
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 15,
                               color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -451,47 +483,59 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$totalStaking HYN',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '全网抵押',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: DefaultColors.color999,
-                            ),
+                      flex: 1,
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '$totalStaking HYN',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                '全网抵押',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: DefaultColors.color999,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$totalTransmission RP',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '全网累计传导',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: DefaultColors.color999,
-                            ),
+                      flex: 1,
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '$totalTransmission RP',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              SizedBox(
+                                height: 4.0,
+                              ),
+                              Text(
+                                '全网累计传导',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: DefaultColors.color999,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
