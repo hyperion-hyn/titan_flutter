@@ -102,6 +102,28 @@ class HYNApi {
     return txHash;
   }
 
+  static Future<String> sendTransferHYNErc30(
+      String password, BigInt amount, String toAddress, localWallet.Wallet wallet, String contractAddress,
+      {String gasPrice, int gasLimit}) async {
+    if (gasPrice == null) {
+      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      gasLimit = 100000;
+    }
+    final txHash = await wallet.sendHYNErc30Transaction(
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice),
+      value: amount,
+      toAddress: toAddress,
+      gasLimit: gasLimit,
+    );
+
+    logger.i('HYN transaction committed，txhash $txHash ');
+    return txHash;
+  }
+
   static Future<String> transCreateAtlasNode(
     CreateAtlasEntity createAtlasEntity,
     String password,
@@ -253,8 +275,10 @@ class HYNApi {
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: payload.name, // ''
-          details: payload.describe, //''
+          name: payload.name,
+          // ''
+          details: payload.describe,
+          //''
           identity: payload.nodeId,
           securityContact: payload.connect,
           website: payload.home),
@@ -405,12 +429,12 @@ class HYNApi {
         typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        if(isWallet){
+        if (isWallet) {
           typeStr = S.of(context).msg_collect_re_delegation_reward + "至Map3";
           String value = "0";
           amountStr = "$value";
           recordAmountStr = getTransRecordAmount(value);
-        }else{
+        } else {
           typeStr = S.of(context).msg_collect_re_delegation_reward;
           String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
           amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
@@ -452,7 +476,6 @@ class HYNApi {
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
-
         /*
 
         * 根据角色，设置，如果是创建人， 设置true/false，展示： （下期预设，节点续约/停止续约），
@@ -515,8 +538,9 @@ class HYNApi {
     }
   }
 
-  static String toAddressHint(int hynMessageType,bool isFrom){
-    var titleStr = isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
+  static String toAddressHint(int hynMessageType, bool isFrom) {
+    var titleStr =
+        isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
     switch (hynMessageType) {
       case MessageType.typeNormal:
         return titleStr;

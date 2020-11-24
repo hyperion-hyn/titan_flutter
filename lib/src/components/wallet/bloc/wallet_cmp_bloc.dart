@@ -249,6 +249,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
   WalletVo walletToWalletCoinsVo(Wallet wallet) {
     List<CoinVo> coins = [];
     var hynContractCoin;
+    var hynRPContractCoin;
     for (var account in wallet.accounts) {
       // add public chain coin
       CoinVo coin = CoinVo(
@@ -276,7 +277,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
+        if (contractCoin.symbol == SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol) {
+          hynRPContractCoin = contractCoin;
+        } else if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           hynContractCoin = contractCoin;
         } else {
           coins.add(contractCoin);
@@ -285,6 +288,9 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
     }
     if (hynContractCoin != null) {
       coins.add(hynContractCoin);
+    }
+    if (hynRPContractCoin != null) {
+      coins.add(hynRPContractCoin);
     }
     return WalletVo(wallet: wallet, coins: coins);
   }
