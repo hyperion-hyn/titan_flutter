@@ -225,8 +225,8 @@ class _Map3NodeCancelState extends BaseState<Map3NodeCancelPage> {
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
-    LogUtil.printMessage(
-        "[${widget.runtimeType}] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
+    // LogUtil.printMessage(
+    //     "[${widget.runtimeType}] _currentEpoch: $_currentEpoch, _currentBlockHeight:$_currentBlockHeight");
 
     var walletAddressStr =
         "${S.of(context).wallet_address} ${UiUtil.shortEthAddress(WalletUtil.ethAddressToBech32Address(_walletAddress) ?? "***", limitLength: 9)}";

@@ -51,6 +51,8 @@ import 'package:titan/src/widget/all_page_state/all_page_state.dart' as all_page
 import 'package:titan/src/widget/wallet_widget.dart';
 import 'package:web3dart/src/models/validator_information_entity.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:titan/src/components/setting/system_config_entity.dart';
+import 'package:titan/src/components/setting/setting_component.dart';
 
 class AtlasDetailPage extends StatefulWidget {
   final String atlasNodeId;
@@ -95,11 +97,13 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   var showMyMap3 = false;
   List<Map3InfoEntity> showMap3List = [];
   List<RewardHistoryEntity> rewardHistoryList = [];
+  SystemConfigEntity systemConfigEntity;
 
   @override
   void initState() {
     super.initState();
     _activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+    systemConfigEntity = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity;
     _refreshData();
     _shakeAnimationController = new ShakeAnimationController();
     _leftTextAnimationController = new ShakeAnimationController();
@@ -457,7 +461,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                 height: 40,
               ),
               InkWell(
-                onTap: () {
+                onTap: () async {
                   if (!showMyMap3) {
                     UiUtil.showAlertView(
                       context,
@@ -478,86 +482,82 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                   } else {
                     var nodeJoinType =
                         NodeJoinType.values[_atlasInfoEntity.myMap3[_selectedMap3NodeValue].mine.creator];
-                    switch (nodeJoinType) {
-                      case NodeJoinType.CREATOR:
-                      case NodeJoinType.JOINER:
-                        UiUtil.showAlertView(
-                          context,
-                          title: S.of(context).receive_reward,
-                          actions: [
-                            ClickOvalButton(
-                              S.of(context).cancel,
-                              () {
-                                Navigator.pop(context);
-                              },
-                              width: 120,
-                              height: 32,
-                              fontSize: 14,
-                              fontColor: DefaultColors.color999,
-                              btnColor: Colors.transparent,
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            ClickOvalButton(
-                              S.of(context).receive,
-                              () async {
-                                var map3Address = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address;
-                                var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-                                  MessageType.typeCollectReStakingReward,
-                                  map3Address: map3Address,
-                                  atlasAddress: widget.atlasNodeAddress,
-                                );
-                                if (lastTxIsPending) {
-                                  return;
-                                }
-                                if(leftReward <= Decimal.fromInt(0)){
-                                  Fluttertoast.showToast(msg: "当前可提金额为0");
-                                  return;
-                                }
+                    if (nodeJoinType == NodeJoinType.CREATOR ||
+                        (systemConfigEntity.isOpenReStakingReward && nodeJoinType == NodeJoinType.JOINER)) {
+                      var map3Address = _atlasInfoEntity.myMap3[_selectedMap3NodeValue].address;
+                      var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+                        MessageType.typeCollectReStakingReward,
+                        map3Address: map3Address,
+                        atlasAddress: widget.atlasNodeAddress,
+                      );
+                      if (lastTxIsPending) {
+                        return;
+                      }
+                      if (leftReward <= Decimal.fromInt(0)) {
+                        Fluttertoast.showToast(msg: "当前可提金额为0");
+                        return;
+                      }
 
-                                Navigator.pop(context);
-                                AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
-                                  nodeName: _atlasInfoEntity.name,
-                                  nodeId: _atlasInfoEntity.nodeId,
-                                  map3Address: map3Address,
-                                  atlasAddress: widget.atlasNodeAddress,
-                                );
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Map3NodeConfirmPage(
-                                        message: message,
-                                      ),
-                                    ));
-                              },
-                              width: 120,
-                              height: 38,
-                              fontSize: 16,
-                            ),
-                          ],
-                          content: S.of(context).withdraw_atlas_reward_staking_rate_distribute,
-                        );
-
-                        break;
-                      /*case NodeJoinType.JOINER:
-                        UiUtil.showAlertView(
-                          context,
-                          title: S.of(context).receive_reward,
-                          actions: [
-                            ClickOvalButton(
-                              S.of(context).ok,
-                              () {
-                                Navigator.pop(context);
-                              },
-                              width: 160,
-                              height: 38,
-                              fontSize: 16,
-                            ),
-                          ],
-                          content: S.of(context).cant_receive_reward_contact_master_distribute,
-                        );
-                        break;*/
+                      UiUtil.showAlertView(
+                        context,
+                        title: S.of(context).receive_reward,
+                        actions: [
+                          ClickOvalButton(
+                            S.of(context).cancel,
+                            () {
+                              Navigator.pop(context);
+                            },
+                            width: 120,
+                            height: 32,
+                            fontSize: 14,
+                            fontColor: DefaultColors.color999,
+                            btnColor: Colors.transparent,
+                          ),
+                          SizedBox(
+                            width: 8,
+                          ),
+                          ClickOvalButton(
+                            S.of(context).receive,
+                            () async {
+                              Navigator.pop(context);
+                              AtlasMessage message = ConfirmAtlasReceiveAwardMessage(
+                                nodeName: _atlasInfoEntity.name,
+                                nodeId: _atlasInfoEntity.nodeId,
+                                map3Address: map3Address,
+                                atlasAddress: widget.atlasNodeAddress,
+                              );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Map3NodeConfirmPage(
+                                      message: message,
+                                    ),
+                                  ));
+                            },
+                            width: 120,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: S.of(context).withdraw_atlas_reward_staking_rate_distribute,
+                      );
+                    } else if (nodeJoinType == NodeJoinType.JOINER) {
+                      UiUtil.showAlertView(
+                        context,
+                        title: S.of(context).receive_reward,
+                        actions: [
+                          ClickOvalButton(
+                            S.of(context).ok,
+                            () {
+                              Navigator.pop(context);
+                            },
+                            width: 160,
+                            height: 38,
+                            fontSize: 16,
+                          ),
+                        ],
+                        content: S.of(context).cant_receive_reward_contact_master_distribute,
+                      );
                     }
                   }
                 },
@@ -821,7 +821,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
               ],
             ),
           ),
-          if(infoContentList.length != 0)
+          if (infoContentList.length != 0)
             stakeInfoView(infoTitleList, infoContentList, isShowAll, () {
               setState(() {
                 isShowAll = true;

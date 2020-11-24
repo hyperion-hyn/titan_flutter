@@ -22,7 +22,7 @@ class ConvertTokenUnit {
   }
 
   static Decimal weiToDecimal(BigInt wei, [int decimals = 18]) {
-    return Decimal.parse(wei.toString()) / Decimal.fromInt(10).pow(decimals);
+    return (Decimal.tryParse(wei.toString())??Decimal.fromInt(0)) / Decimal.fromInt(10).pow(decimals);
   }
 
   static Decimal weiToEther({BigInt weiBigInt, int weiInt}) {

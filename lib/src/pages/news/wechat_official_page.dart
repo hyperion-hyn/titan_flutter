@@ -64,7 +64,7 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+    bool isZh = SettingInheritedModel.of(context)?.languageModel?.isZh()??true;
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16),
@@ -205,7 +205,7 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
     var domesticList;
     var foreignList;
     var audioList;
-    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+    bool isZh = SettingInheritedModel.of(context)?.languageModel?.isZh()??true;
 
     paperList = await _getPowerListByPage(PAPER_TAG, FIRST_PAGE);
     if(isZh){
@@ -259,7 +259,7 @@ class WechatOfficialState extends InfoState<WechatOfficialPage> with AutomaticKe
   }
 
   Future<List<InfoItemVo>> _getPowerListByPage(int tags,int page) {
-    bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+    bool isZh = SettingInheritedModel.of(context)?.languageModel?.isZh()??true;
 
     return _getPowerList(CATEGORY, tags, page, isZh);
   }

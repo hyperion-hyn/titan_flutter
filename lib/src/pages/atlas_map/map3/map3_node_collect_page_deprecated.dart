@@ -35,7 +35,7 @@ class _Map3NodeCollectState extends State<Map3NodeCollectPage> {
 
   @override
   Widget build(BuildContext context) {
-    var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
+    //var ethQuotePrice = WalletInheritedModel.of(context).activatedQuoteVoAndSign('ETH')?.quoteVo?.price ?? 0; //
     var coinVo = WalletInheritedModel.of(context).getCoinVoOfHyn();
 
     return Scaffold(

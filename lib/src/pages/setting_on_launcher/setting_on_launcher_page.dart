@@ -118,7 +118,7 @@ class SettingOnLauncherPageState extends State<SettingOnLauncherPage> {
                               _currentLanguage = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel;
                             }
                             var quoteSign = SupportedQuoteSigns.of('USD');
-                            if (_currentLanguage.isZh() == true) {
+                            if (_currentLanguage?.isZh()??true == true) {
                               quoteSign = SupportedQuoteSigns.of('CNY');
                             }
                             WalletInheritedModel.saveQuoteSign(quoteSign);

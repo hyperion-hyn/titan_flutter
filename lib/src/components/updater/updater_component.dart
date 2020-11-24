@@ -90,7 +90,7 @@ class _UpdaterComponentState extends State<UpdaterComponent> {
             },
             child: Container(
               child: Padding(
-                padding: const EdgeInsets.only(top: 59.0),
+                padding: const EdgeInsets.only(top: 159.0),
                 child: Stack(
                   alignment: Alignment.topCenter,
                   children: <Widget>[

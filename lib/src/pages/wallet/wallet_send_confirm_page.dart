@@ -587,12 +587,18 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
               widget.transferAmount, widget.coinVo.decimals),
         );
       } else {
-        await _transferErc20(
+        var txHash = await _transferErc20(
             walletPassword,
             ConvertTokenUnit.strToBigInt(
                 widget.transferAmount, widget.coinVo.decimals),
             widget.receiverAddress,
             activatedWallet.wallet);
+        if(txHash == null){
+          setState(() {
+            isTransferring = false;
+          });
+          return;
+        }
       }
 
       var msg;
@@ -624,7 +630,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     logger.i('ETH transaction committed，txhash $txHash');
   }
 
-  Future _transferErc20(
+  Future<String> _transferErc20(
       String password, BigInt amount, String toAddress, Wallet wallet) async {
     var contractAddress = widget.coinVo.contractAddress;
 
@@ -637,5 +643,6 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
     );
 
     logger.i('HYN transaction committed，txhash $txHash ');
+    return txHash;
   }
 }

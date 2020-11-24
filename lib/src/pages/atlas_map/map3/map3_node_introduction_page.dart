@@ -222,7 +222,7 @@ class _Map3NodeIntroductionState extends State<Map3NodeIntroductionPage> {
     var fee = '${(100 * double.parse(_introduceEntity?.feeFixed ?? "10")).toInt()}%'; // "$feeMin%-$feeMax%";
     var day = "${_introduceEntity?.days ?? 180}${S.of(context).epoch}";
     return Padding(
-      padding: const EdgeInsets.only(top: 20.0, bottom: 16.0),
+      padding: const EdgeInsets.only(top: 20.0, bottom: 16.0, left: 14),
       child: profitListLightWidget(
         [
           {S.of(context).map3_create_min_staking: detail},

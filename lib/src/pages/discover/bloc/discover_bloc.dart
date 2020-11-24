@@ -38,7 +38,7 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
         ));
       }
     } else if (event is LoadFocusImageEvent) {
-      bool isZh = SettingInheritedModel.of(context).languageModel.isZh();
+      bool isZh = SettingInheritedModel.of(context)?.languageModel?.isZh()??true;
       var requestCategory = NewsTagUtils.getFocusCategory(isZh);
       List<focus.FocusImage> focusList = await _newsApi.getFocusList(requestCategory);
       //save to cache

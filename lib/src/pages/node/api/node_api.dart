@@ -33,14 +33,19 @@ class NodeApi {
 
     headMap.putIfAbsent("appSource", () => Config.APP_SOURCE);
 
-    var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
-    if (hasAddress && activeWalletVo != null) {
-      headMap.putIfAbsent("Address", () => activeWalletVo.wallet.getEthAccount().address);
+    if (hasAddress) {
+      var activeWalletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      var address = activeWalletVo.wallet.getEthAccount().address;
+      if (activeWalletVo != null && (address?.isNotEmpty?? false)) {
+        headMap.putIfAbsent("Address", () => address);
+      }
     }
 
     if (hasLang) {
       var language = SettingInheritedModel.of(Keys.rootKey.currentContext).netLanguageCode;
-      headMap.putIfAbsent("Lang", () => language);
+      if (language?.isNotEmpty ?? false) {
+        headMap.putIfAbsent("Lang", () => language);
+      }
     }
 
     return headMap;

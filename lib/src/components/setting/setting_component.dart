@@ -105,11 +105,11 @@ class SettingInheritedModel extends InheritedModel<SettingAspect> {
   }) : super(key: key, child: child);
 
   String get languageCode {
-    return languageModel?.locale?.languageCode;
+    return languageModel?.locale?.languageCode??'zh';
   }
 
   String get netLanguageCode {
-    var countryCode = languageModel.locale.countryCode ?? '';
+    var countryCode = languageModel?.locale?.countryCode ?? 'zh';
     if (languageCode == "zh") {
       return "${languageCode}_$countryCode";
     }

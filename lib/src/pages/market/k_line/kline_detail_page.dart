@@ -414,7 +414,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
-    var locale = SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.getLocaleName();
+    var locale = SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.getLocaleName()??'zh';
     //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
@@ -576,7 +576,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: SettingInheritedModel.of(context, aspect: SettingAspect.language).languageModel.isKo() ? 15 : 18,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isKo()??false ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {

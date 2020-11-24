@@ -16,17 +16,17 @@ import 'package:titan/src/pages/atlas_map/entity/create_map3_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_broadcast_success_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_cancel_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_reward_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_collect_page_deprecated.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_reward_tabs_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_confirm_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_create_wallet_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_detail_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_add_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_add_page_pending.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_divide_page_pending.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_edit_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_exit_page.dart';
-import 'package:titan/src/pages/atlas_map/map3/map3_node_formal_confirm_page.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_formal_confirm_page_deprecated.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_introduction_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_join_page.dart';
 import 'package:titan/src/pages/atlas_map/map3/map3_node_list_page.dart';
@@ -345,7 +345,7 @@ var map3NodeMyHandlerReward = Handler(handlerFunc: (context, params) {
 
 var map3NodeMyHandlerRewardNew = Handler(handlerFunc: (context, params) {
   _cacheEntryRouteName(params);
-  return Map3NodeCollectRewardPage();
+  return Map3NodeRewardTabsPage();
 });
 
 var map3NodeListHandler = Handler(handlerFunc: (context, params) {
