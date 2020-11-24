@@ -390,7 +390,7 @@ class HomePanelState extends State<HomePanel> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
-                      'res/drawable/ic_rp_token.png',
+                      'res/drawable/ic_wallet_image_rp_hrc30.png',
                       width: 40,
                       height: 40,
                     ),
