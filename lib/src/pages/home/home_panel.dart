@@ -390,7 +390,7 @@ class HomePanelState extends State<HomePanel> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Image.asset(
-                      'res/drawable/ic_rp_token.png',
+                      'res/drawable/ic_wallet_image_rp_hrc30.png',
                       width: 40,
                       height: 40,
                     ),
@@ -412,7 +412,7 @@ class HomePanelState extends State<HomePanel> {
                           height: 4,
                         ),
                         Text(
-                          'RP description',
+                          '拆红包，攒RP，与朋友圈分享更多空投奖励',
                           style: TextStyle(
                             fontSize: 13,
                             color: DefaultColors.color999,
