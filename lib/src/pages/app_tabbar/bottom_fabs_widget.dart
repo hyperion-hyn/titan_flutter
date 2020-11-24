@@ -6,6 +6,7 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'burning_dialog.dart';
 
 class BottomFabsWidget extends StatefulWidget {
@@ -149,12 +150,22 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
               children: [
                 Spacer(),
                 Container(
-                  height: 40,
-                  padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Image.asset('res/drawable/ic_hyn_coin.png'),
+                  width: 80,
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  child: InkWell(
+                    child: Image.asset('res/drawable/red_pocket.png'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RedPocketPage()),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
+            SizedBox(height: 24,),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

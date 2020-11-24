@@ -60,7 +60,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
-  var _fabsHeight = 136;
+  var _fabsHeight = 185;
 
   int _currentTabIndex = 0;
 

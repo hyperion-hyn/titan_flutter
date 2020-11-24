@@ -18,9 +18,11 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
 import 'package:titan/src/pages/mine/my_encrypted_addr_page.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
+import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/widget/loading_button/custom_click_oval_button.dart';
 import 'package:titan/src/widget/drag_tick.dart';
 
@@ -349,7 +351,82 @@ class HomePanelState extends State<HomePanel> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 24),
+            padding: const EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+            ),
+            child: Text(
+              'HRC 30',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+              ),
+            ),
+          ),
+          Text(
+            'RP 红包币',
+            style: TextStyle(
+              color: Colors.grey,
+            ),
+          ),
+          SizedBox(
+            height: 16,
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RedPocketPage()),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                color: HexColor('#FFEDFCFF'),
+              ),
+              padding: EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'res/drawable/ic_rp_token.png',
+                      width: 40,
+                      height: 40,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'RP',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'RP description',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: DefaultColors.color999,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 24, bottom: 16),
             child: Text(
               S.of(context).map_dmap,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
@@ -730,8 +807,9 @@ class HomePanelState extends State<HomePanel> {
 
     bool isChinaMainland =
         SettingInheritedModel.of(context, aspect: SettingAspect.area)
-            .areaModel
-            ?.isChinaMainland??true;
+                .areaModel
+                ?.isChinaMainland ??
+            true;
     List<String> typeOfNearBys = [
       "restaurant",
       "lodging",
@@ -842,16 +920,18 @@ class HomePanelState extends State<HomePanel> {
       return;
     } else if (scanStr.contains("share?id=")) {
       var andList = scanStr.split("&");
-      if(andList.length == 0){
+      if (andList.length == 0) {
         return;
       }
       var idList = andList[0].split("id=");
-      if(idList.length < 1){
+      if (idList.length < 1) {
         return;
       }
       var infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(
