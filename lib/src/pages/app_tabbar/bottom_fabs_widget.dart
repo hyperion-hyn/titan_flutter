@@ -165,6 +165,7 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                 ),
               ],
             ),
+            SizedBox(height: 24,),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
