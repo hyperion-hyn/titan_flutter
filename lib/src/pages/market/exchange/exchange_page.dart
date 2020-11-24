@@ -207,22 +207,18 @@ class _ExchangePageState extends BaseState<ExchangePage>
 
   _exchange() {
     var _selectedCoinToHYN = "--";
-    var _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
-      _getMarketItem(_selectedCoin)?.kLineEntity?.close,
-      4,
-    );
-    if (_hynToSelectedCoin != null &&
-        _hynToSelectedCoin != "null" &&
-        double.parse(_hynToSelectedCoin) > 0) {
+    var _hynToSelectedCoin = '--';
+
+    try {
+      _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
+        _getMarketItem(_selectedCoin)?.kLineEntity?.close,
+        4,
+      );
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
-            Decimal.fromInt(1) /
-                (Decimal.parse(
-                  _hynToSelectedCoin.toString(),
-                )),
-            4,
-          ) ??
-          '--';
-    }
+        (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)),
+        4,
+      );
+    } catch (e) {}
 
     return Column(
       children: <Widget>[
@@ -447,28 +443,35 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _assetView() {
-    var _totalByUsdt = ExchangeInheritedModel.of(context)
-        .exchangeModel
-        .activeAccount
-        ?.assetList
-        ?.getTotalUsdt();
-    var _coinQuotePrice = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.quoteVo
-        ?.price;
+    var _usdtTotalQuotePrice = '--';
+
+    try {
+      var _totalByUSDT = ExchangeInheritedModel.of(context)
+          .exchangeModel
+          .activeAccount
+          ?.assetList
+          ?.getTotalUsdt();
+
+      var _coinQuotePrice = WalletInheritedModel.of(context)
+          .activatedQuoteVoAndSign('USDT')
+          ?.quoteVo
+          ?.price;
+
+      _usdtTotalQuotePrice = FormatUtil.truncateDecimalNum(
+        _totalByUSDT *
+            Decimal.parse(
+              '$_coinQuotePrice',
+            ),
+        4,
+      );
+    } catch (e) {}
+
     var _quoteSymbol = WalletInheritedModel.of(context)
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
     if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
         null) {
-      var _usdtTotalQuotePrice = _coinQuotePrice != null && _totalByUsdt != null
-          ? FormatUtil.truncateDecimalNum(
-              // ignore: null_aware_before_operator
-              _totalByUsdt * Decimal.parse(_coinQuotePrice?.toString()),
-              4,
-            )
-          : '--';
       return Text.rich(
         TextSpan(children: [
           TextSpan(
@@ -481,7 +484,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                 fontSize: 12,
               )),
           TextSpan(
-            text: ' ${_quoteSymbol != null ? '($_quoteSymbol)' : ''}',
+            text: ' (${_quoteSymbol ?? ''})',
             style: TextStyle(
               color: Colors.grey,
               fontSize: 10,
@@ -672,44 +675,39 @@ class _ExchangePageState extends BaseState<ExchangePage>
     )}';
 
     // price
-    var _latestPrice = marketItemEntity.kLineEntity != null
-        ? FormatUtil.truncateDecimalNum(
-              Decimal.parse(
-                  marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
-              4,
-            ) ??
-            '-'
-        : '-';
-    var _latestPriceString = '$_latestPrice';
-
     var _selectedQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity.symbolName,
     );
-    var _latestQuotePrice = _selectedQuote == null
-        ? '--'
-        : FormatUtil.truncateDoubleNum(
-            double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-            4,
-          );
-    var _latestRmbPriceString =
-        '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+    var _latestPrice = '-';
+    var _latestQuotePriceString = '-';
+    var _latestPercentString = '-';
+    var _latestPercentBgColor = HexColor('#FF53AE86');
 
-    // _latestPercent
-    double _latestPercent =
-        MarketInheritedModel.of(context).getRealTimePricePercent(
-      marketItemEntity.symbol,
-    );
-    var _latestPercentBgColor = _latestPercent == 0
-        ? HexColor('#FF999999')
-        : _latestPercent > 0 ? HexColor('#FF53AE86') : HexColor('#FFCC5858');
-    var _latestPercentString =
-        '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(
-      _latestPercent * 100.0,
-      2,
-    )}%';
+    try {
+      _latestPrice = FormatUtil.truncateDecimalNum(
+        Decimal.parse(marketItemEntity.kLineEntity?.close?.toString() ?? '0'),
+        4,
+      );
 
-    //print("[marketItemEntity] symbol:${marketItemEntity.symbolName}, amount:${marketItemEntity.kLineEntity.amount}");
+      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        4,
+      );
+
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
+
+      double _latestPercent =
+          MarketInheritedModel.of(context).getRealTimePricePercent(
+        marketItemEntity.symbol,
+      );
+      _latestPercentBgColor =
+          _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
+      _latestPercentString =
+          '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+    } catch (e) {}
+
     return Column(
       children: <Widget>[
         InkWell(
@@ -783,7 +781,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  _latestPriceString ?? '--',
+                                  _latestPrice,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 16,
@@ -793,7 +791,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                                   height: 4,
                                 ),
                                 Text(
-                                  _latestRmbPriceString,
+                                  _latestQuotePriceString,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,
                                     color: Colors.grey,
