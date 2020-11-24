@@ -206,6 +206,10 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
                 var coinVo = widget.walletVo.coins[index];
+                var hasPrice = true;
+                if(coinVo.symbol == SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol){
+                  hasPrice = false;
+                }
                 return InkWell(
                     onTap: () {
                       var coinVo = widget.walletVo.coins[index];
@@ -216,7 +220,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                           Routes.wallet_account_detail +
                               '?coinVo=$coinVoJsonStr');
                     },
-                    child: _buildAccountItem(context, coinVo));
+                    child: _buildAccountItem(context, coinVo, hasPrice: hasPrice));
               },
               itemCount: widget.walletVo.coins.length,
             ),
@@ -529,7 +533,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     );
   }
 
-  Widget _buildAccountItem(BuildContext context, CoinVo coin) {
+  Widget _buildAccountItem(BuildContext context, CoinVo coin, {bool hasPrice = true}) {
     var symbol = coin.symbol;
     var symbolQuote =
         WalletInheritedModel.of(context).activatedQuoteVoAndSign(symbol);
@@ -543,6 +547,18 @@ class _ShowWalletViewState extends State<ShowWalletView> {
         symbol = symbolComponents.first;
         subSymbol = symbolComponents.last.toLowerCase();
       }
+    }
+
+    var quotePrice;
+    var balancePrice;
+    if(!hasPrice){
+      quotePrice = "即将开放交易";
+      balancePrice = "";
+    }else{
+      quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";
+      balancePrice = _isShowBalances
+          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
+          : '${symbolQuote?.sign?.sign ?? ''} *****';
     }
 
     return Padding(
@@ -591,7 +607,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Text(
-                        "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}",
+                        quotePrice,
                         style: TextStyles.textC9b9b9bS12,
                       ),
                     ),
@@ -621,10 +637,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      _isShowBalances
-                          ? "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(FormatUtil.coinBalanceDouble(coin) * (symbolQuote?.quoteVo?.price ?? 0))}"
-                          : '${symbolQuote?.sign?.sign ?? ''} *****',
+                    child: Text(balancePrice,
                       style: TextStyles.textC9b9b9bS12,
                     ),
                   ),
