@@ -445,7 +445,13 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     Expanded(
                       child: InkWell(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => RedPocketExchangeRecordsPage(),),);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RedPocketExchangeRecordsPage(),
+                            ),
+                          );
                         },
                         child: Row(
                           children: [
@@ -562,7 +568,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _projectIntro() {
-    var intro = '发行量恒定100W，无预挖，无预售。\n10%为HYN传导池。\n90%通过空投发行，投完结束，不超过180天';
+    var intro =
+        '首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景\n用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP\n越早加入，收获越多，更有隐藏红包福利等你来解锁！\nRP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。';
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -601,13 +608,13 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 SizedBox(
                   height: 8,
                 ),
-                Text(
-                  intro,
-                  style: TextStyle(
-                    height: 1.8,
-                    color: DefaultColors.color999,
-                    fontSize: 13,
-                  ),
+                Column(
+                  children: [
+                    rowTipsItem('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
+                    rowTipsItem('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
+                    rowTipsItem('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
+                    rowTipsItem('RP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。')
+                  ],
                 ),
                 SizedBox(
                   height: 32,
@@ -616,6 +623,52 @@ class _RedPocketPageState extends State<RedPocketPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget rowTipsItem(
+    String title, {
+    double top = 8,
+    String subTitle = "",
+    GestureTapCallback onTap,
+  }) {
+    var _nodeWidget = Padding(
+      padding: const EdgeInsets.only(right: 10, top: 10),
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: DefaultColors.color999,
+            border: Border.all(color: DefaultColors.color999, width: 1.0)),
+      ),
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(top: top),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          _nodeWidget,
+          Expanded(
+              child: InkWell(
+            onTap: onTap,
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: subTitle,
+                    style: TextStyle(color: HexColor("#1F81FF"), fontSize: 12),
+                  )
+                ],
+                text: title,
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+              ),
+            ),
+          )),
+        ],
       ),
     );
   }
