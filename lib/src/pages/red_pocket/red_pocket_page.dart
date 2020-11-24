@@ -4,9 +4,11 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -22,7 +24,10 @@ class RedPocketPage extends StatefulWidget {
 }
 
 class _RedPocketPageState extends State<RedPocketPage> {
+  AtlasApi _atlasApi = AtlasApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
+  RPInfo _rpInfo;
+  WalletVo _activeWallet;
 
   @override
   void initState() {
@@ -32,6 +37,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
@@ -59,7 +65,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
           child: CustomScrollView(
             slivers: <Widget>[
               _myRPInfo(),
-              _rpInfo(),
+              _rpInfoWidget(),
               _rpPool(),
               _projectIntro(),
             ],
@@ -72,23 +78,22 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _myRPInfo() {
-    var level = '5';
-    var rpBalance = '--';
-    var rpToday = '--';
-    var rpYesterday = '--';
-    var rpMissed = '--';
+    var level = _rpInfo?.level ?? '--';
+    var rpBalance = _rpInfo?.rpBalance ?? '--';
+    var rpToday = _rpInfo?.rpToday ?? '--';
+    var rpYesterday = _rpInfo?.rpYesterday ?? '--';
+    var rpMissed = _rpInfo?.rpMissed ?? '--';
 
-    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
-    var imgPath = activeWallet != null
+    var imgPath = _activeWallet != null
         ? 'res/drawable/ic_map3_node_default_icon.png'
         : 'res/drawable/img_avatar_default.png';
-    var userName = activeWallet?.wallet?.keystore?.name ?? '--';
+    var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
-        activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
+        _activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
       ),
     );
-    var accountInfo = activeWallet != null
+    var accountInfo = _activeWallet != null
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -299,7 +304,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _rpInfo() {
+  _rpInfoWidget() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -367,8 +372,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
 
   _rpPool() {
     var myStaking = '--';
-    var totalStaking = '--';
     var rpYesterday = '--';
+    var totalStaking = '--';
     var totalTransmission = '--';
     return SliverToBoxAdapter(
       child: Padding(
@@ -612,7 +617,14 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _requestData() {
-    _loadDataBloc.add(RefreshSuccessEvent());
+  _requestData() async {
+    try {
+      _rpInfo = await _atlasApi.postRpInfo(
+        _activeWallet?.wallet?.getAtlasAccount()?.address,
+      );
+      _loadDataBloc.add(RefreshSuccessEvent());
+    } catch (e) {
+      _loadDataBloc.add(RefreshFailEvent());
+    }
   }
 }

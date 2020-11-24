@@ -382,7 +382,7 @@ class HomePanelState extends State<HomePanel> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
-                color: HexColor('#FFEDFCFF'),
+                color: HexColor('#FFFFEDED'),
               ),
               padding: EdgeInsets.all(16.0),
               child: Row(
