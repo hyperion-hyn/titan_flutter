@@ -39,8 +39,7 @@ class UiUtil {
   }
 
   static toast(String message) {
-    Fluttertoast.showToast(
-        msg: message, backgroundColor: Colors.black, textColor: Colors.white);
+    Fluttertoast.showToast(msg: message, backgroundColor: Colors.black, textColor: Colors.white);
   }
 
   static String shortEthAddress(String address, {int limitLength = 9}) {
@@ -50,9 +49,7 @@ class UiUtil {
     if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, limitLength) +
-        "..." +
-        address.substring(address.length - limitLength, address.length);
+    return address.substring(0, limitLength) + "..." + address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -89,6 +86,7 @@ class UiUtil {
     String suffixContent = "",
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
+    Widget contentItem,
   }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
@@ -103,8 +101,7 @@ class UiUtil {
           children: <Widget>[
             Container(
               //alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
                   isShowCloseIcon
@@ -138,28 +135,19 @@ class UiUtil {
                         child: RichText(
                             text: TextSpan(
                                 text: content,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
                                 children: [
                               TextSpan(
                                 text: boldContent,
-                                style: boldStyle ??
-                                    TextStyle(
-                                        fontSize: 14,
-                                        color: HexColor("#FF4C3B"),
-                                        height: 1.8),
+                                style: boldStyle ?? TextStyle(fontSize: 14, color: HexColor("#FF4C3B"), height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#333333"),
-                                    height: 1.8),
+                                style: TextStyle(fontSize: 14, color: HexColor("#333333"), height: 1.8),
                               ),
                             ])),
                       ),
+                      if (contentItem != null) contentItem,
                       if (detail.isNotEmpty)
                         Padding(
                           padding: EdgeInsets.only(top: 6, left: 24, right: 24),
@@ -213,8 +201,7 @@ class UiUtil {
     );
   }
 
-  static Future<T> showConfirmDialogWidget<T>(BuildContext context,
-      {Widget content, List<Widget> actions}) {
+  static Future<T> showConfirmDialogWidget<T>(BuildContext context, {Widget content, List<Widget> actions}) {
     return showDialog<T>(
       context: context,
       builder: (context) {
@@ -242,16 +229,11 @@ class UiUtil {
     ]);
   }
 
-  static Future<T> showRequestLocationAuthDialog<T>(
-      BuildContext context, bool isServiceTurnOff) {
+  static Future<T> showRequestLocationAuthDialog<T>(BuildContext context, bool isServiceTurnOff) {
     return showDialogs<T>(
       context,
-      isServiceTurnOff == true
-          ? S.of(context).open_location_service
-          : S.of(context).require_location,
-      isServiceTurnOff == true
-          ? S.of(context).open_location_service_message
-          : S.of(context).require_location_message,
+      isServiceTurnOff == true ? S.of(context).open_location_service : S.of(context).require_location,
+      isServiceTurnOff == true ? S.of(context).open_location_service_message : S.of(context).require_location_message,
       () => openSettingLocation(isServiceTurnOff),
     );
   }
@@ -271,8 +253,7 @@ class UiUtil {
     }
   }
 
-  static Future<T> showDialogs<T>(
-      BuildContext context, String title, String content, Function func) {
+  static Future<T> showDialogs<T>(BuildContext context, String title, String content, Function func) {
     return showDialogWidget<T>(
       context,
       title: Text(title),
@@ -574,10 +555,7 @@ class UiUtil {
               ),
               Text(
                 msg,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.white),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
               ),
               Spacer()
             ],
@@ -613,8 +591,7 @@ class UiUtil {
             Navigator.pop(context);
 
             ///
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ExchangeAuthPage()));
           },
         ),
       ],

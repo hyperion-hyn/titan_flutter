@@ -8,6 +8,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/red_pocket/red_pocket_exchange_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -66,7 +67,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
           child: CustomScrollView(
             slivers: <Widget>[
               _myRPInfo(),
-              _rpInfoWidget(),
+              _airdropWidget(),
               _rpPool(),
               _projectIntro(),
             ],
@@ -85,9 +86,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = _rpInfo?.rpYesterday ?? '--';
     var rpMissed = _rpInfo?.rpMissed ?? '--';
 
-    var imgPath = _activeWallet != null
-        ? 'res/drawable/ic_map3_node_default_icon.png'
-        : 'res/drawable/img_avatar_default.png';
+    var imgPath =
+        _activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
     var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
@@ -128,6 +128,38 @@ class _RedPocketPageState extends State<RedPocketPage> {
               );
             },
           );
+
+    Widget _columnWidget(String amount, String title) {
+      return Column(
+        children: <Widget>[
+          Text(
+            '$amount',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black,
+            ),
+          ),
+          SizedBox(
+            height: 4.0,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10,
+              color: DefaultColors.color999,
+            ),
+          ),
+        ],
+      );
+    }
+
+    Widget _lineWidget() {
+      return Container(
+        height: 20,
+        width: 0.5,
+        color: HexColor('#000000').withOpacity(0.2),
+      );
+    }
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -189,111 +221,19 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$rpBalance RP',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '余额',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _columnWidget('$rpBalance RP', '余额'),
                     ),
-                    Container(
-                      height: 20,
-                      width: 1,
-                      color: HexColor('#33000000'),
-                    ),
+                    _lineWidget(),
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$rpToday RP',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '今日红包',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _columnWidget('$rpToday RP', '今日红包'),
                     ),
-                    Container(
-                      height: 20,
-                      width: 1,
-                      color: HexColor('#33000000'),
-                    ),
+                    _lineWidget(),
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$rpYesterday RP',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '昨日红包',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _columnWidget('$rpYesterday RP', '昨日红包'),
                     ),
-                    Container(
-                      height: 20,
-                      width: 1,
-                      color: HexColor('#33000000'),
-                    ),
+                    _lineWidget(),
                     Expanded(
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            '$rpMissed RP',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 4.0,
-                          ),
-                          Text(
-                            '我错过的',
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: DefaultColors.color999,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: _columnWidget('$rpMissed RP', '我错过的'),
                     ),
                   ],
                 )
@@ -305,7 +245,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _rpInfoWidget() {
+  _airdropWidget() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -371,6 +311,18 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
+  _myRPInfoV2() {
+    return SliverToBoxAdapter(
+      child: Container(),
+    );
+  }
+
+  _airdropWidgetV2() {
+    return SliverToBoxAdapter(
+      child: Container(),
+    );
+  }
+
   _rpPool() {
     var myStaking = '--';
     var rpYesterday = '--';
@@ -405,7 +357,14 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   children: [
                     Expanded(
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => RedPocketExchangePage(),
+                            ),
+                          );
+                        },
                         child: Row(
                           children: [
                             Column(
@@ -413,10 +372,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                               children: <Widget>[
                                 Text(
                                   '$myStaking HYN',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                  style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(
                                   height: 4.0,
@@ -448,8 +404,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  RedPocketExchangeRecordsPage(),
+                              builder: (context) => RedPocketExchangeRecordsPage(),
                             ),
                           );
                         },
@@ -460,10 +415,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                               children: <Widget>[
                                 Text(
                                   '$rpYesterday RP',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
+                                  style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
                                 ),
                                 SizedBox(
                                   height: 4.0,
@@ -505,10 +457,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                             children: <Widget>[
                               Text(
                                 '$totalStaking HYN',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 4.0,
@@ -534,10 +483,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                             children: <Widget>[
                               Text(
                                 '$totalTransmission RP',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500),
+                                style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: 4.0,
@@ -568,8 +514,6 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _projectIntro() {
-    var intro =
-        '首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景\n用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP\n越早加入，收获越多，更有隐藏红包福利等你来解锁！\nRP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。';
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -613,7 +557,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     rowTipsItem('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
                     rowTipsItem('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
                     rowTipsItem('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
-                    rowTipsItem('RP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。')
+                    rowTipsItem('RP总发行量为100万枚，在红包HRC30智能合约内进行传导和空投，无预挖，无预售。')
                   ],
                 ),
                 SizedBox(
@@ -663,8 +607,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
