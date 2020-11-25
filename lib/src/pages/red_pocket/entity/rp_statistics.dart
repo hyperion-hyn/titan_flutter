@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 part 'rp_statistics.g.dart';
 
-
 @JsonSerializable()
 class RPStatistics extends Object {
-
   @JsonKey(name: 'global')
   Global global;
 
@@ -15,18 +14,20 @@ class RPStatistics extends Object {
   @JsonKey(name: 'rp_contract_info')
   Rp_contract_info rpContractInfo;
 
-  RPStatistics(this.global,this.self,this.rpContractInfo,);
+  RPStatistics(
+    this.global,
+    this.self,
+    this.rpContractInfo,
+  );
 
-  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
+  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) =>
+      _$RPStatisticsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RPStatisticsToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Global extends Object {
-
   @JsonKey(name: 'total_staking_hyn')
   String totalStakingHyn;
 
@@ -36,18 +37,26 @@ class Global extends Object {
   @JsonKey(name: 'total_transmit')
   String totalTransmit;
 
-  Global(this.totalStakingHyn,this.transmit,this.totalTransmit,);
+  get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn);
 
-  factory Global.fromJson(Map<String, dynamic> srcJson) => _$GlobalFromJson(srcJson);
+  get transmitStr => FormatUtil.weiToEtherStr(transmit);
+
+  get totalTransmitStr => FormatUtil.weiToEtherStr(totalTransmit);
+
+  Global(
+    this.totalStakingHyn,
+    this.transmit,
+    this.totalTransmit,
+  );
+
+  factory Global.fromJson(Map<String, dynamic> srcJson) =>
+      _$GlobalFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$GlobalToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Self extends Object {
-
   @JsonKey(name: 'total_staking_hyn')
   String totalStakingHyn;
 
@@ -60,18 +69,29 @@ class Self extends Object {
   @JsonKey(name: 'yesterday')
   String yesterday;
 
-  Self(this.totalStakingHyn,this.totalAmount,this.totalRp,this.yesterday,);
+  get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn);
 
-  factory Self.fromJson(Map<String, dynamic> srcJson) => _$SelfFromJson(srcJson);
+  get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount);
+
+  get totalRpStr => FormatUtil.weiToEtherStr(totalRp);
+
+  get yesterdayStr => FormatUtil.weiToEtherStr(yesterday);
+
+  Self(
+    this.totalStakingHyn,
+    this.totalAmount,
+    this.totalRp,
+    this.yesterday,
+  );
+
+  factory Self.fromJson(Map<String, dynamic> srcJson) =>
+      _$SelfFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SelfToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Rp_contract_info extends Object {
-
   @JsonKey(name: 'ratio')
   String ratio;
 
@@ -84,12 +104,15 @@ class Rp_contract_info extends Object {
   @JsonKey(name: 'staking_day')
   int stakingDay;
 
-  Rp_contract_info(this.ratio,this.hynPerRp,this.releaseDay,this.stakingDay,);
+  Rp_contract_info(
+    this.ratio,
+    this.hynPerRp,
+    this.releaseDay,
+    this.stakingDay,
+  );
 
-  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
+  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) =>
+      _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
-
 }
-
-
