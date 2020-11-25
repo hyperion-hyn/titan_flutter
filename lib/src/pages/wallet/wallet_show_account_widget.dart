@@ -483,7 +483,9 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
           .map((token) => token.contractAddress.toLowerCase())
           .toList()
           .contains(transactionDetail.toAddress.toLowerCase())) {
+        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是
         title = S.of(context).contract_call;
+        iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
         title = S.of(context).map_contract_execution;
       }
