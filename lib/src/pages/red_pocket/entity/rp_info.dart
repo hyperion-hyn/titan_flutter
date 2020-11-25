@@ -2,10 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'rp_info.g.dart';
 
-
 @JsonSerializable()
 class RPInfo extends Object {
-
   @JsonKey(name: 'level')
   String level;
 
@@ -24,12 +22,17 @@ class RPInfo extends Object {
   @JsonKey(name: 'rp_missed')
   String rpMissed;
 
-  RPInfo(this.level,this.balance,this.rpBalance,this.rpToday,this.rpYesterday,this.rpMissed,);
+  RPInfo(
+    this.level,
+    this.balance,
+    this.rpBalance,
+    this.rpToday,
+    this.rpYesterday,
+    this.rpMissed,
+  );
 
-  factory RPInfo.fromJson(Map<String, dynamic> srcJson) => _$RPInfoFromJson(srcJson);
+  factory RPInfo.fromJson(Map<String, dynamic> srcJson) =>
+      _$RPInfoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RPInfoToJson(this);
-
 }
-
-

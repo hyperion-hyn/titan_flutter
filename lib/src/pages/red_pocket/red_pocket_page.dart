@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_exchange_page.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
@@ -17,6 +18,8 @@ import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+
+import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
   RedPocketPage();
@@ -29,8 +32,9 @@ class RedPocketPage extends StatefulWidget {
 
 class _RedPocketPageState extends State<RedPocketPage> {
   AtlasApi _atlasApi = AtlasApi();
+  RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  RPInfo _rpInfo;
+  RPStatistics _rpStatistics;
   WalletVo _activeWallet;
 
   @override
@@ -110,13 +114,14 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _myRPInfo() {
-    var level = _rpInfo?.level ?? '--';
-    var rpBalance = _rpInfo?.rpBalance ?? '--';
-    var rpToday = _rpInfo?.rpToday ?? '--';
-    var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    var rpMissed = _rpInfo?.rpMissed ?? '--';
+    // var level = _rpInfo?.level ?? '--';
+    //var rpToday = _rpStatistics?.self? ?? '--';
+    //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
+    // var rpMissed = _rpInfo?.rpMissed ?? '--';
 
+    var rpBalance = _rpStatistics?.self?.totalRp ?? '--';
     var rpBalanceStr = '$rpBalance RP';
+
     // var rpTodayStr = '$rpToday RP';
     // var rpYesterdayStr = '$rpYesterday RP';
     // var rpMissedStr = '$rpMissed RP';
@@ -205,25 +210,25 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     SizedBox(
                       width: 16,
                     ),
-                    Column(
-                      children: [
-                        Text(
-                          level,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '抵押量级',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: DefaultColors.color999,
-                          ),
-                        ),
-                      ],
-                    )
+                    // Column(
+                    //   children: [
+                    //     Text(
+                    //       level,
+                    //       style: TextStyle(
+                    //         color: Colors.red,
+                    //         fontSize: 20,
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     ),
+                    //     Text(
+                    //       '抵押量级',
+                    //       style: TextStyle(
+                    //         fontSize: 10,
+                    //         color: DefaultColors.color999,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // )
                   ],
                 ),
                 SizedBox(
@@ -271,11 +276,14 @@ class _RedPocketPageState extends State<RedPocketPage> {
               children: [
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    padding: const EdgeInsets.only(
+                      top: 16.0,
+                      bottom: 8.0,
+                    ),
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 16,
+                          height: 24,
                         ),
                         Image.asset(
                           'res/drawable/img_rp_airdrop.png',
@@ -311,7 +319,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                         left: 4,
                       ),
                       child: Text(
-                        '总量90万 RP',
+                        '总量90万RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -329,11 +337,11 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _rpPool() {
-    var rpYesterday = '--';
-    var myHYNStaking = '--';
-    var totalHYNStaking = '--';
-    var myTransmission = '--';
-    var totalTransmission = '--';
+    var rpYesterday = _rpStatistics?.self?.yesterday ?? '--';
+    var myHYNStaking = _rpStatistics?.self?.totalHyn ?? '--';
+    var globalHYNStaking = _rpStatistics?.global?.hyn ?? '--';
+    var totalTransmit = _rpStatistics?.global?.total ?? '--';
+    var globalTransmit = _rpStatistics?.global?.transmit ?? '--';
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -353,6 +361,18 @@ class _RedPocketPageState extends State<RedPocketPage> {
                       '传导池',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        '总量10万RP',
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -391,21 +411,13 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   children: [
                     Expanded(
                       child: _poolInfoColumn(
-                        '$myTransmission RP',
-                        '总可传导',
-                      ),
-                    ),
-                    _verticalLine(havePadding: true),
-                    Expanded(
-                      child: _poolInfoColumn(
-                        '$totalHYNStaking HYN',
+                        '$globalHYNStaking HYN',
                         '全网抵押',
                       ),
                     ),
-                    _verticalLine(havePadding: true),
                     Expanded(
                       child: _poolInfoColumn(
-                        '$totalTransmission RP',
+                        '$globalTransmit RP',
                         '全网累计传导',
                       ),
                     ),
@@ -494,7 +506,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     String subContent,
   ) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
           content,
@@ -654,9 +666,10 @@ class _RedPocketPageState extends State<RedPocketPage> {
 
   _requestData() async {
     try {
-      _rpInfo = await _atlasApi.postRpInfo(
+      _rpStatistics = await _rpApi.getRPStatistics(
         _activeWallet?.wallet?.getAtlasAccount()?.address,
       );
+
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
