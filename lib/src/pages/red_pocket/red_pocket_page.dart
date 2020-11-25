@@ -67,7 +67,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
           child: CustomScrollView(
             slivers: <Widget>[
               _myRPInfo(),
-              _rpInfoWidget(),
+              _airdropWidget(),
               _rpPool(),
               _projectIntro(),
             ],
@@ -306,7 +306,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _rpInfoWidget() {
+  _airdropWidget() {
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -369,6 +369,18 @@ class _RedPocketPageState extends State<RedPocketPage> {
           ),
         ),
       ),
+    );
+  }
+
+  _myRPInfoV2() {
+    return SliverToBoxAdapter(
+      child: Container(),
+    );
+  }
+
+  _airdropWidgetV2() {
+    return SliverToBoxAdapter(
+      child: Container(),
     );
   }
 
@@ -577,8 +589,6 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _projectIntro() {
-    var intro =
-        '首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景\n用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP\n越早加入，收获越多，更有隐藏红包福利等你来解锁！\nRP总发行量为100万枚，只通过红包形式在DDex内进行传导和空投，无预挖，无预售。';
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),

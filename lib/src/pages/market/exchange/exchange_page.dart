@@ -206,18 +206,20 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _exchange() {
-    var _selectedCoinToHYN = "--";
+    var _selectedCoinToHYN = '';
     var _hynToSelectedCoin = '--';
+    var _amount24H = '--';
 
     try {
       _hynToSelectedCoin = FormatUtil.truncateDoubleNum(
-        _getMarketItem(_selectedCoin)?.kLineEntity?.close,
-        4,
-      );
+              _getMarketItem(_selectedCoin)?.kLineEntity?.close, 4) ??
+          '--';
       _selectedCoinToHYN = FormatUtil.truncateDecimalNum(
-        (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)),
-        4,
-      );
+              (Decimal.fromInt(1) / Decimal.parse(_hynToSelectedCoin)), 4) ??
+          '--';
+      _amount24H = FormatUtil.truncateDoubleNum(
+              _getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ??
+          '--';
     } catch (e) {}
 
     return Column(
@@ -321,7 +323,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
                   Expanded(
                     flex: 1,
                     child: Text(
-                      '${S.of(context).exchange_24h_amount} ${FormatUtil.truncateDoubleNum(_getMarketItem(_selectedCoin)?.kLineEntity?.amount, 2) ?? '--'}',
+                      '${S.of(context).exchange_24h_amount} ${_amount24H}',
                       style: TextStyle(
                         color: HexColor('#FF999999'),
                         fontSize: 12,
@@ -580,6 +582,16 @@ class _ExchangePageState extends BaseState<ExchangePage>
         ),
       ),
     );
+    availableCoinItemList.add(
+      DropdownMenuItem(
+        value: 'RP',
+        child: _coinItem(
+          'RP',
+          SupportedTokens.HYN_RP_ERC30_ROPSTEN.logo,
+          false,
+        ),
+      ),
+    );
 //    availableCoinItemList.add(
 //      DropdownMenuItem(
 //        value: 'ETH',
@@ -590,6 +602,23 @@ class _ExchangePageState extends BaseState<ExchangePage>
 //        ),
 //      ),
 //    );
+
+    // return Row(
+    //   children: [
+    //     if (_exchangeType == ExchangeType.BUY) Spacer(),
+    //     DropdownButtonHideUnderline(
+    //       child: DropdownButton(
+    //         onChanged: (value) {
+    //           setState(() {
+    //             _selectedCoin = value;
+    //           });
+    //         },
+    //         value: _selectedCoin,
+    //         items: availableCoinItemList,
+    //       ),
+    //     ),
+    //   ],
+    // );
 
     return Row(
       children: <Widget>[
