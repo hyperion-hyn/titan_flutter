@@ -470,16 +470,17 @@ class _ExchangePageState extends BaseState<ExchangePage>
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
-        null) {
+    var _isShowBalance =
+        ExchangeInheritedModel.of(context).exchangeModel?.isShowBalances ??
+            true;
+    var _isExchangeAccountLoggin =
+        ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ??
+            false;
+    if (_isExchangeAccountLoggin) {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: ExchangeInheritedModel.of(context)
-                      .exchangeModel
-                      .isShowBalances
-                  ? _usdtTotalQuotePrice
-                  : '*****',
+              text: _isShowBalance ? _usdtTotalQuotePrice : '*****',
               style: TextStyle(
                 fontSize: 12,
               )),
