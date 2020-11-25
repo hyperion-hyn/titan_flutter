@@ -487,6 +487,39 @@ class Wallet {
     );
   }
 
+  Future<String> sendHynStakeWithdraw(
+    HynContractMethod methodType,
+    BigInt stakingAmount, {
+    String password,
+    BigInt gasPrice,
+    int gasLimit,
+  }) async {
+    if (gasPrice == null) {
+      gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
+    }
+    if (gasLimit == null) {
+      gasLimit = 100000;
+    }
+    var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw' ;
+
+    final client = WalletUtil.getWeb3Client(true);
+    var credentials = await getCredentials(password);
+    var stakingContract = WalletUtil.getHynStakingContract(WalletConfig.hynStakingContractAddress);
+    return await client.sendTransaction(
+      credentials,
+      web3.Transaction.callContract(
+        value: EtherAmount.inWei(stakingAmount),
+        contract: stakingContract,
+        function: stakingContract.function(methodName),
+        parameters: [],
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        type: web3.MessageType.typeNormal
+      ),
+      fetchChainIdFromNetworkId: false,
+    );
+  }
+
   /// stakingAmount: how many amount of hyn do you what to stake.
   /// type:          what type of contract do you what to stake. [0 for 1 monty, 1 for 3 month, 2 for 6 month]
   Future<String> signCreateMap3Node({
@@ -639,4 +672,9 @@ class Wallet {
   String toString() {
     return toJson().toString();
   }
+}
+
+enum HynContractMethod{
+  STAKE,
+  WITHDRAW
 }
