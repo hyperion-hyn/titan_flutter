@@ -88,6 +88,17 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = _rpInfo?.rpYesterday ?? '--';
     var rpMissed = _rpInfo?.rpMissed ?? '--';
 
+    var preStr = ' RP';
+    var rpBalanceStr = rpBalance + preStr;
+    var rpTodayStr = rpToday + preStr;
+    var rpYesterdayStr = rpYesterday + preStr;
+    var rpMissedStr = rpMissed + preStr;
+
+    //rpBalanceStr = '即';
+    rpTodayStr = '未';
+    rpYesterdayStr = '空';
+    rpMissedStr = '投';
+
     var imgPath =
         _activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
     var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
@@ -215,19 +226,19 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: _columnWidget('$rpBalance RP', '余额'),
+                      child: _columnWidget(rpBalanceStr, '余额'),
                     ),
                     _lineWidget(),
                     Expanded(
-                      child: _columnWidget('$rpToday RP', '今日红包'),
+                      child: _columnWidget(rpTodayStr, '今日红包'),
                     ),
                     _lineWidget(),
                     Expanded(
-                      child: _columnWidget('$rpYesterday RP', '昨日红包'),
+                      child: _columnWidget(rpYesterdayStr, '昨日红包'),
                     ),
                     _lineWidget(),
                     Expanded(
-                      child: _columnWidget('$rpMissed RP', '我错过的'),
+                      child: _columnWidget(rpMissedStr, '我错过的'),
                     ),
                   ],
                 )
@@ -257,6 +268,9 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Column(
                       children: [
+                        SizedBox(
+                          height: 16,
+                        ),
                         Image.asset(
                           'res/drawable/img_rp_airdrop.png',
                           width: 80,
@@ -276,25 +290,28 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   ),
                 ),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '红包空投',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                    Text(
+                      '红包空投',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: HexColor('#333333'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 4,
+                      ),
+                      child: Text(
+                        '总量90万 RP',
+                        style: TextStyle(
+                          color: DefaultColors.color999,
+                          fontSize: 12,
                         ),
-                        Text(
-                          '总发行100W',
-                          style: TextStyle(
-                            color: DefaultColors.color999,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    )
+                      ),
+                    ),
                   ],
                 )
               ],
@@ -313,7 +330,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
       margin: havePadding
           ? const EdgeInsets.only(
               right: 18,
-        left: 18,
+              left: 18,
             )
           : null,
     );
@@ -429,7 +446,9 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16,),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                  ),
                   child: Container(
                     height: 0.5,
                     color: HexColor('#F2F2F2'),
