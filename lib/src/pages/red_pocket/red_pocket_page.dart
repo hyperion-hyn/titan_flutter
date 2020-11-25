@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
@@ -15,6 +16,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/utils.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class RedPocketPage extends StatefulWidget {
   RedPocketPage();
@@ -150,14 +152,6 @@ class _RedPocketPageState extends State<RedPocketPage> {
             ),
           ),
         ],
-      );
-    }
-
-    Widget _lineWidget() {
-      return Container(
-        height: 20,
-        width: 0.5,
-        color: HexColor('#000000').withOpacity(0.2),
       );
     }
 
@@ -311,15 +305,17 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _myRPInfoV2() {
-    return SliverToBoxAdapter(
-      child: Container(),
-    );
-  }
-
-  _airdropWidgetV2() {
-    return SliverToBoxAdapter(
-      child: Container(),
+  Widget _lineWidget({bool havePadding = false}) {
+    return Container(
+      height: 20,
+      width: 0.5,
+      color: HexColor('#000000').withOpacity(0.2),
+      margin: havePadding
+          ? const EdgeInsets.only(
+              right: 18,
+        left: 18,
+            )
+          : null,
     );
   }
 
@@ -328,6 +324,79 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = '--';
     var totalStaking = '--';
     var totalTransmission = '--';
+
+    Widget _myExchangeWidget(String amount, String title, GestureTapCallback onTap) {
+      return Expanded(
+        child: InkWell(
+          onTap: onTap,
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    amount,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4.0,
+                  ),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: DefaultColors.color999,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 15,
+                color: DefaultColors.color999,
+              )
+            ],
+          ),
+        ),
+      );
+    }
+
+    Widget _poolInfoWidget(String amount, String title) {
+      return Expanded(
+        flex: 1,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              amount,
+              style: TextStyle(
+                fontSize: 12,
+                color: DefaultColors.color999,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(
+              height: 4.0,
+            ),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 8,
+                color: DefaultColors.color999,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -355,152 +424,37 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RedPocketExchangePage(),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  '$myStaking HYN',
-                                  style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                Text(
-                                  '我的抵押',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: DefaultColors.color999,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                              color: DefaultColors.color999,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RedPocketExchangeRecordsPage(),
-                            ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  '$rpYesterday RP',
-                                  style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                Text(
-                                  '昨日获得',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: DefaultColors.color999,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                              color: DefaultColors.color999,
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    _myExchangeWidget('$myStaking HYN', '我的抵押', _pushExchangeAction),
+                    _myExchangeWidget('$rpYesterday RP', '昨日获得', _pushRecordAction),
                   ],
                 ),
-                SizedBox(
-                  height: 16,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16,),
+                  child: Container(
+                    height: 0.5,
+                    color: HexColor('#F2F2F2'),
+                  ),
                 ),
                 Row(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                '$totalStaking HYN',
-                                style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                '全网抵押',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                '$totalTransmission RP',
-                                style: TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              Text(
-                                '全网累计传导',
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    _poolInfoWidget('10万 RP', '总可传导'),
+                    _lineWidget(havePadding: true),
+                    _poolInfoWidget('$totalStaking HYN', '全网抵押'),
+                    _lineWidget(havePadding: true),
+                    _poolInfoWidget('$totalTransmission RP', '全网累计传导'),
+                    Spacer(),
                   ],
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                ClickOvalButton(
+                  S.of(context).check,
+                  _pushExchangeAction,
+                  width: 160,
+                  height: 32,
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
                 ),
                 SizedBox(
                   height: 24,
@@ -509,6 +463,24 @@ class _RedPocketPageState extends State<RedPocketPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  _pushExchangeAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RedPocketExchangePage(),
+      ),
+    );
+  }
+
+  _pushRecordAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RedPocketExchangeRecordsPage(),
       ),
     );
   }
