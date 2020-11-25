@@ -336,7 +336,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           left: 18,
         ),
         child: Text(
-          '我的合约',
+          '我的抵押',
           style: TextStyle(
             color: HexColor("#333333"),
             fontSize: 14,
@@ -399,87 +399,110 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                 Radius.circular(6.0),
               ), //设置四周圆角 角度
             ),
-            child: Row(
+            child: Column(
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 10,
-                  ),
-                  child: Image.asset(
-                    "res/drawable/red_pocket_contract.png",
-                    width: 28,
-                    height: 28,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Row(
                   children: <Widget>[
-                    Row(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 10,
+                      ),
+                      child: Image.asset(
+                        "res/drawable/red_pocket_contract.png",
+                        width: 28,
+                        height: 28,
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            right: 6,
-                          ),
-                          child: Text(
-                            '2 份',
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 6,
+                              ),
+                              child: Text(
+                                '2 份',
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                          ),
+                            Text(
+                              '共 1000 HYN',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 6,
                         ),
                         Text(
-                          '共 1000 HYN',
+                          '抵押ID：3',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
-                            color: HexColor("#999999"),
+                            fontSize: 12,
+                            color: HexColor('#333333'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          stateDesc,
+                          style: TextStyle(
+                            color: stateColor,
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
                           ),
                         ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          '2020/12/12 21:21:21',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+
+
                       ],
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      '抵押ID：3',
-                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#333333'),
-                      ),
-                      textAlign: TextAlign.left,
                     ),
                   ],
                 ),
-                Spacer(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      stateDesc,
-                      style: TextStyle(
-                        color: stateColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+                if (index == 1) Padding(
+                  padding: const EdgeInsets.only(top: 6,),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Text(
+                        '2020/12/12 21:21:21可提回',
+                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.left,
                       ),
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Text(
-                      '2020/12/12 21:21:21',
-                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: HexColor('#999999'),
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
