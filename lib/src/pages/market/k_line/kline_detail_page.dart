@@ -21,6 +21,7 @@ import 'package:titan/src/pages/market/entity/trade_info_entity.dart';
 import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart';
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/utils/utils.dart';
 
 class KLineDetailPage extends StatefulWidget {
   final String symbol;
@@ -99,7 +100,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
   var _kMaxTradeCount = 20;
 
-  StreamController<int> _amount24HourController = StreamController.broadcast();
+  // StreamController<int> _amount24HourController = StreamController.broadcast();
   final int _amount24HourRefresh = 15;
 
   StreamController<int> _depthController = StreamController.broadcast();
@@ -282,7 +283,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
   Widget _headerWidget() {
     var marketItemEntity =
-        MarketInheritedModel.of(context).getMarketItem(widget.symbol);
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getMarketItem(widget.symbol);
 
     var _high = marketItemEntity?.kLineEntity?.high?.toString() ?? "--";
     var _low = marketItemEntity?.kLineEntity?.low?.toString() ?? "--";
@@ -312,7 +313,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
     // _latestPercent
     double _latestPercent =
-        MarketInheritedModel.of(context).getRealTimePricePercent(
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePricePercent(
       marketItemEntity?.symbol,
     );
     var _latestPercentBgColor = _latestPercent == 0
@@ -325,106 +326,87 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     )}%';
 
     return SliverToBoxAdapter(
-      child: StreamBuilder(
-        stream: _amount24HourController.stream,
-        builder: (context, optionType) {
-          return Container(
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 0, 14, 7),
-                  child: Row(
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 14, 7),
+              child: Row(
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            _latestPriceString,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 28,
-                                color: _latestPercentBgColor),
-                          ),
-                          SizedBox(
-                            height: 2,
-                          ),
-                          RichText(
-                            text: TextSpan(
-                                text: _latestRmbPriceString,
-                                style: TextStyle(
-                                  color: HexColor("#777777"),
-                                  fontSize: 14,
-                                ),
-                                children: [
-                                  TextSpan(
-                                      text: _latestPercentString,
-                                      style: TextStyle(
-                                        color: _latestPercentBgColor,
-                                        fontSize: 14,
-                                      ))
-                                ]),
-                          )
-                        ],
+                      Text(
+                        _latestPriceString,
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 28, color: _latestPercentBgColor),
                       ),
-                      Spacer(),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              S.of(context).kline_24h_high,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 10,
-                                  color: HexColor("#999999")),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              S.of(context).kline_24h_low,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 10,
-                                  color: HexColor("#999999")),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              '24H',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 10,
-                                  color: HexColor("#999999")),
-                            ),
-                          ]),
                       SizedBox(
-                        width: 16,
+                        height: 2,
                       ),
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [_high, '1', _low, '1', _amount24Hour]
-                              .map((text) => text == '1'
-                                  ? SizedBox(
-                                      height: 6,
-                                    )
-                                  : Text(
-                                      text,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 10,
-                                          color: HexColor("#333333")),
-                                    ))
-                              .toList()),
+                      RichText(
+                        text: TextSpan(
+                            text: _latestRmbPriceString,
+                            style: TextStyle(
+                              color: HexColor("#777777"),
+                              fontSize: 14,
+                            ),
+                            children: [
+                              TextSpan(
+                                  text: _latestPercentString,
+                                  style: TextStyle(
+                                    color: _latestPercentBgColor,
+                                    fontSize: 14,
+                                  ))
+                            ]),
+                      )
                     ],
                   ),
-                ),
-              ],
+                  Spacer(),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          S.of(context).kline_24h_high,
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          S.of(context).kline_24h_low,
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          '24H',
+                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 10, color: HexColor("#999999")),
+                        ),
+                      ]),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [_high, '1', _low, '1', _amount24Hour]
+                          .map((text) => text == '1'
+                          ? SizedBox(
+                        height: 6,
+                      )
+                          : Text(
+                        text,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
+                      ))
+                          .toList()),
+                ],
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -440,11 +422,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
-    var locale = SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.getLocaleName()??'zh';
+    var locale =
+        SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.getLocaleName() ?? 'zh';
     //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
-
       child: Stack(
         children: <Widget>[
           Container(
@@ -454,7 +436,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
             child: KChartWidget(
               _kChartItemList,
               isLine: _isLine,
-              bgColor: [Colors.white,Colors.white],
+              bgColor: [Colors.white, Colors.white],
               mainState: _mainState,
               secondaryState: _secondaryState,
               locale: locale,
@@ -606,7 +588,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isKo()??false ? 15 : 18,
+        width:
+            SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isKo() ?? false ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -943,9 +926,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     return Visibility(
       visible: visible,
       child: Container(
-          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator(
-        strokeWidth: 1.5,
-      )),
+          width: double.infinity,
+          height: height,
+          alignment: Alignment.center,
+          child: CircularProgressIndicator(
+            strokeWidth: 1.5,
+          )),
     );
   }
 
@@ -1365,6 +1351,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     _socketBloc.add(UnSubChannelEvent(channel: channel));
   }
 
+  DebounceLater depthDebounceLater = DebounceLater();
+  DebounceLater tradeDebounceLater = DebounceLater();
+  DebounceLater klineDebounceLater = DebounceLater();
+
   void _initListenChannel() {
     if (_socketBloc == null) return;
 
@@ -1378,23 +1368,33 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         //print("[Bloc] msg:$msg");
         //Fluttertoast.showToast(msg: msg);
       } else if (state is ChannelKLine24HourState) {
-        _amount24HourController.add(_amount24HourRefresh);
+        //24小时
+        // _amount24HourController.add(_amount24HourRefresh);
       } else if (state is ChannelKLinePeriodState) {
-        if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
-          _unSubPeriodChannel(period: state.channel.split(".").last);
-          //print("[WS] 取消不是当前选中的channel:${state.channel}");
-        }
-        _dealPeriodData(state.response, isReplace: false);
+        //蜡烛
+        klineDebounceLater.debounceInterval((){
+          if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
+            _unSubPeriodChannel(period: state.channel.split(".").last);
+            //print("[WS] 取消不是当前选中的channel:${state.channel}");
+          }
+          _dealPeriodData(state.response, isReplace: false);
+        }, 500);
+
       } else if (state is ChannelExchangeDepthState) {
-        _buyChartList.clear();
-        _sellChartList.clear();
-        dealDepthData(_buyChartList, _sellChartList, state.response,
-            enable: false);
-        _setupDepthWidget();
-        _depthController.add(_depthRefresh);
+        //订单深度
+        depthDebounceLater.debounceInterval(() {
+          _buyChartList.clear();
+          _sellChartList.clear();
+          dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
+          _setupDepthWidget();
+          _depthController.add(_depthRefresh);
+        }, 500);
       } else if (state is ChannelTradeDetailState) {
-        _dealTradeData(state.response, isReplace: false);
-        _tradeController.add(_tradeRefresh);
+        //成交
+        tradeDebounceLater.debounceInterval(() {
+          _dealTradeData(state.response, isReplace: false);
+          _tradeController.add(_tradeRefresh);
+        }, 500);
       }
     });
   }

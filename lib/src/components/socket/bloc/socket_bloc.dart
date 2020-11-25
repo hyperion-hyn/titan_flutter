@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/entity/market_symbol_list.dart';
-import 'package:titan/src/pages/market/exchange/exchange_page.dart';
 import 'package:titan/src/utils/log_util.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:rxdart/rxdart.dart';
 import '../socket_config.dart';
 import './bloc.dart';
 
@@ -25,6 +24,11 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
   void setSocketChannel(IOWebSocketChannel socketChannel) {
     this.socketChannel = socketChannel;
   }
+
+  // @override
+  // Stream<Transition<SocketEvent, SocketState>> transformEvents(Stream<SocketEvent> events, transitionFn) {
+  //   return events.debounceTime(const Duration(milliseconds: 100)).asyncExpand(transitionFn);
+  // }
 
   @override
   Stream<SocketState> mapEventToState(
@@ -91,15 +95,13 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelTradeDetailState(response: response);
-                } else if (channelValue.startsWith("user") &&
-                    channelValue.contains("tick")) {
+                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
                 } else {
-                  yield ChannelKLinePeriodState(
-                      channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
                 }
               }
-              yield ReceivedDataSuccessState(response: dataMap);
+              // yield ReceivedDataSuccessState(response: dataMap);
             } else {
               if (channel != null) {
                 yield SubChannelSuccessState(channel: channel);
@@ -117,8 +119,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             yield HeartSuccessState();
           }
         } else {
-          LogUtil.printMessage(
-              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          LogUtil.printMessage("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
@@ -130,7 +131,7 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         LogUtil.printMessage("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
-    } else if (event is MarketSymbolEvent) {
+    } else if (event is MarketSymbolEvent) {  // 价格行情
       var response = await _exchangeApi.getMarketAllSymbol();
       MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
       var _marketItemList = List<MarketItemEntity>();
@@ -152,8 +153,6 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
       yield MarketSymbolState(_marketItemList);
     }
   }
-
-
 
   void _heartAction() {
     //LogUtil.printMessage('[WS] heart，发送心跳, date:${DateTime.now()}');
