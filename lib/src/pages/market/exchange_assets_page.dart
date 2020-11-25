@@ -207,16 +207,29 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   _totalBalances() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
 
-    var _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
-        ? FormatUtil.truncateDecimalNum(
-            _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
-        : null;
-
-    var _totalByUsdt = _exchangeModel.isActiveAccountAndHasAssets()
-        ? _exchangeModel.activeAccount?.assetList?.getTotalUsdt()
-        : null;
     var _isShowBalances =
         ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
+
+    var _totalByHyn = '--';
+
+    var _totalByUsdt = '--';
+
+    var _totalUSDTQuotePrice = '--';
+
+    try {
+      _totalByHyn = _exchangeModel.isActiveAccountAndHasAssets()
+          ? FormatUtil.truncateDecimalNum(
+              _exchangeModel.activeAccount?.assetList?.getTotalHyn(), 6)
+          : '--';
+      if (_exchangeModel.isActiveAccountAndHasAssets()) {
+        _totalUSDTQuotePrice = FormatUtil.truncateDecimalNum(
+          _usdtToCurrency *
+              _exchangeModel.activeAccount?.assetList?.getTotalUsdt(),
+          4,
+        );
+      }
+    } catch (e) {}
+
     return Container(
       color: Colors.white,
       child: Padding(
@@ -244,11 +257,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                       crossAxisAlignment: WrapCrossAlignment.end,
                       children: <Widget>[
                         Text(
-                          _isShowBalances
-                              ? _totalByHyn != null
-                                  ? '$_totalByHyn HYN'
-                                  : '- HYN'
-                              : '***** HYN',
+                          _isShowBalances ? '$_totalByHyn HYN' : '***** HYN',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -264,10 +273,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
                                       _totalByHyn == null ||
                                       _totalByUsdt == null
                                   ? '--'
-                                  : '≈ ${FormatUtil.truncateDecimalNum(
-                                      _usdtToCurrency * _totalByUsdt,
-                                      4,
-                                    )} ${symbolQuote?.sign?.quote ?? '-'}'
+                                  : '≈ $_totalUSDTQuotePrice ${symbolQuote?.sign?.quote ?? '-'}'
                               : '≈ ***** ${symbolQuote?.sign?.quote ?? '-'}',
                           style: TextStyle(
                               fontSize: 12,

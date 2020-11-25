@@ -432,7 +432,7 @@ class WalletUtil {
   }
 
   static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
-    if (coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (coinVo.coinType == CoinType.HYN_ATLAS) {
       return ethAddressToBech32Address(ethAddress);
     } else {
       return ethAddress;

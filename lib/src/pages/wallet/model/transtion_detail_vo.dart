@@ -59,6 +59,8 @@ class TransactionDetailVo {
   int hynType;
   LogsDecoded logsDecoded;
   TransferPayload payload;
+  @JsonKey(name: 'internal_trans')
+  List<InternalTransactions> internalTransactions;
 
   TransactionDetailVo({
     this.id,
@@ -86,6 +88,7 @@ class TransactionDetailVo {
     this.hynType,
     this.logsDecoded,
     this.payload,
+    this.internalTransactions,
   });
 
   String getDecodedAmount() {
@@ -187,6 +190,7 @@ class TransactionDetailVo {
       hynType: hynTransferHistory.type,
       logsDecoded: hynTransferHistory.logsDecoded,
       payload: hynTransferHistory.payload,
+      internalTransactions: hynTransferHistory.internalTransactions,
     );
   }
 
