@@ -49,6 +49,14 @@ class Const {
     }
   }
 
+  static String get RP_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.RP_API_URL_TEST;
+    } else {
+      return Config.RP_API_URL;
+    }
+  }
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
