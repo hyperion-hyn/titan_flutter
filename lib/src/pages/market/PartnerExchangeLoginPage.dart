@@ -32,8 +32,8 @@ class PartnerExchangeLoginPage extends StatefulWidget {
 class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  TextEditingController _userApiKeyController = TextEditingController();
-  TextEditingController _userSecretController = TextEditingController();
+  TextEditingController _userApiKeyController = TextEditingController(text:'29926553ac90c4dd2da249053abb1cff');
+  TextEditingController _userSecretController = TextEditingController(text: '23e7d782c588eb1bfd58f14a84d6f4fe');
 
   ExchangeApi _exchangeApi = ExchangeApi();
 
