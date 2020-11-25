@@ -537,7 +537,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
 
     UiUtil.showAlertView(
       context,
-      title: '抵押数量',
+      title: '抵押份数',
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
