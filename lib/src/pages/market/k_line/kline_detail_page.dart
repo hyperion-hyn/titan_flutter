@@ -876,54 +876,49 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
 
   Widget _depthListViewHeader({limitNum = 20, enable = true, Function clickPrice}) {
     if (_detailCurrentIndex == 1) {
-      return StreamBuilder<Object>(
-        stream: _tradeController.stream,
-        builder: (context, snapshot) {
-          return SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                bottom: 20,
-                left: 12,
-                right: 12,
-                top: 12,
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.only(
+            bottom: 20,
+            left: 12,
+            right: 12,
+            top: 12,
+          ),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Text(
+                  S.of(context).kline_delegate_time,
+                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                ),
               ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      S.of(context).kline_delegate_time,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      S.of(context).kline_delegate_direction,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      S.of(context).kline_delegate_price,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      S.of(context).kline_delegate_amount,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                    ),
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Text(
+                  S.of(context).kline_delegate_direction,
+                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                ),
               ),
-            ),
-          );
-        }
+              Expanded(
+                flex: 2,
+                child: Text(
+                  S.of(context).kline_delegate_price,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  S.of(context).kline_delegate_amount,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -1059,60 +1054,65 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Widget _tradeListViewContent() {
     print("_tradeItemList:${_tradeItemList.length}");
 
-    return SliverList(
-        delegate: SliverChildBuilderDelegate(
-      (context, index) {
-        var excDetailEntity = _tradeItemList[index];
-        return Padding(
-          padding: const EdgeInsets.only(
-            bottom: 12,
-            left: 12,
-            right: 12,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(
-                  FormatUtil.formatSecondDate(excDetailEntity.date),
+    return StreamBuilder<Object>(
+      stream: _tradeController.stream,
+      builder: (context, snapshot) {
+        return SliverList(
+            delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            var excDetailEntity = _tradeItemList[index];
+            return Padding(
+              padding: const EdgeInsets.only(
+                bottom: 12,
+                left: 12,
+                right: 12,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      FormatUtil.formatSecondDate(excDetailEntity.date),
 //                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
-                  style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                ),
+                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      excDetailEntity.actionType == "sell"
+                          ? S.of(context).kline_direct_sell
+                          : S.of(context).kline_direct_buy,
+                      style: TextStyle(
+                          color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      excDetailEntity.price,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      excDetailEntity.amount,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  excDetailEntity.actionType == "sell"
-                      ? S.of(context).kline_direct_sell
-                      : S.of(context).kline_direct_buy,
-                  style: TextStyle(
-                      color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  excDetailEntity.price,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  excDetailEntity.amount,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      childCount: _tradeItemList.length,
-    ));
+            );
+          },
+          childCount: _tradeItemList.length,
+        ));
+      }
+    );
   }
 
   Widget _depthListViewContent(
