@@ -155,6 +155,8 @@ class PrefsKey {
   static const String KLINE_MAIN_STATE = 'mainState';
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
+  static const String SHARED_PREF_LOGIN_USER_API_KEY_LIST = "shared_pref_login_user_api_key_list";
+  static const String SHARED_PREF_LOGIN_USER_API_SECRET_LIST = "shared_pref_login_user_api_secret_list";
   ///Exchange account
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =

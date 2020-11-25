@@ -133,7 +133,7 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           },
           child: ListView(
             children: <Widget>[
-              _totalBalances(),
+              //_totalBalances(),
               _divider(),
               _exchangeAssetListView(),
             ],
@@ -552,11 +552,11 @@ class AssetItemState extends State<AssetItem> {
     } catch (e) {}
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
-            ));
+//        Navigator.push(
+//            context,
+//            MaterialPageRoute(
+//              builder: (context) => ExchangeAssetHistoryPage(widget._symbol),
+//            ));
       },
       child: Column(
         children: <Widget>[
@@ -680,7 +680,6 @@ class AssetItemState extends State<AssetItem> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: DefaultColors.color999,
                               ),
                             ),
                           ),

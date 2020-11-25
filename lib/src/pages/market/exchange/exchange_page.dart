@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
@@ -18,6 +19,8 @@ import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/market/api/exchange_api.dart';
+import 'package:titan/src/pages/market/entity/exchange_banner.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_bloc.dart';
 import 'package:titan/src/pages/market/exchange/bloc/exchange_state.dart';
@@ -27,6 +30,7 @@ import 'package:titan/src/pages/market/exchange_detail/exchange_detail_page.dart
 import 'package:titan/src/pages/market/order/entity/order.dart';
 import 'package:titan/src/pages/market/transfer/exchange_transfer_page.dart';
 import 'package:titan/src/pages/policy/policy_confirm_page.dart';
+import 'package:titan/src/pages/webview/webview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -126,74 +130,72 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<ExchangeBloc, ExchangeState>(
+    return Material(
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ExchangeBloc, ExchangeState>(
+            bloc: _exchangeBloc,
+            listener: (context, state) {},
+          ),
+          BlocListener<SocketBloc, SocketState>(
+            listener: (context, state) {
+              setState(() {
+                _setupMarketItemList();
+              });
+            },
+          ),
+        ],
+        child: BlocBuilder<ExchangeBloc, ExchangeState>(
           bloc: _exchangeBloc,
-          listener: (context, state) {},
-        ),
-        BlocListener<SocketBloc, SocketState>(
-          listener: (context, state) {
-            setState(() {
-              _setupMarketItemList();
-            });
+          builder: (context, state) {
+            return SafeArea(
+              child: Container(
+                color: Colors.white,
+                child: LoadDataContainer(
+                  bloc: _loadDataBloc,
+                  enablePullUp: false,
+                  onLoadData: () async {
+                    _loadDataBloc.add(RefreshSuccessEvent());
+                    _refreshController.refreshCompleted();
+                  },
+                  onRefresh: () async {
+                    BlocProvider.of<ExchangeCmpBloc>(context)
+                        .add(UpdateAssetsEvent());
+                    _loadDataBloc.add(RefreshSuccessEvent());
+                    _refreshController.refreshCompleted();
+                  },
+                  child: CustomScrollView(
+                    slivers: <Widget>[
+                      SliverToBoxAdapter(
+                        child: ExchangeBannerWidget(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _account(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _exchange(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _divider(),
+                      ),
+                      SliverToBoxAdapter(
+                        child: _quotesTabs(),
+                      ),
+                      SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            return _marketItem(_marketItemList[index]);
+                          },
+                          childCount: _marketItemList.length,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
           },
         ),
-      ],
-      child: BlocBuilder<ExchangeBloc, ExchangeState>(
-        bloc: _exchangeBloc,
-        builder: (context, state) {
-          return Container(
-            color: Colors.white,
-            child: LoadDataContainer(
-              bloc: _loadDataBloc,
-              enablePullUp: false,
-              onLoadData: () async {
-                _loadDataBloc.add(RefreshSuccessEvent());
-                _refreshController.refreshCompleted();
-              },
-              onRefresh: () async {
-                ///update assets if logged in
-                if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
-                  BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-                }
-
-                ///update symbol list
-                BlocProvider.of<SocketBloc>(context).add(MarketSymbolEvent());
-
-                _loadDataBloc.add(RefreshSuccessEvent());
-                _refreshController.refreshCompleted();
-              },
-              child: CustomScrollView(
-                slivers: <Widget>[
-                  SliverToBoxAdapter(
-                    child: ExchangeBannerWidget(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _account(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _exchange(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _divider(),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _quotesTabs(),
-                  ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return _marketItem(_marketItemList[index]);
-                      },
-                      childCount: _marketItemList.length,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        },
       ),
     );
   }
@@ -398,7 +400,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
                 ),
               ),
               Spacer(),
-              _assetView(),
+              // _assetView(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Icon(
@@ -437,21 +439,12 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
       );
     } catch (e) {}
 
-    var _quoteSymbol = WalletInheritedModel.of(context)
-        .activatedQuoteVoAndSign('USDT')
-        ?.sign
-        ?.quote;
-    var _isShowBalance =
-        ExchangeInheritedModel.of(context).exchangeModel?.isShowBalances ??
-            true;
-    var _isExchangeAccountLoggin =
-        ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ??
-            false;
-    if (_isExchangeAccountLoggin) {
+    var _quoteSymbol = WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT')?.sign?.quote;
+    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount != null) {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
-              text: _isShowBalance ? _usdtTotalQuotePrice : '*****',
+              text: ExchangeInheritedModel.of(context).exchangeModel.isShowBalances ? _usdtTotalQuotePrice : '*****',
               style: TextStyle(
                 fontSize: 12,
               )),

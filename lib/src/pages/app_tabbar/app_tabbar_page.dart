@@ -28,6 +28,7 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
+import 'package:titan/src/pages/market/PartnerExchangeLoginPage.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
@@ -41,6 +42,8 @@ import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';
 import '../home/home_page.dart';
+import '../market/exchange/exchange_page.dart';
+import '../wallet/wallet_tabs_page.dart';
 import '../mine/my_page.dart';
 import 'announcement_dialog.dart';
 import 'bloc/app_tabbar_bloc.dart';
@@ -297,7 +300,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
-          drawer: isDebug ? DrawerComponent() : null,
+//          drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
               bool isHomePanelMoving =
@@ -355,28 +358,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   Application.isUpdateAnnounce = true;
                 }
 
-                return Stack(
-                  children: <Widget>[
-                    ScaffoldMap(key: Keys.scaffoldMap),
-                    userLocationBar(),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).padding.bottom +
-                              kBottomNavigationBarHeight),
-                      child: _getTabView(_currentTabIndex),
-                    ),
-                    bottomNavigationBar(),
-                    if (createDAppWidgetFunction != null)
-                      createDAppWidgetFunction(context),
-                    if (_isShowAnnounceDialog &&
-                        state is CheckNewAnnouncementState)
-                      AnnouncementDialog(state.announcement, () {
-                        _isShowAnnounceDialog = false;
-                        BlocProvider.of<AppTabBarBloc>(context)
-                            .add(InitialAppTabBarEvent());
-                      })
-                  ],
-                );
+                return SafeArea(child: PartnerExchangeLoginPage());
               }),
             ),
           ),

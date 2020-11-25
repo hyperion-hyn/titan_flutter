@@ -455,7 +455,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               ),
               delegationListView(context, _buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice) {
                 if (depthPrice == "null") return;
-
                 currentPrice = Decimal.parse(depthPrice);
                 currentPriceStr = depthPrice;
                 priceEditController.text = currentPriceStr;
