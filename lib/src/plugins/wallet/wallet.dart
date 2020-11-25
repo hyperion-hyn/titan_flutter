@@ -23,7 +23,6 @@ import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
 import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
-import 'package:web3dart/web3dart.dart';
 
 import 'wallet_util.dart';
 
@@ -195,17 +194,18 @@ class Wallet {
   /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
   /// 如果[message]设置了，则为抵押相关的操作
   /// 如果[type]和[message]都是null，则为ethereum转账
-  Future<String> sendEthTransaction(
-      {int id,
-      String password,
-      String toAddress,
-      BigInt value,
-      BigInt gasPrice,
-      int nonce,
-      int gasLimit = 0,
-      int type,
-      web3.IMessage message,
-      bool isAtlasTrans = false}) async {
+  Future<String> sendEthTransaction({
+    int id,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
+  }) async {
     /*if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
@@ -240,15 +240,15 @@ class Wallet {
     );
 
     var responseMap = await WalletUtil.postToEthereumNetwork(
-        method: 'eth_sendRawTransaction', params: [signedRawHex], isAtlasTrans: isAtlasTrans);
+        method: 'eth_sendRawTransaction', params: [signedRawHex],isAtlasTrans: isAtlasTrans);
     if (type == null && responseMap['result'] != null) {
       nonce = await getCurrentWalletNonce();
       await transactionInteractor.insertTransactionDB(
           responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
           id: id);
-    } else if (responseMap['error'] != null) {
+    }else if(responseMap['error'] != null){
       var errorEntity = responseMap['error'];
-      throw RPCError(errorEntity['code'], errorEntity['message'], "");
+      throw RPCError(errorEntity['code'], errorEntity['message'],"");
     }
 
     return responseMap['result'];
@@ -258,17 +258,18 @@ class Wallet {
   /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
   /// 如果[message]设置了，则为抵押相关的操作
   /// 如果[type]和[message]都是null，则为ethereum转账
-  Future<String> signEthTransaction(
-      {int id,
-      String password,
-      String toAddress,
-      BigInt value,
-      BigInt gasPrice,
-      int nonce,
-      int gasLimit = 0,
-      int type,
-      web3.IMessage message,
-      bool isAtlasTrans = false}) async {
+  Future<String> signEthTransaction({
+    int id,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
+  }) async {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
@@ -279,7 +280,7 @@ class Wallet {
     final rawTx = await client.signTransaction(
       credentials,
       web3.Transaction(
-        to: toAddress == null ? null : web3.EthereumAddress.fromHex(toAddress),
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
         value: value == null ? null : web3.EtherAmount.inWei(value),
@@ -311,7 +312,7 @@ class Wallet {
     var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
 
     var gasFees = BigInt.from(gasLimit) * gasPrice;
-    if (gasFees > ethBalance) {
+    if(gasFees > ethBalance){
       Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
       return null;
     }
@@ -333,52 +334,21 @@ class Wallet {
       fetchChainIdFromNetworkId: true,
     );
 
-    if (txHash != null) {
+    if(txHash != null) {
       nonce = await getCurrentWalletNonce();
       await transactionInteractor.insertTransactionDB(
-          txHash, toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_HYN_USDT, nonce,
-          id: id, contractAddress: contractAddress);
-    } else {
+          txHash,
+          toAddress,
+          value,
+          gasPrice,
+          gasLimit,
+          LocalTransferType.LOCAL_TRANSFER_HYN_USDT,
+          nonce,
+          id: id,
+          contractAddress: contractAddress);
+    }else{
       Fluttertoast.showToast(msg: "广播异常");
     }
-    return txHash;
-  }
-
-  Future<String> sendHYNErc30Transaction({
-    int id,
-    String contractAddress,
-    String password,
-    String toAddress,
-    BigInt value,
-    BigInt gasPrice,
-    int nonce,
-    int gasLimit = 0,
-  }) async {
-    /*var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
-
-    var gasFees = BigInt.from(gasLimit) * gasPrice;
-    if(gasFees > ethBalance){
-      Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
-      return null;
-    }*/
-
-    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
-    final client = WalletUtil.getWeb3Client(true);
-    final credentials = await client.credentialsFromPrivateKey(privateKey);
-    final contract = WalletUtil.getHynErc20Contract(contractAddress);
-    final txHash = await client.sendTransaction(
-      credentials,
-      web3.Transaction.callContract(
-          contract: contract,
-          function: contract.function('transfer'),
-          parameters: [web3.EthereumAddress.fromHex(toAddress), value],
-          gasPrice: web3.EtherAmount.inWei(gasPrice),
-          maxGas: gasLimit,
-          nonce: nonce,
-          type: MessageType.typeNormal),
-      fetchChainIdFromNetworkId: false,
-    );
-
     return txHash;
   }
 

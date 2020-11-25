@@ -60,6 +60,7 @@ class SimpleLineChart extends StatelessWidget {
     final data = List.generate(rewardHistoryList.length, (index) {
       var rewardItem = rewardHistoryList[index];
       var delegation = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(rewardItem.totalDelegation)).toInt();
+      print("!!!!22 ${rewardItem.epoch}   $delegation");
 //      if(index == (rewardHistoryList.length - 1)){
 //        lastRewardOrdinal = OrdinalSales("${rewardItem.epoch}",delegation);
 //      }

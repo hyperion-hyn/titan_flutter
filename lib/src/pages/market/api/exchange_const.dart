@@ -26,6 +26,7 @@ class ExchangeConst {
       "/api/v1-b/market/trade_history"; // 所有用户历史交易数据
   static const PATH_HISTORY_DEPTH =
       "/api/v1-b/market/depth_history"; // 所有用户历史深度数据
+
   static const PATH_HISTORY_KLINE =
       "/api/v1-b/market/kline_history"; // 所有用户历史k线数据
 
@@ -33,10 +34,10 @@ class ExchangeConst {
   static const PATH_BANNER_LIST = '/api/message/listBanner';
 
   ///交易系统：
-  static const PATH_ORDER_LIMIT = "/api/exchange/orderPutLimit"; // 下限价单
+//  static const PATH_ORDER_LIMIT = "/api/exchange/orderPutLimit"; // 下限价单
   static const PATH_ORDER_MARKET = "/api/exchange/orderPutMarket"; // 下市价单
   static const PATH_ORDER_CANCEL = "/api/exchange/orderCancel"; // 取消订单A
-  static const PATH_ORDER_LIST = "/api/order/lists"; // 当前/历史 委托列表
+//  static const PATH_ORDER_LIST = "/api/order/lists"; // 当前/历史 委托列表
   static const PATH_ORDER_LOG_LIST = "/api/order/dealDetailLists"; // 成交明细
   static const PATH_MARKET_ALL = '/api/v1-b/market/all';
   static const PATH_MARKET_INFO =
@@ -50,7 +51,7 @@ class ExchangeConst {
   static const PATH_FIX_ABNORMAL_ACCOUNT = '/api/account/fix';
 
   ///资金操作
-  static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表
+//  static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表
   static const PATH_TO_EXCHANGE = "/api/account/toExchange"; // 资金账户划转到交易账户
   static const PATH_TO_ACCOUNT = "/api/exchange/toAccount"; // 交易账户划转到资金账户
   static const PATH_GET_ADDRESS = "/api/account/getAddress"; // 获取充币地址
@@ -59,4 +60,15 @@ class ExchangeConst {
   static const PATH_ASSETS_HISTORY = "/api/account/getHistory"; // 充提记录
   static const PATH_QUICK_RECHARGE = "/api/account/recharge"; // 快速充币，只用于测试。
 
+  //user api
+
+  static const API_PATH_ACCOUNT_ASSETS = "/api/v1/assetsList"; // 通过api请求资产列表
+  static const API_PATH_ORDER_LIMIT = '/api/v1/orderPut'; //通过api下单
+  static const API_PATH_ORDER_LIST = '/api/v1/orderList'; //通过api查看订单列表
+  static const API_PATH_ORDER_CANCEL = "/api/v1/orderCancel"; // 取消订单
+
+  static const API_PATH_GET_UID = '/api/v1/uid'; //获取uid
+  static const API_PATH_ORDER_LOG_LIST = "/api/v1/dealDetailLists"; // 成交
+
+  static const API_PATH_DEPTH = "/api/v1/depth";
 }

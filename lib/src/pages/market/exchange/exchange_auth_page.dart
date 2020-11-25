@@ -38,10 +38,6 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((callback) {
-      ///
-      _checkIsAuthAlready();
-    });
   }
 
   @override
@@ -53,7 +49,6 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
           setState(() {
             isLoggingIn = false;
           });
-          _setAuthAlready();
           Navigator.of(context).pop();
           Fluttertoast.showToast(msg: S.of(context).exchange_login_success);
         } else if (state is LoginFailState) {
@@ -77,9 +72,7 @@ class _ExchangeAuthPageState extends BaseState<ExchangeAuthPage> {
             ),
           ),
         ),
-        body: WalletInheritedModel.of(context).activatedWallet == null
-            ? _noWalletView()
-            : _authorizeView(),
+        body: _authorizeView(),
       ),
     );
   }

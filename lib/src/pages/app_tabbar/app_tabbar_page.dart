@@ -28,6 +28,7 @@ import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/home/bloc/bloc.dart';
+import 'package:titan/src/pages/market/PartnerExchangeLoginPage.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
 import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
@@ -41,6 +42,8 @@ import '../../widget/draggable_scrollable_sheet.dart' as myWidget;
 
 import '../../../env.dart';
 import '../home/home_page.dart';
+import '../market/exchange/exchange_page.dart';
+import '../wallet/wallet_tabs_page.dart';
 import '../mine/my_page.dart';
 import 'announcement_dialog.dart';
 import 'bloc/app_tabbar_bloc.dart';
@@ -60,7 +63,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
   final GlobalKey _bottomBarKey = GlobalKey(debugLabel: 'bottomBarKey');
   final GlobalKey _discoverKey = GlobalKey(debugLabel: '__discover_key__');
 
-  var _fabsHeight = 185;
+  var _fabsHeight = 56;
 
   int _currentTabIndex = 0;
 
@@ -110,8 +113,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
     Future.delayed(Duration(milliseconds: 500)).then((value) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateWalletPageEvent(updateGasPrice: true));
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
     });
 
 //    Future.delayed(Duration(milliseconds: 2000)).then((value) {
@@ -138,6 +140,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+
   }
 
   @override
@@ -297,7 +300,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         ],
         child: Scaffold(
           resizeToAvoidBottomPadding: false,
-          drawer: isDebug ? DrawerComponent() : null,
+//          drawer: isDebug ? DrawerComponent() : null,
           body: NotificationListener<myWidget.DraggableScrollableNotification>(
             onNotification: (notification) {
               bool isHomePanelMoving =
@@ -350,32 +353,12 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   builder: (context, state) {
                 if (state is CheckNewAnnouncementState &&
                     state.announcement != null) {
+                  //todo maprich _isShowAnnounceDialog 为 true
                   _isShowAnnounceDialog = false;
                   Application.isUpdateAnnounce = true;
                 }
 
-                return Stack(
-                  children: <Widget>[
-                    ScaffoldMap(key: Keys.scaffoldMap),
-                    userLocationBar(),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).padding.bottom +
-                              kBottomNavigationBarHeight),
-                      child: _getTabView(_currentTabIndex),
-                    ),
-                    bottomNavigationBar(),
-                    if (createDAppWidgetFunction != null)
-                      createDAppWidgetFunction(context),
-                    if (_isShowAnnounceDialog &&
-                        state is CheckNewAnnouncementState)
-                      AnnouncementDialog(state.announcement, () {
-                        _isShowAnnounceDialog = false;
-                        BlocProvider.of<AppTabBarBloc>(context)
-                            .add(InitialAppTabBarEvent());
-                      })
-                  ],
-                );
+                return SafeArea(child: PartnerExchangeLoginPage());
               }),
             ),
           ),

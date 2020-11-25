@@ -49,14 +49,6 @@ class Const {
     }
   }
 
-  static String get RP_DOMAIN {
-    if (env.buildType == BuildType.DEV) {
-      return Config.RP_API_URL_TEST;
-    } else {
-      return Config.RP_API_URL;
-    }
-  }
-
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -163,6 +155,8 @@ class PrefsKey {
   static const String KLINE_MAIN_STATE = 'mainState';
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
+  static const String SHARED_PREF_LOGIN_USER_API_KEY_LIST = "shared_pref_login_user_api_key_list";
+  static const String SHARED_PREF_LOGIN_USER_API_SECRET_LIST = "shared_pref_login_user_api_secret_list";
   ///Exchange account
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =

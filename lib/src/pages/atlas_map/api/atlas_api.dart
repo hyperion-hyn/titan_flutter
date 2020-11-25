@@ -32,10 +32,8 @@ import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
-import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -59,27 +57,6 @@ class AtlasApi {
       List resultList = dataList as List;
       return resultList
           .map((json) => HynTransferHistory.fromJson(json))
-          .toList();
-    } else {
-      throw new Exception();
-    }
-  }
-
-  Future<List<InternalTransactions>> queryHYNErc30History(
-      String address, int page, String contractAddress) async {
-    Map result = await AtlasHttpCore.instance.post(
-      "v1/wallet/account_internal_txs",
-      data: "{\"address\": \"$address\",\"contract_address\": \"$contractAddress\",\"page\": $page,\"size\": 20}",
-    );
-
-    if (result["code"] == 0) {
-      var dataList = result["data"]["data"];
-      if (dataList == null || (dataList as List).length == 0) {
-        return [];
-      }
-      List resultList = dataList as List;
-      return resultList
-          .map((json) => InternalTransactions.fromJson(json))
           .toList();
     } else {
       throw new Exception();
@@ -112,8 +89,8 @@ class AtlasApi {
   }
 
   static goToAtlasMap3HelpPage(BuildContext context) {
-    String webUrl =
-        FluroConvertUtils.fluroCnParamsEncode("http://h.hyn.space/helpPage");
+    String webUrl = FluroConvertUtils.fluroCnParamsEncode(
+        "http://h.hyn.space/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
     Application.router.navigateTo(context,
@@ -161,19 +138,6 @@ class AtlasApi {
           headers: getOptionHeader(hasSign: true),
           contentType: "application/json",
         ));
-  }
-
-  ///RP
-  Future<RPInfo> postRpInfo(String address) async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/rp/info",
-        EntityFactory<RPInfo>(
-          (json) => RPInfo.fromJson(json),
-        ),
-        params: {
-          'address': address,
-        },
-        options: RequestOptions(contentType: "application/json"));
   }
 
   // 查询燃烧信息
@@ -383,14 +347,11 @@ class AtlasApi {
   }
 
   // atlas节点图表数据
-  Future<List<RewardHistoryEntity>> postAtlasChartHistory(String nodeAddress,
-      {int page = 1, int size = 20}) async {
+  Future<List<RewardHistoryEntity>> postAtlasChartHistory(String nodeAddress, {int page = 1, int size = 20}) async {
     return AtlasHttpCore.instance.postEntity(
         "/v1/atlas/reward_history",
-        EntityFactory<List<RewardHistoryEntity>>((list) =>
-            (list['data'] as List)
-                .map((item) => RewardHistoryEntity.fromJson(item))
-                .toList()),
+        EntityFactory<List<RewardHistoryEntity>>(
+            (list) => (list['data'] as List).map((item) => RewardHistoryEntity.fromJson(item)).toList()),
         params: {
           "node_address": nodeAddress,
           "page": page,
@@ -635,6 +596,7 @@ class AtlasApi {
         },
         options: RequestOptions(contentType: "application/json"));
   }
+
 
   // 获取节点的抵押人地址列表
   Future<List<Map3UserEntity>> getMap3UserList(String nodeId,
@@ -888,16 +850,14 @@ class AtlasApi {
   }
 
   static bool isTransferBill(int type) {
-    return (type == MessageType.typeUnMicrostakingReturn ||
-        type == MessageType.typeTerminateMap3Return);
+    return (type == MessageType.typeUnMicrostakingReturn || type == MessageType.typeTerminateMap3Return);
   }
 
   static double getTransferBillAmount(HynTransferHistory hynTransferHistory) {
-    var amountStr = (Decimal.parse(hynTransferHistory.payload.amount) +
-            Decimal.parse(hynTransferHistory.payload.reward))
-        .toString();
-    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr))
-        .toDouble();
+    var amountStr =
+        (Decimal.parse(hynTransferHistory.payload.amount) + Decimal.parse(hynTransferHistory.payload.reward))
+            .toString();
+    return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(amountStr)).toDouble();
   }
 
   static bool isTransferMap3Atlas(int type) {
@@ -971,9 +931,10 @@ class AtlasApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+
   Future<SystemConfigEntity> getSystemConfigData() async {
-    var configEntity = await AtlasHttpCore.instance.postEntity('/v1/app/config',
-        EntityFactory<SystemConfigEntity>((data) {
+    var configEntity =
+    await AtlasHttpCore.instance.postEntity('/v1/app/config', EntityFactory<SystemConfigEntity>((data) {
       return SystemConfigEntity.fromJson(json.decode(data));
     }), params: {
       "key": 'app:config',

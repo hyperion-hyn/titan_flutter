@@ -188,6 +188,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     _loadDataBloc.add(RefreshSuccessEvent());
   }
 
+  // DebounceLater depthDebounceLater = DebounceLater();
+  DebounceLater tradeDebounceLater = DebounceLater();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,9 +199,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         listener: (ctx, state) {
           bool isRefresh = consignListSocket(context, state, _activeOrders, true);
           if (isRefresh) {
-            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-            _loadDataBloc.add(LoadingMoreSuccessEvent());
-            consignListController.add(contrConsignTypeRefresh);
+            tradeDebounceLater.debounceInterval(() {
+              BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+              _loadDataBloc.add(LoadingMoreSuccessEvent());
+
+              consignListController.add(contrConsignTypeRefresh);
+            }, 500);
           }
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();
@@ -264,11 +270,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Widget exchangePageView() {
-    _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
+    _realTimePrice = MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePrice(symbol);
     selectQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
     _realTimeQuotePrice =
         FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
-    _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
+    _realTimePricePercent =
+        MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getRealTimePricePercent(symbol);
 
     return SafeArea(
       child: GestureDetector(
@@ -448,7 +455,6 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
               ),
               delegationListView(context, _buyChartList, _sailChartList, limitNum: 5, clickPrice: (depthPrice) {
                 if (depthPrice == "null") return;
-
                 currentPrice = Decimal.parse(depthPrice);
                 currentPriceStr = depthPrice;
                 priceEditController.text = currentPriceStr;
@@ -1017,7 +1023,9 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: Text(
-                      !exchangeModel.isActiveAccountAndHasAssets() ? "授权后查看余额" : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
+                    !exchangeModel.isActiveAccountAndHasAssets()
+                        ? "授权后查看余额"
+                        : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
                     style: TextStyle(color: DefaultColors.color999, fontSize: 10),
                   ),
                 ),

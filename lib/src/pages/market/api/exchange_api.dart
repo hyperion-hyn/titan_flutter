@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/env.dart';
 import 'package:titan/src/basic/http/base_http.dart';
 import 'package:titan/src/basic/http/entity.dart';
@@ -163,8 +164,9 @@ class ExchangeApi {
   }
 
   Future<List<ExchangeBanner>> getBannerList() async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_BANNER_LIST,
-        EntityFactory<List<ExchangeBanner>>((data) {
+    return await ExchangeHttp.instance
+        .postEntity(ExchangeConst.PATH_BANNER_LIST,
+            EntityFactory<List<ExchangeBanner>>((data) {
       var bannerList = List<ExchangeBanner>();
 
       (data as List).forEach((item) {
@@ -218,12 +220,21 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> getAssetsList() async {
-    return await exchangeHttp.postEntity(
-      ExchangeConst.PATH_ACCOUNT_ASSETS,
-      null,
+  Future<dynamic> getUserId({String apiKey, String secret}) async {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_GET_UID,
       params: {},
+      apiKey: apiKey,
+      secret: secret,
     );
+  }
+
+  Future<dynamic> getAssetsList({String apiKey, String secret}) async {
+    return await userApiSignAndPost(
+        path: ExchangeConst.API_PATH_ACCOUNT_ASSETS,
+        params: {},
+        apiKey: apiKey,
+        secret: secret);
   }
 
   Future<dynamic> type2currency(String _type, String _currency) async {
@@ -238,7 +249,7 @@ class ExchangeApi {
   }
 
   Future<dynamic> testRecharge(String type, double balance) async {
-    return await exchangeHttp
+    return await ExchangeHttp.instance
         .postEntity(ExchangeConst.PATH_QUICK_RECHARGE, null, params: {
       "type": type,
       "balance": balance,
@@ -294,9 +305,8 @@ class ExchangeApi {
 
   Future<dynamic> orderPutLimit(
       String market, exchangeType, String price, String amount) async {
-    return await exchangeHttp.postEntity(
-      ExchangeConst.PATH_ORDER_LIMIT,
-      null,
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_LIMIT,
       params: {
         "market": market,
         "side": exchangeType,
@@ -309,7 +319,7 @@ class ExchangeApi {
 
   Future<dynamic> orderPutMarket(
       String market, exchangeType, String amount) async {
-    return await exchangeHttp.postEntity(
+    return await ExchangeHttp.instance.postEntity(
       ExchangeConst.PATH_ORDER_MARKET,
       null,
       params: {
@@ -320,11 +330,13 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderCancel(String orderId) async {
-    return await exchangeHttp.postEntity(
-      ExchangeConst.PATH_ORDER_CANCEL,
-      null,
-      params: {"order_id": orderId},
+  Future<dynamic> orderCancel(String orderId, String market) async {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_CANCEL,
+      params: {
+        "order_id": orderId,
+        'market': market,
+      },
     );
   }
 
@@ -350,29 +362,41 @@ class ExchangeApi {
     );
   }
 
+  Future<dynamic> historyDepthForMM(String market, {int precision = -1}) async {
+    return await userApiSignAndPost(
+        path: ExchangeConst.API_PATH_DEPTH,
+        params: {
+          "market": market,
+          "precision": precision,
+        });
+  }
+
   Future<List<Order>> getOrderList(
     String market,
     int page,
     int size,
     String method,
   ) async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_ORDER_LIST,
-        EntityFactory<List<Order>>((response) {
-      var orderList = List<Order>();
-      if (response is Map && response.length == 0) {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_LIST,
+      factory: EntityFactory<List<Order>>((response) {
+        var orderList = List<Order>();
+        if (response is Map && response.length == 0) {
+          return orderList;
+        }
+        var dataList = response['data'];
+        (dataList as List).forEach((item) {
+          orderList.add(Order.fromJson(item));
+        });
         return orderList;
-      }
-      var dataList = response['data'];
-      (dataList as List).forEach((item) {
-        orderList.add(Order.fromJson(item));
-      });
-      return orderList;
-    }), params: {
-      'market': market,
-      'page': page,
-      'size': size,
-      'method': method,
-    });
+      }),
+      params: {
+        'market': market,
+        'page': page,
+        'size': size,
+        'method': method,
+      },
+    );
   }
 
   Future<List<AssetHistory>> getAccountHistory(
@@ -381,33 +405,9 @@ class ExchangeApi {
     int size,
     String action,
   ) async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
-        EntityFactory<List<AssetHistory>>((response) {
-      var assetHistoryList = List<AssetHistory>();
-      if (response is Map && response.length == 0) {
-        return assetHistoryList;
-      }
-      var dataList = response['data'];
-      (dataList as List).forEach((item) {
-        assetHistoryList.add(AssetHistory.fromJson(item));
-      });
-      return assetHistoryList;
-    }), params: {
-      'type': type,
-      'page': page,
-      'size': size,
-      'action': action,
-    });
-  }
-
-  Future<List<AssetHistory>> get(
-    String type,
-    int page,
-    int size,
-    String action,
-  ) async {
-    return await exchangeHttp.postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
-        EntityFactory<List<AssetHistory>>((response) {
+    return await ExchangeHttp.instance
+        .postEntity(ExchangeConst.PATH_ASSETS_HISTORY,
+            EntityFactory<List<AssetHistory>>((response) {
       var assetHistoryList = List<AssetHistory>();
       if (response is Map && response.length == 0) {
         return assetHistoryList;
@@ -430,9 +430,9 @@ class ExchangeApi {
     int page,
     int size,
   ) async {
-    return await exchangeHttp.postEntity(
-      ExchangeConst.PATH_ORDER_LOG_LIST,
-      EntityFactory<List<OrderDetail>>((response) {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_LOG_LIST,
+      factory: EntityFactory<List<OrderDetail>>((response) {
         var orderDetailList = List<OrderDetail>();
         if (response is Map && response.length == 0) {
           return orderDetailList;
@@ -508,5 +508,45 @@ class ExchangeApi {
     );
 
     return signer.verify64(paramsStr, data['sign']);
+  }
+
+  Future<dynamic> userApiSignAndPost<T>(
+      {String path, //example: /api/index/testWalletSign
+      EntityFactory<T> factory,
+      Map<String, dynamic> params,
+      String apiKey,
+      String secret}) async {
+    var _sharePref = await SharedPreferences.getInstance();
+    var _previousApiKey = _sharePref.getString('exchange_user_api_key') ?? '';
+    var _previousApiSecret =
+        _sharePref.getString('exchange_user_api_secret') ?? '';
+
+    if (apiKey == null) {
+      apiKey = _previousApiKey;
+    }
+    if (secret == null) {
+      secret = _previousApiSecret;
+    }
+
+    params ??= {};
+    params['api'] = apiKey;
+    params['seed'] = Random().nextInt(0xfffffffe).toString();
+    params['ts'] = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
+    params['sign_method'] = 'HmacSHA256';
+    params['sign_ver'] = '2';
+
+    var signedStr = Signer.signApiWithSecretKey(
+        secret: secret,
+        method: 'POST',
+        host: ExchangeConst.EXCHANGE_DOMAIN.split('//')[1],
+        path: path,
+        params: params);
+    params['sign'] = signedStr;
+
+    return await ExchangeHttp.instance.postEntity(
+      path,
+      factory,
+      params: params,
+    );
   }
 }

@@ -50,14 +50,6 @@ class SupportedTokens {
     symbol: 'HYN',
   );
 
-  static const HYN_RP_ERC30_ROPSTEN = const AssetToken(
-    name: "Red Package",
-    decimals: 18,
-    contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
-    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
-    symbol: 'RP',
-  );
-
   static const HYN_ERC20 = const AssetToken(
     name: 'Hyperion',
     decimals: 18,

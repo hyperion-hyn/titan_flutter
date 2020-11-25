@@ -127,7 +127,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       return false;
     }
 
-    //转出的地址在bibox白名单列表，则显示原以太地址
     var ethAddress = HYNApi.getHynToAddress(transactionDetail);
     bool isContain = false;
     if (whiteList.isNotEmpty && ethAddress.isNotEmpty) {

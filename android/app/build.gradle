@@ -45,7 +45,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.hyn.titan"
+        applicationId "org.hyn.titantest"
         minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
@@ -95,7 +95,7 @@ android {
             applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     if (output.outputFileName.contains('-release')) {
-                        def fileName = "titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
+                        def fileName = "mm_titan_${defaultConfig.versionCode}_v${defaultConfig.versionName}.apk"
                         output.outputFileName = fileName
                     }
                 }

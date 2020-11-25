@@ -420,8 +420,7 @@ class WalletUtil {
       } else {
         final contract = WalletUtil.getHynErc20Contract(contractAddress);
         final balanceFun = contract.function('balanceOf');
-        bool isAtlasCoin = coinType == CoinType.HYN_ATLAS;
-        final balance = await WalletUtil.getWeb3Client(isAtlasCoin).call(
+        final balance = await WalletUtil.getWeb3Client().call(
             contract: contract,
             function: balanceFun,
             params: [web3.EthereumAddress.fromHex(address)]);
@@ -432,7 +431,7 @@ class WalletUtil {
   }
 
   static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
-    if (coinVo.coinType == CoinType.HYN_ATLAS) {
+    if (coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
       return ethAddressToBech32Address(ethAddress);
     } else {
       return ethAddress;

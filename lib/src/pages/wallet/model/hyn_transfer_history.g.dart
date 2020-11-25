@@ -40,11 +40,6 @@ HynTransferHistory _$HynTransferHistoryFromJson(Map<String, dynamic> jsonMap) {
     jsonMap['value'] as String,
     (jsonMap['payload'] == null || (jsonMap['payload'] as String).isEmpty ) ? null
         : TransferPayload.fromJson(json.decode(jsonMap['payload'])),
-    (jsonMap['internal_trans'] as List)
-        ?.map((e) => e == null
-        ? null
-        : InternalTransactions.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
   );
 }
 
@@ -77,7 +72,6 @@ Map<String, dynamic> _$HynTransferHistoryToJson(HynTransferHistory instance) =>
       'updated_at': instance.updatedAt,
       'value': instance.value,
       'payload': instance.payload,
-      'internal_trans': instance.internalTransactions,
     };
 
 DataDecoded _$DataDecodedFromJson(Map<String, dynamic> json) {
@@ -165,36 +159,4 @@ Map<String, dynamic> _$TransferPayloadToJson(TransferPayload instance) =>
       'Map3Node': instance.map3Node,
       'Amount': instance.amount,
       'Reward': instance.reward,
-    };
-
-InternalTransactions _$InternalTransactionsFromJson(Map<String, dynamic> json) {
-  return InternalTransactions(
-    json['tx_hash'] as String,
-    json['log_index'] as int,
-    json['from'] as String,
-    json['to'] as String,
-    json['value'] as String,
-    json['data'] as String,
-    json['payload'] as String,
-    json['type'] as String,
-    json['status'] as int,
-    json['timestamp'] as int,
-    json['contract_address'] as String,
-  );
-}
-
-Map<String, dynamic> _$InternalTransactionsToJson(
-    InternalTransactions instance) =>
-    <String, dynamic>{
-      'tx_hash': instance.txHash,
-      'log_index': instance.logIndex,
-      'from': instance.from,
-      'to': instance.to,
-      'value': instance.value,
-      'data': instance.data,
-      'payload': instance.payload,
-      'type': instance.type,
-      'status': instance.status,
-      'timestamp': instance.timestamp,
-      'contract_address': instance.contractAddress,
     };

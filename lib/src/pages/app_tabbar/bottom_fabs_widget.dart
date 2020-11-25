@@ -6,7 +6,6 @@ import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_page.dart';
 import 'burning_dialog.dart';
 
 class BottomFabsWidget extends StatefulWidget {
@@ -43,20 +42,20 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
 
   void _showFireModalBottomSheet(context) {
     showModalBottomSheet(
-        backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15), topRight: Radius.circular(15))),
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+        ),
         context: context,
         builder: (ctx) {
           return Container(
 //            decoration: BoxDecoration(
 //            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),),
-            margin: EdgeInsets.only(top: 12, bottom: 31),
+            margin: EdgeInsets.only(top: 12,bottom: 31),
             child: new Wrap(
               children: <Widget>[
                 InkWell(
-                  onTap: () {
+                  onTap: (){
                     Navigator.pop(ctx);
                     showDialog(
                         context: context,
@@ -67,27 +66,18 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Row(children: <Widget>[
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Image.asset(
-                        'res/drawable/ic_home_clear.png',
-                        width: 15,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text(
-                        S.of(context).Clean,
-                        style:
-                            TextStyle(fontSize: 15, color: HexColor("#333333")),
-                      ),
-                    ]),
+                    child: Row(
+                      children: <Widget>[
+                        SizedBox(width: 20,),
+                        Image.asset('res/drawable/ic_home_clear.png',width: 15,),
+                        SizedBox(width: 12,),
+                        Text(S.of(context).Clean,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
+                      ]
+                    ),
                   ),
                 ),
                 InkWell(
-                  onTap: () {
+                  onTap: (){
                     Navigator.pop(ctx);
                   },
                   child: Padding(
@@ -95,21 +85,10 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
 //                    padding: const EdgeInsets.only(top:5,bottom: 10,left: 10,right: 10),
                     child: Row(
                       children: <Widget>[
-                        SizedBox(
-                          width: 21,
-                        ),
-                        Image.asset(
-                          'res/drawable/ic_close.png',
-                          width: 12,
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(
-                          S.of(context).cancel,
-                          style: TextStyle(
-                              fontSize: 15, color: HexColor("#333333")),
-                        ),
+                        SizedBox(width: 21,),
+                        Image.asset('res/drawable/ic_close.png',width: 12,),
+                        SizedBox(width: 15,),
+                        Text(S.of(context).cancel,style: TextStyle(fontSize: 15,color:HexColor("#333333")),),
                       ],
                     ),
                   ),
@@ -144,59 +123,35 @@ class BottomFabsWidgetState extends State<BottomFabsWidget> {
     if (_isShow == true) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Spacer(),
-                Container(
-                  width: 80,
-                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  child: InkWell(
-                    child: Image.asset('res/drawable/red_pocket.png'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => RedPocketPage()),
-                      );
-                    },
-                  ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            if (widget.showBurnBtn == true)
+              FloatingActionButton(
+                onPressed: () => _showFireModalBottomSheet(context),
+                mini: true,
+                heroTag: 'cleanData',
+                backgroundColor: Colors.white,
+                child: Image.asset(
+                  'res/drawable/ic_logo.png',
+                  width: 24,
+                  color: Colors.black87,
                 ),
-              ],
-            ),
-            SizedBox(height: 24,),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                if (widget.showBurnBtn == true)
-                  FloatingActionButton(
-                    onPressed: () => _showFireModalBottomSheet(context),
-                    mini: true,
-                    heroTag: 'cleanData',
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      'res/drawable/ic_logo.png',
-                      width: 24,
-                      color: Colors.black87,
-                    ),
-                  ),
-                Spacer(),
-                FloatingActionButton(
-                  onPressed: () {
-                    Application.eventBus.fire(ToMyLocationEvent());
-                    //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
-                  },
-                  mini: true,
-                  heroTag: 'myLocation',
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.my_location,
-                    color: Colors.black87,
-                    size: 24,
-                  ),
-                )
-              ],
+              ),
+            Spacer(),
+            FloatingActionButton(
+              onPressed: () {
+                Application.eventBus.fire(ToMyLocationEvent());
+                //BlocProvider.of<MapBloc>(context).add(MyLocationEvent());
+              },
+              mini: true,
+              heroTag: 'myLocation',
+              backgroundColor: Colors.white,
+              child: Icon(
+                Icons.my_location,
+                color: Colors.black87,
+                size: 24,
+              ),
             )
           ],
         ),

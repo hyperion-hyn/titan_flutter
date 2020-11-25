@@ -1,4 +1,3 @@
-
 class SocketConfig {
   static final String cid = "hyn_titan";
   static final String sub = "sub";
@@ -27,6 +26,19 @@ class SocketConfig {
     return "ws.market.$symbol.depth.$level";
   }
 
+  // 指定交易对实时深度数据
+  /*
+  ----MM专用----
+  参数说明：
+  * symbol: ethusdt
+  * level: -1
+  * 注：-1表示不合并，其他表示对应精度
+  *
+  * */
+  static String mmChannelExchangeDepth(String symbol, int level) {
+    return "ws.api.$symbol.depth.$level";
+  }
+
   // 指定交易对实时成交数据
   /*参数说明：
   * symbol: ethusdt
@@ -44,7 +56,4 @@ class SocketConfig {
   static String channelUserTick(String uid, String symbol) {
     return "user.$uid.tick.$symbol";
   }
-
 }
-
-
