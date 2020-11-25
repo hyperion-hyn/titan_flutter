@@ -15,8 +15,9 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web3dart/web3dart.dart';
-
+import 'package:titan/src/widget/all_page_state/all_page_state.dart';
 import 'model/transtion_detail_vo.dart';
+import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
 class WalletShowAccountInfoPage extends StatefulWidget {
   TransactionDetailVo transactionDetail;
@@ -36,6 +37,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   List<String> _dataInfoList = List();
   var gasPriceStr = "";
   var isBillPage = false;
+  AllPageState _currentState = LoadingState();
 
   @override
   void initState() {
@@ -65,7 +67,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   Future loadWalletInfo() async {
     if(widget.transactionDetail.contractAddress.toLowerCase() == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress.toLowerCase()){
       var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
-      widget.transactionDetail = TransactionDetailVo.fromHynTransferHistory(hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
+      widget.transactionDetail = TransactionDetailVo.fromHynErc30TransferHistory(hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
     }
 
     var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
@@ -123,118 +125,16 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     }
 
     setState(() {
-
+      _currentState = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
-    var infoItemTitle;
-    var infoItemStatusImage;
-    getAccountPageTitle(context, widget.transactionDetail,
-        (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
-      infoItemTitle = pageTitle;
-      infoItemStatusImage = pageStatusImage;
-    });
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: BaseAppBar(baseTitle: S.of(context).detail),
-      body: Container(
-        color: DefaultColors.colorf2f2f2,
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverToBoxAdapter(
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 18.0, bottom: 20),
-                      child: Image.asset(
-                        infoItemStatusImage,
-                        width: 63,
-                        height: 63,
-                      ),
-                    ),
-                    Text(
-                      infoItemTitle,
-                      style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2.0, bottom: 34),
-                      child: Text(
-                        FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true),
-                        style: TextStyle(color: DefaultColors.color999, fontSize: 13),
-                      ),
-                    ),
-                    Container(
-                      height: 11,
-                      color: DefaultColors.colorf2f2f2,
-                    )
-                  ],
-                ),
-              ),
-            ),
-            SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-              var leftText = _dataTitleList[index];
-              var rightText = _dataInfoList[index];
-              if(isBillPage){
-                if (index == 0) {
-                  return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
-                } else if (index == 3) {
-                  return accountInfoItem(leftText, rightText, normalLine: false);
-                }
-              }else{
-                if (index == 1) {
-                  var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
-                  return accountInfoItem(leftText, rightText, bottomText: bottomText);
-                } else if (index == 4) {
-                  return accountInfoItem(leftText, rightText, normalLine: false);
-                }
-              }
-              return accountInfoItem(leftText, rightText);
-            }, childCount: _dataTitleList.length)),
-            if(!isBillPage)
-              SliverToBoxAdapter(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WalletShowAccountDetailPage(
-                                  widget.transactionDetail,
-                                  isContain: widget.isContain,
-                                )));
-                  },
-                  child: Container(
-                    color: Colors.white,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
-                          child: Text(
-                            S.of(context).check_for_detail_info,
-                            style: TextStyles.textC333S13,
-                          ),
-                        ),
-                        Spacer(),
-                        Image.asset(
-                          "res/drawable/add_position_image_next.png",
-                          height: 13,
-                        ),
-                        SizedBox(
-                          width: 15,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              )
-          ],
-        ),
-      ),
+      body: _pageView(),
     );
   }
 
@@ -295,6 +195,123 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
             Container(
               height: 11,
               color: DefaultColors.colorf2f2f2,
+            )
+        ],
+      ),
+    );
+  }
+
+  _pageView() {
+    if (_currentState != null) {
+      return Scaffold(
+        body: AllPageStateContainer(_currentState, () {
+          setState(() {
+            _currentState = LoadingState();
+          });
+          loadWalletInfo();
+        }),
+      );
+    }
+
+    var infoItemTitle;
+    var infoItemStatusImage;
+    getAccountPageTitle(context, widget.transactionDetail,
+            (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
+          infoItemTitle = pageTitle;
+          infoItemStatusImage = pageStatusImage;
+        });
+
+    return Container(
+      color: DefaultColors.colorf2f2f2,
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18.0, bottom: 20),
+                    child: Image.asset(
+                      infoItemStatusImage,
+                      width: 63,
+                      height: 63,
+                    ),
+                  ),
+                  Text(
+                    infoItemTitle,
+                    style: TextStyle(fontSize: 16, color: DefaultColors.color333, fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0, bottom: 34),
+                    child: Text(
+                      FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true),
+                      style: TextStyle(color: DefaultColors.color999, fontSize: 13),
+                    ),
+                  ),
+                  Container(
+                    height: 11,
+                    color: DefaultColors.colorf2f2f2,
+                  )
+                ],
+              ),
+            ),
+          ),
+          SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                var leftText = _dataTitleList[index];
+                var rightText = _dataInfoList[index];
+                if(isBillPage){
+                  if (index == 0) {
+                    return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
+                  } else if (index == 3) {
+                    return accountInfoItem(leftText, rightText, normalLine: false);
+                  }
+                }else{
+                  if (index == 1) {
+                    var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                    return accountInfoItem(leftText, rightText, bottomText: bottomText);
+                  } else if (index == 4) {
+                    return accountInfoItem(leftText, rightText, normalLine: false);
+                  }
+                }
+                return accountInfoItem(leftText, rightText);
+              }, childCount: _dataTitleList.length)),
+          if(!isBillPage)
+            SliverToBoxAdapter(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WalletShowAccountDetailPage(
+                            widget.transactionDetail,
+                            isContain: widget.isContain,
+                          )));
+                },
+                child: Container(
+                  color: Colors.white,
+                  child: Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16, bottom: 16.0, left: 15),
+                        child: Text(
+                          S.of(context).check_for_detail_info,
+                          style: TextStyles.textC333S13,
+                        ),
+                      ),
+                      Spacer(),
+                      Image.asset(
+                        "res/drawable/add_position_image_next.png",
+                        height: 13,
+                      ),
+                      SizedBox(
+                        width: 15,
+                      )
+                    ],
+                  ),
+                ),
+              ),
             )
         ],
       ),

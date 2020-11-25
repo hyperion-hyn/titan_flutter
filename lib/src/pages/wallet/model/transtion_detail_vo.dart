@@ -194,6 +194,47 @@ class TransactionDetailVo {
     );
   }
 
+  factory TransactionDetailVo.fromHynErc30TransferHistory(
+      HynTransferHistory hynTransferHistory,
+      int transactionType,
+      String symbol,
+      ) {
+
+    return TransactionDetailVo(
+      type: transactionType,
+      state: hynTransferHistory.status,
+      amount: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? AtlasApi.getTransferBillAmount(hynTransferHistory)
+          : ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(hynTransferHistory.value))
+          .toDouble(),
+      symbol: symbol,
+      fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.map3Node
+          : hynTransferHistory.from,
+      toAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? hynTransferHistory.payload.delegator
+          : hynTransferHistory.to,
+      time: hynTransferHistory.timestamp * 1000,
+      hash: hynTransferHistory.txHash,
+      gasPrice: hynTransferHistory.gasPrice,
+      gasUsed: hynTransferHistory.gasUsed.toString(),
+      gas: hynTransferHistory.gasLimit.toString(),
+      nonce: hynTransferHistory.nonce.toString(),
+      contractAddress: hynTransferHistory.contractAddress,
+      data: hynTransferHistory.data,
+      dataDecoded: hynTransferHistory.dataDecoded,
+      blockHash: hynTransferHistory.blockHash,
+      blockNum: hynTransferHistory.blockNum,
+      epoch: hynTransferHistory.epoch,
+      transactionIndex: hynTransferHistory.transactionIndex,
+      hynType: hynTransferHistory.type,
+      logsDecoded: hynTransferHistory.logsDecoded,
+      payload: hynTransferHistory.payload,
+      internalTransactions: hynTransferHistory.internalTransactions,
+    );
+  }
+
   factory TransactionDetailVo.fromJson(Map<String, dynamic> json) =>
       _$TransactionDetailVoFromJson(json);
 

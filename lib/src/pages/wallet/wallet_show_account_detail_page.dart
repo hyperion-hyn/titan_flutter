@@ -20,6 +20,7 @@ import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 import 'api/hyn_api.dart';
@@ -45,6 +46,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
   var inputData = "";
   var hasDecodeData = false;
   var selectLeftData = true;
+  var isContract = false;
 
   get _toHynAddress {
     var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
@@ -64,52 +66,51 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
 
   @override
   void onCreated() async {
-    print("[widget.isContain] ${widget.isContain}");
-    var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
-    var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,false);
+    var transDetail = widget.transactionDetail;
 
-    if (widget.isContain) {
-      _dataTitleList = [
-        S.of(context).transfer_hash,
-        S.of(context).transfer_status,
-        S.of(context).tx_age,
-        "${S.of(context).tx_block}:",
-        "${S.of(context).tx_time}:",
-        "$fromAddressTitle:",
-        "$toAddressTitle:",
-        "${S.of(context).tx_to_address}（原以太链0X开头）:",
-        "${S.of(context).tx_amount}:",
-        "${S.of(context).transfer_gas_fee}:",
-        "燃料价格:",
-        "HYN${S.of(context).price}:",
-        "燃料限制:",
-        "交易燃料费用:",
-        "随机数",
-        "${S.of(context).tx_type}:",
-        "${S.of(context).tx_input_data}:",
-      ];
+    if (transDetail.dataDecoded == null) {
+      hasDecodeData = false;
     } else {
-      _dataTitleList = [
-        S.of(context).transfer_hash,
-        S.of(context).transfer_status,
-        S.of(context).tx_age,
-        "${S.of(context).tx_block}:",
-        "${S.of(context).tx_time}:",
-        "${S.of(context).tx_from_address}:",
-        "$toAddressTitle:",
-        "${S.of(context).tx_amount}:",
-        "${S.of(context).transfer_gas_fee}:",
-        "燃料价格:",
-        "HYN${S.of(context).price}:",
-        "燃料限制:",
-        "交易燃料费用:",
-        "随机数",
-        "${S.of(context).tx_type}:",
-        "${S.of(context).tx_input_data}:",
-      ];
+      hasDecodeData = true;
+    }
+    inputData = transDetail.data;
+
+    isContract = transDetail.internalTransactions != null;
+
+    print("[widget.isContain] ${widget.isContain}");
+    var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType,true);
+    var toAddressTitle = HYNApi.toAddressHint(transDetail.hynType,false);
+
+    _dataTitleList.add(S.of(context).transfer_hash);
+    _dataTitleList.add(S.of(context).transfer_status);
+    _dataTitleList.add(S.of(context).tx_age);
+    _dataTitleList.add("${S.of(context).tx_block}:");
+    _dataTitleList.add("${S.of(context).tx_time}:");
+
+    if(widget.isContain){
+      _dataTitleList.add("$fromAddressTitle:");
+      _dataTitleList.add("$toAddressTitle:");
+      _dataTitleList.add("${S.of(context).tx_to_address}（原以太链0X开头）:");
+    }else{
+      _dataTitleList.add("${S.of(context).tx_from_address}:");
+      _dataTitleList.add("$toAddressTitle:");
     }
 
-    var transDetail = widget.transactionDetail;
+    _dataTitleList.add("${S.of(context).tx_amount}:");
+
+    if(isContract){
+      _dataTitleList.add("金额转移");
+    }
+
+    _dataTitleList.add("${S.of(context).transfer_gas_fee}:");
+    _dataTitleList.add("燃料价格:");
+    _dataTitleList.add("HYN${S.of(context).price}:");
+    _dataTitleList.add("燃料限制:");
+    _dataTitleList.add("交易燃料费用:");
+    _dataTitleList.add("随机数");
+    _dataTitleList.add("${S.of(context).tx_type}:");
+    _dataTitleList.add("${S.of(context).tx_input_data}:");
+
     var amountText =
         "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true, isWallet: true,
     )}";
@@ -128,7 +129,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
     var statusStr = "";
-    var timeStr = FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true);
+    var timeStr = FormatUtil.formatDate(transDetail.time, isSecond: true, isMillisecond: true);
     var hynPriceStr = "\$0 / HYN";
     var gasUsedStr =
         "${transDetail.gasUsed} (${FormatUtil.formatPercent((Decimal.parse(transDetail.gasUsed) / Decimal.parse(transDetail.gas)).toDouble())})";
@@ -139,56 +140,32 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       isWallet: true,
     );
 
-    if (widget.isContain) {
-      _dataInfoList = [
-        transDetail.hash,
-        statusStr,
-        "${transDetail.epoch}",
-        "${transDetail.blockNum}",
-        timeStr,
-        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-        _toHynAddress,
-        _toEthAddress,
-        amountText,
-        gasEstimate,
-        gasPriceStr,
-        hynPriceStr,
-        transDetail.gas,
-        gasUsedStr,
-        transDetail.nonce,
-        typeStr
-      ];
-    } else {
-      _dataInfoList = [
-        transDetail.hash,
-        statusStr,
-        "${transDetail.epoch}",
-        "${transDetail.blockNum}",
-        timeStr,
-        WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
-        _toHynAddress,
-        amountText,
-        gasEstimate,
-        gasPriceStr,
-        hynPriceStr,
-        transDetail.gas,
-        gasUsedStr,
-        transDetail.nonce,
-        typeStr
-      ];
+    _dataInfoList.add(transDetail.hash);
+    _dataInfoList.add(statusStr);
+    _dataInfoList.add("${transDetail.epoch}");
+    _dataInfoList.add("${transDetail.blockNum}");
+    _dataInfoList.add(timeStr);
+    _dataInfoList.add(WalletUtil.ethAddressToBech32Address(transDetail.fromAddress));
+    _dataInfoList.add(_toHynAddress);
+    if(widget.isContain){
+      _dataInfoList.add(_toEthAddress);
     }
+    _dataInfoList.add(amountText);
+    if(isContract){
+      _dataInfoList.add("");
+    }
+    _dataInfoList.add(gasEstimate);
+    _dataInfoList.add(gasPriceStr);
+    _dataInfoList.add(hynPriceStr);
+    _dataInfoList.add(transDetail.gas);
+    _dataInfoList.add(gasUsedStr);
+    _dataInfoList.add(transDetail.nonce);
+    _dataInfoList.add(typeStr);
 
     var timestamp = 0;
     if (transDetail.time != null && transDetail.time.toString().length >= 10) {
       timestamp = int.parse(transDetail.time.toString().substring(0, 10));
     }
-
-    if (transDetail.dataDecoded == null) {
-      hasDecodeData = false;
-    } else {
-      hasDecodeData = true;
-    }
-    inputData = transDetail.data;
 
     var quotes = await _coinMarketApi.quotes(timestamp);
     SymbolQuoteVo hynQuote;
@@ -251,6 +228,29 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
               } else if (index == 4) {
                 var rightText = _dataInfoList[index];
                 return accountInfoItem(leftText, rightText, isTime: true);
+              } else if (index == 14) {
+                var rightText = _dataInfoList[index];
+                return accountInfoItem(leftText, rightText, hasSubTitle: true);
+              } else if (index == 16) {
+                return inputDataView(leftText);
+              } else {
+                var rightText = _dataInfoList[index];
+                return accountInfoItem(leftText, rightText);
+              }
+            } else if (isContract) {
+              var leftText = _dataTitleList[index];
+              if (index == 0 || index == 5 || index == 6) {
+                var rightText = _dataInfoList[index];
+                return accountInfoItem(leftText, rightText, hasCopy: true);
+              } else if (index == 1) {
+                var rightText = _dataInfoList[index];
+                var isFail = (widget.transactionDetail.state == 4 || widget.transactionDetail.state == 5);
+                return accountInfoItemStatus(leftText, rightText, isFail);
+              } else if (index == 4) {
+                var rightText = _dataInfoList[index];
+                return accountInfoItem(leftText, rightText, isTime: true);
+              } else if (index == 8) {
+                return accountContractItem(leftText);
               } else if (index == 14) {
                 var rightText = _dataInfoList[index];
                 return accountInfoItem(leftText, rightText, hasSubTitle: true);
@@ -349,6 +349,107 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
         ],
       ),
     );
+  }
+
+  Widget accountContractItem(String leftText,) {
+    var contractList = List.generate(widget.transactionDetail.internalTransactions.length, (index){
+      var contractItem = widget.transactionDetail.internalTransactions[index];
+      String rightText = "从 ${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.from))}\n到 ${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}";
+      return Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  leftText,
+                  style: TextStyles.textC333S13,
+                ),
+                Spacer(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Text(rightText, style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),),
+                    Text("${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractItem.value))} HYN", style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),),
+                  ],
+                )
+              ],
+            ),
+          ),
+          Divider(
+            color: DefaultColors.colorf2f2f2,
+            indent: 15,
+            endIndent: 15,
+            height: 1,
+          ),
+        ],
+      );
+    }).toList();
+
+    return Container(child: Column(
+      children: contractList,
+    ),);
+    /*var infoItemTitle;
+    Color accountItemColor;
+    var accountItemImage = "res/drawable/ic_transfer_account_detail_pending.png";
+    getAccountPageTitle(context, widget.transactionDetail,
+            (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
+          infoItemTitle = pageTitle;
+          accountItemColor = pageDetailColor;
+          accountItemImage = pageDetailStatusImage;
+        });
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 18.0, bottom: 18, left: 15, right: 15),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  leftText,
+                  style: TextStyles.textC333S13,
+                ),
+                Spacer(),
+                Container(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 4, left: 11, right: 11),
+                  decoration:
+                  BoxDecoration(color: accountItemColor, borderRadius: BorderRadius.all(Radius.circular(4))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2.0),
+                        child: Image.asset(
+                          accountItemImage,
+                          width: 13,
+                          height: 13,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        infoItemTitle,
+                        style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            color: DefaultColors.colorf2f2f2,
+            indent: 15,
+            endIndent: 15,
+            height: 1,
+          ),
+        ],
+      ),
+    );*/
   }
 
   Widget accountInfoItem(String leftText, String rightText,

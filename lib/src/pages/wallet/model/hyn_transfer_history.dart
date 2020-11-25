@@ -124,6 +124,15 @@ class HynTransferHistory extends Object {
   factory HynTransferHistory.fromJson(Map<String, dynamic> srcJson) => _$HynTransferHistoryFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$HynTransferHistoryToJson(this);
+
+  BigInt getAllContractValue(){
+    BigInt value = BigInt.from(0);
+    internalTransactions.forEach((element) {
+      value += BigInt.parse(element.value);
+    });
+    return value;
+  }
+
 }
 
 @JsonSerializable()
