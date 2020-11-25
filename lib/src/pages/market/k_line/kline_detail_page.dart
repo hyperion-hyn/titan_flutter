@@ -165,7 +165,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
               Expanded(
                 child: CustomScrollView(
                   slivers: <Widget>[
-                    _headerWidget(),
+                    Builder(
+                      builder: (context) {
+                        return _headerWidget(context);
+                      },
+                    ),
                     _dividerWidget(),
                     _periodTabWidget(),
                     _dividerWidget(height: 1.0),
@@ -277,7 +281,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
   }
 
-  Widget _headerWidget() {
+  Widget _headerWidget(var context) {
     var marketItemEntity =
         MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList).getMarketItem(widget.symbol);
 
@@ -868,85 +872,58 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     }
 
     return _delegationListViewContent(context, _buyChartList, _sellChartList, enable: false);
-
-    return SliverToBoxAdapter(
-      child: Stack(
-        children: [
-          Visibility(
-            visible: _detailCurrentIndex == 0,
-            child: Stack(
-              children: <Widget>[
-                Visibility(
-                    visible: !_showLoadingDepth,
-                    child: StreamBuilder(
-                      stream: _depthController.stream,
-                      builder: (context, optionType) {
-                        return delegationListView(context, _buyChartList, _sellChartList, enable: false);
-                      },
-                    )),
-                _loadingWidget(visible: _showLoadingDepth),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: _detailCurrentIndex == 1,
-            child: Stack(
-              children: <Widget>[
-                Visibility(visible: !_showLoadingTrade, child: _transactionListView()),
-                _loadingWidget(visible: _showLoadingTrade),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _delegationListViewHeader({limitNum = 20, enable = true, Function clickPrice}) {
     if (_detailCurrentIndex == 1) {
-      return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            bottom: 20,
-            left: 12,
-            right: 12,
-            top: 12,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_time,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
+      return StreamBuilder<Object>(
+        stream: _tradeController.stream,
+        builder: (context, snapshot) {
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                bottom: 20,
+                left: 12,
+                right: 12,
+                top: 12,
               ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  S.of(context).kline_delegate_direction,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_time,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      S.of(context).kline_delegate_direction,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_price,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_amount,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_price,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_amount,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       );
     }
 
@@ -1087,7 +1064,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       (context, index) {
         var excDetailEntity = _tradeItemList[index];
         return Padding(
-          padding: const EdgeInsets.only(bottom: 12, left: 12, right: 12,),
+          padding: const EdgeInsets.only(
+            bottom: 12,
+            left: 12,
+            right: 12,
+          ),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -1137,210 +1118,215 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Widget _delegationListViewContent(
       BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
       {limitNum = 20, enable = true, Function clickPrice}) {
-    return SliverList(
-        delegate: SliverChildBuilderDelegate(
-      (context, index) {
-        ExcDetailEntity buyEntity;
-        if (buyChartList.length > index) {
-          buyEntity = buyChartList[index];
-        }
+    return StreamBuilder<Object>(
+        stream: _depthController.stream,
+      builder: (context, snapshot) {
+        return SliverList(
+            delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            ExcDetailEntity buyEntity;
+            if (buyChartList.length > index) {
+              buyEntity = buyChartList[index];
+            }
 
-        ExcDetailEntity sellEntity;
-        if (sellChartList.length > index) {
-          sellEntity = sellChartList[index];
-        }
-        return Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                  flex: 1,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+            ExcDetailEntity sellEntity;
+            if (sellChartList.length > index) {
+              sellEntity = sellChartList[index];
+            }
+            return Padding(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        alignment: Alignment.center,
                         children: <Widget>[
-                          Expanded(
-                            flex: buyEntity?.leftPercent ?? 0,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#ffffff"),
-                            ),
-                          ),
-                          Expanded(
-                            flex: buyEntity?.rightPercent ?? 0,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#EBF8F2"),
-                            ),
-                          )
-                        ],
-                      ),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          //splashColor: Colors.greenAccent,
-                          highlightColor: HexColor("#D8F3E7"),
-
-                          onTap: enable
-                              ? () {
-                                  var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
-                                  clickPrice(depthPrice);
-                                  //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
-                                }
-                              : null,
-
-                          child: Row(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Container(
-                                height: 25,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  "${index + 1}",
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: HexColor("#999999"),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 25,
-                                padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  buyEntity?.depthEntity?.vol?.toString() ?? "--",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: HexColor("#333333"),
-                                  ),
+                              Expanded(
+                                flex: buyEntity?.leftPercent ?? 0,
+                                child: Container(
+                                  height: 25,
+                                  color: HexColor("#ffffff"),
                                 ),
                               ),
                               Expanded(
-                                flex: 2,
+                                flex: buyEntity?.rightPercent ?? 0,
                                 child: Container(
                                   height: 25,
-                                  padding: const EdgeInsets.only(right: 5),
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                      color: HexColor("#53AE86"),
-                                    ),
-                                  ),
+                                  color: HexColor("#EBF8F2"),
                                 ),
-                              ),
+                              )
                             ],
                           ),
-                        ),
-                      ),
-                    ],
-                  )),
-              SizedBox(
-                width: 3,
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              //splashColor: Colors.greenAccent,
+                              highlightColor: HexColor("#D8F3E7"),
+
+                              onTap: enable
+                                  ? () {
+                                      var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
+                                      clickPrice(depthPrice);
+                                      //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                    }
+                                  : null,
+
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "${index + 1}",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#999999"),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      buyEntity?.depthEntity?.vol?.toString() ?? "--",
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#333333"),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      height: 25,
+                                      padding: const EdgeInsets.only(right: 5),
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#53AE86"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                  SizedBox(
+                    width: 3,
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Expanded(
+                                flex: sellEntity?.leftPercent ?? 0,
+                                child: Container(
+                                  height: 25,
+                                  color: HexColor("#F9EFEF"),
+                                ),
+                              ),
+                              Expanded(
+                                flex: sellEntity?.rightPercent ?? 0,
+                                child: Container(
+                                  height: 25,
+                                  color: HexColor("#ffffff"),
+                                ),
+                              )
+                            ],
+                          ),
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              //splashColor: Colors.greenAccent,
+                              highlightColor: HexColor("#FAE4E4"),
+
+                              onTap: enable
+                                  ? () {
+                                      clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
+                                      //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
+                                    }
+                                  : null,
+
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 2,
+                                    child: Container(
+                                      height: 25,
+                                      alignment: Alignment.centerLeft,
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: Text(
+                                        FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#CC5858"),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      sellEntity?.depthEntity?.vol?.toString() ?? "--",
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#333333"),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: 25,
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                    child: Text(
+                                      "${index + 1}",
+                                      textAlign: TextAlign.end,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: HexColor("#999999"),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                ],
               ),
-              Expanded(
-                  flex: 1,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            flex: sellEntity?.leftPercent ?? 0,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#F9EFEF"),
-                            ),
-                          ),
-                          Expanded(
-                            flex: sellEntity?.rightPercent ?? 0,
-                            child: Container(
-                              height: 25,
-                              color: HexColor("#ffffff"),
-                            ),
-                          )
-                        ],
-                      ),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          //splashColor: Colors.greenAccent,
-                          highlightColor: HexColor("#FAE4E4"),
-
-                          onTap: enable
-                              ? () {
-                                  clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
-                                  //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
-                                }
-                              : null,
-
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: 2,
-                                child: Container(
-                                  height: 25,
-                                  alignment: Alignment.centerLeft,
-                                  padding: const EdgeInsets.only(left: 5),
-                                  child: Text(
-                                    FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                      color: HexColor("#CC5858"),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 25,
-                                alignment: Alignment.centerRight,
-                                child: Text(
-                                  sellEntity?.depthEntity?.vol?.toString() ?? "--",
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: HexColor("#333333"),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 25,
-                                alignment: Alignment.centerRight,
-                                padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                child: Text(
-                                  "${index + 1}",
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: HexColor("#999999"),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-        );
-      },
-      childCount: limitNum == 20 ? max(buyChartList.length, sellChartList.length) : limitNum,
-    ));
+            );
+          },
+          childCount: limitNum == 20 ? max(buyChartList.length, sellChartList.length) : limitNum,
+        ));
+      }
+    );
   }
 
   Widget delegationListView(
@@ -2001,13 +1987,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           _sellChartList.clear();
           dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
           _setupDepthWidget();
-          // _depthController.add(_depthRefresh);
+          _depthController.add(_depthRefresh);
         }, 500);
       } else if (state is ChannelTradeDetailState) {
         //成交
         tradeDebounceLater.debounceInterval(() {
           _dealTradeData(state.response, isReplace: false);
-          // _tradeController.add(_tradeRefresh);
+          _tradeController.add(_tradeRefresh);
         }, 500);
       }
     });
