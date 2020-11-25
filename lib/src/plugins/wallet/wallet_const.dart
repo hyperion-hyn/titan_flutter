@@ -142,6 +142,16 @@ class WalletConfig {
     return '';
   }
 
+  static String get hynStakingContractAddress {
+    switch (netType) {
+      case EthereumNetType.main:
+        return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
+      case EthereumNetType.ropsten:
+        return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
+    }
+    return '';
+  }
+
   static String getEthereumApi() {
     switch (netType) {
       case EthereumNetType.main:
