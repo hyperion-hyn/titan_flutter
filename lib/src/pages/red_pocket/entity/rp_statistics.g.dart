@@ -14,6 +14,10 @@ RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
     json['self'] == null
         ? null
         : Self.fromJson(json['self'] as Map<String, dynamic>),
+    json['rp_contract_info'] == null
+        ? null
+        : Rp_contract_info.fromJson(
+            json['rp_contract_info'] as Map<String, dynamic>),
   );
 }
 
@@ -21,32 +25,52 @@ Map<String, dynamic> _$RPStatisticsToJson(RPStatistics instance) =>
     <String, dynamic>{
       'global': instance.global,
       'self': instance.self,
+      'rp_contract_info': instance.rpContractInfo,
     };
 
 Global _$GlobalFromJson(Map<String, dynamic> json) {
   return Global(
-    json['hyn'] as int,
-    json['total'] as int,
-    json['transmit'] as int,
+    json['total_staking_hyn'] as String,
+    json['transmit'] as String,
+    json['total_transmit'] as String,
   );
 }
 
 Map<String, dynamic> _$GlobalToJson(Global instance) => <String, dynamic>{
-      'hyn': instance.hyn,
-      'total': instance.total,
+      'total_staking_hyn': instance.totalStakingHyn,
       'transmit': instance.transmit,
+      'total_transmit': instance.totalTransmit,
     };
 
 Self _$SelfFromJson(Map<String, dynamic> json) {
   return Self(
-    json['total_hyn'] as int,
-    json['total_rp'] as int,
-    json['yesterday'] as int,
+    json['total_staking_hyn'] as String,
+    json['total_amount'] as String,
+    json['total_rp'] as String,
+    json['yesterday'] as String,
   );
 }
 
 Map<String, dynamic> _$SelfToJson(Self instance) => <String, dynamic>{
-      'total_hyn': instance.totalHyn,
+      'total_staking_hyn': instance.totalStakingHyn,
+      'total_amount': instance.totalAmount,
       'total_rp': instance.totalRp,
       'yesterday': instance.yesterday,
+    };
+
+Rp_contract_info _$Rp_contract_infoFromJson(Map<String, dynamic> json) {
+  return Rp_contract_info(
+    json['ratio'] as String,
+    json['hyn_per_rp'] as String,
+    json['release_day'] as int,
+    json['staking_day'] as int,
+  );
+}
+
+Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) =>
+    <String, dynamic>{
+      'ratio': instance.ratio,
+      'hyn_per_rp': instance.hynPerRp,
+      'release_day': instance.releaseDay,
+      'staking_day': instance.stakingDay,
     };
