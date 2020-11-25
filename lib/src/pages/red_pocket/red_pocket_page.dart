@@ -81,6 +81,34 @@ class _RedPocketPageState extends State<RedPocketPage> {
     return const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0);
   }
 
+  Widget _contentColumn(
+    String content,
+    String subContent,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          '$content',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+          ),
+        ),
+        SizedBox(
+          height: 4.0,
+        ),
+        Text(
+          subContent,
+          style: TextStyle(
+            fontSize: 10,
+            color: DefaultColors.color999,
+          ),
+        ),
+      ],
+    );
+  }
+
   _myRPInfo() {
     var level = _rpInfo?.level ?? '--';
     var rpBalance = _rpInfo?.rpBalance ?? '--';
@@ -88,26 +116,28 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = _rpInfo?.rpYesterday ?? '--';
     var rpMissed = _rpInfo?.rpMissed ?? '--';
 
-    var preStr = ' RP';
-    var rpBalanceStr = rpBalance + preStr;
-    var rpTodayStr = rpToday + preStr;
-    var rpYesterdayStr = rpYesterday + preStr;
-    var rpMissedStr = rpMissed + preStr;
+    var rpBalanceStr = '$rpBalance RP';
+    // var rpTodayStr = '$rpToday RP';
+    // var rpYesterdayStr = '$rpYesterday RP';
+    // var rpMissedStr = '$rpMissed RP';
 
-    //rpBalanceStr = '即';
-    rpTodayStr = '未';
-    rpYesterdayStr = '空';
-    rpMissedStr = '投';
+    var rpTodayStr = '未';
+    var rpYesterdayStr = '空';
+    var rpMissedStr = '投';
 
-    var imgPath =
-        _activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
+    var imgPath = _activeWallet != null
+        ? 'res/drawable/ic_map3_node_default_icon.png'
+        : 'res/drawable/img_avatar_default.png';
+
     var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
+
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
         _activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
       ),
     );
-    var accountInfo = _activeWallet != null
+
+    var accountInfoWidget = _activeWallet != null
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -142,30 +172,6 @@ class _RedPocketPageState extends State<RedPocketPage> {
             },
           );
 
-    Widget _columnWidget(String amount, String title) {
-      return Column(
-        children: <Widget>[
-          Text(
-            '$amount',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: 4.0,
-          ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10,
-              color: DefaultColors.color999,
-            ),
-          ),
-        ],
-      );
-    }
-
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -194,7 +200,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                       width: 16.0,
                     ),
                     Expanded(
-                      child: accountInfo,
+                      child: accountInfoWidget,
                     ),
                     SizedBox(
                       width: 16,
@@ -226,19 +232,19 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: _columnWidget(rpBalanceStr, '余额'),
+                      child: _contentColumn(rpBalanceStr, '余额'),
                     ),
-                    _lineWidget(),
+                    _verticalLine(),
                     Expanded(
-                      child: _columnWidget(rpTodayStr, '今日红包'),
+                      child: _contentColumn(rpTodayStr, '今日红包'),
                     ),
-                    _lineWidget(),
+                    _verticalLine(),
                     Expanded(
-                      child: _columnWidget(rpYesterdayStr, '昨日红包'),
+                      child: _contentColumn(rpYesterdayStr, '昨日红包'),
                     ),
-                    _lineWidget(),
+                    _verticalLine(),
                     Expanded(
-                      child: _columnWidget(rpMissedStr, '我错过的'),
+                      child: _contentColumn(rpMissedStr, '我错过的'),
                     ),
                   ],
                 )
@@ -322,97 +328,12 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  Widget _lineWidget({bool havePadding = false}) {
-    return Container(
-      height: 20,
-      width: 0.5,
-      color: HexColor('#000000').withOpacity(0.2),
-      margin: havePadding
-          ? const EdgeInsets.only(
-              right: 18,
-              left: 18,
-            )
-          : null,
-    );
-  }
-
   _rpPool() {
-    var myStaking = '--';
     var rpYesterday = '--';
-    var totalStaking = '--';
+    var myHYNStaking = '--';
+    var totalHYNStaking = '--';
+    var myTransmission = '--';
     var totalTransmission = '--';
-
-    Widget _myExchangeWidget(String amount, String title, GestureTapCallback onTap) {
-      return Expanded(
-        child: InkWell(
-          onTap: onTap,
-          child: Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    amount,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 4.0,
-                  ),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: DefaultColors.color999,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 15,
-                color: DefaultColors.color999,
-              )
-            ],
-          ),
-        ),
-      );
-    }
-
-    Widget _poolInfoWidget(String amount, String title) {
-      return Expanded(
-        flex: 1,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              amount,
-              style: TextStyle(
-                fontSize: 12,
-                color: DefaultColors.color999,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(
-              height: 4.0,
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 8,
-                color: DefaultColors.color999,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -441,8 +362,20 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 ),
                 Row(
                   children: [
-                    _myExchangeWidget('$myStaking HYN', '我的抵押', _pushExchangeAction),
-                    _myExchangeWidget('$rpYesterday RP', '昨日获得', _pushRecordAction),
+                    Expanded(
+                      child: _inkwellColumn(
+                        '$myHYNStaking HYN',
+                        '我的抵押',
+                        onTap: _pushExchangeAction,
+                      ),
+                    ),
+                    Expanded(
+                      child: _inkwellColumn(
+                        '$rpYesterday RP',
+                        '昨日获得',
+                        onTap: _pushRecordAction,
+                      ),
+                    ),
                   ],
                 ),
                 Padding(
@@ -456,50 +389,43 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 ),
                 Row(
                   children: [
-                    _poolInfoWidget('10万 RP', '总可传导'),
-                    _lineWidget(havePadding: true),
-                    _poolInfoWidget('$totalStaking HYN', '全网抵押'),
-                    _lineWidget(havePadding: true),
-                    _poolInfoWidget('$totalTransmission RP', '全网累计传导'),
-                    Spacer(),
+                    Expanded(
+                      child: _poolInfoColumn(
+                        '$myTransmission RP',
+                        '总可传导',
+                      ),
+                    ),
+                    _verticalLine(havePadding: true),
+                    Expanded(
+                      child: _poolInfoColumn(
+                        '$totalHYNStaking HYN',
+                        '全网抵押',
+                      ),
+                    ),
+                    _verticalLine(havePadding: true),
+                    Expanded(
+                      child: _poolInfoColumn(
+                        '$totalTransmission RP',
+                        '全网累计传导',
+                      ),
+                    ),
                   ],
                 ),
-                SizedBox(
-                  height: 24,
-                ),
-                ClickOvalButton(
-                  S.of(context).check,
-                  _pushExchangeAction,
-                  width: 160,
-                  height: 32,
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                ),
-                SizedBox(
-                  height: 24,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: ClickOvalButton(
+                    S.of(context).check,
+                    _pushExchangeAction,
+                    width: 160,
+                    height: 32,
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  _pushExchangeAction() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RedPocketExchangePage(),
-      ),
-    );
-  }
-
-  _pushRecordAction() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RedPocketExchangeRecordsPage(),
       ),
     );
   }
@@ -545,10 +471,10 @@ class _RedPocketPageState extends State<RedPocketPage> {
                 ),
                 Column(
                   children: [
-                    rowTipsItem('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
-                    rowTipsItem('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
-                    rowTipsItem('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
-                    rowTipsItem('RP总发行量为100万枚，在红包HRC30智能合约内进行传导和空投，无预挖，无预售。')
+                    _tipRow('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
+                    _tipRow('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
+                    _tipRow('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
+                    _tipRow('RP总发行量为100万枚，在红包HRC30智能合约内进行传导和空投，无预挖，无预售。')
                   ],
                 ),
                 SizedBox(
@@ -562,7 +488,90 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  Widget rowTipsItem(
+  ///widgets
+  Widget _poolInfoColumn(
+    String content,
+    String subContent,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          content,
+          style: TextStyle(
+            fontSize: 12,
+            color: DefaultColors.color999,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(
+          height: 4.0,
+        ),
+        Text(
+          subContent,
+          style: TextStyle(
+            fontSize: 8,
+            color: DefaultColors.color999,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _inkwellColumn(
+    String content,
+    String subContent, {
+    GestureTapCallback onTap,
+    double contentFontSize = 14,
+    double subContentFontSize = 10,
+    CrossAxisAlignment columnCrossAxisAlignment = CrossAxisAlignment.start,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: columnCrossAxisAlignment,
+            children: <Widget>[
+              Text(
+                content,
+                style: TextStyle(
+                  fontSize: contentFontSize,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                height: 4.0,
+              ),
+              Text(
+                subContent,
+                style: TextStyle(
+                  fontSize: subContentFontSize,
+                  color: DefaultColors.color999,
+                ),
+              ),
+            ],
+          ),
+          if (onTap != null)
+            Row(
+              children: [
+                SizedBox(
+                  width: 16,
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15,
+                  color: DefaultColors.color999,
+                )
+              ],
+            )
+        ],
+      ),
+    );
+  }
+
+  Widget _tipRow(
     String title, {
     double top = 8,
     String subTitle = "",
@@ -598,11 +607,47 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   )
                 ],
                 text: title,
-                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
         ],
+      ),
+    );
+  }
+
+  Widget _verticalLine({
+    bool havePadding = false,
+  }) {
+    return Container(
+      height: 20,
+      width: 0.5,
+      color: HexColor('#000000').withOpacity(0.2),
+      margin: havePadding
+          ? const EdgeInsets.only(
+              right: 4.0,
+              left: 4.0,
+            )
+          : null,
+    );
+  }
+
+  ///Actions
+  _pushExchangeAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RedPocketExchangePage(),
+      ),
+    );
+  }
+
+  _pushRecordAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RedPocketExchangeRecordsPage(),
       ),
     );
   }
