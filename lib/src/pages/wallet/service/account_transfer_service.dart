@@ -11,19 +11,24 @@ import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:web3dart/web3dart.dart';
 
 class AccountTransferService {
   EtherscanApi _etherScanApi = EtherscanApi();
   AtlasApi _atlasApi = AtlasApi();
 
-  Future<List<TransactionDetailVo>> getTransferList(
-      CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> getTransferList(CoinVo coinVo, int page) async {
     if (coinVo.symbol == "ETH") {
       return await _getEthTransferList(coinVo, page);
     } else if (coinVo.coinType == CoinType.HYN_ATLAS) {
-      return await _getHYNAtlasTransferList(coinVo, page);
+      if (coinVo.contractAddress != null) {
+        return await _getHYNErc30TransferList(coinVo, page);
+      } else {
+        return await _getHYNAtlasTransferList(coinVo, page);
+      }
     } else if (coinVo.coinType == CoinType.BITCOIN) {
       return await _getBitcoinTransferList(coinVo, page);
     } else {
@@ -31,35 +36,59 @@ class AccountTransferService {
     }
   }
 
-  Future<List<TransactionDetailVo>> _getHYNAtlasTransferList(
-      CoinVo coinVo, int page) async {
-    List<HynTransferHistory> hynTransferHistoryList =
-        await _atlasApi.queryHYNHistory(coinVo.address, page);
+  Future<List<TransactionDetailVo>> _getHYNAtlasTransferList(CoinVo coinVo, int page) async {
+    List<HynTransferHistory> hynTransferHistoryList = await _atlasApi.queryHYNHistory(coinVo.address, page);
 
-    List<TransactionDetailVo> detailList =
-        hynTransferHistoryList.map((hynTransferHistory) {
+    List<TransactionDetailVo> detailList = hynTransferHistoryList.map((hynTransferHistory) {
       var type = 0;
-      if (hynTransferHistory.from.toLowerCase() ==
-          coinVo.address.toLowerCase()) {
+      if (hynTransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (hynTransferHistory.to.toLowerCase() ==
-          coinVo.address.toLowerCase()) {
+      } else if (hynTransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
-      var transactionItem = TransactionDetailVo.fromHynTransferHistory(hynTransferHistory,type,coinVo.symbol);
+      var transactionItem = TransactionDetailVo.fromHynTransferHistory(hynTransferHistory, type, coinVo.symbol);
 
       return transactionItem;
     }).toList();
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getErc20TransferList(
-      CoinVo coinVo, int page) async {
-    List<Erc20TransferHistory> erc20TransferHistoryList = await _etherScanApi
-        .queryErc20History(coinVo.contractAddress, coinVo.address, page);
+  Future<List<TransactionDetailVo>> _getHYNErc30TransferList(CoinVo coinVo, int page) async {
+    var assetToken = SupportedTokens.HYN_RP_ERC30_ROPSTEN;
+    if (coinVo.contractAddress == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress) {
+      assetToken = SupportedTokens.HYN_RP_ERC30_ROPSTEN;
+    }
 
-    List<TransactionDetailVo> detailList =
-        erc20TransferHistoryList.map((erc20TransferHistory) {
+    List<InternalTransactions> erc30TransferHistoryList =
+        await _atlasApi.queryHYNErc30History(coinVo.address, page, coinVo.contractAddress);
+    List<TransactionDetailVo> detailList = erc30TransferHistoryList.map((hynErc30TransferHistory) {
+      var type = 0;
+      if (hynErc30TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
+        type = TransactionType.TRANSFER_OUT;
+      } else if (hynErc30TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
+        type = TransactionType.TRANSFER_IN;
+      }
+      return TransactionDetailVo(
+          type: type,
+          state: hynErc30TransferHistory.status,
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(hynErc30TransferHistory.value), assetToken.decimals)
+              .toDouble(),
+          symbol: assetToken.symbol,
+          fromAddress: hynErc30TransferHistory.from,
+          toAddress: hynErc30TransferHistory.to,
+          time: hynErc30TransferHistory.timestamp * 1000,
+          hash: hynErc30TransferHistory.txHash,
+          hynType: MessageType.typeNormal,
+          contractAddress: coinVo.contractAddress);
+    }).toList();
+    return detailList;
+  }
+
+  Future<List<TransactionDetailVo>> _getErc20TransferList(CoinVo coinVo, int page) async {
+    List<Erc20TransferHistory> erc20TransferHistoryList =
+        await _etherScanApi.queryErc20History(coinVo.contractAddress, coinVo.address, page);
+
+    List<TransactionDetailVo> detailList = erc20TransferHistoryList.map((erc20TransferHistory) {
       var type = 0;
       if (erc20TransferHistory.from == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
@@ -70,8 +99,7 @@ class AccountTransferService {
         type: type,
         state: 1,
         amount: ConvertTokenUnit.weiToDecimal(
-                BigInt.parse(erc20TransferHistory.value),
-                int.parse(erc20TransferHistory.tokenDecimal))
+                BigInt.parse(erc20TransferHistory.value), int.parse(erc20TransferHistory.tokenDecimal))
             .toDouble(),
         symbol: erc20TransferHistory.tokenSymbol,
         fromAddress: erc20TransferHistory.from,
@@ -87,13 +115,10 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getEthTransferList(
-      CoinVo coinVo, int page) async {
-    List<EthTransferHistory> ethTransferHistoryList =
-        await _etherScanApi.queryEthHistory(coinVo.address, page);
+  Future<List<TransactionDetailVo>> _getEthTransferList(CoinVo coinVo, int page) async {
+    List<EthTransferHistory> ethTransferHistoryList = await _etherScanApi.queryEthHistory(coinVo.address, page);
 
-    List<TransactionDetailVo> detailList =
-        ethTransferHistoryList.map((ethTransferHistory) {
+    List<TransactionDetailVo> detailList = ethTransferHistoryList.map((ethTransferHistory) {
       var type = 0;
       if (ethTransferHistory.from == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
@@ -103,9 +128,7 @@ class AccountTransferService {
       return TransactionDetailVo(
         type: type,
         state: int.parse(ethTransferHistory.txreceiptStatus),
-        amount: ConvertTokenUnit.weiToEther(
-                weiBigInt: BigInt.parse(ethTransferHistory.value))
-            .toDouble(),
+        amount: ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(ethTransferHistory.value)).toDouble(),
         symbol: "ETH",
         fromAddress: ethTransferHistory.from,
         toAddress: ethTransferHistory.to,
@@ -120,14 +143,11 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getBitcoinTransferList(
-      CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getBitcoinTransferList(CoinVo coinVo, int page) async {
     List<BitcoinTransferHistory> bitcoinTransferList =
-        await BitcoinApi.getBitcoinTransferList(
-            coinVo.extendedPublicKey, page - 1, 10);
+        await BitcoinApi.getBitcoinTransferList(coinVo.extendedPublicKey, page - 1, 10);
 
-    List<TransactionDetailVo> detailList =
-        bitcoinTransferList.map((bitcoinTransferHistory) {
+    List<TransactionDetailVo> detailList = bitcoinTransferList.map((bitcoinTransferHistory) {
       var type = 0;
       if (bitcoinTransferHistory.amount < 0) {
         type = TransactionType.TRANSFER_OUT;
@@ -137,9 +157,7 @@ class AccountTransferService {
       return TransactionDetailVo(
         type: type,
         state: bitcoinTransferHistory.nConfirmed,
-        amount: ConvertTokenUnit.weiToDecimal(
-                BigInt.parse(bitcoinTransferHistory.amount.toString()), 8)
-            .toDouble(),
+        amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(bitcoinTransferHistory.amount.toString()), 8).toDouble(),
         symbol: coinVo.symbol,
         fromAddress: bitcoinTransferHistory.fromAddr,
         toAddress: bitcoinTransferHistory.toAddr,

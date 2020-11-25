@@ -35,6 +35,7 @@ import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/log_util.dart';
@@ -58,6 +59,27 @@ class AtlasApi {
       List resultList = dataList as List;
       return resultList
           .map((json) => HynTransferHistory.fromJson(json))
+          .toList();
+    } else {
+      throw new Exception();
+    }
+  }
+
+  Future<List<InternalTransactions>> queryHYNErc30History(
+      String address, int page, String contractAddress) async {
+    Map result = await AtlasHttpCore.instance.post(
+      "v1/wallet/account_internal_txs",
+      data: "{\"address\": \"$address\",\"contract_address\": \"$contractAddress\",\"page\": $page,\"size\": 20}",
+    );
+
+    if (result["code"] == 0) {
+      var dataList = result["data"]["data"];
+      if (dataList == null || (dataList as List).length == 0) {
+        return [];
+      }
+      List resultList = dataList as List;
+      return resultList
+          .map((json) => InternalTransactions.fromJson(json))
           .toList();
     } else {
       throw new Exception();

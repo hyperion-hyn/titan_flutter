@@ -10,6 +10,7 @@ import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_detail_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -18,7 +19,7 @@ import 'package:web3dart/web3dart.dart';
 import 'model/transtion_detail_vo.dart';
 
 class WalletShowAccountInfoPage extends StatefulWidget {
-  final TransactionDetailVo transactionDetail;
+  TransactionDetailVo transactionDetail;
   final bool isContain;
 
   WalletShowAccountInfoPage(this.transactionDetail, {this.isContain = false});
@@ -30,6 +31,7 @@ class WalletShowAccountInfoPage extends StatefulWidget {
 }
 
 class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage> {
+  var atlasApi = AtlasApi();
   List<String> _dataTitleList = [];
   List<String> _dataInfoList = List();
   var gasPriceStr = "";
@@ -49,7 +51,23 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   }
 
   @override
-  void onCreated() async {
+  void onCreated() {
+    loadWalletInfo();
+
+    super.onCreated();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future loadWalletInfo() async {
+    if(widget.transactionDetail.contractAddress.toLowerCase() == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress.toLowerCase()){
+      var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
+      widget.transactionDetail = TransactionDetailVo.fromHynTransferHistory(hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
+    }
+
     var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
     var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,false);
 
@@ -104,12 +122,9 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       ];
     }
 
-    super.onCreated();
-  }
+    setState(() {
 
-  @override
-  void dispose() {
-    super.dispose();
+    });
   }
 
   @override
