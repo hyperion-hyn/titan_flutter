@@ -9,7 +9,6 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -30,7 +29,6 @@ class RedPocketExchangePage extends StatefulWidget {
 class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
   AtlasApi _atlasApi = AtlasApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
-  RPInfo _rpInfo;
   WalletVo _activeWallet;
   var _textEditController = TextEditingController();
 
@@ -145,11 +143,11 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
   }
 
   _myRPInfo() {
-    var level = _rpInfo?.level ?? '--';
-    var rpBalance = _rpInfo?.rpBalance ?? '--';
-    var rpToday = _rpInfo?.rpToday ?? '--';
-    var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    var rpMissed = _rpInfo?.rpMissed ?? '--';
+    // var level = _rpInfo?.level ?? '--';
+    // var rpBalance = _rpInfo?.rpBalance ?? '--';
+    // var rpToday = _rpInfo?.rpToday ?? '--';
+    // var rpYesterday = _rpInfo?.rpYesterday ?? '--';
+    // var rpMissed = _rpInfo?.rpMissed ?? '--';
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -539,9 +537,6 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
 
   _requestData() async {
     try {
-      _rpInfo = await _atlasApi.postRpInfo(
-        _activeWallet?.wallet?.getAtlasAccount()?.address,
-      );
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());

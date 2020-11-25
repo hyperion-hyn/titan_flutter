@@ -32,7 +32,6 @@ import 'package:titan/src/pages/atlas_map/entity/test_post_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/tx_hash_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_payload_with_address_entity.dart';
 import 'package:titan/src/pages/atlas_map/entity/user_reward_entity.dart';
-import 'package:titan/src/pages/red_pocket/entity/rp_info.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -161,19 +160,6 @@ class AtlasApi {
           headers: getOptionHeader(hasSign: true),
           contentType: "application/json",
         ));
-  }
-
-  ///RP
-  Future<RPInfo> postRpInfo(String address) async {
-    return AtlasHttpCore.instance.postEntity(
-        "/v1/rp/info",
-        EntityFactory<RPInfo>(
-          (json) => RPInfo.fromJson(json),
-        ),
-        params: {
-          'address': address,
-        },
-        options: RequestOptions(contentType: "application/json"));
   }
 
   // 查询燃烧信息
