@@ -330,11 +330,13 @@ class ExchangeApi {
     );
   }
 
-  Future<dynamic> orderCancel(String orderId) async {
-    return await exchangeHttp.postEntity(
-      ExchangeConst.PATH_ORDER_CANCEL,
-      null,
-      params: {"order_id": orderId},
+  Future<dynamic> orderCancel(String orderId, String market) async {
+    return await userApiSignAndPost(
+      path: ExchangeConst.API_PATH_ORDER_CANCEL,
+      params: {
+        "order_id": orderId,
+        'market': market,
+      },
     );
   }
 
