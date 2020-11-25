@@ -15,6 +15,7 @@ import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
@@ -337,10 +338,14 @@ class _RedPocketPageState extends State<RedPocketPage> {
 
   _rpPool() {
     var rpYesterday = _rpStatistics?.self?.yesterday ?? '--';
-    var myHYNStaking = _rpStatistics?.self?.totalHyn ?? '--';
-    var globalHYNStaking = _rpStatistics?.global?.hyn ?? '--';
-    var totalTransmit = _rpStatistics?.global?.total ?? '--';
+    var myHYNStaking = _rpStatistics?.self?.totalStakingHyn ?? '--';
+    var globalHYNStaking = _rpStatistics?.global?.totalStakingHyn ?? '--';
+    var totalTransmit = _rpStatistics?.global?.totalTransmit ?? '--';
     var globalTransmit = _rpStatistics?.global?.transmit ?? '--';
+
+    try {
+      totalTransmit = FormatUtil.weiToEtherStr(totalTransmit);
+    } catch (e) {}
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -668,7 +673,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
       _rpStatistics = await _rpApi.getRPStatistics(
         _activeWallet?.wallet?.getAtlasAccount()?.address,
       );
-
+      setState(() {});
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
