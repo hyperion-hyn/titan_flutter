@@ -188,7 +188,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     _loadDataBloc.add(RefreshSuccessEvent());
   }
 
-  DebounceLater depthDebounceLater = DebounceLater();
+  // DebounceLater depthDebounceLater = DebounceLater();
   DebounceLater tradeDebounceLater = DebounceLater();
 
   @override
@@ -210,10 +210,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
             _buyChartList.clear();
             _sailChartList.clear();
             dealDepthData(_buyChartList, _sailChartList, state.response);
-
-            tradeDebounceLater.debounceInterval(() {
-              depthController.add(contrDepthTypeRefresh);
-            }, 500);
+            depthController.add(contrDepthTypeRefresh);
           }
         },
         child: BlocListener<ExchangeDetailBloc, AllPageState>(
