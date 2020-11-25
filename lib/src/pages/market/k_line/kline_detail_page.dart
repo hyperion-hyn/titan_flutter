@@ -176,7 +176,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     _kLineWidget(),
                     _dividerWidget(),
                     _detailTabWidget(),
-                    _delegationListViewHeader(enable: false),
+                    _depthListViewHeader(enable: false),
                     _detailWidget(),
                   ],
                 ),
@@ -871,10 +871,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       return _tradeListViewContent();
     }
 
-    return _delegationListViewContent(context, _buyChartList, _sellChartList, enable: false);
+    return _depthListViewContent(context, _buyChartList, _sellChartList, enable: false);
   }
 
-  Widget _delegationListViewHeader({limitNum = 20, enable = true, Function clickPrice}) {
+  Widget _depthListViewHeader({limitNum = 20, enable = true, Function clickPrice}) {
     if (_detailCurrentIndex == 1) {
       return StreamBuilder<Object>(
         stream: _tradeController.stream,
@@ -1115,7 +1115,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     ));
   }
 
-  Widget _delegationListViewContent(
+  Widget _depthListViewContent(
       BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
       {limitNum = 20, enable = true, Function clickPrice}) {
     return StreamBuilder<Object>(
