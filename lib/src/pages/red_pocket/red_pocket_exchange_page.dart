@@ -588,6 +588,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
             autofocus: true,
             controller: _textEditController,
             decoration: InputDecoration(
+              isDense: true,
               filled: true,
               fillColor: HexColor('#FFF2F2F2'),
               hintText: '输入抵押份数，每份500HYN',
@@ -605,7 +606,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                   width: 0.5,
                 ),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
             style: TextStyle(fontSize: 13),
             onSaved: (value) {

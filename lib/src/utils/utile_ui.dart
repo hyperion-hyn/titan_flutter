@@ -93,8 +93,11 @@ class UiUtil {
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
-      builder: (_) => Padding(
-        padding: EdgeInsets.all(36),
+      builder: (_) => AnimatedPadding(
+        padding: MediaQuery.of(context).viewInsets +
+            const EdgeInsets.symmetric(horizontal: 36.0),
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.decelerate,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
