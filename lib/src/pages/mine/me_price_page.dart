@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 
 class MePricePage extends StatefulWidget {
@@ -28,7 +28,7 @@ class _MePriceState extends State<MePricePage> {
   @override
   Widget build(BuildContext context) {
     if (activeQuotesSign == null) {
-      activeQuotesSign = QuotesInheritedModel.of(context,aspect: QuotesAspect.quote).activeQuotesSign;
+      activeQuotesSign = WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign;
     }
 
     return Scaffold(
@@ -44,7 +44,12 @@ class _MePriceState extends State<MePricePage> {
         actions: <Widget>[
           InkWell(
             onTap: () {
-              BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(quotesSign: activeQuotesSign));
+              if (activeQuotesSign != null) {
+                WalletInheritedModel.saveQuoteSign(activeQuotesSign);
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesSignEvent(sign: activeQuotesSign));
+                BlocProvider.of<WalletCmpBloc>(context).add(UpdateQuotesEvent(isForceUpdate: true));
+              }
+
               Navigator.pop(context);
             },
             child: Container(
@@ -98,7 +103,7 @@ class _MePriceState extends State<MePricePage> {
                 ),
                 Spacer(),
                 Visibility(
-                  visible: quotesSign.quote == activeQuotesSign.quote,
+                  visible: quotesSign.quote == activeQuotesSign?.quote ?? '',
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 15, 15, 13),
                     child: Icon(

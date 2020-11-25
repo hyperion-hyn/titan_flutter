@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/data/cache/app_cache.dart';
+import 'package:titan/src/pages/policy/policy_confirm_page.dart';
 import 'package:titan/src/routes/route_util.dart';
 import 'package:titan/src/routes/routes.dart';
 
@@ -50,25 +53,33 @@ class EmptyWalletView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       side: BorderSide(color: Theme.of(context).primaryColor),
                       borderRadius: BorderRadius.circular(36)),
-                  onPressed: () {
-                    var currentRouteName =
-                        RouteUtil.encodeRouteNameWithoutParams(context);
-                    Application.router.navigateTo(
+                  onPressed: () async {
+                    if (await _checkConfirmWalletPolicy()) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => PolicyConfirmPage(
+                          PolicyType.WALLET,
+                        ),
+                      ));
+                    } else {
+                      var currentRouteName =
+                          RouteUtil.encodeRouteNameWithoutParams(context);
+                      Application.router.navigateTo(
                         context,
                         Routes.wallet_create +
-                            '?entryRouteName=$currentRouteName');
+                            '?entryRouteName=$currentRouteName',
+                      );
+                    }
                   },
                   child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 52.0, vertical: 10.0),
-                      child: Text(
-                        S.of(context).create_wallet,
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.w500),
-                      ),
+                    width: 200,
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      S.of(context).create_wallet,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.w500),
                     ),
                   ),
                   color: Colors.white,
@@ -79,25 +90,33 @@ class EmptyWalletView extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Theme.of(context).primaryColor),
                         borderRadius: BorderRadius.circular(36)),
-                    onPressed: () {
-                      var currentRouteName =
-                          RouteUtil.encodeRouteNameWithoutParams(context);
-                      Application.router.navigateTo(
+                    onPressed: () async {
+                      if (await _checkConfirmWalletPolicy()) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) => PolicyConfirmPage(
+                            PolicyType.WALLET,
+                          ),
+                        ));
+                      } else {
+                        var currentRouteName =
+                            RouteUtil.encodeRouteNameWithoutParams(context);
+                        Application.router.navigateTo(
                           context,
                           Routes.wallet_import +
-                              '?entryRouteName=$currentRouteName');
+                              '?entryRouteName=$currentRouteName',
+                        );
+                      }
                     },
                     child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 52.0, vertical: 10.0),
-                        child: Text(
-                          S.of(context).import_wallet,
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(context).primaryColor,
-                              fontWeight: FontWeight.w500),
-                        ),
+                      width: 200,
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Text(
+                        S.of(context).import_wallet,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                     color: Colors.white,
@@ -109,5 +128,12 @@ class EmptyWalletView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<bool> _checkConfirmWalletPolicy() async {
+    var isConfirmWalletPolicy = await AppCache.getValue(
+      PrefsKey.IS_CONFIRM_WALLET_POLICY,
+    );
+    return isConfirmWalletPolicy == null || !isConfirmWalletPolicy;
   }
 }

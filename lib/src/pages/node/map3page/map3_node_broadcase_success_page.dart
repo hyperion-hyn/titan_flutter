@@ -7,13 +7,13 @@ import 'package:titan/src/pages/node/model/contract_node_item.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 
-import 'map3_node_contract_detail_page.dart';
+import 'map3_node_contract_detail_page_v8.dart';
 import 'map3_node_create_contract_page.dart';
 
-class Map3NodeBroadcaseSuccessPage extends StatelessWidget {
+class Map3NodeBroadcaseSuccessPageV8 extends StatelessWidget {
   final String pageType;
   final ContractNodeItem contractNodeItem;
-  Map3NodeBroadcaseSuccessPage(this.pageType, {this.contractNodeItem});
+  Map3NodeBroadcaseSuccessPageV8(this.pageType, {this.contractNodeItem});
 
   @override
   Widget build(BuildContext context) {

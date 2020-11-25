@@ -1,9 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:titan/config.dart';
+import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/basic/http/http.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 
 class EtherscanApi {
@@ -46,7 +48,8 @@ class EtherscanApi {
     return '${getWebHost(isChinaMainland)}/address/$address';
   }
 
-  Future<List<EthTransferHistory>> queryEthHistory(String address, int page) async {
+  Future<List<EthTransferHistory>> queryEthHistory(
+      String address, int page) async {
     Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "txlist",
@@ -61,13 +64,16 @@ class EtherscanApi {
 
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
-      return resultList.map((json) => EthTransferHistory.fromJson(json)).toList();
+      return resultList
+          .map((json) => EthTransferHistory.fromJson(json))
+          .toList();
     } else {
       throw new Exception();
     }
   }
 
-  Future<List<Erc20TransferHistory>> queryErc20History(String contractAddress, String address, int page) async {
+  Future<List<Erc20TransferHistory>> queryErc20History(
+      String contractAddress, String address, int page) async {
     Map result = await HttpCore.instance.get("$apiHost/api", params: {
       "module": "account",
       "action": "tokentx",
@@ -80,9 +86,25 @@ class EtherscanApi {
     });
     if (result["status"] == "1") {
       List resultList = result["result"] as List;
-      return resultList.map((json) => Erc20TransferHistory.fromJson(json)).toList();
+      return resultList
+          .map((json) => Erc20TransferHistory.fromJson(json))
+          .toList();
     } else {
       return [];
+    }
+  }
+
+  Future<ResponseEntity> getGasFromEtherScan() async {
+    Map json = await HttpCore.instance.get("$apiHost/api", params: {
+      "module": "gastracker",
+      "action": "gasoracle",
+      "apikey": Config.ETHERSCAN_APIKEY,
+    });
+
+    if (json["status"] == "1") {
+      return ResponseEntity.fromJson(json);
+    } else {
+      throw new Exception();
     }
   }
 

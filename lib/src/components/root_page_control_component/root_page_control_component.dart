@@ -12,12 +12,13 @@ import 'package:titan/src/components/auth/bloc/auth_event.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/auth/model.dart';
 import 'package:titan/src/components/inject/injector.dart';
-import 'package:titan/src/components/quotes/bloc/bloc.dart';
-import 'package:titan/src/components/quotes/model.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/model.dart';
 import 'package:titan/src/components/root_page_control_component/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/setting/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/app_tabbar/app_tabbar_page.dart';
@@ -67,16 +68,19 @@ class RootPageControlComponentState
         ? QuotesSign.fromJson(json.decode(quoteSignStr))
         : SupportedQuoteSigns.defaultQuotesSign;
 
+
+    WalletInheritedModel.saveQuoteSign(quotesSign);
+
     BlocProvider.of<SettingBloc>(context).add(UpdateSettingEvent(
         areaModel: areaModel,
-        languageModel: languageModel,
-        quotesSign: quotesSign));
+        languageModel: languageModel));
 
-    BlocProvider.of<QuotesCmpBloc>(context).add(UpdateGasPriceEvent());
+    //faster show wallet
+    BlocProvider.of<WalletCmpBloc>(context).add(LoadLocalDiskWalletAndActiveEvent());
 
-    Future.delayed(Duration(milliseconds: 1500), () {
+    //Future.delayed(Duration(milliseconds: 1500), () {
       BlocProvider.of<SettingBloc>(context).add(SystemConfigEvent());
-    });
+    //});
   }
 
   void launchRootPage() async {

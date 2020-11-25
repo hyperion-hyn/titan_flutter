@@ -13,6 +13,7 @@ import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/config/extends_icon_font.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
 import 'package:titan/src/pages/global_data/global_data.dart';
@@ -108,26 +109,6 @@ class HomePanelState extends State<HomePanel> {
                   child: InkWell(
                     borderRadius: BorderRadius.all(Radius.circular(8.0)),
                     onTap: () {
-                      // todo: test_jison_0426
-                      print('[Home_panel] -->focusArea， 数组展示');
-                      /*if (Platform.isIOS) {
-                        // old version
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => WebViewContainer(
-                                  initUrl: 'https://news.hyn.space/react-reduction/',
-                                  title: S.of(context).map3_global_nodes,
-                                )));
-
-                      } else {
-                        // new version
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => GlobalDataPage()));
-                      }*/
-
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -750,7 +731,7 @@ class HomePanelState extends State<HomePanel> {
     bool isChinaMainland =
         SettingInheritedModel.of(context, aspect: SettingAspect.area)
             .areaModel
-            .isChinaMainland;
+            ?.isChinaMainland??true;
     List<String> typeOfNearBys = [
       "restaurant",
       "lodging",
@@ -855,6 +836,8 @@ class HomePanelState extends State<HomePanel> {
 
   Future _scanAction() async {
     String scanStr = await BarcodeScanner.scan();
+    print("[扫描结果] scanStr:$scanStr");
+
     if (scanStr == null) {
       return;
     } else if (scanStr.contains("share?id=")) {
@@ -866,8 +849,9 @@ class HomePanelState extends State<HomePanel> {
       if(idList.length < 1){
         return;
       }
+      var infoEntity = Map3InfoEntity.onlyNodeId(idList[1]);
       Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + "?contractId=${idList[1]}");
+          Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (scanStr.contains("http") || scanStr.contains("https")) {
       scanStr = FluroConvertUtils.fluroCnParamsEncode(scanStr);
       Application.router.navigateTo(

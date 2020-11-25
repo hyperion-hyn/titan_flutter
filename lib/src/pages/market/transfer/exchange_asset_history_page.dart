@@ -11,14 +11,18 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/load_data_event.
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_history.dart';
 import 'package:titan/src/pages/market/model/asset_type.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/pages/webview/inappwebview.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/routes/routes.dart';
@@ -61,7 +65,7 @@ class _ExchangeAssetHistoryPageState
     // TODO: implement onCreated
     super.onCreated();
     symbolQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
+        WalletInheritedModel.of(context).activatedQuoteVoAndSign('USDT');
     _updateTypeToCurrency();
   }
 
@@ -150,7 +154,7 @@ class _ExchangeAssetHistoryPageState
                         onPressed: () {
                           if (ExchangeInheritedModel.of(context)
                               .exchangeModel
-                              .isActiveAccount()) {
+                              .isActiveAccountAndHasAssets()) {
                             Application.router.navigateTo(
                               context,
                               '${Routes.exchange_transfer_page}?coinType=${widget._symbol}',
@@ -230,7 +234,7 @@ class _ExchangeAssetHistoryPageState
   _assetLayout() {
     String _logoPath = '';
     if (widget._symbol == 'HYN') {
-      _logoPath = SupportedTokens.HYN.logo;
+      _logoPath = SupportedTokens.HYN_Atlas.logo;
     } else if (widget._symbol == 'ETH') {
       _logoPath = SupportedTokens.ETHEREUM.logo;
     } else if (widget._symbol == 'USDT') {
@@ -307,20 +311,44 @@ class _ExchangeAssetHistoryPageState
 
   _assetHistoryItem(AssetHistory assetHistory) {
     return InkWell(
-      onTap: () {
-        var isChinaMainland =
-            SettingInheritedModel.of(context).areaModel?.isChinaMainland ==
-                true;
-        var url =
-            EtherscanApi.getTxDetailUrl(assetHistory.txId, isChinaMainland);
-        if (url != null) {
+      onTap: () async {
+        if (assetHistory.isAtlas()) {
+          var _api = AtlasApi();
+
+          HynTransferHistory hynTransferHistory = await _api.queryHYNTxDetail(
+            assetHistory.txId,
+          );
+
+          var transactionType = (assetHistory.name ?? '') == 'withdraw' ? 2 : 1;
+
+          var transactionDetailVo = TransactionDetailVo.fromHynTransferHistory(
+            hynTransferHistory,
+            transactionType,
+            assetHistory.type,
+          );
+
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => InAppWebViewContainer(
-                        initUrl: url,
-                        title: '',
-                      )));
+                  builder: (context) =>
+                      WalletShowAccountInfoPage(transactionDetailVo)));
+        } else {
+          var isChinaMainland =
+              SettingInheritedModel.of(context).areaModel?.isChinaMainland??true ==
+                  true;
+          var url = EtherscanApi.getTxDetailUrl(
+            assetHistory.txId,
+            isChinaMainland,
+          );
+          if (url != null) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => InAppWebViewContainer(
+                          initUrl: url,
+                          title: '',
+                        )));
+          }
         }
       },
       child: Padding(
@@ -514,6 +542,24 @@ class AssetItem extends StatefulWidget {
 class AssetItemState extends State<AssetItem> {
   @override
   Widget build(BuildContext context) {
+    var exchangeAvailable = '-';
+    var exchangeFreeze = '-';
+    var balanceByCurrency = '-';
+
+    try {
+      exchangeAvailable = Decimal.parse(
+        widget._assetType.exchangeAvailable,
+      ).toString();
+
+      exchangeFreeze = Decimal.parse(
+        widget._assetType.exchangeFreeze,
+      ).toString();
+
+      balanceByCurrency = FormatUtil.truncateDecimalNum(
+        Decimal.parse(widget._assetType.usdt) * widget._usdtToCurrency,
+        4,
+      );
+    } catch (e) {}
     return Column(
       children: <Widget>[
         SizedBox(
@@ -528,7 +574,7 @@ class AssetItemState extends State<AssetItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      '${S.of(context).exchange_asset_convert}(${QuotesInheritedModel.of(context, aspect: QuotesAspect.quote).activeQuotesSign.quote})',
+                      '${S.of(context).exchange_asset_convert}(${WalletInheritedModel.of(context, aspect: WalletAspect.quote).activeQuotesSign.quote})',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -538,14 +584,7 @@ class AssetItemState extends State<AssetItem> {
                       height: 8.0,
                     ),
                     Text(
-                      widget._assetType.usdt != null &&
-                              widget._usdtToCurrency != null
-                          ? '${FormatUtil.truncateDecimalNum(
-                              Decimal.parse(widget._assetType.usdt) *
-                                  widget._usdtToCurrency,
-                              4,
-                            )}'
-                          : '-',
+                      balanceByCurrency,
                       maxLines: 2,
                       style:
                           TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
@@ -570,8 +609,7 @@ class AssetItemState extends State<AssetItem> {
                     height: 8.0,
                   ),
                   Text(
-                    Decimal.parse(widget._assetType.exchangeAvailable)
-                        .toString(),
+                    exchangeAvailable,
                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
                   ),
                 ],
@@ -593,7 +631,7 @@ class AssetItemState extends State<AssetItem> {
                     height: 8.0,
                   ),
                   Text(
-                    Decimal.parse(widget._assetType.exchangeFreeze).toString(),
+                    exchangeFreeze,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,

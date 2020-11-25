@@ -144,7 +144,7 @@ class _SelectPositionState extends State<SelectPositionPage> {
     if (widget.type == SelectPositionPage.SELECT_PAGE_TYPE_NCOV) {
       style = Const.kNCovMapStyle;
     } else {
-      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+      if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
         style = Const.kWhiteMapStyleCn;
       } else {
         style = Const.kWhiteMapStyle;

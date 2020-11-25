@@ -5,9 +5,11 @@ class ExchangeModel {
 
   ExchangeAccount activeAccount;
 
-  bool isActiveAccount(){
-    return activeAccount != null && activeAccount.assetList != null;
+  bool hasActiveAccount() {
+    return activeAccount != null;
   }
 
-
+  bool isActiveAccountAndHasAssets() {
+    return activeAccount != null && activeAccount.assetList != null;
+  }
 }

@@ -36,7 +36,7 @@ class ExchangeConst {
   ///交易系统：
 //  static const PATH_ORDER_LIMIT = "/api/exchange/orderPutLimit"; // 下限价单
   static const PATH_ORDER_MARKET = "/api/exchange/orderPutMarket"; // 下市价单
-//  static const PATH_ORDER_CANCEL = "/api/exchange/orderCancel"; // 取消订单A
+  static const PATH_ORDER_CANCEL = "/api/exchange/orderCancel"; // 取消订单A
 //  static const PATH_ORDER_LIST = "/api/order/lists"; // 当前/历史 委托列表
   static const PATH_ORDER_LOG_LIST = "/api/order/dealDetailLists"; // 成交明细
   static const PATH_MARKET_ALL = '/api/v1-b/market/all';
@@ -44,6 +44,11 @@ class ExchangeConst {
       "/api/exchange/getMarketInfo"; // 市场信息，如市价，费率，精度
   static const PATH_USD_CNY = "/api/quotation/getUSDCNY"; // 美元兑换人民币汇率
   static const PATH_TYPE_TO_CURRENCY = "/api/quotation/getType2Currency";
+
+  ///Abnormal account
+  static const PATH_CHECK_ACCOUNT_ABNORMAL = '/api/account/isFix';
+  static const PATH_ABNORMAL_TRANSFER_LIST = "/api/account/fixList"; // 充提记录
+  static const PATH_FIX_ABNORMAL_ACCOUNT = '/api/account/fix';
 
   ///资金操作
 //  static const PATH_ACCOUNT_ASSETS = "/api/account/assetsList"; // 资产列表

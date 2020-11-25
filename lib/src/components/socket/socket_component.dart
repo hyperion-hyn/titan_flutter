@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:decimal/decimal.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_k_chart/entity/k_line_entity.dart';
+import 'package:k_chart/flutter_k_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
@@ -41,7 +43,7 @@ class _SocketState extends State<_SocketManager> {
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
-  List<MarketItemEntity> _marketItemList;
+  List<MarketItemEntity> _marketItemList = List();
   List<List<String>> _tradeDetailList;
   Timer _timer;
 
@@ -82,7 +84,8 @@ class _SocketState extends State<_SocketManager> {
         LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
-          LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+          LogUtil.printMessage(
+              '[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
@@ -122,9 +125,11 @@ class _SocketState extends State<_SocketManager> {
     _bloc = BlocProvider.of<SocketBloc>(context);
   }
 
-  _initData() {
+  _initData() async {
     // 24hour
     _bloc.add(SubChannelEvent(channel: SocketConfig.channelKLine24Hour));
+
+    await _getCacheMarketSymbolList();
 
     // Market
     _bloc.add(MarketSymbolEvent());
@@ -134,8 +139,23 @@ class _SocketState extends State<_SocketManager> {
 //    _bloc.add(SubChannelEvent(channel: hynethTradeChannel));
   }
 
-  _reconnectWS() {
+  _getCacheMarketSymbolList() async {
+    _marketItemList.clear();
+    var sharePref = await SharedPreferences.getInstance();
+    List<String> emptyMarketItemStrList =
+        sharePref.getStringList('cache_market_item_list');
+    emptyMarketItemStrList?.forEach((element) {
+      try {
+        var emptyMarketItem = MarketItemEntity.fromJson(jsonDecode(element));
+        _marketItemList.add(emptyMarketItem);
+      } catch (e) {
+        LogUtil.printMessage('_getCacheMarketSymbolList:$e');
+      }
+    });
+    setState(() {});
+  }
 
+  _reconnectWS() {
     LogUtil.printMessage('[WS] Reconnect!');
     LogUtil.printMessage('[WS] websocket断开了');
     Future.delayed(Duration(milliseconds: 1000)).then((_) {
@@ -151,6 +171,10 @@ class _SocketState extends State<_SocketManager> {
       listener: (context, state) async {
         if (state is MarketSymbolState) {
           _marketItemList = state.marketItemList;
+          setState(() {});
+
+          ///
+          await _cacheSymbolList(_marketItemList);
         } else if (state is ChannelKLine24HourState) {
           _updateMarketItemList(state.response, symbol: state.symbol);
         } else if (state is ChannelTradeDetailState) {
@@ -173,6 +197,21 @@ class _SocketState extends State<_SocketManager> {
         },
       ),
     );
+  }
+
+  Future<void> _cacheSymbolList(List<MarketItemEntity> marketItemList) async {
+    var sharePref = await SharedPreferences.getInstance();
+    List<String> _emptyMarketItemStrList = List();
+    marketItemList.forEach((element) {
+      var marketItemJsonStr = json.encode(MarketItemEntity(
+        element.symbol,
+        KLineEntity.fromCustom(),
+        symbolName: element.symbolName,
+      ).toJson());
+      _emptyMarketItemStrList.add(marketItemJsonStr);
+    });
+    await sharePref.setStringList(
+        'cache_market_item_list', _emptyMarketItemStrList);
   }
 
   _updateMarketItemList(dynamic data, {String symbol = ''}) {
@@ -297,16 +336,16 @@ class MarketInheritedModel extends InheritedModel<String> {
   }
 
   double getRealTimePricePercent(String symbol) {
-    var marketItem = getMarketItem(symbol);
-    var realPercent = marketItem == null
-        ? 0.0
-        : ((marketItem?.kLineEntity?.close ?? 0.0) -
-                    marketItem.kLineEntity?.open ??
-                0.0) /
-            (marketItem?.kLineEntity?.open ?? 1.0);
-//    LogUtil.printMessage(
-//        '[KLineEntity]: open: ${marketItem.kLineEntity.open} close: ${marketItem.kLineEntity.close} percent: $realPercent');
-    return realPercent;
+    try {
+      var marketItem = getMarketItem(symbol);
+      var realPercent = marketItem == null
+          ? 0.0
+          : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) /
+              (marketItem.kLineEntity.open);
+      return realPercent;
+    } catch (e) {
+      return 0.0;
+    }
   }
 
   double get24HourAmount(String symbol) {

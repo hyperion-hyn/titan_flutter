@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +15,15 @@ import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
 import 'package:titan/src/components/scaffold_map/scaffold_map.dart';
 import 'package:titan/src/components/setting/bloc/bloc.dart';
 import 'package:titan/src/components/updater/updater_component.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/data/cache/memory_cache.dart';
 import 'package:titan/src/pages/app_tabbar/bottom_fabs_widget.dart';
+import 'package:titan/src/pages/atlas_map/atlas/atlas_node_tabs_page.dart';
+import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_tabs_page_deprecated.dart';
 import 'package:titan/src/pages/discover/bloc/bloc.dart';
 import 'package:titan/src/pages/discover/discover_page.dart';
 import 'package:titan/src/pages/discover/dmap_define.dart';
@@ -28,11 +31,9 @@ import 'package:titan/src/pages/home/bloc/bloc.dart';
 import 'package:titan/src/pages/market/PartnerExchangeLoginPage.dart';
 import 'package:titan/src/pages/news/info_detail_page.dart';
 import 'package:titan/src/pages/news/infomation_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_page.dart';
-import 'package:titan/src/pages/node/map3page/map3_node_tabs_page.dart';
-import 'package:titan/src/pages/wallet/wallet_page/wallet_page.dart';
+import 'package:titan/src/pages/wallet/wallet_tabs_page.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
-import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/utils/encryption.dart';
 import 'package:titan/src/utils/utile_ui.dart';
@@ -111,6 +112,14 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     );
     SystemChrome.setSystemUIOverlayStyle(systemUiOverlayStyle);
 
+    Future.delayed(Duration(milliseconds: 500)).then((value) {
+      BlocProvider.of<WalletCmpBloc>(context).add(UpdateWalletPageEvent(updateGasPrice: true));
+    });
+
+//    Future.delayed(Duration(milliseconds: 2000)).then((value) {
+//      BlocProvider.of<WalletCmpBloc>(context).add(UpdateGasPriceEvent());
+//    });
+
     // 检测是否有新弹窗
     Future.delayed(Duration(milliseconds: 2000)).then((value) {
       //print('[home] --> check new announcement');
@@ -131,6 +140,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     TitanPlugin.urlLauncherCallBack = (Map values) {
       _urlLauncherAction(values);
     };
+
   }
 
   @override
@@ -154,7 +164,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
   void getClipboardData() async {
     var clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
     if (clipboardData != null &&
-        clipboardData.text.contains("titan://contract/detail")) {
+        clipboardData.text.contains("titan://map3/detail")) {
       var shareUser = clipboardData.text.split("key=")[1];
       MemoryCache.shareKey = shareUser;
     }
@@ -182,13 +192,16 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     var subType = values["subType"];
     var content = values["content"];
     print('[Home_page] _urlLauncherAction, values:${values}');
-    if (type == "contract" && subType == "detail") {
-      var contractId = content["contractId"];
+    if (type == "map3" && subType == "detail") {
+      var nodeId = content["map3"];
       var key = content["key"];
       MemoryCache.shareKey = key;
       print("shareuser jump $key");
-      Application.router.navigateTo(context,
-          Routes.map3node_contract_detail_page + "?contractId=$contractId");
+      var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
+      Application.router.navigateTo(
+          context,
+          Routes.map3node_contract_detail_page +
+              '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
@@ -208,7 +221,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
               context, _activeWallet.wallet,
               dialogTitle: S.of(context).wallet_password_decrypt);
         }
-        if((password != null && encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) || !encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
+        if ((password != null &&
+                encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) ||
+            !encryptedMsg.startsWith(Const.CIPHER_TEXT_PREFIX)) {
           Navigator.pop(context);
           (Keys.scaffoldMap.currentState as ScaffoldCmpMapState)?.back();
           Routes.popUntilCachedEntryRouteName(context);
@@ -222,8 +237,7 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
         BlocProvider.of<AppTabBarBloc>(context)
             .add(ChangeTabBarItemEvent(index: 0));
         await Future.delayed(Duration(milliseconds: 300));
-        BlocProvider.of<ScaffoldMapBloc>(context)
-            .add(SearchPoiEvent(poi: poi));
+        BlocProvider.of<ScaffoldMapBloc>(context).add(SearchPoiEvent(poi: poi));
       });
     }
   }
@@ -433,9 +447,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     tabItem(Icons.home, S.of(context).home_page, 0),
-                    tabItem(Icons.explore, S.of(context).node, 1),
                     tabItem(
-                        Icons.account_balance_wallet, S.of(context).wallet, 2),
+                        Icons.account_balance_wallet, S.of(context).wallet, 1),
+                    tabItem(Icons.explore, S.of(context).node, 2),
                     tabItem(Icons.description, S.of(context).information, 3),
                     tabItem(Icons.person, S.of(context).my_page, 4),
                   ],
@@ -509,37 +523,15 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
   }
 
   Widget _getTabView(int index) {
-//    var barHeight = MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight;
-//    return Padding(
-//      padding: EdgeInsets.only(bottom: barHeight),
-//      child: IndexedStack(
-//        index: index,
-//        children: <Widget>[
-//          BlocProvider(create: (ctx) => HomeBloc(ctx), child: HomePage(key: Keys.homePageKey)),
-//          WalletTabsPage(),
-//          BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage()),
-//          InformationPage(),
-//          MyPage(),
-//        ],
-//      ),
-//    );
-
     switch (index) {
       case 1:
-        return Map3NodeTabsPage();
-
-      case 2:
         return WalletTabsPage();
 
-      /*return BlocProvider(
-            create: (ctx) => DiscoverBloc(ctx),
-            child: DiscoverPage(
-              key: _discoverKey,
-            ));*/
+      case 2:
+        return AtlasNodeTabsPage();
 
       case 3:
         return InformationPage();
-//        return BlocProvider(create: (ctx) => DiscoverBloc(ctx), child: DiscoverPage());
 
       case 4:
         return MyPage();
@@ -550,9 +542,9 @@ class AppTabBarPageState extends BaseState<AppTabBarPage>
     } else {
       return BlocProvider(
           create: (ctx) => HomeBloc(ctx),
-          child: HomePage(homePageFirst,  (){
+          child: HomePage(homePageFirst, () {
             homePageFirst = false;
-          },key: Keys.homePageKey ));
+          }, key: Keys.homePageKey));
     }
   }
 }

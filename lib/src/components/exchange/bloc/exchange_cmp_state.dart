@@ -7,6 +7,9 @@ abstract class ExchangeCmpState {}
 
 class InitialExchangeCmpState extends ExchangeCmpState {}
 
+class CheckAccountState extends ExchangeCmpState{}
+
+
 class LoginState extends ExchangeCmpState {
   final Wallet wallet;
   final String password;

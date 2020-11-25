@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/scaffold_map/bloc/bloc.dart';
+import 'package:titan/src/components/updater/bloc/bloc.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/home/home_panel.dart';
@@ -24,7 +26,14 @@ class HomePage extends StatefulWidget {
   HomePageState createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends BaseState<HomePage> {
+
+  @override
+  void onCreated() async {
+    await Future.delayed(Duration(milliseconds: 333));
+    BlocProvider.of<UpdateBloc>(context).add(CheckUpdate(lang: Localizations.localeOf(context).languageCode));
+    super.onCreated();
+  }
 
   @override
   Widget build(BuildContext context) {

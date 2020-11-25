@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +37,6 @@ class UpdateBloc extends Bloc<UpdateEvent, UpdateState> {
           platform = "ios";
         }
         var versionModel = await injector.repository.checkNewVersion(channel, event.lang, platform);
-
         yield UpdateCheckState(isChecking: false, updateEntity: versionModel, isManual: event.isManual);
       } catch (err) {
         logger.e(err);

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:titan/env.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
@@ -24,7 +23,6 @@ void main() {
         builder: (BuildContext context, StateSetter setState) {
           return new MaterialApp(
             home: new Material(
-              child: QuotesComponent(
                 child: WalletComponent(
                   child: new InkWell(
                     key: Keys.rootKey,
@@ -35,7 +33,6 @@ void main() {
                     child: Text("hahaha", key: sliderKey),
                   ),
                 ),
-              ),
             ),
           );
         },

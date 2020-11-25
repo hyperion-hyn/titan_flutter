@@ -4,12 +4,12 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_k_chart/flutter_k_chart.dart';
+import 'package:k_chart/flutter_k_chart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
@@ -298,8 +298,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     );
     var _latestPriceString = '${_latestPrice ?? '--'}';
 
-    var _selectedQuote =
-        QuotesInheritedModel.of(context).activatedQuoteVoAndSign(
+    var _selectedQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(
       marketItemEntity?.symbolName,
     );
     var _latestQuotePrice = _selectedQuote == null
@@ -441,14 +440,11 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
 
   Widget _kLineWidget() {
     double kLineHeight = 340;
-    var local =
-        SettingInheritedModel.of(context, aspect: SettingAspect.language)
-            .languageModel
-            .locale
-            .languageCode;
+    var locale = SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.getLocaleName()??'zh';
     //print("[KLine] local:$local");
 
     return SliverToBoxAdapter(
+
       child: Stack(
         children: <Widget>[
           Container(
@@ -458,10 +454,12 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
             child: KChartWidget(
               _kChartItemList,
               isLine: _isLine,
+              bgColor: [Colors.white,Colors.white],
               mainState: _mainState,
               secondaryState: _secondaryState,
-              locale: local,
-              fractionDigits: 4,
+              locale: locale,
+              fixedLength: 4,
+//              fractionDigits: 4,
             ),
           ),
           Visibility(
@@ -608,11 +606,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
   }
 
   Widget get _spacerWidget => SizedBox(
-        width: SettingInheritedModel.of(context, aspect: SettingAspect.language)
-                .languageModel
-                .isKo()
-            ? 15
-            : 18,
+        width: SettingInheritedModel.of(context, aspect: SettingAspect.language)?.languageModel?.isKo()??false ? 15 : 18,
       );
 
   Widget _iconWidget({bool isMain}) {
@@ -949,10 +943,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     return Visibility(
       visible: visible,
       child: Container(
-          width: double.infinity,
-          height: height,
-          alignment: Alignment.center,
-          child: CircularProgressIndicator()),
+          width: double.infinity, height: height, alignment: Alignment.center, child: CircularProgressIndicator(
+        strokeWidth: 1.5,
+      )),
     );
   }
 
@@ -1168,11 +1161,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
         var lastItem = _kChartItemList.last;
         var tempItem = kLineDataList.last;
 
-        if (lastItem.id != tempItem.id) {
-          DataUtil.addLastData(_kChartItemList, tempItem);
+        if (lastItem.time != tempItem.time) {
+//          DataUtil.addLastData(_kChartItemList, tempItem);
+          _kChartItemList.add(tempItem);
+          DataUtil.calculate(_kChartItemList);
         } else {
           _kChartItemList.last = tempItem;
-          DataUtil.updateLastData(_kChartItemList);
+//          DataUtil.updateLastData(_kChartItemList);
+          DataUtil.calculate(_kChartItemList);
         }
       }
     }
@@ -1283,10 +1279,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     // buy: high --> low
     _bids.clear();
     _buyChartList.forEach((element) {
-      var amount = element.depthEntity.amount;
+      var amount = element.depthEntity.vol;
       if (_bids.isNotEmpty) {
         var first = _bids.first;
-        amount += first.amount;
+        amount += first.vol;
       }
       DepthEntity entity = DepthEntity(element.depthEntity.price, amount);
       _bids.insert(0, entity);
@@ -1295,10 +1291,10 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
     // sell: low --> high
     _asks.clear();
     _sellChartList.forEach((element) {
-      var amount = element.depthEntity.amount;
+      var amount = element.depthEntity.vol;
       if (_asks.isNotEmpty) {
         var last = _asks.last;
-        amount += last.amount;
+        amount += last.vol;
       }
       DepthEntity entity = DepthEntity(element.depthEntity.price, amount);
       _asks.add(entity);
@@ -1615,9 +1611,7 @@ Widget delegationListView(BuildContext context,
                                         left: index >= 9 ? 3 : 8),
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      buyEntity?.depthEntity?.amount
-                                              ?.toString() ??
-                                          "--",
+                                      buyEntity?.depthEntity?.vol?.toString() ?? "--",
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w500,
@@ -1719,9 +1713,7 @@ Widget delegationListView(BuildContext context,
                                     height: 25,
                                     alignment: Alignment.centerRight,
                                     child: Text(
-                                      sellEntity?.depthEntity?.amount
-                                              ?.toString() ??
-                                          "--",
+                                      sellEntity?.depthEntity?.vol?.toString() ?? "--",
                                       textAlign: TextAlign.end,
                                       style: TextStyle(
                                         fontSize: 10,
@@ -1778,7 +1770,7 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
           List itemList = item;
           if (itemList.length >= 2) {
             entity.price = double.parse(itemList[0].toString());
-            entity.amount = double.parse(itemList[1].toString());
+            entity.vol = double.parse(itemList[1].toString());
             entity.actionType = actionType;
           }
         }
@@ -1792,7 +1784,7 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
 
   DepthInfoEntity maxDepthEntity(List<DepthInfoEntity> list) {
     return list.reduce((DepthInfoEntity current, DepthInfoEntity next) {
-      if (current.amount > next.amount) {
+      if (current.vol > next.vol) {
         return current;
       }
       return next;
@@ -1811,7 +1803,7 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
     var max = maxDepthEntity(buyList);
     for (int index = 0; index < buyList.length; index++) {
       var buy = buyList[index];
-      var right = 10 * buy.amount ~/ max.amount;
+      var right = 10 * buy.vol ~/ max.vol;
       var left = 10 - right;
       var entity = ExcDetailEntity(2, left, right, depthEntity: buy);
       buyChartList.add(entity);
@@ -1829,7 +1821,7 @@ dealDepthData(List<ExcDetailEntity> buyChartList,
     var max = maxDepthEntity(sellList);
     for (int index = 0; index < sellList.length; index++) {
       var sell = sellList[index];
-      var left = 10 * sell.amount ~/ max.amount;
+      var left = 10 * sell.vol ~/ max.vol;
       var right = 10 - left;
       var entity = ExcDetailEntity(4, left, right, depthEntity: sell);
       sellChartList.add(entity);

@@ -78,7 +78,7 @@ class SharePoisPanelState extends BaseState<SharePoisPanel> {
       cancelToken = CancelToken();
       var gaodeModel;
 
-      if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+      if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
         gaodeModel = await _api.searchByGaode(
           lat: _lastPosition.latitude,
           lon: _lastPosition.longitude,

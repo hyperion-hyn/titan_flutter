@@ -16,6 +16,16 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(int.parse(numValue));
   }
 
+  static String stringFormatCoinNum(String numValue) {
+    return NumberFormat("#,###,###,###.######")
+        .format(Decimal.parse(numValue).toDouble());
+  }
+
+  static String stringFormatCoinNumWithFour(String numValue) {
+    return NumberFormat("#,###,###,###.####")
+        .format(Decimal.parse(numValue).toDouble());
+  }
+
   static String doubleFormatNum(double numValue) {
     return NumberFormat("#,###,###,###").format(numValue);
   }
@@ -26,7 +36,7 @@ class FormatUtil {
 
   static String formatPercent(double doubleValue) {
     doubleValue = doubleValue * 100;
-    return NumberFormat("#,###.##").format(doubleValue) + "%";
+    return NumberFormat("#,###.####").format(doubleValue) + "%";
   }
 
   static String formatTenThousand(String strValue) {
@@ -41,6 +51,8 @@ class FormatUtil {
 
   static String formatDate(int timestamp,
       {bool isSecond = false, bool isMillisecond = false}) {
+    if ((timestamp ?? 0) <= 0) return "";
+
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
     if (!isMillisecond) {
       timestamp = timestamp * 1000;
@@ -61,23 +73,65 @@ class FormatUtil {
     return DateFormat(format).format(date) ?? "";
   }
 
+  static String formatDateStr(String utcStr, {bool isSecond = true}) {
+    var date = DateTime.parse(utcStr);
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+    return DateFormat(format).format(date) ?? "";
+  }
+
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
     return DateFormat("yyyy.MM.dd")
             .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
         "";
   }
 
+  // utc时间：2020-10-27 13:32:37   ->  local: 2020-10-27 21:32
   static String formatUTCDateStr(String utcStr, {bool isSecond = true}) {
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+
     var dateTime = DateFormat(format).parse(utcStr, true);
+
     var dateLocal = dateTime.toLocal();
-    return DateFormat(format).format(dateLocal) ?? "";
+
+    var local = DateFormat(format).format(dateLocal) ?? "";
+
+    return local;
+  }
+
+  // utc时间：2020-10-27T08:20:49Z  --> local: 2020-10-27 16:20
+  static String newFormatUTCDateStr(String utcStr, {bool isSecond = true}) {
+    if (utcStr == null || utcStr.isEmpty || utcStr == "0") return "";
+
+    var utc = DateTime.parse(utcStr);
+
+    var utcLocal = utc.toLocal();
+
+    var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
+
+    var formatDate = DateFormat(format).format(utcLocal);
+
+    return formatDate;
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
     return DateFormat("HH:mm MM/dd")
             .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
         "";
+  }
+
+  static String formatTimer(int seconds) {
+    int hour = seconds ~/ 3600;
+    int minute = seconds % 3600 ~/ 60;
+    int second = seconds % 60;
+    return formatTimeNum(hour) +
+        ":" +
+        formatTimeNum(minute) +
+        ":" +
+        formatTimeNum(second);
+  }
+
+  static String formatTimeNum(int timeNum) {
+    return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
   }
 
   static String amountToString(String amount) =>
@@ -101,7 +155,7 @@ class FormatUtil {
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
     return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
+            coinVo?.balance ?? BigInt.from(0), coinVo?.decimals ?? 0)
         .toString();
   }
 
@@ -114,7 +168,7 @@ class FormatUtil {
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
-    var value = double.parse(coinBalanceHumanRead(coinVo));
+    var value = double.tryParse(coinBalanceHumanRead(coinVo))??0;
     if (isFloor) {
       value = (value * 1000000).floor() / 1000000;
     }
@@ -129,6 +183,8 @@ class FormatUtil {
   }
 
   static String formatPrice(double price, [isFloor = true]) {
+    if (price == 0) return "0";
+
     if (price >= 1) {
       if (isFloor) {
         price = (price * 100).floor() / 100;
@@ -217,6 +273,43 @@ class FormatUtil {
     return timeStr;
   }
 
+  static String timeStringSimpleV8(BuildContext context, double seconds) {
+    if (seconds < 60) {
+      return S.of(context).n_second('$seconds');
+    }
+    final kDay = 3600 * 24;
+    final kHour = 3600;
+    final kMinute = 60;
+    int day = 0;
+    int hour = 0;
+    int minute = 0;
+    if (seconds > kDay) {
+      day = seconds ~/ kDay;
+      seconds = seconds - day * kDay;
+    }
+    if (seconds > kHour) {
+      hour = seconds ~/ kHour;
+      seconds = seconds - hour * kHour;
+    }
+    minute = seconds ~/ kMinute;
+    seconds = seconds - minute * kMinute;
+
+    var timeStr = '';
+    if (day > 0) {
+      timeStr += S.of(context).n_day_v8('$day');
+      timeStr += S.of(context).n_hour_simple('$hour');
+      return timeStr;
+    }
+
+    if (hour > 0) {
+      timeStr += S.of(context).n_hour_simple('$hour');
+    }
+    if (minute > 0) {
+      timeStr += S.of(context).n_minute_simple('$minute');
+    }
+    return timeStr;
+  }
+
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
     if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
@@ -266,5 +359,19 @@ class FormatUtil {
       return "";
     }
     return Decimal.parse(value.toString()).toString();
+  }
+
+  static String weiToEtherStr(dynamic entityParam) {
+    if (entityParam == null) {
+      return entityParam;
+    }
+    if (entityParam is String) {
+      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam))
+          .toString();
+    } else if (entityParam is int) {
+      return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
+    } else {
+      return "0";
+    }
   }
 }

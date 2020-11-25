@@ -15,8 +15,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/exchange/bloc/bloc.dart';
 import 'package:titan/src/components/exchange/exchange_component.dart';
 import 'package:titan/src/components/exchange/model.dart';
-import 'package:titan/src/components/quotes/model.dart';
-import 'package:titan/src/components/quotes/quotes_component.dart';
+import 'package:titan/src/components/wallet/model.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/components/socket/bloc/bloc.dart';
 import 'package:titan/src/components/socket/socket_component.dart';
 import 'package:titan/src/components/socket/socket_config.dart';
@@ -168,7 +168,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   void _getExchangelData() async {
-    if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccountAndHasAssets()) {
       beforeJumpNoLogin = false;
       userTickChannel = SocketConfig.channelUserTick(exchangeModel.activeAccount.id, symbol);
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
@@ -265,7 +265,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
   Widget exchangePageView() {
     _realTimePrice = MarketInheritedModel.of(context).getRealTimePrice(symbol);
-    selectQuote = QuotesInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
+    selectQuote = WalletInheritedModel.of(context).activatedQuoteVoAndSign(widget.selectedCoin);
     _realTimeQuotePrice =
         FormatUtil.truncateDoubleNum(double.parse(_realTimePrice) * (selectQuote?.quoteVo?.price ?? 0), 2);
     _realTimePricePercent = MarketInheritedModel.of(context).getRealTimePricePercent(symbol);
@@ -284,10 +284,10 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 child: LoadDataContainer(
                   bloc: _loadDataBloc,
                   enablePullDown: false,
-                  enablePullUp: exchangeModel.isActiveAccount(),
+                  enablePullUp: exchangeModel.isActiveAccountAndHasAssets(),
                   onLoadData: () {},
                   onLoadingMore: () async {
-                    if (exchangeModel.isActiveAccount()) {
+                    if (exchangeModel.isActiveAccountAndHasAssets()) {
                       consignPageSize++;
                       await loadMoreConsignList(_loadDataBloc, marketCoin, consignPageSize, _activeOrders);
                       consignListController.add(contrConsignTypeRefresh);
@@ -336,7 +336,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 child: Text(
                   _realTimePricePercent == 0
                       ? "--"
-                      : (_realTimePricePercent >= 0 ? "+" : "-") +
+                      : (_realTimePricePercent >= 0 ? "+" : "") +
                           FormatUtil.truncateDoubleNum(_realTimePricePercent * 100, 2) +
                           "%",
                   style: TextStyle(
@@ -471,7 +471,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   Decimal getValidNum() {
-    if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccountAndHasAssets()) {
       if (isBuy) {
         return Decimal.parse(
             exchangeModel.activeAccount.assetList.getAsset(widget.selectedCoin.toUpperCase()).exchangeAvailable);
@@ -610,7 +610,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
 
             currentNumStr = FormatUtil.truncateDecimalNum(currentNum, marketInfoEntity.amountPrecision);
           } else if (optionKey == contrOptionsTypeNumPercent) {
-            if (exchangeModel.isActiveAccount()) {
+            if (exchangeModel.isActiveAccountAndHasAssets()) {
               if (isBuy) {
                 currentNum = currentPrice.toString() == "0"
                     ? currentNum
@@ -818,7 +818,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 4.0),
                                   child: Text(
-                                    "≈${getInputPriceQuote()} CNY",
+                                    "≈${getInputPriceQuote()} ${selectQuote?.quoteVo?.quote ?? ""}",
                                     style: TextStyle(fontSize: 10, color: DefaultColors.color999),
                                   ),
                                 )
@@ -1016,7 +1016,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: Text(
-                    "${S.of(context).available}  ${getValidNum() == 0 ? "~" : getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
+                      !exchangeModel.isActiveAccountAndHasAssets() ? "授权后查看余额" : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
                     style: TextStyle(color: DefaultColors.color999, fontSize: 10),
                   ),
                 ),
@@ -1035,7 +1035,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       ),
                       padding: const EdgeInsets.all(0.0),
                       child: Text(
-                          exchangeModel.isActiveAccount()
+                          exchangeModel.isActiveAccountAndHasAssets()
                               ? isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"
                               : S.of(context).login_please,
                           style: TextStyle(
@@ -1136,7 +1136,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   void buyAction() {
-    if (exchangeModel.isActiveAccount()) {
+    if (exchangeModel.isActiveAccountAndHasAssets()) {
       if (currentPriceStr.isEmpty || double.parse(currentPriceStr) == 0) {
         Fluttertoast.showToast(msg: S.of(context).input_price_please);
         isOrderActionLoading = false;

@@ -15,6 +15,9 @@ class ExchangeCmpBloc extends Bloc<ExchangeCmpEvent, ExchangeCmpState> {
     ExchangeCmpEvent event,
   ) async* {
     // TODO: Add Logic
+    if (event is CheckAccountEvent) {
+      yield CheckAccountState();
+    }
     if (event is LoginEvent) {
       yield LoginState(event.wallet, event.password, event.address);
     } else if (event is LoginSuccessEvent) {

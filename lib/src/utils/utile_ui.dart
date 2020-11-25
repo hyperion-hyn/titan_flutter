@@ -4,30 +4,20 @@ import 'package:android_intent/android_intent.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
-import 'package:titan/src/components/auth/auth_component.dart';
-import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
-import 'package:titan/src/components/auth/bloc/auth_event.dart';
-import 'package:titan/src/components/exchange/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/wallet_component.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/bio_auth/bio_auth_page.dart';
 import 'package:titan/src/pages/market/exchange/exchange_auth_page.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/auth_util.dart';
+import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/enter_wallet_password.dart';
 import 'package:titan/src/widget/keyboard/wallet_password_dialog.dart';
-import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
 class UiUtil {
   static double getRenderObjectHeight(GlobalKey key) {
@@ -53,16 +43,16 @@ class UiUtil {
         msg: message, backgroundColor: Colors.black, textColor: Colors.white);
   }
 
-  static String shortEthAddress(String address) {
+  static String shortEthAddress(String address, {int limitLength = 9}) {
     if (address == null || address == "") {
       return "";
     }
-    if (address.length < 9) {
+    if (address.length < limitLength) {
       return address;
     }
-    return address.substring(0, 9) +
+    return address.substring(0, limitLength) +
         "..." +
-        address.substring(address.length - 9, address.length);
+        address.substring(address.length - limitLength, address.length);
   }
 
   static String shortString(String address, {int limitLength = 9}) {
@@ -88,15 +78,20 @@ class UiUtil {
   }
 
   // alertView
-  static Future<bool> showAlertView<T>(BuildContext context,
-      {String title,
-      List<Widget> actions,
-      String content,
-      String detail = "",
-      String boldContent = "",
-      String suffixContent = ""}) {
+  static Future<bool> showAlertView<T>(
+    BuildContext context, {
+    String title,
+    List<Widget> actions,
+    String content,
+    String detail = "",
+    String boldContent = "",
+    TextStyle boldStyle,
+    String suffixContent = "",
+    bool barrierDismissible = true,
+    bool isShowCloseIcon = true,
+  }) {
     return showDialog<bool>(
-      barrierDismissible: true,
+      barrierDismissible: barrierDismissible,
       // 传入 context
       context: context,
       // 构建 Dialog 的视图
@@ -112,18 +107,20 @@ class UiUtil {
                   color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Stack(
                 children: <Widget>[
-                  Positioned(
-                    right: 10,
-                    top: 10,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(_, false),
-                      child: Image.asset(
-                        "res/drawable/map3_node_close.png",
-                        width: 18,
-                        height: 18,
-                      ),
-                    ),
-                  ),
+                  isShowCloseIcon
+                      ? Positioned(
+                          right: 10,
+                          top: 10,
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(_, false),
+                            child: Image.asset(
+                              "res/drawable/map3_node_close.png",
+                              width: 18,
+                              height: 18,
+                            ),
+                          ),
+                        )
+                      : Container(),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -148,10 +145,11 @@ class UiUtil {
                                 children: [
                               TextSpan(
                                 text: boldContent,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: HexColor("#FF4C3B"),
-                                    height: 1.8),
+                                style: boldStyle ??
+                                    TextStyle(
+                                        fontSize: 14,
+                                        color: HexColor("#FF4C3B"),
+                                        height: 1.8),
                               ),
                               TextSpan(
                                 text: suffixContent,
@@ -174,7 +172,7 @@ class UiUtil {
                                   decoration: TextDecoration.none)),
                         ),
                       Padding(
-                        padding: EdgeInsets.only(top: 15, bottom: 18),
+                        padding: EdgeInsets.only(top: 18, bottom: 18),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: actions,
@@ -410,6 +408,7 @@ class UiUtil {
     if (AuthUtil.bioAuthEnabled(authConfig)) {
       ///Bio-auth is expired, ask for pwd with password dialog.
       if (AuthUtil.bioAuthExpired(authConfig)) {
+        Fluttertoast.showToast(msg: S.of(context).bio_auth_expired_hint);
         var pwd = await showPasswordDialog(
           context,
           wallet,
@@ -418,14 +417,15 @@ class UiUtil {
         );
 
         if (pwd != null) {
-          ///Update last bio-auth time
-          authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
-
-          AuthUtil.saveAuthConfig(
-            authConfig,
-            wallet,
-            authType: authType,
-          );
+          ///Update last bio-auth time if pwd is correct
+          if (await onCheckPwdValid(pwd)) {
+            authConfig.lastBioAuthTime = DateTime.now().millisecondsSinceEpoch;
+            AuthUtil.saveAuthConfig(
+              authConfig,
+              wallet,
+              authType: authType,
+            );
+          }
 
           return pwd;
         }
@@ -611,6 +611,7 @@ class UiUtil {
           child: Text(S.of(context).confirm),
           onPressed: () {
             Navigator.pop(context);
+
             ///
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ExchangeAuthPage()));

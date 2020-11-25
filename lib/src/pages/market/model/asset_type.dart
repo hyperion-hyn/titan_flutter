@@ -13,6 +13,9 @@ class AssetType extends Object {
   @JsonKey(name: 'withdraw_fee')
   String withdrawFee;
 
+  @JsonKey(name: 'withdraw_fee_by_gas')
+  String withdrawFeeByGas;
+
   @JsonKey(name: 'recharge')
   bool recharge;
 
@@ -24,6 +27,9 @@ class AssetType extends Object {
 
   @JsonKey(name: 'withdraw_min')
   String withdrawMin;
+
+  @JsonKey(name: 'withdraw_max')
+  String withdrawMax;
 
   @JsonKey(name: 'exchange_available')
   String exchangeAvailable;
@@ -53,10 +59,12 @@ class AssetType extends Object {
     this.accountAvailable,
     this.accountFreeze,
     this.withdrawFee,
+    this.withdrawFeeByGas,
     this.recharge,
     this.withdraw,
     this.rechargeMin,
     this.withdrawMin,
+    this.withdrawMax,
     this.exchangeAvailable,
     this.exchangeFreeze,
     this.btc,
@@ -67,8 +75,7 @@ class AssetType extends Object {
     this.cny,
   );
 
-  factory AssetType.fromJson(Map<String, dynamic> srcJson) =>
-      _$AssetTypeFromJson(srcJson);
+  factory AssetType.fromJson(Map<String, dynamic> srcJson) => _$AssetTypeFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$AssetTypeToJson(this);
 }

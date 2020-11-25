@@ -11,6 +11,7 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/components/auth/bloc/auth_bloc.dart';
 import 'package:titan/src/components/auth/bloc/auth_state.dart';
 import 'package:titan/src/components/exchange/model.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/contribution/verify_poi/verify_poi_page_v2.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/model/asset_list.dart';
@@ -58,7 +59,24 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
   Widget build(BuildContext context) {
     return BlocListener<ExchangeCmpBloc, ExchangeCmpState>(
       listener: (context, state) async {
-        if (state is LoginState) {
+        if (state is CheckAccountState) {
+          try {
+            var sharePref = await SharedPreferences.getInstance();
+            var accountJson = sharePref.getString(PrefsKey.EXCHANGE_ACCOUNT);
+            var account = ExchangeAccount.fromJson(json.decode(accountJson));
+            var lastAuthTime =
+                sharePref.getInt(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME);
+            bool expired = lastAuthTime + 3 * 24 * 3600 * 1000 <
+                DateTime.now().millisecondsSinceEpoch;
+            if (account != null && !expired) {
+              exchangeModel.activeAccount = account;
+
+              ///update assets
+              var ret = await _exchangeApi.getAssetsList();
+              exchangeModel.activeAccount.assetList = AssetList.fromJson(ret);
+            }
+          } catch (e) {}
+        } else if (state is LoginState) {
           try {
             ///Clear previous account
             exchangeModel.activeAccount = null;
@@ -78,6 +96,15 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
 
               BlocProvider.of<ExchangeCmpBloc>(context)
                   .add(LoginSuccessEvent());
+
+              ///cache
+              var sharePref = await SharedPreferences.getInstance();
+              var accountStr =
+                  json.encode(exchangeModel.activeAccount.toJson());
+              sharePref.setString(PrefsKey.EXCHANGE_ACCOUNT, accountStr);
+
+              sharePref.setInt(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME,
+                  DateTime.now().millisecondsSinceEpoch);
             } else {
               BlocProvider.of<ExchangeCmpBloc>(context).add(LoginFailEvent());
             }
@@ -90,6 +117,11 @@ class _ExchangeManagerState extends BaseState<_ExchangeManager> {
           exchangeModel.activeAccount = state.account;
         } else if (state is ClearExchangeAccountState) {
           exchangeModel.activeAccount = null;
+
+          ///clear account cache
+          var sharePref = await SharedPreferences.getInstance();
+          sharePref.remove(PrefsKey.EXCHANGE_ACCOUNT);
+          sharePref.remove(PrefsKey.EXCHANGE_ACCOUNT_LAST_AUTH_TIME);
         } else if (state is UpdateAssetsState) {
           try {
             var _sharePref = await SharedPreferences.getInstance();

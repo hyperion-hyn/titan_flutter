@@ -4,10 +4,14 @@ import 'dart:math';
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
+import 'package:titan/src/components/wallet/bloc/wallet_cmp_bloc.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/pages/node/api/node_api.dart';
@@ -37,7 +41,7 @@ class Map3NodeCreateContractPage extends StatefulWidget {
   _Map3NodeCreateContractState createState() => new _Map3NodeCreateContractState();
 }
 
-class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
+class _Map3NodeCreateContractState extends BaseState<Map3NodeCreateContractPage> {
   TextEditingController _joinCoinController = new TextEditingController();
   final _joinCoinFormKey = GlobalKey<FormState>();
   AllPageState currentState = LoadingState();
@@ -64,8 +68,23 @@ class _Map3NodeCreateContractState extends State<Map3NodeCreateContractPage> {
     });
 
     getNetworkData();
+
+
+
     super.initState();
   }
+
+  @override
+  void onCreated() {
+
+    super.onCreated();
+
+    BlocProvider.of<WalletCmpBloc>(context)
+        .add(UpdateActivatedWalletBalanceEvent());
+
+    //await Future.delayed(Duration(milliseconds: 700));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -404,7 +423,7 @@ Widget getHoldInNum(
                     Text(S.of(context).mortgage_hyn_num, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
               ),
               Expanded(
-                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo)),
+                child: Text(S.of(context).mortgage_wallet_balance(FormatUtil.coinBalanceHumanReadFormat(coinVo),true),
                     style: TextStyle(color: Colors.grey[600])),
               ),
             ],

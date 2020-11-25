@@ -54,12 +54,12 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
   void onCreated() {
     exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
     _socketBloc = BlocProvider.of<SocketBloc>(context);
-    if (exchangeModel.isActiveAccount() && widget.market.isNotEmpty) {
+    if (exchangeModel.isActiveAccountAndHasAssets() && widget.market.isNotEmpty) {
       var symbolList = widget.market.split("/");
       userTickChannel = SocketConfig.channelUserTick(
           exchangeModel.activeAccount.id, "${symbolList[0].toLowerCase()}${symbolList[1].toLowerCase()}");
       _socketBloc.add(SubChannelEvent(channel: userTickChannel));
-    } else if (exchangeModel.isActiveAccount()) {
+    } else if (exchangeModel.isActiveAccountAndHasAssets()) {
       _socketBloc
           .add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "hynusdt")));
       _socketBloc.add(SubChannelEvent(channel: SocketConfig.channelUserTick(exchangeModel.activeAccount.id, "hyneth")));
@@ -110,10 +110,10 @@ class ExchangeActiveOrderListPageState extends BaseState<ExchangeActiveOrderList
       child: LoadDataContainer(
           bloc: _loadDataBloc,
           enablePullDown: false,
-          enablePullUp: exchangeModel.isActiveAccount(),
+          enablePullUp: exchangeModel.isActiveAccountAndHasAssets(),
           onLoadData: () {},
           onLoadingMore: () async {
-            if (exchangeModel.isActiveAccount()) {
+            if (exchangeModel.isActiveAccountAndHasAssets()) {
               consignPageSize++;
               await loadMoreConsignList(_loadDataBloc, widget.market, consignPageSize, _activeOrders);
             } else {
@@ -170,7 +170,7 @@ Widget orderListEmpty(BuildContext context) {
           height: 10,
         ),
         Text(
-          exchangeModel.isActiveAccount() ? S.of(context).no_orders : S.of(context).view_order_after_login,
+          exchangeModel.isActiveAccountAndHasAssets() ? S.of(context).no_orders : S.of(context).view_order_after_login,
           style: TextStyle(fontSize: 14, color: HexColor("#999999")),
         ),
         SizedBox(

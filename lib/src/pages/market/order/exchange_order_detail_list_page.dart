@@ -109,7 +109,7 @@ class ExchangeOrderDetailListPageState
               height: 16,
             ),
             Text(
-              _exchangeModel.isActiveAccount()
+              _exchangeModel.isActiveAccountAndHasAssets()
                   ? S.of(context).exchange_empty_list
                   : S.of(context).exchange_login_before_view_orders,
               style: TextStyle(

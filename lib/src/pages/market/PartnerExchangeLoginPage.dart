@@ -468,7 +468,7 @@ class _PartnerExchangeLoginPageState extends BaseState<PartnerExchangeLoginPage>
       _saveApiKeyAndSecret();
 
       ///
-      if (ExchangeInheritedModel.of(context).exchangeModel.isActiveAccount()) {
+      if (ExchangeInheritedModel.of(context).exchangeModel.hasActiveAccount()) {
         Navigator.push(
           context,
           MaterialPageRoute(

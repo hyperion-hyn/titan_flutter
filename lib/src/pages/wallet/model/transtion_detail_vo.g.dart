@@ -8,9 +8,12 @@ part of 'transtion_detail_vo.dart';
 
 TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
   return TransactionDetailVo(
+    id: json['id'] as int,
+    contractAddress: json['contractAddress'] as String,
+    localTransferType: json['localTransferType'] as int,
     type: json['type'] as int,
     state: json['state'] as int,
-    amount: (json['amount'] as num)?.toDouble(),
+    amount: double.parse(json['amount']),
     symbol: json['symbol'] as String,
     fromAddress: json['fromAddress'] as String,
     toAddress: json['toAddress'] as String,
@@ -21,16 +24,26 @@ TransactionDetailVo _$TransactionDetailVoFromJson(Map<String, dynamic> json) {
     gasPrice: json['gasPrice'] as String,
     gasUsed: json['gasUsed'] as String,
     describe: json['describe'] as String,
+    data: json['data'] as String,
+    dataDecoded: json['dataDecoded'],
+    blockHash: json['blockHash'] as String,
+    blockNum: json['blockNum'] as int,
+    epoch: json['epoch'] as int,
+    transactionIndex: json['transactionIndex'] as int,
+    hynType: json['hynType'] as int,
   );
 }
 
 Map<String, dynamic> _$TransactionDetailVoToJson(
         TransactionDetailVo instance) =>
     <String, dynamic>{
+      'id': instance.id,
+      'contractAddress': instance.contractAddress,
+      'localTransferType': instance.localTransferType,
       'type': instance.type,
       'hash': instance.hash,
       'state': instance.state,
-      'amount': instance.amount,
+      'amount': instance.amount.toString(),
       'symbol': instance.symbol,
       'fromAddress': instance.fromAddress,
       'toAddress': instance.toAddress,
@@ -40,4 +53,11 @@ Map<String, dynamic> _$TransactionDetailVoToJson(
       'gasPrice': instance.gasPrice,
       'gasUsed': instance.gasUsed,
       'describe': instance.describe,
+      'data': instance.data,
+      'dataDecoded': instance.dataDecoded,
+      'blockHash': instance.blockHash,
+      'blockNum': instance.blockNum,
+      'epoch': instance.epoch,
+      'transactionIndex': instance.transactionIndex,
+      'hynType': instance.hynType,
     };

@@ -286,7 +286,7 @@ class _VerifyPoiPageState extends BaseState<VerifyPoiPage> {
   Widget _mapView() {
 //    return Container();
     var style;
-    if (SettingInheritedModel.of(context).areaModel.isChinaMainland) {
+    if (SettingInheritedModel.of(context)?.areaModel?.isChinaMainland??true) {
       style = Const.kWhiteMapStyleCn;
     } else {
       style = Const.kWhiteMapStyle;

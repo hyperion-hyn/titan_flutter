@@ -1,10 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:titan/src/basic/http/http_exception.dart';
+import 'package:titan/src/components/inject/injector.dart';
 import 'package:titan/src/components/setting/setting_component.dart';
 import 'package:titan/src/components/setting/system_config_entity.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
@@ -12,7 +19,9 @@ import 'package:titan/src/plugins/wallet/keystore.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_channel.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
+import 'package:web3dart/credentials.dart';
 import 'package:web3dart/crypto.dart';
+import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart' as web3;
 
 import 'wallet_util.dart';
@@ -24,6 +33,7 @@ class Wallet {
   ///activated account of this wallet,  btc, eth etc.
   List<Account> accounts;
   KeyStore keystore;
+  TransactionInteractor transactionInteractor = Injector.of(Keys.rootKey.currentContext).transactionInteractor;
 
   Wallet({this.keystore, this.accounts});
 
@@ -39,6 +49,15 @@ class Wallet {
   Account getEthAccount() {
     for (var account in accounts) {
       if (account.coinType == CoinType.ETHEREUM) {
+        return account;
+      }
+    }
+    return null;
+  }
+
+  Account getAtlasAccount() {
+    for (var account in accounts) {
+      if (account.coinType == CoinType.HYN_ATLAS) {
         return account;
       }
     }
@@ -86,23 +105,7 @@ class Wallet {
 
   Future<BigInt> getBalanceByCoinTypeAndAddress(int coinType, String address,
       [String contractAddress, String block = 'latest']) async {
-    switch (coinType) {
-      case CoinType.ETHEREUM:
-        if (contractAddress == null) {
-          var response = await WalletUtil.postToEthereumNetwork(method: "eth_getBalance", params: [address, block]);
-          if (response['result'] != null) {
-            return hexToInt(response['result']);
-          }
-        } else {
-          final contract = WalletUtil.getHynErc20Contract(contractAddress);
-          final balanceFun = contract.function('balanceOf');
-          final balance = await WalletUtil.getWeb3Client()
-              .call(contract: contract, function: balanceFun, params: [web3.EthereumAddress.fromHex(address)]);
-          return balance.first;
-        }
-        break;
-    }
-    return BigInt.from(0);
+    return WalletUtil.getBalanceByCoinTypeAndAddress(coinType, address, contractAddress, block);
   }
 
   Future<BigInt> getAllowance(
@@ -174,35 +177,125 @@ class Wallet {
     return BigInt.from(0);
   }
 
+  Future<int> getCurrentWalletNonce({int nonce}) async {
+    if (nonce == null) {
+      WalletVo walletVo = WalletInheritedModel.of(Keys.rootKey.currentContext).activatedWallet;
+      String fromAddress = walletVo.wallet.getEthAccount().address;
+      nonce = await WalletUtil.getWeb3Client().getTransactionCount(EthereumAddress.fromHex(fromAddress));
+//      String localNonce = await transactionInteractor.getTransactionDBNonce(fromAddress);
+//      if (localNonce != null && int.parse(localNonce) >= nonce) {
+//        nonce = int.parse(localNonce) + 1;
+//      }
+    }
+    return nonce;
+  }
+
+  /// 发送转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
   Future<String> sendEthTransaction({
+    int id,
     String password,
     String toAddress,
     BigInt value,
     BigInt gasPrice,
     int nonce,
     int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
   }) async {
-    if (gasLimit == 0) {
+    /*if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
     }
+
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
-    final client = WalletUtil.getWeb3Client();
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction(
-        to: web3.EthereumAddress.fromHex(toAddress),
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
         gasPrice: web3.EtherAmount.inWei(gasPrice),
         maxGas: gasLimit,
-        value: web3.EtherAmount.inWei(value),
+        value: value == null ? null : web3.EtherAmount.inWei(value),
         nonce: nonce,
+        type: type,
+        message: message,
       ),
-      fetchChainIdFromNetworkId: true,
+      fetchChainIdFromNetworkId: type == null ? true : false,
+    );*/
+
+    final signedRawHex = await signEthTransaction(
+      password: password,
+      toAddress: toAddress,
+      gasPrice: gasPrice,
+      value: value,
+      type: type,
+      message: message,
+      isAtlasTrans: isAtlasTrans,
+      gasLimit: gasLimit,
+      nonce: nonce,
     );
-    return txHash;
+
+    var responseMap = await WalletUtil.postToEthereumNetwork(
+        method: 'eth_sendRawTransaction', params: [signedRawHex],isAtlasTrans: isAtlasTrans);
+    if (type == null && responseMap['result'] != null) {
+      nonce = await getCurrentWalletNonce();
+      await transactionInteractor.insertTransactionDB(
+          responseMap['result'], toAddress, value, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_ETH, nonce,
+          id: id);
+    }else if(responseMap['error'] != null){
+      var errorEntity = responseMap['error'];
+      throw RPCError(errorEntity['code'], errorEntity['message'],"");
+    }
+
+    return responseMap['result'];
+  }
+
+  /// 签名转账
+  /// 如果[type]设置为 web3.MessageType.typeNormal 则是 Atlas转账
+  /// 如果[message]设置了，则为抵押相关的操作
+  /// 如果[type]和[message]都是null，则为ethereum转账
+  Future<String> signEthTransaction({
+    int id,
+    String password,
+    String toAddress,
+    BigInt value,
+    BigInt gasPrice,
+    int nonce,
+    int gasLimit = 0,
+    int type,
+    web3.IMessage message,
+    bool isAtlasTrans = false
+  }) async {
+    if (gasLimit == 0) {
+      gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.ethTransferGasLimit;
+    }
+
+    var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
+    final client = WalletUtil.getWeb3Client(isAtlasTrans);
+    final credentials = await client.credentialsFromPrivateKey(privateKey);
+    final rawTx = await client.signTransaction(
+      credentials,
+      web3.Transaction(
+        to: toAddress == null ? null :web3.EthereumAddress.fromHex(toAddress),
+        gasPrice: web3.EtherAmount.inWei(gasPrice),
+        maxGas: gasLimit,
+        value: value == null ? null : web3.EtherAmount.inWei(value),
+        nonce: nonce,
+        type: type,
+        message: message,
+      ),
+      fetchChainIdFromNetworkId: type == null ? true : false,
+    );
+
+    return bytesToHex(rawTx, include0x: true, padToEvenLength: true);
   }
 
   Future<String> sendErc20Transaction({
+    int id,
     String contractAddress,
     String password,
     String toAddress,
@@ -214,11 +307,21 @@ class Wallet {
     if (gasLimit == 0) {
       gasLimit = SettingInheritedModel.ofConfig(Keys.rootKey.currentContext).systemConfigEntity.erc20TransferGasLimit;
     }
+//    nonce = await getCurrentWalletNonce(nonce: nonce);
+
+    var ethBalance = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol('ETH').balance;
+
+    var gasFees = BigInt.from(gasLimit) * gasPrice;
+    if(gasFees > ethBalance){
+      Fluttertoast.showToast(msg: "ETH余额不足以支付gas费");
+      return null;
+    }
+
     var privateKey = await WalletUtil.exportPrivateKey(fileName: keystore.fileName, password: password);
     final client = WalletUtil.getWeb3Client();
     final credentials = await client.credentialsFromPrivateKey(privateKey);
     final contract = WalletUtil.getHynErc20Contract(contractAddress);
-    return await client.sendTransaction(
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: contract,
@@ -230,6 +333,23 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+    if(txHash != null) {
+      nonce = await getCurrentWalletNonce();
+      await transactionInteractor.insertTransactionDB(
+          txHash,
+          toAddress,
+          value,
+          gasPrice,
+          gasLimit,
+          LocalTransferType.LOCAL_TRANSFER_HYN_USDT,
+          nonce,
+          id: id,
+          contractAddress: contractAddress);
+    }else{
+      Fluttertoast.showToast(msg: "广播异常");
+    }
+    return txHash;
   }
 
   Future<dynamic> sendBitcoinTransaction(String password, String pubString, String toAddr, int fee, int amount) async {
@@ -262,7 +382,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var erc20Contract = WalletUtil.getHynErc20Contract(contractAddress);
-    return await client.sendTransaction(
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: erc20Contract,
@@ -274,6 +394,11 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+//    await transactionInteractor.insertTransactionDB(
+//        txHash, approveToAddress, amount, gasPrice, gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce,
+//        contractAddress: contractAddress);
+    return txHash;
   }
 
   Future<String> signApproveErc20Token({
@@ -373,7 +498,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-    return await client.sendTransaction(
+    final txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: map3Contract,
@@ -385,6 +510,10 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+//    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, stakingAmount, gasPrice,
+//        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
+    return txHash;
   }
 
   Future<String> signDelegateMap3Node({
@@ -424,7 +553,7 @@ class Wallet {
     final client = WalletUtil.getWeb3Client();
     var credentials = await getCredentials(password);
     var map3Contract = WalletUtil.getMap3Contract(WalletConfig.map3ContractAddress);
-    return await client.sendTransaction(
+    var txHash = await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
         contract: map3Contract,
@@ -436,6 +565,10 @@ class Wallet {
       ),
       fetchChainIdFromNetworkId: true,
     );
+
+//    await transactionInteractor.insertTransactionDB(txHash, createNodeWalletAddress, BigInt.parse("0"), gasPrice,
+//        gasLimit, LocalTransferType.LOCAL_TRANSFER_MAP3, nonce, contractAddress: "");
+    return txHash;
   }
 
   ///Withdraw token
