@@ -69,6 +69,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           },
           child: CustomScrollView(
             slivers: <Widget>[
+              _poolInfo(),
               _myRPInfo(),
               _myContractHeader(),
               _myContract(),
@@ -82,45 +83,73 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
     return const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0);
   }
 
+  Widget _columnWidget(String amount, String title) {
+    return Column(
+      children: <Widget>[
+        Text(
+          '$amount',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(
+          height: 4.0,
+        ),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 10,
+            color: DefaultColors.color999,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _lineWidget() {
+    return Container(
+      height: 20,
+      width: 0.5,
+      color: HexColor('#000000').withOpacity(0.2),
+    );
+  }
+
+  _poolInfo() {
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          top: 10,
+          bottom: 6,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _columnWidget('10万 RP', '总可传导'),
+            ),
+            _lineWidget(),
+            Expanded(
+              child: _columnWidget('100 HYN', '全网抵押'),
+            ),
+            _lineWidget(),
+            Expanded(
+              child: _columnWidget('20 RP', '全网累计传导'),
+            ),
+            Spacer(),
+          ],
+        ),
+      ),
+    );
+  }
+
   _myRPInfo() {
     var level = _rpInfo?.level ?? '--';
     var rpBalance = _rpInfo?.rpBalance ?? '--';
     var rpToday = _rpInfo?.rpToday ?? '--';
     var rpYesterday = _rpInfo?.rpYesterday ?? '--';
     var rpMissed = _rpInfo?.rpMissed ?? '--';
-
-    Widget _columnWidget(String amount, String title) {
-      return Column(
-        children: <Widget>[
-          Text(
-            '$amount',
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.black,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          SizedBox(
-            height: 4.0,
-          ),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 10,
-              color: DefaultColors.color999,
-            ),
-          ),
-        ],
-      );
-    }
-
-    Widget _lineWidget() {
-      return Container(
-        height: 20,
-        width: 0.5,
-        color: HexColor('#000000').withOpacity(0.2),
-      );
-    }
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -133,68 +162,62 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 28,
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 2,
-                      ),
-                      child: Text(
-                        '已抵押',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: DefaultColors.color999,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 2,
-                      ),
-                      child: Text(
-                        '10份',
-                        style: TextStyle(
-                          color: DefaultColors.color333,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '（500000 HYN）',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: DefaultColors.color999,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
                 padding: const EdgeInsets.only(
-                  bottom: 28,
+                  top: 26,
+                  bottom: 26,
                 ),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                      padding: const EdgeInsets.only(
+                        left: 12,
                       ),
-                      child: _columnWidget('2031 HYN', '全网抵押'),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 4,
+                            ),
+                            child: Text(
+                              '已抵押',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DefaultColors.color999,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                '10份',
+                                style: TextStyle(
+                                  color: DefaultColors.color333,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '（500000 HYN）',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: DefaultColors.color999,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
                     ),
-                    _lineWidget(),
-                    Expanded(
-                      child: _columnWidget('20 RP', '全网累计传导'),
-                    ),
-                    _lineWidget(),
                     Expanded(
                       child: _columnWidget('20 RP', '我累计获得'),
                     ),
-                    _lineWidget(),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8, right: 10,),
+                      child: _lineWidget(),
+                    ),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -481,29 +504,30 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                           ),
                           textAlign: TextAlign.left,
                         ),
-
-
                       ],
                     ),
                   ],
                 ),
-                if (index == 1) Padding(
-                  padding: const EdgeInsets.only(top: 6,),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        '2020/12/12 21:21:21可提回',
-                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#999999'),
+                if (index == 1)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          '2020/12/12 21:21:21可提回',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -537,7 +561,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
 
     UiUtil.showAlertView(
       context,
-      title: '抵押数量',
+      title: '抵押份数',
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
@@ -564,6 +588,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
             autofocus: true,
             controller: _textEditController,
             decoration: InputDecoration(
+              isDense: true,
               filled: true,
               fillColor: HexColor('#FFF2F2F2'),
               hintText: '输入抵押份数，每份500HYN',
@@ -581,7 +606,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                   width: 0.5,
                 ),
               ),
-              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             ),
             style: TextStyle(fontSize: 13),
             onSaved: (value) {

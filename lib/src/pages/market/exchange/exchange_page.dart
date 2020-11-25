@@ -206,7 +206,7 @@ class _ExchangePageState extends BaseState<ExchangePage>
   }
 
   _exchange() {
-    var _selectedCoinToHYN = '';
+    var _selectedCoinToHYN = '--';
     var _hynToSelectedCoin = '--';
     var _amount24H = '--';
 
