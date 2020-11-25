@@ -154,6 +154,14 @@ class TransactionDetailVo {
     return amountStr;
   }
 
+  BigInt getAllContractValue(){
+    BigInt value = BigInt.from(0);
+    internalTransactions.forEach((element) {
+      value += BigInt.parse(element.value);
+    });
+    return value;
+  }
+
   factory TransactionDetailVo.fromHynTransferHistory(
     HynTransferHistory hynTransferHistory,
     int transactionType,
@@ -209,12 +217,8 @@ class TransactionDetailVo {
           weiBigInt: BigInt.parse(hynTransferHistory.value))
           .toDouble(),
       symbol: symbol,
-      fromAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
-          ? hynTransferHistory.payload.map3Node
-          : hynTransferHistory.from,
-      toAddress: AtlasApi.isTransferBill(hynTransferHistory.type)
-          ? hynTransferHistory.payload.delegator
-          : hynTransferHistory.to,
+      fromAddress: hynTransferHistory.from,
+      toAddress: hynTransferHistory.to,
       time: hynTransferHistory.timestamp * 1000,
       hash: hynTransferHistory.txHash,
       gasPrice: hynTransferHistory.gasPrice,

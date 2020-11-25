@@ -38,18 +38,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   var gasPriceStr = "";
   var isBillPage = false;
   AllPageState _currentState = LoadingState();
+  var isContract = false;
 
   @override
   void initState() {
-    isBillPage = (widget.transactionDetail.hynType == MessageType.typeUnMicrostakingReturn
-        || widget.transactionDetail.hynType == MessageType.typeTerminateMap3Return);
+    isBillPage = (widget.transactionDetail.hynType == MessageType.typeUnMicrostakingReturn ||
+        widget.transactionDetail.hynType == MessageType.typeTerminateMap3Return);
     super.initState();
-  }
-
-  get _toAddress {
-    var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
-    //var toAddress = widget.isContain ? ethAddress : WalletUtil.ethAddressToBech32Address(ethAddress);
-    return WalletUtil.ethAddressToBech32Address(ethAddress);
   }
 
   @override
@@ -65,22 +60,27 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   }
 
   Future loadWalletInfo() async {
-    if(widget.transactionDetail.contractAddress.toLowerCase() == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress.toLowerCase()){
+    //优先进行网络请求获取合约详情信息
+    if (widget.transactionDetail.contractAddress.toLowerCase() ==
+        SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress.toLowerCase()) {
       var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
-      widget.transactionDetail = TransactionDetailVo.fromHynErc30TransferHistory(hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
+      widget.transactionDetail = TransactionDetailVo.fromHynErc30TransferHistory(
+          hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
     }
+    var transDetail = widget.transactionDetail;
+    isContract = transDetail.internalTransactions != null;
 
-    var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,true);
-    var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType,false);
+    var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType, true);
+    var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType, false);
 
-    if(isBillPage){
+    if (isBillPage) {
       _dataTitleList = [
         S.of(context).transfer_amount,
         fromAddressTitle,
         toAddressTitle,
         S.of(context).description,
       ];
-    }else{
+    } else {
       _dataTitleList = [
         S.of(context).transfer_amount,
         S.of(context).transfer_gas_fee,
@@ -90,15 +90,28 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       ];
     }
 
-    var transDetail = widget.transactionDetail;
-    var amountText =
-        "${HYNApi.getValueByHynType(transDetail.hynType, transactionDetail: transDetail, getAmountStr: true)}";
-    /*var amountText = "";
-    if (transDetail.type == TransactionType.TRANSFER_IN) {
-      amountText = '+${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    } else if (transDetail.type == TransactionType.TRANSFER_OUT) {
-      amountText = '-${FormatUtil.strClearZero(transDetail.amount.toString())} HYN';
-    }*/
+    var amountText = "";
+    var _toAddress = "";
+    if (isContract) {
+      var tempTransDetail = TransactionDetailVo(
+        type: transDetail.type,
+        amount: ConvertTokenUnit.weiToEther(weiBigInt: transDetail.getAllContractValue()).toDouble(),
+      );
+      amountText = "${HYNApi.getValueByHynType(
+        transDetail.hynType,
+        transactionDetail: tempTransDetail,
+        getAmountStr: true,
+      )}";
+      _toAddress = WalletUtil.ethAddressToBech32Address(transDetail.internalTransactions[0].to);
+    } else {
+      amountText = "${HYNApi.getValueByHynType(
+        transDetail.hynType,
+        transactionDetail: transDetail,
+        getAmountStr: true,
+      )}";
+      var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+      _toAddress = WalletUtil.ethAddressToBech32Address(ethAddress);
+    }
 
     var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
@@ -107,14 +120,14 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var gasLimit = Decimal.parse(transDetail.gas);
     var gasEstimate = "${gasPriceEth * gasLimit} HYN";
 
-    if(isBillPage){
+    if (isBillPage) {
       _dataInfoList = [
         amountText,
         WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
         _toAddress,
         "结算(节点终止)",
       ];
-    }else{
+    } else {
       _dataInfoList = [
         amountText,
         gasEstimate,
@@ -138,7 +151,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     );
   }
 
-  Widget accountInfoItem(String leftText, String rightText, {String bottomText, bool normalLine = true,bool isBillItem = false}) {
+  Widget accountInfoItem(String leftText, String rightText,
+      {String bottomText, bool normalLine = true, bool isBillItem = false}) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -168,15 +182,17 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                           padding: const EdgeInsets.only(top: 2.0),
                           child: Text(bottomText, style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
-                      if(isBillItem)
+                      if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 ${widget.transactionDetail.getBillDelegate()} HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text("抵押 ${widget.transactionDetail.getBillDelegate()} HYN",
+                              style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
-                      if(isBillItem)
+                      if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("奖励 ${widget.transactionDetail.getBillReward()} HYN", style: TextStyles.textC999S11, textAlign: TextAlign.end),
+                          child: Text("奖励 ${widget.transactionDetail.getBillReward()} HYN",
+                              style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
                   ),
@@ -216,10 +232,10 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     var infoItemTitle;
     var infoItemStatusImage;
     getAccountPageTitle(context, widget.transactionDetail,
-            (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
-          infoItemTitle = pageTitle;
-          infoItemStatusImage = pageStatusImage;
-        });
+        (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
+      infoItemTitle = pageTitle;
+      infoItemStatusImage = pageStatusImage;
+    });
 
     return Container(
       color: DefaultColors.colorf2f2f2,
@@ -259,25 +275,25 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
           ),
           SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                var leftText = _dataTitleList[index];
-                var rightText = _dataInfoList[index];
-                if(isBillPage){
-                  if (index == 0) {
-                    return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
-                  } else if (index == 3) {
-                    return accountInfoItem(leftText, rightText, normalLine: false);
-                  }
-                }else{
-                  if (index == 1) {
-                    var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
-                    return accountInfoItem(leftText, rightText, bottomText: bottomText);
-                  } else if (index == 4) {
-                    return accountInfoItem(leftText, rightText, normalLine: false);
-                  }
-                }
-                return accountInfoItem(leftText, rightText);
-              }, childCount: _dataTitleList.length)),
-          if(!isBillPage)
+            var leftText = _dataTitleList[index];
+            var rightText = _dataInfoList[index];
+            if (isBillPage) {
+              if (index == 0) {
+                return accountInfoItem(leftText, rightText, isBillItem: isBillPage);
+              } else if (index == 3) {
+                return accountInfoItem(leftText, rightText, normalLine: false);
+              }
+            } else {
+              if (index == 1) {
+                var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                return accountInfoItem(leftText, rightText, bottomText: bottomText);
+              } else if (index == 4) {
+                return accountInfoItem(leftText, rightText, normalLine: false);
+              }
+            }
+            return accountInfoItem(leftText, rightText);
+          }, childCount: _dataTitleList.length)),
+          if (!isBillPage)
             SliverToBoxAdapter(
               child: InkWell(
                 onTap: () {
@@ -285,9 +301,9 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       context,
                       MaterialPageRoute(
                           builder: (context) => WalletShowAccountDetailPage(
-                            widget.transactionDetail,
-                            isContain: widget.isContain,
-                          )));
+                                widget.transactionDetail,
+                                isContain: widget.isContain,
+                              )));
                 },
                 child: Container(
                   color: Colors.white,
