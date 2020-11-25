@@ -23,17 +23,22 @@ class RPApi {
     int page = 1,
     int size = 20,
   }) async {
-    return await RPHttpCore.instance
-        .getEntity('/v1/rp/release/$address?page=$page&size=$size',
-            EntityFactory<List<RPReleaseInfo>>((data) {
-      var listData = data['data'];
-      return (listData as List)
-          .map((dataItem) => RPReleaseInfo.fromJson(dataItem))
-          .toList();
-    }),
-            options: RequestOptions(
-              contentType: "application/json",
-            ));
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/release/$address',
+      EntityFactory<List<RPReleaseInfo>>(
+        (data) {
+          var listData = data['data'];
+          return (listData as List).map((dataItem) => RPReleaseInfo.fromJson(dataItem)).toList();
+        },
+      ),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
   }
 
   Future<List<RPStakingInfo>> getRPStakingInfoList(
@@ -41,16 +46,19 @@ class RPApi {
     int page = 1,
     int size = 20,
   }) async {
-    return await RPHttpCore.instance
-        .getEntity('/v1/rp/staking/$address?page=$page&size=$size',
-            EntityFactory<List<RPStakingInfo>>((data) {
-      var listData = data['data'];
-      return (listData as List)
-          .map((dataItem) => RPStakingInfo.fromJson(dataItem))
-          .toList();
-    }),
-            options: RequestOptions(
-              contentType: "application/json",
-            ));
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/staking/$address',
+      EntityFactory<List<RPStakingInfo>>((data) {
+        var listData = data['data'];
+        return (listData as List).map((dataItem) => RPStakingInfo.fromJson(dataItem)).toList();
+      }),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
   }
 }
