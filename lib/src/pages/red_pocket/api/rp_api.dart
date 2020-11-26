@@ -21,7 +21,7 @@ class RPApi {
 
     var amountBig = ConvertTokenUnit.strToBigInt(amount);
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amountBig, password: password);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amountBig, password);
 
     return RPHttpCore.instance.postEntity(
         "/v1/rp/create",
