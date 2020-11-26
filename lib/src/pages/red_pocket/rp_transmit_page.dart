@@ -163,7 +163,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalStakingHyn ?? '0');
     var totalRp = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalRp ?? '0');
 
-    String yesterday =  FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
+    String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterday ?? '0') ?? '--';
 
     var hynPerRp = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var ratio = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.ratio ?? '0');
@@ -786,7 +786,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '当前满期HYN有$count}笔，总共 $hynSum HYN，你将发起提回抵押操作，确定继续吗？',
+      content: '当前满期HYN有$count 笔，总共 $hynSum HYN，你将发起提回抵押操作，确定继续吗？',
     );
   }
 
