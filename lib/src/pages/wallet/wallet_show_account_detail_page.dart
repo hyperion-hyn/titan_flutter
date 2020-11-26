@@ -76,7 +76,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     }
     inputData = transDetail.data;
 
-    isContract = transDetail.internalTransactions != null;
+    isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
 
     print("[widget.isContain] ${widget.isContain}");
     var fromAddressTitle = HYNApi.toAddressHint(transDetail.hynType, true);

@@ -50,8 +50,10 @@ class Account {
       token = SupportedTokens.HYN_Atlas;
       if (netType == EthereumNetType.main) {
         erc20Tokens.add(SupportedTokens.HYN_RP_HRC30);
-      }else{
+      }else if(netType == EthereumNetType.ropsten){
         erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_ROPSTEN);
+      }else{
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_LOCAL);
       }
     }
     return Account(
