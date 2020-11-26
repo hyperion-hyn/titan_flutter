@@ -51,7 +51,7 @@ class SupportedTokens {
   );
 
   static const HYN_RP_ERC30 = const AssetToken(
-    name: "Red Packet",
+    name: "Red Pocket",
     decimals: 18,
     contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
     logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
@@ -59,7 +59,7 @@ class SupportedTokens {
   );
 
   static const HYN_RP_ERC30_ROPSTEN = const AssetToken(
-    name: "Red Packet",
+    name: "Red Pocket",
     decimals: 18,
     contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
     logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
@@ -115,9 +115,9 @@ class SupportedTokens {
 
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
-      return [HYN_ERC20, USDT_ERC20, HYN_RP_ERC30];
+      return [USDT_ERC20, HYN_RP_ERC30];
     } else if (netType == EthereumNetType.ropsten) {
-      return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN, HYN_RP_ERC30_ROPSTEN];
+      return [USDT_ERC20_ROPSTEN, HYN_RP_ERC30_ROPSTEN];
     } else if (netType == EthereumNetType.rinkeby) {
       return [HYN_RINKEBY];
     } else {

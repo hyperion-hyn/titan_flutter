@@ -489,9 +489,9 @@ class Wallet {
 
   Future<String> sendHynStakeWithdraw(
     HynContractMethod methodType,
-    BigInt stakingAmount,
     String password, {
-    BigInt gasPrice,
+        BigInt stakingAmount,
+        BigInt gasPrice,
     int gasLimit,
   }) async {
     if (gasPrice == null) {
@@ -508,7 +508,7 @@ class Wallet {
     return await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
-          value: EtherAmount.inWei(stakingAmount),
+          value: stakingAmount != null ? EtherAmount.inWei(stakingAmount) : null,
           contract: stakingContract,
           function: stakingContract.function(methodName),
           parameters: [],
