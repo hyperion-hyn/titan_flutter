@@ -489,8 +489,8 @@ class Wallet {
 
   Future<String> sendHynStakeWithdraw(
     HynContractMethod methodType,
-    BigInt stakingAmount, {
-    String password,
+    BigInt stakingAmount,
+    String password, {
     BigInt gasPrice,
     int gasLimit,
   }) async {
@@ -500,7 +500,7 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = 100000;
     }
-    var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw' ;
+    var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw';
 
     final client = WalletUtil.getWeb3Client(true);
     var credentials = await getCredentials(password);
@@ -508,14 +508,13 @@ class Wallet {
     return await client.sendTransaction(
       credentials,
       web3.Transaction.callContract(
-        value: EtherAmount.inWei(stakingAmount),
-        contract: stakingContract,
-        function: stakingContract.function(methodName),
-        parameters: [],
-        gasPrice: web3.EtherAmount.inWei(gasPrice),
-        maxGas: gasLimit,
-        type: web3.MessageType.typeNormal
-      ),
+          value: EtherAmount.inWei(stakingAmount),
+          contract: stakingContract,
+          function: stakingContract.function(methodName),
+          parameters: [],
+          gasPrice: web3.EtherAmount.inWei(gasPrice),
+          maxGas: gasLimit,
+          type: web3.MessageType.typeNormal),
       fetchChainIdFromNetworkId: false,
     );
   }
@@ -674,7 +673,4 @@ class Wallet {
   }
 }
 
-enum HynContractMethod{
-  STAKE,
-  WITHDRAW
-}
+enum HynContractMethod { STAKE, WITHDRAW }
