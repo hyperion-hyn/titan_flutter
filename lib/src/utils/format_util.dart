@@ -18,7 +18,7 @@ class FormatUtil {
 
   static String stringFormatCoinNum(String numValue) {
     return NumberFormat("#,###,###,###.######")
-        .format(Decimal.parse(numValue).toDouble());
+        .format(Decimal.tryParse(numValue??'0').toDouble());
   }
 
   static String stringFormatCoinNumWithFour(String numValue) {

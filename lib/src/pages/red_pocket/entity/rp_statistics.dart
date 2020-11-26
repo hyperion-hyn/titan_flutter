@@ -101,6 +101,9 @@ class Rp_contract_info extends Object {
   @JsonKey(name: 'staking_day')
   int stakingDay;
 
+  String get hynPerRpStr => FormatUtil.weiToEtherStr(hynPerRp) ?? '0';
+  String get ratioStr => FormatUtil.weiToEtherStr(ratio) ?? '0';
+
   Rp_contract_info(
     this.ratio,
     this.hynPerRp,

@@ -86,6 +86,7 @@ class UiUtil {
     String suffixContent = "",
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
+        bool isInputValue = false,
     Widget contentItem,
   }) {
     return showDialog<bool>(
@@ -173,7 +174,8 @@ class UiUtil {
                   ),
                 ],
               ),
-            )
+            ),
+            if (isInputValue) SizedBox(height: 120,),
           ],
         ),
       ),
