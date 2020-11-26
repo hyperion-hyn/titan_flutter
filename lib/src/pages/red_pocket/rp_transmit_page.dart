@@ -604,6 +604,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   void getNetworkData() async {
+    _currentPage = 1;
     try {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
