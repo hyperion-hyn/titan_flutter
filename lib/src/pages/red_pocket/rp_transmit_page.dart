@@ -842,6 +842,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     try {
       await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
       Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
+      _loadDataBloc.add(LoadingEvent());
     } catch (e) {
       LogUtil.toastException(e);
     }
