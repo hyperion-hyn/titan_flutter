@@ -66,6 +66,14 @@ class SupportedTokens {
     symbol: 'RP',
   );
 
+  static const HYN_RP_ERC30_LOCAL = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0x706e02F5007fA10C023e598B5A8a8Ffc6266ca21',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
   static const HYN_ERC20 = const AssetToken(
     name: 'Hyperion',
     decimals: 18,
@@ -119,9 +127,9 @@ class SupportedTokens {
     } else if (netType == EthereumNetType.ropsten) {
       return [USDT_ERC20_ROPSTEN, HYN_RP_ERC30_ROPSTEN];
     } else if (netType == EthereumNetType.rinkeby) {
-      return [HYN_RINKEBY];
+      return [];
     } else {
-      return [HYN_LOCAL];
+      return [HYN_RP_ERC30_LOCAL];
     }
   }
 }

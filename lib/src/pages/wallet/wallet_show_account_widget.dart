@@ -338,7 +338,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.coinType == CoinType.HYN_ATLAS ||
+                                            if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ||
                                                 widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
                                                 widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol) {
                                               Navigator.push(
@@ -347,7 +347,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                       builder: (context) => ExchangeDetailPage(
                                                           selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
-                                              Fluttertoast.showToast(msg: S.of(context).wallet_symbol_pair_tips);
+                                              Fluttertoast.showToast(msg: "尚未开放${widget.coinVo.symbol}兑换");
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
