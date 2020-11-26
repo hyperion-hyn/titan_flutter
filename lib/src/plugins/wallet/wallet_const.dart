@@ -94,7 +94,7 @@ class WalletConfig {
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
 
   //todo
-  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
+  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.local : EthereumNetType.main;
 
   static BitcoinNetType bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
 
