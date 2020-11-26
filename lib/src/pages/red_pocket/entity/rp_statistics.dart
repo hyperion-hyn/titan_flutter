@@ -20,7 +20,8 @@ class RPStatistics extends Object {
     this.rpContractInfo,
   );
 
-  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
+  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) =>
+      _$RPStatisticsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RPStatisticsToJson(this);
 }
@@ -36,7 +37,8 @@ class Global extends Object {
   @JsonKey(name: 'total_transmit')
   String totalTransmit;
 
-  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
+  String get totalStakingHynStr =>
+      FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
   String get transmitStr => FormatUtil.weiToEtherStr(transmit) ?? '0';
 
@@ -48,7 +50,8 @@ class Global extends Object {
     this.totalTransmit,
   );
 
-  factory Global.fromJson(Map<String, dynamic> srcJson) => _$GlobalFromJson(srcJson);
+  factory Global.fromJson(Map<String, dynamic> srcJson) =>
+      _$GlobalFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$GlobalToJson(this);
 }
@@ -59,7 +62,7 @@ class Self extends Object {
   String totalStakingHyn;
 
   @JsonKey(name: 'total_amount')
-  String totalAmount;
+  int totalAmount;
 
   @JsonKey(name: 'total_rp')
   String totalRp;
@@ -67,7 +70,8 @@ class Self extends Object {
   @JsonKey(name: 'yesterday')
   String yesterday;
 
-  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
+  String get totalStakingHynStr =>
+      FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
   String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '0';
 
@@ -82,15 +86,16 @@ class Self extends Object {
     this.yesterday,
   );
 
-  factory Self.fromJson(Map<String, dynamic> srcJson) => _$SelfFromJson(srcJson);
+  factory Self.fromJson(Map<String, dynamic> srcJson) =>
+      _$SelfFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SelfToJson(this);
 }
 
 @JsonSerializable()
 class Rp_contract_info extends Object {
-  @JsonKey(name: 'ratio')
-  String ratio;
+  @JsonKey(name: 'base_rp')
+  String baseRp;
 
   @JsonKey(name: 'hyn_per_rp')
   String hynPerRp;
@@ -101,17 +106,25 @@ class Rp_contract_info extends Object {
   @JsonKey(name: 'staking_day')
   int stakingDay;
 
+  @JsonKey(name: 'drop_on_percent')
+  int dropOnPercent;
+
+  @JsonKey(name: 'pool_percent')
+  int poolPercent;
+
   String get hynPerRpStr => FormatUtil.weiToEtherStr(hynPerRp) ?? '0';
-  String get ratioStr => FormatUtil.weiToEtherStr(ratio) ?? '0';
 
   Rp_contract_info(
-    this.ratio,
+    this.baseRp,
     this.hynPerRp,
     this.releaseDay,
     this.stakingDay,
+    this.dropOnPercent,
+    this.poolPercent,
   );
 
-  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
+  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) =>
+      _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
 }

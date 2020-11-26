@@ -188,7 +188,6 @@ class _SocketState extends State<_SocketManager> {
       },
       child: BlocBuilder<SocketBloc, SocketState>(
         builder: (context, state) {
-          print('state 222, $state');
           return MarketInheritedModel(
             marketItemList: _marketItemList,
             // tradeDetailList: _tradeDetailList,
