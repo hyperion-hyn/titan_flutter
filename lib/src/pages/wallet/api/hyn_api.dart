@@ -604,7 +604,7 @@ class HYNApi {
   }
 
   static bool isHynErc30ContractAddress(String contractAddress) {
-    contractAddress = contractAddress.toLowerCase();
+    contractAddress = contractAddress?.toLowerCase()??'';
     if (contractAddress == WalletConfig.hynRPErc30Address.toLowerCase() ||
         contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase()) {
       return true;

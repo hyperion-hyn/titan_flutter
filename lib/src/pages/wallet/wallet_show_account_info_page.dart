@@ -18,6 +18,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state.dart';
+import 'model/hyn_transfer_history.dart';
 import 'model/transtion_detail_vo.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
@@ -104,7 +105,9 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         transactionDetail: tempTransDetail,
         getAmountStr: true,
       )}";
-      _toAddress = WalletUtil.ethAddressToBech32Address(transDetail.internalTransactions[0].to);
+
+      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
+      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
     } else {
       amountText = "${HYNApi.getValueByHynType(
         transDetail.hynType,
