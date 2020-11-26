@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -33,7 +34,7 @@ class RedPocketPage extends StatefulWidget {
   }
 }
 
-class _RedPocketPageState extends State<RedPocketPage> {
+class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
@@ -45,13 +46,25 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   @override
+  void onCreated() {
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+    super.onCreated();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+  }
+
+  @override
+  void didPopNext() {
+    _requestData();
+    super.didPopNext();
   }
 
   @override
   void dispose() {
+    Application.routeObserver.unsubscribe(this);
     super.dispose();
     _loadDataBloc.close();
   }
@@ -186,10 +199,16 @@ class _RedPocketPageState extends State<RedPocketPage> {
               ),
             ),
             onTap: () {
-              Application.router.navigateTo(
-                context,
-                Routes.wallet_manager,
-              );
+              Application.router
+                  .navigateTo(
+                    context,
+                    Routes.wallet_manager,
+                  )
+                  .then((value) => () {
+                        if (mounted) {
+                          setState(() {});
+                        }
+                      });
             },
           );
 
@@ -357,7 +376,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = '--';
     var myHYNStaking = '--';
     var globalHYNStaking = '--';
-    var globalTotalTransmit = '--';
+    var globalTransmit = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
@@ -370,8 +389,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
       globalHYNStaking = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.global?.totalStakingHynStr,
       );
-      globalTotalTransmit = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.totalTransmitStr,
+      globalTransmit = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.global?.transmitStr,
       );
     } catch (e) {}
 
@@ -451,7 +470,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     ),
                     Expanded(
                       child: _poolInfoColumn(
-                        '$globalTotalTransmit RP',
+                        '$globalTransmit RP',
                         '全网累计传导',
                       ),
                     ),
@@ -696,12 +715,13 @@ class _RedPocketPageState extends State<RedPocketPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpReleaseRecordsPage(),
+        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
       ),
     );
   }
 
   _requestData() async {
+    print('RedPocketPage-----_requestData');
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
         _activeWallet?.wallet?.getAtlasAccount()?.address,

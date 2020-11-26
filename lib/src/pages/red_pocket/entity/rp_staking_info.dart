@@ -39,13 +39,13 @@ part 'rp_staking_info.g.dart';
   @JsonKey(name: 'release_limit')
   int releaseLimit;
 
-  @JsonKey(name: 'expect_release_time')
-  String expectReleaseTime;
+  @JsonKey(name: 'expect_retrieve_time')
+  String expectRetrieveTime;
 
   @JsonKey(name: 'status')
   int status;
 
-  RpStakingInfo(this.id,this.createdAt,this.updatedAt,this.stakingAt,this.txHash,this.stakingId,this.address,this.hynAmount,this.releaseRp,this.releaseTimes,this.releaseLimit,this.expectReleaseTime,this.status,);
+  RpStakingInfo(this.id,this.createdAt,this.updatedAt,this.stakingAt,this.txHash,this.stakingId,this.address,this.hynAmount,this.releaseRp,this.releaseTimes,this.releaseLimit,this.expectRetrieveTime,this.status,);
 
   factory RpStakingInfo.fromJson(Map<String, dynamic> srcJson) => _$RpStakingInfoFromJson(srcJson);
 

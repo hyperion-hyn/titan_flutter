@@ -10,11 +10,17 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'entity/rp_release_info.dart';
+import 'entity/rp_statistics.dart';
 
 class RpReleaseRecordsPage extends StatefulWidget {
+  final RPStatistics rpStatistics;
+
+  RpReleaseRecordsPage(this.rpStatistics);
+
   @override
   State<StatefulWidget> createState() {
     return _RpReleaseRecordsState();
@@ -27,7 +33,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   int _currentPage = 1;
   var _address = "";
-  List<RPReleaseInfo> _dataList = [];
+  List<RpReleaseInfo> _dataList = [];
 
   @override
   void initState() {
@@ -79,107 +85,124 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
-              var amount = FormatUtil.weiToEtherStr(model?.amount ?? '0');
-              var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
-              var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+              //print("[$runtimeType] _dataList.length:${_dataList.length}");
 
-              return Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: HexColor('#FFFFFF'),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(6.0),
-                    ), //设置四周圆角 角度
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 10,
+              var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+
+              // var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
+              // var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+              // var amountBig = (hynAmountBig / hynPerRpBig);
+              // if (amountBig.isNaN || amountBig.isInfinite) {
+              //   amountBig = 0;
+              // }
+              // var amount = amountBig.toInt();
+              // if (amount.isNaN) {
+              //   amount = 1;
+              // }
+
+              var amount = model?.amount ?? 0;
+              var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+              var updatedAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000));
+
+              return InkWell(
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12, left: 12, right: 12,),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor('#FFFFFF'),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(6.0),
+                      ), //设置四周圆角 角度
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 10,
+                          ),
+                          child: Image.asset(
+                            "res/drawable/red_pocket_coins.png",
+                            width: 28,
+                            height: 28,
+                          ),
                         ),
-                        child: Image.asset(
-                          "res/drawable/red_pocket_coins.png",
-                          width: 28,
-                          height: 28,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 6,
-                                ),
-                                child: Text(
-                                  '$amount 份',
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 6,
+                                  ),
+                                  child: Text(
+                                    '$amount 份',
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                '共 $hynAmount HYN',
-                                style: TextStyle(
-                                  color: HexColor("#999999"),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
+                                Text(
+                                  '共 $hynAmount HYN',
+                                  style: TextStyle(
+                                    color: HexColor("#999999"),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 6,
+                            ),
+                            Text(
+                              '抵押ID：${model?.stakingId ?? 0}',
+                              //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor('#333333'),
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          Text(
-                            '抵押ID：${model?.stakingId ?? 0}',
-                            //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#333333'),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            '+ $rpAmount RP',
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          ],
+                        ),
+                        Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              '+ $rpAmount RP',
+                              style: TextStyle(
+                                color: HexColor("#333333"),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          Text(
-                            stakingAt,
-                            //'21:21:21',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#999999'),
+                            SizedBox(
+                              height: 6,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ],
+                            Text(
+                              updatedAt,
+                              //'21:21:21',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor('#999999'),
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -192,6 +215,8 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
   }
 
   void getNetworkData() async {
+    _currentPage = 1;
+
     try {
       var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
 

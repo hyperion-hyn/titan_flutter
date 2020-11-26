@@ -5,10 +5,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
@@ -33,7 +35,7 @@ class RpTransmitPage extends StatefulWidget {
   }
 }
 
-class _RpTransmitPageState extends State<RpTransmitPage> {
+class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final RPApi _rpApi = RPApi();
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -54,12 +56,31 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
+
+  }
+
+  @override
+  void onCreated() {
+
+    _loadDataBloc.add(LoadingEvent());
+
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    super.onCreated();
+  }
+
+  @override
+  void didPopNext() {
+
     _loadDataBloc.add(LoadingEvent());
   }
+
 
   @override
   void dispose() {
     super.dispose();
+
+    Application.routeObserver.unsubscribe(this);
     _loadDataBloc.close();
   }
 
@@ -69,6 +90,19 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       appBar: BaseAppBar(
         baseTitle: '传导池',
         backgroundColor: Colors.grey[50],
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _pushRecordAction,
+            child: Text(
+              '传导明细',
+              style: TextStyle(
+                color: HexColor("#333333"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         child: Column(
@@ -159,7 +193,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myRPInfo() {
-    String totalAmount = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalAmountStr) ?? '--';
+    int totalAmount = _rpStatistics?.self?.totalAmount ?? 0;
     String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
@@ -238,14 +272,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                     child: _lineWidget(),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RpReleaseRecordsPage(),
-                        ),
-                      );
-                    },
+                    onTap: _pushRecordAction,
                     child: _columnWidget('$yesterday RP', '我昨日获得'),
                   ),
                   Padding(
@@ -460,13 +487,18 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
               var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
               var amountBig = (hynAmountBig / hynPerRpBig);
+
+              if (amountBig.isNaN || amountBig.isInfinite) {
+                amountBig = 0;
+              }
+
               var amount = amountBig.toInt();
               if (amount.isNaN) {
                 amount = 1;
               }
 
               var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime ?? '0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
 
               return Padding(
                 padding: const EdgeInsets.only(
@@ -604,10 +636,11 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   void getNetworkData() async {
+    _currentPage = 1;
     try {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
-      // _rpStatistics = await _rpApi.getRPStatistics(_address);
+      _rpStatistics = await _rpApi.getRPStatistics(_address);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
@@ -841,5 +874,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     } catch (e) {
       LogUtil.toastException(e);
     }
+  }
+
+  _pushRecordAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+      ),
+    );
   }
 }

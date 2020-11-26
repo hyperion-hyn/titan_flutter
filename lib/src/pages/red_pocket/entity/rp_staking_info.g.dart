@@ -19,7 +19,7 @@ RpStakingInfo _$RpStakingInfoFromJson(Map<String, dynamic> json) {
     json['release_rp'] as String,
     json['release_times'] as int,
     json['release_limit'] as int,
-    json['expect_release_time'] as String,
+    json['expect_retrieve_time'] as String,
     json['status'] as int,
   );
 }
@@ -37,6 +37,6 @@ Map<String, dynamic> _$RpStakingInfoToJson(RpStakingInfo instance) =>
       'release_rp': instance.releaseRp,
       'release_times': instance.releaseTimes,
       'release_limit': instance.releaseLimit,
-      'expect_release_time': instance.expectReleaseTime,
+      'expect_retrieve_time': instance.expectRetrieveTime,
       'status': instance.status,
     };
