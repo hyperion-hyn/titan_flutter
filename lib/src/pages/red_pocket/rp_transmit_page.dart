@@ -52,8 +52,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     _rpStatistics = widget.rpStatistics;
 
-    _activeWallet =
-        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
     _loadDataBloc.add(LoadingEvent());
   }
@@ -118,15 +117,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _poolInfo() {
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(
-            _rpStatistics?.global?.totalStakingHynStr) ??
-        '--';
-    String transmit =
-        FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ??
-            '--';
-    String totalTransmit = FormatUtil.stringFormatCoinNum(
-            _rpStatistics?.global?.totalTransmitStr) ??
-        '--';
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
+    String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
+    String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -166,21 +159,12 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myRPInfo() {
-    String totalAmount =
-        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalAmountStr) ??
-            '--';
-    String totalStakingHyn = FormatUtil.stringFormatCoinNum(
-            _rpStatistics?.self?.totalStakingHynStr) ??
-        '--';
-    String totalRp =
-        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
-    String yesterday =
-        FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ??
-            '--';
+    String totalAmount = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalAmountStr) ?? '--';
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
+    String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
+    String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    String hynPerRp = FormatUtil.stringFormatCoinNum(
-            _rpStatistics?.rpContractInfo?.hynPerRpStr) ??
-        '--';
+    String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.hynPerRpStr) ?? '--';
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
@@ -310,8 +294,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                             ),
                           ),
                           TextSpan(
-                            text:
-                                ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
+                            text: ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
                             style: TextStyle(
                               fontSize: 10,
                               color: HexColor("#999999"),
@@ -410,9 +393,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
           color: isEmpty ? Colors.white : null,
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
-        margin: isEmpty
-            ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16)
-            : null,
+        margin: isEmpty ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16) : null,
         //color: Colors.white,
         child: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -478,18 +459,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
               var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
               var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
-              var amountBig = (hynAmountBig/hynPerRpBig);
+              var amountBig = (hynAmountBig / hynPerRpBig);
               var amount = amountBig.toInt();
               if (amount.isNaN) {
                 amount = 1;
               }
 
-              var stakingAt = FormatUtil.newFormatUTCDateStr(
-                  model?.stakingAt ?? '0',
-                  isSecond: true);
-              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(
-                  model?.expectReleaseTime ?? '0',
-                  isSecond: true);
+              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime ?? '0', isSecond: true);
 
               return Padding(
                 padding: const EdgeInsets.only(
@@ -628,8 +605,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
   void getNetworkData() async {
     try {
-      var netData =
-          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       // _rpStatistics = await _rpApi.getRPStatistics(_address);
 
@@ -651,8 +627,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData =
-          await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
@@ -690,8 +665,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      detail:
-          '注：你的HYN抵押将锁定${_rpStatistics?.rpContractInfo?.stakingDay ?? 0}天，满期后可自行取回',
+      detail: '注：你的HYN抵押将锁定${_rpStatistics?.rpContractInfo?.stakingDay ?? 0}天，满期后可自行取回',
       contentItem: Material(
         child: Form(
           key: _formKey,
@@ -711,12 +685,10 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                   return '请输入抵押份数';
                 }
 
-                var hynToken =
-                    WalletInheritedModel.of(context).getCoinVoBySymbol(
+                var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
                   SupportedTokens.HYN_Atlas.symbol,
                 );
-                var hynTokenBalance =
-                    Decimal.parse(hynToken.balance.toString());
+                var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
                 var amount = int.tryParse(value) ?? 0;
                 var total = 1000 * amount;
                 var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
@@ -770,8 +742,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       var response = await _rpApi.getCanRetrieve(_address);
       print("[$runtimeType] getCanRetrieve, response:$response");
 
-      if (response.data != null) {
-        var json = response.data as Map<String, dynamic>;
+      var data = response;
+      if ((data != null) && (data is Map<String, dynamic>)) {
+        var json = data;
 
         if (json.keys.contains('count')) {
           count = json['count'] as int;
@@ -828,15 +801,13 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   void _retrieveAction() async {
     Navigator.pop(context, true);
 
-    var password =
-        await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
     if (password == null) {
       return;
     }
 
     try {
-      await _rpApi.postRetrieveHyn(
-          activeWallet: _activeWallet, password: password);
+      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
       Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
     } catch (e) {
       LogUtil.toastException(e);
@@ -857,8 +828,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     Navigator.pop(context, true);
 
-    var password =
-        await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
     if (password == null) {
       return;
     }
@@ -866,8 +836,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     var total = 1000 * (int.tryParse(inputText) ?? 0);
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
-      await _rpApi.postStakingRp(
-          amount: amount, activeWallet: _activeWallet, password: password);
+      await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
       _loadDataBloc.add(LoadingEvent());
     } catch (e) {
       LogUtil.toastException(e);

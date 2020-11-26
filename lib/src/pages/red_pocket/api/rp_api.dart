@@ -107,15 +107,18 @@ class RPApi {
     );
   }
 
-  Future<ResponseEntity> getCanRetrieve(String address) async {
-    return await RPHttpCore.instance.getEntity(
+  Future<Map<String, dynamic>> getCanRetrieve(String address) async {
+    var data = await RPHttpCore.instance.getEntity(
       '/v1/rp/can_retrieve/$address',
-      EntityFactory<ResponseEntity>((json) {
+      EntityFactory<Map<String, dynamic>>((json) {
         return json;
       }),
       options: RequestOptions(
         contentType: "application/json",
       ),
     );
+    print("[rp_api] getCanRetrieve, data:$data");
+
+    return data;
   }
 }
