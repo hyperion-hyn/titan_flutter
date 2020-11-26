@@ -117,9 +117,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _poolInfo() {
-    var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.global?.totalStakingHyn ?? '0');
-    var transmit = FormatUtil.weiToEtherStr(_rpStatistics?.global?.transmit ?? '0');
-    var totalTransmit = FormatUtil.weiToEtherStr(_rpStatistics?.global?.totalTransmit ?? '0');
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalStakingHynStr) ?? '--';
+    String transmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.transmitStr) ?? '--';
+    String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -159,14 +159,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myRPInfo() {
-    var totalAmount = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalAmount ?? '0');
-    var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalStakingHyn ?? '0');
-    var totalRp = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalRp ?? '0');
+    String totalAmount = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalAmountStr) ?? '--';
+    String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
+    String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
+    String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterday ?? '0') ?? '--';
+    String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.hynPerRp) ?? '--';
+    String ratio = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.ratio) ?? '--';
 
-    var hynPerRp = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
-    var ratio = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.ratio ?? '0');
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
 
