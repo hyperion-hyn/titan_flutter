@@ -178,7 +178,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                 ),
               );
             },
-            childCount: _dataList?.length,
+            childCount: _dataList?.length ?? 0,
           ))
         ],
       ),
