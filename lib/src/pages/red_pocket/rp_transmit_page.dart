@@ -648,6 +648,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     UiUtil.showAlertView(
       context,
       title: '抵押份数',
+      isInputValue: true,
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
@@ -748,7 +749,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
         }
       }
     } catch (e) {
-      print(e);
+      LogUtil.toastException(e);
       return;
     }
     print("[$runtimeType] count:$count, hynSum:$hynSum");

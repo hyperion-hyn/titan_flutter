@@ -162,7 +162,7 @@ class WalletConfig {
       case EthereumNetType.ropsten:
         return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
       case EthereumNetType.local:
-        return "0x1936d124f98d6d4Cd23c4Abe6B7C6103609b4a74";
+        return "0x2190490FEcA5D47290CFA4a762b1889718913319";
     }
     return '';
   }
