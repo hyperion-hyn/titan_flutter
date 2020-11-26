@@ -48,6 +48,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override

@@ -54,6 +54,13 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+
     _loadDataBloc.add(LoadingEvent());
   }
 
