@@ -779,6 +779,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     try {
       await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
+      Fluttertoast.showToast(msg: '取回成功，请查看钱包余额！');
     } catch (e) {
       LogUtil.toastException(e);
     }
