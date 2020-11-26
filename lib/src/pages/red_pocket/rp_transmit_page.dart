@@ -458,6 +458,13 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               }
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+              var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
+              var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+              var amountBig = (hynAmountBig/hynPerRpBig);
+              var amount = amountBig.toInt();
+              if (amount.isNaN) {
+                amount = 1;
+              }
 
               var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
               var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime ?? '0', isSecond: true);
@@ -504,7 +511,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                                       right: 6,
                                     ),
                                     child: Text(
-                                      '$hynAmount 份',
+                                      '$amount 份',
                                       style: TextStyle(
                                         color: HexColor("#333333"),
                                         fontSize: 14,
@@ -601,7 +608,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     try {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
-      _rpStatistics = await _rpApi.getRPStatistics(_address);
+      // _rpStatistics = await _rpApi.getRPStatistics(_address);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
