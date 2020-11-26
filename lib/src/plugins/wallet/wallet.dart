@@ -344,7 +344,7 @@ class Wallet {
     return txHash;
   }
 
-  Future<String> sendHYNErc30Transaction({
+  Future<String> sendHYNHrc30Transaction({
     int id,
     String contractAddress,
     String password,

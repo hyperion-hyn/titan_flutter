@@ -517,7 +517,7 @@ class _WalletSendConfirmState extends BaseState<WalletSendConfirmPage> {
         }
       } else if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         if (widget.coinVo.contractAddress != null) {
-          var txHash = await HYNApi.sendTransferHYNErc30(
+          var txHash = await HYNApi.sendTransferHYNHrc30(
               walletPassword,
               ConvertTokenUnit.strToBigInt(widget.transferAmount, widget.coinVo.decimals),
               widget.receiverAddress,

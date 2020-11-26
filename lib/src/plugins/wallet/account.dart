@@ -49,9 +49,9 @@ class Account {
     } else if (json['coinType'] == CoinType.HYN_ATLAS){
       token = SupportedTokens.HYN_Atlas;
       if (netType == EthereumNetType.main) {
-        erc20Tokens.add(SupportedTokens.HYN_RP_ERC30);
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30);
       }else{
-        erc20Tokens.add(SupportedTokens.HYN_RP_ERC30_ROPSTEN);
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_ROPSTEN);
       }
     }
     return Account(

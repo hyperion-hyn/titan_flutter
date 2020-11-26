@@ -684,7 +684,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                 }
 
                 var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-                  SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol,
+                  SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
                 );
                 var rpTokenBalance = Decimal.parse(rpToken.balance.toString());
                 var amount = int.tryParse(value) ?? 0;

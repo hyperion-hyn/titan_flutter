@@ -126,7 +126,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
 
     var rpBalance = '--';
     var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-      SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol,
+      SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
     );
 
     try {

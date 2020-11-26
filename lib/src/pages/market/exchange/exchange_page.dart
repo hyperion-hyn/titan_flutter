@@ -563,7 +563,7 @@ class _ExchangePageState extends BaseState<ExchangePage> with AutomaticKeepAlive
         value: 'RP',
         child: _coinItem(
           'RP',
-          SupportedTokens.HYN_RP_ERC30_ROPSTEN.logo,
+          SupportedTokens.HYN_RP_HRC30_ROPSTEN.logo,
           false,
         ),
       ),

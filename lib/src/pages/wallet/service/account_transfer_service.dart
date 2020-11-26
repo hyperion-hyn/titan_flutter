@@ -27,7 +27,7 @@ class AccountTransferService {
       return await _getEthTransferList(coinVo, page);
     } else if (coinVo.coinType == CoinType.HYN_ATLAS) {
       if (coinVo.contractAddress != null) {
-        return await _getHYNErc30TransferList(coinVo, page);
+        return await _getHYNHrc30TransferList(coinVo, page);
       } else {
         return await _getHYNAtlasTransferList(coinVo, page);
       }
@@ -55,28 +55,28 @@ class AccountTransferService {
     return detailList;
   }
 
-  Future<List<TransactionDetailVo>> _getHYNErc30TransferList(CoinVo coinVo, int page) async {
+  Future<List<TransactionDetailVo>> _getHYNHrc30TransferList(CoinVo coinVo, int page) async {
     var assetToken = HYNApi.getContractToken(coinVo.contractAddress);
 
-    List<InternalTransactions> erc30TransferHistoryList =
-        await _atlasApi.queryHYNErc30History(coinVo.address, page, coinVo.contractAddress);
-    List<TransactionDetailVo> detailList = erc30TransferHistoryList.map((hynErc30TransferHistory) {
+    List<InternalTransactions> hrc30TransferHistoryList =
+        await _atlasApi.queryHYNHrc30History(coinVo.address, page, coinVo.contractAddress);
+    List<TransactionDetailVo> detailList = hrc30TransferHistoryList.map((hynHrc30TransferHistory) {
       var type = 0;
-      if (hynErc30TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
+      if (hynHrc30TransferHistory.from.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_OUT;
-      } else if (hynErc30TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
+      } else if (hynHrc30TransferHistory.to.toLowerCase() == coinVo.address.toLowerCase()) {
         type = TransactionType.TRANSFER_IN;
       }
       return TransactionDetailVo(
           type: type,
-          state: hynErc30TransferHistory.status,
-          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(hynErc30TransferHistory.value), assetToken.decimals)
+          state: hynHrc30TransferHistory.status,
+          amount: ConvertTokenUnit.weiToDecimal(BigInt.parse(hynHrc30TransferHistory.value), assetToken.decimals)
               .toDouble(),
           symbol: assetToken.symbol,
-          fromAddress: hynErc30TransferHistory.from,
-          toAddress: hynErc30TransferHistory.to,
-          time: hynErc30TransferHistory.timestamp * 1000,
-          hash: hynErc30TransferHistory.txHash,
+          fromAddress: hynHrc30TransferHistory.from,
+          toAddress: hynHrc30TransferHistory.to,
+          time: hynHrc30TransferHistory.timestamp * 1000,
+          hash: hynHrc30TransferHistory.txHash,
           hynType: MessageType.typeNormal,
           contractAddress: coinVo.contractAddress);
     }).toList();

@@ -64,10 +64,10 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   Future loadWalletInfo() async {
     //优先进行网络请求获取合约详情信息
-    if (HYNApi.isHynErc30ContractAddress(widget.transactionDetail.toAddress) ||
-        HYNApi.isHynErc30ContractAddress(widget.transactionDetail.contractAddress)) {
+    if (HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.toAddress) ||
+        HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.contractAddress)) {
       var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
-      widget.transactionDetail = TransactionDetailVo.fromHynErc30TransferHistory(
+      widget.transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(
           hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
     }
     var transDetail = widget.transactionDetail;

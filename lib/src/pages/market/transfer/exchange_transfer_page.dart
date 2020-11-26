@@ -360,7 +360,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return 'HYN (ERC-20)(${S.of(context).mapping})';
     } else if (symbol == 'USDT') {
       return 'USDT';
-    } else if (symbol == SupportedTokens.HYN_RP_ERC30.symbol) {
+    } else if (symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
       return 'RP';
     }
   }
