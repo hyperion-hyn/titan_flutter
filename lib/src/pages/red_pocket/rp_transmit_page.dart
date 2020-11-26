@@ -14,7 +14,7 @@ import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -23,18 +23,18 @@ import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RedPocketExchangePage extends StatefulWidget {
+class RpTransmitPage extends StatefulWidget {
   final RPStatistics rpStatistics;
 
-  RedPocketExchangePage(this.rpStatistics);
+  RpTransmitPage(this.rpStatistics);
 
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketExchangePageState();
+    return _RpTransmitPageState();
   }
 }
 
-class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
+class _RpTransmitPageState extends State<RpTransmitPage> {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   WalletVo _activeWallet;
@@ -259,7 +259,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RedPocketExchangeRecordsPage(),
+                            builder: (context) => RpReleaseRecordsPage(),
                           ),
                         );
                       },

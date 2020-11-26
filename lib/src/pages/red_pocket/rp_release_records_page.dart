@@ -14,14 +14,14 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'entity/rp_release_info.dart';
 
 
-class RedPocketExchangeRecordsPage extends StatefulWidget {
+class RpReleaseRecordsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketExchangeRecordsState();
+    return _RpReleaseRecordsState();
   }
 }
 
-class _RedPocketExchangeRecordsState extends BaseState<RedPocketExchangeRecordsPage> {
+class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
   LoadDataBloc loadDataBloc = LoadDataBloc();
 
   int _currentPage = 1;

@@ -11,8 +11,8 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_exchange_page.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -684,7 +684,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketExchangePage(_rpStatistics),
+        builder: (context) => RpTransmitPage(_rpStatistics),
       ),
     );
   }
@@ -693,7 +693,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RedPocketExchangeRecordsPage(),
+        builder: (context) => RpReleaseRecordsPage(),
       ),
     );
   }
