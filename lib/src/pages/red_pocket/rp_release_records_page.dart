@@ -17,7 +17,6 @@ import 'entity/rp_release_info.dart';
 import 'entity/rp_statistics.dart';
 
 class RpReleaseRecordsPage extends StatefulWidget {
-
   final RPStatistics rpStatistics;
 
   RpReleaseRecordsPage(this.rpStatistics);
@@ -86,17 +85,16 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-
-
+              print("[$runtimeType] _dataList.length:${_dataList.length}");
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+
               var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
               var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
               var amountBig = (hynAmountBig / hynPerRpBig);
               if (amountBig.isNaN || amountBig.isInfinite) {
                 amountBig = 0;
               }
-
               var amount = amountBig.toInt();
               if (amount.isNaN) {
                 amount = 1;

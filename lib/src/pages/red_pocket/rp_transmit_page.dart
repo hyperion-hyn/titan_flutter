@@ -69,6 +69,19 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       appBar: BaseAppBar(
         baseTitle: '传导池',
         backgroundColor: Colors.grey[50],
+        actions: <Widget>[
+          FlatButton(
+            onPressed: _pushRecordAction,
+            child: Text(
+              '传导明细',
+              style: TextStyle(
+                color: HexColor("#333333"),
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Container(
         child: Column(
@@ -238,14 +251,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                     child: _lineWidget(),
                   ),
                   InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
-                        ),
-                      );
-                    },
+                    onTap: _pushRecordAction,
                     child: _columnWidget('$yesterday RP', '我昨日获得'),
                   ),
                   Padding(
@@ -471,7 +477,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               }
 
               var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
-              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime ?? '0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
 
               return Padding(
                 padding: const EdgeInsets.only(
@@ -847,5 +853,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     } catch (e) {
       LogUtil.toastException(e);
     }
+  }
+
+  _pushRecordAction() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+      ),
+    );
   }
 }
