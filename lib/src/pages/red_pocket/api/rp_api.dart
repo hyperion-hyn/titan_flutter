@@ -28,20 +28,18 @@ class RPApi {
   }
 
   Future<ResponseEntity> postRetrieveHyn({
-    String amount = '0',
     String password = '',
     WalletVo activeWallet,
   }) async {
-    var total = 500 * int.tryParse(amount) ?? 0;
-    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
-    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password, stakingAmount: amountBig);
 
+
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
+    print("[Rp_api] postRetrieveHyn, txHash:$txHash");
+    
     return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "hyn_amount": amountBig,
-          "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
   }
