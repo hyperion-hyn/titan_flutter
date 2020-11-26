@@ -5,6 +5,7 @@ import 'package:titan/src/components/wallet/vo/coin_vo.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
 import 'package:titan/src/pages/wallet/api/etherscan_api.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/bitcoin_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/erc20_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/eth_transfer_history.dart';
@@ -12,6 +13,7 @@ import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/wallet/cointype.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
+import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:web3dart/web3dart.dart';
@@ -54,10 +56,7 @@ class AccountTransferService {
   }
 
   Future<List<TransactionDetailVo>> _getHYNErc30TransferList(CoinVo coinVo, int page) async {
-    var assetToken = SupportedTokens.HYN_RP_ERC30_ROPSTEN;
-    if (coinVo.contractAddress == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress) {
-      assetToken = SupportedTokens.HYN_RP_ERC30_ROPSTEN;
-    }
+    var assetToken = HYNApi.getContractToken(coinVo.contractAddress);
 
     List<InternalTransactions> erc30TransferHistoryList =
         await _atlasApi.queryHYNErc30History(coinVo.address, page, coinVo.contractAddress);

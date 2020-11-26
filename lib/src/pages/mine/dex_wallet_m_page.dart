@@ -535,7 +535,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
                                       contract = WalletUtil.getHynErc20Contract(WalletConfig.getUsdtErc20Address());
                                       decimals = SupportedTokens.USDT_ERC20.decimals;
                                     } else if (tokenType == TokenType.HYN_ERC20) {
-                                      contract = WalletUtil.getHynErc20Contract(WalletConfig.getHynErc20Address());
+                                      contract = WalletUtil.getHynErc20Contract(WalletConfig.getHynErc20Address);
                                       decimals = SupportedTokens.HYN_ERC20.decimals;
                                     } else {
                                       UiUtil.toast('错误的类型 $tokenType');
@@ -636,7 +636,7 @@ class _DexWalletManagerPageState extends State<DexWalletManagerPage> {
       ret = await Future.wait([
         WalletUtil.getBalanceByCoinTypeAndAddress(CoinType.ETHEREUM, addressData.address),
         WalletUtil.getBalanceByCoinTypeAndAddress(
-            CoinType.ETHEREUM, addressData.address, WalletConfig.getHynErc20Address()),
+            CoinType.ETHEREUM, addressData.address, WalletConfig.getHynErc20Address),
         WalletUtil.getBalanceByCoinTypeAndAddress(
             CoinType.ETHEREUM, addressData.address, WalletConfig.getUsdtErc20Address()),
       ]);

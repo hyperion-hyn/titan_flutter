@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -61,8 +63,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   Future loadWalletInfo() async {
     //优先进行网络请求获取合约详情信息
-    if (widget.transactionDetail.contractAddress.toLowerCase() ==
-        SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress.toLowerCase()) {
+    if (HYNApi.isHynErc30ContractAddress(widget.transactionDetail.toAddress) ||
+        HYNApi.isHynErc30ContractAddress(widget.transactionDetail.contractAddress)) {
       var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
       widget.transactionDetail = TransactionDetailVo.fromHynErc30TransferHistory(
           hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);

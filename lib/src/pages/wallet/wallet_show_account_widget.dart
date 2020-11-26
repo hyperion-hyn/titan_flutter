@@ -92,12 +92,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    var tempTransList = await getEthTransferList();
-    if (tempTransList.length > 0) {
-      await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-    }
+    if(!HYNApi.isHynErc30ContractAddress(widget.coinVo.contractAddress)){
+      var tempTransList = await getEthTransferList();
+      if (tempTransList.length > 0) {
+        await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
+      }
 
-    getWhiteList();
+      getWhiteList();
+    }
   }
 
   List<String> whiteList = [];
@@ -479,11 +481,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
         (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
-      if (SupportedTokens.allContractTokens(WalletConfig.netType)
-          .map((token) => token.contractAddress.toLowerCase())
-          .toList()
-          .contains(transactionDetail.toAddress.toLowerCase())) {
-        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
+        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是对方钱包地址
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
@@ -722,7 +721,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
 
     List<TransactionDetailVo> transferList = [];
-    if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       retList.addAll(transferList);
       return retList;
