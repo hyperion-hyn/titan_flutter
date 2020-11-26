@@ -718,7 +718,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                 var hynTokenBalance =
                     Decimal.parse(hynToken.balance.toString());
                 var amount = int.tryParse(value) ?? 0;
-                var total = 500 * amount;
+                var total = 1000 * amount;
                 var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
                 var inputValue = Decimal.parse(amountBig.toString());
                 var isOver = inputValue > hynTokenBalance;
@@ -734,7 +734,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                 isDense: true,
                 filled: true,
                 fillColor: HexColor('#FFF2F2F2'),
-                hintText: '输入抵押份数，每份500HYN',
+                hintText: '输入抵押份数，每份1000HYN',
                 hintStyle: TextStyle(
                   color: HexColor('#FF999999'),
                   fontSize: 13,
@@ -863,7 +863,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       return;
     }
 
-    var total = 500 * (int.tryParse(inputText) ?? 0);
+    var total = 1000 * (int.tryParse(inputText) ?? 0);
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
       await _rpApi.postStakingRp(
