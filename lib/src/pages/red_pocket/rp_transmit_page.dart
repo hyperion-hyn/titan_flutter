@@ -5,10 +5,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
+import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
+import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
@@ -33,7 +35,7 @@ class RpTransmitPage extends StatefulWidget {
   }
 }
 
-class _RpTransmitPageState extends State<RpTransmitPage> with RouteAware {
+class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final RPApi _rpApi = RPApi();
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -54,10 +56,18 @@ class _RpTransmitPageState extends State<RpTransmitPage> with RouteAware {
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
-    _loadDataBloc.add(LoadingEvent());
 
   }
 
+  @override
+  void onCreated() {
+
+    _loadDataBloc.add(LoadingEvent());
+
+    Application.routeObserver.subscribe(this, ModalRoute.of(context));
+
+    super.onCreated();
+  }
 
   @override
   void didPopNext() {
@@ -69,6 +79,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> with RouteAware {
   @override
   void dispose() {
     super.dispose();
+
+    Application.routeObserver.unsubscribe(this);
     _loadDataBloc.close();
   }
 
