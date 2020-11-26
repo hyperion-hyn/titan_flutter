@@ -524,7 +524,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         context,
                         MaterialPageRoute(
                             builder: (context) => WalletShowAccountInfoPage(
-                                  transactionDetail,
+                                  transactionDetail.hash,
+                                  transactionDetail.symbol,
                                   isContain: _isContain(transactionDetail),
                                 )));
                   } else {

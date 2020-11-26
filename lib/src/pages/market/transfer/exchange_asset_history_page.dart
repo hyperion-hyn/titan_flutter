@@ -337,7 +337,7 @@ class _ExchangeAssetHistoryPageState
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      WalletShowAccountInfoPage(transactionDetailVo)));
+                      WalletShowAccountInfoPage(transactionDetailVo.hash,transactionDetailVo.symbol)));
         } else {
           var isChinaMainland =
               (SettingInheritedModel.of(context).areaModel?.isChinaMainland ??

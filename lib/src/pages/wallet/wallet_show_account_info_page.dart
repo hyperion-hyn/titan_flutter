@@ -7,6 +7,8 @@ import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
+import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
+import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
@@ -23,10 +25,11 @@ import 'model/transtion_detail_vo.dart';
 import 'package:titan/src/widget/all_page_state/all_page_state_container.dart';
 
 class WalletShowAccountInfoPage extends StatefulWidget {
-  TransactionDetailVo transactionDetail;
+  String hashTx;
+  String symbol;
   final bool isContain;
 
-  WalletShowAccountInfoPage(this.transactionDetail, {this.isContain = false});
+  WalletShowAccountInfoPage(this.hashTx,this.symbol, {this.isContain = false});
 
   @override
   State<StatefulWidget> createState() {
@@ -42,11 +45,11 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   var isBillPage = false;
   AllPageState _currentState = LoadingState();
   var isContract = false;
+  TransactionDetailVo transactionDetail;
+  WalletVo walletVo;
 
   @override
   void initState() {
-    isBillPage = (widget.transactionDetail.hynType == MessageType.typeUnMicrostakingReturn ||
-        widget.transactionDetail.hynType == MessageType.typeTerminateMap3Return);
     super.initState();
   }
 
@@ -64,17 +67,32 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
   Future loadWalletInfo() async {
     //优先进行网络请求获取合约详情信息
-    if (HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.toAddress) ||
+    var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.hashTx);
+
+    walletVo = WalletInheritedModel.of(context).activatedWallet;
+    var type = 0;
+    if (hynTransferHistory.from == walletVo.wallet.getAtlasAccount().address) {
+      type = TransactionType.TRANSFER_OUT;
+    } else if (hynTransferHistory.to == walletVo.wallet.getAtlasAccount().address) {
+      type = TransactionType.TRANSFER_IN;
+    }
+
+    transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(
+        hynTransferHistory, type, widget.symbol);
+
+    /*if (HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.toAddress) ||
         HYNApi.isHynHrc30ContractAddress(widget.transactionDetail.contractAddress)) {
-      var hynTransferHistory = await atlasApi.queryHYNTxDetail(widget.transactionDetail.hash);
       widget.transactionDetail = TransactionDetailVo.fromHynHrc30TransferHistory(
           hynTransferHistory, widget.transactionDetail.type, widget.transactionDetail.symbol);
-    }
-    var transDetail = widget.transactionDetail;
-    isContract = transDetail.internalTransactions != null;
+    }*/
+    var transDetail = transactionDetail;
+    isContract = (transDetail.internalTransactions != null && transDetail.internalTransactions.length != 0);
 
-    var fromAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType, true);
-    var toAddressTitle = HYNApi.toAddressHint(widget.transactionDetail.hynType, false);
+    isBillPage = (transactionDetail.hynType == MessageType.typeUnMicrostakingReturn ||
+        transactionDetail.hynType == MessageType.typeTerminateMap3Return);
+
+    var fromAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, true);
+    var toAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, false);
 
     if (isBillPage) {
       _dataTitleList = [
@@ -114,7 +132,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         transactionDetail: transDetail,
         getAmountStr: true,
       )}";
-      var ethAddress = HYNApi.getHynToAddress(widget.transactionDetail);
+      var ethAddress = HYNApi.getHynToAddress(transactionDetail);
       _toAddress = WalletUtil.ethAddressToBech32Address(ethAddress);
     }
 
@@ -190,13 +208,13 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 ${widget.transactionDetail.getBillDelegate()} HYN",
+                          child: Text("抵押 ${transactionDetail.getBillDelegate()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("奖励 ${widget.transactionDetail.getBillReward()} HYN",
+                          child: Text("奖励 ${transactionDetail.getBillReward()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                     ],
@@ -236,7 +254,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
     var infoItemTitle;
     var infoItemStatusImage;
-    getAccountPageTitle(context, widget.transactionDetail,
+    getAccountPageTitle(context, transactionDetail,
         (pageTitle, pageStatusImage, pageDetailColor, pageDetailStatusImage) {
       infoItemTitle = pageTitle;
       infoItemStatusImage = pageStatusImage;
@@ -266,7 +284,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                   Padding(
                     padding: const EdgeInsets.only(top: 2.0, bottom: 34),
                     child: Text(
-                      FormatUtil.formatDate(widget.transactionDetail.time, isSecond: true, isMillisecond: true),
+                      FormatUtil.formatDate(transactionDetail.time, isSecond: true, isMillisecond: true),
                       style: TextStyle(color: DefaultColors.color999, fontSize: 13),
                     ),
                   ),
@@ -290,7 +308,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
               }
             } else {
               if (index == 1) {
-                var bottomText = "GasPrice($gasPriceStr) * Gas(${widget.transactionDetail.gas})";
+                var bottomText = "GasPrice($gasPriceStr) * Gas(${transactionDetail.gas})";
                 return accountInfoItem(leftText, rightText, bottomText: bottomText);
               } else if (index == 4) {
                 return accountInfoItem(leftText, rightText, normalLine: false);
@@ -306,7 +324,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       context,
                       MaterialPageRoute(
                           builder: (context) => WalletShowAccountDetailPage(
-                                widget.transactionDetail,
+                                transactionDetail,
                                 isContain: widget.isContain,
                               )));
                 },
@@ -338,6 +356,18 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       ),
     );
   }
+
+  static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WalletShowAccountInfoPage(
+              hashTx,
+              symbol,
+              isContain: false,
+            )));
+  }
+
 }
 
 void getAccountPageTitle(BuildContext context, TransactionDetailVo transactionDetail, Function function) {
