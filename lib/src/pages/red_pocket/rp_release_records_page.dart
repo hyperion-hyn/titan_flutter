@@ -22,7 +22,7 @@ class RpReleaseRecordsPage extends StatefulWidget {
 }
 
 class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
-  LoadDataBloc loadDataBloc = LoadDataBloc();
+  LoadDataBloc _loadDataBloc = LoadDataBloc();
 
   int _currentPage = 1;
   RPApi _rpApi = RPApi();
@@ -39,7 +39,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   @override
   void onCreated() {
-    loadDataBloc.add(LoadingEvent());
+    _loadDataBloc.add(LoadingEvent());
   }
 
   void getNetworkData() async {
@@ -50,14 +50,14 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
         _dataList = netData;
         if (mounted) {
           setState(() {
-            loadDataBloc.add(RefreshSuccessEvent());
+            _loadDataBloc.add(RefreshSuccessEvent());
           });
         }
       } else {
-        loadDataBloc.add(LoadFailEvent());
+        _loadDataBloc.add(LoadEmptyEvent());
       }
     } catch (e) {
-      loadDataBloc.add(LoadFailEvent());
+      _loadDataBloc.add(LoadFailEvent());
     }
   }
 
@@ -68,19 +68,19 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
       if (netData?.isNotEmpty??false) {
         _dataList = netData;
-        loadDataBloc.add(LoadingMoreSuccessEvent());
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
+        _loadDataBloc.add(LoadMoreEmptyEvent());
       }
       setState(() {});
     } catch (e) {
-      loadDataBloc.add(LoadMoreFailEvent());
+      _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
   @override
   void dispose() {
-    loadDataBloc.close();
+    _loadDataBloc.close();
     super.dispose();
   }
 
@@ -98,7 +98,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   _pageView() {
     return LoadDataContainer(
-      bloc: loadDataBloc,
+      bloc: _loadDataBloc,
       onLoadData: () async {
         getNetworkData();
       },

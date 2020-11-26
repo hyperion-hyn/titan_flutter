@@ -74,9 +74,12 @@ class RPApi {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/release/$address',
       EntityFactory<List<RPReleaseInfo>>(
-        (data) {
-          var listData = data['data'];
-          return (listData as List).map((dataItem) => RPReleaseInfo.fromJson(dataItem)).toList();
+        (json) {
+          var data = (json['data'] as List).map((map) {
+            return RPReleaseInfo.fromJson(map);
+          }).toList();
+
+          return data;
         },
       ),
       params: {
