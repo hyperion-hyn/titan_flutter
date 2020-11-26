@@ -189,7 +189,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
   }
 
   // DebounceLater depthDebounceLater = DebounceLater();
-  DebounceLater tradeDebounceLater = DebounceLater();
+  // DebounceLater tradeDebounceLater = DebounceLater();
 
   @override
   Widget build(BuildContext context) {
@@ -199,12 +199,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         listener: (ctx, state) {
           bool isRefresh = consignListSocket(context, state, _activeOrders, true);
           if (isRefresh) {
-            tradeDebounceLater.debounceInterval(() {
-              BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-              _loadDataBloc.add(LoadingMoreSuccessEvent());
+            // tradeDebounceLater.debounceInterval(() {
+            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
 
-              consignListController.add(contrConsignTypeRefresh);
-            }, 500);
+            consignListController.add(contrConsignTypeRefresh);
+            // }, 500);
           }
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();

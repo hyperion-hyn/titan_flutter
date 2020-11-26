@@ -385,14 +385,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [_high, '1', _low, '1', _amount24Hour]
                           .map((text) => text == '1'
-                          ? SizedBox(
-                        height: 6,
-                      )
-                          : Text(
-                        text,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
-                      ))
+                              ? SizedBox(
+                                  height: 6,
+                                )
+                              : Text(
+                                  text,
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w500, fontSize: 10, color: HexColor("#333333")),
+                                ))
                           .toList()),
                 ],
               ),
@@ -1303,9 +1303,9 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     _socketBloc.add(UnSubChannelEvent(channel: channel));
   }
 
-  DebounceLater depthDebounceLater = DebounceLater();
-  DebounceLater tradeDebounceLater = DebounceLater();
-  DebounceLater klineDebounceLater = DebounceLater();
+  // DebounceLater depthDebounceLater = DebounceLater();
+  // DebounceLater tradeDebounceLater = DebounceLater();
+  // DebounceLater klineDebounceLater = DebounceLater();
 
   void _initListenChannel() {
     if (_socketBloc == null) return;
@@ -1324,29 +1324,29 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         // _amount24HourController.add(_amount24HourRefresh);
       } else if (state is ChannelKLinePeriodState) {
         //蜡烛
-        klineDebounceLater.debounceInterval((){
-          if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
-            _unSubPeriodChannel(period: state.channel.split(".").last);
-            //print("[WS] 取消不是当前选中的channel:${state.channel}");
-          }
-          _dealPeriodData(state.response, isReplace: false);
-        }, 500);
+        // klineDebounceLater.debounceInterval((){
+        if (!(state.channel?.endsWith(_periodParameter.value) ?? true)) {
+          _unSubPeriodChannel(period: state.channel.split(".").last);
+          //print("[WS] 取消不是当前选中的channel:${state.channel}");
+        }
+        _dealPeriodData(state.response, isReplace: false);
+        // }, 500);
 
       } else if (state is ChannelExchangeDepthState) {
         //订单深度
-        depthDebounceLater.debounceInterval(() {
-          _buyChartList.clear();
-          _sellChartList.clear();
-          dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
-          _setupDepthWidget();
-          _depthController.add(_depthRefresh);
-        }, 500);
+        // depthDebounceLater.debounceInterval(() {
+        _buyChartList.clear();
+        _sellChartList.clear();
+        dealDepthData(_buyChartList, _sellChartList, state.response, enable: false);
+        _setupDepthWidget();
+        _depthController.add(_depthRefresh);
+        // }, 500);
       } else if (state is ChannelTradeDetailState) {
         //成交
-        tradeDebounceLater.debounceInterval(() {
-          _dealTradeData(state.response, isReplace: false);
-          _tradeController.add(_tradeRefresh);
-        }, 500);
+        // tradeDebounceLater.debounceInterval(() {
+        _dealTradeData(state.response, isReplace: false);
+        _tradeController.add(_tradeRefresh);
+        // }, 500);
       }
     });
   }
