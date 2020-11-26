@@ -51,7 +51,7 @@ class SupportedTokens {
   );
 
   static const HYN_RP_ERC30 = const AssetToken(
-    name: "Red Package",
+    name: "Red Packet",
     decimals: 18,
     contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
     logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
@@ -59,7 +59,7 @@ class SupportedTokens {
   );
 
   static const HYN_RP_ERC30_ROPSTEN = const AssetToken(
-    name: "Red Package",
+    name: "Red Packet",
     decimals: 18,
     contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
     logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
