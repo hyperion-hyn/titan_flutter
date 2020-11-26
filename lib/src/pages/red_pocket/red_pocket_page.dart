@@ -357,7 +357,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterday = '--';
     var myHYNStaking = '--';
     var globalHYNStaking = '--';
-    var globalTotalTransmit = '--';
+    var globalTransmit = '--';
     var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
@@ -370,8 +370,8 @@ class _RedPocketPageState extends State<RedPocketPage> {
       globalHYNStaking = FormatUtil.stringFormatCoinNum(
         _rpStatistics?.global?.totalStakingHynStr,
       );
-      globalTotalTransmit = FormatUtil.stringFormatCoinNum(
-        _rpStatistics?.global?.totalTransmitStr,
+      globalTransmit = FormatUtil.stringFormatCoinNum(
+        _rpStatistics?.global?.transmitStr,
       );
     } catch (e) {}
 
@@ -451,7 +451,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     ),
                     Expanded(
                       child: _poolInfoColumn(
-                        '$globalTotalTransmit RP',
+                        '$globalTransmit RP',
                         '全网累计传导',
                       ),
                     ),
