@@ -9,48 +9,38 @@ import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class RPApi {
+  Future<ResponseEntity> postCreateRp({
+    BigInt amount,
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
 
-  Future<ResponseEntity> postCreateRp(
-      {
-        String amount = '0',
-        String password = '',
-        WalletVo activeWallet,
-      }) async {
-
-    var amountBig = ConvertTokenUnit.strToBigInt(amount);
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amountBig, password);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amount, password);
 
-    return RPHttpCore.instance.postEntity(
-        "/v1/rp/create",
-        EntityFactory<ResponseEntity>(
-                (json) => json),
+    return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "amount": amountBig,
+          "hyn_amount": amount,
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<ResponseEntity> postCollectRp(
-      {
-        String amount = '0',
-        String password = '',
-        WalletVo activeWallet,
-      }) async {
-
-    var amountBig = ConvertTokenUnit.strToBigInt(amount);
+  Future<ResponseEntity> postCollectRp({
+    String amount = '0',
+    String password = '',
+    WalletVo activeWallet,
+  }) async {
+    var total = 500 * int.tryParse(amount) ?? 0;
+    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, amountBig, password);
 
-    return RPHttpCore.instance.postEntity(
-        "/v1/rp/create",
-        EntityFactory<ResponseEntity>(
-                (json) => json),
+    return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "amount": amountBig,
+          "hyn_amount": amountBig,
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
@@ -104,7 +94,7 @@ class RPApi {
           return RPStakingInfo.fromJson(map);
         }).toList();
 
-       return data;
+        return data;
       }),
       params: {
         'page': page,

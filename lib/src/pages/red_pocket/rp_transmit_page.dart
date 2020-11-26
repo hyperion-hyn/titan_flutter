@@ -637,9 +637,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               return;
             }
 
-            var amount = _textEditController?.text ?? '';
+            var inputText = _textEditController?.text ?? '';
 
-            if (amount.isEmpty) {
+            if (inputText.isEmpty) {
               return;
             }
 
@@ -650,6 +650,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               return;
             }
 
+            var total = 500 * (int.tryParse(inputText) ?? 0);
+            var amount = ConvertTokenUnit.strToBigInt(total.toString());
             try {
               await _rpApi.postCreateRp(amount: amount, activeWallet: _activeWallet, password: password);
             } catch (e) {
