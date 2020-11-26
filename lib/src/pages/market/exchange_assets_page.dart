@@ -360,10 +360,11 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
   _exchangeAssetListView() {
     var _exchangeModel = ExchangeInheritedModel.of(context).exchangeModel;
     var _assetList = _exchangeModel.isActiveAccountAndHasAssets()
-        ? _exchangeModel.activeAccount.assetList
+        ? _exchangeModel?.activeAccount?.assetList
         : null;
     var _isShowBalances =
-        ExchangeInheritedModel.of(context).exchangeModel.isShowBalances;
+        ExchangeInheritedModel.of(context)?.exchangeModel?.isShowBalances ??
+            true;
     if (_assetList != null) {
       return Container(
         color: Colors.white,
@@ -371,13 +372,13 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
           children: <Widget>[
             AssetItem(
               'HYN',
-              _assetList.HYN,
+              _assetList?.HYN,
               _usdtToCurrency,
               _isShowBalances,
             ),
             AssetItem(
               'USDT',
-              _assetList.USDT,
+              _assetList?.USDT,
               _usdtToCurrency,
               _isShowBalances,
             ),
@@ -387,6 +388,12 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 //              ethToCurrency,
 //              _isShowBalances,
 //            ),
+//             AssetItem(
+//               'RP',
+//               _assetList?.RP,
+//               _usdtToCurrency,
+//               _isShowBalances,
+//             ),
           ],
         ),
       );

@@ -360,6 +360,8 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return 'HYN (ERC-20)(${S.of(context).mapping})';
     } else if (symbol == 'USDT') {
       return 'USDT';
+    } else if (symbol == SupportedTokens.HYN_RP_ERC30.symbol) {
+      return 'RP';
     }
   }
 
@@ -374,13 +376,14 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
         ),
         builder: (BuildContext context) {
           return Container(
-            height: _fromExchangeToWallet ? 170 : 170,
+            height: 170,
             child: Column(
               children: <Widget>[
                 //if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
                 _coinItem('HYN'),
-//                _coinItem('ETH'),
+                // _coinItem('ETH'),
                 _coinItem('USDT'),
+                //   _coinItem('RP'),
 
                 InkWell(
                   child: Padding(
