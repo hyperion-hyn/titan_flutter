@@ -1,6 +1,7 @@
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -293,7 +294,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                             text: '$ratio',
                             style: TextStyle(
                               fontSize: 10,
-                              color: HexColor("#999999"),
+                              color: HexColor("#333333"),
                               fontWeight: FontWeight.w500,
                               height: 1.5,
                             ),
@@ -696,7 +697,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                 var isOver = inputValue > rpTokenBalance;
                 print("[$runtimeType] isOver:$isOver, rpTokenBalance:$rpTokenBalance, inputValue:$inputValue, amount:$amount");
                 if (isOver) {
-                  return '余额不足购买份数的金额';
+                  return '钱包的HYN余额不足购买当前份数';
                 }
 
 
@@ -735,6 +736,11 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _showCollectAlertView() {
+
+    // Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
+    //
+    // return;
+
     UiUtil.showAlertView(
       context,
       title: '取回所有满期抵押',
