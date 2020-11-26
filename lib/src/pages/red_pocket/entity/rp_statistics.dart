@@ -113,6 +113,7 @@ class Rp_contract_info extends Object {
   int poolPercent;
 
   String get hynPerRpStr => FormatUtil.weiToEtherStr(hynPerRp) ?? '0';
+  String get baseRpStr => FormatUtil.weiToEtherStr(baseRp) ?? '0';
 
   Rp_contract_info(
     this.baseRp,

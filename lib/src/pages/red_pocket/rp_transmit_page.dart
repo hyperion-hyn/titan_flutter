@@ -199,6 +199,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
     String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.hynPerRpStr) ?? '--';
+    String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
@@ -312,7 +313,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         ),
                         children: [
                           TextSpan(
-                            text: '-',
+                            text: '$baseRp',
                             style: TextStyle(
                               fontSize: 10,
                               color: HexColor("#333333"),
@@ -603,7 +604,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           ),
                         ],
                       ),
-                      if (status >= 3 && status <= 7)
+                      if (status >= 3 && status <= 5)
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 6,
@@ -842,6 +843,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     try {
       await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
       Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
+      _loadDataBloc.add(LoadingEvent());
     } catch (e) {
       LogUtil.toastException(e);
     }
