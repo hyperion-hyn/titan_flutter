@@ -14,9 +14,12 @@ class RPApi {
     String password = '',
     WalletVo activeWallet,
   }) async {
-
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, password, stakingAmount: amount,);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(
+      HynContractMethod.STAKE,
+      password,
+      stakingAmount: amount,
+    );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
 
     return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
@@ -32,7 +35,6 @@ class RPApi {
     String password = '',
     WalletVo activeWallet,
   }) async {
-
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
@@ -99,6 +101,18 @@ class RPApi {
         'page': page,
         'size': size,
       },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  Future<ResponseEntity> getCanRetrieve(String address) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/can_retrieve/$address',
+      EntityFactory<ResponseEntity>((json) {
+        return json;
+      }),
       options: RequestOptions(
         contentType: "application/json",
       ),
