@@ -100,16 +100,14 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
               //   amount = 1;
               // }
 
-              var amount = model?.amount??0;
+              var amount = model?.amount ?? 0;
               var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
               var updatedAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000));
 
               return InkWell(
-                onTap: () {
-
-                },
+                onTap: () {},
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 12),
+                  padding: const EdgeInsets.only(top: 12, left: 12, right: 12,),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 16,

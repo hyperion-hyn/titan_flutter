@@ -33,7 +33,7 @@ class RpTransmitPage extends StatefulWidget {
   }
 }
 
-class _RpTransmitPageState extends State<RpTransmitPage> {
+class _RpTransmitPageState extends State<RpTransmitPage> with RouteAware {
   final RPApi _rpApi = RPApi();
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
@@ -54,15 +54,17 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
 
+    _loadDataBloc.add(LoadingEvent());
+
   }
 
+
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
+  void didPopNext() {
 
     _loadDataBloc.add(LoadingEvent());
   }
+
 
   @override
   void dispose() {
