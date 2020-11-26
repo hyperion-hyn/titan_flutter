@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -8,39 +9,49 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/red_pocket/red_pocket_exchange_records_page.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
+import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 
-class RedPocketExchangePage extends StatefulWidget {
-  RedPocketExchangePage();
+class RpTransmitPage extends StatefulWidget {
+  final RPStatistics rpStatistics;
+
+  RpTransmitPage(this.rpStatistics);
 
   @override
   State<StatefulWidget> createState() {
-    return _RedPocketExchangePageState();
+    return _RpTransmitPageState();
   }
 }
 
-class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
-  AtlasApi _atlasApi = AtlasApi();
+class _RpTransmitPageState extends State<RpTransmitPage> {
+  RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   WalletVo _activeWallet;
   var _textEditController = TextEditingController();
+  RPStatistics _rpStatistics;
+  var _address = "";
+  int _currentPage = 1;
+  List<RPStakingInfo> _dataList = [];
 
   @override
   void initState() {
     super.initState();
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
+    _rpStatistics = widget.rpStatistics;
+
+    _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    _address = _activeWallet?.wallet?.getEthAccount()?.address ?? "";
   }
 
   @override
@@ -58,12 +69,14 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
       ),
       body: LoadDataContainer(
           bloc: _loadDataBloc,
-          enablePullUp: false,
           onLoadData: () async {
-            _requestData();
+            getNetworkData();
           },
           onRefresh: () async {
-            _requestData();
+            getNetworkData();
+          },
+          onLoadingMore: () {
+            getMoreNetworkData();
           },
           child: CustomScrollView(
             slivers: <Widget>[
@@ -115,6 +128,10 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
   }
 
   _poolInfo() {
+    var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.global?.totalStakingHyn ?? '0');
+    var transmit = FormatUtil.weiToEtherStr(_rpStatistics?.global?.transmit ?? '0');
+    var totalTransmit = FormatUtil.weiToEtherStr(_rpStatistics?.global?.totalTransmit ?? '0');
+
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.only(
@@ -125,15 +142,27 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Expanded(
-              child: _columnWidget('10万 RP', '总可传导'),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                ),
+                child: _columnWidget('$totalTransmit RP', '总可传导'),
+              ),
+              // child: _columnWidget('10万 RP', '总可传导'),
             ),
-            _lineWidget(),
-            Expanded(
-              child: _columnWidget('100 HYN', '全网抵押'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: _lineWidget(),
             ),
-            _lineWidget(),
             Expanded(
-              child: _columnWidget('20 RP', '全网累计传导'),
+              child: _columnWidget('$totalStakingHyn HYN', '全网抵押'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: _lineWidget(),
+            ),
+            Expanded(
+              child: _columnWidget('$transmit RP', '全网累计传导'),
             ),
             Spacer(),
           ],
@@ -143,11 +172,15 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
   }
 
   _myRPInfo() {
-    // var level = _rpInfo?.level ?? '--';
-    // var rpBalance = _rpInfo?.rpBalance ?? '--';
-    // var rpToday = _rpInfo?.rpToday ?? '--';
-    // var rpYesterday = _rpInfo?.rpYesterday ?? '--';
-    // var rpMissed = _rpInfo?.rpMissed ?? '--';
+    var totalAmount = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalAmount ?? '0');
+    var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalStakingHyn ?? '0');
+    var totalRp = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalRp ?? '0');
+    var yesterday = FormatUtil.weiToEtherStr(_rpStatistics?.self?.yesterday ?? '0');
+
+    var hynPerRp = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+    var ratio = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.ratio ?? '0');
+    var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
+    var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -189,7 +222,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                '10份',
+                                '$totalAmount份',
                                 style: TextStyle(
                                   color: DefaultColors.color333,
                                   fontSize: 18,
@@ -197,7 +230,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                                 ),
                               ),
                               Text(
-                                '（500000 HYN）',
+                                '（$totalStakingHyn HYN）',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: DefaultColors.color999,
@@ -210,10 +243,15 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                       ),
                     ),
                     Expanded(
-                      child: _columnWidget('20 RP', '我累计获得'),
+                      flex: 2,
+                      child: _columnWidget('$totalRp RP', '我累计获得'),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 8, right: 10,),
+                      padding: const EdgeInsets.only(
+                        bottom: 8,
+                        right: 10,
+                        left: 10,
+                      ),
                       child: _lineWidget(),
                     ),
                     InkWell(
@@ -221,29 +259,25 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RedPocketExchangeRecordsPage(),
+                            builder: (context) => RpReleaseRecordsPage(),
                           ),
                         );
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        child: Row(
-                          children: [
-                            _columnWidget('100 RP', '我昨日获得'),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 15,
-                              color: DefaultColors.color999,
-                            )
-                          ],
-                        ),
+                      child: Expanded(
+                        flex: 1,
+                        child: _columnWidget('$yesterday RP', '我昨日获得'),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                      ),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 15,
+                        color: DefaultColors.color999,
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -262,7 +296,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         text: TextSpan(
-                          text: '当前每份（500 HYN）总共可传导出 ',
+                          text: '当前每份（$hynPerRp HYN）总共可传导出 ',
                           style: TextStyle(
                             fontSize: 10,
                             color: HexColor("#999999"),
@@ -271,7 +305,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                           ),
                           children: [
                             TextSpan(
-                              text: '0.95',
+                              text: '$ratio',
                               style: TextStyle(
                                 fontSize: 10,
                                 color: HexColor("#999999"),
@@ -280,7 +314,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                               ),
                             ),
                             TextSpan(
-                              text: ' RP，分15天释放。90天后可取回已抵押的HYN。',
+                              text: ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
                               style: TextStyle(
                                 fontSize: 10,
                                 color: HexColor("#999999"),
@@ -382,7 +416,10 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
       (context, index) {
         HexColor stateColor = HexColor('#999999');
         String stateDesc = '运行中';
-        switch (index) {
+        var model = _dataList[index];
+
+        var status = model?.status;
+        switch (status) {
           case 0:
             stateColor = HexColor('#FFC500');
             stateDesc = '抵押确认中...';
@@ -403,6 +440,9 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
             stateDesc = '已提取';
             break;
         }
+
+        var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount?? '0');
+
         return Padding(
           padding: const EdgeInsets.only(
             top: 12,
@@ -445,7 +485,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                                 right: 6,
                               ),
                               child: Text(
-                                '2 份',
+                                '$hynAmount 份',
                                 style: TextStyle(
                                   color: HexColor("#333333"),
                                   fontSize: 14,
@@ -454,7 +494,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                               ),
                             ),
                             Text(
-                              '共 1000 HYN',
+                              '共 $hynAmount HYN',
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
@@ -467,7 +507,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                           height: 6,
                         ),
                         Text(
-                          '抵押ID：3',
+                          '抵押ID：${model?.id??0}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
@@ -494,8 +534,8 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                           height: 6,
                         ),
                         Text(
-                          '2020/12/12 21:21:21',
-                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          '${model?.createdAt??'--'}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                           style: TextStyle(
                             fontSize: 12,
                             color: HexColor('#999999'),
@@ -515,7 +555,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Text(
-                          '2020/12/12 21:21:21可提回',
+                          '${model?.updatedAt??'--'}可提回',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
@@ -531,15 +571,43 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           ),
         );
       },
-      childCount: 4,
+      childCount: _dataList?.length ?? 0,
     ));
   }
 
-  _requestData() async {
+  void getNetworkData() async {
     try {
-      _loadDataBloc.add(RefreshSuccessEvent());
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+
+      if (netData?.isNotEmpty ?? false) {
+        _dataList = netData;
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+      } else {
+        _loadDataBloc.add(LoadEmptyEvent());
+      }
     } catch (e) {
-      _loadDataBloc.add(RefreshFailEvent());
+      _loadDataBloc.add(LoadFailEvent());
+    }
+  }
+
+  void getMoreNetworkData() async {
+    try {
+      _currentPage = _currentPage + 1;
+      var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
+
+      if (netData?.isNotEmpty ?? false) {
+        _dataList = netData;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+      setState(() {});
+    } catch (e) {
+      _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
 
@@ -562,6 +630,19 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           S.of(context).confirm,
           () async {
             Navigator.pop(context, true);
+
+            var amount = _textEditController?.text??'';
+
+            if (amount.isEmpty) {
+              return;
+            }
+
+            var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+            if (password == null) {
+              return;
+            }
+
+            await _rpApi.postCreateRp(amount: amount, activeWallet: _activeWallet, password: password);
           },
           width: 200,
           height: 38,
@@ -569,7 +650,7 @@ class _RedPocketExchangePageState extends State<RedPocketExchangePage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      detail: '注：你的HYN抵押将锁定90天，满期后可自行取回',
+      detail: '注：你的HYN抵押将锁定${_rpStatistics?.rpContractInfo?.stakingDay ?? 0}天，满期后可自行取回',
       contentItem: Material(
         child: Container(
           color: Colors.white,
