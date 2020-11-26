@@ -92,12 +92,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    var tempTransList = await getEthTransferList();
-    if (tempTransList.length > 0) {
-      await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-    }
+    if(!HYNApi.isHynErc30ContractAddress(widget.coinVo.contractAddress)){
+      var tempTransList = await getEthTransferList();
+      if (tempTransList.length > 0) {
+        await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
+      }
 
-    getWhiteList();
+      getWhiteList();
+    }
   }
 
   List<String> whiteList = [];
@@ -719,7 +721,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
 
     List<TransactionDetailVo> transferList = [];
-    if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       retList.addAll(transferList);
       return retList;
