@@ -145,7 +145,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var imgPath = _activeWallet != null
+    var avatarPath = _activeWallet != null
         ? 'res/drawable/ic_map3_node_default_icon.png'
         : 'res/drawable/img_avatar_default.png';
 
@@ -210,7 +210,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(60.0),
                       child: Image.asset(
-                        imgPath,
+                        avatarPath,
                         width: 42,
                         height: 42,
                         fit: BoxFit.cover,
@@ -416,7 +416,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                       child: _inkwellColumn(
                         '$myHYNStaking HYN',
                         '我的抵押',
-                        onTap: _pushExchangeAction,
+                        onTap: _navToRPPool,
                       ),
                     ),
                     Expanded(
@@ -424,7 +424,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                       child: _inkwellColumn(
                         '$rpYesterday RP',
                         '昨日获得',
-                        onTap: _pushRecordAction,
+                        onTap: _navToRPReleaseRecord,
                       ),
                     ),
                   ],
@@ -458,7 +458,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: ClickOvalButton(
                     S.of(context).check,
-                    _pushExchangeAction,
+                    _navToRPPool,
                     width: 160,
                     height: 32,
                     fontSize: 14,
@@ -680,7 +680,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   ///Actions
-  _pushExchangeAction() {
+  _navToRPPool() {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -689,7 +689,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
   }
 
-  _pushRecordAction() {
+  _navToRPReleaseRecord() {
     Navigator.push(
       context,
       MaterialPageRoute(

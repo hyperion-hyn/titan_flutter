@@ -398,8 +398,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
                       )
                     : WalletInheritedModel.of(context)
                                 .activatedQuoteVoAndSign('USDT')
-                                .sign
-                                .quote ==
+                                ?.sign
+                                ?.quote ==
                             'CNY'
                         ? Image.asset(
                             'res/drawable/ic_exchange_account_cny.png',
@@ -472,8 +472,8 @@ class _ExchangePageState extends BaseState<ExchangePage>
         .activatedQuoteVoAndSign('USDT')
         ?.sign
         ?.quote;
-    if (ExchangeInheritedModel.of(context).exchangeModel.activeAccount !=
-        null) {
+    if (ExchangeInheritedModel.of(context).exchangeModel?.hasActiveAccount() ??
+        false) {
       return Text.rich(
         TextSpan(children: [
           TextSpan(
