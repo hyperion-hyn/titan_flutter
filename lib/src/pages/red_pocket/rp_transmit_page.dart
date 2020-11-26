@@ -464,8 +464,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
 
-              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
-              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime??'0', isSecond: true);
+              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime ?? '0', isSecond: true);
 
               return Padding(
                 padding: const EdgeInsets.only(
@@ -732,10 +732,36 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     );
   }
 
-  _showCollectAlertView() {
-    // todo:检查是否有提取的
-    // Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
-    // return;
+  _showCollectAlertView() async {
+    int count = 0;
+    String hynSum = '0';
+
+    try {
+      var response = await _rpApi.getCanRetrieve(_address);
+      print("[$runtimeType] getCanRetrieve, response:$response");
+
+      if (response.data != null) {
+        var json = response.data as Map<String, dynamic>;
+
+        if (json.keys.contains('count')) {
+          count = json['count'] as int;
+        }
+
+        if (json.keys.contains('hyn_sum')) {
+          hynSum = json['hyn_sum'];
+          hynSum = FormatUtil.weiToEtherStr(hynSum ?? '0');
+        }
+      }
+    } catch (e) {
+      print(e);
+      return;
+    }
+    print("[$runtimeType] count:$count, hynSum:$hynSum");
+
+    if (count <= 0 || hynSum == '0') {
+      Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
+      return;
+    }
 
     UiUtil.showAlertView(
       context,
@@ -765,7 +791,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
           fontWeight: FontWeight.normal,
         ),
       ],
-      content: '当前满期HYN有2笔，总共 2000 HYN，你将发起提回抵押操作，确定继续吗？',
+      content: '当前满期HYN有$count}笔，总共 $hynSum HYN，你将发起提回抵押操作，确定继续吗？',
     );
   }
 
@@ -779,7 +805,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
     try {
       await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
-      Fluttertoast.showToast(msg: '取回成功，请查看钱包余额！');
+      Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
     } catch (e) {
       LogUtil.toastException(e);
     }

@@ -39,8 +39,7 @@ class ExchangeTransferPage extends StatefulWidget {
 class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
   String _selectedCoinSymbol = 'HYN';
   TextEditingController _amountController = TextEditingController();
-
-  final _fromKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool _fromExchangeToWallet = false;
   ExchangeApi _exchangeApi = ExchangeApi();
   WalletVo activatedWallet;
@@ -296,10 +295,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                 onTap: () {
                   setState(() {
                     _fromExchangeToWallet = !_fromExchangeToWallet;
-                    if (_fromExchangeToWallet &&
-                        _selectedCoinSymbol == 'HYN ERC20') {
-                      _selectedCoinSymbol = 'HYN';
-                    }
                   });
                 },
               )
@@ -327,7 +322,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           child: Row(
             children: <Widget>[
               Text(
-                _getCoinNameBySymbol(_selectedCoinSymbol),
+                _getTokenNameBySymbol(_selectedCoinSymbol),
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
@@ -353,15 +348,15 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
     );
   }
 
-  _getCoinNameBySymbol(String symbol) {
+  _getTokenNameBySymbol(String symbol) {
     if (symbol == SupportedTokens.HYN_Atlas.symbol) {
       return 'HYN';
-    } else if (symbol == SupportedTokens.HYN_ERC20.symbol) {
-      return 'HYN (ERC-20)(${S.of(context).mapping})';
-    } else if (symbol == 'USDT') {
+    } else if (symbol == SupportedTokens.USDT_ERC20.symbol) {
       return 'USDT';
     } else if (symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
       return 'RP';
+    } else {
+      return '';
     }
   }
 
@@ -379,7 +374,6 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             height: 170,
             child: Column(
               children: <Widget>[
-                //if (!_fromExchangeToWallet) _coinItem('HYN ERC20'),
                 _coinItem('HYN'),
                 // _coinItem('ETH'),
                 _coinItem('USDT'),
@@ -431,7 +425,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           onPressed: () async {
             debounce(() {
               FocusScope.of(context).requestFocus(FocusNode());
-              if (_fromKey.currentState.validate()) {
+              if (_formKey.currentState.validate()) {
                 _transfer();
               }
             }, 200)();
@@ -455,7 +449,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
             padding: const EdgeInsets.all(16.0),
             child: Center(
               child: Text(
-                _getCoinNameBySymbol(symbol),
+                _getTokenNameBySymbol(symbol),
                 style: TextStyle(
                     color: _selectedCoinSymbol == symbol
                         ? Theme.of(context).primaryColor
@@ -549,7 +543,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
           children: <Widget>[
             Expanded(
               child: Form(
-                key: _fromKey,
+                key: _formKey,
                 child: TextFormField(
                   controller: _amountController,
                   validator: (value) {
@@ -582,7 +576,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                     return null;
                   },
                   onChanged: (data) {
-                    _fromKey.currentState.validate();
+                    _formKey.currentState.validate();
                   },
                   decoration: InputDecoration(
                       border: UnderlineInputBorder(
@@ -635,7 +629,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
                                     affinity: TextAffinity.downstream,
                                     offset: _amountController.text.length,
                                   ));
-                                  _fromKey.currentState.validate();
+                                  _formKey.currentState.validate();
                                   setState(() {});
                                 },
                               )
