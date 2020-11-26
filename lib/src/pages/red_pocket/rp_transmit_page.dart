@@ -34,15 +34,17 @@ class RpTransmitPage extends StatefulWidget {
 }
 
 class _RpTransmitPageState extends State<RpTransmitPage> {
-  RPApi _rpApi = RPApi();
-  LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final RPApi _rpApi = RPApi();
+  final _formKey = GlobalKey<FormState>();
+  final LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final TextEditingController _textEditController = TextEditingController();
+
+  String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
   WalletVo _activeWallet;
-  var _textEditController = TextEditingController();
   RPStatistics _rpStatistics;
-  var _address = "";
   int _currentPage = 1;
   List<RPStakingInfo> _dataList = [];
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -51,7 +53,6 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     _rpStatistics = widget.rpStatistics;
 
     _activeWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
-    _address = _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
     _loadDataBloc.add(LoadingEvent());
   }
@@ -81,7 +82,6 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       ),
     );
   }
-
 
   Widget _columnWidget(String amount, String title) {
     return Column(
@@ -581,6 +581,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     try {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
+      _rpStatistics = await _rpApi.getRPStatistics(_address);
+
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
         if (mounted) {
@@ -607,12 +609,10 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
-      setState(() {});
     } catch (e) {
       _loadDataBloc.add(LoadMoreFailEvent());
     }
   }
-
 
   _showExchangeAlertView() {
     var border = OutlineInputBorder(
@@ -631,34 +631,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
-          () async {
-
-            var valid = _formKey.currentState.validate();
-            if (!valid) {
-              return;
-            }
-
-            var inputText = _textEditController?.text ?? '';
-
-            if (inputText.isEmpty) {
-              return;
-            }
-
-            Navigator.pop(context, true);
-
-            var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
-            if (password == null) {
-              return;
-            }
-
-            var total = 500 * (int.tryParse(inputText) ?? 0);
-            var amount = ConvertTokenUnit.strToBigInt(total.toString());
-            try {
-              await _rpApi.postCreateRp(amount: amount, activeWallet: _activeWallet, password: password);
-            } catch (e) {
-              LogUtil.toastException(e);
-            }
-          },
+          _confirmAction,
           width: 200,
           height: 38,
           fontSize: 16,
@@ -681,8 +654,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               controller: _textEditController,
               keyboardType: TextInputType.numberWithOptions(decimal: false),
               validator: (value) {
-
-                if (value?.isEmpty??true) {
+                if (value?.isEmpty ?? true) {
                   return '请输入抵押份数';
                 }
 
@@ -690,16 +662,16 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                   SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol,
                 );
                 var rpTokenBalance = Decimal.parse(rpToken.balance.toString());
-                var amount = int.tryParse(value)??0;
+                var amount = int.tryParse(value) ?? 0;
                 var total = 500 * amount;
                 var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
                 var inputValue = Decimal.parse(amountBig.toString());
                 var isOver = inputValue > rpTokenBalance;
-                print("[$runtimeType] isOver:$isOver, rpTokenBalance:$rpTokenBalance, inputValue:$inputValue, amount:$amount");
+                print(
+                    "[$runtimeType] isOver:$isOver, rpTokenBalance:$rpTokenBalance, inputValue:$inputValue, amount:$amount");
                 if (isOver) {
                   return '钱包的HYN余额不足购买当前份数';
                 }
-
 
                 return null;
               },
@@ -726,7 +698,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               ),
               style: TextStyle(fontSize: 13),
               onSaved: (value) {
-                print("[object]  --> value:$value");
+                print("[$runtimeType] textField, inputValue:$value");
               },
             ),
           ),
@@ -736,7 +708,6 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _showCollectAlertView() {
-
     // Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
     //
     // return;
@@ -773,5 +744,33 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       ],
       content: '当前满期HYN有2笔，总共 2000 HYN，你将发起提回抵押操作，确定继续吗？',
     );
+  }
+
+  void _confirmAction() async {
+    var valid = _formKey.currentState.validate();
+    if (!valid) {
+      return;
+    }
+
+    var inputText = _textEditController?.text ?? '';
+
+    if (inputText.isEmpty) {
+      return;
+    }
+
+    Navigator.pop(context, true);
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    if (password == null) {
+      return;
+    }
+
+    var total = 500 * (int.tryParse(inputText) ?? 0);
+    var amount = ConvertTokenUnit.strToBigInt(total.toString());
+    try {
+      await _rpApi.postCreateRp(amount: amount, activeWallet: _activeWallet, password: password);
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
   }
 }
