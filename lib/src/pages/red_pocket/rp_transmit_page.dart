@@ -608,7 +608,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     try {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
-      // _rpStatistics = await _rpApi.getRPStatistics(_address);
+      _rpStatistics = await _rpApi.getRPStatistics(_address);
 
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
