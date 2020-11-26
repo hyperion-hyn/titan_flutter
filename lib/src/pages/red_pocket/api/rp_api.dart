@@ -9,7 +9,7 @@ import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class RPApi {
-  Future<ResponseEntity> postCreateRp({
+  Future<ResponseEntity> postStakingRp({
     BigInt amount,
     String password = '',
     WalletVo activeWallet,
@@ -27,7 +27,7 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<ResponseEntity> postCollectRp({
+  Future<ResponseEntity> postRetrieveHyn({
     String amount = '0',
     String password = '',
     WalletVo activeWallet,
@@ -37,7 +37,7 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, amountBig, password);
 
-    return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
+    return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
           "hyn_amount": amountBig,
@@ -82,16 +82,16 @@ class RPApi {
     );
   }
 
-  Future<List<RPStakingInfo>> getRPStakingInfoList(
+  Future<List<RpStakingInfo>> getRPStakingInfoList(
     String address, {
     int page = 1,
     int size = 20,
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/staking/$address',
-      EntityFactory<List<RPStakingInfo>>((json) {
+      EntityFactory<List<RpStakingInfo>>((json) {
         var data = (json['data'] as List).map((map) {
-          return RPStakingInfo.fromJson(map);
+          return RpStakingInfo.fromJson(map);
         }).toList();
 
         return data;
