@@ -392,14 +392,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myContract() {
-    var isEmpty = _dataList?.isEmpty??true;
+    var isEmpty = _dataList?.isEmpty ?? true;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: isEmpty?Colors.white:null,
+          color: isEmpty ? Colors.white : null,
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
-        margin: isEmpty?const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16):null,
+        margin: isEmpty ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16) : null,
         //color: Colors.white,
         child: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -653,7 +653,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
-          _confirmAction,
+          _stakingAction,
           width: 200,
           height: 38,
           fontSize: 16,
@@ -730,8 +730,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _showCollectAlertView() {
+    // todo:检查是否有提取的
     // Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
-    //
     // return;
 
     UiUtil.showAlertView(
@@ -755,9 +755,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
         ),
         ClickOvalButton(
           S.of(context).confirm,
-          () {
-            Navigator.pop(context, true);
-          },
+          _retrieveAction,
           width: 115,
           height: 36,
           fontSize: 16,
@@ -768,7 +766,22 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     );
   }
 
-  void _confirmAction() async {
+  void _retrieveAction() async {
+    Navigator.pop(context, true);
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    if (password == null) {
+      return;
+    }
+
+    try {
+      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
+  }
+
+  void _stakingAction() async {
     var valid = _formKey.currentState.validate();
     if (!valid) {
       return;
