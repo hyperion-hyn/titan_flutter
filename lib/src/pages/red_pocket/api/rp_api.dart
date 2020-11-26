@@ -16,7 +16,7 @@ class RPApi {
   }) async {
 
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amount, password);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, password, stakingAmount: amount,);
 
     return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
         params: {
@@ -35,7 +35,7 @@ class RPApi {
     var total = 500 * int.tryParse(amount) ?? 0;
     var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, amountBig, password);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password, stakingAmount: amountBig);
 
     return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<ResponseEntity>((json) => json),
         params: {
