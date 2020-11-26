@@ -679,17 +679,17 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                   return '请输入抵押份数';
                 }
 
-                var rpToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-                  SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol,
+                var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+                  SupportedTokens.HYN_Atlas.symbol,
                 );
-                var rpTokenBalance = Decimal.parse(rpToken.balance.toString());
+                var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
                 var amount = int.tryParse(value) ?? 0;
                 var total = 500 * amount;
                 var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
                 var inputValue = Decimal.parse(amountBig.toString());
-                var isOver = inputValue > rpTokenBalance;
+                var isOver = inputValue > hynTokenBalance;
                 print(
-                    "[$runtimeType] isOver:$isOver, rpTokenBalance:$rpTokenBalance, inputValue:$inputValue, amount:$amount");
+                    "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
                 if (isOver) {
                   return '钱包的HYN余额不足购买当前份数';
                 }
