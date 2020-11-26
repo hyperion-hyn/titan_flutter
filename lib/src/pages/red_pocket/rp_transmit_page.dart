@@ -198,7 +198,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.hynPerRpStr) ?? '--';
+    String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRp) ?? '--';
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
