@@ -11,6 +11,7 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -590,5 +591,34 @@ class HYNApi {
         break;
     }
     return toAddressStr;
+  }
+
+  static bool isContractTokenAddress(String contractAddress) {
+    if (SupportedTokens.allContractTokens(WalletConfig.netType)
+        .map((token) => token.contractAddress.toLowerCase())
+        .toList()
+        .contains(contractAddress.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool isHynErc30ContractAddress(String contractAddress) {
+    contractAddress = contractAddress.toLowerCase();
+    if (contractAddress == WalletConfig.hynRPErc30Address.toLowerCase() ||
+        contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase()) {
+      return true;
+    }
+    return false;
+  }
+
+  static AssetToken getContractToken(String contractAddress) {
+    AssetToken assetToken;
+    SupportedTokens.allContractTokens(WalletConfig.netType).forEach((element) {
+      if (element.contractAddress.toLowerCase() == contractAddress.toLowerCase()) {
+        assetToken = element;
+      }
+    });
+    return assetToken;
   }
 }

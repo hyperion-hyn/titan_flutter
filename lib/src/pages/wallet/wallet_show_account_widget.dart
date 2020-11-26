@@ -479,11 +479,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
         (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
-      if (SupportedTokens.allContractTokens(WalletConfig.netType)
-          .map((token) => token.contractAddress.toLowerCase())
-          .toList()
-          .contains(transactionDetail.toAddress.toLowerCase())) {
-        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
+        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是对方钱包地址
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {

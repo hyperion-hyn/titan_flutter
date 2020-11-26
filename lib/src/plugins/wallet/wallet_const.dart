@@ -112,7 +112,7 @@ class WalletConfig {
     return '';
   }
 
-  static String getHynErc20Address() {
+  static String get getHynErc20Address {
     switch (netType) {
       case EthereumNetType.main:
         return SupportedTokens.HYN_ERC20.contractAddress;
@@ -122,6 +122,16 @@ class WalletConfig {
         return SupportedTokens.HYN_RINKEBY.contractAddress;
       case EthereumNetType.local:
         return SupportedTokens.HYN_LOCAL.contractAddress;
+    }
+    return '';
+  }
+
+  static String get hynRPErc30Address {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.HYN_RP_ERC30.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress;
     }
     return '';
   }

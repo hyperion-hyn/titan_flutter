@@ -901,11 +901,6 @@ class AtlasApi {
         type == MessageType.typeRenewMap3);
   }
 
-  static bool isAtlasContract(String contractAddress) {
-    return contractAddress == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress ||
-        contractAddress == SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress;
-  }
-
   static Future<bool> checkIsExit({String map3Address = ''}) async {
     try {
       var activatedWallet =
