@@ -130,8 +130,9 @@ class _RedPocketPageState extends State<RedPocketPage> {
     );
 
     try {
-      rpBalance = FormatUtil.coinBalanceHumanReadFormat(
+      rpBalance = FormatUtil.coinBalanceByDecimal(
         rpToken,
+        4,
       );
     } catch (e) {}
 
@@ -334,7 +335,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                         left: 4,
                       ),
                       child: Text(
-                        '总量90万RP',
+                        '总量88万RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -397,7 +398,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                         left: 4,
                       ),
                       child: Text(
-                        '总量10万RP',
+                        '总量12万RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
