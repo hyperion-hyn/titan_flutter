@@ -24,7 +24,10 @@ part 'rp_release_info.g.dart';
   @JsonKey(name: 'amount')
   int amount;
 
-  RpReleaseInfo(this.stakingId,this.stakingAt,this.hynAmount,this.rpAmount,this.updatedAt,this.amount,);
+  @JsonKey(name: 'tx_hash')
+  String txHash;
+
+  RpReleaseInfo(this.stakingId,this.stakingAt,this.hynAmount,this.rpAmount,this.updatedAt,this.amount, this.txHash,);
 
   factory RpReleaseInfo.fromJson(Map<String, dynamic> srcJson) => _$RpReleaseInfoFromJson(srcJson);
 

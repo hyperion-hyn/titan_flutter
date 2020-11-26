@@ -14,6 +14,7 @@ RpReleaseInfo _$RpReleaseInfoFromJson(Map<String, dynamic> json) {
     json['rp_amount'] as String,
     json['updated_at'] as int,
     json['amount'] as int,
+    json['tx_hash'] as String,
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$RpReleaseInfoToJson(RpReleaseInfo instance) =>
       'rp_amount': instance.rpAmount,
       'updated_at': instance.updatedAt,
       'amount': instance.amount,
+      'tx_hash': instance.txHash,
     };

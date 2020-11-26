@@ -89,116 +89,122 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
 
-              var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-              var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
-              var amountBig = (hynAmountBig / hynPerRpBig);
-              if (amountBig.isNaN || amountBig.isInfinite) {
-                amountBig = 0;
-              }
-              var amount = amountBig.toInt();
-              if (amount.isNaN) {
-                amount = 1;
-              }
+              // var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
+              // var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+              // var amountBig = (hynAmountBig / hynPerRpBig);
+              // if (amountBig.isNaN || amountBig.isInfinite) {
+              //   amountBig = 0;
+              // }
+              // var amount = amountBig.toInt();
+              // if (amount.isNaN) {
+              //   amount = 1;
+              // }
 
+              var amount = model?.amount??0;
               var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-              var stakingAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.stakingAt * 1000));
+              var updatedAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000));
 
-              return Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: HexColor('#FFFFFF'),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(6.0),
-                    ), //设置四周圆角 角度
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 10,
+              return InkWell(
+                onTap: () {
+
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: HexColor('#FFFFFF'),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(6.0),
+                      ), //设置四周圆角 角度
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: 10,
+                          ),
+                          child: Image.asset(
+                            "res/drawable/red_pocket_coins.png",
+                            width: 28,
+                            height: 28,
+                          ),
                         ),
-                        child: Image.asset(
-                          "res/drawable/red_pocket_coins.png",
-                          width: 28,
-                          height: 28,
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 6,
-                                ),
-                                child: Text(
-                                  '$amount 份',
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: 6,
+                                  ),
+                                  child: Text(
+                                    '$amount 份',
+                                    style: TextStyle(
+                                      color: HexColor("#333333"),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                '共 $hynAmount HYN',
-                                style: TextStyle(
-                                  color: HexColor("#999999"),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.normal,
+                                Text(
+                                  '共 $hynAmount HYN',
+                                  style: TextStyle(
+                                    color: HexColor("#999999"),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 6,
+                            ),
+                            Text(
+                              '抵押ID：${model?.stakingId ?? 0}',
+                              //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor('#333333'),
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          Text(
-                            '抵押ID：${model?.stakingId ?? 0}',
-                            //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#333333'),
+                              textAlign: TextAlign.left,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                      Spacer(),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            '+ $rpAmount RP',
-                            style: TextStyle(
-                              color: HexColor("#333333"),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                          ],
+                        ),
+                        Spacer(),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              '+ $rpAmount RP',
+                              style: TextStyle(
+                                color: HexColor("#333333"),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 6,
-                          ),
-                          Text(
-                            stakingAt,
-                            //'21:21:21',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: HexColor('#999999'),
+                            SizedBox(
+                              height: 6,
                             ),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ],
+                            Text(
+                              updatedAt,
+                              //'21:21:21',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: HexColor('#999999'),
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -211,6 +217,8 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
   }
 
   void getNetworkData() async {
+    _currentPage = 1;
+    
     try {
       var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
 
