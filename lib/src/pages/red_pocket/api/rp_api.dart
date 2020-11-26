@@ -57,17 +57,17 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<List<RPReleaseInfo>> getRPReleaseInfoList(
+  Future<List<RpReleaseInfo>> getRPReleaseInfoList(
     String address, {
     int page = 1,
     int size = 20,
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/release/$address',
-      EntityFactory<List<RPReleaseInfo>>(
+      EntityFactory<List<RpReleaseInfo>>(
         (json) {
           var data = (json['data'] as List).map((map) {
-            return RPReleaseInfo.fromJson(map);
+            return RpReleaseInfo.fromJson(map);
           }).toList();
 
           return data;

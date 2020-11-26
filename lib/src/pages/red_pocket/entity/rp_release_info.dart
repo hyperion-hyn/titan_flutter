@@ -1,35 +1,35 @@
-import 'package:json_annotation/json_annotation.dart';
-
+import 'package:json_annotation/json_annotation.dart'; 
+  
 part 'rp_release_info.g.dart';
 
 
 @JsonSerializable()
-class RPReleaseInfo extends Object {
-
-  @JsonKey(name: 'amount')
-  int amount;
-
-  @JsonKey(name: 'hyn_amount')
-  int hynAmount;
-
-  @JsonKey(name: 'rp_amount')
-  int rpAmount;
-
-  @JsonKey(name: 'staking_at')
-  String stakingAt;
+  class RpReleaseInfo extends Object {
 
   @JsonKey(name: 'staking_id')
   int stakingId;
 
+  @JsonKey(name: 'staking_at')
+  int stakingAt;
+
+  @JsonKey(name: 'hyn_amount')
+  String hynAmount;
+
+  @JsonKey(name: 'rp_amount')
+  String rpAmount;
+
   @JsonKey(name: 'updated_at')
-  String updatedAt;
+  int updatedAt;
 
-  RPReleaseInfo(this.amount,this.hynAmount,this.rpAmount,this.stakingAt,this.stakingId,this.updatedAt,);
+  @JsonKey(name: 'amount')
+  int amount;
 
-  factory RPReleaseInfo.fromJson(Map<String, dynamic> srcJson) => _$RPReleaseInfoFromJson(srcJson);
+  RpReleaseInfo(this.stakingId,this.stakingAt,this.hynAmount,this.rpAmount,this.updatedAt,this.amount,);
 
-  Map<String, dynamic> toJson() => _$RPReleaseInfoToJson(this);
+  factory RpReleaseInfo.fromJson(Map<String, dynamic> srcJson) => _$RpReleaseInfoFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$RpReleaseInfoToJson(this);
 
 }
 
-
+  

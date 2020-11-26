@@ -6,23 +6,23 @@ part of 'rp_release_info.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RPReleaseInfo _$RPReleaseInfoFromJson(Map<String, dynamic> json) {
-  return RPReleaseInfo(
-    json['amount'] as int,
-    json['hyn_amount'] as int,
-    json['rp_amount'] as int,
-    json['staking_at'] as String,
+RpReleaseInfo _$RpReleaseInfoFromJson(Map<String, dynamic> json) {
+  return RpReleaseInfo(
     json['staking_id'] as int,
-    json['updated_at'] as String,
+    json['staking_at'] as int,
+    json['hyn_amount'] as String,
+    json['rp_amount'] as String,
+    json['updated_at'] as int,
+    json['amount'] as int,
   );
 }
 
-Map<String, dynamic> _$RPReleaseInfoToJson(RPReleaseInfo instance) =>
+Map<String, dynamic> _$RpReleaseInfoToJson(RpReleaseInfo instance) =>
     <String, dynamic>{
-      'amount': instance.amount,
+      'staking_id': instance.stakingId,
+      'staking_at': instance.stakingAt,
       'hyn_amount': instance.hynAmount,
       'rp_amount': instance.rpAmount,
-      'staking_at': instance.stakingAt,
-      'staking_id': instance.stakingId,
       'updated_at': instance.updatedAt,
+      'amount': instance.amount,
     };

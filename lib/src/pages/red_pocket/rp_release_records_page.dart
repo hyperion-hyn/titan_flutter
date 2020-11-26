@@ -27,7 +27,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   int _currentPage = 1;
   var _address = "";
-  List<RPReleaseInfo> _dataList = [];
+  List<RpReleaseInfo> _dataList = [];
 
   @override
   void initState() {
