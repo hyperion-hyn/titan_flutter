@@ -134,7 +134,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               padding: const EdgeInsets.only(
                 left: 16,
               ),
-              child: _columnWidget('10万 RP', '总可传导'),
+              child: _columnWidget('12万 RP', '总可传导'),
               // child: _columnWidget('$totalTransmit RP', '总可传导'),
             ),
           ),
@@ -464,6 +464,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
 
+              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime??'0', isSecond: true);
+
               return Padding(
                 padding: const EdgeInsets.only(
                   top: 12,
@@ -555,7 +558,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                                 height: 6,
                               ),
                               Text(
-                                '${model?.stakingAt ?? '--'}',
+                                '${stakingAt ?? '--'}',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                                 style: TextStyle(
                                   fontSize: 12,
@@ -576,7 +579,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                '${model?.expectReleaseTime ?? '--'}可提回',
+                                '${expectReleaseTime ?? '--'}可提回',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                                 style: TextStyle(
                                   fontSize: 12,
