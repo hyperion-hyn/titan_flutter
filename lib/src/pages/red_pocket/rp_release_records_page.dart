@@ -13,7 +13,6 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 
 import 'entity/rp_release_info.dart';
 
-
 class RpReleaseRecordsPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -22,10 +21,10 @@ class RpReleaseRecordsPage extends StatefulWidget {
 }
 
 class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
-  LoadDataBloc loadDataBloc = LoadDataBloc();
+  final LoadDataBloc _loadDataBloc = LoadDataBloc();
+  final RPApi _rpApi = RPApi();
 
   int _currentPage = 1;
-  RPApi _rpApi = RPApi();
   var _address = "";
   List<RPReleaseInfo> _dataList = [];
 
@@ -39,48 +38,12 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   @override
   void onCreated() {
-    loadDataBloc.add(LoadingEvent());
-  }
-
-  void getNetworkData() async {
-    try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
-
-      if (netData?.isNotEmpty??false) {
-        _dataList = netData;
-        if (mounted) {
-          setState(() {
-            loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        loadDataBloc.add(LoadFailEvent());
-      }
-    } catch (e) {
-      loadDataBloc.add(LoadFailEvent());
-    }
-  }
-
-  void getMoreNetworkData() async {
-    try {
-      _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
-
-      if (netData?.isNotEmpty??false) {
-        _dataList = netData;
-        loadDataBloc.add(LoadingMoreSuccessEvent());
-      } else {
-        loadDataBloc.add(LoadMoreEmptyEvent());
-      }
-      setState(() {});
-    } catch (e) {
-      loadDataBloc.add(LoadMoreFailEvent());
-    }
+    _loadDataBloc.add(LoadingEvent());
   }
 
   @override
   void dispose() {
-    loadDataBloc.close();
+    _loadDataBloc.close();
     super.dispose();
   }
 
@@ -98,7 +61,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   _pageView() {
     return LoadDataContainer(
-      bloc: loadDataBloc,
+      bloc: _loadDataBloc,
       onLoadData: () async {
         getNetworkData();
       },
@@ -113,6 +76,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
           SliverList(
               delegate: SliverChildBuilderDelegate(
             (context, index) {
+              var model = _dataList[index];
               return Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Container(
@@ -149,7 +113,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                                   right: 6,
                                 ),
                                 child: Text(
-                                  '2 份',
+                                  '${model?.amount ?? 0} 份',
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
@@ -158,7 +122,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                                 ),
                               ),
                               Text(
-                                '共 1000 HYN',
+                                '共 ${model?.hynAmount ?? 0} HYN',
                                 style: TextStyle(
                                   color: HexColor("#999999"),
                                   fontSize: 12,
@@ -167,9 +131,11 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 6,),
+                          SizedBox(
+                            height: 6,
+                          ),
                           Text(
-                            '抵押ID：3',
+                            '抵押ID：${model?.stakingId ?? 0}',
                             //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                             style: TextStyle(
                               fontSize: 12,
@@ -185,16 +151,19 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            '+ 10RP',
+                            '+ ${model?.rpAmount ?? 0}RP',
                             style: TextStyle(
                               color: HexColor("#333333"),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 6,),
+                          SizedBox(
+                            height: 6,
+                          ),
                           Text(
-                            '21:21:21',
+                            model?.stakingAt ?? 0,
+                            //'21:21:21',
                             //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                             style: TextStyle(
                               fontSize: 12,
@@ -209,10 +178,45 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                 ),
               );
             },
-            childCount: _dataList?.length,
+            childCount: _dataList?.length ?? 0,
           ))
         ],
       ),
     );
+  }
+
+  void getNetworkData() async {
+    try {
+      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+
+      if (netData?.isNotEmpty ?? false) {
+        _dataList = netData;
+        if (mounted) {
+          setState(() {
+            _loadDataBloc.add(RefreshSuccessEvent());
+          });
+        }
+      } else {
+        _loadDataBloc.add(LoadEmptyEvent());
+      }
+    } catch (e) {
+      _loadDataBloc.add(LoadFailEvent());
+    }
+  }
+
+  void getMoreNetworkData() async {
+    try {
+      _currentPage = _currentPage + 1;
+      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+
+      if (netData?.isNotEmpty ?? false) {
+        _dataList = netData;
+        _loadDataBloc.add(LoadingMoreSuccessEvent());
+      } else {
+        _loadDataBloc.add(LoadMoreEmptyEvent());
+      }
+    } catch (e) {
+      _loadDataBloc.add(LoadMoreFailEvent());
+    }
   }
 }
