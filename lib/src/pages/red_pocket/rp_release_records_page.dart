@@ -10,6 +10,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/utils/format_util.dart';
 
 import 'entity/rp_release_info.dart';
 
@@ -77,6 +78,12 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
               delegate: SliverChildBuilderDelegate(
             (context, index) {
               var model = _dataList[index];
+
+              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
+              var amount = FormatUtil.weiToEtherStr(model?.amount ?? '0');
+              var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+              var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+
               return Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: Container(
@@ -113,7 +120,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                                   right: 6,
                                 ),
                                 child: Text(
-                                  '${model?.amount ?? 0} 份',
+                                  '$amount 份',
                                   style: TextStyle(
                                     color: HexColor("#333333"),
                                     fontSize: 14,
@@ -122,7 +129,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                                 ),
                               ),
                               Text(
-                                '共 ${model?.hynAmount ?? 0} HYN',
+                                '共 $hynAmount HYN',
                                 style: TextStyle(
                                   color: HexColor("#999999"),
                                   fontSize: 12,
@@ -151,7 +158,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            '+ ${model?.rpAmount ?? 0}RP',
+                            '+ $rpAmount RP',
                             style: TextStyle(
                               color: HexColor("#333333"),
                               fontSize: 14,
@@ -162,9 +169,8 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                             height: 6,
                           ),
                           Text(
-                            model?.stakingAt ?? 0,
+                            stakingAt,
                             //'21:21:21',
-                            //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                             style: TextStyle(
                               fontSize: 12,
                               color: HexColor('#999999'),

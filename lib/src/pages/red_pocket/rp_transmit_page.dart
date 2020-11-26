@@ -134,7 +134,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               padding: const EdgeInsets.only(
                 left: 16,
               ),
-              child: _columnWidget('10万 RP', '总可传导'),
+              child: _columnWidget('12万 RP', '总可传导'),
               // child: _columnWidget('$totalTransmit RP', '总可传导'),
             ),
           ),
@@ -392,14 +392,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myContract() {
-    var isEmpty = _dataList?.isEmpty??true;
+    var isEmpty = _dataList?.isEmpty ?? true;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: isEmpty?Colors.white:null,
+          color: isEmpty ? Colors.white : null,
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
-        margin: isEmpty?const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16):null,
+        margin: isEmpty ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16) : null,
         //color: Colors.white,
         child: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -463,6 +463,9 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               }
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+
+              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
+              var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectReleaseTime??'0', isSecond: true);
 
               return Padding(
                 padding: const EdgeInsets.only(
@@ -555,7 +558,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                                 height: 6,
                               ),
                               Text(
-                                '${model?.stakingAt ?? '--'}',
+                                '${stakingAt ?? '--'}',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                                 style: TextStyle(
                                   fontSize: 12,
@@ -576,7 +579,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                '${model?.expectReleaseTime ?? '--'}可提回',
+                                '${expectReleaseTime ?? '--'}可提回',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                                 style: TextStyle(
                                   fontSize: 12,
@@ -653,7 +656,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
       actions: [
         ClickOvalButton(
           S.of(context).confirm,
-          _confirmAction,
+          _stakingAction,
           width: 200,
           height: 38,
           fontSize: 16,
@@ -730,8 +733,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _showCollectAlertView() {
+    // todo:检查是否有提取的
     // Fluttertoast.showToast(msg: '当前没有到期的抵押合约！');
-    //
     // return;
 
     UiUtil.showAlertView(
@@ -755,9 +758,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
         ),
         ClickOvalButton(
           S.of(context).confirm,
-          () {
-            Navigator.pop(context, true);
-          },
+          _retrieveAction,
           width: 115,
           height: 36,
           fontSize: 16,
@@ -768,7 +769,23 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     );
   }
 
-  void _confirmAction() async {
+  void _retrieveAction() async {
+    Navigator.pop(context, true);
+
+    var password = await UiUtil.showWalletPasswordDialogV2(context, _activeWallet.wallet);
+    if (password == null) {
+      return;
+    }
+
+    try {
+      await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
+      Fluttertoast.showToast(msg: '取回成功，请查看钱包余额！');
+    } catch (e) {
+      LogUtil.toastException(e);
+    }
+  }
+
+  void _stakingAction() async {
     var valid = _formKey.currentState.validate();
     if (!valid) {
       return;

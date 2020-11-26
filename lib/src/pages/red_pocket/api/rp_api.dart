@@ -17,30 +17,29 @@ class RPApi {
 
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, password, stakingAmount: amount,);
+    print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
 
     return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "hyn_amount": amount,
+          "hyn_amount": amount.toString(),
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
   }
 
   Future<ResponseEntity> postRetrieveHyn({
-    String amount = '0',
     String password = '',
     WalletVo activeWallet,
   }) async {
-    var total = 500 * int.tryParse(amount) ?? 0;
-    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
+
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
-    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password, stakingAmount: amountBig);
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
+    print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
 
     return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "hyn_amount": amountBig,
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
