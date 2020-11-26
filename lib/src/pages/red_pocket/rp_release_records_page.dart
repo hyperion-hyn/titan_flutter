@@ -85,7 +85,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              print("[$runtimeType] _dataList.length:${_dataList.length}");
+              //print("[$runtimeType] _dataList.length:${_dataList.length}");
 
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
 
@@ -218,7 +218,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
 
   void getNetworkData() async {
     _currentPage = 1;
-    
+
     try {
       var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
 
