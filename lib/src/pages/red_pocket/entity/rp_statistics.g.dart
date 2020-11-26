@@ -17,7 +17,7 @@ RPStatistics _$RPStatisticsFromJson(Map<String, dynamic> json) {
     json['rp_contract_info'] == null
         ? null
         : Rp_contract_info.fromJson(
-            json['rp_contract_info'] as Map<String, dynamic>),
+        json['rp_contract_info'] as Map<String, dynamic>),
   );
 }
 
@@ -37,40 +37,44 @@ Global _$GlobalFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$GlobalToJson(Global instance) => <String, dynamic>{
-      'total_staking_hyn': instance.totalStakingHyn,
-      'transmit': instance.transmit,
-      'total_transmit': instance.totalTransmit,
-    };
+  'total_staking_hyn': instance.totalStakingHyn,
+  'transmit': instance.transmit,
+  'total_transmit': instance.totalTransmit,
+};
 
 Self _$SelfFromJson(Map<String, dynamic> json) {
   return Self(
     json['total_staking_hyn'] as String,
-    json['total_amount'] as String,
+    json['total_amount'] as int,
     json['total_rp'] as String,
     json['yesterday'] as String,
   );
 }
 
 Map<String, dynamic> _$SelfToJson(Self instance) => <String, dynamic>{
-      'total_staking_hyn': instance.totalStakingHyn,
-      'total_amount': instance.totalAmount,
-      'total_rp': instance.totalRp,
-      'yesterday': instance.yesterday,
-    };
+  'total_staking_hyn': instance.totalStakingHyn,
+  'total_amount': instance.totalAmount,
+  'total_rp': instance.totalRp,
+  'yesterday': instance.yesterday,
+};
 
 Rp_contract_info _$Rp_contract_infoFromJson(Map<String, dynamic> json) {
   return Rp_contract_info(
-    json['ratio'] as String,
+    json['base_rp'] as String,
     json['hyn_per_rp'] as String,
     json['release_day'] as int,
     json['staking_day'] as int,
+    json['drop_on_percent'] as int,
+    json['pool_percent'] as int,
   );
 }
 
 Map<String, dynamic> _$Rp_contract_infoToJson(Rp_contract_info instance) =>
     <String, dynamic>{
-      'ratio': instance.ratio,
+      'base_rp': instance.baseRp,
       'hyn_per_rp': instance.hynPerRp,
       'release_day': instance.releaseDay,
       'staking_day': instance.stakingDay,
+      'drop_on_percent': instance.dropOnPercent,
+      'pool_percent': instance.poolPercent,
     };

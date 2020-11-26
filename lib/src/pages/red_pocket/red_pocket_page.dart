@@ -278,6 +278,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
   }
 
   _airdropWidget() {
+    var airDropPercent = _rpStatistics?.rpContractInfo?.dropOnPercent ?? '--';
     return SliverToBoxAdapter(
       child: Padding(
         padding: _cardPadding(),
@@ -335,7 +336,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                         left: 4,
                       ),
                       child: Text(
-                        '总量88万RP',
+                        '总量$airDropPercent万RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -357,6 +358,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     var myHYNStaking = '--';
     var globalHYNStaking = '--';
     var globalTotalTransmit = '--';
+    var poolPercent = _rpStatistics?.rpContractInfo?.poolPercent ?? '--';
 
     try {
       rpYesterday = FormatUtil.stringFormatCoinNum(
@@ -398,7 +400,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
                         left: 4,
                       ),
                       child: Text(
-                        '总量12万RP',
+                        '总量$poolPercent万RP',
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
