@@ -20,8 +20,7 @@ class RPStatistics extends Object {
     this.rpContractInfo,
   );
 
-  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) =>
-      _$RPStatisticsFromJson(srcJson);
+  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RPStatisticsToJson(this);
 }
@@ -37,11 +36,11 @@ class Global extends Object {
   @JsonKey(name: 'total_transmit')
   String totalTransmit;
 
-  get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn);
+  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
-  get transmitStr => FormatUtil.weiToEtherStr(transmit);
+  String get transmitStr => FormatUtil.weiToEtherStr(transmit) ?? '0';
 
-  get totalTransmitStr => FormatUtil.weiToEtherStr(totalTransmit);
+  String get totalTransmitStr => FormatUtil.weiToEtherStr(totalTransmit) ?? '0';
 
   Global(
     this.totalStakingHyn,
@@ -49,8 +48,7 @@ class Global extends Object {
     this.totalTransmit,
   );
 
-  factory Global.fromJson(Map<String, dynamic> srcJson) =>
-      _$GlobalFromJson(srcJson);
+  factory Global.fromJson(Map<String, dynamic> srcJson) => _$GlobalFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$GlobalToJson(this);
 }
@@ -69,13 +67,13 @@ class Self extends Object {
   @JsonKey(name: 'yesterday')
   String yesterday;
 
-  get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn);
+  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
-  get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount);
+  String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '0';
 
-  get totalRpStr => FormatUtil.weiToEtherStr(totalRp);
+  String get totalRpStr => FormatUtil.weiToEtherStr(totalRp) ?? '0';
 
-  get yesterdayStr => FormatUtil.weiToEtherStr(yesterday);
+  String get yesterdayStr => FormatUtil.weiToEtherStr(yesterday) ?? '0';
 
   Self(
     this.totalStakingHyn,
@@ -84,8 +82,7 @@ class Self extends Object {
     this.yesterday,
   );
 
-  factory Self.fromJson(Map<String, dynamic> srcJson) =>
-      _$SelfFromJson(srcJson);
+  factory Self.fromJson(Map<String, dynamic> srcJson) => _$SelfFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SelfToJson(this);
 }
@@ -111,8 +108,7 @@ class Rp_contract_info extends Object {
     this.stakingDay,
   );
 
-  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) =>
-      _$Rp_contract_infoFromJson(srcJson);
+  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
 }
