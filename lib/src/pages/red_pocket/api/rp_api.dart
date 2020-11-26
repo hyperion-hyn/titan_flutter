@@ -22,7 +22,7 @@ class RPApi {
     return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
         params: {
           "address": address,
-          "hyn_amount": amount,
+          "hyn_amount": amount.toString(),
           "tx_hash": txHash,
         },
         options: RequestOptions(contentType: "application/json"));
