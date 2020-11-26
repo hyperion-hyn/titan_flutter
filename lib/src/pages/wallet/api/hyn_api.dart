@@ -103,7 +103,7 @@ class HYNApi {
     return txHash;
   }
 
-  static Future<String> sendTransferHYNErc30(
+  static Future<String> sendTransferHYNHrc30(
       String password, BigInt amount, String toAddress, localWallet.Wallet wallet, String contractAddress,
       {String gasPrice, int gasLimit}) async {
     if (gasPrice == null) {
@@ -112,7 +112,7 @@ class HYNApi {
     if (gasLimit == null) {
       gasLimit = 100000;
     }
-    final txHash = await wallet.sendHYNErc30Transaction(
+    final txHash = await wallet.sendHYNHrc30Transaction(
       contractAddress: contractAddress,
       password: password,
       gasPrice: BigInt.parse(gasPrice),
@@ -594,6 +594,9 @@ class HYNApi {
   }
 
   static bool isContractTokenAddress(String contractAddress) {
+    print("!!!2323${SupportedTokens.allContractTokens(WalletConfig.netType)
+        .map((token) => token.contractAddress.toLowerCase())
+        .toList()}   ${contractAddress.toLowerCase()}");
     if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
@@ -603,9 +606,9 @@ class HYNApi {
     return false;
   }
 
-  static bool isHynErc30ContractAddress(String contractAddress) {
+  static bool isHynHrc30ContractAddress(String contractAddress) {
     contractAddress = contractAddress?.toLowerCase()??'';
-    if (contractAddress == WalletConfig.hynRPErc30Address.toLowerCase() ||
+    if (contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase() ||
         contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase()) {
       return true;
     }

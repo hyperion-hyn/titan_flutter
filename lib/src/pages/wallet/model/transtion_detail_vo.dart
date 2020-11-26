@@ -202,7 +202,7 @@ class TransactionDetailVo {
     );
   }
 
-  factory TransactionDetailVo.fromHynErc30TransferHistory(
+  factory TransactionDetailVo.fromHynHrc30TransferHistory(
       HynTransferHistory hynTransferHistory,
       int transactionType,
       String symbol,

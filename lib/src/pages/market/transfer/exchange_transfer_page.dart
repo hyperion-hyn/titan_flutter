@@ -353,7 +353,7 @@ class _ExchangeTransferPageState extends BaseState<ExchangeTransferPage> {
       return 'HYN';
     } else if (symbol == SupportedTokens.USDT_ERC20.symbol) {
       return 'USDT';
-    } else if (symbol == SupportedTokens.HYN_RP_ERC30.symbol) {
+    } else if (symbol == SupportedTokens.HYN_RP_HRC30.symbol) {
       return 'RP';
     } else {
       return '';

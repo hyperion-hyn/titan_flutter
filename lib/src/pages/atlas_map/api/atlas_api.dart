@@ -64,7 +64,7 @@ class AtlasApi {
     }
   }
 
-  Future<List<InternalTransactions>> queryHYNErc30History(
+  Future<List<InternalTransactions>> queryHYNHrc30History(
       String address, int page, String contractAddress) async {
     Map result = await AtlasHttpCore.instance.post(
       "v1/wallet/account_internal_txs",

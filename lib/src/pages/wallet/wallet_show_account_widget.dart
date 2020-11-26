@@ -92,7 +92,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    if(!HYNApi.isHynErc30ContractAddress(widget.coinVo.contractAddress)){
+    if(!HYNApi.isHynHrc30ContractAddress(widget.coinVo.contractAddress)){
       var tempTransList = await getEthTransferList();
       if (tempTransList.length > 0) {
         await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
@@ -481,8 +481,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
         (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
-      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)) {
-        //Hyn、Eth的toAddress是合约地址，erc20或erc30的toAddress是对方钱包地址
+      print("!!!!111 ${transactionDetail.toAddress}");
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)
+      || HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
+        //Hyn、Eth的toAddress是合约地址，erc20或hrc30的toAddress是对方钱包地址
         title = S.of(context).contract_call;
         iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {

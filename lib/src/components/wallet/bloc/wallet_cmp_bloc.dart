@@ -277,7 +277,7 @@ class WalletCmpBloc extends Bloc<WalletCmpEvent, WalletCmpState> {
           logo: asset.logo,
           balance: BigInt.from(0),
         );
-        if (contractCoin.symbol == SupportedTokens.HYN_RP_ERC30_ROPSTEN.symbol) {
+        if (contractCoin.symbol == SupportedTokens.HYN_RP_HRC30_ROPSTEN.symbol) {
           hynRPContractCoin = contractCoin;
         } else if (contractCoin.symbol == SupportedTokens.HYN_ERC20.symbol) {
           hynContractCoin = contractCoin;
