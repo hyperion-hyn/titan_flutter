@@ -9,6 +9,32 @@ const HYN_STAKING_ABI = '''
     "anonymous": false,
     "inputs": [
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256"
+      }
+    ],
+    "name": "LockedDurationChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MinStakingAmountChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -115,7 +141,33 @@ const HYN_STAKING_ABI = '''
   },
   {
     "inputs": [],
+    "name": "DEFAULT_MIN_STAKING_AMOUNT",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "lockedDuration",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "minStakingAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -190,6 +242,19 @@ const HYN_STAKING_ABI = '''
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "setMinStakingAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "duration",
         "type": "uint256"
       }
@@ -201,9 +266,47 @@ const HYN_STAKING_ABI = '''
   },
   {
     "inputs": [],
+    "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "resume",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "selfDestroy",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawableStakingOf",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "withdrawableSize",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -227,7 +330,7 @@ const HYN_STAKING_ABI = '''
         "type": "address"
       }
     ],
-    "name": "stakingOf",
+    "name": "totalStakingOf",
     "outputs": [
       {
         "internalType": "uint256",
@@ -256,7 +359,7 @@ const HYN_STAKING_ABI = '''
         "type": "uint256"
       }
     ],
-    "name": "stakingShareOf",
+    "name": "stakingDetailsOf",
     "outputs": [
       {
         "internalType": "uint256",
@@ -276,25 +379,6 @@ const HYN_STAKING_ABI = '''
       {
         "internalType": "uint256",
         "name": "releaseAt",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawableStakingOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "withdrawableSize",
         "type": "uint256"
       }
     ],
