@@ -159,7 +159,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myRPInfo() {
-    String totalAmount = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalAmountStr) ?? '--';
+    int totalAmount = _rpStatistics?.self?.totalAmount ?? 0;
     String totalStakingHyn = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalStakingHynStr) ?? '--';
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
@@ -242,7 +242,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RpReleaseRecordsPage(),
+                          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
                         ),
                       );
                     },
@@ -460,6 +460,11 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
               var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
               var amountBig = (hynAmountBig / hynPerRpBig);
+
+              if (amountBig.isNaN || amountBig.isInfinite) {
+                amountBig = 0;
+              }
+
               var amount = amountBig.toInt();
               if (amount.isNaN) {
                 amount = 1;

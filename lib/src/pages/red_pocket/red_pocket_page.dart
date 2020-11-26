@@ -696,7 +696,7 @@ class _RedPocketPageState extends State<RedPocketPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => RpReleaseRecordsPage(),
+        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
       ),
     );
   }

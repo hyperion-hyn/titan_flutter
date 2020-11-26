@@ -10,11 +10,18 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'entity/rp_release_info.dart';
+import 'entity/rp_statistics.dart';
 
 class RpReleaseRecordsPage extends StatefulWidget {
+
+  final RPStatistics rpStatistics;
+
+  RpReleaseRecordsPage(this.rpStatistics);
+
   @override
   State<StatefulWidget> createState() {
     return _RpReleaseRecordsState();
@@ -79,10 +86,24 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt??'0', isSecond: true);
-              var amount = FormatUtil.weiToEtherStr(model?.amount ?? '0');
+
+
+
               var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+              var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
+              var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
+              var amountBig = (hynAmountBig / hynPerRpBig);
+              if (amountBig.isNaN || amountBig.isInfinite) {
+                amountBig = 0;
+              }
+
+              var amount = amountBig.toInt();
+              if (amount.isNaN) {
+                amount = 1;
+              }
+
               var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+              var stakingAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.stakingAt * 1000));
 
               return Padding(
                 padding: const EdgeInsets.only(top: 12),
