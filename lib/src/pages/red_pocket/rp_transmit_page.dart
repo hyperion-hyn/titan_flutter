@@ -44,7 +44,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   WalletVo _activeWallet;
   RPStatistics _rpStatistics;
   int _currentPage = 1;
-  List<RPStakingInfo> _dataList = [];
+  List<RpStakingInfo> _dataList = [];
 
   @override
   void initState() {
@@ -392,13 +392,14 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
   }
 
   _myContract() {
+    var isEmpty = _dataList?.isEmpty??true;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isEmpty?Colors.white:null,
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
-        margin: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16),
+        margin: isEmpty?const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16):null,
         //color: Colors.white,
         child: LoadDataContainer(
           bloc: _loadDataBloc,
@@ -417,24 +418,45 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
               String stateDesc = '运行中';
               var model = _dataList[index];
 
+              //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
               var status = model?.status;
               switch (status) {
-                case 0:
+                case 1:
                   stateColor = HexColor('#FFC500');
                   stateDesc = '抵押确认中...';
                   break;
 
-                case 1:
+                case 2:
+                  stateColor = HexColor('#999999');
+                  stateDesc = '失败';
+                  break;
+
+                case 3:
                   stateColor = HexColor('#333333');
                   stateDesc = '运行中';
                   break;
 
-                case 2:
+                case 4:
+                  stateColor = HexColor('#FFC500');
+                  stateDesc = '释放中...';
+                  break;
+
+                case 5:
+                  stateColor = HexColor('#333333');
+                  stateDesc = '释放结束';
+                  break;
+
+                case 6:
                   stateColor = HexColor('#00C081');
                   stateDesc = '可取回';
                   break;
 
-                case 3:
+                case 7:
+                  stateColor = HexColor('#FFC500');
+                  stateDesc = '取回中...';
+                  break;
+
+                case 8:
                   stateColor = HexColor('#999999');
                   stateDesc = '已提取';
                   break;
@@ -533,7 +555,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                                 height: 6,
                               ),
                               Text(
-                                '${model?.createdAt ?? '--'}',
+                                '${model?.stakingAt ?? '--'}',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                                 style: TextStyle(
                                   fontSize: 12,
@@ -545,7 +567,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                           ),
                         ],
                       ),
-                      if (index == 1)
+                      if (status >= 3 && status <= 7)
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 6,
@@ -554,7 +576,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Text(
-                                '${model?.updatedAt ?? '--'}可提回',
+                                '${model?.expectReleaseTime ?? '--'}可提回',
                                 //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                                 style: TextStyle(
                                   fontSize: 12,
@@ -768,7 +790,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     var total = 500 * (int.tryParse(inputText) ?? 0);
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
-      await _rpApi.postCreateRp(amount: amount, activeWallet: _activeWallet, password: password);
+      await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
     } catch (e) {
       LogUtil.toastException(e);
     }
