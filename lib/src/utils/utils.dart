@@ -27,24 +27,26 @@ String getExpiredTimeShowTip(BuildContext context, int expireTime) {
   }
 }
 
-String shortBlockChainAddress(String address, {int limitCharsLength=9}) {
+String shortBlockChainAddress(String address, {int limitCharsLength = 9}) {
   if (address == null || address == "") {
     return "";
   }
   if (address.length <= limitCharsLength) {
     return address;
   }
-  return address.substring(0, limitCharsLength) + "..." + address.substring(address.length - limitCharsLength, address.length);
+  return address.substring(0, limitCharsLength) +
+      "..." +
+      address.substring(address.length - limitCharsLength, address.length);
 }
 
-String shortName(String name, {int limitCharsLength=9}) {
+String shortName(String name, {int limitCharsLength = 9}) {
   if (name == null || name == "") {
     return "";
   }
   if (name.length < limitCharsLength) {
     return name;
   }
-  return name.substring(0, limitCharsLength) + "..." ;
+  return name.substring(0, limitCharsLength) + "...";
 }
 
 String shortEmail(String email) {
@@ -77,6 +79,28 @@ Function debounce(Function fn, [int t = 100]) {
       fn();
     });
   };
+}
+
+class DebounceLater {
+  Timer _debounceLater;
+  Function _fun;
+
+  void debounceInterval(Function fn, [int t = 100]) {
+    if (_debounceLater?.isActive == true) {
+      _fun = fn;
+      return;
+    } else if (_fun == null) {
+      fn();
+    }
+    _fun = fn;
+
+    _debounceLater = Timer(Duration(milliseconds: t), () {
+      _debounceLater = null;
+      if (_fun != null) {
+        _fun();
+      }
+    });
+  }
 }
 
 Future launchUrl(String url) async {
