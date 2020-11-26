@@ -134,7 +134,7 @@ class WalletConfig {
       case EthereumNetType.ropsten:
         return SupportedTokens.HYN_RP_ERC30_ROPSTEN.contractAddress;
       case EthereumNetType.local:
-        return "0x706e02F5007fA10C023e598B5A8a8Ffc6266ca21";
+        return SupportedTokens.HYN_RP_ERC30_LOCAL.contractAddress;
     }
     return '';
   }
