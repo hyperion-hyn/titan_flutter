@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
@@ -22,6 +20,29 @@ class RPApi {
     var amountBig = ConvertTokenUnit.strToBigInt(amount);
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.STAKE, amountBig, password);
+
+    return RPHttpCore.instance.postEntity(
+        "/v1/rp/create",
+        EntityFactory<ResponseEntity>(
+                (json) => json),
+        params: {
+          "address": address,
+          "amount": amountBig,
+          "tx_hash": txHash,
+        },
+        options: RequestOptions(contentType: "application/json"));
+  }
+
+  Future<ResponseEntity> postCollectRp(
+      {
+        String amount = '0',
+        String password = '',
+        WalletVo activeWallet,
+      }) async {
+
+    var amountBig = ConvertTokenUnit.strToBigInt(amount);
+    var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+    var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, amountBig, password);
 
     return RPHttpCore.instance.postEntity(
         "/v1/rp/create",
