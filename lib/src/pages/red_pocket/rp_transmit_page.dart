@@ -162,7 +162,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     var totalAmount = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalAmount ?? '0');
     var totalStakingHyn = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalStakingHyn ?? '0');
     var totalRp = FormatUtil.weiToEtherStr(_rpStatistics?.self?.totalRp ?? '0');
-    var yesterday = FormatUtil.weiToEtherStr(_rpStatistics?.self?.yesterday ?? '0');
+
+    String yesterday =  FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
     var hynPerRp = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
     var ratio = FormatUtil.weiToEtherStr(_rpStatistics?.rpContractInfo?.ratio ?? '0');
@@ -228,10 +229,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: _columnWidget('$totalRp RP', '我累计获得'),
-                  ),
+                  _columnWidget('$totalRp RP', '我累计获得'),
                   Padding(
                     padding: const EdgeInsets.only(
                       bottom: 8,
@@ -249,10 +247,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                         ),
                       );
                     },
-                    child: Expanded(
-                      flex: 1,
-                      child: _columnWidget('$yesterday RP', '我昨日获得'),
-                    ),
+                    child: _columnWidget('$yesterday RP', '我昨日获得'),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
@@ -361,7 +356,7 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
