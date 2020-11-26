@@ -498,7 +498,7 @@ class Wallet {
       gasPrice = BigInt.from(1 * TokenUnit.G_WEI);
     }
     if (gasLimit == null) {
-      gasLimit = 100000;
+      gasLimit = 300000;
     }
     var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw';
 
