@@ -54,6 +54,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
