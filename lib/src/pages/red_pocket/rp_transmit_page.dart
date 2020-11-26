@@ -830,6 +830,8 @@ class _RpTransmitPageState extends State<RpTransmitPage> {
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
       await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
+      _loadDataBloc.add(LoadingEvent());
+
     } catch (e) {
       LogUtil.toastException(e);
     }
