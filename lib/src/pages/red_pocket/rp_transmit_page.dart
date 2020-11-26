@@ -603,7 +603,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           ),
                         ],
                       ),
-                      if (status >= 3 && status <= 7)
+                      if (status >= 3 && status <= 5)
                         Padding(
                           padding: const EdgeInsets.only(
                             top: 6,
