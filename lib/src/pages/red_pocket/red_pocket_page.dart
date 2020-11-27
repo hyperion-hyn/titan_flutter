@@ -41,7 +41,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
-  WalletVo _activeWallet;
 
   @override
   void initState() {
@@ -57,8 +56,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
@@ -137,6 +134,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _myRPInfo() {
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     // var level = _rpInfo?.level ?? '--';
     //var rpToday = _rpStatistics?.self? ?? '--';
     //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
@@ -164,18 +162,19 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var avatarPath =
-        _activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
+    var avatarPath = activeWallet != null
+        ? 'res/drawable/ic_map3_node_default_icon.png'
+        : 'res/drawable/img_avatar_default.png';
 
-    var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
+    var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
-        _activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
+        activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
       ),
     );
 
-    var accountInfoWidget = _activeWallet != null
+    var accountInfoWidget = activeWallet != null
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -530,8 +529,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           '详细介绍',
                         );
-                        Application.router
-                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                        Application.router.navigateTo(
+                            context,
+                            Routes.toolspage_webview_page +
+                                '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         '详细介绍',
@@ -684,7 +685,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -731,13 +733,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
-        _activeWallet?.wallet?.getAtlasAccount()?.address,
+        activeWallet?.wallet?.getAtlasAccount()?.address,
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {
