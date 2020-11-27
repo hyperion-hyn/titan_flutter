@@ -234,6 +234,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () async {
+                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
+                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          return;
+                                        }
+                                        
                                         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
                                           TransactionDetailVo localTransfer = await getLocalTransfer(true);
                                           if (localTransfer != null) {
@@ -304,6 +309,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     ),
                                     InkWell(
                                       onTap: () {
+                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
+                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          return;
+                                        }
                                         Navigator.push(context,
                                             MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
                                       },

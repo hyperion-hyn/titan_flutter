@@ -94,7 +94,7 @@ class WalletConfig {
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
 
   //todo: test_rp
-  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.local : EthereumNetType.main;
+  static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
 
   static BitcoinNetType bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
 
@@ -160,7 +160,7 @@ class WalletConfig {
       case EthereumNetType.main:
         return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
       case EthereumNetType.ropsten:
-        return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
+        return '0xf1392f10e2b62ffcd0E4fd3d62cA1b64aa7CFf48';
       case EthereumNetType.local:
         return "0x2190490FEcA5D47290CFA4a762b1889718913319";
     }

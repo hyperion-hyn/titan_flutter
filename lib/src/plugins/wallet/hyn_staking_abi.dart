@@ -297,13 +297,18 @@ const HYN_STAKING_ABI = '''
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "withdrawableSize",
+        "name": "totalAmount",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "withdrawableSize",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool[]",
+        "name": "indexes",
+        "type": "bool[]"
       }
     ],
     "stateMutability": "view",
