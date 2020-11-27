@@ -196,6 +196,12 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
       if (widget.isContain) {
         _dataInfoList[8] = amountText;
         _dataInfoList[11] = hynPrice;
+        if(isContract) {
+          _dataInfoList[12] = hynPrice;
+        }
+      } else if(isContract) {
+        _dataInfoList[7] = amountText;
+        _dataInfoList[11] = hynPrice;
       } else {
         _dataInfoList[7] = amountText;
         _dataInfoList[10] = hynPrice;
@@ -395,7 +401,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                           ]),
                     ),
                     Text(
-                      "${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractItem.value))} HYN",
+                      "${ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(contractItem.value))} ${HYNApi.getHynSymbol(contractItem.contractAddress)}",
                       style: TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   ],
