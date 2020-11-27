@@ -369,12 +369,6 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     ///refresh reward map
     await _getRewardMap();
 
-    var count = _rewardMap?.values?.length ?? 0;
-    if (count == 0) {
-      Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
-      return;
-    }
-
     try {
       if (_rewardMap.isNotEmpty) {
         ///clear amount first;
@@ -394,15 +388,13 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
           Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
           return;
         }
+
+        Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
+        return;
       }
     } catch (e) {
       print(e);
-
       LogUtil.toastException(e);
-      /*Fluttertoast.showToast(
-        msg: '未知错误，请稍后重试！',
-        gravity: ToastGravity.CENTER,
-      );*/
       return;
     }
 
