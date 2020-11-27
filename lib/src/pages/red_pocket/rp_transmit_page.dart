@@ -74,7 +74,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   @override
   void didPopNext() {
-    //_loadDataBloc.add(LoadingEvent());
 
     getNetworkData();
   }
@@ -85,6 +84,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
     Application.routeObserver.unsubscribe(this);
     _loadDataBloc.close();
+    _inputController.close();
   }
 
   @override
@@ -916,7 +916,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     try {
       await _rpApi.postRetrieveHyn(activeWallet: _activeWallet, password: password);
       Fluttertoast.showToast(msg: '取回请求已发送成功，请稍后查看钱包HYN余额！');
-      _loadDataBloc.add(LoadingEvent());
+      getNetworkData();
     } catch (e) {
       LogUtil.toastException(e);
     }
@@ -945,7 +945,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
       await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
-      _loadDataBloc.add(LoadingEvent());
+      getNetworkData();
     } catch (e) {
       LogUtil.toastException(e);
     }
