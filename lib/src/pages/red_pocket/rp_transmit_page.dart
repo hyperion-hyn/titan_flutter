@@ -586,7 +586,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           height: 6,
                         ),
                         Text(
-                          '抵押ID：${model?.id ?? 0}',
+                          '抵押ID：${model?.stakingId ?? 0}',
                           //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                           style: TextStyle(
                             fontSize: 12,
