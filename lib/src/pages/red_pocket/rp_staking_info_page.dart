@@ -51,6 +51,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
+  String get _stakingIndex => widget?.rpStakingInfo?.id?.toString() ?? '0';
+
   WalletVo _activeWallet;
   RPStatistics _rpStatistics;
   RpStakingReleaseInfo _stakingInfo;
@@ -78,7 +80,6 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
 
   @override
   void didPopNext() {
-
     getNetworkData();
   }
 
@@ -127,61 +128,10 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
         child: CustomScrollView(
           slivers: [
             _stakingInfoWidget(),
-            _myReleaseListHeader(),
-            _myReleaseListView(),
+            // _myReleaseListHeader(),
+            // _myReleaseListView(),
           ],
         ),
-      ),
-    );
-  }
-
-
-  _myReleaseListHeader() {
-    return SliverToBoxAdapter(
-      child: Container(
-        color: HexColor('#F8F8F8'),
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 20,
-            left: 18,
-            bottom: 2,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'RP传导明细',
-                style: TextStyle(
-                  color: HexColor("#333333"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(
-                width: 10,
-              ),
-              Text(
-                '累积${_stakingInfo?.releaseRp ?? '0'}RP',
-                style: TextStyle(
-                  color: HexColor("#333333"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  _myReleaseListView() {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          return _itemBuilder(index);
-        },
-        childCount: _dataList?.length ?? 0,
       ),
     );
   }
@@ -192,7 +142,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
     var model = _stakingInfo;
 
     //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-    var status = model?.status;
+    var status = model?.status ?? 0;
     switch (status) {
       case 1:
         stateColor = HexColor('#FFC500');
@@ -252,129 +202,181 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
     var stakingAt = FormatUtil.newFormatUTCDateStr(model?.stakingAt ?? '0', isSecond: true);
     var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
 
-    return Container(
-      color: HexColor('#F8F8F8'),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 12,
-          left: 16,
-          right: 16,
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
+    return SliverToBoxAdapter(
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 12,
+            left: 16,
+            right: 16,
           ),
-          decoration: BoxDecoration(
-            color: HexColor('#FFFFFF'),
-            borderRadius: BorderRadius.all(
-              Radius.circular(6.0),
-            ), //设置四周圆角 角度
-          ),
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 10,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 12,
+            ),
+            decoration: BoxDecoration(
+              color: HexColor('#FFFFFF'),
+              borderRadius: BorderRadius.all(
+                Radius.circular(6.0),
+              ), //设置四周圆角 角度
+            ),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 10,
+                      ),
+                      child: Image.asset(
+                        "res/drawable/red_pocket_contract.png",
+                        width: 28,
+                        height: 28,
+                      ),
                     ),
-                    child: Image.asset(
-                      "res/drawable/red_pocket_contract.png",
-                      width: 28,
-                      height: 28,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 6,
-                            ),
-                            child: Text(
-                              '抵押 $amount 份',
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 6,
+                              ),
+                              child: Text(
+                                '抵押 $amount 份',
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          ),
-                          Text(
-                            ' 第 ${model?.releaseTimes??0} 天',
-                            style: TextStyle(
-                              color: HexColor("#999999"),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
+                            Text(
+                              ' 第 ${model?.releaseTimes ?? 0} 天',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          Text(
-                            stateDesc,
-                            style: TextStyle(
-                              color: stateColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                            Spacer(),
+                            Text(
+                              stateDesc,
+                              style: TextStyle(
+                                color: stateColor,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        '价值 $hynAmount HYN',
-                        style: TextStyle(
-                          color: HexColor("#999999"),
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                ),
-                child: Container(
-                  height: 0.5,
-                  color: HexColor('#F2F2F2'),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    '抵押时间 ${stakingAt ?? '--'}',
-                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: HexColor('#999999'),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          '价值 $hynAmount HYN',
+                          style: TextStyle(
+                            color: HexColor("#999999"),
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ],
                     ),
-                    textAlign: TextAlign.left,
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
                   ),
-                  Spacer(),
-                  if (status >= 3 && status <= 5)
+                  child: Container(
+                    height: 0.5,
+                    color: HexColor('#F2F2F2'),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
                     Text(
-                      '到期时间 ${expectReleaseTime ?? '--'}',
-                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                      '抵押时间 ${stakingAt ?? '--'}',
+                      //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
                       style: TextStyle(
                         fontSize: 10,
                         color: HexColor('#999999'),
                       ),
-                      textAlign: TextAlign.right,
+                      textAlign: TextAlign.left,
                     ),
-                ],
+                    Spacer(),
+                    if (status >= 3 && status <= 5)
+                      Text(
+                        '到期时间 ${expectReleaseTime ?? '--'}',
+                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _myReleaseListHeader() {
+    return SliverToBoxAdapter(
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 18,
+            bottom: 2,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'RP传导明细',
+                style: TextStyle(
+                  color: HexColor("#333333"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Text(
+                '累积${_stakingInfo?.releaseRp ?? '0'}RP',
+                style: TextStyle(
+                  color: HexColor("#333333"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _myReleaseListView() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return _itemBuilder(index);
+        },
+        childCount: _dataList?.length ?? 0,
       ),
     );
   }
@@ -433,10 +435,16 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   void getNetworkData() async {
     _currentPage = 1;
     try {
-      var netData =
-          await _rpApi.getStakingReleaseList(widget.rpStakingInfo.id.toString(), _address, page: _currentPage);
+      var netData = await _rpApi.getStakingReleaseList(
+        _stakingIndex,
+        _address,
+        page: _currentPage,
+      );
 
-      _stakingInfo = await _rpApi.getRPStakingReleaseInfo(_address, widget.rpStakingInfo.id.toString());
+      _stakingInfo = await _rpApi.getRPStakingReleaseInfo(
+        _address,
+        _stakingIndex,
+      );
 
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
@@ -456,8 +464,11 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData =
-          await _rpApi.getStakingReleaseList(widget.rpStakingInfo.id.toString(), _address, page: _currentPage);
+      var netData = await _rpApi.getStakingReleaseList(
+        _stakingIndex,
+        _address,
+        page: _currentPage,
+      );
 
       if (netData?.isNotEmpty ?? false) {
         _dataList.addAll(netData);
