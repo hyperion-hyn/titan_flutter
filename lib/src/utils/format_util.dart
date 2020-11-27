@@ -354,6 +354,7 @@ class FormatUtil {
       return entityParam;
     }
     if (entityParam is String) {
+      entityParam = entityParam.toString().split(".")[0];
       return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
     } else if (entityParam is int) {
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();

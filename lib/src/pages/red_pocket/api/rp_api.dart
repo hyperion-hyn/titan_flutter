@@ -22,6 +22,9 @@ class RPApi {
       stakingAmount: amount,
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
+    if(txHash == null){
+      return;
+    }
 
     return await RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
         params: {
@@ -39,7 +42,9 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
-
+    if(txHash == null){
+      return;
+    }
     return await RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
