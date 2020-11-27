@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
@@ -715,21 +716,31 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   ///Actions
   _navToRPPool() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RpTransmitPage(_rpStatistics),
-      ),
-    );
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpTransmitPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
   }
 
   _navToRPReleaseRecord() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
-      ),
-    );
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
   }
 
   _requestData() async {
