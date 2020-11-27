@@ -53,7 +53,7 @@ class SupportedTokens {
   static const HYN_RP_HRC30 = const AssetToken(
     name: "Red Pocket",
     decimals: 18,
-    contractAddress: '0x8da841502526591599d5483EbEAe66e9fEA57430',
+    contractAddress: '0x88880126bC73107118f18000309d10dB9f1d6a14',
     logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
     symbol: 'RP',
   );

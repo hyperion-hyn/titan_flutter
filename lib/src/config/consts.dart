@@ -70,6 +70,7 @@ class Const {
 //  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
+  static DateFormat DAY_FORMAT = new DateFormat("yyyy/MM/dd");
 
   //ncov
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';

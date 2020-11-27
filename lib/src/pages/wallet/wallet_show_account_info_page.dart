@@ -57,6 +57,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
   var isBillPage = false;
   AllPageState _currentState = LoadingState();
   var isContract = false;
+  var isToken = false;
   TransactionDetailVo transactionDetail;
   WalletVo walletVo;
 
@@ -103,6 +104,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     isBillPage = (transactionDetail.hynType == MessageType.typeUnMicrostakingReturn ||
         transactionDetail.hynType == MessageType.typeTerminateMap3Return);
 
+    isToken = widget.symbol == SupportedTokens.HYN_RP_HRC30.symbol;
     var fromAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, true);
     var toAddressTitle = HYNApi.toAddressHint(transactionDetail.hynType, false);
 
@@ -135,15 +137,18 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         transactionDetail: tempTransDetail,
         getAmountStr: true,
       )}";
-
-      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
-      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
     } else {
       amountText = "${HYNApi.getValueByHynType(
         transDetail.hynType,
         transactionDetail: transDetail,
         getAmountStr: true,
       )}";
+    }
+
+    if(isToken){
+      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
+      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
+    }else{
       var ethAddress = HYNApi.getHynToAddress(transactionDetail);
       _toAddress = WalletUtil.ethAddressToBech32Address(ethAddress);
     }
