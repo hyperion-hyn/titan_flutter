@@ -156,6 +156,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
       var ethAddress = HYNApi.getHynToAddress(transactionDetail);
       _toAddress = WalletUtil.ethAddressToBech32Address(ethAddress);
     }
+    amountText = "$amountText ${widget.symbol}";
 
     var gasPriceGwei = ConvertTokenUnit.weiToGWei(weiBigInt: BigInt.parse(transDetail.gasPrice));
     var gasPriceEth = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(transDetail.gasPrice));
