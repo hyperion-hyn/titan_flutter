@@ -381,7 +381,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                 width: 10,
               ),
               Text(
-                '累积${_stakingInfo?.releaseRp ?? '0'} RP',
+                '累计${FormatUtil.weiToEtherStr(_stakingInfo?.rpAmount ?? '0') ?? '0'} RP',
                 style: TextStyle(
                   color: HexColor("#999999"),
                   fontSize: 12,
@@ -396,6 +396,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   }
 
   Widget _myReleaseListView() {
+    print("[$runtimeType] _dataList?.length:${_dataList?.length ?? 0}");
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
