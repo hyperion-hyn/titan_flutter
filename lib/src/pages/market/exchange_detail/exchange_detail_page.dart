@@ -188,8 +188,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
     _loadDataBloc.add(RefreshSuccessEvent());
   }
 
-  // DebounceLater depthDebounceLater = DebounceLater();
-  // DebounceLater tradeDebounceLater = DebounceLater();
+  DebounceLater assetsDebounceLater = DebounceLater();
 
   @override
   Widget build(BuildContext context) {
@@ -199,12 +198,12 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
         listener: (ctx, state) {
           bool isRefresh = consignListSocket(context, state, _activeOrders, true);
           if (isRefresh) {
-            // tradeDebounceLater.debounceInterval(() {
-            BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
-            _loadDataBloc.add(LoadingMoreSuccessEvent());
+            assetsDebounceLater.debounceInterval(() {
+              BlocProvider.of<ExchangeCmpBloc>(context).add(UpdateAssetsEvent());
+            }, 1000);
 
+            _loadDataBloc.add(LoadingMoreSuccessEvent());
             consignListController.add(contrConsignTypeRefresh);
-            // }, 500);
           }
           if (state is ChannelExchangeDepthState) {
             _buyChartList.clear();
@@ -303,9 +302,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                     }
                   },
                   child: CustomScrollView(
-                    slivers: <Widget>[
-                      _depthWidget(), _exchangeOptionsWidget(), _consignListWidget()
-                    ],
+                    slivers: <Widget>[_depthWidget(), _exchangeOptionsWidget(), _consignListWidget()],
                   ),
                 ),
               ),
@@ -684,9 +681,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 Text(S.of(context).buy,
-                                    style: TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
+                                    style:
+                                        TextStyle(fontSize: 14, color: isBuy ? Colors.white : DefaultColors.color999)),
                                 Text("HYN",
-                                    style: TextStyle(fontSize: 11, color: isBuy ? Colors.white : DefaultColors.color999)),
+                                    style:
+                                        TextStyle(fontSize: 11, color: isBuy ? Colors.white : DefaultColors.color999)),
                               ],
                             ),
                           ),
@@ -714,9 +713,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: <Widget>[
                                 Text(S.of(context).sale,
-                                    style: TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                                    style:
+                                        TextStyle(fontSize: 14, color: isBuy ? DefaultColors.color999 : Colors.white)),
                                 Text("HYN",
-                                    style: TextStyle(fontSize: 11, color: isBuy ? DefaultColors.color999 : Colors.white)),
+                                    style:
+                                        TextStyle(fontSize: 11, color: isBuy ? DefaultColors.color999 : Colors.white)),
                               ],
                             ),
                           ),
@@ -773,7 +774,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage> with RouteAw
                       child: Row(
                         children: <Widget>[
                           Padding(
-                            padding: EdgeInsets.only(bottom: currentPriceStr != "0" && currentPriceStr != "" ? 16.0 : 0),
+                            padding:
+                                EdgeInsets.only(bottom: currentPriceStr != "0" && currentPriceStr != "" ? 16.0 : 0),
                             child: Text(
                               S.of(context).price,
                               style: TextStyle(fontSize: 14, color: DefaultColors.color999),
