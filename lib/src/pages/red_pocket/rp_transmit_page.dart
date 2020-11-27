@@ -821,9 +821,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           var total = 1000 * (int.tryParse(inputText) ?? 0);
 
                           return Padding(
-                            padding: const EdgeInsets.only(top: 4),
+                            padding: const EdgeInsets.only(top: 4, left: 4,),
                             child: Text(
-                              '折合$total HYN',
+                              '价值 $total HYN',
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 12,
