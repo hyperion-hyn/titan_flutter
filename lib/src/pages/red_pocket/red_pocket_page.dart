@@ -722,7 +722,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _requestData() async {
-    print('RedPocketPage-----_requestData');
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
         _activeWallet?.wallet?.getAtlasAccount()?.address,
