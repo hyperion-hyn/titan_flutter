@@ -370,6 +370,14 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     await _getRewardMap();
 
     try {
+      var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+        MessageType.typeCollectMicroStakingRewards,
+      );
+      if (lastTxIsPending) {
+        Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
+        return;
+      }
+
       if (_rewardMap.isNotEmpty) {
         ///clear amount first;
         _totalAmount = Decimal.fromInt(0);
@@ -382,13 +390,6 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
           _totalAmount = _totalAmount + valueByDecimal;
         });
       } else {
-        var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
-            MessageType.typeCollectMicroStakingRewards);
-        if (lastTxIsPending) {
-          Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
-          return;
-        }
-
         Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
         return;
       }
