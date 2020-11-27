@@ -660,16 +660,18 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
       _rpStatistics = await _rpApi.getRPStatistics(_address);
 
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
       }
+      // } else {
+      //   _loadDataBloc.add(LoadEmptyEvent());
+      // }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());
     }
@@ -684,6 +686,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         _dataList.addAll(netData);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
+
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
