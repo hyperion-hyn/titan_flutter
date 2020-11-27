@@ -820,7 +820,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         stream: _inputController.stream,
                         builder: (context, snapshot) {
                           var inputText = snapshot?.data ?? '0';
-                          var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
+                          var total = (_hynPerRpValue.toInt()) * (int.tryParse(inputText) ?? 0);
 
                           return Padding(
                             padding: const EdgeInsets.only(
