@@ -9,6 +9,7 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
+import 'package:titan/src/pages/atlas_map/map3/map3_node_public_widget.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
@@ -398,6 +399,21 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _myReleaseListView() {
     print("[$runtimeType] _dataList?.length:${_dataList?.length ?? 0}");
 
+    if (_dataList?.isEmpty??true) {
+      return SliverToBoxAdapter(
+        child: Container(
+          color: HexColor('#F8F8F8'),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 160),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16.0),
+              child: emptyListWidget(title: "传导明细为空", isAdapter: false),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
@@ -476,15 +492,14 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
         _stakingIndex,
       );
 
+      if (mounted) {
+        setState(() {
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+
       if (netData?.isNotEmpty ?? false) {
         _dataList = netData;
-        if (mounted) {
-          setState(() {
-            _loadDataBloc.add(RefreshSuccessEvent());
-          });
-        }
-      } else {
-        _loadDataBloc.add(LoadEmptyEvent());
       }
     } catch (e) {
       _loadDataBloc.add(LoadFailEvent());

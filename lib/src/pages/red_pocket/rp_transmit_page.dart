@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +21,6 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_staking_info_page.dart';
-import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -44,6 +45,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final TextEditingController _textEditController = TextEditingController();
+  StreamController<String> _inputController = StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
 
@@ -443,7 +445,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   _myContractList() {
-    if (_dataList?.isEmpty??true) {
+    if (_dataList?.isEmpty ?? true) {
       return SliverToBoxAdapter(
         child: Container(
           color: HexColor('#F8F8F8'),
@@ -702,7 +704,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
         _dataList.addAll(netData);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
-
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
     } catch (e) {
@@ -746,58 +747,93 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
               right: 22,
               bottom: 16,
             ),
-            child: TextFormField(
-              autofocus: true,
-              controller: _textEditController,
-              keyboardType: TextInputType.numberWithOptions(decimal: false),
-              inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9]"))],
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return '请输入抵押份数';
-                }
+            child: Column(
+              children: <Widget>[
+                TextFormField(
+                  autofocus: true,
+                  controller: _textEditController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: false),
+                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[0-9]"))],
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) {
+                      return '请输入抵押份数';
+                    }
 
-                var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
-                  SupportedTokens.HYN_Atlas.symbol,
-                );
-                var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
-                var amount = int.tryParse(value) ?? 0;
-                var total = 1000 * amount;
-                var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
-                var inputValue = Decimal.parse(amountBig.toString());
-                var isOver = inputValue > hynTokenBalance;
-                print(
-                    "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
-                if (isOver) {
-                  return '钱包的HYN余额不足购买当前份数';
-                }
+                    var hynToken = WalletInheritedModel.of(context).getCoinVoBySymbol(
+                      SupportedTokens.HYN_Atlas.symbol,
+                    );
+                    var hynTokenBalance = Decimal.parse(hynToken.balance.toString());
+                    var amount = int.tryParse(value) ?? 0;
+                    if (amount <= 0) {
+                      return '请输入抵押份数';
+                    }
 
-                return null;
-              },
-              decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                fillColor: HexColor('#FFF2F2F2'),
-                hintText: '输入抵押份数，每份1000HYN',
-                hintStyle: TextStyle(
-                  color: HexColor('#FF999999'),
-                  fontSize: 13,
-                ),
-                focusedBorder: border,
-                focusedErrorBorder: border,
-                enabledBorder: border,
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                    color: Colors.red,
-                    width: 0.5,
+                    var total = 1000 * amount;
+                    var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
+                    var inputValue = Decimal.parse(amountBig.toString());
+                    var isOver = inputValue > hynTokenBalance;
+                    print(
+                        "[$runtimeType] isOver:$isOver, hynTokenBalance:$hynTokenBalance, inputValue:$inputValue, amount:$amount");
+                    if (isOver) {
+                      return '钱包的HYN余额不足购买当前份数';
+                    }
+
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: HexColor('#FFF2F2F2'),
+                    hintText: '输入抵押份数，每份1000HYN',
+                    hintStyle: TextStyle(
+                      color: HexColor('#FF999999'),
+                      fontSize: 13,
+                    ),
+                    focusedBorder: border,
+                    focusedErrorBorder: border,
+                    enabledBorder: border,
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(
+                        color: Colors.red,
+                        width: 0.5,
+                      ),
+                    ),
+                    //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   ),
+                  style: TextStyle(fontSize: 13),
+                  onSaved: (value) {
+                    print("[$runtimeType] onSaved, inputValue:$value");
+                  },
+                  onChanged: (String value) {
+                    print("[$runtimeType] onChanged, inputValue:$value");
+
+                    _inputController.add(value);
+                  },
                 ),
-                //contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              ),
-              style: TextStyle(fontSize: 13),
-              onSaved: (value) {
-                print("[$runtimeType] textField, inputValue:$value");
-              },
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    StreamBuilder<Object>(
+                        stream: _inputController.stream,
+                        builder: (context, snapshot) {
+                          var inputText = snapshot?.data ?? '0';
+                          var total = 1000 * (int.tryParse(inputText) ?? 0);
+
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Text(
+                              '折合$total HYN',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 12,
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
