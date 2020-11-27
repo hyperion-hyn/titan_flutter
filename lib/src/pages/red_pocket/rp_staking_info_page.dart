@@ -118,8 +118,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
         child: CustomScrollView(
           slivers: [
             _stakingInfoWidget(),
-            // _myReleaseListHeader(),
-            // _myReleaseListView(),
+            _myReleaseListHeader(),
+            _myReleaseListView(),
           ],
         ),
       ),
@@ -231,6 +231,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(
@@ -245,21 +246,15 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              width: 6,
+                            ),
                             Text(
-                              ' 第 ${model?.releaseTimes ?? 0} 天',
+                              '第 ${model?.releaseTimes ?? 0} 天',
                               style: TextStyle(
                                 color: HexColor("#999999"),
                                 fontSize: 12,
                                 fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                            Spacer(),
-                            Text(
-                              stateDesc,
-                              style: TextStyle(
-                                color: stateColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -267,21 +262,61 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                         SizedBox(
                           height: 6,
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '价值 $hynAmount HYN',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
                         Text(
-                          '价值 $hynAmount HYN',
+                          stateDesc,
+                          //textAlign: TextAlign.end,
                           style: TextStyle(
-                            color: HexColor("#999999"),
-                            fontSize: 12,
-                            fontWeight: FontWeight.normal,
+                            color: stateColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
                           ),
+                        ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              '  ',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 20,
+                    bottom: 12,
                   ),
                   child: Container(
                     height: 0.5,
@@ -329,7 +364,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
           padding: const EdgeInsets.only(
             top: 20,
             left: 18,
-            bottom: 2,
+            bottom: 6,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -346,11 +381,11 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
                 width: 10,
               ),
               Text(
-                '累积${_stakingInfo?.releaseRp ?? '0'}RP',
+                '累积${_stakingInfo?.releaseRp ?? '0'} RP',
                 style: TextStyle(
-                  color: HexColor("#333333"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: HexColor("#999999"),
+                  fontSize: 12,
+                  fontWeight: FontWeight.normal,
                 ),
               ),
             ],
@@ -382,40 +417,43 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
         WalletShowAccountInfoPage.jumpToAccountInfoPage(
             context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
       },
-      child: Padding(
-        padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
-          ),
-          decoration: BoxDecoration(
-            color: HexColor('#FFFFFF'),
-            borderRadius: BorderRadius.all(
-              Radius.circular(6.0),
-            ), //设置四周圆角 角度
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '+ $rpAmount RP',
-                style: TextStyle(
-                  color: HexColor("#333333"),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 12,
+            ),
+            decoration: BoxDecoration(
+              color: HexColor('#FFFFFF'),
+              borderRadius: BorderRadius.all(
+                Radius.circular(6.0),
+              ), //设置四周圆角 角度
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '+ $rpAmount RP',
+                  style: TextStyle(
+                    color: HexColor("#333333"),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Spacer(),
-              Text(
-                updatedAt,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: HexColor('#999999'),
+                Spacer(),
+                Text(
+                  updatedAt,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: HexColor('#999999'),
+                  ),
+                  textAlign: TextAlign.right,
                 ),
-                textAlign: TextAlign.right,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
