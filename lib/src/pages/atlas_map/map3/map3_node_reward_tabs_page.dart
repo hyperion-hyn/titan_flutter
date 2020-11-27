@@ -65,51 +65,7 @@ class _Map3NodeRewardTabsPageState extends State<Map3NodeRewardTabsPage>
               ),
             ],
           ),
-          body: Column(
-            children: [
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      color: Colors.white,
-                      child: TabBar(
-                        isScrollable: true,
-                        indicatorColor: HexColor("#228BA1"),
-                        indicatorSize: TabBarIndicatorSize.label,
-                        indicatorWeight: 1,
-                        controller: _tabController,
-                        labelColor: Theme.of(context).primaryColor,
-                        unselectedLabelColor: HexColor("#333333"),
-                        tabs: [
-                          Tab(
-                            child: Text(
-                              'Map3奖励',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-//                          Tab(
-//                            child: Text(
-//                              'Atlas奖励',
-//                              style: TextStyle(fontWeight: FontWeight.bold),
-//                            ),
-//                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    Map3NodeRewardListPage(),
-                    //AtlasCollectableLisPage(),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          body: Map3NodeRewardListPage(),
         ),
       ),
     );

@@ -60,7 +60,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   String get _notification {
     var notification = '';
     if (_lastPendingTx == null) return null;
-    
+
     switch (_lastPendingTx.status) {
       case TransactionStatus.pending:
       case TransactionStatus.pending_for_receipt:
@@ -74,11 +74,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     }
     return notification;
   }
-  
+
   @override
   void initState() {
     super.initState();
-    var activatedWallet = WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
+    var activatedWallet =
+        WalletInheritedModel.of(Keys.rootKey.currentContext)?.activatedWallet;
     _address = activatedWallet?.wallet?.getAtlasAccount()?.address ?? "";
     _walletName = activatedWallet?.wallet?.keystore?.name ?? "";
 
@@ -161,22 +162,39 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     _rewardMap = await _client.getAllMap3RewardByDelegatorAddress(
       EthereumAddress.fromHex(_address),
     );
+
+    if (_rewardMap.isNotEmpty) {
+      ///clear amount first;
+      _totalAmount = Decimal.fromInt(0);
+
+      _rewardMap.forEach((key, value) {
+        var bigIntValue = BigInt.tryParse(value) ?? BigInt.from(0);
+        Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
+          weiBigInt: bigIntValue,
+        );
+        _totalAmount = _totalAmount + valueByDecimal;
+      });
+    } else {
+      _totalAmount = Decimal.fromInt(0);
+    }
+
     setState(() {});
-    print('------rewardMap: $_rewardMap');
   }
 
   @override
   Widget build(BuildContext context) {
     var _lastCurrentBlockHeight = _currentBlockHeight;
 
-    _currentBlockHeight = AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
+    _currentBlockHeight =
+        AtlasInheritedModel.of(context).committeeInfo?.blockNum ?? 0;
     if (_lastCurrentBlockHeight == 0) {
       _lastCurrentBlockHeight = _currentBlockHeight;
     }
 
     //LogUtil.printMessage("[${widget.runtimeType}]   _currentBlockHeight:$_currentBlockHeight");
 
-    if ((_lastPendingTx != null) && (_currentBlockHeight > _lastCurrentBlockHeight)) {
+    if ((_lastPendingTx != null) &&
+        (_currentBlockHeight > _lastCurrentBlockHeight)) {
       _getData();
     }
 
@@ -193,6 +211,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
               child: LoadDataContainer(
                   bloc: _loadDataBloc,
                   onLoadData: () async {
+                    _getData();
                     await _refreshData();
                   },
                   onRefresh: () async {
@@ -200,74 +219,84 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                     await _refreshData();
                   },
                   onLoadingMore: () {
+                    _getData();
                     _loadMoreData();
-                    setState(() {});
                   },
                   child: CustomScrollView(
                     slivers: <Widget>[
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(
-                            16.0,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                '我创建的',
-                                style: TextStyle(
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: _collectableRewardWidget(),
                       ),
                       _myCreateNodeList(),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(
-                            16.0,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                '我参与的',
-                                style: TextStyle(
-                                  color: DefaultColors.color999,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
                       _myJoinNodeList(),
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 50,
-                        ),
-                      )
                     ],
                   )),
             ),
-            _confirmButtonWidget(),
           ],
         ),
       ),
     );
   }
 
-  Widget _confirmButtonWidget() {
-    if (_joinNodeList == null) return Container();
-
-    return Container(
-      width: double.infinity,
-      height: 50,
-      child: ClickOvalButton(
-        '全部提取',
-        _collect,
-        radius: 0,
-        fontSize: 16,
-        fontWeight: FontWeight.normal,
+  _collectableRewardWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 32.0,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[200],
+              blurRadius: 15.0,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 36.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                '${FormatUtil.stringFormatCoinNum(_totalAmount.toString())}',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 4.0,
+              ),
+              child: Text(
+                '当前可提',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: ClickOvalButton(
+                '提取奖励',
+                _collect,
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -303,9 +332,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       return SliverList(
           delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return Container(
-            height: 60,
-            child: _nodeCollectItem(_createdNodeList[index]),
+          return _nodeCollectItem(
+            _createdNodeList[index],
+            isShowDivider: true,
           );
         },
         childCount: _createdNodeList.length,
@@ -320,10 +349,14 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       return SliverList(
           delegate: SliverChildBuilderDelegate(
         (context, index) {
-          return Container(
-            height: 60,
-            child: _nodeCollectItem(_joinNodeList[index]),
-          );
+          if (index != _joinNodeList.length - 1) {
+            return _nodeCollectItem(
+              _joinNodeList[index],
+              isShowDivider: true,
+            );
+          } else {
+            return _nodeCollectItem(_joinNodeList[index]);
+          }
         },
         childCount: _joinNodeList.length,
       ));
@@ -336,13 +369,15 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     ///refresh reward map
     await _getRewardMap();
 
-    var count = _rewardMap?.values?.length ?? 0;
-    if (count == 0) {
-      Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
-      return;
-    }
-
     try {
+      var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
+        MessageType.typeCollectMicroStakingRewards,
+      );
+      if (lastTxIsPending) {
+        Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
+        return;
+      }
+
       if (_rewardMap.isNotEmpty) {
         ///clear amount first;
         _totalAmount = Decimal.fromInt(0);
@@ -355,20 +390,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
           _totalAmount = _totalAmount + valueByDecimal;
         });
       } else {
-        var lastTxIsPending = await AtlasApi.checkLastTxIsPending(MessageType.typeCollectMicroStakingRewards);
-        if (lastTxIsPending) {
-          Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
-          return;
-        }
+        Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
+        return;
       }
     } catch (e) {
       print(e);
-
       LogUtil.toastException(e);
-      /*Fluttertoast.showToast(
-        msg: '未知错误，请稍后重试！',
-        gravity: ToastGravity.CENTER,
-      );*/
       return;
     }
 
@@ -387,7 +414,8 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
             var message = ConfirmCollectMap3NodeMessage(
               entity: entity,
               amount: _totalAmount.toString(),
-              addressList: _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
+              addressList:
+                  _rewardMap?.keys?.map((e) => e.toString())?.toList() ?? [],
             );
             Navigator.push(
                 context,
@@ -419,9 +447,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   _refreshData() async {
     _currentPage = 1;
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address, page: _currentPage, size: _pageSize, status: [
-        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-      ]);
+      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
+          page: _currentPage,
+          size: _pageSize,
+          status: [
+            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+          ]);
 
       if (_list != null) {
         _joinNodeList.clear();
@@ -436,9 +467,12 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
 
   _loadMoreData() async {
     try {
-      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address, page: _currentPage + 1, size: _pageSize, status: [
-        Map3InfoStatus.CONTRACT_HAS_STARTED.index,
-      ]);
+      var _list = await _atlasApi.getMap3NodeListByMyJoin(_address,
+          page: _currentPage + 1,
+          size: _pageSize,
+          status: [
+            Map3InfoStatus.CONTRACT_HAS_STARTED.index,
+          ]);
 
       if (_list != null && _list.isNotEmpty) {
         _joinNodeList.addAll(_list);
@@ -453,85 +487,101 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
     if (mounted) setState(() {});
   }
 
-  _nodeCollectItem(Map3InfoEntity map3infoEntity) {
+  _nodeCollectItem(
+    Map3InfoEntity map3infoEntity, {
+    bool isShowDivider = false,
+  }) {
     if (map3infoEntity == null) return Container();
     var nodeName = map3infoEntity?.name ?? "";
     var nodeAddress = '${UiUtil.shortEthAddress(
       WalletUtil.ethAddressToBech32Address(map3infoEntity?.address ?? ""),
       limitLength: 8,
     )}';
-    var valueInRewardMap = _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
-        ? _rewardMap[map3infoEntity.address?.toLowerCase()]
-        : '0';
+    var valueInRewardMap =
+        _rewardMap?.containsKey(map3infoEntity.address?.toLowerCase()) ?? false
+            ? _rewardMap[map3infoEntity.address?.toLowerCase()]
+            : '0';
     var bigIntValue = BigInt.tryParse(valueInRewardMap) ?? BigInt.from(0);
     var _collectable = ConvertTokenUnit.weiToEther(
       weiBigInt: bigIntValue,
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          iconMap3Widget(map3infoEntity),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text.rich(TextSpan(children: [
-                  TextSpan(
-                      text: nodeName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      )),
-                  TextSpan(text: "", style: TextStyles.textC333S14bold),
-                ])),
-                Container(
-                  height: 4,
-                ),
-                Row(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              iconMap3Widget(map3infoEntity),
+              SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      '${S.of(context).node_addrees}: ${nodeAddress}',
-                      style: TextStyle(color: DefaultColors.color999, fontSize: 11),
+                    Text.rich(TextSpan(children: [
+                      TextSpan(
+                          text: nodeName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          )),
+                      TextSpan(text: "", style: TextStyles.textC333S14bold),
+                    ])),
+                    Container(
+                      height: 4,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          '${S.of(context).node_addrees}: ${nodeAddress}',
+                          style: TextStyle(
+                              color: DefaultColors.color999, fontSize: 11),
+                        )
+                      ],
                     )
                   ],
-                )
-              ],
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Text(
-                  '${FormatUtil.stringFormatCoinNum(_collectable.toString())}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w500,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Text(
+                      '${FormatUtil.stringFormatCoinNum(_collectable.toString())}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Container(
-                height: 4,
-              ),
-              Text(
-                '可提奖励',
-                style: TextStyle(
-                  color: DefaultColors.color999,
-                  fontSize: 12,
-                ),
+                  Container(
+                    height: 4,
+                  ),
+                  Text(
+                    '可提奖励',
+                    style: TextStyle(
+                      color: DefaultColors.color999,
+                      fontSize: 12,
+                    ),
+                  )
+                ],
               )
             ],
+          ),
+        ),
+        if (isShowDivider)
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16.0,
+            ),
+            child: Divider(height: 0, color: HexColor('#FFF2F2F2')),
           )
-        ],
-      ),
+      ],
     );
   }
 }
