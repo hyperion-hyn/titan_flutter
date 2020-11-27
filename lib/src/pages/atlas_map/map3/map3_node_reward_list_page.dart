@@ -373,23 +373,13 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       var lastTxIsPending = await AtlasApi.checkLastTxIsPending(
         MessageType.typeCollectMicroStakingRewards,
       );
+
       if (lastTxIsPending) {
         Fluttertoast.showToast(msg: '请先等待上一笔交易处理完成');
         return;
       }
 
-      if (_rewardMap.isNotEmpty) {
-        ///clear amount first;
-        _totalAmount = Decimal.fromInt(0);
-
-        _rewardMap.forEach((key, value) {
-          var bigIntValue = BigInt.tryParse(value) ?? BigInt.from(0);
-          Decimal valueByDecimal = ConvertTokenUnit.weiToEther(
-            weiBigInt: bigIntValue,
-          );
-          _totalAmount = _totalAmount + valueByDecimal;
-        });
-      } else {
+      if (_rewardMap.isEmpty) {
         Fluttertoast.showToast(msg: S.of(context).current_reward_zero);
         return;
       }
@@ -398,8 +388,6 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
       LogUtil.toastException(e);
       return;
     }
-
-    //var preText = "${S.of(context).you_create_or_join_node('${_rewardMap?.values?.length ?? 0}')}，";
 
     UiUtil.showAlertView(
       context,
