@@ -552,7 +552,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
     var quotePrice;
     var balancePrice;
     if(!hasPrice){
-      quotePrice = "即将开放交易";
+      quotePrice = "即将开放兑换";
       balancePrice = "";
     }else{
       quotePrice = "${symbolQuote?.sign?.sign ?? ''} ${FormatUtil.formatPrice(symbolQuote?.quoteVo?.price ?? 0.0)}";

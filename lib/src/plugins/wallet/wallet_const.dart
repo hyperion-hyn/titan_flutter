@@ -158,7 +158,7 @@ class WalletConfig {
   static String get hynStakingContractAddress {
     switch (netType) {
       case EthereumNetType.main:
-        return '0x94646B6a1d0ff4014CAe643C7de8b850E6266B18';
+        return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
       case EthereumNetType.ropsten:
         return '0xf1392f10e2b62ffcd0E4fd3d62cA1b64aa7CFf48';
       case EthereumNetType.local:
