@@ -41,6 +41,7 @@ import 'package:titan/src/utils/log_util.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '../../../../config.dart';
+import '../../../../env.dart';
 
 class AtlasApi {
   Future<List<HynTransferHistory>> queryHYNHistory(
@@ -115,6 +116,19 @@ class AtlasApi {
         FluroConvertUtils.fluroCnParamsEncode("http://h.hyn.space/helpPage");
     String webTitle = FluroConvertUtils.fluroCnParamsEncode(
         S.of(Keys.rootKey.currentContext).help);
+    Application.router.navigateTo(context,
+        Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+  }
+
+  static goToHynScanPage(BuildContext context,String walletAddress) {
+
+    String webUrl;
+    if(env.buildType == BuildType.DEV){
+      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://test.hynscan.io/address/$walletAddress/transactions");
+    }else{
+      webUrl = FluroConvertUtils.fluroCnParamsEncode("https://hynscan.io/address/$walletAddress/transactions");
+    }
+    String webTitle = FluroConvertUtils.fluroCnParamsEncode("");
     Application.router.navigateTo(context,
         Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
   }

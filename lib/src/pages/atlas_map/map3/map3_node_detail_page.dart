@@ -2370,7 +2370,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               child: Stack(
                 children: <Widget>[
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      AtlasApi.goToHynScanPage(context,item.address);
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                       child: Row(
