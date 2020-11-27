@@ -45,9 +45,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final _formKey = GlobalKey<FormState>();
   final LoadDataBloc _loadDataBloc = LoadDataBloc();
   final TextEditingController _textEditController = TextEditingController();
-  StreamController<String> _inputController = StreamController.broadcast();
+  final StreamController<String> _inputController = StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
+  
+  String get _hynPerRpStr => _rpStatistics?.rpContractInfo?.hynPerRpStr;
+  String get _hynPerRp => FormatUtil.stringFormatCoinNum(_hynPerRpStr) ?? '--';
+  double get _hynPerRpValue => double?.tryParse(_hynPerRpStr) ?? 0;
 
   WalletVo _activeWallet;
   RPStatistics _rpStatistics;
@@ -74,7 +78,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   @override
   void didPopNext() {
-
     getNetworkData();
   }
 
@@ -216,7 +219,6 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    String hynPerRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.hynPerRpStr) ?? '--';
     String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
@@ -328,7 +330,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: '当前每份（$hynPerRp HYN）总共可传导出 ',
+                            text: '当前每份（$_hynPerRp HYN）总共可传导出 ',
                             style: TextStyle(
                               fontSize: 10,
                               color: HexColor("#999999"),
@@ -768,7 +770,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                       return '请输入抵押份数';
                     }
 
-                    var total = 1000 * amount;
+                    var total = _hynPerRpValue * amount;
                     var amountBig = ConvertTokenUnit.strToBigInt(total.toString());
                     var inputValue = Decimal.parse(amountBig.toString());
                     var isOver = inputValue > hynTokenBalance;
@@ -784,7 +786,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                     isDense: true,
                     filled: true,
                     fillColor: HexColor('#FFF2F2F2'),
-                    hintText: '输入抵押份数，每份1000HYN',
+                    hintText: '输入抵押份数，每份$_hynPerRp HYN',
                     hintStyle: TextStyle(
                       color: HexColor('#FF999999'),
                       fontSize: 13,
@@ -818,10 +820,13 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                         stream: _inputController.stream,
                         builder: (context, snapshot) {
                           var inputText = snapshot?.data ?? '0';
-                          var total = 1000 * (int.tryParse(inputText) ?? 0);
+                          var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
 
                           return Padding(
-                            padding: const EdgeInsets.only(top: 4, left: 4,),
+                            padding: const EdgeInsets.only(
+                              top: 4,
+                              left: 4,
+                            ),
                             child: Text(
                               '价值 $total HYN',
                               style: TextStyle(
@@ -941,7 +946,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       return;
     }
 
-    var total = 1000 * (int.tryParse(inputText) ?? 0);
+    var total = _hynPerRpValue * (int.tryParse(inputText) ?? 0);
     var amount = ConvertTokenUnit.strToBigInt(total.toString());
     try {
       await _rpApi.postStakingRp(amount: amount, activeWallet: _activeWallet, password: password);
