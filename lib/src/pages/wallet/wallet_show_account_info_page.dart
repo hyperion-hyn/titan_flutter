@@ -127,8 +127,8 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
 
     var amountText = "";
     var _toAddress = "";
-    if (isContract) {
-      var tempTransDetail = TransactionDetailVo(
+    /*if (isContract) {
+      *//*var tempTransDetail = TransactionDetailVo(
         type: transDetail.type,
         amount: ConvertTokenUnit.weiToEther(weiBigInt: transDetail.getAllContractValue()).toDouble(),
       );
@@ -136,19 +136,23 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         transDetail.hynType,
         transactionDetail: tempTransDetail,
         getAmountStr: true,
-      )}";
+      )}";*//*
     } else {
+
+    }*/
+
+    if(isToken){
+      amountText = ConvertTokenUnit.weiToEther(weiBigInt: transDetail.getAllContractValue()).toString();
+
+      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
+      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
+    }else{
       amountText = "${HYNApi.getValueByHynType(
         transDetail.hynType,
         transactionDetail: transDetail,
         getAmountStr: true,
       )}";
-    }
 
-    if(isToken){
-      InternalTransactions internalTransaction = transDetail?.internalTransactions?.isEmpty??true?null:transDetail.internalTransactions[0];
-      _toAddress = WalletUtil.ethAddressToBech32Address(internalTransaction?.to??'0');
-    }else{
       var ethAddress = HYNApi.getHynToAddress(transactionDetail);
       _toAddress = WalletUtil.ethAddressToBech32Address(ethAddress);
     }
