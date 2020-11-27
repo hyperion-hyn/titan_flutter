@@ -17,6 +17,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_staking_info_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -88,14 +89,14 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     return Scaffold(
       appBar: BaseAppBar(
         baseTitle: '传导池',
-        backgroundColor: Colors.grey[50],
+        backgroundColor: HexColor('#F8F8F8'),
         actions: <Widget>[
           FlatButton(
             onPressed: _pushRecordAction,
             child: Text(
               '传导明细',
               style: TextStyle(
-                color: HexColor("#333333"),
+                color: HexColor("#1F81FF"),
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
               ),
@@ -165,39 +166,42 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalTransmit = FormatUtil.stringFormatCoinNum(_rpStatistics?.global?.totalTransmitStr) ?? '--';
 
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 10,
-          bottom: 6,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 10,
+            bottom: 6,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                  ),
+                  child: _columnWidget('12万 RP', '总可传导'),
+                  // child: _columnWidget('$totalTransmit RP', '总可传导'),
                 ),
-                child: _columnWidget('12万 RP', '总可传导'),
-                // child: _columnWidget('$totalTransmit RP', '总可传导'),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: _lineWidget(),
-            ),
-            Expanded(
-              child: _columnWidget('$totalStakingHyn HYN', '全网抵押'),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: _lineWidget(),
-            ),
-            Expanded(
-              child: _columnWidget('$transmit RP', '全网累计传导'),
-            ),
-            Spacer(),
-          ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _lineWidget(),
+              ),
+              Expanded(
+                child: _columnWidget('$totalStakingHyn HYN', '全网抵押'),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: _lineWidget(),
+              ),
+              Expanded(
+                child: _columnWidget('$transmit RP', '全网累计传导'),
+              ),
+              Spacer(),
+            ],
+          ),
         ),
       ),
     );
@@ -216,190 +220,193 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
 
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
-          ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 26,
-                  bottom: 26,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 12,
-                        // right: 20,
-                      ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 4,
-                            ),
-                            child: Text(
-                              '已抵押',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DefaultColors.color999,
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(16.0)),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 26,
+                    bottom: 26,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          // right: 20,
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 4,
                               ),
-                            ),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                '$totalAmount份',
+                              child: Text(
+                                '已抵押',
                                 style: TextStyle(
-                                  color: DefaultColors.color333,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12,
+                                  color: DefaultColors.color999,
                                 ),
                               ),
-                              Text(
-                                '（$totalStakingHyn HYN）',
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  '$totalAmount份',
+                                  style: TextStyle(
+                                    color: DefaultColors.color333,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  '（$totalStakingHyn HYN）',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: DefaultColors.color999,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        ),
+                      ),
+                      _columnWidget('$totalRp RP', '我累计获得', isBold: true),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 8,
+                          // right: 10,
+                          // left: 10,
+                        ),
+                        child: _lineWidget(),
+                      ),
+                      InkWell(
+                        onTap: _pushRecordAction,
+                        child: _columnWidget('$yesterday RP', '我昨日获得', isBold: true),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 8,
+                          bottom: 12,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 15,
+                          color: DefaultColors.color999,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 16,
+                    left: 30,
+                    right: 30,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 2,
+                        child: RichText(
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: '当前每份（$hynPerRp HYN）总共可传导出 ',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: HexColor("#999999"),
+                              fontWeight: FontWeight.normal,
+                              height: 1.5,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '$baseRp',
                                 style: TextStyle(
                                   fontSize: 10,
-                                  color: DefaultColors.color999,
+                                  color: HexColor("#333333"),
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: HexColor("#999999"),
+                                  fontWeight: FontWeight.normal,
+                                  height: 1.5,
                                 ),
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ClickOvalButton(
+                        '一键取回',
+                        _showCollectAlertView,
+                        width: 120,
+                        height: 32,
+                        fontSize: 12,
+                        btnColor: HexColor('#00B97C'),
+                      ),
+                      SizedBox(
+                        width: 14,
+                      ),
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                            child: ClickOvalButton(
+                              '抵押HYN',
+                              _showStakingAlertView,
+                              width: 120,
+                              height: 32,
+                              fontSize: 12,
+                              btnColor: HexColor('#107EDC'),
+                            ),
+                            padding: const EdgeInsets.all(
+                              16,
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: Image.asset(
+                              "res/drawable/red_pocket_exchange_hot.png",
+                              width: 35,
+                              height: 20,
+                            ),
+                          )
                         ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
                       ),
-                    ),
-                    _columnWidget('$totalRp RP', '我累计获得', isBold: true),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        bottom: 8,
-                        // right: 10,
-                        // left: 10,
-                      ),
-                      child: _lineWidget(),
-                    ),
-                    InkWell(
-                      onTap: _pushRecordAction,
-                      child: _columnWidget('$yesterday RP', '我昨日获得', isBold: true),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        right: 8,
-                        bottom: 12,
-                      ),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 15,
-                        color: DefaultColors.color999,
-                      ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 16,
-                  left: 30,
-                  right: 30,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: RichText(
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: '当前每份（$hynPerRp HYN）总共可传导出 ',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: HexColor("#999999"),
-                            fontWeight: FontWeight.normal,
-                            height: 1.5,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: '$baseRp',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: HexColor("#333333"),
-                                fontWeight: FontWeight.w500,
-                                height: 1.5,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: HexColor("#999999"),
-                                fontWeight: FontWeight.normal,
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 6,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ClickOvalButton(
-                      '一键取回',
-                      _showCollectAlertView,
-                      width: 120,
-                      height: 32,
-                      fontSize: 12,
-                      btnColor: HexColor('#00B97C'),
-                    ),
-                    SizedBox(
-                      width: 14,
-                    ),
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          child: ClickOvalButton(
-                            '抵押HYN',
-                            _showStakingAlertView,
-                            width: 120,
-                            height: 32,
-                            fontSize: 12,
-                            btnColor: HexColor('#107EDC'),
-                          ),
-                          padding: const EdgeInsets.all(
-                            16,
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Image.asset(
-                            "res/drawable/red_pocket_exchange_hot.png",
-                            width: 35,
-                            height: 20,
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -408,45 +415,26 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   _myContractHeader() {
     return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 32,
-          left: 18,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              '我的抵押',
-              style: TextStyle(
-                color: HexColor("#333333"),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _myContract() {
-    var isEmpty = _dataList?.isEmpty ?? true;
-
-    return SliverToBoxAdapter(
-      child: Expanded(
-        child: Container(
-          decoration: BoxDecoration(
-            color: isEmpty ? Colors.white : null,
-            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 20,
+            left: 18,
+            bottom: 2,
           ),
-          margin: isEmpty ? const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16) : null,
-          //color: Colors.white,
-          child: ListView.builder(
-            itemBuilder: (context, index) {
-              return _itemBuilder(index);
-            },
-            itemCount: _dataList?.length ?? 0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '我的抵押',
+                style: TextStyle(
+                  color: HexColor("#333333"),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -531,134 +519,134 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     var expectReleaseTime = FormatUtil.newFormatUTCDateStr(model?.expectRetrieveTime ?? '0', isSecond: true);
 
     return InkWell(
-      onTap: () {
-        WalletShowAccountInfoPage.jumpToAccountInfoPage(
-            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(
-          top: 12,
-          left: 16,
-          right: 16,
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 16,
-            horizontal: 12,
+      onTap: () => _pushStakingInfoAction(index),
+      child: Container(
+        color: HexColor('#F8F8F8'),
+        child: Padding(
+          padding: const EdgeInsets.only(
+            top: 12,
+            left: 16,
+            right: 16,
           ),
-          decoration: BoxDecoration(
-            color: HexColor('#FFFFFF'),
-            borderRadius: BorderRadius.all(
-              Radius.circular(6.0),
-            ), //设置四周圆角 角度
-          ),
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      right: 10,
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: 12,
+            ),
+            decoration: BoxDecoration(
+              color: HexColor('#FFFFFF'),
+              borderRadius: BorderRadius.all(
+                Radius.circular(6.0),
+              ), //设置四周圆角 角度
+            ),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 10,
+                      ),
+                      child: Image.asset(
+                        "res/drawable/red_pocket_contract.png",
+                        width: 28,
+                        height: 28,
+                      ),
                     ),
-                    child: Image.asset(
-                      "res/drawable/red_pocket_contract.png",
-                      width: 28,
-                      height: 28,
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 6,
-                            ),
-                            child: Text(
-                              '$amount 份',
-                              style: TextStyle(
-                                color: HexColor("#333333"),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                right: 6,
+                              ),
+                              child: Text(
+                                '$amount 份',
+                                style: TextStyle(
+                                  color: HexColor("#333333"),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
-                          ),
-                          Text(
-                            '共 $hynAmount HYN',
-                            style: TextStyle(
-                              color: HexColor("#999999"),
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal,
+                            Text(
+                              '共 $hynAmount HYN',
+                              style: TextStyle(
+                                color: HexColor("#999999"),
+                                fontSize: 12,
+                                fontWeight: FontWeight.normal,
+                              ),
                             ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 6,
+                        ),
+                        Text(
+                          '抵押ID：${model?.id ?? 0}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#333333'),
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        '抵押ID：${model?.id ?? 0}',
-                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#333333'),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        stateDesc,
-                        style: TextStyle(
-                          color: stateColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
+                      ],
+                    ),
+                    Spacer(),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          stateDesc,
+                          style: TextStyle(
+                            color: stateColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 6,
-                      ),
-                      Text(
-                        '${stakingAt ?? '--'}',
-                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#999999'),
+                        SizedBox(
+                          height: 6,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              if (status >= 3 && status <= 5)
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        '${expectReleaseTime ?? '--'}可提回',
-                        //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: HexColor('#999999'),
+                        Text(
+                          '${stakingAt ?? '--'}',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(model?.createdAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
-            ],
+                if (status >= 3 && status <= 5)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          '${expectReleaseTime ?? '--'}可提回',
+                          //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: HexColor('#999999'),
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -913,6 +901,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       context,
       MaterialPageRoute(
         builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+      ),
+    );
+  }
+
+  _pushStakingInfoAction(int index) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RpStakingInfoPage(_rpStatistics, _dataList[index]),
       ),
     );
   }

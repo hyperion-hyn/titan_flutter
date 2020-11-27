@@ -4,12 +4,13 @@ import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart';
 
 class RPApi {
-  Future<ResponseEntity> postStakingRp({
+  Future<dynamic> postStakingRp({
     BigInt amount,
     String password = '',
     WalletVo activeWallet,
@@ -22,7 +23,7 @@ class RPApi {
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
 
-    return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<ResponseEntity>((json) => json),
+    return RPHttpCore.instance.postEntity("/v1/rp/create", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "hyn_amount": amount.toString(),
@@ -31,7 +32,7 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
-  Future<ResponseEntity> postRetrieveHyn({
+  Future<dynamic> postRetrieveHyn({
     String password = '',
     WalletVo activeWallet,
   }) async {
@@ -39,7 +40,7 @@ class RPApi {
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
 
-    return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<ResponseEntity>((json) => json),
+    return RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
         params: {
           "address": address,
           "tx_hash": txHash,
@@ -57,6 +58,15 @@ class RPApi {
         options: RequestOptions(contentType: "application/json"));
   }
 
+  Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(String address, String id) async {
+    return RPHttpCore.instance.getEntity(
+        "/v1/rp/staking/$address/$id",
+        EntityFactory<RpStakingReleaseInfo>(
+          (json) => RpStakingReleaseInfo.fromJson(json),
+        ),
+        options: RequestOptions(contentType: "application/json"));
+  }
+
   Future<List<RpReleaseInfo>> getRPReleaseInfoList(
     String address, {
     int page = 1,
@@ -64,6 +74,33 @@ class RPApi {
   }) async {
     return await RPHttpCore.instance.getEntity(
       '/v1/rp/release/$address',
+      EntityFactory<List<RpReleaseInfo>>(
+        (json) {
+          var data = (json['data'] as List).map((map) {
+            return RpReleaseInfo.fromJson(map);
+          }).toList();
+
+          return data;
+        },
+      ),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
+  }
+
+  Future<List<RpReleaseInfo>> getStakingReleaseList(
+    String id,
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/staking/$address/$id/release',
       EntityFactory<List<RpReleaseInfo>>(
         (json) {
           var data = (json['data'] as List).map((map) {

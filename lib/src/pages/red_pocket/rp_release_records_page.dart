@@ -7,11 +7,8 @@ import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
-import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 
@@ -89,25 +86,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
             (context, index) {
               var model = _dataList[index];
 
-              //print("[$runtimeType] _dataList.length:${_dataList.length}");
-
-              var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
-
-              // var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
-              // var hynPerRpBig = ConvertTokenUnit.strToBigInt(widget.rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
-              // var amountBig = (hynAmountBig / hynPerRpBig);
-              // if (amountBig.isNaN || amountBig.isInfinite) {
-              //   amountBig = 0;
-              // }
-              // var amount = amountBig.toInt();
-              // if (amount.isNaN) {
-              //   amount = 1;
-              // }
-
-              var amount = model?.amount ?? 0;
-              var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
               var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
-              var updatedAt = Const.DATE_FORMAT.format(currentDate);
 
               bool isNewDay = false;
               if (index == 0) {
@@ -130,117 +109,130 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                         style: TextStyle(color: Color(0xff999999)),
                       ),
                     ),
-                  InkWell(
-                    onTap: () {
-                      WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                          context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: HexColor('#FFFFFF'),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(6.0),
-                          ), //设置四周圆角 角度
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                right: 10,
-                              ),
-                              child: Image.asset(
-                                "res/drawable/red_pocket_coins.png",
-                                width: 28,
-                                height: 28,
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 6,
-                                      ),
-                                      child: Text(
-                                        '$amount 份',
-                                        style: TextStyle(
-                                          color: HexColor("#333333"),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      '共 $hynAmount HYN',
-                                      style: TextStyle(
-                                        color: HexColor("#999999"),
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 6,
-                                ),
-                                Text(
-                                  '抵押ID：${model?.stakingId ?? 0}',
-                                  //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: HexColor('#333333'),
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  '+ $rpAmount RP',
-                                  style: TextStyle(
-                                    color: HexColor("#333333"),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 6,
-                                ),
-                                Text(
-                                  updatedAt,
-                                  //'21:21:21',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: HexColor('#999999'),
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  _itemBuilder(index),
                 ],
               );
             },
             childCount: _dataList?.length ?? 0,
           ))
         ],
+      ),
+    );
+  }
+
+  Widget _itemBuilder(int index) {
+    var model = _dataList[index];
+
+    var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
+
+    var amount = model?.amount ?? 0;
+    var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    var updatedAt = Const.DATE_FORMAT.format(currentDate);
+
+    return InkWell(
+      onTap: () {
+        WalletShowAccountInfoPage.jumpToAccountInfoPage(
+            context, model?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 6, left: 12, right: 12, bottom: 6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: 16,
+            horizontal: 12,
+          ),
+          decoration: BoxDecoration(
+            color: HexColor('#FFFFFF'),
+            borderRadius: BorderRadius.all(
+              Radius.circular(6.0),
+            ), //设置四周圆角 角度
+          ),
+          child: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 10,
+                ),
+                child: Image.asset(
+                  "res/drawable/red_pocket_coins.png",
+                  width: 28,
+                  height: 28,
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 6,
+                        ),
+                        child: Text(
+                          '$amount 份',
+                          style: TextStyle(
+                            color: HexColor("#333333"),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        '共 $hynAmount HYN',
+                        style: TextStyle(
+                          color: HexColor("#999999"),
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    '抵押ID：${model?.stakingId ?? 0}',
+                    //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: HexColor('#333333'),
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    '+ $rpAmount RP',
+                    style: TextStyle(
+                      color: HexColor("#333333"),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    updatedAt,
+                    //'21:21:21',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: HexColor('#999999'),
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
