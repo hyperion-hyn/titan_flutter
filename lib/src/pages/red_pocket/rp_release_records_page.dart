@@ -264,7 +264,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
       var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+        _dataList.addAll(netData);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());

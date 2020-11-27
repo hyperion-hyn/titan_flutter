@@ -681,7 +681,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       var netData = await _rpApi.getRPStakingInfoList(_address, page: _currentPage);
 
       if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+        _dataList.addAll(netData);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
