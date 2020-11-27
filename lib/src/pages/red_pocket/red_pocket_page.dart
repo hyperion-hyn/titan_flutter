@@ -17,6 +17,7 @@ import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
+import 'package:titan/src/routes/fluro_convert_utils.dart';
 import 'package:titan/src/routes/routes.dart';
 import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
@@ -521,7 +522,16 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Spacer(),
                     InkWell(
                       onTap: () {
-                        AtlasApi.goToAtlasMap3HelpPage(context);
+                        String webUrl = FluroConvertUtils.fluroCnParamsEncode(
+                          "https://h.hyn.space/redpocket",
+                        );
+                        String webTitle = FluroConvertUtils.fluroCnParamsEncode(
+                          '详细介绍',
+                        );
+                        Application.router.navigateTo(
+                            context,
+                            Routes.toolspage_webview_page +
+                                '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         '详细介绍',

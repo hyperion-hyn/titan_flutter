@@ -413,7 +413,7 @@ class HYNApi {
                 "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
             amountStr =
-                "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+                "${transactionDetail.amount < 0 ? "-" : ""}${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }
         }
         break;
