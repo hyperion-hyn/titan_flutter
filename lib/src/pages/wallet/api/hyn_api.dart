@@ -616,6 +616,15 @@ class HYNApi {
     return false;
   }
 
+  static String getHynSymbol(String contractAddress) {
+    contractAddress = contractAddress?.toLowerCase()??'';
+    if(contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase()){
+      return SupportedTokens.HYN_RP_HRC30.symbol;
+    }else{
+      return SupportedTokens.HYN_Atlas.symbol;
+    }
+  }
+
   static AssetToken getContractToken(String contractAddress) {
     AssetToken assetToken;
     SupportedTokens.allContractTokens(WalletConfig.netType).forEach((element) {
