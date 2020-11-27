@@ -35,6 +35,18 @@ class WalletShowAccountInfoPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return WalletShowAccountInfoPageState();
   }
+
+
+  static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WalletShowAccountInfoPage(
+              hashTx,
+              symbol,
+              isContain: false,
+            )));
+  }
 }
 
 class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage> {
@@ -362,16 +374,6 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
     );
   }
 
-  static void jumpToAccountInfoPage(BuildContext context, String hashTx, String symbol){
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => WalletShowAccountInfoPage(
-              hashTx,
-              symbol,
-              isContain: false,
-            )));
-  }
 
 }
 

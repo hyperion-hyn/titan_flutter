@@ -10,7 +10,9 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/atlas_map/entity/map3_info_entity.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/utils/format_util.dart';
 
 import 'entity/rp_release_info.dart';
@@ -105,7 +107,9 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
               var updatedAt = Const.DATE_FORMAT.format(DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000));
 
               return InkWell(
-                onTap: () {},
+                onTap: () {
+                  WalletShowAccountInfoPage.jumpToAccountInfoPage(context, model?.txHash??'', SupportedTokens.HYN_RP_HRC30.symbol);
+                },
                 child: Padding(
                   padding: const EdgeInsets.only(top: 12, left: 12, right: 12,),
                   child: Container(
