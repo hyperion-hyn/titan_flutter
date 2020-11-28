@@ -203,32 +203,39 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                   ),
                 ],
               ),
-              Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '+ $rpAmount RP',
-                    style: TextStyle(
-                      color: HexColor("#333333"),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
+              //Spacer(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 12,),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '+ $rpAmount RP',
+                        // '+ xx RP',
+                        style: TextStyle(
+                          color: HexColor("#333333"),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 3,
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        updatedAt,
+                        //'21:21:21',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: HexColor('#999999'),
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Text(
-                    updatedAt,
-                    //'21:21:21',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: HexColor('#999999'),
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ],
+                ),
               ),
             ],
           ),
