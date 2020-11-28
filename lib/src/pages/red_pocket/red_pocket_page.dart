@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/basic/widget/base_app_bar.dart';
 import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
+import 'package:titan/src/components/wallet/bloc/bloc.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
@@ -39,7 +42,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   RPApi _rpApi = RPApi();
   LoadDataBloc _loadDataBloc = LoadDataBloc();
   RPStatistics _rpStatistics;
-  WalletVo _activeWallet;
 
   @override
   void initState() {
@@ -55,7 +57,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _activeWallet = WalletInheritedModel.of(context).activatedWallet;
   }
 
   @override
@@ -134,6 +135,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   }
 
   _myRPInfo() {
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     // var level = _rpInfo?.level ?? '--';
     //var rpToday = _rpStatistics?.self? ?? '--';
     //var rpYesterday = _rpInfo?.rpYesterday ?? '--';
@@ -145,9 +147,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
 
     try {
-      rpBalance = FormatUtil.coinBalanceByDecimal(
+      rpBalance = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
-        4,
       );
     } catch (e) {}
 
@@ -161,19 +162,19 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var avatarPath = _activeWallet != null
+    var avatarPath = activeWallet != null
         ? 'res/drawable/ic_map3_node_default_icon.png'
         : 'res/drawable/img_avatar_default.png';
 
-    var userName = _activeWallet?.wallet?.keystore?.name ?? '--';
+    var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
-        _activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
+        activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
       ),
     );
 
-    var accountInfoWidget = _activeWallet != null
+    var accountInfoWidget = activeWallet != null
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -714,29 +715,49 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   ///Actions
   _navToRPPool() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RpTransmitPage(_rpStatistics),
-      ),
-    );
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpTransmitPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
   }
 
   _navToRPReleaseRecord() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => RpReleaseRecordsPage(_rpStatistics),
-      ),
-    );
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpReleaseRecordsPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
   }
 
   _requestData() async {
+    var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     try {
       _rpStatistics = await _rpApi.getRPStatistics(
-        _activeWallet?.wallet?.getAtlasAccount()?.address,
+        activeWallet?.wallet?.getAtlasAccount()?.address,
       );
-      setState(() {});
+
+      if (context != null) {
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
+      }
+
+      if (mounted) {
+        setState(() {});
+      }
+
       _loadDataBloc.add(RefreshSuccessEvent());
     } catch (e) {
       _loadDataBloc.add(RefreshFailEvent());
