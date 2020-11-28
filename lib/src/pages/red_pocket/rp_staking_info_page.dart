@@ -427,6 +427,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
+    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
 

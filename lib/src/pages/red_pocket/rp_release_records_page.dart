@@ -128,7 +128,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     var amount = model?.amount ?? 0;
 
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum(rpAmount);
+    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
