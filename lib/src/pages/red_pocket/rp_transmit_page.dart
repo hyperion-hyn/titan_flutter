@@ -187,7 +187,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   padding: const EdgeInsets.only(
                     left: 16,
                   ),
-                  child: _columnWidget('12万 RP', '总可传导'),
+                  child: _columnWidget('${_rpStatistics?.rpContractInfo?.poolPercent??'--'}万 RP', '总可传导'),
                   // child: _columnWidget('$totalTransmit RP', '总可传导'),
                 ),
               ),
