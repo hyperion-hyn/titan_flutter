@@ -83,6 +83,9 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
       );
     } else {
       if (widget.btnColor != null) {
+        if(widget.btnColor.length == 1){
+          widget.btnColor.add(widget.btnColor[0]);
+        }
         return LinearGradient(
           colors: widget.btnColor,
         );
