@@ -575,7 +575,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                     setState(() {});
                   },
                   width: 112,
-                  btnColor: HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2"),
+                  btnColor: [HexColor(selectLeftData ? "#1F81FF" : "#F2F2F2")],
                   radius: 4,
                   fontColor: HexColor(selectLeftData ? "#ffffff" : "#999999"),
                 ),
@@ -590,7 +590,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                     setState(() {});
                   },
                   width: 112,
-                  btnColor: HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF"),
+                  btnColor: [HexColor(selectLeftData ? "#F2F2F2" : "#1F81FF")],
                   radius: 4,
                   fontColor: HexColor(selectLeftData ? "#999999" : "#ffffff"),
                 ),

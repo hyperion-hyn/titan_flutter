@@ -947,7 +947,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             height: 32,
             fontSize: 14,
             fontColor: HexColor("#999999"),
-            btnColor: Colors.transparent,
+            btnColor: [Colors.transparent],
           ),
           Spacer(),
           ClickOvalButton(

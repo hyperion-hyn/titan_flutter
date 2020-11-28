@@ -16,6 +16,7 @@ import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/rp_add_friends_page.dart';
+import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -309,12 +310,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     children: <Widget>[
                       Expanded(child: _contentColumn('10', '直友团')),
                       Spacer(),
-                      Text(
-                        '邀请直友一起领红包',
-                        style: TextStyle(
-                          color: HexColor('#333333'),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
+                      InkWell(
+                        onTap: _navToRPInviteFriends,
+                        child: Text(
+                          '邀请直友一起领红包',
+                          style: TextStyle(
+                            color: HexColor('#333333'),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       Icon(
@@ -781,6 +785,20 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         context,
         MaterialPageRoute(
           builder: (context) => RpAddFriendsPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
+  }
+
+  _navToRPInviteFriends() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpInviteFriendPage(),
         ),
       );
     } else {

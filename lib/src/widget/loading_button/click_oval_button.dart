@@ -9,7 +9,7 @@ class ClickOvalButton extends StatefulWidget {
   double fontSize;
   Function onTap;
   bool isLoading;
-  Color btnColor;
+  List<Color> btnColor;
   Color fontColor;
   double radius;
   String loadingText;
@@ -84,7 +84,7 @@ class _ClickOvalButtonState extends State<ClickOvalButton> {
     } else {
       if (widget.btnColor != null) {
         return LinearGradient(
-          colors: <Color>[widget.btnColor, widget.btnColor],
+          colors: widget.btnColor,
         );
       } else {
         return LinearGradient(

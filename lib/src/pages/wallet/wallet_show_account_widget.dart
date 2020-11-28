@@ -666,7 +666,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             msg: S.of(context).wallet_transaction_finish_tips, toastLength: Toast.LENGTH_LONG);
                       }
                     }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: Color(0xffDEDEDE)),
+                  }, width: 52, height: 22, fontSize: 12, btnColor: [Color(0xffDEDEDE)]),
                   SizedBox(
                     width: 10,
                   ),
@@ -701,7 +701,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                             toastLength: Toast.LENGTH_LONG);
                       }
                     }
-                  }, width: 52, height: 22, fontSize: 12, btnColor: Theme.of(context).primaryColor),
+                  }, width: 52, height: 22, fontSize: 12, btnColor: [Theme.of(context).primaryColor]),
                 ],
               ),
             ),
