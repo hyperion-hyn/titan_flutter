@@ -354,7 +354,14 @@ class FormatUtil {
       return entityParam;
     }
     if (entityParam is String) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam)).toString();
+      var arr = entityParam.split('.');
+      bool isContainerPoint = (arr?.length ?? 0) > 1;
+      String pendingValue = entityParam;
+      if (isContainerPoint) {
+        pendingValue = arr?.first ?? '0';
+      }
+      var weiBigInt = (BigInt.tryParse(pendingValue) ?? BigInt.from(int.tryParse(pendingValue) ?? 0));
+      return ConvertTokenUnit.weiToEther(weiBigInt: weiBigInt).toString();
     } else if (entityParam is int) {
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
     } else {
