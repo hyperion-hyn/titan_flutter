@@ -9,6 +9,8 @@ import 'package:titan/src/data/cache/app_cache.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_http.dart';
 import 'package:titan/src/pages/market/api/exchange_api.dart';
 import 'package:titan/src/pages/market/api/exchange_const.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import '../../../env.dart';
 import '../../../main.dart';
@@ -82,6 +84,7 @@ class _MeAppSwitchState extends State<MeAppSwitchPage> {
         AtlasHttpCoreNoLog.clearInstance();
         ExchangeHttp.clearInstance();
         WalletConfig.clearNetType();
+        RPHttpCore.clearInstance();
         ExchangeApi().init();
 
 

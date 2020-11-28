@@ -31,6 +31,19 @@ class RPHttpCore extends BaseHttpCore {
       responseType: ResponseType.PLAIN*/
     contentType: 'application/x-www-form-urlencoded',
   ));
+
+
+  static void clearInstance() {
+    _instance = null;
+
+    _dio = null;
+    _dio = new Dio(BaseOptions(
+      baseUrl: Const.RP_DOMAIN,
+      connectTimeout: 5000,
+      receiveTimeout: 5000,
+      contentType: 'application/x-www-form-urlencoded',
+    ));
+  }
 }
 
 // no log
