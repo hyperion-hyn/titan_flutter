@@ -11,6 +11,7 @@ import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/domain/transaction_interactor.dart';
 import 'package:titan/src/pages/wallet/api/bitcoin_api.dart';
+import 'package:titan/src/pages/wallet/api/hyn_api.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/plugins/titan_plugin.dart';
 import 'package:titan/src/plugins/wallet/account.dart';
@@ -500,6 +501,10 @@ class Wallet {
     if (gasLimit == null) {
       gasLimit = 300000;
     }
+    if(!HYNApi.isGasFeeEnough(gasPrice, gasLimit, stakingAmount: stakingAmount)){
+      return null;
+    }
+
     var methodName = methodType == HynContractMethod.STAKE ? 'stake' : 'withdraw';
 
     final client = WalletUtil.getWeb3Client(true);

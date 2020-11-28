@@ -490,7 +490,6 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
         (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
-      print("!!!!111 ${transactionDetail.toAddress}");
       if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)
       || HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
         //Hyn、Eth的toAddress是合约地址，erc20或hrc30的toAddress是对方钱包地址

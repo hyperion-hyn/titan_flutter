@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -594,9 +595,6 @@ class HYNApi {
   }
 
   static bool isContractTokenAddress(String contractAddress) {
-    print("!!!2323${SupportedTokens.allContractTokens(WalletConfig.netType)
-        .map((token) => token.contractAddress.toLowerCase())
-        .toList()}   ${contractAddress.toLowerCase()}");
     if (SupportedTokens.allContractTokens(WalletConfig.netType)
         .map((token) => token.contractAddress.toLowerCase())
         .toList()
@@ -614,6 +612,19 @@ class HYNApi {
       return true;
     }
     return false;
+  }
+
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit,{BigInt stakingAmount}) {
+    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
+    var gasFees = gasPrice * BigInt.from(gasLimit);
+    if(stakingAmount == null){
+      stakingAmount = BigInt.from(0);
+    }
+    if((hynCoin.balance - stakingAmount) < gasFees){
+      Fluttertoast.showToast(msg: "燃料费不足",gravity: ToastGravity.CENTER);
+      return false;
+    }
+    return true;
   }
 
   static String getHynSymbol(String contractAddress) {
