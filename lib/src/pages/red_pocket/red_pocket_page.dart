@@ -15,6 +15,7 @@ import 'package:titan/src/config/application.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
+import 'package:titan/src/pages/red_pocket/rp_add_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
@@ -162,9 +163,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var avatarPath = activeWallet != null
-        ? 'res/drawable/ic_map3_node_default_icon.png'
-        : 'res/drawable/img_avatar_default.png';
+    var avatarPath =
+        activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
@@ -290,6 +290,40 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       child: _contentColumn(rpMissedStr, '我错过的'),
                     ),
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 20,
+                    bottom: 10,
+                  ),
+                  child: Container(
+                    height: 0.5,
+                    color: HexColor('#F2F2F2'),
+                  ),
+                ),
+                InkWell(
+                  onTap: _navToRPAddFriends,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(child: _contentColumn('10', '直友团')),
+                      Spacer(),
+                      Text(
+                        '邀请直友一起领红包',
+                        style: TextStyle(
+                          color: HexColor('#333333'),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Icon(
+                        Icons.add,
+                        color: HexColor('#999999'),
+                        size: 17,
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -529,10 +563,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           '详细介绍',
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         '详细介绍',
@@ -685,8 +717,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -742,6 +773,21 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
+
+  _navToRPAddFriends() {
+    var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
+    if (activeWallet != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RpAddFriendsPage(_rpStatistics),
+        ),
+      );
+    } else {
+      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+    }
+  }
+
   _requestData() async {
     var activeWallet = WalletInheritedModel.of(context).activatedWallet;
     try {
@@ -750,8 +796,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {
