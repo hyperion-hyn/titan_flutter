@@ -50,6 +50,30 @@ class SupportedTokens {
     symbol: 'HYN',
   );
 
+  static const HYN_RP_HRC30 = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0x88880126bC73107118f18000309d10dB9f1d6a14',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
+  static const HYN_RP_HRC30_ROPSTEN = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0x6175228cBAbFEC03B3E67953501180B35ae55494',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
+  static const HYN_RP_HRC30_LOCAL = const AssetToken(
+    name: "Red Pocket",
+    decimals: 18,
+    contractAddress: '0xdB86E8bD3d8d7cE0a757DAD02Cbb6fb704383df0',
+    logo: "res/drawable/ic_wallet_image_rp_hrc30.png",
+    symbol: 'RP',
+  );
+
   static const HYN_ERC20 = const AssetToken(
     name: 'Hyperion',
     decimals: 18,
@@ -99,13 +123,13 @@ class SupportedTokens {
 
   static List<AssetToken> allContractTokens(EthereumNetType netType) {
     if (netType == EthereumNetType.main) {
-      return [HYN_ERC20, USDT_ERC20];
+      return [USDT_ERC20, HYN_RP_HRC30];
     } else if (netType == EthereumNetType.ropsten) {
-      return [HYN_ROPSTEN, USDT_ERC20_ROPSTEN];
+      return [USDT_ERC20_ROPSTEN, HYN_RP_HRC30_ROPSTEN];
     } else if (netType == EthereumNetType.rinkeby) {
-      return [HYN_RINKEBY];
+      return [];
     } else {
-      return [HYN_LOCAL];
+      return [HYN_RP_HRC30_LOCAL];
     }
   }
 }

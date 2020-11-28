@@ -232,14 +232,11 @@ class _ExchangeAssetHistoryPageState
   }
 
   _assetLayout() {
-    String _logoPath = '';
-    if (widget._symbol == 'HYN') {
-      _logoPath = SupportedTokens.HYN_Atlas.logo;
-    } else if (widget._symbol == 'ETH') {
-      _logoPath = SupportedTokens.ETHEREUM.logo;
-    } else if (widget._symbol == 'USDT') {
-      _logoPath = SupportedTokens.USDT_ERC20.logo;
-    }
+    var token = WalletInheritedModel.of(
+      context,
+      aspect: WalletAspect.activatedWallet,
+    ).getCoinVoBySymbol(widget._symbol);
+
     return Container(
       color: Colors.white,
       child: Column(
@@ -251,7 +248,7 @@ class _ExchangeAssetHistoryPageState
                   Row(
                     children: <Widget>[
                       Image.asset(
-                        _logoPath,
+                        token?.logo ?? '',
                         width: 32,
                         height: 32,
                       ),
@@ -280,28 +277,37 @@ class _ExchangeAssetHistoryPageState
     if (widget._symbol == 'HYN') {
       return AssetItem(
         ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
-            .HYN,
+            ?.exchangeModel
+            ?.activeAccount
+            ?.assetList
+            ?.HYN,
         _usdtToCurrency,
       );
     } else if (widget._symbol == 'USDT') {
       return AssetItem(
         ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
-            .USDT,
+            ?.exchangeModel
+            ?.activeAccount
+            ?.assetList
+            ?.USDT,
         _usdtToCurrency,
       );
     } else if (widget._symbol == 'ETH') {
       return AssetItem(
         ExchangeInheritedModel.of(context)
-            .exchangeModel
-            .activeAccount
-            .assetList
-            .ETH,
+            ?.exchangeModel
+            ?.activeAccount
+            ?.assetList
+            ?.ETH,
+        _usdtToCurrency,
+      );
+    } else if (widget._symbol == 'RP') {
+      return AssetItem(
+        ExchangeInheritedModel.of(context)
+            ?.exchangeModel
+            ?.activeAccount
+            ?.assetList
+            ?.RP,
         _usdtToCurrency,
       );
     } else {
@@ -331,10 +337,11 @@ class _ExchangeAssetHistoryPageState
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      WalletShowAccountInfoPage(transactionDetailVo)));
+                      WalletShowAccountInfoPage(transactionDetailVo.hash,transactionDetailVo.symbol)));
         } else {
           var isChinaMainland =
-              SettingInheritedModel.of(context).areaModel?.isChinaMainland??true ==
+              (SettingInheritedModel.of(context).areaModel?.isChinaMainland ??
+                      true) ==
                   true;
           var url = EtherscanApi.getTxDetailUrl(
             assetHistory.txId,

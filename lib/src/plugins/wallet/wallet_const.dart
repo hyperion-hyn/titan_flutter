@@ -93,6 +93,7 @@ class WalletConfig {
 
   static String get BITCOIN_TRANSATION_DETAIL => 'https://blockchair.com/bitcoin/transaction/';
 
+  //todo: test_rp
   static EthereumNetType netType = env.buildType == BuildType.DEV ? EthereumNetType.ropsten : EthereumNetType.main;
 
   static BitcoinNetType bitcoinNetType = env.buildType == BuildType.DEV ? BitcoinNetType.local : BitcoinNetType.main;
@@ -117,7 +118,7 @@ class WalletConfig {
     return '';
   }
 
-  static String getHynErc20Address() {
+  static String get getHynErc20Address {
     switch (netType) {
       case EthereumNetType.main:
         return SupportedTokens.HYN_ERC20.contractAddress;
@@ -127,6 +128,18 @@ class WalletConfig {
         return SupportedTokens.HYN_RINKEBY.contractAddress;
       case EthereumNetType.local:
         return SupportedTokens.HYN_LOCAL.contractAddress;
+    }
+    return '';
+  }
+
+  static String get hynRPHrc30Address {
+    switch (netType) {
+      case EthereumNetType.main:
+        return SupportedTokens.HYN_RP_HRC30.contractAddress;
+      case EthereumNetType.ropsten:
+        return SupportedTokens.HYN_RP_HRC30_ROPSTEN.contractAddress;
+      case EthereumNetType.local:
+        return SupportedTokens.HYN_RP_HRC30_LOCAL.contractAddress;
     }
     return '';
   }
@@ -143,6 +156,18 @@ class WalletConfig {
       case EthereumNetType.local:
         //have not deployed
         return SupportedTokens.USDT_ERC20.contractAddress;
+    }
+    return '';
+  }
+
+  static String get hynStakingContractAddress {
+    switch (netType) {
+      case EthereumNetType.main:
+        return '0x6910E6F7fe7C8D5444E63F8285f5342FfC7FCA6b';
+      case EthereumNetType.ropsten:
+        return '0x193b8996843227D963eceF73F17F93cE61d02454';
+      case EthereumNetType.local:
+        return "0x2190490FEcA5D47290CFA4a762b1889718913319";
     }
     return '';
   }

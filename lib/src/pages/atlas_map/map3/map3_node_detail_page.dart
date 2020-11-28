@@ -78,6 +78,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   bool _showLoadingTxLog = true;
   bool _showLoadingUserList = true;
+  bool _loadTxLogsFinished = false;
+  bool _loadUserListFinished = false;
 
   HynTransferHistory _lastPendingTx;
 
@@ -683,7 +685,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     var hasShare = config?.canShareMap3Node ?? true;
 
     if ((_map3Status == Map3InfoStatus.CREATE_SUBMIT_ING || _lastPendingTx != null) &&
-            (_currentBlockHeight > _lastCurrentBlockHeight)) {
+        (_currentBlockHeight > _lastCurrentBlockHeight)) {
       // LogUtil.printMessage("[${widget.runtimeType}] build, _refreshData");
       _refreshData();
     }
@@ -2170,13 +2172,43 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                       _detailCurrentIndex = type;
                     });
 
+                    print("[$runtimeType] onTap:$index, type:${type.toString()}");
+
                     if (type == Map3NodeDetailType.tx_log) {
                       if (_txLogList.isEmpty) {
                         _loadTxLogData();
+                      } else {
+                        if (!_loadTxLogsFinished) {
+                          print("[$runtimeType] _loadTxLogsFinished:$_loadTxLogsFinished");
+
+                          if (_currentPageTxLog > 1) {
+                            print("[$runtimeType] _loadTxLogsFinished:$_loadTxLogsFinished, >1");
+
+                            _loadDataBloc.add(LoadingMoreSuccessEvent());
+                          } else {
+                            print("[$runtimeType] _loadTxLogsFinished:$_loadTxLogsFinished, >2");
+
+                            _loadDataBloc.add(RefreshSuccessEvent());
+                          }
+                        }
                       }
                     } else {
                       if (_userList.isEmpty) {
                         _loadUserListData();
+                      } else {
+                        if (!_loadUserListFinished) {
+                          print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished");
+
+                          if (_currentPageUserList > 1) {
+                            print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >1");
+
+                            _loadDataBloc.add(LoadingMoreSuccessEvent());
+                          } else {
+                            print("[$runtimeType] _loadUserListFinished:$_loadUserListFinished, >2");
+
+                            _loadDataBloc.add(RefreshSuccessEvent());
+                          }
+                        }
                       }
                     }
                   },
@@ -2244,17 +2276,43 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      scrollDirection: Axis.vertical,
-      itemBuilder: (context, index) {
-        return delegateRecordItemWidget(
-          _txLogList[index],
-          map3CreatorAddress: _nodeCreatorAddress,
-        );
-      },
-      itemCount: _txLogList.length,
+    return Column(
+      children: <Widget>[
+        /*
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 12,
+                ),
+                color: Colors.white,
+                child: Text('共 ${_txLogList?.length ?? 0}个',
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                      color: HexColor('#999999'),
+                    )),
+              ),
+            ),
+          ],
+        ),
+        */
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) {
+            return delegateRecordItemWidget(
+              _txLogList[index],
+              map3CreatorAddress: _nodeCreatorAddress,
+            );
+          },
+          itemCount: _txLogList.length,
+        ),
+      ],
     );
   }
 
@@ -2313,7 +2371,9 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
               child: Stack(
                 children: <Widget>[
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      AtlasApi.goToHynScanPage(context,item.address);
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                       child: Row(
@@ -2451,6 +2511,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
     try {
       _currentPageTxLog = 1;
+      _loadTxLogsFinished = false;
       List<HynTransferHistory> tempMemberList = await _atlasApi.getMap3StakingLogList(
         _nodeAddress,
         page: _currentPageTxLog,
@@ -2494,6 +2555,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         _txLogList.addAll(tempMemberList);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
+        _loadTxLogsFinished = true;
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
 
@@ -2520,25 +2582,36 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       return;
     }
 
-    _currentPageUserList = 1;
-    List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
-      _nodeId,
-      page: _currentPageUserList,
-    );
+    try {
+      _currentPageUserList = 1;
+      _loadUserListFinished = false;
+      List<Map3UserEntity> tempMemberList = await _atlasApi.getMap3UserList(
+        _nodeId,
+        page: _currentPageUserList,
+      );
 
-    // print("[widget] --> build, length:${tempMemberList.length}");
-    if (mounted) {
-      setState(() {
-        _showLoadingUserList = false;
+      // print("[widget] --> build, length:${tempMemberList.length}");
+      if (mounted) {
+        setState(() {
+          _showLoadingUserList = false;
 
-        if (tempMemberList.length > 0) {
-          _userList = [];
-        }
-        _userList.addAll(tempMemberList);
-        _loadDataBloc.add(RefreshSuccessEvent());
-      });
+          if (tempMemberList.length > 0) {
+            _userList = [];
+          }
+          _userList.addAll(tempMemberList);
+          _loadDataBloc.add(RefreshSuccessEvent());
+        });
+      }
+    } catch (e) {
+      // if (mounted) {
+      //   setState(() {
+      //     _loadDataBloc.add(LoadMoreFailEvent());
+      //   });
+      // }
     }
   }
+
+
 
   void _loadUserListMoreData() async {
     if (_nodeAddress.isEmpty) {
@@ -2563,6 +2636,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
         _userList.addAll(tempMemberList);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
+        _loadUserListFinished = true;
         _loadDataBloc.add(LoadMoreEmptyEvent());
       }
       setState(() {});

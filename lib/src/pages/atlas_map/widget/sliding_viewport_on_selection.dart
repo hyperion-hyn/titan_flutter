@@ -21,7 +21,6 @@ class SlidingViewportOnSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("!!!!333 ${lastRewardOrdinal.year}   ${lastRewardOrdinal.sales}");
     return new charts.BarChart(
       seriesList,
       animate: animate,
@@ -67,7 +66,6 @@ class SlidingViewportOnSelection extends StatelessWidget {
     final desktopSalesData = List.generate(rewardHistoryList.length, (index) {
       var rewardItem = rewardHistoryList[index];
       var delegation = ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(rewardItem.totalDelegation)).toInt();
-      print("!!!!22 ${rewardItem.epoch}   $delegation");
       if(index == (rewardHistoryList.length - 1)){
         lastRewardOrdinal = OrdinalSales("${rewardItem.epoch}",delegation);
       }

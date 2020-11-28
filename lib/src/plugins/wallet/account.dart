@@ -38,14 +38,23 @@ class Account {
 //        erc20Tokens.add(SupportedTokens.HYN_ROPSTEN);
         erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
       } else if (netType == EthereumNetType.rinkeby) {
-        erc20Tokens.add(SupportedTokens.HYN_RINKEBY);
+        erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+//        erc20Tokens.add(SupportedTokens.HYN_RINKEBY);
       } else {
-        erc20Tokens.add(SupportedTokens.HYN_LOCAL);
+        erc20Tokens.add(SupportedTokens.USDT_ERC20_ROPSTEN);
+//        erc20Tokens.add(SupportedTokens.HYN_LOCAL);
       }
     } else if (json['coinType'] == CoinType.BITCOIN) {
       token = SupportedTokens.BTC;
     } else if (json['coinType'] == CoinType.HYN_ATLAS){
       token = SupportedTokens.HYN_Atlas;
+      if (netType == EthereumNetType.main) {
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30);
+      }else if(netType == EthereumNetType.ropsten){
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_ROPSTEN);
+      }else{
+        erc20Tokens.add(SupportedTokens.HYN_RP_HRC30_LOCAL);
+      }
     }
     return Account(
       address: json['address'],
