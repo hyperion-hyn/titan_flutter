@@ -73,128 +73,130 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   WidgetShot(
                     controller: _shotController,
                     child: Stack(
-                      alignment: Alignment.bottomCenter,
                       children: <Widget>[
                         Image.asset(
                           "res/drawable/bg_rp_invite_friend_top.png",
                           fit: BoxFit.cover,
                           width: double.infinity,
                         ),
-                        SingleChildScrollView(
-                          controller: scrollController,
-                          child: Container(
-                            width: double.infinity,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 21,
-                                ),
-                                Container(
+                        Align(
+                          alignment: Alignment.center,
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: Container(
+                              width: double.infinity,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 21,
+                                  ),
+                                  Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(colors: [
+                                            HexColor("#ffd985"),
+                                            HexColor("#ffa73f"),
+                                          ]),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(width: 2, color: Colors.transparent)),
+                                      child:
+                                          walletHeaderWidget(walletName, address: ethWalletAddress, isShowShape: false)),
+//                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
+                                  /*Image.asset(
+                                    "res/drawable/ic_rp_invite_friend_head_img.png",
                                     width: 60,
                                     height: 60,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(colors: [
-                                          HexColor("#ffd985"),
-                                          HexColor("#ffa73f"),
-                                        ]),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(width: 2, color: Colors.transparent)),
-                                    child:
-                                        walletHeaderWidget(walletName, address: ethWalletAddress, isShowShape: false)),
-//                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
-                                /*Image.asset(
-                                  "res/drawable/ic_rp_invite_friend_head_img.png",
-                                  width: 60,
-                                  height: 60,
-                                ),*/
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2, bottom: 17.0),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        "$walletName",
-                                        style: TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.bold,
-                                          color: DefaultColors.color333,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 16,
-                                      ),
-                                      Text("${shortBlockChainAddress(walletAddress)}",
+                                  ),*/
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2, bottom: 17.0),
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "$walletName",
                                           style: TextStyle(
-                                            fontSize: 15,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
                                             color: DefaultColors.color333,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 230,
-                                  child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        text: "邀请你一起来海伯利安领",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 22,
-                                          color: DefaultColors.color333,
-                                        ),
-                                        children: [
-                                          TextSpan(
-                                            text: "红包",
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22,
-                                              color: HexColor("#FF3B3B"),
-                                            ),
                                           ),
-                                          TextSpan(
-                                            text: "啦!",
+                                        ),
+                                        SizedBox(
+                                          width: 16,
+                                        ),
+                                        Text("${shortBlockChainAddress(walletAddress)}",
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 22,
+                                              fontSize: 15,
                                               color: DefaultColors.color333,
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 230,
+                                    child: RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                          text: "邀请你一起来海伯利安领",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: DefaultColors.color333,
+                                          ),
+                                          children: [
+                                            TextSpan(
+                                              text: "红包",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                                color: HexColor("#FF3B3B"),
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: "啦!",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
+                                                color: DefaultColors.color333,
+                                              ),
+                                            ),
+                                          ]),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 14, bottom: 21.0),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: <Widget>[
+                                        Image.asset(
+                                          "res/drawable/ic_rp_invite_friend_red_package.png",
+                                          width: 208,
+                                          height: 267,
+                                        ),
+                                        Positioned(
+                                          bottom: 42,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                            width: 84,
+                                            height: 84,
+                                            child: QrImage(
+                                              data:
+                                                  "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
+                                              size: 131,
                                             ),
                                           ),
-                                        ]),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 14, bottom: 21.0),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: <Widget>[
-                                      Image.asset(
-                                        "res/drawable/ic_rp_invite_friend_red_package.png",
-                                        width: 208,
-                                        height: 267,
-                                      ),
-                                      Positioned(
-                                        bottom: 42,
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
-                                          width: 84,
-                                          height: 84,
-                                          child: QrImage(
-                                            data:
-                                                "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
-                                            size: 131,
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                  SizedBox(
+                                    height: 21,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 55,
-                                )
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -204,7 +206,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   ClickOvalButton(
                     "分享",
                     () async {
-                      scrollController.jumpTo(scrollController.position.minScrollExtent);
+                      scrollController.jumpTo(scrollController.position.maxScrollExtent);
                       await _shareQr(context);
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
