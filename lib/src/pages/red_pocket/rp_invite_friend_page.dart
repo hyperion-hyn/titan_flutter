@@ -30,6 +30,7 @@ import 'api/rp_api.dart';
 
 class RpInviteFriendPage extends StatefulWidget {
   static String shareDomain = "https://h.hyn.space/share";
+
   RpInviteFriendPage();
 
   @override
@@ -41,6 +42,7 @@ class RpInviteFriendPage extends StatefulWidget {
 class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
   WalletVo activityWallet;
   final ShotController _shotController = new ShotController();
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -75,25 +77,31 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                       children: <Widget>[
                         Image.asset(
                           "res/drawable/bg_rp_invite_friend_top.png",
-                          fit:BoxFit.cover,
+                          fit: BoxFit.cover,
                           width: double.infinity,
                         ),
                         SingleChildScrollView(
+                          controller: scrollController,
                           child: Container(
                             width: double.infinity,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                SizedBox(height: 21,),
+                                SizedBox(
+                                  height: 21,
+                                ),
                                 Container(
-                                  width: 60,
+                                    width: 60,
                                     height: 60,
                                     decoration: BoxDecoration(
-                                      gradient: LinearGradient(colors:[HexColor("#ffd985"),HexColor("#ffa73f"),]),
+                                        gradient: LinearGradient(colors: [
+                                          HexColor("#ffd985"),
+                                          HexColor("#ffa73f"),
+                                        ]),
                                         shape: BoxShape.circle,
-                                        border: Border.all(width: 2,color: Colors.transparent)
-                                    ),
-                                    child: walletHeaderWidget(walletName,address: ethWalletAddress,isShowShape: false)),
+                                        border: Border.all(width: 2, color: Colors.transparent)),
+                                    child:
+                                        walletHeaderWidget(walletName, address: ethWalletAddress, isShowShape: false)),
 //                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
                                 /*Image.asset(
                                   "res/drawable/ic_rp_invite_friend_head_img.png",
@@ -174,7 +182,8 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                           width: 84,
                                           height: 84,
                                           child: QrImage(
-                                            data: "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
+                                            data:
+                                                "${RpInviteFriendPage.shareDomain}?from=$walletAddress&name=$walletName",
                                             size: 131,
                                           ),
                                         ),
@@ -182,7 +191,9 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 55,)
+                                SizedBox(
+                                  height: 55,
+                                )
                               ],
                             ),
                           ),
@@ -192,12 +203,14 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   ),
                   ClickOvalButton(
                     "分享",
-                        () async {
+                    () async {
+                      scrollController.jumpTo(scrollController.position.maxScrollExtent);
                       await _shareQr(context);
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                     fontSize: 16,
-                    width: 200,height: 38,
+                    width: 200,
+                    height: 38,
                   )
                 ],
               ),
@@ -266,49 +279,52 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
             RPApi _rpApi = RPApi();
             var walletVo = WalletInheritedModel.of(context).activatedWallet;
             if (walletVo == null) {
-              UiUtil.showAlertView(context, title: "一起领红包邀请", content: "现在新建一个钱包身份，创建后将自动成为$walletName的直友，现在就创建吗?", actions: [
-                ClickOvalButton(
-                  S.of(context).cancel,
-                  () {
-                    MemoryCache.rpInviteKey = inviterAddress;
+              UiUtil.showAlertView(context,
+                  title: "一起领红包邀请",
+                  content: "现在新建一个钱包身份，创建后将自动成为$walletName的直友，现在就创建吗?",
+                  actions: [
+                    ClickOvalButton(
+                      S.of(context).cancel,
+                      () {
+                        MemoryCache.rpInviteKey = inviterAddress;
 
-                    Navigator.pop(context);
-                  },
-                  width: 120,
-                  height: 32,
-                  fontSize: 14,
-                  fontColor: DefaultColors.color999,
-                  btnColor: [Colors.transparent],
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                ClickOvalButton(
-                  S.of(context).confirm,
-                  () async {
-                    MemoryCache.rpInviteKey = inviterAddress;
+                        Navigator.pop(context);
+                      },
+                      width: 120,
+                      height: 32,
+                      fontSize: 14,
+                      fontColor: DefaultColors.color999,
+                      btnColor: [Colors.transparent],
+                    ),
+                    SizedBox(
+                      width: 8,
+                    ),
+                    ClickOvalButton(
+                      S.of(context).confirm,
+                      () async {
+                        MemoryCache.rpInviteKey = inviterAddress;
 
-                    Navigator.pop(context);
-                    BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
-                  },
-                  width: 120,
-                  height: 38,
-                  fontSize: 16,
-                ),
-              ]);
+                        Navigator.pop(context);
+                        BlocProvider.of<AppTabBarBloc>(context).add(ChangeTabBarItemEvent(index: 1));
+                      },
+                      width: 120,
+                      height: 38,
+                      fontSize: 16,
+                    ),
+                  ]);
               return;
             }
 
             try {
               bool inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
-              if(inviteResult) {
+              if (inviteResult) {
                 Fluttertoast.showToast(msg: "邀请成功");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RedPocketPage()),
                 );
               }
-            }catch(error){
+            } catch (error) {
               LogUtil.toastException(error);
             }
           },
