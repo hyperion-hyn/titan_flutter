@@ -147,9 +147,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     );
 
     try {
-      rpBalance = FormatUtil.coinBalanceByDecimal(
+      rpBalance = FormatUtil.coinBalanceHumanReadFormat(
         rpToken,
-        4,
       );
     } catch (e) {}
 
