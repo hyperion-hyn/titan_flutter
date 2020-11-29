@@ -64,22 +64,25 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
         body: Column(
           children: <Widget>[
             Expanded(
-              child: WidgetShot(
-                controller: _shotController,
-                child: Column(
-                  children: <Widget>[
-                    Stack(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  WidgetShot(
+                    controller: _shotController,
+                    child: Stack(
                       alignment: Alignment.bottomCenter,
                       children: <Widget>[
                         Image.asset(
                           "res/drawable/bg_rp_invite_friend_top.png",
-                          height: 579,
+                          fit:BoxFit.cover,
+                          width: double.infinity,
                         ),
                         Container(
                           width: double.infinity,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
+                              SizedBox(height: 66,),
                               Container(
                                 width: 60,
                                   height: 60,
@@ -177,21 +180,21 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                   ],
                                 ),
                               ),
-                              ClickOvalButton(
-                                "分享",
-                                () async {
-                                  await _shareQr(context);
-                                },
-                                btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-                                fontSize: 16,
-                              )
                             ],
                           ),
                         ),
                       ],
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  ClickOvalButton(
+                    "分享",
+                        () async {
+                      await _shareQr(context);
+                    },
+                    btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
+                    fontSize: 16,
+                  )
+                ],
               ),
             ),
             Container(
