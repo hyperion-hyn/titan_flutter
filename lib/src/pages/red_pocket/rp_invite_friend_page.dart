@@ -29,7 +29,7 @@ import 'package:titan/src/widget/widget_shot.dart';
 import 'api/rp_api.dart';
 
 class RpInviteFriendPage extends StatefulWidget {
-  static String shareDomain = "https://share.hyn.spage/redpocket_share.html";
+  static String shareDomain = "https://h.hyn.space/share";
   RpInviteFriendPage();
 
   @override
