@@ -83,7 +83,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              SizedBox(height: 66,),
+                              Spacer(),
                               Container(
                                 width: 60,
                                   height: 60,
@@ -181,6 +181,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                   ],
                                 ),
                               ),
+                              SizedBox(height: 55,)
                             ],
                           ),
                         ),
@@ -194,6 +195,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
                     fontSize: 16,
+                    width: 200,height: 38,
                   )
                 ],
               ),
