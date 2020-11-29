@@ -55,7 +55,8 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
 
   @override
   Widget build(BuildContext context) {
-    String walletAddress = WalletUtil.ethAddressToBech32Address(activityWallet.wallet.getAtlasAccount().address);
+    String ethWalletAddress = activityWallet.wallet.getAtlasAccount().address;
+    String walletAddress = WalletUtil.ethAddressToBech32Address(ethWalletAddress);
     String walletName = activityWallet.wallet.keystore.name;
 
     return Scaffold(
@@ -91,7 +92,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                       shape: BoxShape.circle,
                                       border: Border.all(width: 2,color: Colors.transparent)
                                   ),
-                                  child: walletHeaderWidget(walletName,address: walletAddress,isShowShape: false)),
+                                  child: walletHeaderWidget(walletName,address: ethWalletAddress,isShowShape: false)),
 //                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
                               /*Image.asset(
                                 "res/drawable/ic_rp_invite_friend_head_img.png",
