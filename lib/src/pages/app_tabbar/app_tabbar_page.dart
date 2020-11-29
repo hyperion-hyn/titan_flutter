@@ -49,6 +49,7 @@ import 'bloc/app_tabbar_bloc.dart';
 import 'bloc/app_tabbar_event.dart';
 import 'bloc/app_tabbar_state.dart';
 import 'drawer_component.dart';
+import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 
 class AppTabBarPage extends StatefulWidget {
   @override
@@ -139,60 +140,6 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       _urlLauncherAction(values);
     };
 
-    Future.delayed(Duration(milliseconds: 2000)).then((value) {
-      UiUtil.showAlertViewNew(context,
-          barrierDismissible: false,
-          contentWidget: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Text("asdasdf",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: HexColor("#333333"),
-                        decoration: TextDecoration.none)),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top:12,bottom:11.0),
-                child: Image.asset(
-                  "res/drawable/ic_rp_invite_friend_start_show.png",
-                  width: 62,
-                  height: 61,
-                ),
-              ),
-              SizedBox(
-                width: 240,
-                child: RichText(
-                  textAlign: TextAlign.center,
-                  text: TextSpan(
-                    text: "Moo",
-                    style: TextStyles.textC333S14bold,
-                    children:[
-                      TextSpan(
-                        text: " hyn18923u982fjlajs ",
-                        style: TextStyles.textC999S12,
-                      ),
-                      TextSpan(
-                          text: "邀请你成为他的直友并一起领红包，是否同意?",
-                        style: TextStyles.textC333S14,
-                      ),
-                    ]
-                  ),
-                ),
-              )
-            ],
-          ),
-          actions: [
-            ClickOvalButton(
-              "同意",
-              () {},
-              btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
-              fontSize: 16,
-            )
-          ]);
-    });
   }
 
   @override
@@ -251,6 +198,10 @@ class AppTabBarPageState extends BaseState<AppTabBarPage> with TickerProviderSta
       var infoEntity = Map3InfoEntity.onlyNodeId(nodeId);
       Application.router.navigateTo(context,
           Routes.map3node_contract_detail_page + '?info=${FluroConvertUtils.object2string(infoEntity.toJson())}');
+    } else if (type == "rp" && subType == "detail") {
+      var inviterAddress = content["from"];
+      var walletName = content["name"];
+      showInviteDialog(context,inviterAddress,walletName);
     } else if (type == "location" && subType == 'share') {
       ///When received encrypted msg, show dialog
       ///
