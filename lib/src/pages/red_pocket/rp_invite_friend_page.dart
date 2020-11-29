@@ -204,7 +204,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                   ClickOvalButton(
                     "分享",
                     () async {
-                      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+                      scrollController.jumpTo(scrollController.position.minScrollExtent);
                       await _shareQr(context);
                     },
                     btnColor: [HexColor("#FF4D4D"), HexColor("#FF0527")],
