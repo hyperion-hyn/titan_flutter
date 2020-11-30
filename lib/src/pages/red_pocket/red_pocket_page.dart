@@ -28,6 +28,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'entity/rp_statistics.dart';
 
@@ -107,8 +108,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
   Widget _contentColumn(
     String content,
-    String subContent,
-  ) {
+    String subContent, {
+    double contentFontSize = 14,
+    double subContentFontSize = 10,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Column(
@@ -117,7 +120,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           Text(
             '$content',
             style: TextStyle(
-              fontSize: 11,
+              fontSize: contentFontSize,
               color: Colors.black,
             ),
           ),
@@ -127,7 +130,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           Text(
             subContent,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: subContentFontSize,
               color: DefaultColors.color999,
             ),
           ),
@@ -164,8 +167,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var avatarPath =
-        activeWallet != null ? 'res/drawable/ic_map3_node_default_icon.png' : 'res/drawable/img_avatar_default.png';
+    var avatarPath = activeWallet != null
+        ? 'res/drawable/ic_map3_node_default_icon.png'
+        : 'res/drawable/img_avatar_default.png';
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
@@ -233,11 +237,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(60.0),
-                      child: Image.asset(
-                        avatarPath,
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
+                      child: walletHeaderWidget(
+                        userName,
+                        address:
+                            activeWallet?.wallet?.getAtlasAccount()?.address ??
+                                '',
+                        isShowShape: false,
                       ),
                     ),
                     SizedBox(
@@ -296,7 +301,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   padding: const EdgeInsets.only(
                     left: 16,
                     right: 16,
-                    top: 20,
+                    top: 16,
                     bottom: 10,
                   ),
                   child: Container(
@@ -308,7 +313,12 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   onTap: _navToRPAddFriends,
                   child: Row(
                     children: <Widget>[
-                      Expanded(child: _contentColumn('10', '直友团')),
+                      Expanded(
+                          child: _contentColumn(
+                        '10',
+                        '直友团',
+                        contentFontSize: 16,
+                      )),
                       Spacer(),
                       InkWell(
                         onTap: _navToRPInviteFriends,
@@ -567,8 +577,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           '详细介绍',
                         );
-                        Application.router
-                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                        Application.router.navigateTo(
+                            context,
+                            Routes.toolspage_webview_page +
+                                '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         '详细介绍',
@@ -721,7 +733,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -777,7 +790,6 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     }
   }
 
-
   _navToRPAddFriends() {
     var activeWallet = WalletInheritedModel.of(context)?.activatedWallet;
     if (activeWallet != null) {
@@ -814,7 +826,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {
