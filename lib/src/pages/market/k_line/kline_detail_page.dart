@@ -954,18 +954,15 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
       if (!_showLoadingTrade) {
         return _tradeListViewContent();
       } else {
-        _loadingWidget(visible: _showLoadingTrade);
+        return _loadingWidget(visible: _showLoadingTrade);
       }
     } else {
       if (!_showLoadingDepth) {
         return _depthListViewContent();
       } else {
-        _loadingWidget(visible: _showLoadingDepth);
+        return _loadingWidget(visible: _showLoadingDepth);
       }
     }
-    return SliverToBoxAdapter(
-      child: Container(),
-    );
   }
 
   Widget _tradeListViewContent() {
