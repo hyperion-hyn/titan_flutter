@@ -256,7 +256,7 @@ class _ShowWalletViewState extends State<ShowWalletView> {
               height: 16,
             ),
             HynBurnBanner(),
-            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
+//            if (env.buildType == BuildType.DEV) _ropstenTestWalletView(context),
           ]),
     );
   }

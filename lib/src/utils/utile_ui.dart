@@ -78,16 +78,17 @@ class UiUtil {
   static Future<bool> showAlertView<T>(
     BuildContext context, {
     String title,
-    List<Widget> actions,
-    String content,
-    String detail = "",
-    String boldContent = "",
-    TextStyle boldStyle,
-    String suffixContent = "",
+    Color titleColor,
     bool barrierDismissible = true,
     bool isShowCloseIcon = true,
-        bool isInputValue = false,
     Widget contentItem,
+    List<Widget> actions,
+    String content,
+    String boldContent = "",
+    String suffixContent = "",
+    String detail = "",
+    TextStyle boldStyle,
+    bool isInputValue = false,
   }) {
     return showDialog<bool>(
       barrierDismissible: barrierDismissible,
@@ -95,8 +96,7 @@ class UiUtil {
       context: context,
       // 构建 Dialog 的视图
       builder: (_) => AnimatedPadding(
-        padding: MediaQuery.of(context).viewInsets +
-            const EdgeInsets.symmetric(horizontal: 36.0),
+        padding: MediaQuery.of(context).viewInsets + const EdgeInsets.symmetric(horizontal: 36.0),
         duration: const Duration(milliseconds: 100),
         curve: Curves.decelerate,
         child: Column(
@@ -131,7 +131,7 @@ class UiUtil {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: HexColor("#333333"),
+                                color: titleColor ?? HexColor("#333333"),
                                 decoration: TextDecoration.none)),
                       ),
                       Padding(
@@ -175,7 +175,10 @@ class UiUtil {
                 ],
               ),
             ),
-            if (isInputValue) SizedBox(height: 120,),
+            if (isInputValue)
+              SizedBox(
+                height: 120,
+              ),
           ],
         ),
       ),
