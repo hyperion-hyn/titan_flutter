@@ -158,13 +158,13 @@ class PrefsKey {
 
   static const String SHARED_PREF_GAS_FEE_KEY = "shared_pref_gas_fee_key";
 
-  // kLine
+  // Exchange
   static const String PERIOD_CURRENT_INDEX = 'periodCurrentIndex';
-
   static const String KLINE_MAIN_STATE = 'mainState';
   static const String KLINE_SECONDARY_STATE = 'secondaryState';
 
-  ///Exchange account
+  static const String CACHE_MARKET_ITEM_LIST = 'cache_market_item_list_v2';
+
   static const String EXCHANGE_ACCOUNT = 'exchange_account';
   static const String EXCHANGE_ACCOUNT_LAST_AUTH_TIME =
       'exchange_account_last_auth_time';

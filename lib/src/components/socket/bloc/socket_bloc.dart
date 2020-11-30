@@ -95,10 +95,12 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
                   yield ChannelExchangeDepthState(response: response);
                 } else if (channelValue.contains("trade.detail")) {
                   yield ChannelTradeDetailState(response: response);
-                } else if (channelValue.startsWith("user") && channelValue.contains("tick")) {
+                } else if (channelValue.startsWith("user") &&
+                    channelValue.contains("tick")) {
                   yield ChannelUserTickState(response: response);
                 } else {
-                  yield ChannelKLinePeriodState(channel: channelValue, response: response);
+                  yield ChannelKLinePeriodState(
+                      channel: channelValue, response: response);
                 }
               }
               // yield ReceivedDataSuccessState(response: dataMap);
@@ -119,7 +121,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
             yield HeartSuccessState();
           }
         } else {
-          LogUtil.printMessage("[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
+          LogUtil.printMessage(
+              "[SocketBloc] mapEventToState, errMsg:$errMsg, errCode:$errCode");
 
           if (eventAction == SocketConfig.sub) {
             yield SubChannelFailState();
@@ -131,7 +134,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
         LogUtil.printMessage("[SocketBloc] e:$e");
         yield ReceivedDataFailState();
       }
-    } else if (event is MarketSymbolEvent) {  // 价格行情
+    } else if (event is MarketSymbolEvent) {
+      // 价格行情
       var response = await _exchangeApi.getMarketAllSymbol();
       MarketSymbolList marketSymbolList = MarketSymbolList.fromJson(response);
       var _marketItemList = List<MarketItemEntity>();
@@ -140,6 +144,8 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           'hynusdt',
           marketSymbolList.hynusdt,
           symbolName: 'USDT',
+          base: 'USDT',
+          quote: 'HYN',
         ));
       }
       if (marketSymbolList.hyneth != null) {
@@ -147,6 +153,17 @@ class SocketBloc extends Bloc<SocketEvent, SocketState> {
           'hyneth',
           marketSymbolList.hyneth,
           symbolName: 'ETH',
+          base: 'ETH',
+          quote: 'HYN',
+        ));
+      }
+      if (marketSymbolList.rphyn != null) {
+        _marketItemList.add(MarketItemEntity(
+          'rphyn',
+          marketSymbolList.rphyn,
+          symbolName: 'RP',
+          base: 'HYN',
+          quote: 'RP',
         ));
       }
 

@@ -388,12 +388,12 @@ class _ExchangeAssetsPageState extends BaseState<ExchangeAssetsPage> {
 //              ethToCurrency,
 //              _isShowBalances,
 //            ),
-//             AssetItem(
-//               'RP',
-//               _assetList?.RP,
-//               _usdtToCurrency,
-//               _isShowBalances,
-//             ),
+            AssetItem(
+              'RP',
+              _assetList?.RP,
+              _usdtToCurrency,
+              _isShowBalances,
+            ),
           ],
         ),
       );

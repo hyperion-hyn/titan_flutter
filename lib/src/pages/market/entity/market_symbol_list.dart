@@ -1,4 +1,3 @@
-
 import 'package:k_chart/flutter_k_chart.dart';
 
 class MarketSymbolList {
@@ -6,6 +5,7 @@ class MarketSymbolList {
   KLineEntity hynusdt;
   KLineEntity hyneth;
   KLineEntity hynbtc;
+  KLineEntity rphyn;
 
   MarketSymbolList.fromJson(dynamic response) {
     //print('[MarketSymbolList.fromJson] ${(response as List<dynamic>).first}');
@@ -21,6 +21,9 @@ class MarketSymbolList {
       }
       if (symbols.containsKey('HYN/BTC')) {
         hynbtc = fromSymbolToKLineEntity(symbols['HYN/BTC']);
+      }
+      if (symbols.containsKey('RP/HYN')) {
+        rphyn = fromSymbolToKLineEntity(symbols['RP/HYN']);
       }
     } catch (e) {
       print('[ MarketSymbolList.fromJson] $e');
