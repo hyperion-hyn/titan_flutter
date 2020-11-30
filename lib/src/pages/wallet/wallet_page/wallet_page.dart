@@ -89,11 +89,6 @@ class _WalletPageState extends BaseState<WalletPage>
   @override
   void didPopNext() async {
     listLoadingData();
-    /*print("!!!!000 ${FormatUtil.formatSecondDate(DateTime.now().millisecondsSinceEpoch)}");
-    callLater((_) {
-      BlocProvider.of<WalletCmpBloc>(context)
-          .add(UpdateActivatedWalletBalanceEvent());
-    });*/
   }
 
   @override

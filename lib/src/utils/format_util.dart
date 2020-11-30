@@ -5,6 +5,7 @@ import 'package:titan/generated/l10n.dart';
 import 'dart:convert';
 
 import 'package:titan/src/components/wallet/vo/coin_vo.dart';
+import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 
 class FormatUtil {
@@ -17,13 +18,15 @@ class FormatUtil {
   }
 
   static String stringFormatCoinNum(String numValue) {
-    return NumberFormat("#,###,###,###.######")
-        .format(Decimal.parse(numValue).toDouble());
+    return NumberFormat("#,###,###,###.######").format(Decimal.tryParse(numValue ?? '0').toDouble());
+  }
+
+  static String stringFormatCoinNum10(String numValue) {
+    return NumberFormat("#,###,###,###.##########").format(Decimal.tryParse(numValue ?? '0').toDouble());
   }
 
   static String stringFormatCoinNumWithFour(String numValue) {
-    return NumberFormat("#,###,###,###.####")
-        .format(Decimal.parse(numValue).toDouble());
+    return NumberFormat("#,###,###,###.####").format(Decimal.parse(numValue).toDouble());
   }
 
   static String doubleFormatNum(double numValue) {
@@ -49,8 +52,7 @@ class FormatUtil {
     return NumberFormat("#,###,###,###").format(doubleValue);
   }
 
-  static String formatDate(int timestamp,
-      {bool isSecond = false, bool isMillisecond = false}) {
+  static String formatDate(int timestamp, {bool isSecond = false, bool isMillisecond = false}) {
     if ((timestamp ?? 0) <= 0) return "";
 
     var format = isSecond ? "yyyy-MM-dd HH:mm" : "yyyy-MM-dd";
@@ -80,9 +82,7 @@ class FormatUtil {
   }
 
   static String formatDateCircle(int timestamp, {bool isSecond = true}) {
-    return DateFormat("yyyy.MM.dd")
-            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
-        "";
+    return DateFormat("yyyy.MM.dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
   // utc时间：2020-10-27 13:32:37   ->  local: 2020-10-27 21:32
@@ -114,28 +114,21 @@ class FormatUtil {
   }
 
   static String formatMarketOrderDate(int timestamp, {bool isSecond = true}) {
-    return DateFormat("HH:mm MM/dd")
-            .format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ??
-        "";
+    return DateFormat("HH:mm MM/dd").format(DateTime.fromMillisecondsSinceEpoch(timestamp)) ?? "";
   }
 
   static String formatTimer(int seconds) {
     int hour = seconds ~/ 3600;
     int minute = seconds % 3600 ~/ 60;
     int second = seconds % 60;
-    return formatTimeNum(hour) +
-        ":" +
-        formatTimeNum(minute) +
-        ":" +
-        formatTimeNum(second);
+    return formatTimeNum(hour) + ":" + formatTimeNum(minute) + ":" + formatTimeNum(second);
   }
 
   static String formatTimeNum(int timeNum) {
     return timeNum < 10 ? "0" + timeNum.toString() : timeNum.toString();
   }
 
-  static String amountToString(String amount) =>
-      FormatUtil.formatNum(double.parse(amount).toInt());
+  static String amountToString(String amount) => FormatUtil.formatNum(double.parse(amount).toInt());
 
   static String encodeBase64(String data) {
     var content = utf8.encode(data);
@@ -148,27 +141,22 @@ class FormatUtil {
   }
 
   static double coinBalanceDouble(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? 0, coinVo?.decimals ?? 0)
-        .toDouble();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0).toDouble();
   }
 
   static String coinBalanceHumanRead(CoinVo coinVo) {
-    return ConvertTokenUnit.weiToDecimal(
-            coinVo?.balance ?? BigInt.from(0), coinVo?.decimals ?? 0)
-        .toString();
+    return ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? BigInt.from(0), coinVo?.decimals ?? 0).toString();
   }
 
   static String coinBalanceByDecimal(CoinVo coinVo, int decimal) {
     return truncateDecimalNum(
-      ConvertTokenUnit.weiToDecimal(
-          coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
+      ConvertTokenUnit.weiToDecimal(coinVo?.balance ?? 0, coinVo?.decimals ?? 0),
       decimal,
     );
   }
 
   static String coinBalanceHumanReadFormat(CoinVo coinVo, [isFloor = true]) {
-    var value = double.tryParse(coinBalanceHumanRead(coinVo))??0;
+    var value = double.tryParse(coinBalanceHumanRead(coinVo)) ?? 0;
     if (isFloor) {
       value = (value * 1000000).floor() / 1000000;
     }
@@ -312,19 +300,13 @@ class FormatUtil {
 
   static String truncateDecimalNum(Decimal decNum, int decimal) {
     var number = decNum.toDouble();
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
-        decimal) {
-      var result = number
-          .toStringAsFixed(decimal)
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
+      var result =
+          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       result = FormatUtil.strClearZero(result);
       return result;
     } else {
-      var result = number
-          .toString()
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       result = FormatUtil.strClearZero(result);
       return result;
     }
@@ -334,19 +316,29 @@ class FormatUtil {
     if (number == null) {
       return null;
     }
-    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) <
-        decimal) {
-      var result = number
-          .toStringAsFixed(decimal)
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+    if ((number.toString().length - number.toString().lastIndexOf(".") - 1) < decimal) {
+      var result =
+          number.toStringAsFixed(decimal).substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       return result;
     } else {
-      var result = number
-          .toString()
-          .substring(0, number.toString().lastIndexOf(".") + decimal + 1)
-          .toString();
+      var result = number.toString().substring(0, number.toString().lastIndexOf(".") + decimal + 1).toString();
       return result;
+    }
+  }
+
+  /// timestamp 秒
+  static String humanReadableDay(int timestamp) {
+    var now = DateTime.now();
+    var timeDate = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    var todayBegin = DateTime(now.year, now.month, now.day);
+    if (timeDate.isAfter(todayBegin)) {
+      return '今天';
+    } else if (timeDate.isAfter(DateTime(now.year, now.month, now.day - 1))) {
+      return '昨天';
+    } else if (timeDate.isAfter(DateTime(now.year, now.month, now.day - 2))) {
+      return '前天';
+    } else {
+      return Const.DAY_FORMAT.format(timeDate);
     }
   }
 
@@ -366,8 +358,14 @@ class FormatUtil {
       return entityParam;
     }
     if (entityParam is String) {
-      return ConvertTokenUnit.weiToEther(weiBigInt: BigInt.parse(entityParam))
-          .toString();
+      var arr = entityParam.split('.');
+      bool isContainerPoint = (arr?.length ?? 0) > 1;
+      String pendingValue = entityParam;
+      if (isContainerPoint) {
+        pendingValue = arr?.first ?? '0';
+      }
+      var weiBigInt = (BigInt.tryParse(pendingValue) ?? BigInt.from(int.tryParse(pendingValue) ?? 0));
+      return ConvertTokenUnit.weiToEther(weiBigInt: weiBigInt).toString();
     } else if (entityParam is int) {
       return ConvertTokenUnit.weiToEther(weiInt: entityParam).toString();
     } else {

@@ -1,4 +1,5 @@
 import 'package:decimal/decimal.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
@@ -11,6 +12,7 @@ import 'package:titan/src/pages/wallet/model/hyn_transfer_history.dart';
 import 'package:titan/src/pages/wallet/model/transtion_detail_vo.dart';
 import 'package:titan/src/pages/wallet/service/account_transfer_service.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
+import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet.dart' as localWallet;
 import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
@@ -99,6 +101,28 @@ class HYNApi {
     );
 
     logger.i('HYN transaction committed，txHash $txHash');
+    return txHash;
+  }
+
+  static Future<String> sendTransferHYNHrc30(
+      String password, BigInt amount, String toAddress, localWallet.Wallet wallet, String contractAddress,
+      {String gasPrice, int gasLimit}) async {
+    if (gasPrice == null) {
+      gasPrice = (1 * TokenUnit.G_WEI).toStringAsFixed(0);
+    }
+    if (gasLimit == null) {
+      gasLimit = 100000;
+    }
+    final txHash = await wallet.sendHYNHrc30Transaction(
+      contractAddress: contractAddress,
+      password: password,
+      gasPrice: BigInt.parse(gasPrice),
+      value: amount,
+      toAddress: toAddress,
+      gasLimit: gasLimit,
+    );
+
+    logger.i('HYN transaction committed，txhash $txHash ');
     return txHash;
   }
 
@@ -253,8 +277,10 @@ class HYNApi {
     var message = EditMap3NodeMessage(
       map3NodeAddress: map3NodeAddress,
       description: NodeDescription(
-          name: payload.name, // ''
-          details: payload.describe, //''
+          name: payload.name,
+          // ''
+          details: payload.describe,
+          //''
           identity: payload.nodeId,
           securityContact: payload.connect,
           website: payload.home),
@@ -388,7 +414,7 @@ class HYNApi {
                 "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
             amountStr =
-                "-${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+                "${transactionDetail.amount < 0 ? "-" : ""}${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }
         }
         break;
@@ -405,12 +431,12 @@ class HYNApi {
         typeStr = S.of(context).msg_cancel_re_delegation;
         break;
       case MessageType.typeCollectReStakingReward:
-        if(isWallet){
+        if (isWallet) {
           typeStr = S.of(context).msg_collect_re_delegation_reward + "至Map3";
           String value = "0";
           amountStr = "$value";
           recordAmountStr = getTransRecordAmount(value);
-        }else{
+        } else {
           typeStr = S.of(context).msg_collect_re_delegation_reward;
           String value = transactionDetail?.getAtlasRewardAmount() ?? "0.0";
           amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
@@ -452,7 +478,6 @@ class HYNApi {
         recordAmountStr = getTransRecordAmount(value);
         break;
       case MessageType.typeRenewMap3:
-
         /*
 
         * 根据角色，设置，如果是创建人， 设置true/false，展示： （下期预设，节点续约/停止续约），
@@ -515,8 +540,9 @@ class HYNApi {
     }
   }
 
-  static String toAddressHint(int hynMessageType,bool isFrom){
-    var titleStr = isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
+  static String toAddressHint(int hynMessageType, bool isFrom) {
+    var titleStr =
+        isFrom ? S.of(Keys.rootKey.currentContext).tx_from_address : S.of(Keys.rootKey.currentContext).tx_to_address;
     switch (hynMessageType) {
       case MessageType.typeNormal:
         return titleStr;
@@ -566,5 +592,57 @@ class HYNApi {
         break;
     }
     return toAddressStr;
+  }
+
+  static bool isContractTokenAddress(String contractAddress) {
+    if (SupportedTokens.allContractTokens(WalletConfig.netType)
+        .map((token) => token.contractAddress.toLowerCase())
+        .toList()
+        .contains(contractAddress.toLowerCase())) {
+      return true;
+    }
+    return false;
+  }
+
+  static bool isHynHrc30ContractAddress(String contractAddress) {
+    contractAddress = contractAddress?.toLowerCase()??'';
+    if (contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase() ||
+        contractAddress == WalletConfig.hynStakingContractAddress.toLowerCase() ||
+        contractAddress == "0x0000000000000000000000000000000000000000") {
+      return true;
+    }
+    return false;
+  }
+
+  static bool isGasFeeEnough(BigInt gasPrice, int gasLimit,{BigInt stakingAmount}) {
+    var hynCoin = WalletInheritedModel.of(Keys.rootKey.currentContext).getCoinVoBySymbol(SupportedTokens.HYN_Atlas.symbol);
+    var gasFees = gasPrice * BigInt.from(gasLimit);
+    if(stakingAmount == null){
+      stakingAmount = BigInt.from(0);
+    }
+    if((hynCoin.balance - stakingAmount) < gasFees){
+      Fluttertoast.showToast(msg: "燃料费不足",gravity: ToastGravity.CENTER);
+      return false;
+    }
+    return true;
+  }
+
+  static String getHynSymbol(String contractAddress) {
+    contractAddress = contractAddress?.toLowerCase()??'';
+    if(contractAddress == WalletConfig.hynRPHrc30Address.toLowerCase()){
+      return SupportedTokens.HYN_RP_HRC30.symbol;
+    }else{
+      return SupportedTokens.HYN_Atlas.symbol;
+    }
+  }
+
+  static AssetToken getContractToken(String contractAddress) {
+    AssetToken assetToken;
+    SupportedTokens.allContractTokens(WalletConfig.netType).forEach((element) {
+      if (element.contractAddress.toLowerCase() == contractAddress.toLowerCase()) {
+        assetToken = element;
+      }
+    });
+    return assetToken;
   }
 }

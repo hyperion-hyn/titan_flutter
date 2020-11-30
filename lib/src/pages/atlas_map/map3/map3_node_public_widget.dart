@@ -1360,7 +1360,7 @@ void _pushTransactionDetailAction(HynTransferHistory item) {
   Navigator.push(
     Keys.rootKey.currentContext,
     MaterialPageRoute(
-        builder: (context) => WalletShowAccountInfoPage(transactionDetail)),
+        builder: (context) => WalletShowAccountInfoPage(transactionDetail.hash,transactionDetail.symbol)),
   );
 }
 

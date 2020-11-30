@@ -100,7 +100,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
     } else {
       _basicAddressReg = RegExp(r'^(0x)?[0-9a-f]{40}', caseSensitive: false);
       var addressExample =
-          widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol
+          widget.coinVo.coinType == CoinType.HYN_ATLAS
               ? 'hyn1ntjklkvx9jlkrz9'
               : '0x81e7A0529AC1726e';
       addressHint = S.of(context).example + ': $addressExample...';
@@ -177,16 +177,16 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                             horizontal: 0, vertical: 12),
                         child: TextFormField(
                             validator: (value) {
-                              var address = widget.coinVo.symbol ==
-                                      SupportedTokens.HYN_Atlas.symbol
+                              var address = widget.coinVo.coinType ==
+                                      CoinType.HYN_ATLAS
                                   ? WalletUtil.bech32ToEthAddress(value)
                                   : value;
                               if (address.isEmpty) {
                                 return S
                                     .of(context)
                                     .receiver_address_not_empty_hint;
-                              } else if (widget.coinVo.symbol ==
-                                      SupportedTokens.HYN_Atlas.symbol &&
+                              } else if (widget.coinVo.coinType ==
+                                  CoinType.HYN_ATLAS &&
                                   !value.startsWith('hyn1')) {
                                 return addressErrorHint;
                               } else if (!_basicAddressReg.hasMatch(address)) {
@@ -240,9 +240,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
                       Row(
                         children: <Widget>[
                           Text(
-                            S
-                                .of(context)
-                                .send_count_label(widget.coinVo.symbol),
+                            S.of(context).send_count_label(widget.coinVo.symbol),
                             style: TextStyle(
                                 color: Color(0xFF333333),
                                 fontSize: 16,
@@ -406,7 +404,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       }
 
       ///
-      if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+      if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
         var balance = Decimal.parse(
           FormatUtil.coinBalanceDouble(
             widget.coinVo,
@@ -427,7 +425,7 @@ class _WalletSendState extends BaseState<WalletSendPage> {
       Application.router.navigateTo(
           context,
           Routes.wallet_transfer_token_confirm +
-              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ? WalletUtil.bech32ToEthAddress(_receiverAddressController.text) : _receiverAddressController.text}");
+              "?coinVo=$voStr&transferAmount=$amountTrim&receiverAddress=${widget.coinVo.coinType == CoinType.HYN_ATLAS ? WalletUtil.bech32ToEthAddress(_receiverAddressController.text) : _receiverAddressController.text}");
     }
   }
 

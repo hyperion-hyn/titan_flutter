@@ -35,6 +35,7 @@ import 'package:bip39/bip39.dart' as bip39;
 
 import 'bitcoin_trans_entity.dart';
 import 'contract_const.dart';
+import 'hyn_staking_abi.dart';
 
 class WalletUtil {
   static Future<String> makeMnemonic() {
@@ -300,6 +301,13 @@ class WalletUtil {
     return contract;
   }
 
+  static web3.DeployedContract _newHynStakingContract(String contractAddress) {
+    final contract = web3.DeployedContract(
+        web3.ContractAbi.fromJson(HYN_STAKING_ABI, 'HynStaking'),
+        web3.EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }
+
   /// https://infura.io/docs/gettingStarted/makeRequests.md
   static Future<dynamic> postToEthereumNetwork(
       {String method, List params, int id = 1,bool isAtlasTrans = false}) {
@@ -328,6 +336,7 @@ class WalletUtil {
 
   static web3.DeployedContract _hynErc20Contract;
   static web3.DeployedContract _map3StakingContract;
+  static web3.DeployedContract _hynStakingContract;
 
   static web3.Web3Client _web3AtlasClientMain;
   static web3.Web3Client _web3AtlasClientTest;
@@ -350,6 +359,14 @@ class WalletUtil {
       _map3StakingContract = WalletUtil._newMap3Contract(contractAddress);
     }
     return _map3StakingContract;
+  }
+
+  static web3.DeployedContract getHynStakingContract(String contractAddress) {
+    if (_hynStakingContract == null ||
+        _hynStakingContract?.address?.hex?.contains(contractAddress) != true) {
+      _hynStakingContract = WalletUtil._newHynStakingContract(contractAddress);
+    }
+    return _hynStakingContract;
   }
 
   static web3.Web3Client getWeb3Client([bool isAtlas = false, bool isPrint = false]) {
@@ -420,7 +437,8 @@ class WalletUtil {
       } else {
         final contract = WalletUtil.getHynErc20Contract(contractAddress);
         final balanceFun = contract.function('balanceOf');
-        final balance = await WalletUtil.getWeb3Client().call(
+        bool isAtlasCoin = coinType == CoinType.HYN_ATLAS;
+        final balance = await WalletUtil.getWeb3Client(isAtlasCoin).call(
             contract: contract,
             function: balanceFun,
             params: [web3.EthereumAddress.fromHex(address)]);
@@ -431,7 +449,7 @@ class WalletUtil {
   }
 
   static String formatToHynAddrIfAtlasChain(CoinVo coinVo, String ethAddress) {
-    if (coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (coinVo.coinType == CoinType.HYN_ATLAS) {
       return ethAddressToBech32Address(ethAddress);
     } else {
       return ethAddress;

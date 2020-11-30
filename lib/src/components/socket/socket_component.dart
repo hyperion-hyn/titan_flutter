@@ -12,6 +12,7 @@ import 'package:titan/src/pages/market/api/exchange_const.dart';
 import 'package:titan/src/pages/market/entity/market_item_entity.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/log_util.dart';
+import 'package:titan/src/utils/utils.dart';
 import 'package:web_socket_channel/io.dart';
 
 class SocketComponent extends StatelessWidget {
@@ -43,8 +44,9 @@ class _SocketState extends State<_SocketManager> {
   IOWebSocketChannel _socketChannel;
 
   SocketBloc _bloc;
+  // 24小时候成交数据
   List<MarketItemEntity> _marketItemList = List();
-  List<List<String>> _tradeDetailList;
+  // List<List<String>> _tradeDetailList;
   Timer _timer;
 
 //  var hynusdtTradeChannel = SocketConfig.channelTradeDetail("hynusdt");
@@ -84,8 +86,7 @@ class _SocketState extends State<_SocketManager> {
         LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅！');
 
         for (var channel in _channelList) {
-          LogUtil.printMessage(
-              '[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
+          LogUtil.printMessage('[WS]  listen..., data, Socket 连接成功， 发起订阅， channel:$channel');
 
           _bloc.add(SubChannelEvent(channel: channel));
         }
@@ -142,8 +143,7 @@ class _SocketState extends State<_SocketManager> {
   _getCacheMarketSymbolList() async {
     _marketItemList.clear();
     var sharePref = await SharedPreferences.getInstance();
-    List<String> emptyMarketItemStrList =
-        sharePref.getStringList('cache_market_item_list');
+    List<String> emptyMarketItemStrList = sharePref.getStringList('cache_market_item_list');
     emptyMarketItemStrList?.forEach((element) {
       try {
         var emptyMarketItem = MarketItemEntity.fromJson(jsonDecode(element));
@@ -165,23 +165,22 @@ class _SocketState extends State<_SocketManager> {
     LogUtil.printMessage('[WS] websocket重连中。。。。');
   }
 
+  DebounceLater cacheDebounceLater = DebounceLater();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SocketBloc, SocketState>(
       listener: (context, state) async {
-        if (state is MarketSymbolState) {
+        if (state is MarketSymbolState) { // 24小时候成交数据  api 方式
           _marketItemList = state.marketItemList;
-          setState(() {});
-
-          ///
-          await _cacheSymbolList(_marketItemList);
-        } else if (state is ChannelKLine24HourState) {
+          cacheDebounceLater.debounceInterval(() {
+            _cacheSymbolList(_marketItemList);
+          }, 1000);
+        } else if (state is ChannelKLine24HourState) {  // 24小时候成交数据  socket 方式
           _updateMarketItemList(state.response, symbol: state.symbol);
-        } else if (state is ChannelTradeDetailState) {
-          _tradeDetailList = state.response
-              .map((item) => (item as List).map((e) => e.toString()).toList())
-              .toList();
-        } else if (state is SubChannelState) {
+        } /*else if (state is ChannelTradeDetailState) {
+          _tradeDetailList = state.response.map((item) => (item as List).map((e) => e.toString()).toList()).toList();
+        }*/ else if (state is SubChannelState) {
           _channelList.add(state.channel);
         } else if (state is UnSubChannelState) {
           _channelList.remove(state.channel);
@@ -191,7 +190,7 @@ class _SocketState extends State<_SocketManager> {
         builder: (context, state) {
           return MarketInheritedModel(
             marketItemList: _marketItemList,
-            tradeDetailList: _tradeDetailList,
+            // tradeDetailList: _tradeDetailList,
             child: widget.child,
           );
         },
@@ -210,8 +209,7 @@ class _SocketState extends State<_SocketManager> {
       ).toJson());
       _emptyMarketItemStrList.add(marketItemJsonStr);
     });
-    await sharePref.setStringList(
-        'cache_market_item_list', _emptyMarketItemStrList);
+    await sharePref.setStringList('cache_market_item_list', _emptyMarketItemStrList);
   }
 
   _updateMarketItemList(dynamic data, {String symbol = ''}) {
@@ -281,17 +279,22 @@ class _SocketState extends State<_SocketManager> {
       );
       _marketItemList[index] = element;
     }
+
+    // 使得ui刷新
+    _marketItemList = _marketItemList.toList();
   }
 }
 
-class MarketInheritedModel extends InheritedModel<String> {
+enum SocketAspect { marketItemList }
+
+class MarketInheritedModel extends InheritedModel<SocketAspect> {
   final List<MarketItemEntity> marketItemList;
-  final List<List<String>> tradeDetailList;
+  // final List<List<String>> tradeDetailList;
 
   const MarketInheritedModel({
     Key key,
     @required this.marketItemList,
-    @required this.tradeDetailList,
+    // @required this.tradeDetailList,
     @required Widget child,
   }) : super(key: key, child: child);
 
@@ -314,34 +317,33 @@ class MarketInheritedModel extends InheritedModel<String> {
     return marketItem?.kLineEntity?.close?.toString() ?? "0";
   }
 
-  @deprecated
-  String getCurrentSymbolRealTimePrice() {
-    if (tradeDetailList != null && tradeDetailList.length > 0) {
-      var tradeDetail = tradeDetailList[0];
-      Decimal tradeDecimal = Decimal.parse(tradeDetail[1]);
-      return FormatUtil.truncateDecimalNum(tradeDecimal, 4);
-    }
-    return "0";
-  }
-
-  //buy 为 true , sell 为 false
-  @deprecated
-  bool isBuyCurrentSymbolRealTimeDirection() {
-    if (tradeDetailList != null && tradeDetailList.length > 0) {
-      var tradeDetail = tradeDetailList[0];
-      var direction = tradeDetail[3];
-      return direction == "buy";
-    }
-    return true;
-  }
+  // @deprecated
+  // String getCurrentSymbolRealTimePrice() {
+  //   if (tradeDetailList != null && tradeDetailList.length > 0) {
+  //     var tradeDetail = tradeDetailList[0];
+  //     Decimal tradeDecimal = Decimal.parse(tradeDetail[1]);
+  //     return FormatUtil.truncateDecimalNum(tradeDecimal, 4);
+  //   }
+  //   return "0";
+  // }
+  //
+  // //buy 为 true , sell 为 false
+  // @deprecated
+  // bool isBuyCurrentSymbolRealTimeDirection() {
+  //   if (tradeDetailList != null && tradeDetailList.length > 0) {
+  //     var tradeDetail = tradeDetailList[0];
+  //     var direction = tradeDetail[3];
+  //     return direction == "buy";
+  //   }
+  //   return true;
+  // }
 
   double getRealTimePricePercent(String symbol) {
     try {
       var marketItem = getMarketItem(symbol);
       var realPercent = marketItem == null
           ? 0.0
-          : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) /
-              (marketItem.kLineEntity.open);
+          : (marketItem.kLineEntity.close - marketItem.kLineEntity.open) / (marketItem.kLineEntity.open);
       return realPercent;
     } catch (e) {
       return 0.0;
@@ -350,29 +352,26 @@ class MarketInheritedModel extends InheritedModel<String> {
 
   double get24HourAmount(String symbol) {
     var marketItem = getMarketItem(symbol);
-    var amount =
-        marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
+    var amount = marketItem == null ? 0.0 : (marketItem.kLineEntity?.amount ?? 0.0);
     return amount;
   }
 
-  static MarketInheritedModel of(BuildContext context) {
-    return InheritedModel.inheritFrom<MarketInheritedModel>(
-      context,
-    );
+  static MarketInheritedModel of(BuildContext context, {SocketAspect aspect}) {
+    return InheritedModel.inheritFrom<MarketInheritedModel>(context, aspect: aspect);
   }
 
   @override
   bool updateShouldNotify(MarketInheritedModel old) {
-    return marketItemList != old.marketItemList ||
-        tradeDetailList != old.tradeDetailList;
+    return marketItemList != old.marketItemList; // || tradeDetailList != old.tradeDetailList;
   }
 
   @override
   bool updateShouldNotifyDependent(
     MarketInheritedModel old,
-    Set<String> dependencies,
+    Set<SocketAspect> dependencies,
   ) {
-    return marketItemList != old.marketItemList ||
-        tradeDetailList != old.tradeDetailList;
+    return marketItemList != old.marketItemList && dependencies.contains(SocketAspect.marketItemList);
+        // ||
+        // tradeDetailList != old.tradeDetailList && dependencies.contains(SocketAspect.tradeDetailList);
   }
 }

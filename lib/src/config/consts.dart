@@ -49,6 +49,14 @@ class Const {
     }
   }
 
+  static String get RP_DOMAIN {
+    if (env.buildType == BuildType.DEV) {
+      return Config.RP_API_URL_TEST;
+    } else {
+      return Config.RP_API_URL;
+    }
+  }
+
   static const String TITAN_SCHEMA = "titan://";
   static const String TITAN_SHARE_URL_PREFIX =
       'https://www.hyn.mobi/titan/sharev2/?key=';
@@ -62,6 +70,7 @@ class Const {
 //  static NumberFormat DOUBLE_NUMBER_FORMAT = new NumberFormat("#,###.##");
 
   static DateFormat DATE_FORMAT = new DateFormat("yy/MM/dd HH:mm");
+  static DateFormat DAY_FORMAT = new DateFormat("yyyy/MM/dd");
 
   //ncov
   static const kNcovMapStyleCn = 'https://cn.tile.map3.network/ncov.json';

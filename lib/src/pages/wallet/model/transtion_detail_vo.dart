@@ -59,6 +59,8 @@ class TransactionDetailVo {
   int hynType;
   LogsDecoded logsDecoded;
   TransferPayload payload;
+  @JsonKey(name: 'internal_trans')
+  List<InternalTransactions> internalTransactions;
 
   TransactionDetailVo({
     this.id,
@@ -86,6 +88,7 @@ class TransactionDetailVo {
     this.hynType,
     this.logsDecoded,
     this.payload,
+    this.internalTransactions,
   });
 
   String getDecodedAmount() {
@@ -151,6 +154,14 @@ class TransactionDetailVo {
     return amountStr;
   }
 
+  BigInt getAllContractValue(){
+    BigInt value = BigInt.from(0);
+    internalTransactions.forEach((element) {
+      value += BigInt.parse(element.value);
+    });
+    return value;
+  }
+
   factory TransactionDetailVo.fromHynTransferHistory(
     HynTransferHistory hynTransferHistory,
     int transactionType,
@@ -187,6 +198,44 @@ class TransactionDetailVo {
       hynType: hynTransferHistory.type,
       logsDecoded: hynTransferHistory.logsDecoded,
       payload: hynTransferHistory.payload,
+      internalTransactions: hynTransferHistory.internalTransactions,
+    );
+  }
+
+  factory TransactionDetailVo.fromHynHrc30TransferHistory(
+      HynTransferHistory hynTransferHistory,
+      int transactionType,
+      String symbol,
+      ) {
+
+    return TransactionDetailVo(
+      type: transactionType,
+      state: hynTransferHistory.status,
+      amount: AtlasApi.isTransferBill(hynTransferHistory.type)
+          ? AtlasApi.getTransferBillAmount(hynTransferHistory)
+          : ConvertTokenUnit.weiToEther(
+          weiBigInt: BigInt.parse(hynTransferHistory.value))
+          .toDouble(),
+      symbol: symbol,
+      fromAddress: hynTransferHistory.from,
+      toAddress: hynTransferHistory.to,
+      time: hynTransferHistory.timestamp * 1000,
+      hash: hynTransferHistory.txHash,
+      gasPrice: hynTransferHistory.gasPrice,
+      gasUsed: hynTransferHistory.gasUsed.toString(),
+      gas: hynTransferHistory.gasLimit.toString(),
+      nonce: hynTransferHistory.nonce.toString(),
+      contractAddress: hynTransferHistory.contractAddress,
+      data: hynTransferHistory.data,
+      dataDecoded: hynTransferHistory.dataDecoded,
+      blockHash: hynTransferHistory.blockHash,
+      blockNum: hynTransferHistory.blockNum,
+      epoch: hynTransferHistory.epoch,
+      transactionIndex: hynTransferHistory.transactionIndex,
+      hynType: hynTransferHistory.type,
+      logsDecoded: hynTransferHistory.logsDecoded,
+      payload: hynTransferHistory.payload,
+      internalTransactions: hynTransferHistory.internalTransactions,
     );
   }
 

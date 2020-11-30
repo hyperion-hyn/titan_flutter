@@ -92,12 +92,14 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     super.didChangeDependencies();
     Application.routeObserver.subscribe(this, ModalRoute.of(context));
 
-    var tempTransList = await getEthTransferList();
-    if (tempTransList.length > 0) {
-      await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
-    }
+    if(!HYNApi.isHynHrc30ContractAddress(widget.coinVo.contractAddress)){
+      var tempTransList = await getEthTransferList();
+      if (tempTransList.length > 0) {
+        await widget.transactionInteractor.deleteSameNonce(tempTransList[0].nonce);
+      }
 
-    getWhiteList();
+      getWhiteList();
+    }
   }
 
   List<String> whiteList = [];
@@ -127,6 +129,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
       return false;
     }
 
+    //转出的地址在bibox白名单列表，则显示原以太地址
     var ethAddress = HYNApi.getHynToAddress(transactionDetail);
     bool isContain = false;
     if (whiteList.isNotEmpty && ethAddress.isNotEmpty) {
@@ -231,6 +234,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                   children: <Widget>[
                                     InkWell(
                                       onTap: () async {
+                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
+                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          return;
+                                        }
+                                        
                                         if (widget.coinVo.coinType == CoinType.ETHEREUM) {
                                           TransactionDetailVo localTransfer = await getLocalTransfer(true);
                                           if (localTransfer != null) {
@@ -301,6 +309,10 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     ),
                                     InkWell(
                                       onTap: () {
+                                        if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
+                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          return;
+                                        }
                                         Navigator.push(context,
                                             MaterialPageRoute(builder: (context) => WalletReceivePage(coinVo)));
                                       },
@@ -335,7 +347,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                       builder: (BuildContext context) {
                                         return InkWell(
                                           onTap: () {
-                                            if (widget.coinVo.coinType == CoinType.HYN_ATLAS ||
+                                            if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol ||
                                                 widget.coinVo.symbol == SupportedTokens.USDT_ERC20.symbol ||
                                                 widget.coinVo.symbol == SupportedTokens.USDT_ERC20_ROPSTEN.symbol) {
                                               Navigator.push(
@@ -344,7 +356,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                       builder: (context) => ExchangeDetailPage(
                                                           selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
-                                              Fluttertoast.showToast(msg: S.of(context).wallet_symbol_pair_tips);
+                                              Fluttertoast.showToast(msg: "尚未开放${widget.coinVo.symbol}兑换");
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)
@@ -478,11 +490,11 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
         (widget.coinVo.coinType == CoinType.BITCOIN && transactionDetail.state >= 6) ||
         (widget.coinVo.coinType == CoinType.HYN_ATLAS && transactionDetail.state == 3)) {
       title = S.of(context).completed;
-      if (SupportedTokens.allContractTokens(WalletConfig.netType)
-          .map((token) => token.contractAddress.toLowerCase())
-          .toList()
-          .contains(transactionDetail.toAddress.toLowerCase())) {
+      if (HYNApi.isContractTokenAddress(transactionDetail.toAddress)
+      || HYNApi.isHynHrc30ContractAddress(transactionDetail.toAddress)) {
+        //Hyn、Eth的toAddress是合约地址，erc20或hrc30的toAddress是对方钱包地址
         title = S.of(context).contract_call;
+        iconPath = "res/drawable/ic_hyn_wallet_contract.png";
       } else if (WalletConfig.map3ContractAddress.toLowerCase() == transactionDetail.toAddress.toLowerCase()) {
         title = S.of(context).map_contract_execution;
       }
@@ -520,7 +532,8 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                         context,
                         MaterialPageRoute(
                             builder: (context) => WalletShowAccountInfoPage(
-                                  transactionDetail,
+                                  transactionDetail.hash,
+                                  transactionDetail.symbol,
                                   isContain: _isContain(transactionDetail),
                                 )));
                   } else {
@@ -719,7 +732,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
     }
 
     List<TransactionDetailVo> transferList = [];
-    if (widget.coinVo.symbol == SupportedTokens.HYN_Atlas.symbol) {
+    if (widget.coinVo.coinType == CoinType.HYN_ATLAS) {
       transferList = await _accountTransferService.getTransferList(widget.coinVo, page);
       retList.addAll(transferList);
       return retList;

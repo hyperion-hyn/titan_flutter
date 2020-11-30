@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
-import 'package:titan/src/basic/utils/hex_color.dart';
 import 'package:titan/src/pages/wallet/wallet_backup_show_resume_word_page.dart';
 import 'package:titan/src/global.dart';
 import 'package:titan/src/plugins/wallet/keystore.dart';
@@ -14,7 +11,6 @@ import 'package:titan/src/plugins/wallet/wallet_const.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/utils/utile_ui.dart';
 import 'package:titan/src/widget/screenshot_warning_dialog.dart';
-import 'package:titan/src/widget/enter_wallet_password.dart';
 
 class WalletBackupNoticePage extends StatefulWidget {
   Wallet wallet;
