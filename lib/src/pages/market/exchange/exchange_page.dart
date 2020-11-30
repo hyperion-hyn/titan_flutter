@@ -724,14 +724,6 @@ class _ExchangePageState extends BaseState<ExchangePage>
         4,
       );
 
-      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
-        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
-        4,
-      );
-
-      _latestQuotePriceString =
-          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
-
       double _latestPercent =
           MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
               .getRealTimePricePercent(
@@ -741,6 +733,14 @@ class _ExchangePageState extends BaseState<ExchangePage>
           _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
       _latestPercentString =
           '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
+
+      var _latestQuotePrice = FormatUtil.truncateDoubleNum(
+        double.parse(_latestPrice) * _selectedQuote?.quoteVo?.price,
+        4,
+      );
+
+      _latestQuotePriceString =
+          '${_selectedQuote?.sign?.sign ?? ''} $_latestQuotePrice';
     } catch (e) {}
 
     return Column(
