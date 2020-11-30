@@ -78,6 +78,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                           "res/drawable/bg_rp_invite_friend_top.png",
                           fit: BoxFit.cover,
                           width: double.infinity,
+                          height: double.infinity,
                         ),
                         Align(
                           alignment: Alignment.center,
@@ -219,7 +220,9 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
             ),
             Container(
               height: 60,
-              color: Colors.green,
+              child: Image.asset("res/drawable/bg_rp_invite_friend_bottom.png",fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,),
             )
           ],
         ));
