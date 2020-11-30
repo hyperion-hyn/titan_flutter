@@ -869,7 +869,7 @@
   "kline_state_secondary": "2nd",
   "kline_delegate_buy": "Buy",
   "kline_delegate_sell": "Sell Order",
-  "kline_delegate_amount": "Amount (HYN)",
+  "kline_delegate_amount": "Amount",
   "kline_delegate_price": "Price (USDT)",
   "kline_delegate_time": "Time",
   "kline_delegate_direction": "Direction",

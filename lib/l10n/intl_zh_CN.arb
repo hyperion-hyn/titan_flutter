@@ -865,7 +865,7 @@
   "kline_state_secondary": "副图",
   "kline_delegate_buy": "买盘",
   "kline_delegate_sell": "卖盘",
-  "kline_delegate_amount": "数量(HYN)",
+  "kline_delegate_amount": "数量",
   "kline_delegate_price": "价格(USDT)",
   "kline_delegate_time": "时间",
   "kline_delegate_direction": "方向",

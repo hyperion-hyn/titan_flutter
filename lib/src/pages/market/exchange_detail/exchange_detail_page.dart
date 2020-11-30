@@ -863,7 +863,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                                     ? 16.0
                                     : 0),
                             child: Text(
-                              S.of(context).price,
+                              '${S.of(context).price}(${widget.base})',
                               style: TextStyle(
                                   fontSize: 14, color: DefaultColors.color999),
                             ),

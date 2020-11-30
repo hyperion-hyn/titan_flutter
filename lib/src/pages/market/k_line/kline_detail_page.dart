@@ -987,7 +987,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                     //"买盘 数量(HYN)",
                     S.of(context).kline_delegate_buy +
                         " " +
-                        S.of(context).kline_delegate_amount,
+                        '${S.of(context).kline_delegate_amount}(${widget.quote})',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 10,
@@ -997,7 +997,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   ),
                   Text(
                     //"价格(USDT)",
-                    S.of(context).kline_delegate_price,
+                    '${S.of(context).price} (${widget.base})',
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 10,
@@ -1007,7 +1007,8 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage>
                   ),
                   Text(
                     //"数量(HYN)卖盘",
-                    S.of(context).kline_delegate_amount +
+                    '(${widget.quote})' +
+                        S.of(context).kline_delegate_amount +
                         " " +
                         S.of(context).kline_delegate_sell,
                     textAlign: TextAlign.right,

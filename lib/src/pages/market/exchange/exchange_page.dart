@@ -725,12 +725,14 @@ class _ExchangePageState extends BaseState<ExchangePage>
       );
 
       double _latestPercent =
-          MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
+      MarketInheritedModel.of(context, aspect: SocketAspect.marketItemList)
               .getRealTimePricePercent(
         marketItemEntity.symbol,
       );
+
       _latestPercentBgColor =
           _latestPercent < 0 ? HexColor('#FFCC5858') : HexColor('#FF53AE86');
+
       _latestPercentString =
           '${(_latestPercent) > 0 ? '+' : ''}${FormatUtil.truncateDoubleNum(_latestPercent * 100.0, 2)}%';
 
