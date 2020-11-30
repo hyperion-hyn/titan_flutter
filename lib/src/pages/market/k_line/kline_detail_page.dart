@@ -955,15 +955,13 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   }
 
   Widget _detailWidget() {
-
     if (_detailCurrentIndex == 1) {
       if (!_showLoadingTrade) {
         return _tradeListViewContent();
       } else {
         return _loadingWidget(visible: _showLoadingTrade, isDetail: true);
       }
-    }
-    else {
+    } else {
       if (!_showLoadingDepth) {
         return _depthListViewContent();
       } else {
@@ -1246,22 +1244,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
   Widget _loadingWidget({bool visible = true, double height = 160, bool isDetail = false}) {
     //print("[$runtimeType] isDetail:$isDetail, _showLoadingTrade:$_showLoadingTrade, _showLoadingDepth:$_showLoadingDepth");
 
-    if (isDetail) {
-      return SliverToBoxAdapter(
-        child: Visibility(
-          visible: true,
-          child: Container(
-            width: double.infinity,
-            height: height,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.5,
-            ),
-          ),
-        ),
-      );
-    }
-    return Visibility(
+    var child = Visibility(
       visible: visible,
       child: Container(
         width: double.infinity,
@@ -1272,6 +1255,14 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
         ),
       ),
     );
+
+    if (isDetail) {
+      return SliverToBoxAdapter(
+        child: child,
+      );
+    }
+    
+    return child;
   }
 
   Widget _transactionListView() {
