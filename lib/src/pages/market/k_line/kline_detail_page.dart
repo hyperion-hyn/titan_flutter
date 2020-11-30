@@ -176,7 +176,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
                     _kLineWidget(),
                     _dividerWidget(),
                     _detailTabWidget(),
-                    _depthListViewHeader(enable: false),
+                    _detailHeaderWidget(),
                     _detailWidget(),
                   ],
                 ),
@@ -866,62 +866,7 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     );
   }
 
-  Widget _detailWidget() {
-    if (_detailCurrentIndex == 1) {
-      return _tradeListViewContent();
-    }
-
-    return _depthListViewContent(context, _buyChartList, _sellChartList, enable: false);
-  }
-
-  Widget _depthListViewHeader({limitNum = 20, enable = true, Function clickPrice}) {
-    if (_detailCurrentIndex == 1) {
-      return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.only(
-            bottom: 20,
-            left: 12,
-            right: 12,
-            top: 12,
-          ),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_time,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(
-                  S.of(context).kline_delegate_direction,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_price,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  S.of(context).kline_delegate_amount,
-                  textAlign: TextAlign.end,
-                  style: TextStyle(color: HexColor("#777777"), fontSize: 10),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
+  Widget _detailHeaderWidget() {
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.only(
@@ -930,86 +875,39 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
           right: 12,
           top: 12,
         ),
-        child: enable
+        child: (_detailCurrentIndex == 1)
             ? Row(
                 children: <Widget>[
                   Expanded(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          //"买",
-                          S.of(context).kline_market_buy,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            //"数量",
-                            S.of(context).kline_market_amount,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.normal,
-                              color: HexColor("#777777"),
-                            ),
-                          ),
-                        ),
-                        Spacer(),
-                        Text(
-                          //"买价",
-                          S.of(context).kline_market_buy_price,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                      ],
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_time,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
-                  ),
-                  SizedBox(
-                    width: 3,
                   ),
                   Expanded(
-                    child: Row(
-                      children: <Widget>[
-                        Text(
-                          //"卖价",
-                          S.of(context).kline_market_sell_price,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(
-                            //"数量",
-                            S.of(context).kline_market_amount,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.normal,
-                              color: HexColor("#777777"),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          //"卖",
-                          S.of(context).kline_market_sell,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.normal,
-                            color: HexColor("#777777"),
-                          ),
-                        ),
-                      ],
+                    flex: 1,
+                    child: Text(
+                      S.of(context).kline_delegate_direction,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
                     ),
-                  )
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_price,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      S.of(context).kline_delegate_amount,
+                      textAlign: TextAlign.end,
+                      style: TextStyle(color: HexColor("#777777"), fontSize: 10),
+                    ),
+                  ),
                 ],
               )
             : Row(
@@ -1051,282 +949,283 @@ class _KLineDetailPageState extends BaseState<KLineDetailPage> with TickerProvid
     );
   }
 
+  Widget _detailWidget() {
+    if (_detailCurrentIndex == 0) {
+      if (!_showLoadingTrade) {
+        return _tradeListViewContent();
+      } else {
+        _loadingWidget(visible: _showLoadingTrade);
+      }
+    } else {
+      if (!_showLoadingDepth) {
+        return _depthListViewContent();
+      } else {
+        _loadingWidget(visible: _showLoadingDepth);
+      }
+    }
+    return SliverToBoxAdapter(
+      child: Container(),
+    );
+  }
+
   Widget _tradeListViewContent() {
     print("_tradeItemList:${_tradeItemList.length}");
 
     return StreamBuilder<Object>(
-      stream: _tradeController.stream,
-      builder: (context, snapshot) {
-        return SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            var excDetailEntity = _tradeItemList[index];
-            return Padding(
-              padding: const EdgeInsets.only(
-                bottom: 12,
-                left: 12,
-                right: 12,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      FormatUtil.formatSecondDate(excDetailEntity.date),
+        stream: _tradeController.stream,
+        builder: (context, snapshot) {
+          return SliverList(
+              delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              var excDetailEntity = _tradeItemList[index];
+              return Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 12,
+                  left: 12,
+                  right: 12,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        FormatUtil.formatSecondDate(excDetailEntity.date),
 //                          FormatUtil.formatDate(excDetailEntity.date, isSecond: true, isMillisecond: true),
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      excDetailEntity.actionType == "sell"
-                          ? S.of(context).kline_direct_sell
-                          : S.of(context).kline_direct_buy,
-                      style: TextStyle(
-                          color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        excDetailEntity.actionType == "sell"
+                            ? S.of(context).kline_direct_sell
+                            : S.of(context).kline_direct_buy,
+                        style: TextStyle(
+                            color: HexColor(excDetailEntity.actionType == "sell" ? "#CC5858" : "#53AE86"),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      excDetailEntity.price,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        excDetailEntity.price,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      excDetailEntity.amount,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        excDetailEntity.amount,
+                        textAlign: TextAlign.end,
+                        style: TextStyle(color: HexColor("#333333"), fontSize: 10, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-          childCount: _tradeItemList.length,
-        ));
-      }
-    );
+                  ],
+                ),
+              );
+            },
+            childCount: _tradeItemList.length,
+          ));
+        });
   }
 
-  Widget _depthListViewContent(
-      BuildContext context, List<ExcDetailEntity> buyChartList, List<ExcDetailEntity> sellChartList,
-      {limitNum = 20, enable = true, Function clickPrice}) {
+  Widget _depthListViewContent() {
+    var buyChartList = _buyChartList;
+    var sellChartList = _sellChartList;
     return StreamBuilder<Object>(
         stream: _depthController.stream,
-      builder: (context, snapshot) {
-        return SliverList(
-            delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            ExcDetailEntity buyEntity;
-            if (buyChartList.length > index) {
-              buyEntity = buyChartList[index];
-            }
+        builder: (context, snapshot) {
+          return SliverList(
+              delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              ExcDetailEntity buyEntity;
+              if (buyChartList.length > index) {
+                buyEntity = buyChartList[index];
+              }
 
-            ExcDetailEntity sellEntity;
-            if (sellChartList.length > index) {
-              sellEntity = sellChartList[index];
-            }
-            return Padding(
-              padding: const EdgeInsets.only(left: 12, right: 12),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                      flex: 1,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: buyEntity?.leftPercent ?? 0,
-                                child: Container(
-                                  height: 25,
-                                  color: HexColor("#ffffff"),
+              ExcDetailEntity sellEntity;
+              if (sellChartList.length > index) {
+                sellEntity = sellChartList[index];
+              }
+              return Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: buyEntity?.leftPercent ?? 0,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#ffffff"),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: buyEntity?.rightPercent ?? 0,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#EBF8F2"),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                //splashColor: Colors.greenAccent,
+                                highlightColor: HexColor("#D8F3E7"),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Container(
+                                      height: 25,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        "${index + 1}",
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#999999"),
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: 25,
+                                      padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        buyEntity?.depthEntity?.vol?.toString() ?? "--",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          color: HexColor("#333333"),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        height: 25,
+                                        padding: const EdgeInsets.only(right: 5),
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                            color: HexColor("#53AE86"),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Expanded(
-                                flex: buyEntity?.rightPercent ?? 0,
-                                child: Container(
-                                  height: 25,
-                                  color: HexColor("#EBF8F2"),
+                            ),
+                          ],
+                        )),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Expanded(
+                                  flex: sellEntity?.leftPercent ?? 0,
+                                  child: Container(
+                                    height: 25,
+                                    color: HexColor("#F9EFEF"),
+                                  ),
                                 ),
-                              )
-                            ],
-                          ),
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              //splashColor: Colors.greenAccent,
-                              highlightColor: HexColor("#D8F3E7"),
-
-                              onTap: enable
-                                  ? () {
-                                      var depthPrice = buyEntity?.depthEntity?.price.toString() ?? "0";
-                                      clickPrice(depthPrice);
-                                      //print("[KLINE] 当前选中价格：${buyEntity?.depthEntity?.price?.toString() ?? "--"}");
-                                    }
-                                  : null,
-
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Container(
+                                Expanded(
+                                  flex: sellEntity?.rightPercent ?? 0,
+                                  child: Container(
                                     height: 25,
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      "${index + 1}",
-                                      textAlign: TextAlign.left,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#999999"),
+                                    color: HexColor("#ffffff"),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                //splashColor: Colors.greenAccent,
+                                highlightColor: HexColor("#FAE4E4"),
+
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                      flex: 2,
+                                      child: Container(
+                                        height: 25,
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: Text(
+                                          FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                            color: HexColor("#CC5858"),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      buyEntity?.depthEntity?.vol?.toString() ?? "--",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#333333"),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
+                                    Container(
                                       height: 25,
-                                      padding: const EdgeInsets.only(right: 5),
                                       alignment: Alignment.centerRight,
                                       child: Text(
-                                        FormatUtil.clearScientificCounting(buyEntity?.depthEntity?.price) ?? "--",
+                                        sellEntity?.depthEntity?.vol?.toString() ?? "--",
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
-                                          color: HexColor("#53AE86"),
+                                          color: HexColor("#333333"),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      )),
-                  SizedBox(
-                    width: 3,
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Expanded(
-                                flex: sellEntity?.leftPercent ?? 0,
-                                child: Container(
-                                  height: 25,
-                                  color: HexColor("#F9EFEF"),
-                                ),
-                              ),
-                              Expanded(
-                                flex: sellEntity?.rightPercent ?? 0,
-                                child: Container(
-                                  height: 25,
-                                  color: HexColor("#ffffff"),
-                                ),
-                              )
-                            ],
-                          ),
-                          Material(
-                            color: Colors.transparent,
-                            child: InkWell(
-                              //splashColor: Colors.greenAccent,
-                              highlightColor: HexColor("#FAE4E4"),
-
-                              onTap: enable
-                                  ? () {
-                                      clickPrice(sellEntity?.depthEntity?.price.toString() ?? "0");
-                                      //print("[KLINE] 当前选中价格：${sellEntity?.depthEntity?.price?.toString() ?? "--"}");
-                                    }
-                                  : null,
-
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Expanded(
-                                    flex: 2,
-                                    child: Container(
+                                    Container(
                                       height: 25,
-                                      alignment: Alignment.centerLeft,
-                                      padding: const EdgeInsets.only(left: 5),
+                                      alignment: Alignment.centerRight,
+                                      padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
                                       child: Text(
-                                        FormatUtil.clearScientificCounting(sellEntity?.depthEntity?.price) ?? "--",
+                                        "${index + 1}",
+                                        textAlign: TextAlign.end,
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
-                                          color: HexColor("#CC5858"),
+                                          color: HexColor("#999999"),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    alignment: Alignment.centerRight,
-                                    child: Text(
-                                      sellEntity?.depthEntity?.vol?.toString() ?? "--",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#333333"),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 25,
-                                    alignment: Alignment.centerRight,
-                                    padding: EdgeInsets.only(left: index >= 9 ? 3 : 8),
-                                    child: Text(
-                                      "${index + 1}",
-                                      textAlign: TextAlign.end,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w500,
-                                        color: HexColor("#999999"),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      )),
-                ],
-              ),
-            );
-          },
-          childCount: limitNum == 20 ? max(buyChartList.length, sellChartList.length) : limitNum,
-        ));
-      }
-    );
+                          ],
+                        )),
+                  ],
+                ),
+              );
+            },
+            childCount: max(buyChartList.length, sellChartList.length),
+          ));
+        });
   }
 
   Widget delegationListView(
