@@ -92,7 +92,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
           FlatButton(
             onPressed: () {
               WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_Atlas.symbol);
             },
             child: Text(
               '查看抵押交易',
