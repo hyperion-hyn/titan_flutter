@@ -229,6 +229,7 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
                       ),
                       _myCreateNodeList(),
                       _myJoinNodeList(),
+                      _emptyListHint(),
                     ],
                   )),
             ),
@@ -302,29 +303,35 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
   }
 
   _emptyListHint() {
-    return SliverToBoxAdapter(
-      child: Center(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Image.asset(
-                'res/drawable/ic_empty_contract.png',
-                width: 100,
-                height: 100,
+    if (_createdNodeList.isEmpty && _joinNodeList.isEmpty) {
+      return SliverToBoxAdapter(
+        child: Center(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Image.asset(
+                  'res/drawable/ic_empty_contract.png',
+                  width: 100,
+                  height: 100,
+                ),
               ),
-            ),
-            Text(
-              S.of(context).exchange_empty_list,
-              style: TextStyle(
-                fontSize: 13,
-                color: DefaultColors.color999,
+              Text(
+                S.of(context).exchange_empty_list,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: DefaultColors.color999,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
+    }
   }
 
   _myCreateNodeList() {
@@ -340,7 +347,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
         childCount: _createdNodeList.length,
       ));
     } else {
-      return _emptyListHint();
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
     }
   }
 
@@ -361,7 +370,9 @@ class Map3NodeRewardListPageState extends State<Map3NodeRewardListPage> {
         childCount: _joinNodeList.length,
       ));
     } else {
-      return _emptyListHint();
+      return SliverToBoxAdapter(
+        child: Container(),
+      );
     }
   }
 
