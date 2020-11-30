@@ -2716,6 +2716,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       if (mounted) {
         setState(() {
+          _isLoading = false;
           _loadDataBloc.add(RefreshFailEvent());
         });
       }
