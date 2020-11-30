@@ -601,8 +601,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     if (_nodeAddress.isNotEmpty) {
       print("[Map3Detail] --> _nodeAddress:$_nodeAddress");
 
-      _isLoading = true;
-
       setState(() {
         _loadDataBloc.add(RefreshSuccessEvent());
       });
@@ -2687,6 +2685,12 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   // refresh
   Future _refreshData() async {
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
     try {
       await _loadDetailData();
 
@@ -2701,10 +2705,10 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
           _isLoading = false;
           _loadDataBloc.add(RefreshSuccessEvent());
         });
+      }
 
-        if (_canRenewNextPeriod && _lastPendingTx == null) {
-          _showEditPreNextAlert();
-        }
+      if (_canRenewNextPeriod && _lastPendingTx == null) {
+        _showEditPreNextAlert();
       }
     } catch (e) {
       logger.e(e);
