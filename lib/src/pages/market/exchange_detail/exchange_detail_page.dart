@@ -434,6 +434,8 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                                 symbolName: widget.selectedCoin,
                                 isPop: true,
                                 periodCurrentIndex: periodCurrentIndex,
+                                base: widget.base,
+                                quote: widget.quote,
                               )));
 
                   if (callBackValue != null) {
@@ -523,11 +525,11 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
     if (exchangeModel.isActiveAccountAndHasAssets()) {
       if (isBuy) {
         return Decimal.parse(exchangeModel.activeAccount.assetList
-            .getAsset(widget.selectedCoin.toUpperCase())
+            .getAsset(widget.base)
             .exchangeAvailable);
       } else {
         return Decimal.parse(exchangeModel.activeAccount?.assetList
-            ?.getAsset("HYN")
+            ?.getAsset(widget.quote)
             ?.exchangeAvailable);
       }
     } else {
@@ -1159,7 +1161,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                           ),
                         ),
                         Text(
-                          "${widget.selectedCoin.toUpperCase()}",
+                          "${widget.base}",
                           style: TextStyle(
                               fontSize: 14, color: DefaultColors.color777),
                         ),
@@ -1174,7 +1176,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
                     child: Text(
                       !exchangeModel.isActiveAccountAndHasAssets()
                           ? "授权后查看余额"
-                          : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.selectedCoin.toUpperCase() : "HYN"}",
+                          : "${S.of(context).available}  ${getValidNum()}  ${isBuy ? widget.base : widget.quote}",
                       style: TextStyle(
                           color: DefaultColors.color999, fontSize: 10),
                     ),
@@ -1329,7 +1331,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
           Decimal.parse(currentNumStr).toDouble()) {
         Fluttertoast.showToast(
             msg:
-                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_less_than}${marketInfoEntity.amountMin}HYN");
+                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_less_than}${marketInfoEntity.amountMin} ${widget.quote}");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
@@ -1338,7 +1340,7 @@ class ExchangeDetailPageState extends BaseState<ExchangeDetailPage>
           Decimal.parse(currentNumStr).toDouble()) {
         Fluttertoast.showToast(
             msg:
-                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_more_than}${marketInfoEntity.amountMax}HYN");
+                "${S.of(context).each}${isBuy ? "${S.of(context).buy}" : "${S.of(context).sale}"}${S.of(context).no_more_than}${marketInfoEntity.amountMax} ${widget.quote}");
         isOrderActionLoading = false;
         optionsController.add({contrOptionsTypeRefresh: ""});
         return;
