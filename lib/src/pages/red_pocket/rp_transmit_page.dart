@@ -299,19 +299,24 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                       ),
                       InkWell(
                         onTap: _pushRecordAction,
-                        child: _columnWidget('$yesterday RP', '我昨日获得', isBold: true),
+                        child: Row(
+                          children: <Widget>[
+                            _columnWidget('$yesterday RP', '我昨日获得', isBold: true),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 8,
+                                right: 8,
+                                bottom: 12,
+                              ),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 15,
+                                color: DefaultColors.color999,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          right: 8,
-                          bottom: 12,
-                        ),
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          size: 15,
-                          color: DefaultColors.color999,
-                        ),
-                      )
                     ],
                   ),
                 ),
