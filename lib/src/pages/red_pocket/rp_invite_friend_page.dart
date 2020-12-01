@@ -267,7 +267,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
                   style: TextStyles.textC999S12,
                 ),
                 TextSpan(
-                  text: "邀请你成为他的直友并一起领红包，是否同意?",
+                  text: "邀请你成为他的好友并一起领红包，是否同意?",
                   style: TextStyles.textC333S14,
                 ),
               ]),
@@ -286,7 +286,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
             if (walletVo == null) {
               UiUtil.showAlertView(context,
                   title: "一起领红包邀请",
-                  content: "现在新建一个钱包身份，创建后将自动成为$walletName的直友，现在就创建吗?",
+                  content: "现在新建一个钱包身份，创建后将自动成为$walletName的好友，现在就创建吗?",
                   actions: [
                     ClickOvalButton(
                       S.of(context).cancel,
