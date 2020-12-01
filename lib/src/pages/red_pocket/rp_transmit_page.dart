@@ -479,7 +479,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
   Widget _itemBuilder(index) {
     var model = _dataList[index];
-    var status = model.status;
+    var status = model?.status ?? 0;
     HexColor stateColor = getStateColor(status);
     String stateDesc = getStateDesc(status);
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
@@ -938,7 +938,9 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
 
 HexColor getStateColor(int status) {
   HexColor stateColor = HexColor('#999999');
-
+  if (status == null) {
+    return stateColor;
+  }
   //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
 
   switch (status) {
@@ -973,11 +975,19 @@ HexColor getStateColor(int status) {
     case 8:
       stateColor = HexColor('#999999');
       break;
+
+    default:
+      stateColor = HexColor('#999999');
+      break;
   }
   return stateColor;
 }
 
 String getStateDesc(int status) {
+  if (status == null) {
+    return '';
+  }
+
   String stateDesc = '运行中';
 
   //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
@@ -1013,6 +1023,10 @@ String getStateDesc(int status) {
 
     case 8:
       stateDesc = '已提取';
+      break;
+
+    default:
+      stateDesc = '';
       break;
   }
   return stateDesc;

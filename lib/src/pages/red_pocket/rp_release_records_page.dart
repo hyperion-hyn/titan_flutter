@@ -128,7 +128,8 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
     var amount = model?.amount ?? 0;
 
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    // rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
@@ -206,7 +207,7 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                   ),
                 ],
               ),
-              //Spacer(),
+              // Spacer(),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 12,),
@@ -216,13 +217,14 @@ class _RpReleaseRecordsState extends BaseState<RpReleaseRecordsPage> {
                     children: <Widget>[
                       Text(
                         '+ $rpAmount RP',
-                        // '+ xx RP',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
                         maxLines: 3,
+                        textAlign: TextAlign.right,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(
                         height: 6,

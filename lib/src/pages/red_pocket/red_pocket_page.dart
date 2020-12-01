@@ -173,9 +173,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
+    var walletAddress = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
-        activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
+        walletAddress,
       ),
     );
 
@@ -235,14 +237,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(60.0),
+                    SizedBox(
+                      width: 42,
+                      height: 42,
                       child: walletHeaderWidget(
                         userName,
-                        address:
-                            activeWallet?.wallet?.getAtlasAccount()?.address ??
-                                '',
                         isShowShape: false,
+                        address: walletAddress,
+                        isCircle: true,
                       ),
                     ),
                     SizedBox(
