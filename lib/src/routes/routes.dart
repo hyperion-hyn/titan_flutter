@@ -107,7 +107,7 @@ class Routes {
     );
   }
 
-  static void configureRoutes(Router router) {
+  static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = Handler(handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("ROUTE WAS NOT FOUND !!!");
       return unknownPage();
@@ -358,13 +358,14 @@ class Routes {
       body: Center(child: Text('page not found')));
 }
 
-class MyRouter extends Router {
+class MyRouter extends FluroRouter {
   @override
   RouteMatch matchRoute(BuildContext buildContext, String path,
       {RouteSettings routeSettings,
       TransitionType transitionType,
       Duration transitionDuration = const Duration(milliseconds: 250),
-      transitionsBuilder}) {
+      transitionsBuilder,
+      bool maintainState = true}) {
     RouteSettings settingsToUse = routeSettings;
     if (routeSettings == null) {
       settingsToUse = RouteSettings(name: path, arguments: Map());
@@ -378,6 +379,7 @@ class MyRouter extends Router {
       transitionType: transitionType,
       transitionDuration: transitionDuration,
       transitionsBuilder: transitionsBuilder,
+      maintainState: maintainState
     );
   }
 }
