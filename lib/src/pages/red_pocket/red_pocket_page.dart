@@ -9,17 +9,13 @@ import 'package:titan/src/basic/widget/base_state.dart';
 import 'package:titan/src/basic/widget/load_data_container/bloc/bloc.dart';
 import 'package:titan/src/basic/widget/load_data_container/load_data_container.dart';
 import 'package:titan/src/components/wallet/bloc/bloc.dart';
-import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/application.dart';
-import 'package:titan/src/config/consts.dart';
-import 'package:titan/src/pages/atlas_map/api/atlas_api.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/rp_add_friends_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_invite_friend_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
-import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/plugins/wallet/wallet_util.dart';
 import 'package:titan/src/routes/fluro_convert_utils.dart';
@@ -29,7 +25,6 @@ import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
 import 'package:titan/src/widget/wallet_widget.dart';
-
 import 'entity/rp_statistics.dart';
 
 class RedPocketPage extends StatefulWidget {
@@ -313,54 +308,59 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 ),
                 Row(
                   children: <Widget>[
-                    Expanded(
-                        child: InkWell(
+                    InkWell(
                       onTap: _navToRPAddFriends,
                       child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 8,
-                              left: 15,
-                            ),
-                            child: _contentColumn(
-                              '--',
-                              S.of(context).rp_friends,
-                              contentFontSize: 16,
-                            ),
-                          ),
-                          Image.asset(
-                            'res/drawable/rp_add_friends_arrow.png',
-                            width: 15,
-                            height: 15,
-                          ),
-                        ],
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          right: 8,
+                          left: 12,
+                        ),
+                        child: _contentColumn(
+                          '${_rpStatistics?.self?.friends ?? 0}',
+                          S.of(context).rp_friends,
+                          contentFontSize: 16,
+                        ),
                       ),
-                    )),
-                    Spacer(),
-                    InkWell(
-                      onTap: _navToRPInviteFriends,
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              right: 8,
-                            ),
-                            child: Text(
-                              S.of(context).rp_invite_to_collect,
-                              style: TextStyle(
-                                color: HexColor('#333333'),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                      Image.asset(
+                        'res/drawable/rp_add_friends_arrow.png',
+                        width: 15,
+                        height: 15,
+                      ),
+                    ],
+                      ),
+                    ),
+                    //Spacer(),
+                    Expanded(
+                      child: InkWell(
+                        onTap: _navToRPInviteFriends,
+                        child: Row(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: 12,
+                                right: 8,
+                              ),
+                              child: Text(
+                                S.of(context).rp_invite_to_collect,
+                                style: TextStyle(
+                                  color: HexColor('#333333'),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2,
                               ),
                             ),
-                          ),
-                          Image.asset(
-                            'res/drawable/rp_add_friends.png',
-                            width: 17,
-                            height: 17,
-                          ),
-                        ],
+                            Image.asset(
+                              'res/drawable/rp_add_friends.png',
+                              width: 17,
+                              height: 17,
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.end,
+                        ),
                       ),
                     ),
                   ],
@@ -603,10 +603,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           S.of(context).detailed_introduction,
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         S.of(context).detailed_introduction,
@@ -759,8 +757,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -852,8 +849,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {

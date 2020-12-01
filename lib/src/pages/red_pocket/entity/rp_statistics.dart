@@ -20,8 +20,7 @@ class RPStatistics extends Object {
     this.rpContractInfo,
   );
 
-  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) =>
-      _$RPStatisticsFromJson(srcJson);
+  factory RPStatistics.fromJson(Map<String, dynamic> srcJson) => _$RPStatisticsFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$RPStatisticsToJson(this);
 }
@@ -37,8 +36,7 @@ class Global extends Object {
   @JsonKey(name: 'total_transmit')
   String totalTransmit;
 
-  String get totalStakingHynStr =>
-      FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
+  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
   String get transmitStr => FormatUtil.weiToEtherStr(transmit) ?? '0';
 
@@ -50,8 +48,7 @@ class Global extends Object {
     this.totalTransmit,
   );
 
-  factory Global.fromJson(Map<String, dynamic> srcJson) =>
-      _$GlobalFromJson(srcJson);
+  factory Global.fromJson(Map<String, dynamic> srcJson) => _$GlobalFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$GlobalToJson(this);
 }
@@ -70,8 +67,10 @@ class Self extends Object {
   @JsonKey(name: 'yesterday')
   String yesterday;
 
-  String get totalStakingHynStr =>
-      FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
+  @JsonKey(name: 'friends')
+  int friends;
+
+  String get totalStakingHynStr => FormatUtil.weiToEtherStr(totalStakingHyn) ?? '0';
 
   String get totalAmountStr => FormatUtil.weiToEtherStr(totalAmount) ?? '0';
 
@@ -84,10 +83,10 @@ class Self extends Object {
     this.totalAmount,
     this.totalRp,
     this.yesterday,
+    this.friends,
   );
 
-  factory Self.fromJson(Map<String, dynamic> srcJson) =>
-      _$SelfFromJson(srcJson);
+  factory Self.fromJson(Map<String, dynamic> srcJson) => _$SelfFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$SelfToJson(this);
 }
@@ -124,8 +123,7 @@ class Rp_contract_info extends Object {
     this.poolPercent,
   );
 
-  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) =>
-      _$Rp_contract_infoFromJson(srcJson);
+  factory Rp_contract_info.fromJson(Map<String, dynamic> srcJson) => _$Rp_contract_infoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$Rp_contract_infoToJson(this);
 }
