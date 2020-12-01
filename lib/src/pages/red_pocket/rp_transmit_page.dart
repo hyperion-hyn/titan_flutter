@@ -48,7 +48,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   final StreamController<String> _inputController = StreamController.broadcast();
 
   String get _address => _activeWallet?.wallet?.getEthAccount()?.address ?? "";
-  
+
   String get _hynPerRpStr => _rpStatistics?.rpContractInfo?.hynPerRpStr;
   String get _hynPerRp => FormatUtil.stringFormatCoinNum(_hynPerRpStr) ?? '--';
   double get _hynPerRpValue => double?.tryParse(_hynPerRpStr) ?? 0;
@@ -187,7 +187,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                   padding: const EdgeInsets.only(
                     left: 16,
                   ),
-                  child: _columnWidget('${_rpStatistics?.rpContractInfo?.poolPercent??'--'}万 RP', '总可传导'),
+                  child: _columnWidget('${_rpStatistics?.rpContractInfo?.poolPercent ?? '--'}万 RP', '总可传导'),
                   // child: _columnWidget('$totalTransmit RP', '总可传导'),
                 ),
               ),
@@ -478,54 +478,10 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
   }
 
   Widget _itemBuilder(index) {
-    HexColor stateColor = HexColor('#999999');
-    String stateDesc = '运行中';
     var model = _dataList[index];
-
-    //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-    var status = model?.status;
-    switch (status) {
-      case 1:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '抵押确认中...';
-        break;
-
-      case 2:
-        stateColor = HexColor('#999999');
-        stateDesc = '失败';
-        break;
-
-      case 3:
-        stateColor = HexColor('#333333');
-        stateDesc = '运行中';
-        break;
-
-      case 4:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '释放中...';
-        break;
-
-      case 5:
-        stateColor = HexColor('#333333');
-        stateDesc = '释放结束';
-        break;
-
-      case 6:
-        stateColor = HexColor('#00C081');
-        stateDesc = '可取回';
-        break;
-
-      case 7:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '取回中...';
-        break;
-
-      case 8:
-        stateColor = HexColor('#999999');
-        stateDesc = '已提取';
-        break;
-    }
-
+    var status = model.status;
+    HexColor stateColor = getStateColor(status);
+    String stateDesc = getStateDesc(status);
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
     var hynPerRpBig = ConvertTokenUnit.strToBigInt(_rpStatistics?.rpContractInfo?.hynPerRp ?? '0');
@@ -978,4 +934,86 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
       ),
     );
   }
+}
+
+HexColor getStateColor(int status) {
+  HexColor stateColor = HexColor('#999999');
+
+  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
+
+  switch (status) {
+    case 1:
+      stateColor = HexColor('#FFC500');
+      break;
+
+    case 2:
+      stateColor = HexColor('#999999');
+      break;
+
+    case 3:
+      stateColor = HexColor('#333333');
+      break;
+
+    case 4:
+      stateColor = HexColor('#FFC500');
+      break;
+
+    case 5:
+      stateColor = HexColor('#333333');
+      break;
+
+    case 6:
+      stateColor = HexColor('#00C081');
+      break;
+
+    case 7:
+      stateColor = HexColor('#FFC500');
+      break;
+
+    case 8:
+      stateColor = HexColor('#999999');
+      break;
+  }
+  return stateColor;
+}
+
+String getStateDesc(int status) {
+  String stateDesc = '运行中';
+
+  //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
+
+  switch (status) {
+    case 1:
+      stateDesc = '抵押确认中...';
+      break;
+
+    case 2:
+      stateDesc = '失败';
+      break;
+
+    case 3:
+      stateDesc = '运行中';
+      break;
+
+    case 4:
+      stateDesc = '释放中...';
+      break;
+
+    case 5:
+      stateDesc = '释放结束';
+      break;
+
+    case 6:
+      stateDesc = '可取回';
+      break;
+
+    case 7:
+      stateDesc = '取回中...';
+      break;
+
+    case 8:
+      stateDesc = '已提取';
+      break;
+  }
+  return stateDesc;
 }

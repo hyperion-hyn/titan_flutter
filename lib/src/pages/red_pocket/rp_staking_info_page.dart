@@ -14,6 +14,7 @@ import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
+import 'package:titan/src/pages/red_pocket/rp_transmit_page.dart';
 import 'package:titan/src/pages/wallet/wallet_show_account_info_page.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
@@ -128,53 +129,10 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   }
 
   Widget _stakingInfoWidget() {
-    HexColor stateColor = HexColor('#999999');
-    String stateDesc = '运行中';
     var model = _stakingInfo;
-
-    //1:确认中 2:失败 3:成功 4:释放中 5:释放结束 6:可取回 7:取回中 8: 已提取
-    var status = model?.status ?? 0;
-    switch (status) {
-      case 1:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '抵押确认中...';
-        break;
-
-      case 2:
-        stateColor = HexColor('#999999');
-        stateDesc = '失败';
-        break;
-
-      case 3:
-        stateColor = HexColor('#333333');
-        stateDesc = '运行中';
-        break;
-
-      case 4:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '释放中...';
-        break;
-
-      case 5:
-        stateColor = HexColor('#333333');
-        stateDesc = '释放结束';
-        break;
-
-      case 6:
-        stateColor = HexColor('#00C081');
-        stateDesc = '可取回';
-        break;
-
-      case 7:
-        stateColor = HexColor('#FFC500');
-        stateDesc = '取回中...';
-        break;
-
-      case 8:
-        stateColor = HexColor('#999999');
-        stateDesc = '已提取';
-        break;
-    }
+    var status = model.status;
+    HexColor stateColor = getStateColor(status);
+    String stateDesc = getStateDesc(status);
 
     var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
     var hynAmountBig = ConvertTokenUnit.strToBigInt(model?.hynAmount ?? '0');
@@ -399,7 +357,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _myReleaseListView() {
     print("[$runtimeType] _dataList?.length:${_dataList?.length ?? 0}");
 
-    if (_dataList?.isEmpty??true) {
+    if (_dataList?.isEmpty ?? true) {
       return SliverToBoxAdapter(
         child: Container(
           color: HexColor('#F8F8F8'),
