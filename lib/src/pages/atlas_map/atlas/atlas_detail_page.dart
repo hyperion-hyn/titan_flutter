@@ -77,10 +77,10 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
   bool isShowAll = false;
 
   var infoTitleList = [
-    "当前管理费",
+    S.of(Keys.rootKey.currentContext).current_management_fee,
     S.of(Keys.rootKey.currentContext).description,
-    "可设最高管理费",
-    "单纪元可调管理费幅度",
+    S.of(Keys.rootKey.currentContext).setting_max_management_fee,
+    S.of(Keys.rootKey.currentContext).epoch_management_fee_trim,
     S.of(Keys.rootKey.currentContext).max_staking_num,
     S.of(Keys.rootKey.currentContext).website,
     S.of(Keys.rootKey.currentContext).contact,
@@ -468,7 +468,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                       title: S.of(context).receive_reward,
                       actions: [
                         ClickOvalButton(
-                          "好的",
+                          S.of(context).ok,
                           () {
                             Navigator.pop(context);
                           },
@@ -494,7 +494,7 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
                         return;
                       }
                       if (leftReward <= Decimal.fromInt(0)) {
-                        Fluttertoast.showToast(msg: "当前可提金额为0");
+                        Fluttertoast.showToast(msg: S.of(context).current_withdrawal_amount_zero);
                         return;
                       }
 
@@ -831,126 +831,6 @@ class AtlasDetailPageState extends State<AtlasDetailPage> {
       ),
     );
   }
-
-//  _joinMap3Item(int index) {
-//    if (index == 0) {
-//      return Padding(
-//        padding: const EdgeInsets.only(left: 14, right: 14, top: 16),
-//        child: Row(
-//          crossAxisAlignment: CrossAxisAlignment.end,
-//          children: <Widget>[
-//            Text(
-//              "节点记录",
-//              style: TextStyles.textC333S16,
-//            ),
-//            Spacer(),
-//            Text("共${_map3TxLogList.length}个节点", style: TextStyles.textC999S12)
-//          ],
-//        ),
-//      );
-//    }
-//
-//    var map3TxLogEntity = _map3TxLogList[index - 1];
-//    return Column(
-//      children: <Widget>[
-//        SizedBox(
-//          height: 17,
-//        ),
-//        Padding(
-//          padding: const EdgeInsets.only(left: 26.0, right: 24),
-//          child: Row(
-//            crossAxisAlignment: CrossAxisAlignment.start,
-//            children: <Widget>[
-//              Padding(
-//                padding: const EdgeInsets.only(right: 10),
-//                child: walletHeaderWidget(map3TxLogEntity.name, isShowShape: false, address: map3TxLogEntity.map3Address),
-//              ),
-//              Expanded(
-//                child: Column(
-//                  crossAxisAlignment: CrossAxisAlignment.start,
-//                  children: <Widget>[
-//                    Row(
-//                      children: <Widget>[
-//                        Text("${map3TxLogEntity.name}", style: TextStyles.textC000S14),
-//                        //todo
-//                        if (map3TxLogEntity.map3Address == _atlasInfoEntity.creator)
-//                          Text("（创建者）", style: TextStyles.textC999S12)
-//                      ],
-//                    ),
-//                    Padding(
-//                      padding: const EdgeInsets.only(top: 5.0),
-//                      child: Text("${shortBlockChainAddress(map3TxLogEntity.map3Address)}", style: TextStyles.textC999S12),
-//                    ),
-//                  ],
-//                ),
-//              ),
-//              Column(
-//                children: <Widget>[
-//                  Row(
-//                    children: <Widget>[
-//                      Text("${HYNApi.getValueByHynType(map3TxLogEntity.type)}", style: TextStyles.textC333S14),
-//                      map3StatusText(map3TxLogEntity)
-//                    ],
-//                  ),
-//                  SizedBox(
-//                    height: 5,
-//                  ),
-//                  Text(
-//                    FormatUtil.formatDateStr(map3TxLogEntity.updatedAt),
-//                    style: TextStyles.textC999S10,
-//                  )
-//                ],
-//              )
-//            ],
-//          ),
-//        ),
-//        SizedBox(
-//          height: 15,
-//        ),
-//        Divider(
-//          color: DefaultColors.colorf2f2f2,
-//          indent: 26,
-//          endIndent: 24,
-//        )
-//      ],
-//    );
-//  }
-
-//  Widget map3StatusText(Map3TxLogEntity map3txLogEntity) {
-//    var statusText = "";
-//    var statuBgColor = "#228BA1";
-//    var statuTextColor = "#FFFFFF";
-//    switch (map3txLogEntity.status) {
-//      case 1:
-//      case 2:
-//        statusText = "进行中";
-//        statuBgColor = "#228BA1";
-//        statuTextColor = "#FFFFFF";
-//        break;
-//      case Map3AtlasStatus.DELEGATE_SUCCESS_CANCEL_ING:
-//        statusText = "撤销中";
-//        statuBgColor = "#F2F2F2";
-//        statuTextColor = "#CC2D1E";
-//        break;
-//      case Map3AtlasStatus.DELEGATE_SUCCESS_NO_CANCEL: //todo 在已抵押中，如果大于起始块高则是新抵押
-//        statusText = "已抵押";
-//        statuBgColor = "#F2F2F2";
-//        statuTextColor = "#999999";
-//        break;
-//      default:
-//        return null;
-//    }
-//
-//    return Container(
-//      padding: const EdgeInsets.only(top: 2.0, bottom: 2, left: 7, right: 7),
-//      margin: EdgeInsets.only(left: 6),
-//      decoration: BoxDecoration(color: HexColor(statuBgColor), borderRadius: BorderRadius.all(Radius.circular(10))),
-//      child: Text(
-//        statusText,
-//        style: TextStyle(fontSize: 6, color: HexColor(statuTextColor)),
-//      ),
-//    );
-//  }
 
   _bottomBtnBar() {
     return Container(

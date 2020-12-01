@@ -107,47 +107,49 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
   get _notifyMessage {
     if (_isLoading) {
-      return '数据刷新中...';
+      return S.of(Keys.rootKey.currentContext).map3_refresh_data;
     }
 
     switch (_map3Status) {
       case Map3InfoStatus.FUNDRAISING_CANCEL_SUBMIT:
-        return '终止请求处理中...';
+        return S.of(Keys.rootKey.currentContext).map3_exit_doing;
         break;
 
       case Map3InfoStatus.CANCEL_NODE_SUCCESS:
-        return '节点已终止，抵押金额已返回您的钱包';
+        return S.of(Keys.rootKey.currentContext).map3_exit_done;
         //return '终止请求已完成, 请前往【钱包】查看退款情况!';
         break;
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
-          return "抵押已满$startMinValue，将在下个纪元启动……";
+          return S.of(Keys.rootKey.currentContext).map3_pending_delegate_full(startMinValue);
         } else {
           if (_lastPendingTx != null) {
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeTerminateMap3:
-                return '终止请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_exit_doing;
                 break;
 
               case MessageType.typeUnMicroDelegate:
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
+
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '部分撤销${amount}HYN请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_cancel_doing(amount);
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_edit_doing;
                 break;
 
               case MessageType.typeMicroDelegate:
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
+
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return '抵押${amount}HYN请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_delegate_doing(amount);
                 break;
             }
           }
@@ -157,7 +159,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_IS_END:
         //print("[text] _currentEpoch:$_currentEpoch, _releaseEpoch:$_releaseEpoch");
         if (_currentEpoch <= (_releaseEpoch + 1)) {
-          return "节点已到期，将在下个纪元结算";
+          return S.of(Keys.rootKey.currentContext).map3_end_done;
         }
         break;
 
@@ -167,33 +169,33 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var type = _lastPendingTx.type;
             switch (type) {
               case MessageType.typeCollectMicroStakingRewards:
-                return '提取请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_collect_doing;
                 break;
 
               case MessageType.typeRenewMap3:
-                return '续约请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_renew_doing;
                 break;
 
               case MessageType.typeEditMap3:
-                return '编辑请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_edit_doing;
                 break;
 
               case MessageType.typeReDelegate:
-                return '复抵押请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_re_delegate_doing;
                 break;
 
               case MessageType.typeUnReDelegate:
-                return '取消复抵押请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_un_re_delegate_doing;
                 break;
 
               case MessageType.typeCollectReStakingReward:
-                return '提取Atlas奖励请求处理中...';
+                return S.of(Keys.rootKey.currentContext).map3_collect_in_atlas_doing;
                 break;
             }
           }
 
           if (_map3infoEntity.atlas == null) {
-            return '请节点主尽快复抵押至atlas节点以享受出块奖励！';
+            return S.of(Keys.rootKey.currentContext).map3_notification_redelegate;
           }
 
           if (_isCreator) {
@@ -206,7 +208,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var leftEpoch = periodEpoch14 - _currentEpoch;
 
             if (_statusCreator == 0 && leftEpoch > 0) {
-              return "距离可以设置下期续约还需$leftEpoch纪元";
+              return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
             }
           } else {
             /*
@@ -219,7 +221,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             if (_statusJoiner == 0 && leftEpoch > 0) {
               if (_statusCreator == 0) {
-                return "距离可以设置下期续约还需$leftEpoch纪元";
+                return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
               } else if (_statusCreator == 1) {
                 return _closeRenewDefaultText;
               }
@@ -253,7 +255,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
   // get _pendingUnlockEpoch =>
   //     double.tryParse(_microDelegationsCreator?.pendingDelegation?.unlockedEpoch ?? '0')?.toInt() ?? 0;
 
-  get _closeRenewDefaultText => '节点主已经停止续约，该节点到期后自动终止';
+  get _closeRenewDefaultText => S.of(Keys.rootKey.currentContext).map3_notification_expired;
 
   /*
   tips:
@@ -511,7 +513,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          _map3StatusDesc = "距离到期还需$_endRemainEpochValue纪元";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
         } else {
           //_map3StatusDesc = "距离到期仅剩1个纪元";
           _map3StatusDesc = "";
@@ -538,11 +540,11 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
       case Map3InfoStatus.CREATE_SUBMIT_ING:
         if (_isFullDelegate) {
-          _map3StatusDesc = "抵押已满，准备启动";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).delegation_full_will_active_hint;
         } else {
           var remain = startMin - staking;
           var remainDelegation = FormatUtil.formatPrice(remain);
-          _map3StatusDesc = S.of(context).remain + remainDelegation + "启动";
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).remain + remainDelegation + S.of(Keys.rootKey.currentContext).active;
         }
 
         break;
@@ -580,8 +582,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
     super.onCreated();
 
     _delegateRecordTabModels = [
-      Map3NodeDetailTabBarModel('节点记录', Map3NodeDetailType.tx_log),
-      Map3NodeDetailTabBarModel('参与地址', Map3NodeDetailType.user_list),
+      Map3NodeDetailTabBarModel(S.of(context).account_flow, Map3NodeDetailType.tx_log),
+      Map3NodeDetailTabBarModel(S.of(context).join_address, Map3NodeDetailType.user_list),
     ];
     _detailTabController = TabController(length: _delegateRecordTabModels.length, vsync: this);
 
@@ -2607,8 +2609,6 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       // }
     }
   }
-
-
 
   void _loadUserListMoreData() async {
     if (_nodeAddress.isEmpty) {
