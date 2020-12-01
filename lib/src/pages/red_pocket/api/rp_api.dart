@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/src/basic/http/entity.dart';
 import 'package:titan/src/components/wallet/vo/wallet_vo.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_http.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_release_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_staking_release_info.dart';
@@ -24,7 +25,7 @@ class RPApi {
       stakingAmount: amount,
     );
     print("[Rp_api] postStakingRp, address:$address, txHash:$txHash");
-    if(txHash == null){
+    if (txHash == null) {
       return;
     }
 
@@ -44,7 +45,7 @@ class RPApi {
     var address = activeWallet?.wallet?.getEthAccount()?.address ?? "";
     var txHash = await activeWallet.wallet.sendHynStakeWithdraw(HynContractMethod.WITHDRAW, password);
     print("[Rp_api] postRetrieveHyn, address:$address, txHash:$txHash");
-    if(txHash == null){
+    if (txHash == null) {
       return;
     }
     return await RPHttpCore.instance.postEntity("/v1/rp/retrieve", EntityFactory<dynamic>((json) => json),
@@ -66,7 +67,6 @@ class RPApi {
   }
 
   Future<RpStakingReleaseInfo> getRPStakingReleaseInfo(String address, String id) async {
-
     return await RPHttpCore.instance.getEntity(
         "/v1/rp/staking/$address/$id",
         EntityFactory<RpStakingReleaseInfo>(
@@ -171,14 +171,14 @@ class RPApi {
 
   Future<bool> postRpInviter(
     String inviterAddress,
-      Wallet wallet,
+    Wallet wallet,
   ) async {
     var myAddress = wallet?.getEthAccount()?.address ?? "";
-    if(myAddress.isEmpty || (inviterAddress?.isEmpty ?? true)){
+    if (myAddress.isEmpty || (inviterAddress?.isEmpty ?? true)) {
       return false;
     }
     inviterAddress = WalletUtil.bech32ToEthAddress(inviterAddress);
-    if(myAddress.toLowerCase() == inviterAddress.toLowerCase()){
+    if (myAddress.toLowerCase() == inviterAddress.toLowerCase()) {
       Fluttertoast.showToast(msg: "不能邀请自己");
       return false;
     }
@@ -189,5 +189,25 @@ class RPApi {
         },
         options: RequestOptions(contentType: "application/json"));
     return true;
+  }
+
+  Future<RpMinersEntity> getRPMinerList(
+    String address, {
+    int page = 1,
+    int size = 20,
+  }) async {
+    return await RPHttpCore.instance.getEntity(
+      '/v1/rp/miners/$address',
+      EntityFactory<RpMinersEntity>((json) {
+        return RpMinersEntity.fromJson(json);
+      }),
+      params: {
+        'page': page,
+        'size': size,
+      },
+      options: RequestOptions(
+        contentType: "application/json",
+      ),
+    );
   }
 }
