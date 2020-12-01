@@ -122,9 +122,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
       case Map3InfoStatus.FUNDRAISING_NO_CANCEL:
         if (_isFullDelegate) {
-          // TODO: 翻译有问题
           var startMinValue = FormatUtil.formatTenThousandNoUnit(startMin.toString()) + S.of(context).ten_thousand;
-          return S.of(Keys.rootKey.currentContext).map3_pending_delegate_full;
+          return S.of(Keys.rootKey.currentContext).map3_pending_delegate_full(startMinValue);
         } else {
           if (_lastPendingTx != null) {
             var type = _lastPendingTx.type;
@@ -137,9 +136,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
 
-                // TODO: 翻译有问题
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return S.of(Keys.rootKey.currentContext).map3_cancel_doing;
+                return S.of(Keys.rootKey.currentContext).map3_cancel_doing(amount);
                 break;
 
               case MessageType.typeEditMap3:
@@ -150,9 +148,8 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
                 TransactionDetailVo transactionDetail =
                     TransactionDetailVo.fromHynTransferHistory(_lastPendingTx, 0, "HYN");
 
-                // TODO: 翻译有问题
                 var amount = FormatUtil.stringFormatCoinNum(transactionDetail.getDecodedAmount());
-                return S.of(Keys.rootKey.currentContext).map3_delegate_doing;
+                return S.of(Keys.rootKey.currentContext).map3_delegate_doing(amount);
                 break;
             }
           }
@@ -211,8 +208,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
             var leftEpoch = periodEpoch14 - _currentEpoch;
 
             if (_statusCreator == 0 && leftEpoch > 0) {
-              // TODO: 翻译有问题
-              return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch;
+              return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
             }
           } else {
             /*
@@ -225,8 +221,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
 
             if (_statusJoiner == 0 && leftEpoch > 0) {
               if (_statusCreator == 0) {
-                // TODO: 翻译有问题
-                return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch;
+                return S.of(Keys.rootKey.currentContext).map3_notification_left_epoch(leftEpoch);
               } else if (_statusCreator == 1) {
                 return _closeRenewDefaultText;
               }
@@ -518,8 +513,7 @@ class _Map3NodeDetailState extends BaseState<Map3NodeDetailPage> with TickerProv
       case Map3InfoStatus.CONTRACT_HAS_STARTED:
         var _endRemainEpochValue = _endRemainEpoch.toInt();
         if (_endRemainEpochValue > 0) {
-          // TODO: 翻译有问题
-          _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch;
+          _map3StatusDesc = S.of(Keys.rootKey.currentContext).map3_notification_expired_left_epoch(_endRemainEpochValue);
         } else {
           //_map3StatusDesc = "距离到期仅剩1个纪元";
           _map3StatusDesc = "";
