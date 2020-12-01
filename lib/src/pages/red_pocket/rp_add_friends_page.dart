@@ -59,7 +59,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
     return Scaffold(
       backgroundColor: HexColor('#F8F8F8'),
       appBar: BaseAppBar(
-        baseTitle: '直友团',
+        baseTitle: '朋友圈',
         backgroundColor: HexColor('#F8F8F8'),
       ),
       body: _pageView(),
@@ -98,7 +98,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
                       child: Text(
-                        '我邀请的直友',
+                        '我邀请的好友',
                         style: TextStyle(
                           color: Color(0xff333333),
                           fontWeight: FontWeight.w500,

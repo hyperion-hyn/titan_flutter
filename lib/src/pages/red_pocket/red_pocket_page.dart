@@ -167,9 +167,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     var rpYesterdayStr = '空';
     var rpMissedStr = '投';
 
-    var avatarPath = activeWallet != null
-        ? 'res/drawable/ic_map3_node_default_icon.png'
-        : 'res/drawable/img_avatar_default.png';
+    // var avatarPath = activeWallet != null
+    //     ? 'res/drawable/ic_map3_node_default_icon.png'
+    //     : 'res/drawable/img_avatar_default.png';
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
@@ -311,35 +311,56 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     color: HexColor('#F2F2F2'),
                   ),
                 ),
-                InkWell(
-                  onTap: _navToRPAddFriends,
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                          child: _contentColumn(
-                        '10',
-                        '直友团',
-                        contentFontSize: 16,
-                      )),
-                      Spacer(),
-                      InkWell(
-                        onTap: _navToRPInviteFriends,
-                        child: Text(
-                          '邀请直友一起领红包',
-                          style: TextStyle(
-                            color: HexColor('#333333'),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: InkWell(
+                      onTap: _navToRPAddFriends,
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8, left: 15,),
+                            child: _contentColumn(
+                              '--',
+                              '朋友圈',
+                              contentFontSize: 16,
+                            ),
                           ),
-                        ),
+                          Image.asset(
+                            'res/drawable/rp_add_friends_arrow.png',
+                            width: 15,
+                            height: 15,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        Icons.add,
-                        color: HexColor('#999999'),
-                        size: 17,
+                    )),
+                    Spacer(),
+                    InkWell(
+                      onTap: _navToRPInviteFriends,
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              right: 8,
+                            ),
+                            child: Text(
+                              '邀请好友一起领红包',
+                              style: TextStyle(
+                                color: HexColor('#333333'),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Image.asset(
+                            'res/drawable/rp_add_friends.png',
+                            width: 17,
+                            height: 17,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -579,10 +600,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
                           '详细介绍',
                         );
-                        Application.router.navigateTo(
-                            context,
-                            Routes.toolspage_webview_page +
-                                '?initUrl=$webUrl&title=$webTitle');
+                        Application.router
+                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
                         '详细介绍',
@@ -735,8 +754,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(
-                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -828,8 +846,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context)
-            .add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {
