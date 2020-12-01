@@ -235,7 +235,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     InkWell(
                                       onTap: () async {
                                         if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          Fluttertoast.showToast(msg: S.of(context).feature_available_soon);
                                           return;
                                         }
                                         
@@ -310,7 +310,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                     InkWell(
                                       onTap: () {
                                         if(widget.coinVo.symbol == SupportedTokens.HYN_RP_HRC30.symbol){
-                                          Fluttertoast.showToast(msg: "该功能即将开放");
+                                          Fluttertoast.showToast(msg: S.of(context).feature_available_soon);
                                           return;
                                         }
                                         Navigator.push(context,
@@ -356,7 +356,7 @@ class _ShowAccountPageState extends DataListState<ShowAccountPage> with RouteAwa
                                                       builder: (context) => ExchangeDetailPage(
                                                           selectedCoin: 'USDT', exchangeType: ExchangeType.BUY)));
                                             } else {
-                                              Fluttertoast.showToast(msg: "尚未开放${widget.coinVo.symbol}兑换");
+                                              Fluttertoast.showToast(msg: S.of(context).exchange_is_not_yet_open(widget.coinVo.symbol));
                                             }
                                             /*Clipboard.setData(ClipboardData(text: coinVo.address));
                                             Scaffold.of(context)

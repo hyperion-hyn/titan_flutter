@@ -432,7 +432,7 @@ class HYNApi {
         break;
       case MessageType.typeCollectReStakingReward:
         if (isWallet) {
-          typeStr = S.of(context).msg_collect_re_delegation_reward + "至Map3";
+          typeStr = S.of(context).msg_collect_re_delegation_reward + S.of(context).to_map3;
           String value = "0";
           amountStr = "$value";
           recordAmountStr = getTransRecordAmount(value);
@@ -504,13 +504,13 @@ class HYNApi {
 
           if (isCreator) {
             if (isRenew != null) {
-              typeStr = isRenew ? '下期预设，节点续约' : '下期预设，停止续约';
+              typeStr = isRenew ? S.of(context).preset_next_node_renew : S.of(context).preset_next_stop_renew;
             } else {
               typeStr = S.of(context).msg_renew_map3;
             }
           } else {
             if (isRenew != null) {
-              typeStr = isRenew ? '下期预设，跟随续约' : '下期预设，不跟随';
+              typeStr = isRenew ? S.of(context).preset_next_follow_renew : S.of(context).preset_next_do_not_follow;
             } else {
               typeStr = S.of(context).msg_renew_map3;
             }
@@ -522,7 +522,7 @@ class HYNApi {
         break;
       case MessageType.typeUnMicrostakingReturn:
       case MessageType.typeTerminateMap3Return:
-        typeStr = "节点结算";
+        typeStr = S.of(context).node_settlement;
         String value = transactionDetail?.amount?.toString() ?? "0.0";
         amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
@@ -621,7 +621,7 @@ class HYNApi {
       stakingAmount = BigInt.from(0);
     }
     if((hynCoin.balance - stakingAmount) < gasFees){
-      Fluttertoast.showToast(msg: "燃料费不足",gravity: ToastGravity.CENTER);
+      Fluttertoast.showToast(msg: S.of(Keys.rootKey.currentContext).insufficient_gas_fee,gravity: ToastGravity.CENTER);
       return false;
     }
     return true;

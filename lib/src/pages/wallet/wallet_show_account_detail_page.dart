@@ -100,15 +100,15 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
     _dataTitleList.add("${S.of(context).tx_amount}:");
 
     if (isContract) {
-      _dataTitleList.add("金额转移");
+      _dataTitleList.add(S.of(context).amount_transfer);
     }
 
     _dataTitleList.add("${S.of(context).transfer_gas_fee}:");
-    _dataTitleList.add("燃料价格:");
+    _dataTitleList.add("${S.of(context).gas_price}:");
     _dataTitleList.add("HYN${S.of(context).price}:");
-    _dataTitleList.add("燃料限制:");
-    _dataTitleList.add("交易燃料费用:");
-    _dataTitleList.add("随机数");
+    _dataTitleList.add("${S.of(context).gas_limit}:");
+    _dataTitleList.add("${S.of(context).transaction_gas_fee}:");
+    _dataTitleList.add(S.of(context).random_number);
     _dataTitleList.add("${S.of(context).tx_type}:");
     _dataTitleList.add("${S.of(context).tx_input_data}:");
 
@@ -455,7 +455,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   Padding(
                     padding: const EdgeInsets.only(left: 6.0),
                     child: Text(
-                      "交易位置",
+                      S.of(context).transaction_location,
                       style: TextStyles.textC999S13,
                     ),
                   ),
@@ -570,7 +570,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
             Row(
               children: <Widget>[
                 ClickOvalButton(
-                  "Origi",
+                  S.of(context).origin,
                   () {
                     selectLeftData = true;
                     inputData = widget.transactionDetail.data;
@@ -585,7 +585,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   width: 11,
                 ),
                 ClickOvalButton(
-                  "Decoded",
+                  S.of(context).decoded,
                   () {
                     selectLeftData = false;
                     inputData = json.encode(widget.transactionDetail.dataDecoded);
