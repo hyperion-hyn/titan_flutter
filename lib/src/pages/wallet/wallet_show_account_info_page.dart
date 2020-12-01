@@ -170,7 +170,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
         amountText,
         WalletUtil.ethAddressToBech32Address(transDetail.fromAddress),
         _toAddress,
-        "结算(节点终止)",
+        "节点结算",
       ];
     } else {
       _dataInfoList = [
@@ -230,7 +230,7 @@ class WalletShowAccountInfoPageState extends BaseState<WalletShowAccountInfoPage
                       if (isBillItem)
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
-                          child: Text("抵押 ${transactionDetail.getBillDelegate()} HYN",
+                          child: Text("${S.of(context).staking} ${transactionDetail.getBillDelegate()} HYN",
                               style: TextStyles.textC999S11, textAlign: TextAlign.end),
                         ),
                       if (isBillItem)

@@ -385,7 +385,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                   children: <Widget>[
                     RichText(
                       text: TextSpan(
-                          text: "从 ",
+                          text: "${S.of(context).exchange_from} ",
                           style: TextStyle(color: DefaultColors.color999, fontSize: 13),
                           children: [
                             TextSpan(
@@ -394,7 +394,7 @@ class WalletShowAccountDetailPageState extends BaseState<WalletShowAccountDetail
                               style:
                                   TextStyle(color: DefaultColors.color333, fontSize: 13, fontWeight: FontWeight.bold),
                             ),
-                            TextSpan(text: "到 ", style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
+                            TextSpan(text: "${S.of(context).exchange_to} ", style: TextStyle(color: DefaultColors.color999, fontSize: 13)),
                             TextSpan(
                               text: "${shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(contractItem.to))}",
                               style:

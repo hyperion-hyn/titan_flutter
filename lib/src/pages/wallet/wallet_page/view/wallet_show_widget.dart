@@ -297,7 +297,6 @@ class _ShowWalletViewState extends State<ShowWalletView> {
   Widget _exchangeHYNViewOld(BuildContext context, CoinVo coin) {
     return InkWell(
       onTap: () {
-        print("111111111");
         AtlasApi.goToAtlasMap3HelpPage(context);
       },
       child: Column(

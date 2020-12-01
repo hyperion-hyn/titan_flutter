@@ -414,7 +414,7 @@ class HYNApi {
                 "+${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           } else if (transactionDetail.type == TransactionType.TRANSFER_OUT) {
             amountStr =
-                "${transactionDetail.amount < 0 ? "-" : ""}${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
+                "${transactionDetail.amount == 0 ? "" : "-"}${formatComma ? FormatUtil.stringFormatCoinNum(transactionDetail.amount.toString()) : transactionDetail.amount}";
           }
         }
         break;
@@ -522,7 +522,7 @@ class HYNApi {
         break;
       case MessageType.typeUnMicrostakingReturn:
       case MessageType.typeTerminateMap3Return:
-        typeStr = "结算(节点终止)";
+        typeStr = "节点结算";
         String value = transactionDetail?.amount?.toString() ?? "0.0";
         amountStr = "+${formatComma ? FormatUtil.stringFormatCoinNum(value) : value}";
         recordAmountStr = getTransRecordAmount(value);
