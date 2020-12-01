@@ -93,7 +93,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
           FlatButton(
             onPressed: () {
               WalletShowAccountInfoPage.jumpToAccountInfoPage(
-                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_RP_HRC30.symbol);
+                  context, widget.rpStakingInfo?.txHash ?? '', SupportedTokens.HYN_Atlas.symbol);
             },
             child: Text(
               '查看抵押交易',
@@ -130,7 +130,7 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
 
   Widget _stakingInfoWidget() {
     var model = _stakingInfo;
-    var status = model.status;
+    var status = model?.status ?? 0;
     HexColor stateColor = getStateColor(status);
     String stateDesc = getStateDesc(status);
 
@@ -385,7 +385,8 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
     var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
+    //rpAmount = '00000000000000000000000000000000000000000000000000000000000000';
+    //rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
 
     var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
@@ -413,15 +414,17 @@ class _RpStakingInfoPageState extends BaseState<RpStakingInfoPage> with RouteAwa
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  '+ $rpAmount RP',
-                  style: TextStyle(
-                    color: HexColor("#333333"),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    '+ $rpAmount RP',
+                    style: TextStyle(
+                      color: HexColor("#333333"),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-                Spacer(),
+                //Spacer(),
                 Text(
                   updatedAt,
                   style: TextStyle(
