@@ -4,6 +4,8 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:titan/generated/l10n.dart';
 import 'package:titan/src/basic/utils/hex_color.dart';
@@ -21,6 +23,7 @@ import 'package:titan/src/pages/red_pocket/entity/rp_staking_info.dart';
 import 'package:titan/src/pages/red_pocket/entity/rp_statistics.dart';
 import 'package:titan/src/pages/red_pocket/rp_release_records_page.dart';
 import 'package:titan/src/pages/red_pocket/rp_staking_info_page.dart';
+import 'package:titan/src/pages/red_pocket/widget/rich_text_widget.dart';
 import 'package:titan/src/plugins/wallet/convert.dart';
 import 'package:titan/src/plugins/wallet/token.dart';
 import 'package:titan/src/style/titan_sytle.dart';
@@ -219,11 +222,15 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
     String totalRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.totalRpStr) ?? '--';
     String yesterday = FormatUtil.stringFormatCoinNum(_rpStatistics?.self?.yesterdayStr) ?? '--';
 
-    String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
+    // String baseRp = FormatUtil.stringFormatCoinNum(_rpStatistics?.rpContractInfo?.baseRpStr) ?? '--';
+    String baseRp = _rpStatistics?.rpContractInfo?.baseRpStr ?? '--';
 
     var releaseDay = (_rpStatistics?.rpContractInfo?.releaseDay ?? '0');
     var stakingDay = (_rpStatistics?.rpContractInfo?.stakingDay ?? '0');
 
+    var content = '''
+    前每份（$_hynPerRp HYN）总共可传导出${baseRp}RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。
+    ''';
     return SliverToBoxAdapter(
       child: Container(
         color: HexColor('#F8F8F8'),
@@ -239,7 +246,7 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 26,
-                    bottom: 26,
+                    //bottom: 16,
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -323,15 +330,39 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                 Padding(
                   padding: const EdgeInsets.only(
                     bottom: 16,
+                    top: 24,
                     left: 30,
                     right: 30,
                   ),
                   child: Row(
                     children: <Widget>[
+                      /*
+                      Flexible(
+                        child: RichTextWidget(
+                          Text(
+                            content,
+                            maxLines: 3,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: HexColor("#999999"),
+                              fontWeight: FontWeight.normal,
+                              height: 1.5,
+                            ),
+                          ),
+                          richTexts: [
+                            BaseRichText(
+                              "RP",
+                              style: TextStyle(color: Colors.yellow),
+                              onTap: () => {print("touch pushed")},
+                            ),
+                          ],
+                        ),
+                      ),
+                      */
                       Expanded(
                         flex: 2,
                         child: RichText(
-                          maxLines: 2,
+                          maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
                           text: TextSpan(
@@ -349,11 +380,29 @@ class _RpTransmitPageState extends BaseState<RpTransmitPage> with RouteAware {
                                   fontSize: 10,
                                   color: HexColor("#333333"),
                                   fontWeight: FontWeight.w500,
+                                  height: 1.8,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' RP，分',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: HexColor("#999999"),
+                                  fontWeight: FontWeight.normal,
                                   height: 1.5,
                                 ),
                               ),
                               TextSpan(
-                                text: ' RP，分$releaseDay天释放。$stakingDay天后可取回已抵押的HYN。',
+                                text: '$releaseDay',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: HexColor("#333333"),
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.5,
+                                ),
+                              ),
+                              TextSpan(
+                                text: '天释放。$stakingDay天后可取回已抵押的HYN。',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: HexColor("#999999"),
