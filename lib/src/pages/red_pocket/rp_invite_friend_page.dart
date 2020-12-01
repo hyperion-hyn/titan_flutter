@@ -63,7 +63,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: BaseAppBar(baseTitle: "邀请好友"),
+        appBar: BaseAppBar(baseTitle: S.of(context).invite_friends),
         body: Column(
           children: <Widget>[
             Expanded(
@@ -205,7 +205,7 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                     ),
                   ),
                   ClickOvalButton(
-                    "分享",
+                    S.of(context).share,
                     () async {
                       scrollController.jumpTo(scrollController.position.maxScrollExtent);
                       await _shareQr(context);
@@ -242,7 +242,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(top: 20),
-            child: Text("一起领红包邀请",
+            child: Text(S.of(context).red_pocket_invitation_together,
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -267,7 +267,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
                   style: TextStyles.textC999S12,
                 ),
                 TextSpan(
-                  text: "邀请你成为他的好友并一起领红包，是否同意?",
+                  text: S.of(context).invite_friend_receive_pocket_agree,
                   style: TextStyles.textC333S14,
                 ),
               ]),
@@ -277,7 +277,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
       ),
       actions: [
         ClickOvalButton(
-          "同意",
+          S.of(context).agree,
           () async {
             Navigator.pop(context);
 
@@ -285,8 +285,8 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
             var walletVo = WalletInheritedModel.of(context).activatedWallet;
             if (walletVo == null) {
               UiUtil.showAlertView(context,
-                  title: "一起领红包邀请",
-                  content: "现在新建一个钱包身份，创建后将自动成为$walletName的好友，现在就创建吗?",
+                  title: S.of(context).red_pocket_invitation_together,
+                  content: S.of(context).create_wallet_auto_friend_create_now(walletName),
                   actions: [
                     ClickOvalButton(
                       S.of(context).cancel,
@@ -323,7 +323,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
             try {
               bool inviteResult = await _rpApi.postRpInviter(inviterAddress, walletVo.wallet);
               if (inviteResult) {
-                Fluttertoast.showToast(msg: "邀请成功");
+                Fluttertoast.showToast(msg: S.of(context).invitation_success);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RedPocketPage()),

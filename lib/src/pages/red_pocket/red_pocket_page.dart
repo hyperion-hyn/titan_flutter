@@ -79,7 +79,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        baseTitle: '红包 HRC30',
+        baseTitle: S.of(context).rp_hrc30,
         backgroundColor: Colors.grey[50],
       ),
       body: LoadDataContainer(
@@ -163,9 +163,9 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
     // var rpYesterdayStr = '$rpYesterday RP';
     // var rpMissedStr = '$rpMissed RP';
 
-    var rpTodayStr = '未';
-    var rpYesterdayStr = '空';
-    var rpMissedStr = '投';
+    var rpTodayStr = S.of(context).rp_not_airdrop_1;
+    var rpYesterdayStr = S.of(context).rp_not_airdrop_2;
+    var rpMissedStr = S.of(context).rp_not_airdrop_3;
 
     // var avatarPath = activeWallet != null
     //     ? 'res/drawable/ic_map3_node_default_icon.png'
@@ -203,7 +203,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
           )
         : InkWell(
             child: Text(
-              '请创建/导入钱包',
+              S.of(context).create_or_import_wallet_first,
               style: TextStyle(
                 color: Colors.blue,
               ),
@@ -283,19 +283,19 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: [
                     Expanded(
-                      child: _contentColumn(rpBalanceStr, '余额'),
+                      child: _contentColumn(rpBalanceStr, S.of(context).rp_balance),
                     ),
                     _verticalLine(),
                     Expanded(
-                      child: _contentColumn(rpTodayStr, '今日红包'),
+                      child: _contentColumn(rpTodayStr, S.of(context).rp_today_rp),
                     ),
                     _verticalLine(),
                     Expanded(
-                      child: _contentColumn(rpYesterdayStr, '昨日红包'),
+                      child: _contentColumn(rpYesterdayStr, S.of(context).rp_yesterday_rp),
                     ),
                     _verticalLine(),
                     Expanded(
-                      child: _contentColumn(rpMissedStr, '我错过的'),
+                      child: _contentColumn(rpMissedStr, S.of(context).rp_missed),
                     ),
                   ],
                 ),
@@ -319,10 +319,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       child: Row(
                         children: <Widget>[
                           Padding(
-                            padding: const EdgeInsets.only(right: 8, left: 15,),
+                            padding: const EdgeInsets.only(
+                              right: 8,
+                              left: 15,
+                            ),
                             child: _contentColumn(
                               '--',
-                              '朋友圈',
+                              S.of(context).rp_friends,
                               contentFontSize: 16,
                             ),
                           ),
@@ -344,7 +347,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                               right: 8,
                             ),
                             child: Text(
-                              '邀请好友一起领红包',
+                              S.of(context).rp_invite_to_collect,
                               style: TextStyle(
                                 color: HexColor('#333333'),
                                 fontSize: 14,
@@ -404,7 +407,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           height: 8,
                         ),
                         Text(
-                          '即将上线',
+                          S.of(context).rp_available_soon,
                           style: TextStyle(
                             fontSize: 13,
                           ),
@@ -417,7 +420,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '红包空投',
+                      S.of(context).rp_airdrop,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -429,7 +432,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         left: 4,
                       ),
                       child: Text(
-                        '总量$airDropPercent万RP',
+                        S.of(context).rp_total_amount_percent(airDropPercent),
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -483,7 +486,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: [
                     Text(
-                      '传导池',
+                      S.of(context).rp_transmit_pool,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -493,7 +496,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                         left: 4,
                       ),
                       child: Text(
-                        '总量$poolPercent万RP',
+                        S.of(context).rp_total_amount_percent(poolPercent),
                         style: TextStyle(
                           color: DefaultColors.color999,
                           fontSize: 12,
@@ -511,7 +514,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       flex: 1,
                       child: _inkwellColumn(
                         '$myHYNStaking HYN',
-                        '我的抵押',
+                        S.of(context).rp_my_hyn_staking,
                         onTap: _navToRPPool,
                       ),
                     ),
@@ -519,7 +522,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                       flex: 1,
                       child: _inkwellColumn(
                         '$rpYesterday RP',
-                        '昨日获得',
+                        S.of(context).rp_transmit_yesterday,
                         onTap: _navToRPReleaseRecord,
                       ),
                     ),
@@ -539,13 +542,13 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                     Expanded(
                       child: _poolInfoColumn(
                         '$globalHYNStaking HYN',
-                        '全网抵押',
+                        S.of(context).rp_global_hyn_staking,
                       ),
                     ),
                     Expanded(
                       child: _poolInfoColumn(
                         '$globalTransmit RP',
-                        '全网累计传导',
+                        S.of(context).rp_global_transmit,
                       ),
                     ),
                   ],
@@ -586,7 +589,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   children: [
                     Text(
-                      '项目简介',
+                      S.of(context).rp_project_intro,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -598,13 +601,15 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                           "https://h.hyn.space/redpocket",
                         );
                         String webTitle = FluroConvertUtils.fluroCnParamsEncode(
-                          '详细介绍',
+                          S.of(context).detailed_introduction,
                         );
-                        Application.router
-                            .navigateTo(context, Routes.toolspage_webview_page + '?initUrl=$webUrl&title=$webTitle');
+                        Application.router.navigateTo(
+                            context,
+                            Routes.toolspage_webview_page +
+                                '?initUrl=$webUrl&title=$webTitle');
                       },
                       child: Text(
-                        '详细介绍',
+                        S.of(context).detailed_introduction,
                         style: TextStyle(
                           color: Colors.blue,
                         ),
@@ -617,10 +622,10 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 ),
                 Column(
                   children: [
-                    _tipRow('首个基于可信地图位置+HRC30去中心化交易结构的去中心化应用场景'),
-                    _tipRow('用户只需抵押HYN即可体验去中心化抢红包，与朋友圈共同分享RP'),
-                    _tipRow('越早加入，收获越多，更有隐藏红包福利等你来解锁！'),
-                    _tipRow('RP总发行量为100万枚，在红包HRC30智能合约内进行传导和空投，无预挖，无预售。')
+                    _tipRow(S.of(context).rp_desc_1),
+                    _tipRow(S.of(context).rp_desc_2),
+                    _tipRow(S.of(context).rp_desc_3),
+                    _tipRow(S.of(context).rp_desc_4)
                   ],
                 ),
                 SizedBox(
@@ -754,7 +759,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                   )
                 ],
                 text: title,
-                style: TextStyle(height: 1.8, color: DefaultColors.color999, fontSize: 12),
+                style: TextStyle(
+                    height: 1.8, color: DefaultColors.color999, fontSize: 12),
               ),
             ),
           )),
@@ -792,7 +798,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
   }
 
@@ -806,7 +812,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
   }
 
@@ -820,7 +826,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
   }
 
@@ -834,7 +840,7 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
         ),
       );
     } else {
-      Fluttertoast.showToast(msg: '请先创建/导入钱包');
+      Fluttertoast.showToast(msg: S.of(context).create_or_import_wallet_first);
     }
   }
 
@@ -846,7 +852,8 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
       );
 
       if (context != null) {
-        BlocProvider.of<WalletCmpBloc>(context).add(UpdateActivatedWalletBalanceEvent());
+        BlocProvider.of<WalletCmpBloc>(context)
+            .add(UpdateActivatedWalletBalanceEvent());
       }
 
       if (mounted) {
