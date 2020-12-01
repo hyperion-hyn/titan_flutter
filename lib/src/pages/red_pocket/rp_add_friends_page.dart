@@ -8,10 +8,8 @@ import 'package:titan/src/basic/widget/load_data_container/load_data_container.d
 import 'package:titan/src/components/wallet/wallet_component.dart';
 import 'package:titan/src/config/consts.dart';
 import 'package:titan/src/pages/red_pocket/api/rp_api.dart';
-import 'package:titan/src/utils/format_util.dart';
+import 'package:titan/src/pages/red_pocket/entity/rp_miners_entity.dart';
 import 'package:titan/src/utils/utile_ui.dart';
-
-import 'entity/rp_release_info.dart';
 import 'entity/rp_statistics.dart';
 
 class RpAddFriendsPage extends StatefulWidget {
@@ -31,7 +29,9 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
 
   int _currentPage = 1;
   var _address = "";
-  List<RpReleaseInfo> _dataList = [];
+  List<RpMinerInfo> _dataList = [];
+  RpMinersEntity _rpMinersEntity;
+  RpMinerInfo get _inviterInfo => _rpMinersEntity?.inviter;
 
   int lastDay;
 
@@ -117,16 +117,9 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
   }
 
   Widget _inviteBuilder(int index) {
-    var model = _dataList[index];
+    var model = _inviterInfo;
 
-    var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
-
-    var amount = model?.amount ?? 0;
-
-    var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.inviteTime * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
 
     return Padding(
@@ -188,7 +181,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                         right: 6,
                       ),
                       child: Text(
-                        '$amount 份',
+                        model?.name??'',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -197,7 +190,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                       ),
                     ),
                     Text(
-                      '共 $hynAmount HYN',
+                      '${model?.level??0}',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -210,7 +203,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                   height: 6,
                 ),
                 Text(
-                  '${UiUtil.shortEthAddress(model?.txHash??'')}',
+                  '${UiUtil.shortEthAddress(model?.address??'')}',
                   //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                   style: TextStyle(
                     fontSize: 10,
@@ -231,14 +224,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
   Widget _itemBuilder(int index) {
     var model = _dataList[index];
 
-    var hynAmount = FormatUtil.weiToEtherStr(model?.hynAmount ?? '0');
-
-    var amount = model?.amount ?? 0;
-
-    var rpAmount = FormatUtil.weiToEtherStr(model?.rpAmount ?? '0');
-    rpAmount = FormatUtil.stringFormatCoinNum10(rpAmount);
-
-    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.updatedAt * 1000);
+    var currentDate = DateTime.fromMillisecondsSinceEpoch(model.inviteTime * 1000);
     var updatedAt = Const.DATE_FORMAT.format(currentDate);
 
     return Padding(
@@ -277,7 +263,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                         right: 6,
                       ),
                       child: Text(
-                        'Moo ${model?.stakingId??0} ',
+                        model?.name??'',
                         style: TextStyle(
                           color: HexColor("#333333"),
                           fontSize: 14,
@@ -286,7 +272,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                       ),
                     ),
                     Text(
-                      ' ${model?.stakingId??0} 级',
+                      ' ${model?.level??0} 级',
                       style: TextStyle(
                         color: HexColor("#999999"),
                         fontSize: 12,
@@ -299,7 +285,7 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
                   height: 6,
                 ),
                 Text(
-                  '${UiUtil.shortEthAddress(model?.txHash??'')}',
+                  '${UiUtil.shortEthAddress(model?.address??'')}',
                   //DateFormat("HH:mm").format(DateTime.fromMillisecondsSinceEpoch(createAt)),
                   style: TextStyle(
                     fontSize: 10,
@@ -343,10 +329,12 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
     _currentPage = 1;
 
     try {
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPMinerList(_address, page: _currentPage);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList = netData;
+      _rpMinersEntity = netData;
+
+      if (netData?.miners?.isNotEmpty ?? false) {
+        _dataList = netData.miners;
         if (mounted) {
           setState(() {
             _loadDataBloc.add(RefreshSuccessEvent());
@@ -363,10 +351,10 @@ class _RpAddFriendsState extends BaseState<RpAddFriendsPage> {
   void getMoreNetworkData() async {
     try {
       _currentPage = _currentPage + 1;
-      var netData = await _rpApi.getRPReleaseInfoList(_address, page: _currentPage);
+      var netData = await _rpApi.getRPMinerList(_address, page: _currentPage);
 
-      if (netData?.isNotEmpty ?? false) {
-        _dataList.addAll(netData);
+      if (netData?.miners?.isNotEmpty ?? false) {
+        _dataList.addAll(netData.miners);
         _loadDataBloc.add(LoadingMoreSuccessEvent());
       } else {
         _loadDataBloc.add(LoadMoreEmptyEvent());
