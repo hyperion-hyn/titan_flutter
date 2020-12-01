@@ -26,6 +26,7 @@ import 'package:titan/src/style/titan_sytle.dart';
 import 'package:titan/src/utils/format_util.dart';
 import 'package:titan/src/utils/utils.dart';
 import 'package:titan/src/widget/loading_button/click_oval_button.dart';
+import 'package:titan/src/widget/wallet_widget.dart';
 
 import 'entity/rp_statistics.dart';
 
@@ -168,9 +169,11 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
 
     var userName = activeWallet?.wallet?.keystore?.name ?? '--';
 
+    var walletAddress = activeWallet?.wallet?.getEthAccount()?.address ?? "";
+
     var userAddress = shortBlockChainAddress(
       WalletUtil.ethAddressToBech32Address(
-        activeWallet?.wallet?.getAtlasAccount()?.address ?? '',
+        walletAddress,
       ),
     );
 
@@ -230,13 +233,14 @@ class _RedPocketPageState extends BaseState<RedPocketPage> with RouteAware {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(60.0),
-                      child: Image.asset(
-                        avatarPath,
-                        width: 42,
-                        height: 42,
-                        fit: BoxFit.cover,
+                    SizedBox(
+                      width: 42,
+                      height: 42,
+                      child: walletHeaderWidget(
+                        userName,
+                        isShowShape: false,
+                        address: walletAddress,
+                        isCircle: true,
                       ),
                     ),
                     SizedBox(
