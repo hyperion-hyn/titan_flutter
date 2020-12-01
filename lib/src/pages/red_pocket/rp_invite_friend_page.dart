@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
@@ -102,8 +103,8 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                           ]),
                                           shape: BoxShape.circle,
                                           border: Border.all(width: 2, color: Colors.transparent)),
-                                      child:
-                                          walletHeaderWidget(walletName, address: ethWalletAddress, isShowShape: false)),
+                                      child: walletHeaderWidget(walletName,
+                                          address: ethWalletAddress, isShowShape: false)),
 //                              iconWidget("",walletName,walletAddress,isCircle: true,iconWidth: 60),
                                   /*Image.asset(
                                     "res/drawable/ic_rp_invite_friend_head_img.png",
@@ -180,7 +181,8 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
                                           bottom: 42,
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(5))),
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.all(Radius.circular(5))),
                                             width: 84,
                                             height: 84,
                                             child: QrImage(
@@ -219,10 +221,28 @@ class _RpInviteFriendPageState extends BaseState<RpInviteFriendPage> {
               ),
             ),
             Container(
-              height: 60,
-              child: Image.asset("res/drawable/bg_rp_invite_friend_bottom.png",fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,),
+              height: 102,
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  Image.asset(
+                    "res/drawable/bg_rp_invite_friend_bottom.png",
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left:58.0,right: 58,top: 20),
+                    child: Text(
+                      "提示：如果你还没有推荐人，当你的好友接收你的邀请，那么系统也会为你设定一个推荐人",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ));

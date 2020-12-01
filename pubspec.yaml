@@ -76,7 +76,7 @@ dependencies:
   #https://pub.dev/packages/flutter_downloader/versions/0.0.6#-installing-tab-
   #flutter_downloader: ^1.1.7
   #https://pub.dev/packages/flutter_html:
-  flutter_html: ^1.1.1
+  flutter_html: ^0.11.0
   #https://pub.dev/packages/sprintf
   sprintf: ^4.0.2
   #https://github.com/tobrun/flutter-mapbox-gl
