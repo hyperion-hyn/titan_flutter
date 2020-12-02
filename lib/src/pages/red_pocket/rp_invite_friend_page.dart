@@ -298,7 +298,7 @@ void showInviteDialog(BuildContext context, String inviterAddress, String wallet
       ),
       actions: [
         ClickOvalButton(
-          S.of(context).agree,
+          S.of(context).key_accept,
           () async {
             Navigator.pop(context);
 
