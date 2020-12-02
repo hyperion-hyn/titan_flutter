@@ -90,7 +90,11 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
               children: [
                 _inviteBuilder(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    left: 16,
+                    bottom: 6,
+                  ),
                   child: Text(
                     S.of(context).rp_my_invite_list,
                     style: TextStyle(
@@ -114,6 +118,9 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
         child: Center(
           child: Column(
             children: [
+              SizedBox(
+                height: 36,
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Image.asset(
@@ -175,7 +182,7 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#333333'),
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -193,7 +200,9 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
   _inviterWidget() {
     var inviterName = _inviter?.name ?? '';
     var inviterLevel = _inviter?.level ?? '';
-    var inviterAddress = _inviter?.address ?? '';
+    var address = shortBlockChainAddress(WalletUtil.ethAddressToBech32Address(
+      _inviter?.address ?? '',
+    ));
     if (_inviter != null) {
       return Row(
         children: [
@@ -201,16 +210,11 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
             padding: const EdgeInsets.only(
               right: 10,
             ),
-            child: SizedBox(
-              height: 30,
-              width: 30,
-              child: walletHeaderWidget(
-                inviterName,
+            child: walletHeaderWidget(inviterName,
                 isShowShape: false,
-                address: inviterAddress,
+                address: _inviter?.address,
                 isCircle: true,
-              ),
-            ),
+                size: 32),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +249,7 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
                 height: 6,
               ),
               Text(
-                '${UiUtil.shortEthAddress(inviterAddress)}',
+                '$address',
                 style: TextStyle(
                   fontSize: 10,
                   color: HexColor('#999999'),
@@ -289,18 +293,22 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
           ), //设置四周圆角 角度
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
                 right: 10,
               ),
               child: SizedBox(
-                height: 30,
-                width: 30,
-                child: walletHeaderWidget(name,
-                    address: info?.address ?? '',
-                    isCircle: true,
-                    isShowShape: false),
+                height: 40,
+                width: 40,
+                child: walletHeaderWidget(
+                  name,
+                  address: info?.address ?? '',
+                  isCircle: true,
+                  isShowShape: false,
+                  size: 32,
+                ),
               ),
             ),
             Column(
