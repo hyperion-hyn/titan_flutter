@@ -90,7 +90,11 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
               children: [
                 _inviteBuilder(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, left: 24, bottom: 6),
+                  padding: const EdgeInsets.only(
+                    top: 16,
+                    left: 16,
+                    bottom: 6,
+                  ),
                   child: Text(
                     S.of(context).rp_my_invite_list,
                     style: TextStyle(
@@ -114,6 +118,9 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
         child: Center(
           child: Column(
             children: [
+              SizedBox(
+                height: 36,
+              ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Image.asset(
@@ -202,8 +209,8 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
               right: 10,
             ),
             child: SizedBox(
-              height: 30,
-              width: 30,
+              height: 40,
+              width: 40,
               child: walletHeaderWidget(
                 inviterName,
                 isShowShape: false,
@@ -289,14 +296,15 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
           ), //设置四周圆角 角度
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(
                 right: 10,
               ),
               child: SizedBox(
-                height: 30,
-                width: 30,
+                height: 40,
+                width: 40,
                 child: walletHeaderWidget(name,
                     address: info?.address ?? '',
                     isCircle: true,
