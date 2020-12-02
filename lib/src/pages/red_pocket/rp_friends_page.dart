@@ -182,7 +182,7 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
                       style: TextStyle(
                         fontSize: 14,
                         color: HexColor('#333333'),
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.left,
                     ),
@@ -210,16 +210,11 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
             padding: const EdgeInsets.only(
               right: 10,
             ),
-            child: SizedBox(
-              height: 40,
-              width: 40,
-              child: walletHeaderWidget(
-                inviterName,
+            child: walletHeaderWidget(inviterName,
                 isShowShape: false,
                 address: _inviter?.address,
                 isCircle: true,
-              ),
-            ),
+                size: 32),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,10 +302,13 @@ class _RpAddFriendsState extends BaseState<RpFriendsPage> {
               child: SizedBox(
                 height: 40,
                 width: 40,
-                child: walletHeaderWidget(name,
-                    address: info?.address ?? '',
-                    isCircle: true,
-                    isShowShape: false),
+                child: walletHeaderWidget(
+                  name,
+                  address: info?.address ?? '',
+                  isCircle: true,
+                  isShowShape: false,
+                  size: 32,
+                ),
               ),
             ),
             Column(
